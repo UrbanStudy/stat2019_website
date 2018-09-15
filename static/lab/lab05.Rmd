@@ -1,0 +1,191 @@
+---
+title: 'USP654 Lab 5: Working with categorical variables'
+author: "Liming Wang"
+date: "10/23/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+## Identify Categorical Variables
+
+What are the categorical variables in `mtcars` and California TOD dataset?
+
+```{r}
+require(tidyverse)
+mtcars %>% head
+```
+
+```{r}
+?mtcars
+```
+
+```{r}
+californiatod <- read_csv("californiatod.csv")
+californiatod %>% head
+```
+
+## Descriptive Stats
+
+For categorical variables, the descriptive statistics and visualization we use is different from numeric variables. For numeric variables, we calculate their mean, standard deviation, median and use histograms and scatter plots to visualize them. For categorical variables, we examine the frequency by categories and use bar chart for visualization.
+
+```{r}
+californiatod %>% 
+  group_by(region) %>% 
+  summarize(n=n()) %>% 
+  mutate(percent=100*n/sum(n))
+```
+
+It is common to code a categorical variable with two categories as dummy variable, using 0 and 1 to code either category. For example, sex, auto vs manual transimission, V vs Straight engine. Compare these two ways of doing descriptive stats for `vs` (V vs S engine) and `am` (auto vs manual):
+
+1. mean & sd
+```{r}
+mtcars %>% 
+  summarize(am_mean=mean(am),
+            am_sd=sd(am))
+```
+
+2. Frequencies by categories
+```{r}
+mtcars %>% 
+  group_by(am) %>% 
+  tally
+# tally is equivalent to summarize(n=n())
+```
+
+## Recode Categorical Variables
+
+In many cases, it makes sense to recode categorical variables:
+
+1. From numeric coding (e.g. `am` and `vs`) to more meaningful categorical coding (factor in R, nomial or ordinal variable in SPSS)
+
+```{r}
+(
+mtcars_recoded <- mtcars %>% 
+  mutate(am=factor(am, labels = c(`0`="automatic", `1`="manual")),
+         vs=factor(vs, labels = c(`0`="V engine", `1`="S engine")))
+)
+
+# Now repeat the frequencies
+mtcars_recoded %>% 
+  group_by(am) %>% 
+  tally
+```
+
+3. Recode from a numeric/continous variable
+
+```{r}
+## Assume we want to combine LA + SD to Southern CA and Bay Area and Sacramento
+## as Northern CA
+(
+californiatod <- californiatod %>% 
+  mutate(transit_level=case_when(
+    transit>0.4~"high",
+    transit>0.2~"medium",
+    TRUE ~ "low"
+  ))
+)
+
+## It is generally a good idea to verify your recode afterwards
+californiatod %>% 
+  group_by(transit_level) %>%
+  summarize(min_transit=min(transit), max_transit=max(transit))
+
+## there should be no mis-classification or cross-over
+```
+
+3. Combine or split categories
+
+```{r}
+## Assume we want to combine LA + SD to Southern CA and Bay Area and Sacramento
+## as Northern CA
+(
+californiatod <- californiatod %>% 
+  mutate(CA=recode(region, "LA"="Southern", "SD"="Southern", "Bay Area"="Northern", "Sacramento"="Northern"))
+)
+
+## It is generally a good idea to verify your recode afterwards
+californiatod %>% 
+  group_by(region, CA) %>% 
+  tally
+
+## there should be no mis-classification or cross-over
+```
+
+## Visualization
+
+```{r}
+library(ggplot2)
+library(scales)
+ggplot(mtcars_recoded, aes(x=am)) + geom_bar()
+```
+
+Visualize two categorical variables:
+
+```{r}
+library(ggplot2)
+library(scales)
+ggplot(mtcars_recoded, aes(x=am, fill=vs)) + geom_bar()
+```
+
+## Regression Models with Categorical Indepdent Variables
+
+### Dummy Variables
+```{r}
+install.packages("huxtable")
+library(huxtable)
+huxreg(
+  lm(mpg ~ wt + cyl, data=mtcars),
+  lm(mpg ~ wt + cyl + am, data=mtcars),
+  lm(mpg ~ wt + cyl + vs, data=mtcars)
+  )
+```
+
+Compare the above regression results with:
+```{r}
+huxreg(
+  lm(mpg ~ wt + cyl, data=mtcars_recoded),
+  lm(mpg ~ wt + cyl + am, data=mtcars_recoded),
+  lm(mpg ~ wt + cyl + vs, data=mtcars_recoded)
+  )
+```
+
+### Categorical Variables
+
+R will automatically create dummy variables in regression models when it recoginizes a variable as a categorical variable:
+```{r}
+huxreg(
+  lm(houseval ~ density + transit, data=californiatod),
+  lm(houseval ~ density + transit + railtype, data=californiatod),
+  lm(houseval ~ density + transit + region, data=californiatod),
+  lm(houseval ~ density + transit + CA, data=californiatod)
+  )
+```
+
+### Interaction Terms
+
+```{r}
+huxreg(
+  lm(houseval ~ transit, data=californiatod),
+  lm(houseval ~ transit * railtype, data=californiatod),
+  lm(houseval ~ transit * region, data=californiatod),
+  lm(houseval ~ transit * CA, data=californiatod)
+  )
+```
+
+## Tasks
+
+1. Identify the categorical variables in your own dataset
+2. Select a few of the categorical variables
+    - How is each of them code (dummy, numeric, or character)?
+    - Recode the categorical variables that are not properly coded currently
+    - Consider combine/recode some of the categories for one of your categorical variables
+    - Run regression models including your categorical variables as independent variables; think about how you interpret the results of your regression
+    - Test interaction effects between your categorical variables and numeric variables.
+

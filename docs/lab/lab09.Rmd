@@ -1,0 +1,248 @@
+---
+title: 'USP654 Lab 9: Variable Selection; DID regression'
+date: "11/20/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+We will be using the taxlot_sample and uber data for this lab. [Download taxlot_sample.csv](data/taxlot_sample.csv) and [uber DUI data](data/uber_dui.csv)
+
+## Variable Selection
+
+This section is adapted from [olsrr tutorial of variable selection](http://www.rsquaredacademy.com/olsrr/articles/variable_selection.html).
+
+```{r}
+require(tidyverse)
+taxlot_sample <- read_csv("data/taxlot_sample.csv")
+
+# create a subset with only single family residence
+taxlot_sfr <- taxlot_sample %>% 
+  filter(sfr == 1)
+```
+
+
+### All possible subset
+
+All subset regression tests all possible subsets of the set of potential independent variables. If there are K potential independent variables (besides the constant), then there are $2^k$ distinct subsets of them to be tested. 
+
+```{r}
+if (!require(olsrr)) {
+  install.packages("olsrr"); library(olsrr)
+}
+
+sfrmodel <- lm(TOTALVAL ~ BLDGSQFT + YEARBUILT + GIS_ACRES + dpioneer + dfwy + dpark + dmax + dbikehq, data = taxlot_sfr)
+
+(sfrmodel_all_subset <- ols_all_subset(sfrmodel))
+plot(sfrmodel_all_subset)
+```
+
+### Best Subset Regression
+
+Select the subset of predictors that do the best at meeting some well-defined objective criterion, such as having the largest R2 value or the smallest MSE, AIC, etc.
+```{r}
+(sfrmodel_best_subset <- ols_best_subset(sfrmodel))
+plot(sfrmodel_best_subset)
+```
+
+### Stepwise Forward Regression
+Build regression model from a set of candidate predictor variables by entering predictors in a stepwise manner until there is no variable left to enter any more.
+
+```{r}
+# Here . tells lm to use all variables except for the dependent variable
+sfrmodel <- lm(TOTALVAL ~ BLDGSQFT + YEARBUILT + GIS_ACRES + dpioneer + dfwy + dpark + dmax + dbikehq, data = taxlot_sfr)
+
+# based on p-value
+(sfrmodel_stepfwd.p <- ols_step_forward(sfrmodel))
+plot(sfrmodel_stepfwd.p)
+
+# based on AIC
+(sfrmodel_stepfwd.aic <- ols_stepaic_forward(sfrmodel))
+plot(sfrmodel_stepfwd.aic)
+```
+
+### Stepwise Backward Regression
+
+Build regression model from a set of candidate predictor variables by removing predictors in a stepwise manner until there is no variable left to remove any more.
+
+```{r}
+# based on p-value
+(sfrmodel_stepbwd.p <- ols_step_backward(sfrmodel))
+plot(sfrmodel_stepbwd.p)
+
+# based on AIC
+(sfrmodel_stepbwd.aic <- ols_stepaic_backward(sfrmodel))
+plot(sfrmodel_stepbwd.aic)
+```
+
+### Step AIC regression
+
+Build regression model from a set of candidate predictor variables by entering and removing predictors based on Akaike Information Criteria, in a stepwise manner until there is no variable left to enter or remove any more. The model should include all the candidate predictor variables.
+
+```{r}
+(sfrmodel_stepboth.aic <- ols_stepaic_both(sfrmodel))
+plot(sfrmodel_stepboth.aic)
+```
+
+### Cross Validation
+CV assesses how the results of a model will generalize to an independent data set. It is mainly used in settings where the goal is prediction, and one wants to estimate how accurately a predictive model will perform in practice.
+
+```{r}
+if (!require(DAAG)) {
+  install.packages("DAAG"); library(DAAG)
+}
+sfrmodel_bestsubset <- lm(TOTALVAL~BLDGSQFT+YEARBUILT+GIS_ACRES+dpioneer+dfwy, data=taxlot_sfr)
+
+## This two lines should do a 5-fold cross-validation for the sfr model
+## but there is some issue in the package
+#cv_out <- cv.lm(taxlot_sfr, sfrmodel_bestsubset, seed = 29, m=5)
+#cv_out["cvpred"] %>% summary
+
+## Alternatively, use the modelr and purrr package
+## This is beyond the scope of this class, provided here 
+## for reference
+library(modelr)
+library(purrr)
+(taxlot_sfr_kcv <- taxlot_sfr %>% 
+  modelr::crossv_kfold() %>% 
+  mutate(model=map(train, ~lm(TOTALVAL~BLDGSQFT+YEARBUILT+GIS_ACRES+dpioneer+dfwy, data=.x)),
+         rmse=map2_dbl(model, test, modelr::rmse),
+         rsquare=map2_dbl(model, test, modelr::rsquare)))
+
+taxlot_sfr_kcv %>% 
+  summarise_at(c("rmse", "rsquare"), funs(mean))
+```
+
+## Difference-in-Difference
+
+Load Uber DUI data
+
+```{r}
+######################################################
+#
+# Included is data on daily DUIs as recorded by the
+# Seattle and San Francisco city police departments
+# from July 2010 to Jun 2014.
+#
+# Uber operated in SF over the entire period and
+# launched in Seattle on eventdate 391 (08/11/2011) 
+# in the data set. Data are ordered by day for each city.
+#
+# variables
+# ---------
+# eventdate : starts at 0; increases by 1 each day
+# incidents : number of daily DUIs recorded
+# post : dummy variable equal to 1 if date after Uber Seattle launch
+# sea : dummy equal to 1 if seattle 
+# sf : dummy equal to 1 if San Francisco
+# dayofweek : Sun-Sat, factor
+# marijuana : marijuana legal (eventdate 876 ())
+#
+
+require(tidyverse)
+if (!require(lubridate)) {
+  install.packages("lubridate"); library(lubridate)
+}
+
+df_raw <- read_csv("data/uber_dui.csv", na=c("#N/A"))
+summary(df_raw) # 493 days had no incident data;
+# For SFPD, only days w/ incidents reported;
+# Not sure about Seattle PD
+
+# To make things simpler, let's just assume all missing
+# days had no DUI arrests in either city
+df <- df_raw %>% 
+  transmute(eventdate,
+            date=as_date("2010-7-16") + eventdate,
+            dayofweek,
+            city=ifelse(sea==1, "Seattle", "SF"),
+            incidents=ifelse(is.na(incidents), 0, incidents),
+            post,
+            marijuana
+         )
+
+summary(df)
+```
+
+### Visualization
+
+```{r}
+library(ggplot2)
+
+ggplot(df, aes(x=date, y=incidents, color=city)) + 
+  geom_line() +
+  geom_vline(xintercept = as_date("2011-08-11")) +
+  geom_vline(xintercept = as_date("2012-12-08"))
+```
+
+```{r}
+df_sea <- df %>% filter(city=="Seattle")
+
+if (!require(ggfortify)) {
+  install.packages("ggfortify"); library(ggfortify)
+}
+
+# Visually inspect the weekly pattern
+sea_ts <- ts(df_sea$incidents, frequency = 7)
+autoplot(stl(sea_ts, s.window = 'periodic'), ts.colour = 'blue')
+
+# Visually inspect the monthly pattern
+sea_ts <- ts(df_sea$incidents, frequency = 30)
+autoplot(stl(sea_ts, s.window = 'periodic'), ts.colour = 'blue')
+
+if (!require(strucchange)) {
+  install.packages("strucchange"); library(strucchange)
+}
+
+autoplot(breakpoints(incidents ~ eventdate, data=df_sea))
+```
+
+### Models
+```{r}
+# Base Seattle model
+(mod1_sea <- lm(incidents ~ dayofweek + eventdate, data=df_sea)) %>% 
+  summary()
+
+# Dummy variable approach
+(mod2_sea <- lm(incidents ~ dayofweek + eventdate + post, data=df_sea)) %>% 
+  summary()
+
+anova(mod1_sea, mod2_sea)
+
+# Chow test on whether there is a structure change on day 392 (8/11/2011)
+# when Uber entered Seattle
+
+# NOTE: Data must be in time order!
+require(strucchange)
+df_sea <- df_sea %>% arrange(eventdate)
+sctest(incidents ~ dayofweek + eventdate, type = "Chow", point = 392, data = df_sea)
+
+# To use SPSS for Chow Test: http://www-01.ibm.com/support/docview.wss?uid=swg21476885
+```
+
+## DID
+
+```{r}
+# First, let's establish the base model that
+# includes both cities
+(mod3 <- lm(incidents ~ post + dayofweek + eventdate * city, data=df)) %>% 
+  summary()
+
+# Specify the DID form of the base model
+
+
+# Add a control for marijuana legalization
+
+
+```
+
+## Tasks
+
+1. Practice variable selection with your own data/model
+2. Finish DID regression with the Uber DUI data
