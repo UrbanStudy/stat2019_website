@@ -1,7 +1,11 @@
 ---
-title: "Data Analysis II"
-description: "Data Analysis II takes an applied approach to statistical analysis and research methodology and is the second in a two-course sequence. Provides students with statistical background, conceptual understanding, technical writing skills, computer application, and the ability to apply these skills to realistic data analysis problems and research designs. Topics include simple regression and correlation, multiple regression, and logistic regression. The laboratory (USP654L) must be taken concurrently. Recommended prerequisites: USP 534/634 or an equivalent course approved by the instructor and prior experience with statistical software."
-markup: "mmark"
+title: "Applied Regression Analysis"
+markup: mmark
+description: 'Basic concepts of regression analysis, matrix approach to linear regression
+  selecting the “best” regression equation, and multiple regression. Computational
+  algorithms and computer software regression packages. Applications in science, engineering,
+  561.'
+  and business. Prerequisites: Mth 261 and either Stat 451/Stat 551 or Stat 461/Stat
 ---
 
 ### Course info
@@ -9,26 +13,25 @@ markup: "mmark"
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span>
 ------------|---------------------------------------------
-When        |  Mon 4:00 - 7:30pm                         |
-Where       |  URBN 225                                  |
+When        |  MWF	10:15-11:05	10                       |
+Where       |   DF    1                                  |
 Office Hours|  [Mon 2 - 4pm & by appointment](https://calendar.google.com/calendar/selfsched?sstoken=UUlwWnNVMTFpNHBGfGRlZmF1bHR8NDA1NGM4OTVlYTI4NjA0MGFhNjlhNDliMWZlNWY4YmU) at URBN 350D |
 
 ### Instructor
 {.table .table-condensed .table-striped .text-left}
 <span></span>     | <span></span>     | <span></span>    | <span></span>         
 ------------------|-------------------|------------------|------------------
-Instructor        | [Liming Wang](https://lmwang.netlify.com/) | <a href="mailto:lmwang@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp; <a href="https://github.com/lmwang9527" title="GitHub"><i class="fa fa-github"></i></a> |
-
+Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena) | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  |
+Fariborz Maseeh Department of Mathematics & Statistics
 
 ### Texts
 
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span> | <span></span> 
 -----------|---------------------------------|----------------------------------
+[Introduction to Linear Regression Analysis](https://www.amazon.com/Introduction-Linear-Regression-Analysis-Fifth/dp/1118780574) | Douglas C. Montgomery, Elizabeth A. Peck, G. Geoffrey Vining | John Wiley & Sons, Jun 29, 2015
 [Regression Analysis for the Social Sciences](https://www.amazon.com/Regression-Analysis-Social-Sciences-2/dp/113881251X) | Gordon, Rachel | Routledge, 2015
 [R for Data Science](http://r4ds.had.co.nz/) | Grolemund, Wickham | O'Reilly, 1st edition, 2017
-
-We will read a few chapters in [Applied Multiple Regression/Correlation Analysis for the Behavioral Sciences 3rd edition](https://www.amazon.com/Multiple-Regression-Correlation-Analysis-Behavioral/dp/0805822232) by Cohen et al from Routledge as supplement. Additional readings will be posted to [D2L/Readings](https://d2l.pdx.edu/d2l/le/content/667907/Home)
 
 ### Software
 
@@ -43,4 +46,4 @@ Class meets in CUPA computer lab URBN 225; you are welcome to bring and use your
 ### Attributions
 
 - This course website is adapted from [STA 112FS by Mine Çetinkaya-Rundel at Duke University](http://www2.stat.duke.edu/courses/Fall17/sta112.01/), which in turn is based on [ESPM-157 by Carl Boettinger](https://espm-157.carlboettiger.info/).
-- Background photo [*Portland at Dusk* by Alejandro Rdguez on flickr](https://www.flickr.com/photos/90642235@N04/19400834865/)
+- Background photo ["City of Darkness: Life in Kowloon Walled City" by Greg Girard](http://greggirard.bigcartel.com/)

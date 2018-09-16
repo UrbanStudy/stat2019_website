@@ -1,0 +1,75 @@
+---
+title: 'USP654 Lab 10: Generalized Linear Models'
+date: "11/27/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+## Discrete Outcome: Count/Poisson Regression
+
+`mtcars` example: Number of carburetors ~ f(x1, x2, ...)
+
+- lm: lm(carb ~ mpg + qsec, data=mtcars)
+- glm: glm(carb ~ mpg + qsec, data=mtcars, family="poisson")
+
+```{r, echo=TRUE}
+require(MASS)
+require(huxtable)
+fit_lm <- lm(carb ~ mpg + qsec, data=mtcars)
+fit_glm <- glm(carb ~ mpg + qsec, data=mtcars, family="poisson")
+huxreg(OLS=fit_lm, Poisson=fit_glm)
+```
+
+## Dichotomous (Binomial) Outcome: Logistic Regression
+
+- `mtcars` example
+
+am ~ f(x):
+
+- lm: lm(am ~ qsec + hp + cyl, data=mtcars)
+- glm: glm(am ~ qsec + hp + cyl, data=mtcars, family=binomial("logit"))
+
+```{r, echo=TRUE}
+require(MASS)
+require(huxtable)
+require(ggplot2)
+fit_lm <- lm(am ~ qsec + hp, data=mtcars)
+fit_glm <- glm(am ~ qsec + hp, data=mtcars, family=binomial("logit"))
+huxreg(OLS=fit_lm, logit=fit_glm)
+```
+
+- log Likelihood
+
+```{r}
+logLik(fit_glm)
+
+fit_glm0 <- update(fit_glm, .~1)
+logLik(fit_glm0)
+
+
+# pseudo R2
+1 - logLik(fit_glm)/logLik(fit_glm0)
+```
+
+- Interpretation of coefficients
+
+```{r, echo=TRUE}
+# odds ratio
+(odds <- exp(coef(fit_glm)))
+
+#prob
+odds/(1 + odds)
+```
+
+
+## Tasks
+
+1. Create a model for a count outcome in your dataset;
+1. Create a model for a Dichotomous outcome in your dataset.
