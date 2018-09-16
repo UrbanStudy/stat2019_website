@@ -18,3 +18,5 @@ Course website is at https://usp654.github.io
 
 - This website is adapted from [STA 112FS by Mine Çetinkaya-Rundel](http://www2.stat.duke.edu/courses/Fall17/sta112.01/), which in turn is based on [ESPM-157 by Carl Boettinger](https://espm-157.carlboettiger.info/).
 - Background photo [~Portland at Dusk~ by Alejandro Rdguez](https://www.flickr.com/photos/90642235@N04/19400834865/)# stat564.github.io
+# stat564_website
+# stat564_website
