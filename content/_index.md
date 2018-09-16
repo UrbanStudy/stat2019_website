@@ -13,16 +13,17 @@ description: 'Basic concepts of regression analysis, matrix approach to linear r
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span>
 ------------|---------------------------------------------
-When        |  MWF	10:15-11:05                          |
-Where       |   DF    1                                  |
-Office Hours|  [Mon 2 - 4pm & by appointment](https://calendar.google.com/calendar/selfsched?sstoken=UUlwWnNVMTFpNHBGfGRlZmF1bHR8NDA1NGM4OTVlYTI4NjA0MGFhNjlhNDliMWZlNWY4YmU) at URBN 350D |
+When        |  MWF	10:15-11:05                |
+Where       |   DF    Douglas Fir 1                                  |
+Office Hours|  [by appointment]() at EH 310 |
+Fariborz Maseeh Department of Mathematics & Statistics
 
 ### Instructor
 {.table .table-condensed .table-striped .text-left}
 <span></span>     | <span></span>     | <span></span>    | <span></span>         
 ------------------|-------------------|------------------|------------------
 Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena) | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  |
-Fariborz Maseeh Department of Mathematics & Statistics
+
 
 ### Texts
 
