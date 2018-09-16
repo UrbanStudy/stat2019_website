@@ -46,5 +46,5 @@ Class meets in CUPA computer lab URBN 225; you are welcome to bring and use your
 
 ### Attributions
 
-- This course website is adapted from [STA 112FS by Mine Çetinkaya-Rundel at Duke University](http://www2.stat.duke.edu/courses/Fall17/sta112.01/), which in turn is based on [ESPM-157 by Carl Boettinger](https://espm-157.carlboettiger.info/).
+- This course website is adapted from [USP654 Data Analysis II by Liming Wang at Portland State](https://usp654.github.io), which in turn is based on [STA 112FS by Mine Çetinkaya-Rundel at Duke University](http://www2.stat.duke.edu/courses/Fall17/sta112.01/) and [ESPM-157 by Carl Boettinger](https://espm-157.carlboettiger.info/).
 - Background photo ["City of Darkness: Life in Kowloon Walled City" by Greg Girard](http://greggirard.bigcartel.com/)
