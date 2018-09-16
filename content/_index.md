@@ -15,7 +15,7 @@ description: 'Basic concepts of regression analysis, matrix approach to linear r
 ------------|---------------------------------------------
 When        |  MWF	10:15-11:05                |
 Where       |   DF    Douglas Fir 1                                  |
-Office Hours|  [by appointment]() at EH 310 |
+Office Hours|  by appointment at EH 310 |
 Fariborz Maseeh Department of Mathematics & Statistics
 
 ### Instructor
