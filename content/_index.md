@@ -13,7 +13,7 @@ description: 'Basic concepts of regression analysis, matrix approach to linear r
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span>
 ------------|---------------------------------------------
-When        |  MWF	10:15-11:05	10                       |
+When        |  MWF	10:15-11:05                          |
 Where       |   DF    1                                  |
 Office Hours|  [Mon 2 - 4pm & by appointment](https://calendar.google.com/calendar/selfsched?sstoken=UUlwWnNVMTFpNHBGfGRlZmF1bHR8NDA1NGM4OTVlYTI4NjA0MGFhNjlhNDliMWZlNWY4YmU) at URBN 350D |
 
