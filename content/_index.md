@@ -1,11 +1,7 @@
 ---
 title: "Applied Regression Analysis"
-markup: mmark
-description: 'Basic concepts of regression analysis, matrix approach to linear regression
-  selecting the “best” regression equation, and multiple regression. Computational
-  algorithms and computer software regression packages. Applications in science, engineering,
-  561.'
-  and business. Prerequisites: Mth 261 and either Stat 451/Stat 551 or Stat 461/Stat
+description: "Basic concepts of regression analysis, matrix approach to linear regression selecting the “best” regression equation, and multiple regression. Computational algorithms and computer software regression packages. Applications in science, engineering,and business. Prerequisites: Mth 261 and either Stat 451/Stat 551 or Stat 461/Stat561."
+markup: "mmark"
 ---
 
 ### Course info
@@ -15,8 +11,8 @@ description: 'Basic concepts of regression analysis, matrix approach to linear r
 ------------|---------------------------------------------
 When        |  MWF	10:15-11:05                |
 Where       |   DF    Douglas Fir 1                                  |
-Office Hours|  by appointment at EH 310 |
-Fariborz Maseeh Department of Mathematics & Statistics
+Office Hours|  by appointment at EH 310 Fariborz Maseeh Department of Mathematics & Statistics|
+
 
 ### Instructor
 {.table .table-condensed .table-striped .text-left}
