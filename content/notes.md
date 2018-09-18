@@ -11,8 +11,6 @@ markup: "mmark"
 
 - [Interpreting Cohen's d effect size](http://rpsychologist.com/d3/cohend/)
 
-- [Interpreting Cohen's d effect size](http://rpsychologist.com/d3/cohend/)
-
 - [Interpreting Correlations](http://rpsychologist.com/d3/correlation/)
 
 - [Understanding Statistical Power and Significance Testing](http://rpsychologist.com/d3/NHST/)

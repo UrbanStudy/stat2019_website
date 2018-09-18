@@ -28,7 +28,7 @@ Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeesha
 -----------|---------------------------------|----------------------------------
 [Introduction to Linear Regression Analysis](https://www.amazon.com/Introduction-Linear-Regression-Analysis-Fifth/dp/1118780574) | Douglas C. Montgomery, Elizabeth A. Peck, G. Geoffrey Vining | John Wiley & Sons, Jun 29, 2015
 [Regression Analysis for the Social Sciences](https://www.amazon.com/Regression-Analysis-Social-Sciences-2/dp/113881251X) | Gordon, Rachel | Routledge, 2015
-[OpenIntro Statistics](https://www.openintro.org/stat/index.php)
+[OpenIntro Statistics](https://www.openintro.org/stat/index.php) | David M Diez, Christopher D Barr, Mine C¸ etinkaya-Rundel | 3rd edition, 2015
 [R for Data Science](http://r4ds.had.co.nz/) | Grolemund, Wickham | O'Reilly, 1st edition, 2017
 
 ### Software
