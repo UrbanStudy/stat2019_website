@@ -3,7 +3,7 @@ title: "Policies"
 date: "2017-04-13T00:00:00"
 markup: "mmark"
 ---
-"https://media.giphy.com/media/tQzCYJVbh19Ha/giphy.gif"
+
 ### Grading:
 
 3 homework assignments and the class project+paper will make up your entire grade in the course. I use these grading cutoffs:
