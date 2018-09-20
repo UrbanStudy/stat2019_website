@@ -13,28 +13,26 @@ markup: "mmark"
 ------------|---------------------------------------------
 When        |  MWF	10:15-11:05                |
 Where       |   DF    Douglas Fir 1                                  |
-Office Hours|  11.05 am – 12 pm on Monday, Wednesday, Friday in Douglas Fir 1 (DF1)
-3 – 4 pm on Monday in East Hall (EH) 310
-2 – 4 pm on Thursday in East Hall (EH) 310 or by appointment|
+Office Hours|  MWF  11.05-12:00 in DF1, 3–4 pm on Monday or 2–4 pm on Thursday in East Hall (EH) 310 or by appointment|
 
 
 ### Instructor
 {.table .table-condensed .table-striped .text-left}
 <span></span>     | <span></span>     | <span></span>    | <span></span>         
 ------------------|-------------------|------------------|------------------
-Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena) | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  |
-East Hall, Room 310 (632 SW Hall Street, Portland, OR 97201)
-503-725-8296
+Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena) | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  | East Hall, Room 310 (632 SW Hall Street, Portland, OR 97201) 503-725-8296
 
 ### Texts
-
+*Required for additional reading and homework problems*
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span> | <span></span> 
 -----------|---------------------------------|----------------------------------
-*Required for additional reading and homework problems*
 [Introduction to Linear Regression Analysis](https://www.amazon.com/Introduction-Linear-Regression-Analysis-Fifth/dp/1118780574) | Douglas C. Montgomery, Elizabeth A. Peck, G. Geoffrey Vining | John Wiley & Sons, Jun 29, 2015
 
 *References*
+{.table .table-condensed .table-striped .text-left}
+ <span></span>     | <span></span> | <span></span> 
+-----------|---------------------------------|----------------------------------
 Classical and Modern Regression with Applications | Raymond Myers | 2nd edition
 Applied Linear Regression Models | Neter, Kunter, Nachtscheim |4th edition, 2004
 Applied regression analysis | Draper and Smith | New York: Wiley, 1998
@@ -46,6 +44,10 @@ SAS programming for researchers and social scientists | Paul E. Spector | 2001
 [Multiple Regression in R](http://web.math.ku.dk/~richard/courses/regression2013/regression.pdf)
 
 *Other references*
+
+{.table .table-condensed .table-striped .text-left}
+ <span></span>     | <span></span> | <span></span> 
+-----------|---------------------------------|----------------------------------
 [Regression Analysis for the Social Sciences](https://www.amazon.com/Regression-Analysis-Social-Sciences-2/dp/113881251X) | Gordon, Rachel | Routledge, 2015
 [OpenIntro Statistics](https://www.openintro.org/stat/index.php) | David M Diez, Christopher D Barr, Mine C¸ etinkaya-Rundel | 3rd edition, 2015
 [R for Data Science](http://r4ds.had.co.nz/) | Grolemund, Wickham | O'Reilly, 1st edition, 2017
