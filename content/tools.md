@@ -21,7 +21,7 @@ markup: "mmark"
 
 ## Qantitative
 
-<img src="https://journal.r-project.org/RLogo.png" style="max-width:10px;min-width:15%;" > <img src="https://www.rstudio.com/wp-content/uploads/2016/09/RStudio-Logo-Blue-Gray-250.png" style="max-width:15%;min-width:40px;" >
+<img src="https://journal.r-project.org/RLogo.png" style="max-width:10px;min-width:10%;" > <img src="https://www.rstudio.com/wp-content/uploads/2016/09/RStudio-Logo-Blue-Gray-250.png" style="max-width:15%;min-width:40px;" >
 - 
 [R](https://cran.r-project.org) is the statistical programming language we will use in this class. We will interface with R using [RStudio](https://www.rstudio.com), a fully feautred IDE. Installing them on your own computer should be straightforward. If you already have them installed on your computer, I recommend you check the version and upgrade them to the latest version. Ask me for help if you have any problem installing them.
 
