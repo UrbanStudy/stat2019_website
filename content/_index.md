@@ -21,7 +21,7 @@ Office Hours|  MWF  11.05-12:00 in DF1, 3–4 pm on Monday or 2–4 pm on Thursd
 {.table .table-condensed .table-striped .text-left}
 <span></span>     | <span></span>     | <span></span>    | <span></span>         
 ------------------|-------------------|------------------|------------------
-Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena) | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  | East Hall, Room 310 (632 SW Hall Street, Portland, OR 97201) 503-725-8296
+Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena)  | East Hall, Room 310 | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  503-725-8296
 
 ### Texts
 
@@ -44,8 +44,8 @@ Probability and Statistical Inference | Hogg, Tanis, and Zimmerman| 9th edition,
 Introduction to Mathematical Statistics | Hogg and Craig| 5th edition, 1995
 Quick Start to Data Analysis with SAS | DiIorio and Hardy, 1996
 SAS programming for researchers and social scientists | Paul E. Spector | 2001
-[Freely available resource for learning R programming](http://cmdlinetips.com/2018/01/free-online-resources-books-to-learn-r-and-data-science/)
-[Multiple Regression in R](http://web.math.ku.dk/~richard/courses/regression2013/regression.pdf)
+[Freely available resource for learning R programming](http://cmdlinetips.com/2018/01/free-online-resources-books-to-learn-r-and-data-science/) |
+[Multiple Regression in R](http://web.math.ku.dk/~richard/courses/regression2013/regression.pdf) |
 
 *Other references*
 

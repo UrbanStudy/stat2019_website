@@ -6,7 +6,7 @@ markup: "mmark"
 ## Qualitative
 
 ### Zotero
-<img src="https://static.grammarly.com/assets/files/997ea3a3690bda688b2a6d7407bb5eb9/logo.svg" style="max-width:15%;min-width:40px;float:right;" />
+<img src="https://www.zotero.org/static/images/bs4theme/zotero-logo.1519312231.svg" style="max-width:15%;min-width:40px;float:left;" />
 [Zotero](https://www.zotero.org/) is a free and open-source reference management software to manage bibliographic data and related research materials.
 
 ### Nvivo or ATLAS.Ti
@@ -20,7 +20,7 @@ markup: "mmark"
 ## Qantitative
 
 ### R + RStudio
-<img src="https://www.r-project.org/Rlogo.png" style="max-width:15%;min-width:40px;float:right;" />
+<img src="https://journal.r-project.org/RLogo.png" style="max-width:15%;min-width:40px;float:right;" />
 <img src="https://www.rstudio.com/wp-content/uploads/2016/09/RStudio-Logo-Blue-Gray-250.png" style="max-width:15%;min-width:40px;float:right;" />
 [R](https://cran.r-project.org) is the statistical programming language we will use in this class. We will interface with R using [RStudio](https://www.rstudio.com), a fully feautred IDE. Installing them on your own computer should be straightforward. If you already have them installed on your computer, I recommend you check the version and upgrade them to the latest version. Ask me for help if you have any problem installing them.
 
