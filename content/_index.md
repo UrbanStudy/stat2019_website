@@ -1,10 +1,11 @@
 ---
 title: "Applied Regression Analysis"
-description: "Basic concepts of regression analysis, matrix approach to linear regression selecting the “best” regression equation, and multiple regression. Computational algorithms and computer software regression packages. Applications in science, engineering,and business. 
-*Overall course goals:*
-In this course we focus on learning the various mathematical and statistical criteria used to build models, find the “best model”, check for model adequacy, alleviate, if possible, the problems so as to improve the model adequacy, estimate the parameters (quantities) of interest, and predict future outcomes. The corresponding formal tests of statistical inference are discussed. Case studies via computer application are used to motivate and illustrate the various techniques."
+description: "Basic concepts of regression analysis, matrix approach to linear regression selecting the “best” regression equation, and multiple regression. Computational algorithms and computer software regression packages. Applications in science, engineering,and business. "
 markup: "mmark"
 ---
+
+*Overall course goals:*
+In this course we focus on learning the various mathematical and statistical criteria used to build models, find the “best model”, check for model adequacy, alleviate, if possible, the problems so as to improve the model adequacy, estimate the parameters (quantities) of interest, and predict future outcomes. The corresponding formal tests of statistical inference are discussed. Case studies via computer application are used to motivate and illustrate the various techniques.
 
 ### Course info
 
@@ -23,13 +24,16 @@ Office Hours|  MWF  11.05-12:00 in DF1, 3–4 pm on Monday or 2–4 pm on Thursd
 Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena) | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  | East Hall, Room 310 (632 SW Hall Street, Portland, OR 97201) 503-725-8296
 
 ### Texts
+
 *Required for additional reading and homework problems*
+
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span> | <span></span> 
 -----------|---------------------------------|----------------------------------
 [Introduction to Linear Regression Analysis](https://www.amazon.com/Introduction-Linear-Regression-Analysis-Fifth/dp/1118780574) | Douglas C. Montgomery, Elizabeth A. Peck, G. Geoffrey Vining | John Wiley & Sons, Jun 29, 2015
 
 *References*
+
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span> | <span></span> 
 -----------|---------------------------------|----------------------------------
