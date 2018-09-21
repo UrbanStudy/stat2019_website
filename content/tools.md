@@ -25,9 +25,17 @@ markup: "mmark"
 - 
 [R](https://cran.r-project.org) is the statistical programming language we will use in this class. We will interface with R using [RStudio](https://www.rstudio.com), a fully feautred IDE. Installing them on your own computer should be straightforward. If you already have them installed on your computer, I recommend you check the version and upgrade them to the latest version. Ask me for help if you have any problem installing them.
 
-- Download and install R 3.4.1 from https://ftp.osuosl.org/pub/cran/ for your operating system. (Requires administrator privellege)
-- Download and install RStudio Desktop free version from https://www.rstudio.com/products/rstudio/download/
+The following links contain some very useful resources to get started with R
 
+- A really good [introductory tutorial to R](https://www.computerworld.com/article/2497143/business-intelligence/business-intelligence-beginner-s-guide-to-r-introduction.html)
+
+- This is a [FANTASTIC webpage](http://adv-r.had.co.nz) to really learn how to properly code in R, make impactful graphics, connect R to other programing languages, etc. 
+
+- [A Harvard tutorial to use ggplot2 (to make amazing figures)](http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html) and a [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+- [RStudio webinars and tutorials](https://www.rstudio.com/resources/webinars/)
+- [R Cookbook](http://www.bagualu.net/wordpress/wp-content/uploads/2015/10/R_Cookbook.pdf)
+- [R Graphics Cookbook ](http://omega.albany.edu:8008/R/R_Graphics_Cookbook.pdf)
 
 <img src="https://campus.datacamp.com/static/media/logo-full-color.018b48cc.svg" style="max-width:15%;min-width:40px;" >
 - 
