@@ -37,7 +37,7 @@ markup: "mmark"
 
 ## Equations:
 
-1. Normal Distribution
+1. Normal Distribution $x\sim N(0,1)$
 
     $N\left(0,\sigma ^{2}\right)$
     
