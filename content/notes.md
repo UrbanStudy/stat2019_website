@@ -43,7 +43,7 @@ markup: mmark
     
 1. Standard Normal(R4C3):
 
-   $fX(x) = \frac{1}{{\sqrt {2\pi } }}e^{ - \frac{{z^2 }}{2}} = .3989e^{ - 5z^2 }, −∞<x<∞$
+   $fX(x) = \frac{1}{{\sqrt {2\pi } }}e^{ - \frac{{z^2 }}{2}} = .3989e^{ - 5z^2 }, -\infty<x<\infty$
     
 
 1. Poisson Distribution
