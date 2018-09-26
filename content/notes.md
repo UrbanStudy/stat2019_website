@@ -28,10 +28,8 @@ markup: "mmark"
 
 ## Univariable Distribution
 
-
 1. [Chart of Univariable Distribution](https://www.wolfram.com/mathematica/new-in-8/parametric-probability-distributions/index.html)
 
-    
-    
+
 1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
 
