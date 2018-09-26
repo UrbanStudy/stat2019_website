@@ -17,35 +17,35 @@ markup: "mmark"
 
 ## Machine Learning by PwC
 
-<img src="http://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-overview-thumb.png" style="max-width:15%;min-width:40px;" >
+<img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-overview-thumb.png" style="max-width:15%;min-width:40px;" >
 [Machine learning overview](http://usblogs.pwc.com/emerging-technology/machine-learning-overview-infographic-redirect/)
 
-<img src="http://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-methods-thumb.png" style="max-width:15%;min-width:40px;" >
+<img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-methods-thumb.png" style="max-width:15%;min-width:40px;" >
 [Machine learning methods](http://usblogs.pwc.com/emerging-technology/machine-learning-methods-infographic/)
 
-<img src="http://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-evolution-thumb.png" style="max-width:15%;min-width:40px;" >
-[Machine learning evolution](http://usblogs.pwc.com/emerging-technology/machine-learning-evolution-infographic/)
+<img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-evolution-thumb.png" style="max-width:15%;min-width:40px;" >
+[Machine learning evolution](https://usblogs.pwc.com/emerging-technology/machine-learning-evolution-infographic/)
 
-## Cheatsheets
+## Univariable Distribution
 
-Equations:
 
-1. Z test
+1. [Chart of Univariable Distribution](https://www.wolfram.com/mathematica/new-in-8/parametric-probability-distributions/index.html)
 
-    Z test is a  [this link](https://)
     
-1. T test
+    
+1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
 
-    T test is an  [here](https://)
+## Equations:
 
-1. X
+1. Normal Distribution
 
-    X  is an  [here](https://)
+    `$$N\left(0,\sigma ^{2}\right)$$`
+    
+1. Standard Normal(R4C3):
 
-1. Y
+   `$$fX(x) = \frac{1}{{\sqrt {2\pi } }}e^{ - \frac{{z^2 }}{2}} = .3989e^{ - 5z^2 }, −∞<x<∞$$`
+    
 
-    Y  is an  [here](https://)
+1. Poisson Distribution
 
-1. Z
-
-    Z  is an  [here](https://)
+    `$$P\left( x \right) = \frac{{e^{ - \lambda } \lambda ^x }}{{x!}}$$`
