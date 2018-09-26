@@ -35,16 +35,3 @@ markup: "mmark"
     
 1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
 
-## Equations:
-
-1. Normal Distribution $x\sim N(0,1)$
-
-    $N\left(0,\sigma ^{2}\right)$
-    
-1. Standard Normal(R4C3):
-
-    $$fX(x) = \frac{1}{{\sqrt {2\pi } }}e^{ - \frac{{z^2 }}{2}} = .3989e^{ - 5z^2 }, -\infty<x<\infty$$
-
-1. Poisson Distribution
-
-    `$$P\left( x \right) = \frac{{e^{ - \lambda } \lambda ^x }}{{x!}}$$`
