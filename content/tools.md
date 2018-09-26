@@ -25,6 +25,14 @@ markup: "mmark"
 - 
 [R](https://cran.r-project.org) is the statistical programming language we will use in this class. We will interface with R using [RStudio](https://www.rstudio.com), a fully feautred IDE. Installing them on your own computer should be straightforward. If you already have them installed on your computer, I recommend you check the version and upgrade them to the latest version. Ask me for help if you have any problem installing them.
 
+- Install the R Software 
+
+    Go to http://cran.rstudio.com/ and click on Download R for Windows (or OSX), click on install R for the first time and download R. When the file is done downloading, double click  “R-3.4.1-win.exe” (or apporiate installation file for your OS) to install the file and select Run, and continue with the installation wizard.
+
+- Install Rstudio 
+
+    There are many ways to interface with R from the bare-bones base R software, RStudio, or R Commander (a GUI wrapper for base R). We will be using RStudio for our labs. In order to install RStudio visit http://www.rstudio.com/products/rstudio/download and download RStudio for desktop for your operating system. If in the lab and RStudio is not installed and the software manager is not working you can download the zip/tar RStudio for windows, open the zip file, and run RStudio without installing. If you must do this, then I recommend downloading the zip/tar file to your H: drive where it stays after you switch computers.
+
 The following links contain some very useful resources to get started with R
 
 - A really good [introductory tutorial to R](https://www.computerworld.com/article/2497143/business-intelligence/business-intelligence-beginner-s-guide-to-r-introduction.html)
