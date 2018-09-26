@@ -39,13 +39,12 @@ markup: "mmark"
 
 1. Normal Distribution
 
-   $N\left(0,\sigma ^{2}\right)$
+    $N\left(0,\sigma ^{2}\right)$
     
 1. Standard Normal(R4C3):
 
-   $fX(x) = \frac{1}{{\sqrt {2\pi } }}e^{ - \frac{{z^2 }}{2}} = .3989e^{ - 5z^2 }, -\infty<x<\infty$
-    
+    $$fX(x) = \frac{1}{{\sqrt {2\pi } }}e^{ - \frac{{z^2 }}{2}} = .3989e^{ - 5z^2 }, -\infty<x<\infty$$
 
 1. Poisson Distribution
 
-   $P\left( x \right) = \frac{{e^{ - \lambda } \lambda ^x }}{{x!}}$
+    `$$P\left( x \right) = \frac{{e^{ - \lambda } \lambda ^x }}{{x!}}$$`
