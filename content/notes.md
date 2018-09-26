@@ -1,6 +1,6 @@
 ---
-title: "Notes"
-markup: mmark
+title: Notes
+markup: "mmark"
 ---
 
 ## Demonstration
