@@ -1,0 +1,153 @@
+---
+title: 'USP654 Lab 3: Multiple Regression'
+author: "Liming Wang"
+date: "10/09/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+## Descriptive statistics among multiple variables
+
+### Correlation Matrix
+
+With base R function `cor`:
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+
+mtcars[1:6] %>% cor
+```
+
+
+For fancier outputs, install the `corrr` package:
+
+```{r, echo=TRUE}
+install.packages("corrr")
+library(corrr)
+
+```
+
+Half correlation matrix:
+```{r, echo=TRUE}
+mtcars %>% 
+  correlate() %>% 
+  shave() %>% 
+  fashion()
+```
+
+Visulize correlation matrix:
+```{r, echo=TRUE}
+mtcars %>% 
+  correlate() %>% 
+  shave() %>% 
+  rplot()
+```
+
+### Scatterplot Matrix
+
+(Looking at the first 6 variables, as the figure becomes illegible when all variables are shown).
+```{r, echo=TRUE}
+mtcars[1:6] %>% 
+  plot
+```
+
+Better looking version with `GGally` package
+```{r, echo=TRUE}
+install.packages("GGally")
+```
+
+```{r, echo=TRUE}
+library(GGally)
+ggpairs(data=mtcars[1:6])
+```
+
+## Multiple Regression
+In R, run multiple regressions with `lm` (short for **l**inear **m**odel):
+
+```{r, echo=TRUE}
+lm(mpg ~ wt + cyl, data=mtcars)
+```
+
+## More detailed regression results
+
+1. Pass the results from `lm()` to `summary()` for more detailed information:
+```{r, echo=TRUE}
+lm(mpg ~ wt + cyl, data=mtcars) %>%
+  summary()
+```
+
+For better formatting of the results (pretty print), we can use the `texreg` package:
+```{r, echo=TRUE}
+## Install and load texreg package
+install.packages("texreg")
+library(texreg)
+
+# Pretty print regression results on screen
+screenreg(list(
+    lm(mpg ~ wt, data=mtcars),
+    lm(mpg ~ wt + cyl, data=mtcars)
+))
+
+# Save regression results to a html file
+list(lm(mpg ~ wt, data=mtcars),
+     lm(mpg ~ wt + cyl, data=mtcars)
+     ) %>%
+  htmlreg(file="output/lm_mpg-wt+cyl.html")
+```
+
+2. Confidence interval of coefficients
+```{r, echo=TRUE}
+lm(mpg ~ wt + cyl, data=mtcars) %>%
+  confint()
+```
+
+
+## Visualize regression results
+
+```{r, echo=TRUE}
+ggplot(mtcars, aes(x=wt, y=mpg)) + geom_point() + geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r, echo=TRUE}
+ggplot(mtcars, aes(x=cyl, y=mpg)) + geom_point() + geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r, echo=TRUE}
+betas <- lm(mpg ~ wt + cyl, data=mtcars) %>% summary() %>% coef()
+ggplot(mtcars, aes(x=wt, y=mpg)) + geom_point() +
+  geom_abline(aes(slope=betas["wt", "Estimate"], intercept=betas["(Intercept)", "Estimate"]))
+
+ggplot(mtcars, aes(x=cyl, y=mpg)) + geom_point() +
+  geom_abline(aes(slope=betas["cyl", "Estimate"], intercept=betas["(Intercept)", "Estimate"]))
+```
+
+## Hypothesis testing of nested models
+
+```{r, echo=TRUE}
+## Install and load ggfortify package
+
+lm_mpg_wt <- lm(mpg ~ wt, data=mtcars)
+lm_mpg_wt.cyl <- lm(mpg ~ wt + cyl, data=mtcars)
+
+anova(lm_mpg_wt, lm_mpg_wt.cyl)
+```
+
+## Tasks
+
+1. ~~Create a new RStudio project and create directory structure following the recommendation in [Project Management With RStudio](http://swcarpentry.github.io/r-novice-gapminder/02-project-intro/)~~;
+1. ~~Select a dataset from the [Tools and Datasets] section of the course website or use your own dataset, save the dataset in the data folder of your project~~;
+1. ~~Famarlize yourself with your dataset with the data document~~;
+1. ~~Create a script that imports your dataset into R and explores it with descriptive statistics and/or visulization~~;
+1. Choose a dependent variable and a couple of independent variables and run regression models;
+1. Create regression plots (scatter plot superimposed with a regression line) & diagnostic plots.
+
+## Resources
+- [Introduction to R on Data Camp](https://campus.datacamp.com/courses/free-introduction-to-r/chapter-1-intro-to-basics-1?ex=1): A self-instruction course covering R basics.
+- [R coding basics on Software Carpentry](http://swcarpentry.github.io/r-novice-gapminder/), hands-on tutorial on R basics, lesson 4-11.

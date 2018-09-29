@@ -1,0 +1,202 @@
+---
+title: 'USP654 Lab 8: Indirect Effects; Model Diagnostics'
+date: "11/13/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+## Model Diagnostics
+
+We will be using the taxlot_sample data for this lab. [Download taxlot_sample.csv](data/taxlot_sample.csv)
+
+It's generally a good idea to start your modeling work, including diagnostics, with descriptive statistics and visualization:
+
+```{r, results="asis"}
+require(tidyverse)
+taxlot_sample <- read_csv("data/taxlot_sample.csv")
+
+set.seed(100)
+taxlot_sfr <- taxlot_sample %>% 
+  filter(sfr == 1)
+
+require(ggplot2)
+
+# histograms for outcome and predictor variables
+ggplot(data=taxlot_sfr, aes(x=TOTALVAL)) + 
+  geom_histogram()
+ggplot(data=taxlot_sfr, aes(x=BLDGSQFT)) + 
+  geom_histogram()
+
+# boxplots for outcome and predictor variables
+ggplot(data=taxlot_sfr, aes(x="TOTALVAL", y=TOTALVAL)) + 
+  geom_boxplot()
+ggplot(data=taxlot_sfr, aes(x="BLDGSQFT", y=BLDGSQFT)) + 
+  geom_boxplot()
+
+# scatter plot between outcome and predictor variable
+ggplot(data=taxlot_sfr, aes(x=BLDGSQFT, y=TOTALVAL)) + 
+  geom_point() + geom_smooth(method="lm", se=FALSE)
+
+# Which observations do you suspect are outliers/influential observations?
+```
+
+In many cases, it is useful to find out which observations they are and what are the values of other variables for these observations. For these, interactive plots would be handy:
+
+```{r, }
+if (!require(plotly))
+  install.packages("plotly") & require(plotly)
+
+g <- ggplot(data=taxlot_sfr, aes(x=BLDGSQFT, y=TOTALVAL, text=FID)) + 
+  geom_point() + geom_smooth(method="lm", se=FALSE)
+ggplotly(g, tooltip=c("FID"))
+
+# Now to identify the observation in the top-right corner, move your mouse to hover above the data point,
+# and a tooltip will show its FID (the unique identifier) value: 1098, and we can get the row representing
+# the observation:
+taxlot_sfr %>% filter(FID==1098)
+
+#We can see it is probably a large house on a less than half acre lot, built in 1920 at a very good location (1.5 miles from Poineer square; 0.06 miles from a park, etc)
+```
+
+```{r, }
+# Now to identify the observation in the top-right corner, move your mouse to hover above the data point,
+# and a tooltip will show its FID (the unique identifier) value: 1098, and we can get the row representing
+# the observation:
+taxlot_sfr %>% filter(FID==1098)
+
+#We can see it is probably a large house on a less than half acre lot, built in 1920 at a very good location (1.5 miles from Poineer square; 0.06 miles from a park, etc)
+```
+
+### Default R diagnostic plots
+
+(Adapted from Joseph Broach's 2016 course material)
+
+1. Residuals vs Fitted: Primarily a test of linearity of the relationship. This is a plot of residual errors (Y distance from SRL to observed value) against predicted values.
+
+- __Expected__: random cloud of points and a roughly horizontal (Red) indicator of conditional residual means given fitted values
+
+- __Departures__: residuals that drift up or down considerably as Y increases (wrong explanatory variables, nonlinearity, non-fixed parameters at population level)
+
+2. Normal Q-Q plot: Primarily a test of normality of the (expected) error distribution. This is a plot of standardized residuals ordered by quantile and compared with the values we would expect at each quantile if drawn from a normal distribution.
+
+- __Expected__: points more or less fall on the 45-degree line, matching expectations. There will be some departure in real world data, especially at the tails.
+
+- __Departures__: residuals that seem disinterested in following the line, or that snake noticeably from side to side (non-normality, could be omitted variable or nonlinear relationship)
+
+3. Scale-Location: Primarily a test of heteroskedasticity (constant error variance) of the relationship. This is a plot of square-rooted, absolute value residual errors (so all are positive) against predicted values of Y. 
+
+- __Expected__: More or less horizontal fit curve with no strong evidence that expected error magnitude changes over the range of Y.
+ 
+- __Departures__: residuals that trend up or down considerably as Y increases (potential heteroskedasticity or autocorrelation in errors)
+
+4. Residuals vs Leverage: Primarily a test of the influence of specific data points on the sample regression. It attempts to summarize points by their influence on the regression. Cook’s distance is a measure of the relative impact on the SRL of removing a specific point.
+ 
+- __Expected__: red fit curve close to horizontal and no points outside the 0.5 Cook’s distance bands
+
+- __Departures__: specific influential observations (bad data or rare data that may be difficult to infer about from sample); this is less a specific departure from assumptions and more a warning that some sample points are “exploiting” our OLS estimation technique and possibly given too much weight as a result.
+
+```{r}
+
+lm_sfr <- lm(TOTALVAL ~ YEARBUILT + BLDGSQFT + GIS_ACRES + dpioneer + dmax, data=taxlot_sfr)
+
+summary(lm_sfr)
+
+plot(lm_sfr, ask=FALSE)
+```
+
+### Specific diagnostics with `olsrr` package
+
+#### Outliers and Influential Observations
+
+```{r}
+if (!require(olsrr))
+  install.packages("olsrr") & require(olsrr)
+
+# leverage (hat)
+leverage <- ols_leverage(lm_sfr)
+ols_rsdlev_plot(lm_sfr)
+# Cook's distance
+ols_cooksd_chart(lm_sfr)
+# DFFITS
+ols_dffits_plot(lm_sfr)
+# DFBETAS
+ols_dfbetas_panel(lm_sfr)
+```
+
+#### Heteroskedasticity
+
+- Residual vs Fitted Values Plot
+
+It is a scatter plot of residuals on the y axis and fitted values on the x axis to detect non-linearity, unequal error variances, and outliers.
+
+- Characteristics of a well behaved residual vs fitted plot:
+    - The residuals spread randomly around the 0 line indicating that the relationship is linear.
+    - The residuals form an approximate horizontal band around the 0 line indicating homogeneity of error variance.
+    - No one residual is visibly away from the random pattern of the residuals indicating that there are no outliers.
+```{r}
+ols_rvsp_plot(lm_sfr)
+```
+
+- Residual QQ Plot and normality test of residuals
+
+```{r}
+ols_rsd_qqplot(lm_sfr)
+
+# hypothesis test of normality of residuals
+ols_norm_test(lm_sfr)
+```
+
+- Test of Heteroskedasticity with Breusch-Pagan Test
+```{r}
+ols_bp_test(lm_sfr)
+```
+
+- Heteroskedasticity-Consistent Standard Errors
+
+```{r}
+# standard variance-covariance matrix
+vcov0 <- vcov(lm_sfr)
+# convert to correlation
+vcov0
+
+# Heteroskedasticity-Consistent variance covariance matrix
+require(car)
+vcov_hc3 <- hccm(lm_sfr, type="hc3")
+vcov_hc3
+
+# In presence of Heteroskedasticity, vcov_hc3 is larger than vcov0, to redo hypothesis tests
+# with the Heteroskedasticity-Consistent variance covariance matrix
+
+if (!require(lmtest))
+  install.packages("lmtest") & library(lmtest)
+
+coeftest(lm_sfr, vcov_hc3)
+
+```
+
+#### Multicollinary with VIF
+
+Variance inflation factors measure the inflation in the variances of the parameter estimates due to collinearities that exist among the predictors. The general rule of thumb is that VIFs exceeding 4 warrant further investigation, while VIFs exceeding 10 are signs of serious multicollinearity requiring correction.
+
+```{r}
+ols_vif_tol(lm_sfr)
+```
+
+## Tasks
+
+1. Visualize the outcome variable and a numeric independent variable in your dataset (if your dataset does not have numeric variables, use the taxlot_sample data set)
+    - Are there any potential outliers and influential observations?
+    - Examine a few of the outliers and influential observations, is there a reason for them to be outliers and/or influential obs?
+    - How do you plan to handle them?
+2. Run regressions of the outcome variable on a number of independent variables, and go through the default and customized diagnostic plots
+    - Are there patterns in your Residuals vs Fitted plot? What may be the cause?
+    - Are your residuals iid normal?
+    - Does your model suffer from heteroskedasticity? If so, calculate the Heteroskedasticity-Consistent Standard Errors and re-do the t-tests on coefficients using the Heteroskedasticity-Consistent Standard Errors.
+    - Does your model suffer from multicollinary? If so, how would you address it?

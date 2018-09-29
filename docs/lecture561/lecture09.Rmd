@@ -1,0 +1,194 @@
+---
+title: "USP654: Data Analysis II"
+subtitle: "Information Criteria; Model Selection; DID regression"
+author: "Liming Wang"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  xaringan::moon_reader:
+    self_contained: true
+    seal: yes
+    nature:
+      highlightStyle: github
+---
+
+```{r results="asis", echo=FALSE}
+cat("
+<style>
+.large { font-size: 130% }
+.small { font-size: 85% }
+.tiny{ font-size: 50% }
+</style>
+")
+```
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=F)
+options(knitr.kable.NA = '')
+options(digits=3)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+
+require(tidyverse)
+require(knitr)
+#californiatod <- read_csv("californiatod.csv")
+```
+
+# Outline
+
+- Information Criteria
+- Variable Selection
+- Difference-in-Difference
+- Categorical variable as the dependent variable
+    - Models of share/probability
+    
+---
+
+# Information Criteria (1)
+
+- Some scholars have critiqued the standard hypothesis testing approach, for example, because: 
+    - The choice of alpha level is arbitrary 
+    - Hypothesis tests are more likely to be rejected in larger sample sizes (thus leading to more complex models, with more predictors, especially in larger samples).   
+- Information criteria are an increasingly popular alternative because they:
+    - Do not need an alpha level
+    - Are designed to penalize more complex models (with more predictors) over simpler models (with fewer predictors)
+    - Are less vulnerable to identifying more complex models in larger sample sizes.
+
+---
+
+# Information Criteria (2)
+
+- Akaike Information Criterion (AIC)
+
+$AIC=n*ln(\frac{SSE}{n}) + 2k$
+
+- Bayesian Information Criterion (BIC)
+
+$AIC=n*ln(\frac{SSE}{n}) + k * ln(n)$
+
+---
+
+# Information Criteria (3)
+
+- For both AIC and BIC, models with smaller values are preferred.  
+- [Raftery (1995)](https://www.stat.washington.edu/raftery/Research/PDF/socmeth1995.pdf) recommended guidelines that refer to the strength of evidence in favor of the model with the smaller BIC.  
+    - 0 - 2: Weak
+    - 2 - 6: Positive
+    - 6 - 10: Strong
+    - 10+: Very Strong
+
+- [Burnham and Anderson (2002, pp 79)](http://www.springer.com/us/book/9780387953649)  recommended guidelines that refer to the strength of evidence for continuing to consider the model with the larger AIC. 
+    - 0 - 2: Substantial
+    - 4 - 7: Considerably Less
+    - 6 - 10: Essentially None
+
+---
+
+.small[
+```{r}
+library(tidyverse)
+library(huxtable)
+californiatod <- read_csv("californiatod.csv")
+huxreg(
+  lm(I(houseval/1000) ~ transit, data=californiatod),
+  lm(I(houseval/1000) ~ transit * railtype, data=californiatod),
+  lm(I(houseval/1000) ~ transit * railtype + density + I(density^2), data=californiatod)
+  ) %>% 
+  set_caption('Linear regressions of houseval (in 1000s)'
+)
+```
+]
+
+---
+
+```{r, result="asis"}
+anova(
+  lm(I(houseval/1000) ~ transit, data=californiatod),
+  lm(I(houseval/1000) ~ transit * railtype, data=californiatod),
+  lm(I(houseval/1000) ~ transit * railtype + density + I(density^2), data=californiatod)) %>% 
+  mutate(model = c("(1)", "(2)", "(3)")) %>% 
+  kable(format="html", caption="ANOVA of 3 linear regressions of houseval")
+```
+
+---
+
+# Variable Selection
+
+Variable selection is intended to select the ìbestî subset of predictors:
+
+1.  We want to explain the data in the simplest way -- redundant predictors should be removed.  The principle of Occam' s Razor states that among several plausible explanations for a phenomenon, the simplest is best. Applied to regression analysis, this implies that the smallest model that fits the data is best.  
+2.  Unnecessary predictors will add noise to the estimation of other quantities that we are interested in. Degrees of freedom will be wasted.
+3.  Collinearity is caused by having too many variables trying to do the same job.  
+4.  Cost: if the model is to be used for prediction, we can save time and/or money by not measuring redundant predictors.
+
+Prior to variable selection: 
+
+1. Identify outliers and infuential points - maybe exclude them at least temporarily;
+2. Add in any transformations of the variables that seem appropriate;
+3. Remove observations with missing values in any variables that may be included in variable selection
+
+---
+
+# All Subset Regression
+
+All subset regression tests all possible subsets of the set of potential independent variables. If there are K potential independent variables (besides the constant), then there are 2k distinct subsets of them to be tested. For example, if you have 10 candidate independent variables, the number of subsets to be tested is 210, which is 1024, and if you have 20 candidate variables, the number is 220, which is more than one million.
+
+---
+
+# Stepwise Selection (1)
+
+- Forward stepwise selection:
+    1. First we approximate the response variable y with a constant (i.e., an intercept-only regression model).
+    2. Then we gradually add one more variable at a time (or add main effects  first, then interactions).
+    3. Every time we always choose from the rest of the variables the one that yields the best model when added to the pool of already selected variables. This best model can be measured by the p-value, adjusted R2, AIC, BIC, etc.
+
+For example, if we have 10 predictor variables, first we would estimate a model with intercept only, and then iterate over the 10 variables for 10 regressions, each time using a different predictor variable, capturing the residual sum of squares (or AIC or BIC),  choose the variable that yields the minimum residual sum of squares and put it in the pool of selected variables. We then proceed to choose the next variable from the 9 left, etc.
+
+---
+
+# Stepwise Selection (2)
+
+- Backward stepwise selection: This is similar to forward stepwise selection, except that we start with the full model using all the predictors and gradually delete variables one at a time.
+
+---
+
+# Overfitting
+
+Carefully selected features can improve model accuracy. But adding too many can lead to overfitting:
+
+- Overfitted models describe random error or noise instead of any underlying relationship;
+
+- They generally have poor predictive performance on test data.
+
+---
+
+# Cross Validation
+
+CV assesses how the results of a model will generalize to an independent data set. It is mainly used in settings where the goal is prediction, and one wants to estimate how accurately a predictive model will perform in practice.
+
+- Leave-p-out cross-validation: Use p observations as the validation set and the remaining observations as the training set. This is repeated on all ways to cut the original sample on a validation set of p observations and a training set.
+- k-fold cross-validation: In k-fold cross-validation, the original sample is randomly partitioned into k equal sized subsamples. Of the k subsamples, a single subsample is retained as the validation data for testing the model, and the remaining k − 1 subsamples are used as training data. The cross-validation process is then repeated k times (the folds), with each of the k subsamples used exactly once as the validation data.
+- Repeated random sub-sampling validation (Monte Carlo cross-validation): randomly splits the dataset into training and validation data. For each such split, the model is fit to the training data, and predictive accuracy is assessed using the validation data. The results are then averaged over the splits.
+
+---
+
+# Experiment Design
+
+- Observational Study: investigators observe subjects and measure variables 
+of interest without assigning treatments to the subjects.  The treatment that each subject receives is determined beyond the control of the investigator
+- Experiment: investigators apply treatments to experimental units (people, 
+animals, plots of land, etc.) and then proceed to observe the effect of the 
+treatments on the experimental units 
+    - Randomized Experiment: investigators control the assignment of treatments to experimental units using a chance mechanism
+    - Quasi-Experiment (Natural Experiment): individuals (or clusters of individuals) exposed to the experimental and control conditions are determined by nature or by other factors outside the control of the investigators, but the process governing the exposures arguably resembles random assignment.
+
+---
+
+# Difference-in-Differences
+
+[Gertler, P. J.; Martinez, S., Premand, P., Rawlings, L. B. and Christel M. J. Vermeersch, 2010, Impact Evaluation in Practice: Ancillary Material, The World Bank, Washington DC (www.worldbank.org/ieinpractice)](http://wbi.worldbank.org/boost/Data/boost/boostcms/files/field/tools-resources-attachment/21.technical_dif_in_dif_premand_holla_eng_pp.pptx)
+
+---
+
+# Example
+
+[Branas, C. C., Cheney, R. A., MacDonald, J. M., Tam, V. W., Jackson, T. D., & Ten Have, T. R. (2011). A Difference-in-Differences Analysis of Health, Safety, and Greening Vacant Urban Space. American Journal of Epidemiology, 174(11), 1296–1306.](http://doi.org/10.1093/aje/kwr273)

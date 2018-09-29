@@ -1,0 +1,220 @@
+---
+title: "USP654: Data Analysis II"
+subtitle: "Dummy Variables"
+author: "Liming Wang"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  xaringan::moon_reader:
+    css: "example.css"
+    self_contained: true
+    seal: yes
+    nature:
+      highlightStyle: github
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=F)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+# Outline
+
+- Review of Terminology
+- Regression with Categorical Independent Variables
+   - Dummy Variables
+   - OLS estimate of Multiple Regression
+   - General Linear F Test
+
+---
+
+# TSS, SSE, MSS
+
+```{r, echo=F, results="asis"}
+require(tidyverse)
+terms <- tribble(
+  ~Textbook, ~R, ~`Alternative Terms`,
+  "TSS (Total Sum of Squares)", "sd(y)^2 * (n - 1); var(y)*(n-1)", "SST (Sum of Squares Total)",
+  "SSE (Sum of Squared Error)", "Residuals standard error; resid(model1)^2 %>% sum", "RSS (Residual Sum of Squares)",
+  "MSS (Model Sum of Squares)", "", "RSS (Regression Sum of Squares); SSE (Sum of Squares Explained)"
+)
+
+terms %>% knitr::kable(format="html")
+```
+
+An explanation of the terms used by SPSS can be found at: https://stats.idre.ucla.edu/spss/output/regression-analysis/
+
+---
+
+# TSS, SSE, MSS
+
+Which is which?
+
+```{r, echo=TRUE}
+y <- mtcars$mpg
+model1 <- lm(mpg ~ wt+cyl, data=mtcars)
+anova(model1)
+```
+
+---
+
+# Categorical Variables
+
+![Type of variables](img/type-of-variables.png)
+
+---
+
+# Research Questions & Hypotheses
+
+- Do men and women differ in the average income?
+- Does sprawling neighborhood prompt more driving?
+- Are cars with manual transimission more fuel efficient?
+- Do properties near light rail stations enjoy a high premium?
+
+---
+
+# Dummy Variables (1)
+- Each dummy variable indicates one of the levels of the original variable (hence these are sometimes also called indicator variables).  
+- Commonly, dummy variables take on two values: 0 and 1.
+    - The 1 represents the category on the original variable that the dummy variable indicates.
+    - The 0 represents all other categories. 
+- Other codings are possible, although the 0/1 coding is common in the social sciences and makes it easy to interpret the results.
+- We represent a single categorical variable with a set of dummy variables
+
+---
+
+# Dummy Variables (2)
+
+- In general, to represent a variable with `c` categories requires `c-1` dummy variables.
+- The group whose dummy variable is excluded is often referred to as the reference category.  
+    - Other frequently used terms, such as omitted category or excluded category, are also strictly correct, as we have left one of the dummies for one of the categories out of the model.  
+    - However, these terms can be misleading in that they imply that this omitted or excluded category is not part of the analysis, when it in fact it is central to our interpretation.  
+- Which one of the five dummies we omit is arbitrary.  
+    - The decision on the reference category does not affect the results of the regression analysis.
+
+---
+
+# Dummy Variables (3)
+
+```{r, eval=F, echo=TRUE}
+## Assume we want to combine LA + SD to Southern CA 
+## and Bay Area and Sacramento as Northern CA
+(
+californiatod <- californiatod %>% 
+  mutate(CA=recode(region, "LA"="Southern", 
+                   "SD"="Southern", "Bay Area"="Northern", 
+                   "Sacramento"="Northern"))
+)
+
+## It is generally a good idea to verify your recode afterwards
+californiatod %>% 
+  group_by(region, CA) %>% 
+  tally
+
+## there should be no mis-classification or cross-over
+```
+
+---
+
+# Single Dummy Variable Predictor (1)
+
+$$\text{mpg}_i = \beta_0 + \beta_1 * \text{vs}_i + \epsilon_i$$
+```{r, eval=TRUE, echo=FALSE}
+lm(mpg ~ vs, data=mtcars) %>% 
+  summary
+```
+
+---
+
+# Single Dummy Variable Predictor (2)
+
+- Conditional means (interpretation of intercept):
+
+$$E(\text{mpg}_i | \text{VS}_i = 0) = \beta_0 + \beta_1 * 0 = \beta_0$$
+$$E(\text{mpg}_i | \text{VS}_i = 1) = \beta_0 + \beta_1 * 1 = \beta_0 + \beta_1$$
+- Difference in conditional means (interpretation of dummy coefficient):
+
+$$E(\text{mpg}_i | \text{VS}_i = 1) - E(\text{mpg}_i | \text{VS}_i = 0) = (\beta_0 + \beta_1) - \beta_0 = \beta_1$$
+
+---
+
+# Single Dummy Variable Predictor (3)
+
+- intercept
+- slope
+- standard error
+- t-stat
+- p-value (significance)
+
+---
+
+# Correspondence with a T-Test
+
+```{r, echo=TRUE}
+t.test(mpg ~ vs, data=mtcars)
+```
+
+---
+
+# Categorical Variable with More than One Categories
+
+```{r, eval=TRUE, echo=FALSE, message=F, warning=F}
+require(tidyverse)
+californiatod <- read_csv("californiatod.csv")
+
+lm(houseval ~ region, data=californiatod) %>% 
+  summary
+```
+
+---
+
+# Correspondence with an ANOVA
+
+```{r}
+aov(houseval ~ region, data=californiatod) %>% 
+  summary
+```
+
+---
+
+# Testing Differences in Means Among the Included Groups (1)
+
+The coefficients are the mean differences to the reference category for the corresponding group. What if we are interested in the difference between LA and SD?
+
+- Re-estimating the regression model with a slightly different reference category
+- Using a partial F test
+- Testing the significance of a linear combination of coefficients
+
+---
+
+# Testing Differences in Means Among the Included Groups (2)
+
+```{r, echo=TRUE}
+catod2 <- californiatod %>% mutate(region = relevel(as.factor(region), ref = 4))
+lm(houseval ~ region, data=catod2)  %>% summary
+```
+
+---
+
+# Testing Differences in Means Among the Included Groups (3)
+
+```{r, echo=TRUE, results="asis"}
+catod2 <- californiatod %>% mutate(LA_SD_region = ifelse(region %in% c("LA", "SD"), "LA_SD", region))
+require(huxtable); huxreg(
+  lm(houseval ~ LA_SD_region, data=catod2),
+  lm(houseval ~ region, data=catod2))
+```
+
+---
+
+```{r, echo=TRUE}
+anova(
+  lm(houseval ~ LA_SD_region, data=catod2),
+  lm(houseval ~ region, data=catod2)
+)
+```
+
+---
+
+# Testing Differences in Means Among the Included Groups (4)
+

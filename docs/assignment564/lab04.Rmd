@@ -1,0 +1,156 @@
+---
+title: 'USP654 Lab 4: Multiple Regression'
+author: "Liming Wang"
+date: "10/16/2017"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+## Data manipulation with the `dplyr` package (part of `tidyverse`)
+`dplyr` works most efficiently with "tidy data"
+
+![Tidy Data](http://r4ds.had.co.nz/images/tidy-1.png)
+
+It has 5 basic verbs for manipulating R data frame (or tibble):
+
+- `mutate()` adds new variables that are functions of existing variables (Note there is a new column `kmpl` to the right)
+```{r, echo=TRUE}
+require(tidyverse)
+# convert mpg to kilometers per liter
+mtcars %>% mutate(kmpl = mpg * 0.425144)
+```
+
+(Note we do not assign the results back to `mtcars`, the new `kmpl` is for showing only and lost afterwards. To retain the new variable, assign the results back to `mtcars` or to a new name).
+
+- `select()` picks variables based on their names.
+
+The above example is hard to see the results as there are too many columns. Here only show the columns of interest:
+```{r}
+# convert mpg to kilometers per liter
+mtcars %>% mutate(kmpl = mpg * 0.425144) %>% 
+  select(mpg, kmpl)
+```
+
+- `filter()` picks cases based on their values.
+
+Let's select cars with mpg above 20:
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% filter(mpg > 20) %>% 
+  select(mpg, cyl, hp)
+```
+
+How many cars are there with `mpg` > 20?
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% filter(mpg > 20) %>% 
+  nrow()
+```
+
+- `summarise()` reduces multiple values down to a single summary (working with `group_by()`).
+
+Let's see how many cars with auto and manual transimission (`am`: 0-automatic, 1-manual):
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% group_by(am) %>% 
+  summarize(n=n())
+```
+
+Let's get the average mpg by the type of transimission (`am`: 0-automatic, 1-manual):
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% group_by(am) %>% 
+  summarize(mean_mpg=mean(mpg))
+```
+
+You can easily combine multiple `summarize` functions with the same grouping:
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% group_by(am) %>% 
+  summarize(n=n(),
+            mean_mpg=mean(mpg),
+            sd_mpg=sd(mpg),
+            min_mpg=min(mpg),
+            max_mpg=max(mpg))
+```
+
+- `arrange()` changes the ordering of the rows.
+
+Let's reorder the mtcars by `mpg` (ascending by default):
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% arrange(mpg)
+```
+
+Descending order:
+```{r, echo=TRUE}
+# convert mpg to kilometers per liter
+mtcars %>% arrange(desc(mpg))
+```
+
+## Hypothesis testing of nested models
+
+```{r, echo=TRUE}
+###########################################
+## General linear F test
+
+require(tidyverse)
+
+fit_R <- lm(mpg ~ wt, data=mtcars)
+fit_F <- lm(mpg ~ wt + cyl, data=mtcars)
+
+anova(fit_R, fit_F)
+
+
+## To do the F test manually
+SSE_R <- resid(fit_R)^2 %>% sum
+SSE_F <- resid(fit_F)^2 %>% sum
+df_R <- df.residual(fit_R)
+df_F <- df.residual(fit_F)
+
+F_val <- ((SSE_R - SSE_F)/(df_R - df_F))/(SSE_F/df_F)
+
+# Look up the critical F value for alpha=0.05
+alpha <- 0.05
+qf(alpha, (df_R - df_F), df_F, lower.tail=F)
+
+# Alternatively, find the p-value corresponding to our F_val
+pf(F_val, (df_R - df_F), df_F, lower.tail=F)
+
+###########################################
+
+n <- nrow(mtcars)          # number of observations
+k <- length(coef(fit_R))   # number of coefficients
+
+## Calculate R2 and adjusted R2 manually
+TSS <- sd(mtcars$mpg)^2 * (n - 1)
+# OR
+TSS <- var(mtcars$mpg) * (n - 1)
+
+(R2_R <- 1 - SSE_R/TSS)
+(R2_R_adj <- 1 - (SSE_R/(n - k))/(TSS/(n - 1)))
+```
+
+Note that R uses the term `RSS` (residual Sum Squares) instead of `SSE` (Sum Square Error) in the textbook, they are the same.
+
+## Tasks
+
+1. Load your dataset, and then use the `dplyr` verbs to manipulate it:
+    - Add a new variable that is converted from (an) existing variable(s);
+    - Select a subset of the observation based on (a) condition(s);
+    - Count number of observations in your dataset with distinct values of a discrete numeric or a categorical variable (e.g, number of cars with 4, 6, and 8 cylinders);
+    - Summarize the mean of a nuermic variable by values of a discrete/categorical variable (e.g. mean mpg for cars with auto or manual transmission(`am`));
+1. Fit a pair of nested multiple regression models with your own dataset and use the general linear F test to test for significance between the restricted and full model:
+    - What is your hypothesis? And what is the practical interpretation/implication of your hypothesis?
+    - Think about whether your models are nested, which is the restricted model and the full model?
+    - Even though you don't need to do this manually, think about how you'd conduct the hypothesis test manually;
+    - Conduct an F test of your nested models and determine the conclusion of your hypothesis test;
+    - What is the implication of the result of your hypothesis testing?
+

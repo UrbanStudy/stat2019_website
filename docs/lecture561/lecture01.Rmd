@@ -1,0 +1,239 @@
+---
+title: "STAT 561"
+subtitle: "Sutdy notes"
+author: "Teached by Fountain"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  xaringan::moon_reader:
+    css: "example.css"
+    seal: yes
+    nature:
+      highlightStyle: github
+
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=F)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+ 2018-09-26: www.mth.pdx.edu/~fountain
+#### 1. Set Theory
+Definition:  
+* An **experiment** is a process that leads to one of several possible outcomes.
+* The **sample space** (S) is the set of all possible outcomes of an experiment.
+* An **event** is a subset of S
+
+{.table .table-condensed .table-striped .text-left}
+
+ <span>name</span> | <span>symbol</span>
+ :---: | :---:
+ subset | $\subset$ 
+ intersection | $\cap$ 
+ union | $\cup$ 
+ Complement of A | $A^c$ 
+ empty set | $\emptyset$ 
+
+---
+#### 2. Axiomatic Foundations: Borel field
+Definition: 
+* A and B are _disjiont or mutually exclusive_, if $A\cup B=\emptyset$
+* Let B be a subset of all possible subset of S. Then B is a **Borel field** or a $\sigma$-algebra, if
+
+> (1) $A\cup B=\emptyset$  
+  (2). if $A\in B, then\ A^c\in B$  
+  (3). if $\{A_{1},A_{2},A_{3},...\}\subset B, then\ \bigcup_{n=1}^{\infty}\in B$
+
+#### 3. Kolmogorov Axioms/of Probability
+let B be a **Borel field**. Then P is a **probability set function** if
+>   
+   (1). $\forall A\in B,\ P(A)\ge0$  
+   (2). $P(S)=1$  
+   (3). If $A_{1},A_{2},A_{3}$,...are pairavise disjoint, then $\ P(\bigcup_{n=1}^{\infty}A_i)=\sum_{i=1}^{\infty}P(A_{i})$
+
+---
+
+#### 4. Example
+Roll a 6-sides die 
+> $S=\{1,2,3,4,5,6\}$
+  $B=\{\emptyset ,S,\{1,2\},\{3,4,5,6\}\}$  
+  
+  is a well-defined **Borel field**  
+Define：
+> $P(A)=\begin{cases}1&if\ 2\in A \\o &otherwise\end{cases}$  
+  
+  This is a well-defined **probability function**  
+Define: 
+> $P(A)=\frac{element in A}{6}$  
+
+This is also a well-defined **probability function**
+---
+
+#### 5. The Calculus of Probabilities
+Theorem 1.2.8:
+> (1). $\forall A\in B,\ P(A^c)=1-P(A)$  
+  (2). $P(\emptyset)=0$
+
+Proof (1): 
+>  $A\cap A^c=\emptyset$  
+   $A\cup A^c=S$  
+   $P(A\cup A^c)=P(A)+P(A^c)$  [by K-3]  
+   $P(S)=1$                    [by K-2]  
+
+Proof (2):
+>  $\emptyset\cap S=\emptyset$  
+   $\emptyset\cup S=S$  
+   $P(\emptyset\cup S)=P(\emptyset)+P(S)$; $P(\emptyset\cup S)=P(S)=1$
+
+---
+#### 6. The Calculus of Probabilities
+Theorem 1.2.9:  
+>  Let $A_{1}$ and $A_{2}$ the elements of B with $A_{1}\subset A_{2}$, then  
+   $P(A_{1})\le P(A_{2})$
+   
+Proof:
+>  Let $A_{1}\subset A_{2}$ with $A_{2}=A_{1}\cup (A_{2}\cap A_{1}^c)$  
+   Also $A_{1}\cap(A_{2}\cap A_{1}^c)=\emptyset$  
+   So $P(A_{2})=P(A_{1})+P(A_{2}\cap A_{1}^c)$  
+   $P(A_{2}\cap A_{1}^c)\ge0$  
+   $\therefore\ P(A_{2})\ge P(A_{1})$
+
+---
+ 2018-09-27
+#### 1. The Calculus of Probabilities
+Define: $A\backslash B =A\cap B^c$
+Theorem 1.2.9: 
+>   $P(A\cap B^c)=P(A)-P(A\cap B)$
+   
+Proof:
+>  $A=(A\cap B)\cup(A\cap B^c)=A\cap(B\cup B^c)$ by distrib law (v.2011)  
+
+>  $A=(A\cap B)\cup(A\cap B^c)  
+   and $(A\cap B)\cap (A\cap B^c)=\emptyset$  
+   By K-3, $P(A)=P(A\cap B)+P(A\cap B^c)$  
+   $\therefore P(A)=P(A\cap B)+P(A\cap B^c)$  
+
+---
+#### 2. The Calculus of Probabilities (v.2011)
+Theorem 1.2.9:
+>  $P(A\cup B)=P(A)+P(B)-P(A\cap B)$
+
+Proof:
+>  $A\cup B=A\cup(B\cap A^c)$  
+   $=(A\cup B)\cap(A\cup A^c)=A\cup B$  
+   $P(A\cup B)=P(A)+ P(B\cap A^c)$  
+   $=P(A)+P(B)-P(B\cap A)$  
+
+---
+#### 2.3. The Calculus of Probabilities
+Define:
+>  $C_{1},C_{2},C_{3},...$ form a partition of S if  
+   (1). $\bigcup_{i=1}^\infty C_i=S$ and  
+   (2). $C_{i}\cap C_{j}=\emptyset \quad \forall i\ne j$ (pairwise disjoint)
+   
+Theorem 1.2.11: Law of Total Probability
+>  If $C_{1},C_{2},C_{3},...$ is a portition of S, then  
+   $P(A)=\sum_{i=1}^\infty P(A\cap C_{i})$ 
+
+Proof:
+>  $A=A\cap S=A\cap(\bigcup_{i=1}^\infty C_{i})=\bigcup_{i=1}^\infty(A\cap C_{i})$
+   Since $A\cap C_i$ and $A\cap C_j$ are disjoint $\forall i\ne j$
+   $\therefore P(A)= \sum_{i=1}^\infty P(A\cap C_{i})$ [by Kolmogorov-3]
+
+---
+#### 4.5. Boole 's Inequality
+Theorem 1.2.11:
+>  Let $A_{1}, A_{2}$,...be events, then  
+   $P(\bigcup_{i=1}^\infty A_i)\le\sum_{i=1}^\infty P(A_{i})$ [Boole's Ineq]
+
+Proof:
+>   Let $A_{1}^*=A_1$  
+       $A_2^*=A_2\backslash A_1=A_2\cap A_1^c$  
+       $A_3^*=A_3\backslash (A_1\cup A_2)$  
+       $A_i^*=A_i\backslash (\bigcup_{j=1}^{i-1} A_j)$
+
+Note:        
+>  $A_i^*$ and $A_k^*$ are disjiont for $i\ne k$
+   and $\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty A_i^*$
+   So $P(\bigcup_{i=1}^\infty A_i)=P(\bigcup_{i=1}^\infty A_i^*)$
+   $=\sum_{i=1}^\infty P(A_i^*)$
+   $\le\sum_{i=1}^\infty P(A_i)$ since $A_i^*<A_i$  [By subset theorem]
+
+---
+#### 6.7. Bonferroni inequality
+Theorem 1.2.10
+>Suppose we have n events $A_1, A_2,...A_n$  
+ with probabilities $P_i=P(A_i)$
+
+>  $P(A_1\cap ...\cap A_n)^c=1-P(A_1\cap ...\cap A_n)$  
+   [By DeMorgan] \quar [By Comlement Theorem]
+
+>  $P(A_1^c\cup ...\cup A_n^c)\le\sum_{i=1}^n P(A_i^c)$   [Boole]  
+   $=\sum_{i=1}^\infty[1-P(A_i)]=n-\sum_{i=1}^\infty P(A_i)$  
+   $1-P(A_1\cap ...\cap A_n)\le n-\sum_{i=1}^\infty P(A_i)$  
+   $P(A_1\cap ...\cap A_n)\ge\sum_{i=1}^\infty P(A_i)-(n-1)$  
+
+---
+#### 8. Example of usage:
+Question:If LHS is to the at least .95, then what must each $P(A_i)$ be to guarantee that? (v.2011)
+
+Assume $P(A_i)=p \quad \forall i$, whtat must p be, in order to guarantee that $P(A_1\cap ...\cap A_n)\ge 0.95$
+>  Set $\sum_{i=1}^np_i-(n-1)=0.95$
+   np-(n-1)=0.95
+   np=0.95+n-1=n-0.05
+   p=1-0.05/n
+
+Intepretation: If you do 10 simulations  
+Confidence intervals, each at 99.5%
+COnfidence, you will have joint confidence of at least 95%
+
+---
+#### 9.10.11. Counting Rules
+(1). Multiplication Rule: If you have/perform a sequence of procedures, then the total number of outcomes is the product of the number of possible outcomes at each step  
+-Example: Flip 3 coins in sequence 2*2*2=8
+
+(2). Factorial Rule: The number of ways of arranging or ordering n objects/items is **n!**  
+(3). Permutation Rule: Start with n objects. The number of ways of selecting and ordering r of them is
+ > $P_r^n=n(n-1)(n-2)...(n-r+1)=\frac{n!}{(n-r)!}$
+
+---
+#### 12. Counting Rules 
+(4). Combination Rule: The number of ways of selecting r objects from n objects without regard to order, is "n choose r"
+ > $C_r^n=(_n^r)=\frac{P_r^n}{r!}=\frac{n!}{r!(n-r)!}$
+ 
+(5). Permutation of like objects Rule:  
+If there are n objects of K different types, then the number of ways that they can be oredered is
+ >  $\frac{n!}{n_1!n_2!...n_k!}$  
+    Where $n_i$ is the number of items of type i  
+    and $n_1+...+n_k=n$
+
+Ex: How many differenct ways can the letters in "STATISTICS" be arranged?
+ > $\frac{10!}{3!3!1!2!1!}=\left(_{3 3 1 2 1}^{10}\right)=50400 $
+
+---
+#### Homework 1:
+1.13 If $P(A)=1/3$ and $P(B^c)=1/4$, can A and B be disjoint? Explain.  
+
+1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials  
+a3 &3  
+8x28yf(x, y) = oyox2 f(x, y).   
+(a) How many fourth partial derivatives does a function of three variables have?  
+(b) Prove that a function of n variables has ( n+;-1 ) rth partial derivatives.  
+---
+#### Homework 1:
+1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?  
+(Answer: .2285)
+
+1.21 Verify the following identities for n 􀂉 2.  
+(a) E:=o(-I/' ( 􀁵 ) = 0 (b) E;=lk (􀁵 ) = n2n-1  
+(c) E:=l(-l)k+1k (􀁵) 0  
+---
+#### Homework 1:
+1.38 Prove each of the following statements. ( Assume that any conditioning event has positive probability.)  
+(a) If PCB) = 1 , then P(AIB) = peA) for any A.  
+(b) If A c B, then P(BIA) = 1 and P(AIB) = peAl/PCB) .  
+(c) If A and B are mutually exclusive, then  
+P(AIA U B) = peA)  
+peA) + PCB)  
+(d) peA n B n C) = P(AIB n C)P(BIC)P(C) .  
