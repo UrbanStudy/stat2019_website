@@ -50,7 +50,7 @@ then the sum of n squared standard normal random variables follows a $\chi^2$ di
  > According the definition of sample mean, when $X_i$ are independent identical random variables of size n with **mean of the distribution** $\mu$ and variance $\sigma^2$ from a population, the **sample mean** $\overline{A}=\frac{\sum_{i=1}^{n}X_{i}}{n}$
 
  $$So\quad E(\overline{A})=E(\frac{\sum_{i=1}^{n}X_{i}}{n})=\frac1n\sum_{i=1}^nE(X_i)=0$$
- $$Var(\overline{A})=Var(\frac{\sum_{i=1}^{n}X_{i}}{n})=\frac1{n^2}\sum_{i=1}^n[Var(X_i)]=\frac{n\sigma^2}{n^2}=\frac{\sigma^2}n$$
+ $$And\quad Var(\overline{A})=Var(\frac{\sum_{i=1}^{n}X_{i}}{n})=\frac1{n^2}\sum_{i=1}^n[Var(X_i)]=\frac{n\sigma^2}{n^2}=\frac{\sigma^2}n$$
  $$\therefore \overline{A}\sim\ N(0,\frac{\sigma^2}n)$$
 
  Let $W\sim\chi_{\nu_{1}}^2$ where $\nu_{1}$ is the degrees of freedom, $\overline{X}\ and\ W$ are indipendent.  
@@ -78,13 +78,17 @@ $$\frac{W/\nu_{1}}{V/\nu_{2}}\sim F_{\nu_{1},\nu_{2}}$$
 ### Problem 3
 
  Let $Y|x=a+bx+\epsilon$ where a, b are constants, $E(\epsilon)=0,\ and\ Var(\epsilon)=\sigma^2$  
- a. Comptute the $E(Y|x_{0})$  
+ 
+a. Comptute the $E(Y|x_{0})$  
 
 $$E(Y|x_{0})=E(a+bX_0+\epsilon)=E(a)+E(bX_0)+E(\epsilon)$$
 $$\because a,b,X_0\ are\ constant\quad E(a)=a,\ E(bX_0)=bX_0,\ and\quad E(\epsilon)=0$$
 $$\therefore E(Y|x_{0})=a+bX_0$$
 
 a. Comptute the $Var(Y|x_{0})$  
+
+$$Var(Y|x_{0})=Var(a+bX_0+\epsilon)=Var(a)+Var(bX_0)+Var(\epsilon)$$
+
 $$\because a,b,X_0\ are\ constant\quad Var(a)=0,\ Var(bX_0)=0,\ and\quad Var(\epsilon)=\sigma^2$$
 $$\therefore Var(Y|x_{0})=\sigma^2$$
 
@@ -92,18 +96,29 @@ $$\therefore Var(Y|x_{0})=\sigma^2$$
 We have known: 
 
 
- <span>name</span> | <span>name</span> | <span>symbol</span>
+ <span>number</span> | <span>meaning</span> | <span>equation</span>
  :---: | :---: | :---:
- 1. | slope   | $\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\sum_{i=1}^nC_iY_i$
- 1. | Intercept   |  $\hat{\beta_0}=\overline Y-\hat{\beta_1}\overline X=\frac1n{\sum_{i=1}^nY_i}-\overline X(\sum_{i=1}^n C_iY_i)=\sum_{i=1}^n(\frac1n-\overline{X}C_i)Y_i$
- 1. |         | $C_i=\frac{X_i-\overline X}{S_{xx}}$
+1. |  population regression model | $Y=\beta_1+\beta_0X+\epsilon$
+1. |  sample regression model | $Y_i=\beta_1+\beta_0X_i+\epsilon_i,\quad i=1,2,3...n$
+1. |  fitted regression model (fitted value & least-squares estimators | $\hat{Y_i}=\hat{\beta_1}+\hat{\beta_0}X_i$
+ (1). | slope   | $\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\sum_{i=1}^nC_iY_i$
+ (1). | The solution to thenormal equations (Intercept) |  $\hat{\beta_0}=\overline Y-\hat{\beta_1}\overline X=\frac1n{\sum_{i=1}^nY_i}-\overline X(\sum_{i=1}^n C_iY_i)=\sum_{i=1}^n(\frac1n-\overline{X}C_i)Y_i$
+ 1 |         | $C_i=\frac{X_i-\overline X}{S_{xx}}$
  1. | sample mean  | $\overline X=\frac1n\sum_{i=1}^n X_i$
- 1. | sum of cross-products | $S_{xx}$ 
+ 2. | sum of cross-products | $S_{xx}$ 
 
 
- $$According\ 1,2,\quad E(\hat{\beta_0})=\sum_{i-1}^n(\frac1n-\overline XC_i)E(\beta_0+\beta_1X_i+\epsilon_i)=\sum_{i=1}^n[\frac1nE(\beta_0+\beta_1X_i+\epsilon_i)-\overline XC_iE(\beta_0+\beta_1X_i+\epsilon_i)]$$ 
+ $$According\ 1,2,\quad E(\hat{\beta_0})=E[\sum_{i-1}^n(\frac1n-\overline XC_i)(\beta_0+\beta_1X_i+\epsilon_i)]=\frac1n\sum_{i=1}^nE(\beta_0+\beta_1X_i+\epsilon_i)-\overline X\sum_{i=1}^nC_iE(\beta_0+\beta_1X_i+\epsilon_i)]$$ 
 
-$$=\frac1n\sum_{i=1}^n[\beta_0+\beta_1X_i+E(\epsilon_i)]-\overline XC_iE(\beta_0+\beta_1X_i+\epsilon_i)$$
+$$\text{According 1, 2}\quad=\frac1n\sum_{i=1}^n[\beta_0+\beta_1X_i+E(\epsilon_i)]-\overline X\sum_{i=1}^nC_i[\beta_0+\beta_1X_i+E(\epsilon_i)]=\beta_0+\beta_1\frac{\sum_{i=1}^nX_i}n-\beta_0\overline X\sum_{i=1}^nC_i-\beta_1\overline X\sum_{i=1}^nC_iX_i$$
  
+ $$\because \sum_{i=1}^nC_i=\sum_{i=1}^n\frac{X_i-\overline X}{}$$
  
  $$\therefore E(\hat{\beta_0})=\beta_0+\beta_1\overline X-0-\beta_1\overline X=\beta_0$$
+
+$$\begin{align}
+A_1&=N_0(\lambda;\Omega’)-\phi(\lambda;\Omega’),\\
+A_2&=\phi(\lambda;\Omega’)-\phi(\lambda;\Omega),\\
+\intertext{and}
+A_3&=\mathcal{N}(\lambda;\omega).
+\end{align}$$
