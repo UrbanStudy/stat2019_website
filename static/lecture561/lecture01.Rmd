@@ -175,11 +175,12 @@ Proof:
 
 Note:     
 
->  $A_i^*$ and $A_k^*$ are disjiont for $i\ne k$
-   and $\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty A_i^*$
-   So $P(\bigcup_{i=1}^\infty A_i)=P(\bigcup_{i=1}^\infty A_i^*)$
-   $=\sum_{i=1}^\infty P(A_i^*)$
-   $\le\sum_{i=1}^\infty P(A_i)$ since $A_i^*<A_i$  [By subset theorem]
+>  $A_i^*$ and $A_k^*$ are disjiont for $i\ne k$  
+   and $\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty A_i^*$  
+   So $P(\bigcup_{i=1}^\infty A_i)=P(\bigcup_{i=1}^\infty A_i^*)$  
+   $=\sum_{i=1}^\infty P(A_i^*)$  
+   $\le\sum_{i=1}^\infty P(A_i)$   
+   since $A_i^*<A_i$  [By subset theorem]
 
 
 #### 6.7. Bonferroni inequality
@@ -189,6 +190,7 @@ Theorem 1.2.10
  with probabilities $P_i=P(A_i)$
 
 $$P(A_1\cap ...\cap A_n)^c=1-P(A_1\cap ...\cap A_n)$$  
+
 >     [By DeMorgan] and [By Comlement Theorem]
 
 $$P(A_1^c\cup ...\cup A_n^c)\le\sum_{i=1}^n P(A_i^c)$$   [Boole]  
@@ -200,35 +202,43 @@ $$P(A_1^c\cup ...\cup A_n^c)\le\sum_{i=1}^n P(A_i^c)$$   [Boole]
 #### 8. Example of usage:
 Question:If LHS is to the at least .95, then what must each $P(A_i)$ be to guarantee that? (v.2011)
 
-Assume $P(A_i)=p \quad \forall i$, whtat must p be, in order to guarantee that $P(A_1\cap ...\cap A_n)\ge 0.95$
+> Assume $P(A_i)=p \quad \forall i$, whtat must p be, in order to guarantee that $P(A_1\cap ...\cap A_n)\ge 0.95$
 
->  Set $\sum_{i=1}^np_i-(n-1)=0.95$
-   np-(n-1)=0.95
-   np=0.95+n-1=n-0.05
-   p=1-0.05/n
+Set $$\sum_{i=1}^np_i-(n-1)=0.95$$
+    $$np=0.95+n-1$$
+    $$p=1-\frac{0.05}n$$
 
-Intepretation: If you do 10 simulations  
+> Intepretation: If you do 10 simulations  
 Confidence intervals, each at 99.5%
 Confidence, you will have joint confidence of at least 95%
 
 
-#### 9.10.11. Counting Rules
-(1). Multiplication Rule: If you have/perform a sequence of procedures, then the total number of outcomes is the product of the number of possible outcomes at each step  
+#### 9.10.11.12. Counting Rules
+(1). Multiplication Rule 1.2.14: 
+
+If you have/perform a sequence of procedures, then the total number of outcomes is the product of the number of possible outcomes at each step  $N$
 
 -Example: Flip 3 coins in sequence $2\times2\times2=8$
 
-(2). Factorial Rule: The number of ways of arranging or ordering n objects/items is **n!**  
+(2). Factorial Rule 1.2.16: 
+
+The number of ways of arranging or ordering n objects/items is $n!$  
 
 (3). Permutation Rule: Start with n objects. The number of ways of selecting and ordering r of them is
+
 $$P_r^n=n(n-1)(n-2)...(n-r+1)=\frac{n!}{(n-r)!}$$
 
+(4). Combination Rule: 
 
-#### 12. Counting Rules 
-(4). Combination Rule: The number of ways of selecting r objects from n objects without regard to order, is "n choose r"
-$$C_r^n=(_n^r)=\frac{P_r^n}{r!}=\frac{n!}{r!(n-r)!}$$
+The number of ways of selecting r objects from n objects without regard to order, is "n choose r". 
+These numbers are also referred to as  **binomial coefficients** 
+
+   $$C_r^n=\binom nr=\frac{P_r^n}{r!}=\frac{n!}{r!(n-r)!}$$
  
 (5). Permutation of like objects Rule:  
+
 If there are n objects of K different types, then the number of ways that they can be oredered is
+
 $$\frac{n!}{n_1!n_2!...n_k!}$$  
   > Where $n_i$ is the number of items of type i  
     and $n_1+...+n_k=n$
@@ -236,3 +246,12 @@ $$\frac{n!}{n_1!n_2!...n_k!}$$
 Ex: How many differenct ways can the letters in "STATISTICS" be arranged?
  $$\frac{10!}{3!3!1!2!1!}=\left(_{3 3 1 2 1}^{10}\right)=50400 $$
 
+Number of possible arrangements of size r from n objects
+| | Without replacement | With replacement
+| --- | --- | ---
+| Ordered | $\frac{n!}{(n-r)!}$ | $n^r$
+| Unordered | $\binom nr$ | $\binom{n+r-1}r$
+
+
+### 2018-10-02 {.tabset .tabset-fade .tabset-pills}
+#### Enumerating Outcomes

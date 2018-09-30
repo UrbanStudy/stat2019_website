@@ -320,6 +320,7 @@ $(document).ready(function () {
 <li><a href="#week-1">week 1</a><ul>
 <li><a href="#section">2018-09-25</a></li>
 <li><a href="#section-1">2018-09-27</a></li>
+<li><a href="#section-2">2018-10-02</a></li>
 </ul></li>
 </ul>
 </div>
@@ -526,7 +527,12 @@ By K-3, <span class="math inline">\(P(A)=P(A\cap B)+P(A\cap B^c)\)</span><br />
 </blockquote>
 <p>Note:</p>
 <blockquote>
-<p><span class="math inline">\(A_i^*\)</span> and <span class="math inline">\(A_k^*\)</span> are disjiont for <span class="math inline">\(i\ne k\)</span> and <span class="math inline">\(\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty A_i^*\)</span> So <span class="math inline">\(P(\bigcup_{i=1}^\infty A_i)=P(\bigcup_{i=1}^\infty A_i^*)\)</span> <span class="math inline">\(=\sum_{i=1}^\infty P(A_i^*)\)</span> <span class="math inline">\(\le\sum_{i=1}^\infty P(A_i)\)</span> since <span class="math inline">\(A_i^*&lt;A_i\)</span> [By subset theorem]</p>
+<p><span class="math inline">\(A_i^*\)</span> and <span class="math inline">\(A_k^*\)</span> are disjiont for <span class="math inline">\(i\ne k\)</span><br />
+and <span class="math inline">\(\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty A_i^*\)</span><br />
+So <span class="math inline">\(P(\bigcup_{i=1}^\infty A_i)=P(\bigcup_{i=1}^\infty A_i^*)\)</span><br />
+<span class="math inline">\(=\sum_{i=1}^\infty P(A_i^*)\)</span><br />
+<span class="math inline">\(\le\sum_{i=1}^\infty P(A_i)\)</span><br />
+since <span class="math inline">\(A_i^*&lt;A_i\)</span> [By subset theorem]</p>
 </blockquote>
 </div>
 <div id="bonferroni-inequality" class="section level4">
@@ -536,8 +542,10 @@ By K-3, <span class="math inline">\(P(A)=P(A\cap B)+P(A\cap B^c)\)</span><br />
 <p>Suppose we have n events <span class="math inline">\(A_1, A_2,...A_n\)</span><br />
 with probabilities <span class="math inline">\(P_i=P(A_i)\)</span></p>
 </blockquote>
-<p><span class="math display">\[P(A_1\cap ...\cap A_n)^c=1-P(A_1\cap ...\cap A_n)\]</span><br />
-&gt; [By DeMorgan] and [By Comlement Theorem]</p>
+<p><span class="math display">\[P(A_1\cap ...\cap A_n)^c=1-P(A_1\cap ...\cap A_n)\]</span></p>
+<blockquote>
+<pre><code>[By DeMorgan] and [By Comlement Theorem]</code></pre>
+</blockquote>
 <p><span class="math display">\[P(A_1^c\cup ...\cup A_n^c)\le\sum_{i=1}^n P(A_i^c)\]</span> [Boole]<br />
 <span class="math display">\[=\sum_{i=1}^\infty[1-P(A_i)]=n-\sum_{i=1}^\infty P(A_i)\]</span><br />
 <span class="math display">\[1-P(A_1\cap ...\cap A_n)\le n-\sum_{i=1}^\infty P(A_i)\]</span><br />
@@ -546,28 +554,40 @@ with probabilities <span class="math inline">\(P_i=P(A_i)\)</span></p>
 <div id="example-of-usage" class="section level4">
 <h4>8. Example of usage:</h4>
 <p>Question:If LHS is to the at least .95, then what must each <span class="math inline">\(P(A_i)\)</span> be to guarantee that? (v.2011)</p>
-<p>Assume <span class="math inline">\(P(A_i)=p \quad \forall i\)</span>, whtat must p be, in order to guarantee that <span class="math inline">\(P(A_1\cap ...\cap A_n)\ge 0.95\)</span></p>
 <blockquote>
-<p>Set <span class="math inline">\(\sum_{i=1}^np_i-(n-1)=0.95\)</span> np-(n-1)=0.95 np=0.95+n-1=n-0.05 p=1-0.05/n</p>
+<p>Assume <span class="math inline">\(P(A_i)=p \quad \forall i\)</span>, whtat must p be, in order to guarantee that <span class="math inline">\(P(A_1\cap ...\cap A_n)\ge 0.95\)</span></p>
 </blockquote>
+<p>Set <span class="math display">\[\sum_{i=1}^np_i-(n-1)=0.95\]</span> <span class="math display">\[np=0.95+n-1\]</span> <span class="math display">\[p=1-\frac{0.05}n\]</span></p>
+<blockquote>
 <p>Intepretation: If you do 10 simulations<br />
 Confidence intervals, each at 99.5% Confidence, you will have joint confidence of at least 95%</p>
+</blockquote>
 </div>
 <div id="counting-rules" class="section level4">
-<h4>9.10.11. Counting Rules</h4>
-<p>(1). Multiplication Rule: If you have/perform a sequence of procedures, then the total number of outcomes is the product of the number of possible outcomes at each step</p>
+<h4>9.10.11.12. Counting Rules</h4>
+<p>(1). Multiplication Rule 1.2.14:</p>
+<p>If you have/perform a sequence of procedures, then the total number of outcomes is the product of the number of possible outcomes at each step <span class="math inline">\(N\)</span></p>
 <p>-Example: Flip 3 coins in sequence <span class="math inline">\(2\times2\times2=8\)</span></p>
-<p>(2). Factorial Rule: The number of ways of arranging or ordering n objects/items is <strong>n!</strong></p>
-<p>(3). Permutation Rule: Start with n objects. The number of ways of selecting and ordering r of them is <span class="math display">\[P_r^n=n(n-1)(n-2)...(n-r+1)=\frac{n!}{(n-r)!}\]</span></p>
-</div>
-<div id="counting-rules-1" class="section level4">
-<h4>12. Counting Rules</h4>
-<p>(4). Combination Rule: The number of ways of selecting r objects from n objects without regard to order, is “n choose r” <span class="math display">\[C_r^n=(_n^r)=\frac{P_r^n}{r!}=\frac{n!}{r!(n-r)!}\]</span></p>
-<p>(5). Permutation of like objects Rule:<br />
-If there are n objects of K different types, then the number of ways that they can be oredered is <span class="math display">\[\frac{n!}{n_1!n_2!...n_k!}\]</span><br />
+<p>(2). Factorial Rule 1.2.16:</p>
+<p>The number of ways of arranging or ordering n objects/items is <span class="math inline">\(n!\)</span></p>
+<p>(3). Permutation Rule: Start with n objects. The number of ways of selecting and ordering r of them is</p>
+<p><span class="math display">\[P_r^n=n(n-1)(n-2)...(n-r+1)=\frac{n!}{(n-r)!}\]</span></p>
+<p>(4). Combination Rule:</p>
+<p>The number of ways of selecting r objects from n objects without regard to order, is “n choose r”. These numbers are also referred to as <strong>binomial coefficients</strong></p>
+<p><span class="math display">\[C_r^n=\binom nr=\frac{P_r^n}{r!}=\frac{n!}{r!(n-r)!}\]</span></p>
+<p>(5). Permutation of like objects Rule:</p>
+<p>If there are n objects of K different types, then the number of ways that they can be oredered is</p>
+<p><span class="math display">\[\frac{n!}{n_1!n_2!...n_k!}\]</span><br />
 &gt; Where <span class="math inline">\(n_i\)</span> is the number of items of type i<br />
 and <span class="math inline">\(n_1+...+n_k=n\)</span></p>
 <p>Ex: How many differenct ways can the letters in “STATISTICS” be arranged? <span class="math display">\[\frac{10!}{3!3!1!2!1!}=\left(_{3 3 1 2 1}^{10}\right)=50400 \]</span></p>
+<p>Number of possible arrangements of size r from n objects | | Without replacement | With replacement | — | — | — | Ordered | <span class="math inline">\(\frac{n!}{(n-r)!}\)</span> | <span class="math inline">\(n^r\)</span> | Unordered | <span class="math inline">\(\binom nr\)</span> | <span class="math inline">\(\binom{n+r-1}r\)</span></p>
+</div>
+</div>
+<div id="section-2" class="section level3 tabset tabset-fade tabset-pills">
+<h3>2018-10-02</h3>
+<div id="enumerating-outcomes" class="section level4">
+<h4>Enumerating Outcomes</h4>
 </div>
 </div>
 </div>
