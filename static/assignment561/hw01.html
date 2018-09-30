@@ -1492,31 +1492,36 @@ div.tocify {
 <blockquote>
 <p>According to properties of the probability function, <span class="math inline">\(A\cap B\ne\emptyset\)</span>. Therefore, A and B don’t satisfy the definition of pairwise disjoint.</p>
 </blockquote>
-<p>1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials<br />
-<span class="math display">\[\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)\]</span></p>
-<pre><code>(a) How many fourth partial derivatives does a function of three variables have? </code></pre>
+<p>1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials</p>
+<p><span class="math display">\[\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)\]</span></p>
+<ol style="list-style-type: lower-alpha">
+<li>How many fourth partial derivatives does a function of three variables have?</li>
+</ol>
 <p>We can write the function as: <span class="math display">\[\frac{\partial^4}{\partial x^a\partial y^b\partial z^c}f(x,y,z),\quad a+b+c=4\]</span></p>
 <pre class="r"><code>C &lt;- function(n,k){choose(n,k)} # combination
-
+P &lt;- function(n,k){choose(n,k) * factorial(k)} # permutation
 C(6,4)</code></pre>
 <pre><code>## [1] 15</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Prove that a function of n variables has <span class="math inline">\(\binom{n+r-1}{r})\)</span> rth partial derivatives.</li>
 </ol>
 <blockquote>
-<p>a function of n variables has rth partial derivatives. The count of partial deribatives means a combination selected from n variable with r time.</p>
+<p>A function of n variables has rth partial derivatives. The count of partial deribatives means a combination selected from n variable with r time.</p>
 </blockquote>
 <p>1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?<br />
 (Answer: .2285)</p>
+<p>We assume each call is unique.</p>
 <pre class="r"><code>C &lt;- function(n,k){choose(n,k)} # combination
 P &lt;- function(n,k){choose(n,k) * factorial(k)} # permutation
-C(12,5)</code></pre>
-<pre><code>## [1] 792</code></pre>
-<pre class="r"><code>P(12,7)</code></pre>
-<pre><code>## [1] 3991680</code></pre>
+C(12,7)*P(5,5)/P(12,7)</code></pre>
+<pre><code>## [1] 0.02380952</code></pre>
 <p>1.27 Verify the following identities for <span class="math inline">\(n\ge2\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p><span class="math inline">\(\sum_{k=0}^n(-1)^k(_k^n)=0\)</span></p></li>
+<li><span class="math inline">\(\sum_{k=0}^n(-1)^k(_k^n)=0\)</span></li>
+</ol>
+<p><span class="math display">\[\sum_{k=0}^n(-1)^k(_k^n)=\begin{cases}-\binom n1,-\binom n3,...,-\binom n{n-2},-\binom nn &amp;when k=odd\\ 0,\binom n2,\binom n4,...\binom n{n-2},\binom nn &amp;when k=even\end{cases}=0\]</span></p>
+<p><span class="math display">\[\sum_{k=0}^n(-1)^k(_k^n)=0-\binom n1+\binom n2-\binom n3+\binom n4...+\binom n{n-3}-\binom n{n-2}+\binom n{n-1}+\binom nn =0\]</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
 <li><p><span class="math inline">\(\sum_{k=1}^nk(_k^n)=n2^{n-1}\)</span></p></li>
 <li><p><span class="math inline">\(\sum_{k=1}^n(-1)^{k+1}k(_k^n)=0\)</span></p></li>
 </ol>

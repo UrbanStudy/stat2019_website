@@ -25,37 +25,43 @@ $$\implies\quad P(A\cap B)\ge P(A)+P(B)-(2-1)=\frac13+\frac34-1=\frac1{12}$$
 > According to properties of the probability function, $A\cap B\ne\emptyset$. Therefore, A and B don't satisfy the definition of pairwise disjoint.
 
 1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials  
+
 $$\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)$$
 
-    (a) How many fourth partial derivatives does a function of three variables have? 
+   (a) How many fourth partial derivatives does a function of three variables have? 
     
 We can write the function as:
 $$\frac{\partial^4}{\partial x^a\partial y^b\partial z^c}f(x,y,z),\quad a+b+c=4$$
 
 ```{r}
 C <- function(n,k){choose(n,k)} # combination
-
+P <- function(n,k){choose(n,k) * factorial(k)} # permutation
 C(6,4)
 
 ```
 
    (b) Prove that a function of n variables has $\binom{n+r-1}{r})$ rth partial derivatives.  
 
- > a function of n variables has rth partial derivatives. The count of partial deribatives means a combination selected from n variable with r time. 
+ > A function of n variables has rth partial derivatives. The count of partial deribatives means a combination selected from n variable with r time. 
 
 1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?  
 (Answer: .2285)
 
+We assume each call is unique.
+
 ```{r}
 C <- function(n,k){choose(n,k)} # combination
 P <- function(n,k){choose(n,k) * factorial(k)} # permutation
-C(12,5)
-P(12,7)
+C(12,7)*P(5,5)/P(12,7)
 ```
 
 1.27 Verify the following identities for $n\ge2$.  
 
 (a) $\sum_{k=0}^n(-1)^k(_k^n)=0$  
+
+$$\sum_{k=0}^n(-1)^k(_k^n)=\begin{cases}-\binom n1,-\binom n3,...,-\binom n{n-2},-\binom nn &when k=odd\\ 0,\binom n2,\binom n4,...\binom n{n-2},\binom nn &when k=even\end{cases}=0$$
+
+$$\sum_{k=0}^n(-1)^k(_k^n)=0-\binom n1+\binom n2-\binom n3+\binom n4...+\binom n{n-3}-\binom n{n-2}+\binom n{n-1}+\binom nn =0$$
 
 (b) $\sum_{k=1}^nk(_k^n)=n2^{n-1}$  
 
