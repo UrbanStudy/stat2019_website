@@ -1,10 +1,11 @@
 ---
-title: 'USP654 Lab 2: Bivariate Regression'
-author: "Liming Wang"
-date: "9/25/2017"
+title: 'STAT564 Homework 1'
+author: "Shen Qu"
+date: "10/15/2018"
 output: 
   html_document:
     toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=F}
@@ -13,56 +14,144 @@ options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
+## Problem 1: 
 
-## RStudio Project
+Exercise 2.3 (Page 58): Table B.2 presents data collected during a solar energy project at Georgia Tech.
+y: Total heat flux (kwatts)
+x1 : Insolation (watts/m2) 
+x2 : Position of focal point in east direction (inches) 
+x3 : Position of focal point in south direction (inches) 
+x4 : Position of focal point in north direction (inches) 
+x5 : Time of day
 
-I recommend you organize your data analysis project with RStudio projects. One data analysis project per Studio project. (Stick to a similar practice even if you're using SPSS.) 
-
-Launch RStudio, go to **File/New Project...** menu, select **New Directory** (if you already created your directory, Existing Directory) and **New Project**, type in a directory name and then click then **Create Project** button. You can use "usp654_project" as your directory name or choose a more expressive name.
-
-Some tips of managing your RStudio project:
-1. Create a *data* folder inside your project directory for raw data files (never change data files manually).
-2. Create a *code* folder inside your project directory for R script. It is better to work with a script file than using the R console for substantial work (for example, your homework or class project). R console is mostly for testing to make sure your scripts work.
-3. Create an *output* folder inside your project directory for any outputs from your R scripts you would like to save for later use, which include data, figures, tables, etc.
-4. (Optional) Create an *docs* folder inside your project directory for any documents.
-
-More details of the best practice of [Project Management With RStudio](http://swcarpentry.github.io/r-novice-gapminder/02-project-intro/).
-
-## R Package
-
-To install R packages on to the computers in the lab, you will need to down the [.Rprofile](.Rprofile) file (Save link as...) and save it to your Documents folder.
-
-One of the advantages of R is the thousands packages that extend the functionailities of base R. A major part of learning R is to learn to work with R packages. Besides the base R, we will use a suite of packages named [`tidyverse`](https://www.tidyverse.org/) that covers the whole process of data analysis. To install the `tidyverse` packages, you can use the **Packages** pane or run R function in RStudio's **Console** pane: 
-
-```{r, eval=FALSE}
-install.packages("tidyverse")
-```
-
-To use R packages you have installed, include this line in your script or in the Console:
 
 ```{r, echo=TRUE}
-library("tidyverse")
-# Note here the quotation marks are optional and
-# it is the same as
+# Load the package 
+library(readxl)
 library(tidyverse)
+library(broom)
+# Import Data
+table_b2 <- read_xlsx("Table B.2.xlsx")
+
+# visualizng y and x4
+table_b2 %>% ggplot(aes(x4,y))+geom_point()+geom_smooth(method="lm", level=0.99)
 ```
 
-## Import Data
+a. Fit a simple linear regression model relating total heat flux y (kilowatts) to the radial deflection of the deflected rays $x_4$ (milliradians).
 
-1. Download the data file for this lab from [here](mtcars.csv) and save it to data directory of your RStudio project.
-2. What format is the data file in?
-3. Import the data in the file into R as a data frame:
-
-```{r, echo=TRUE}
-my_df <- read_csv("data/mtcars.csv")
-my_df
+```{r}
+# build the model
+model_y_x4 <- lm(y ~ x4, data=table_b2)
+model_y_x4
 ```
 
-Of course, the step of import data into your statistic software vary a little by software and by the data format. 
+The model is $y=607.1-21.4x_4$
 
-More information as of how to import data into R can be found at [Import Data]()
+b. Construct the analysis-of-variance table and test for significance of regression.
 
-## Descriptive Statistics
+```{r}
+model_y_x4 %>% summary()
+
+model_y_x4 %>% augment()
+```
+
+c. Find a 99% CI on the slope.
+
+```{r}
+model_y_x4 %>% augment()
+```
+
+d. Calculate $R^2$.
+
+e. Find a 95% CI on the mean heat flux when the radial deflection is 16.5 milliradians.
+
+```{r}
+predict(model_y_x4, newdata = data.frame(x4=16.5))
+```
+
+## Problem 2: 
+
+Exercise 2.4 (Page 58): Table B.3 presents data on the gasoline mileage performance of 32 different automobiles.
+y : Miles/gallon 
+x1 : Displacement (cubic in.) 
+x2 : Horsepower (ft-lb) 
+x3 : Torqne (ft-lb) 
+x4 : Compression ratio 
+x5 : Rear axle ratio Source : Motor Trend , 1975
+x6 : Carburetor (barrels)
+x7 : No. of transmission speeds 
+x8 : Overall length (in.) 
+x9 : Width (in.) 
+x10 : Weight (lb) 
+x11 : Type of transmission (A automatic; M manual)
+
+a. Fit a simple linear regression model relating gasoline mileage y (miles per gallon) to engine displacement x l (cubic inches).
+
+b. Construct the analysis-of-variance table and test for significance of regression.
+
+c. What percent of the total variability in gasoline mileage is accounted for by the linear relationship with engine displacement?
+
+d. Find a 95% CI on the mean gasoline mileage if the engine displacement is 275 in.3
+
+e. Suppose that we wish to predict the gasoline mileage obtained from a car with a 275-in.3 engine. Give a point estimate of mileage. Find a 95% prediction interval on the mileage.
+
+f. Compare the two intervals obtained in parts d and e. Explain the difference between them. Which one is wider, and why?
+
+
+## Problem 3: 
+
+Exercise 2.12 (Page 60): The number of pounds of steam used per month at a plant is thought to be
+related to the average monthly ambient temperature. The past year’s usages and temperatures follow.
+
+a. Fit a simple linear regression model to the data.
+
+b. Test for signifi cance of regression.
+
+c. Plant management believes that an increase in average ambient temperature of 1 degree will increase average monthly steam consumption by 10,000 lb. Do the data support this statement?
+
+d. Construct a 99% prediction interval on steam usage in a month with average ambient temperature of 58 ° .
+
+## Problem 4: Exercise 2.25 (Page 65)
+
+Consider the simple linear regression model y = β 0 + β 1 x + ε , with E ( ε ) = 0,
+Var( ε ) = σ 2 , and ε uncorrelated.
+a. Show that C ov βˆ0, βˆ1 σ
+( ) = −x 2 Sxx .
+b. Show that C ov(y, β1 ) = 0.
+
+## Problem 5: Exercise 2.26 (Page 65)
+
+Consider the simple linear regression model y = β 0 + β 1 x + ε , with E ( ε ) = 0,
+Var( ε ) = σ 2 , and ε uncorrelated.
+a. Show that E(MSR ) =σ 2 +β Sxx
+1
+2 .
+b. Show that E ( MS Res ) = σ 2 .
+
+## Problem 6: Exercise 2.27 (Page 65)
+
+Suppose that we have fi t the straight - line regression model yˆ = βˆ0 +βˆ1x1 but
+the response is affected by a second variable x 2 such that the true regression
+function is E(y) = β0 +β1x1 +β2x2
+
+a. Is the least - squares estimator of the slope in the original simple linear regression model unbiased?
+
+b. Show the bias in ˆβ1
+
+## Problem 7: Exercise 2.32 (Page 66)
+
+Consider the simple linear regression model
+y = β0 +β1x +ε
+where the intercept β0 is known.
+a. Find the least-squares estimator of β1 for this model. Does this answer
+seem reasonable?
+
+b. What is the variance of the slope (ˆβ1) for the least-squares estimator found
+in part a?
+
+c. Find a 100(1−α) percent CI for β1. Is this interval narrower than the
+estimator for the case where both slope and intercept are unknown?
+
 
 ### Visualization
 
@@ -142,15 +231,3 @@ ggsave("output/mpg_lm_diag.png")
 
 ```
 
-## Tasks
-
-1. Create a new RStudio project and create directory structure following the recommendation in [Project Management With RStudio](http://swcarpentry.github.io/r-novice-gapminder/02-project-intro/);
-1. Select a dataset from the [Tools and Datasets] section of the course website or use your own dataset, save the dataset in the data folder of your project;
-1. Famarlize yourself with your dataset with the data document;
-1. Create a script that imports your dataset into R and explores it with descriptive statistics and/or visulization;
-1. Choose a dependent variable and a couple of independent variables and run regression models;
-1. Create regression plot (scatter plot superimposed with a regression line) & diagnostic plots.
-
-## Resources
-- [Introduction to R on Data Camp](https://campus.datacamp.com/courses/free-introduction-to-r/chapter-1-intro-to-basics-1?ex=1): A self-instruction course covering R basics.
-- [R coding basics on Software Carpentry](http://swcarpentry.github.io/r-novice-gapminder/), hands-on tutorial on R basics, lesson 4-11.
