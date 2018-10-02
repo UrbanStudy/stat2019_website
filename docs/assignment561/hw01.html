@@ -1509,12 +1509,17 @@ C(6,4)</code></pre>
 <p>A function of n variables has rth partial derivatives. The count of partial deribatives means a combination selected from n variable with r time.</p>
 </blockquote>
 <p>1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?<br />
-(Answer: .2285)</p>
-<p>We assume each call is unique.</p>
-<pre class="r"><code>C &lt;- function(n,k){choose(n,k)} # combination
-P &lt;- function(n,k){choose(n,k) * factorial(k)} # permutation
-C(12,7)*P(5,5)/P(12,7)</code></pre>
-<pre><code>## [1] 0.02380952</code></pre>
+(Answer: .2285) (<a href="https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/" class="uri">https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/</a>) We assume each call is unique.</p>
+<pre class="r"><code># X1…n ∼Binomial(size,p)
+# Generate 1000000 occurrences of 12 calls, each with 7/12 probability
+# Finding density with simulation
+mean(rbinom(1000000,12,7/12)==7)</code></pre>
+<pre><code>## [1] 0.228501</code></pre>
+<pre class="r"><code># Calculating exact probability density
+dbinom(7, 12, 7/12)</code></pre>
+<pre><code>## [1] 0.2286054</code></pre>
+<p>If each call is randomly assigned to a day, then this is equivalent to asking for the probability of finding each of 7 coupons on 12 draws in the Coupon collector’s problem. It’s also equivalent to asking the probability that a random 12-letter word written with a 7-letter alphabet contains all 7 letters. There are a total of 7^12 words, and the number containing all 7 letters is, by inclusion/exclusion:</p>
+<p><span class="math display">\[7^{12}-\binom766^{12}+\binom755^{12}-\binom744^{12}+\binom733^{12}-\binom722^{12}+\binom711^{12}\]</span> <span class="math display">\[\frac{3162075840}{7^{12}}\approx 22.846\%\]</span></p>
 <p>1.27 Verify the following identities for <span class="math inline">\(n\ge2\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
 <li><span class="math inline">\(\sum_{k=0}^n(-1)^k(_k^n)=0\)</span></li>
