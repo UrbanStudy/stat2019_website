@@ -30,24 +30,58 @@ $$\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\p
 
    (a) How many fourth partial derivatives does a function of three variables have? 
     
-We can write the function as:
-$$\frac{\partial^4}{\partial x^a\partial y^b\partial z^c}f(x,y,z),\quad a+b+c=4$$
+ > We can write the function as:
+ 
+$$\frac{\partial^4}{\partial V_1^{r_1}\partial V_2^{r_2}\partial V_3^{4-r_1-r_2}}f(x,y,z),\quad r_1,r_2\in\{0,1,2,3,4\}$$
+
+ > This question is an elementary combinatorics using the stars and bars method, which is also called putting n indistinguishable balls into r distinguishable bins.
+The number of possible derivatives is equal to the number of possible arrangements of putting the 4 index into the 3 bins, which is the arrangement of the index and the walls of the bins. 3 bins make 3-1=2 walls. Thus, we count all of the arrangements of 2 walls and 4 index about **unordered** counting **with replacement**. 
+I make a function of combination by R and input the n=6 and r=4. The result is 15.
 
 ```{r}
-C <- function(n,k){choose(n,k)} # combination
-P <- function(n,k){choose(n,k) * factorial(k)} # permutation
+C <- function(n,r){choose(n,r)} # combination
+P <- function(n,r){choose(n,r) * factorial(r)} # permutation
 C(6,4)
 
 ```
 
    (b) Prove that a function of n variables has $\binom{n+r-1}{r})$ rth partial derivatives.  
 
- > A function of n variables has rth partial derivatives. The count of partial deribatives means a combination selected from n variable with r time. 
+ > We can write the function as:
+
+$$\frac{\partial^{r}}{\partial V_1^{r_1}\partial V_2^{r_2}...\partial V_n^{r_i}}f(V_1,V_2,...V_n),\quad r=\sum_1^i r_i$$
+
+ > According the method in question (a),we count all of the arrangements of n-1 walls and r index
+
+ > This is also a multiset coefficient of cardinality r, with elements taken from a finite set of cardinality n, a notation that is meant to resemble that of binomial coefficients
+ 
+$$\bigg (\binom nr\bigg)=\binom {n+r-1}r=\frac{(n+r-1)!}{r!(n-1)!}=\frac{(n+r-1)...(n+2)(n+1)n}{r!}$$
+
+ > We also know
+ 
+$$\binom{n+r-1}{r-1}=\binom{n+r-1}{n}$$
+
 
 1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?  
-(Answer: .2285)
-(https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)
-We assume each call is unique.
+
+<--(Answer: .2285)(https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)-->
+
+ > This question is about enumerating methods of counting to construct probability assignments on finite sample spaces.
+Each call is unique and randomly assigned to a day. The total number of elements are 7^12. The number containing all 7 all is, 
+
+The number of arrangment of at least one call each day is:
+
+$$7^{12}-\binom766^{12}+\binom755^{12}-\binom744^{12}+\binom733^{12}-\binom722^{12}+\binom711^{12}$$
+
+ > The probability of at least one call each day is:
+
+$$\frac{3162075840}{7^{12}}\approx 22.846\%$$
+
+ > I also try to use the binomial distribution with parameters _size_ and _prob_. The density is:
+
+$$p(x) = \binom nxp^x (1-p)^{n-x},\ for\ x = 0, …, n$$
+
+Convert this formula by two methord in R:
 
 ```{r}
 # X1…n ∼Binomial(size,p)
@@ -58,26 +92,61 @@ mean(rbinom(1000000,12,7/12)==7)
 dbinom(7, 12, 7/12)
 ```
 
-If each call is randomly assigned to a day, then this is equivalent to asking for the probability of finding each of 7 coupons on 12 draws in the Coupon collector's problem. It's also equivalent to asking the probability that a random 12-letter word written with a 7-letter alphabet contains all 7 letters.
-There are a total of 7^12 words, and the number containing all 7 letters is, by inclusion/exclusion:
-
-$$7^{12}-\binom766^{12}+\binom755^{12}-\binom744^{12}+\binom733^{12}-\binom722^{12}+\binom711^{12}$$
-$$\frac{3162075840}{7^{12}}\approx 22.846\%$$
 
 1.27 Verify the following identities for $n\ge2$.  
 
 (a) $\sum_{k=0}^n(-1)^k(_k^n)=0$  
 
-$$\sum_{k=0}^n(-1)^k(_k^n)=\begin{cases}-\binom n1,-\binom n3,...,-\binom n{n-2},-\binom nn &when k=odd\\ 0,\binom n2,\binom n4,...\binom n{n-2},\binom nn &when k=even\end{cases}=0$$
+When n is odd, the formula is:
 
-$$\sum_{k=0}^n(-1)^k(_k^n)=0-\binom n1+\binom n2-\binom n3+\binom n4...+\binom n{n-3}-\binom n{n-2}+\binom n{n-1}+\binom nn =0$$
+$$\sum_{k=0}^n(-1)^k(_k^n)=\binom n0-\binom n1+\binom n2...-\binom n{n-2}+\binom n{n-1}-\binom nn$$
 
-(b) $\sum_{k=1}^nk(_k^n)=n2^{n-1}$  
+$$=\binom n0-\binom nn+\Big[\binom n{n-1}-\binom n1\Big]+\Big[\binom n2-\binom n{n-2}\Big]...$$
+
+$$\because\quad \binom nk=\frac{n!}{k!(n-k)!}=\frac{n!}{(n-k)![n-(n-k)]!}=\binom n{n-k}$$
+
+ > All $\binom nk and \binom n{n-k}$ which are equal and have opposite signs. Thus, all pairs cancel and the sum is zero.
+In the same way, we know for n even that: 
+
+$$\sum_{k=1}^{n-1}(-1)^k\binom{n-1}k=\Bigg[-\binom{n-1}1+\binom{n-1}2-\binom{n-1}3...-\binom{n-1}{n-3}+\binom {n-1}{n-2}\Bigg]-\binom{n-1}{n-1}=-\binom{n-1}{n-1}=-1$$
+
+$$\sum_{k=1}^{n-1}(-1)^k\binom{n-1}{k-1}=-\binom{n-1}0+\Bigg[\binom{n-1}1-\binom{n-1}2...-\binom{n-1}{n-4}+\binom {n-1}{n-3}-\binom{n-1}{n-2}\Bigg]=-\binom{n-1}{0}=-1$$
+
+
+ > When n is odd, the formula is:
+
+$$\sum_{k=0}^n(-1)^k(_k^n)=\binom n0-\binom n1+\binom n2...+\binom n{n-2}-\binom n{n-1}+\binom nn$$
+
+$$=1+1-\binom n1+\binom n2...+\binom n{n-2}-\binom n{n-1}=2+\sum_{k=1}^{n-1}(-1)^k(_k^n)$$
+
+  > According to the Pascal's rule, a combinatorial identity about binomial coefficients
+ 
+ $$\binom nk=\binom {n-1}{k-1}+\binom {n-1}{k}$$
+
+$$\therefore\quad \sum_{k=0}^n(-1)^k(_k^n)=2+\sum_{k=1}^{n-1}(-1)^k\bigg[\binom {n-1}{k-1}+\binom {n-1}{k}\bigg]$$
+
+$$=2+\sum_{k=1}^{n-1}(-1)^k\binom {n-1}{k-1}+\sum_{k=1}^{n-1}(-1)^k\binom {n-1}{k}=2-1-1=0$$
+
+Therefore, for k>0, $\sum_{k=0}^n(-1)^k(_k^n)=0$
+
+(b) $\sum_{k=1}^nk\binom{k}n=n2^{n-1}$  
+
+$$\sum_{k=1}^nk(_k^n)=\binom n1+2\binom n2+3\binom n3...+(n-2)\binom n{n-2}+(n-1)\binom n{n-1}+n\binom nn$$
+
+$$\sum_{k=1}^nk(_k^n)=\sum_{k=1}^n\frac{kn!}{k!(n-k)!}=\sum_{k=1}^nn\frac{(n-1)!}{(k-1)!(n-1-k+1)}=n\sum_{k=1}^n\binom{n-1}{k-1}$$
+
+ > According to the Binomial theorem, set x=1, j=k-1, m=n-1
+
+$$\sum_{j=0}^m(_j^m)x^j=(1+x)^m \implies \sum_{k=1}^{n-1}\binom{n-1}{k-1}1^{k-1}=(1+1)^{n-1}=2^{n-1} $$
+
+$$\therefore\quad \sum_{k=1}^nk\binom{k}n=n2^{n-1}$$
 
 (c) $\sum_{k=1}^n(-1)^{k+1}k(_k^n)=0$  
 
+According question (a) $\sum_{j=0}^m(-1)^j\binom{m}j=0$, set j=k-1, m=n-1.
 
----
+$$\implies \sum_{k=1}^{n-1}(-1)^{k-1}\binom{n-1}{k-1}=0$$
+
 
 1.38 Prove each of the following statements. ( Assume that any conditioning event has positive probability.)  
 
