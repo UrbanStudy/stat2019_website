@@ -21,6 +21,7 @@ $$\implies\quad P(A\cap B)\ge P(A)+P(B)-(2-1)=\frac13+\frac34-1=\frac1{12}$$
 
 > According to properties of the probability function, $A\cap B\ne\emptyset$. Therefore, A and B don't satisfy the definition of pairwise disjoint.
 
+---
 1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials  
 
 $$\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)$$
@@ -33,9 +34,9 @@ $$\frac{\partial^4}{\partial V_1^{r_1}\partial V_2^{r_2}\partial V_3^{4-r_1-r_2}
 
  > This question is an elementary combinatorics using the stars and bars method, which is also called putting n indistinguishable balls into r distinguishable bins.
 The number of possible derivatives is equal to the number of possible arrangements of putting the 4 index into the 3 bins, which is the arrangement of the index and the walls of the bins. 3 bins make 3-1=2 walls. Thus, we count all of the arrangements of 2 walls and 4 index about **unordered** counting **with replacement**. 
-I make a function of combination by R and input the n=6 and r=4. The result is 15.
+We calculate the combination $\binom64$. The result is 15.
 
-```{r}
+```{r, echo=FALSE}
 C <- function(n,r){choose(n,r)} # combination
 P <- function(n,r){choose(n,r) * factorial(r)} # permutation
 C(6,4)
@@ -46,7 +47,7 @@ C(6,4)
 
  > We can write the function as:
 
-$$\frac{\partial^{r}}{\partial V_1^{r_1}\partial V_2^{r_2}...\partial V_n^{r_i}}f(V_1,V_2,...V_n),\quad r=\sum_1^i r_i$$
+$$\frac{\partial^{r}}{\partial V_1^{r_1}\partial V_2^{r_2}...\partial V_n^{r_i}}f(V_1,V_2,...V_n),\quad r=\sum_{i=1}^n r_i$$
 
  > According the method in question (a),we count all of the arrangements of n-1 walls and r index
 
@@ -58,27 +59,41 @@ $$\bigg (\binom nr\bigg)=\binom {n+r-1}r=\frac{(n+r-1)!}{r!(n-1)!}=\frac{(n+r-1)
  
 $$\binom{n+r-1}{r-1}=\binom{n+r-1}{n}$$
 
-
+ --- 
 1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?  
 
-<--(Answer: .2285)(https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)-->
+<!--[Answer: .2285](https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)-->
 
- > This question is about enumerating methods of counting to construct probability assignments on finite sample spaces.
-Each call is unique and randomly assigned to a day. The total number of elements are 7^12. The number containing all 7 all is, 
+ > This question is about enumerating methods of counting to construct probability assignments on finite sample spaces. Each call is unique and randomly assigned to a day independently. There are a total of $7^12$ assignments.
+   Firstly, We use $P_i, i=1,2,...7$ to represent the porbability of no call on i days. When no call on 1 day, the number of assignments of rest days includes 6 ordered choosing tasks in 12 ways with replacement. In this way, when no call on 6 day the number of assignments of rest days includes 1 ordered choosing tasks in 12 ways with replacement. The probabilities are:
+ 
+$$P_i=\frac{6^{12}}{7^{12}},\ \frac{5^{12}}{7^{12}},..\frac{1^{12}}{7^{12}},\ 0$$
 
-The number of arrangment of at least one call each day is:
 
-$$7^{12}-\binom766^{12}+\binom755^{12}-\binom744^{12}+\binom733^{12}-\binom722^{12}+\binom711^{12}$$
+
+ > Secondly, we use $A_i, i=1,2,...7$ represent the combination of days. The probability of no call is:
+
+$$P(A_1\cup A_2\cup...A_7)=P(\cup_{i=1}^7A_i)=\sum_{i=1}^7P(A_i)-\sum_{i<j}P(A_i\cap A_j)+\sum_{i<j<k}P(A_i\cap A_j\cap A_k)-...+P(\cap_{i=1}^7A_i)$$
+
+$$=\binom71P_1-\binom72P_2+\binom73P_3-...-\binom76P_6+\binom77P_7$$
+
+ $$=\binom71\frac{6^{12}}{7^{12}}-\binom72\frac{5^{12}}{7^{12}}+\binom73\frac{4^{12}}{7^{12}}-\binom74\frac{3^{12}}{7^{12}}+\binom75\frac{2^{12}}{7^{12}}-\binom76\frac{1^{12}}{7^{12}}+0=\sum_{k=1}^{7}(-1)^{7-k}\binom{7}{k}(\frac{7-k}{7})^{12}$$
 
  > The probability of at least one call each day is:
 
-$$\frac{3162075840}{7^{12}}\approx 22.846\%$$
+ $$1-P(A_1\cup A_2\cup...A_7)=1-\sum_{k=1}^{7}(-1)^{7-k}\binom{7}{k}(\frac{7-k}{7})^{12}$$
 
- > I also try to use the binomial distribution with parameters _size_ and _prob_. The density is:
+ > I complete the calculation in R: 
+
+```{r}
+1-(C(7,1)*6^12-C(7,2)*5^12+C(7,3)*4^12-C(7,4)*3^12+C(7,5)*2^12-C(7,6)*1^12)/(7^12)
+```
+
+ > I also try an incomprehensible way for me. Using the binomial distribution with parameters _size_ and _prob_, the density is:
 
 $$p(x) = \binom nxp^x (1-p)^{n-x},\ for\ x = 0, …, n$$
 
-Convert this formula by two methord in R:
+ > Convert this formula by two methord in R, the results is close.
 
 ```{r}
 # X1…n ∼Binomial(size,p)

@@ -326,61 +326,91 @@ $(document).ready(function () {
 <blockquote>
 <p>According to properties of the probability function, <span class="math inline">\(A\cap B\ne\emptyset\)</span>. Therefore, A and B don’t satisfy the definition of pairwise disjoint.</p>
 </blockquote>
-<p>1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials</p>
-<p><span class="math display">\[\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)\]</span></p>
-<ol style="list-style-type: lower-alpha">
-<li>How many fourth partial derivatives does a function of three variables have?</li>
-</ol>
-<blockquote>
-<p>We can write the function as:</p>
-</blockquote>
-<p><span class="math display">\[\frac{\partial^4}{\partial V_1^{r_1}\partial V_2^{r_2}\partial V_3^{4-r_1-r_2}}f(x,y,z),\quad r_1,r_2\in\{0,1,2,3,4\}\]</span></p>
-<blockquote>
-<p>This question is an elementary combinatorics using the stars and bars method, which is also called putting n indistinguishable balls into r distinguishable bins. The number of possible derivatives is equal to the number of possible arrangements of putting the 4 index into the 3 bins, which is the arrangement of the index and the walls of the bins. 3 bins make 3-1=2 walls. Thus, we count all of the arrangements of 2 walls and 4 index about <strong>unordered</strong> counting <strong>with replacement</strong>. I make a function of combination by R and input the n=6 and r=4. The result is 15.</p>
-</blockquote>
-<pre class="r"><code>C &lt;- function(n,r){choose(n,r)} # combination
-P &lt;- function(n,r){choose(n,r) * factorial(r)} # permutation
-C(6,4)</code></pre>
-<pre><code>## [1] 15</code></pre>
-<ol start="2" style="list-style-type: lower-alpha">
-<li>Prove that a function of n variables has <span class="math inline">\(\binom{n+r-1}{r})\)</span> rth partial derivatives.</li>
-</ol>
-<blockquote>
-<p>We can write the function as:</p>
-</blockquote>
-<p><span class="math display">\[\frac{\partial^{r}}{\partial V_1^{r_1}\partial V_2^{r_2}...\partial V_n^{r_i}}f(V_1,V_2,...V_n),\quad r=\sum_1^i r_i\]</span></p>
-<blockquote>
-<p>According the method in question (a),we count all of the arrangements of n-1 walls and r index</p>
-</blockquote>
-<blockquote>
-<p>This is also a multiset coefficient of cardinality r, with elements taken from a finite set of cardinality n, a notation that is meant to resemble that of binomial coefficients</p>
-</blockquote>
-<p><span class="math display">\[\bigg (\binom nr\bigg)=\binom {n+r-1}r=\frac{(n+r-1)!}{r!(n-1)!}=\frac{(n+r-1)...(n+2)(n+1)n}{r!}\]</span></p>
-<blockquote>
-<p>We also know</p>
-</blockquote>
-<p><span class="math display">\[\binom{n+r-1}{r-1}=\binom{n+r-1}{n}\]</span></p>
+<table style="width:6%;">
+<colgroup>
+<col width="5%"></col>
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>1.19 If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials</td>
+</tr>
+<tr class="even">
+<td><span class="math display">\[\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)\]</span></td>
+</tr>
+<tr class="odd">
+<td>(a) How many fourth partial derivatives does a function of three variables have?</td>
+</tr>
+<tr class="even">
+<td>&gt; We can write the function as:</td>
+</tr>
+<tr class="odd">
+<td><span class="math display">\[\frac{\partial^4}{\partial V_1^{r_1}\partial V_2^{r_2}\partial V_3^{4-r_1-r_2}}f(x,y,z),\quad r_1,r_2\in\{0,1,2,3,4\}\]</span></td>
+</tr>
+<tr class="even">
+<td>&gt; This question is an elementary combinatorics using the stars and bars method, which is also called putting n indistinguishable balls into r distinguishable bins. The number of possible derivatives is equal to the number of possible arrangements of putting the 4 index into the 3 bins, which is the arrangement of the index and the walls of the bins. 3 bins make 3-1=2 walls. Thus, we count all of the arrangements of 2 walls and 4 index about <strong>unordered</strong> counting <strong>with replacement</strong>. We calculate the combination <span class="math inline">\(\binom64\)</span>. The result is 15.</td>
+</tr>
+<tr class="odd">
+<td><code>## [1] 15</code></td>
+</tr>
+<tr class="even">
+<td>(b) Prove that a function of n variables has <span class="math inline">\(\binom{n+r-1}{r})\)</span> rth partial derivatives.</td>
+</tr>
+<tr class="odd">
+<td>&gt; We can write the function as:</td>
+</tr>
+<tr class="even">
+<td><span class="math display">\[\frac{\partial^{r}}{\partial V_1^{r_1}\partial V_2^{r_2}...\partial V_n^{r_i}}f(V_1,V_2,...V_n),\quad r=\sum_{i=1}^n r_i\]</span></td>
+</tr>
+<tr class="odd">
+<td>&gt; According the method in question (a),we count all of the arrangements of n-1 walls and r index</td>
+</tr>
+<tr class="even">
+<td>&gt; This is also a multiset coefficient of cardinality r, with elements taken from a finite set of cardinality n, a notation that is meant to resemble that of binomial coefficients</td>
+</tr>
+<tr class="odd">
+<td><span class="math display">\[\bigg (\binom nr\bigg)=\binom {n+r-1}r=\frac{(n+r-1)!}{r!(n-1)!}=\frac{(n+r-1)...(n+2)(n+1)n}{r!}\]</span></td>
+</tr>
+<tr class="even">
+<td>&gt; We also know</td>
+</tr>
+<tr class="odd">
+<td><span class="math display">\[\binom{n+r-1}{r-1}=\binom{n+r-1}{n}\]</span></td>
+</tr>
+</tbody>
+</table>
 <p>1.20 My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?</p>
-<p>&lt;–(Answer: .2285)(<a href="https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)--" class="uri">https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)--</a>&gt;</p>
+<!--[Answer: .2285](https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)-->
 <blockquote>
-<p>This question is about enumerating methods of counting to construct probability assignments on finite sample spaces. Each call is unique and randomly assigned to a day. The total number of elements are 7^12. The number containing all 7 all is,</p>
+<p>This question is about enumerating methods of counting to construct probability assignments on finite sample spaces. Each call is unique and randomly assigned to a day independently. There are a total of <span class="math inline">\(7^12\)</span> assignments. Firstly, We use <span class="math inline">\(P_i, i=1,2,...7\)</span> to represent the porbability of no call on i days. When no call on 1 day, the number of assignments of rest days includes 6 ordered choosing tasks in 12 ways with replacement. In this way, when no call on 6 day the number of assignments of rest days includes 1 ordered choosing tasks in 12 ways with replacement. The probabilities are:</p>
 </blockquote>
-<p>The number of arrangment of at least one call each day is:</p>
-<p><span class="math display">\[7^{12}-\binom766^{12}+\binom755^{12}-\binom744^{12}+\binom733^{12}-\binom722^{12}+\binom711^{12}\]</span></p>
+<p><span class="math display">\[P_i=\frac{6^{12}}{7^{12}},\ \frac{5^{12}}{7^{12}},..\frac{1^{12}}{7^{12}},\ 0\]</span></p>
+<blockquote>
+<p>Secondly, we use <span class="math inline">\(A_i, i=1,2,...7\)</span> represent the combination of days. The probability of no call is:</p>
+</blockquote>
+<p><span class="math display">\[P(A_1\cup A_2\cup...A_7)=P(\cup_{i=1}^7A_i)=\sum_{i=1}^7P(A_i)-\sum_{i&lt;j}P(A_i\cap A_j)+\sum_{i&lt;j&lt;k}P(A_i\cap A_j\cap A_k)-...+P(\cap_{i=1}^7A_i)\]</span></p>
+<p><span class="math display">\[=\binom71P_1-\binom72P_2+\binom73P_3-...-\binom76P_6+\binom77P_7\]</span></p>
+<p><span class="math display">\[=\binom71\frac{6^{12}}{7^{12}}-\binom72\frac{5^{12}}{7^{12}}+\binom73\frac{4^{12}}{7^{12}}-\binom74\frac{3^{12}}{7^{12}}+\binom75\frac{2^{12}}{7^{12}}-\binom76\frac{1^{12}}{7^{12}}+0=\sum_{k=1}^{7}(-1)^{7-k}\binom{7}{k}(\frac{7-k}{7})^{12}\]</span></p>
 <blockquote>
 <p>The probability of at least one call each day is:</p>
 </blockquote>
-<p><span class="math display">\[\frac{3162075840}{7^{12}}\approx 22.846\%\]</span></p>
+<p><span class="math display">\[1-P(A_1\cup A_2\cup...A_7)=1-\sum_{k=1}^{7}(-1)^{7-k}\binom{7}{k}(\frac{7-k}{7})^{12}\]</span></p>
 <blockquote>
-<p>I also try to use the binomial distribution with parameters <em>size</em> and <em>prob</em>. The density is:</p>
+<p>I complete the calculation in R:</p>
+</blockquote>
+<pre class="r"><code>1-(C(7,1)*6^12-C(7,2)*5^12+C(7,3)*4^12-C(7,4)*3^12+C(7,5)*2^12-C(7,6)*1^12)/(7^12)</code></pre>
+<pre><code>## [1] 0.2284524</code></pre>
+<blockquote>
+<p>I also try an incomprehensible way for me. Using the binomial distribution with parameters <em>size</em> and <em>prob</em>, the density is:</p>
 </blockquote>
 <p><span class="math display">\[p(x) = \binom nxp^x (1-p)^{n-x},\ for\ x = 0, …, n\]</span></p>
-<p>Convert this formula by two methord in R:</p>
+<blockquote>
+<p>Convert this formula by two methord in R, the results is close.</p>
+</blockquote>
 <pre class="r"><code># X1…n ∼Binomial(size,p)
 # Generate 1000000 occurrences of 12 calls, each with 7/12 probability
 # Finding density with simulation
 mean(rbinom(1000000,12,7/12)==7)</code></pre>
-<pre><code>## [1] 0.228298</code></pre>
+<pre><code>## [1] 0.228095</code></pre>
 <pre class="r"><code># Calculating exact probability density
 dbinom(7, 12, 7/12)</code></pre>
 <pre><code>## [1] 0.2286054</code></pre>
