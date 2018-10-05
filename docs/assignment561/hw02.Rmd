@@ -6,18 +6,78 @@ date: "10/13/2018"
 output: html_document
 ---
 
-1 .39 A pair of events A and B cannot be simultaneously mutually exclusive and independent.
-Prove that if P(A) > 0 and P(B) > 0, then:
+1 .39 A pair of events A and B cannot be simultaneously mutually exclusive and independent. Prove that if P(A) > 0 and P(B) > 0, then:
+
 (a) If A and B are mutually exclusive, they cannot be independent.
+
+When A and B are pairwise disjoint, $P(A\cap{B})=0$. 
+
+$$\because\quad P(A)P(B)>0\quad \therefore\quad P(A)P(B)\ne P(A\cap{B})$$
+
+Therefore, A and B does not satisfy the definition of **statistically independent**
 
 (b) If A and B are independent, they cannot be mutually exclusive.
 
+Acrroding the definition of statistically independent, When A and B are independent, $P(A\cap{B})=P(A)P(B)>0$, which means $A\cap B\ne\emptyset$. Therefore, A and B does not satisfy the definition of **paiwise disjoint**$
+
 1.47 Prove that the following functions are cdfs.
+
+According the Theorem 1.5.3 about **cumulative distribution function**, A cdf F(x) should satisfy 3 conditions: (https://www.zhihu.com/question/26432043)
+
+a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$
+b. F is non-decreasing，which means for any a>b $ f(a)>f(b) $
+c. F is right-continuous, which means $\lim_(x\to c)f(x)=f(c) $
+
 (a) $\frac12+\frac1\pi\tan^{-1}(x), x\in-(\infty,\infty)$
-(b) $(l + e-X)-l , x\in(-\infty,\infty)$
+
+$$\lim_{x\to-\infty}F(x)=\lim_{x\to-\infty}[\frac12+\frac1\pi\tan^{-1}(x)]=\frac12+\frac1\pi(-\frac\pi2)=0$$
+
+$$\lim_{x\to\infty}F(x)=\frac12+\frac1\pi(\frac\pi2)=1$$
+
+$$f(x)'=\frac\partial{\partial{x}}[\frac12+\frac1\pi\tan^{-1}(x)]=\frac1{\pi(1+x^2)}>0$$
+
+
+(b) $(1+e^{-x})^{-1} , x\in(-\infty,\infty)$
+
+ > This is a Continuous cdf.
+
+$$\because\quad \lim_{x\to-\infty}e^x=0,\quad\lim_{x\to-\infty}e^{-x}=\infty,\quad \lim_{x\to-\infty}\frac1{1+e^{-x}}=0\quad \therefore\lim_{x\to-\infty}F(x)=0$$
+
+$$\text{in the same way, }\lim_{x\to\infty}F(x)=\lim_{x\to\infty}\frac1{1+e^{-x}}=\lim_{x\to\infty}\frac1{1+0}=1$$
+
+$$f(x)'=\frac\partial{\partial{x}}\frac1{1+e^{-x}}=\frac{e^{-x}}{(1+e^{-x})^2}>0$$
+
 (c) $e^{-e^{-x}}, x\in(-\infty,\infty)$
+
+$$\because\quad \lim_{x\to-\infty}e^x=0,\quad\lim_{x\to-\infty}e^{-x}=\infty,\quad\lim_{x\to-\infty}e^{e^{-x}}=\infty,\quad \therefore\lim_{x\to-\infty}e^{-e^{-x}}=0$$
+
+$$\text{in the same way, }\lim_{x\to\infty}F(x)=\lim_{x\to\infty}e^{-e^{-x}}=e^0=1$$
+
+$$f(x)'=\frac\partial{\partial{x}}e^{-e^{-x}}=e^{-e^{-x}}\frac\partial{\partial{x}}(-e^{-x})=e^{-e^{-x}}(-e^{-x})\frac\partial{\partial{x}}(-x)=e^{-e^{-x}}e^{-x}>0$$
+
+
 (d) $1-e^{-x}, x\in(0,\infty)$
-(e) the function defined in (1.5.6)
+
+$$\because\quad \lim_{x\to-\infty}e^x=1,\quad\lim_{x\to-\infty}e^{-x}=1,\quad \therefore\lim_{x\to-\infty}(1-e^{-x})=0$$
+
+$$\text{in the same way, }\lim_{x\to\infty}F(x)=\lim_{x\to\infty}(1-e^{-x})=1-e^0=1$$
+
+$$f(x)'=\frac\partial{\partial{x}}(1-e^{-x})=-e^{-x}\frac\partial{\partial{x}}(-x)=e^{-x}>0$$
+
+(e) the function defined in (1.5.6) $F_Y(y)=\begin{cases}\frac{1-\epsilon}{1+e^{-y}}，& y<0\\\epsilon+\frac{1-\epsilon}{1+e^{-y}}，& y\ge0\end{cases} $
+
+ > This is a cdf with jumps.
+ 
+ $$\lim_{y\to-\infty}F_Y(y)=\lim_{y\to-\infty}\frac{1-\epsilon}{1+e^{-y}}=0$$
+
+ $$\lim_{y\to\infty}F_Y(y)=\epsilon+\frac{1-\epsilon}{1+e^{-y}}=\epsilon+1-\epsilon=1$$
+
+ $$\lim_{y\to0}F_Y(y)=\epsilon+\frac{1-\epsilon}{1+e^{-y}}=1=F(0)$$
+
+ > The limit point is 0. No jump occurs when F(y) approaches 0 from the right. And $0<\epsilon<1$
+
+
+$$f(y)'=\frac\partial{\partial{y}}(\epsilon+\frac{1-\epsilon}{1+e^{-y}})=(1-\epsilon)\frac{1+e^{-y}+\frac\partial{\partial{y}}(e^{-y})}{(1+e^{-y})^2}=\frac{1-\epsilon}{(1+e^{-y})^2}>0$$
 
 1 .54 For each of the following, determine the value of c that makes F(x) a pdf.
 
@@ -28,17 +88,7 @@ Prove that if P(A) > 0 and P(B) > 0, then:
     
 
 
-1 .55 An electronic device has lifetime denoted by T. The device has value V 5 if it fails
-before time t = 3; otherwise, it has value V = 2T. Find the cdf of V, if T has pdf
+1 .55 An electronic device has lifetime denoted by T. The device has value V 5 if it fails before time t = 3; otherwise, it has value V = 2T. Find the cdf of V, if T has pdf
 
 $$f_T(t)=\frac1{1.5}e^{-\frac{t}{1.5}},\ t>0$$
-    
-```{r, echo=TRUE, message=FALSE, warning=FALSE}
-library(tidyverse)
-library(huxtable)
-californiatod <- read_csv("californiatod.csv")
-huxreg(
-  lm(houseval ~ transit * railtype + density + I(density^2), data=californiatod)
-  )
-```
-
+ 
