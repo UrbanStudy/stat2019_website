@@ -2,7 +2,7 @@
 title: "HW2"
 subtitle: STAT561 Fall 2018
 author: 'Shen Qu'
-date: "10/13/2018"
+date: "10/11/2018"
 output: html_document
 ---
 
@@ -10,20 +10,19 @@ output: html_document
 
 (a) If A and B are mutually exclusive, they cannot be independent.
 
-When A and B are pairwise disjoint, $P(A\cap{B})=0$. 
+ > When A and B are pairwise disjoint, $P(A\cap{B})=0$. 
 
 $$\because\quad P(A)P(B)>0\quad \therefore\quad P(A)P(B)\ne P(A\cap{B})$$
 
-Therefore, A and B does not satisfy the definition of **statistically independent**
+ > Therefore, A and B does not satisfy the definition of **statistically independent**
 
 (b) If A and B are independent, they cannot be mutually exclusive.
 
-Acrroding the definition of statistically independent, When A and B are independent, $P(A\cap{B})=P(A)P(B)>0$, which means $A\cap B\ne\emptyset$. Therefore, A and B does not satisfy the definition of **paiwise disjoint**$
+ > Acrroding the definition of statistically independent, When A and B are independent, $P(A\cap{B})=P(A)P(B)>0$, which means $A\cap B\ne\emptyset$. Therefore, A and B does not satisfy the definition of **paiwise disjoint**$
 
 1.47 Prove that the following functions are cdfs.
 
-According the Theorem 1.5.3 about **cumulative distribution function**, A cdf F(x) should satisfy 3 conditions: (https://www.zhihu.com/question/26432043)
-
+ > According the Theorem 1.5.3 about **cumulative distribution function**, A cdf F(x) should satisfy 3 conditions:   
 a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$
 b. F is non-decreasing，which means for any a>b $ f(a)>f(b) $
 c. F is right-continuous, which means $\lim_(x\to c)f(x)=f(c) $
@@ -81,14 +80,43 @@ $$f(y)'=\frac\partial{\partial{y}}(\epsilon+\frac{1-\epsilon}{1+e^{-y}})=(1-\eps
 
 1 .54 For each of the following, determine the value of c that makes F(x) a pdf.
 
+ > According to the theorem 1.6.5, A function fx(x) is a pdf (or pmf ) of a random variable X if and only if  
+a. $fx(x)\ge 0$  for all x.  
+b. $\sum_xfx (x) = 1 (pmf)\ or \int_{-\infty}^{\infty}fx (x) dx=1\ (pdf)$
+
 (a) $f(x)=c\sin{x}, 0<x<\pi/2$
 
+$$\because 0<x<\pi/2,\ \sin{x}\in[0,1],\quad \therefore when\ c\ge0,\quad fx(x)\ge0$$
+
+$$\because \int_{0}^{\frac\pi2}sin(x)dx=1,\quad \therefore c=\frac11=1$$
 
 (b) $f(x)=ce^{-|x|}, -\infty< x < \infty$
     
+$$\because -\infty<-|x|\le0,\ e^{-|x|}\in(0,1],\quad \therefore when\ c\ge0,\quad fx(x)\ge0$$
+
+$$\because \int_{-\infty}^{\infty}e^{-|x|}dx=\int_{-\infty}^{0}e^{x}dx+\int_{0}^{\infty}e^{-x}dx=2,\quad \therefore c=\frac12$$
 
 
-1 .55 An electronic device has lifetime denoted by T. The device has value V 5 if it fails before time t = 3; otherwise, it has value V = 2T. Find the cdf of V, if T has pdf
+1 .55 An electronic device has lifetime denoted by T. The device has value V=5 if it fails before time t = 3; otherwise, it has value V = 2T. Find the cdf of V, if T has pdf
 
 $$f_T(t)=\frac1{1.5}e^{-\frac{t}{1.5}},\ t>0$$
+
+$$\because -\infty<-\frac{t}{1.5}<0,\quad \therefore  \frac1{1.5}e^{-\frac{t}{1.5}}\in(0,\frac23)$$
+
+$$And\quad \int_{0}^{\infty}\frac1{1.5}e^{-\frac{t}{1.5}}dx=1$$
+
+ > According the theorem 1.5.10 of **identically distributed**
+
+$$F_V(v)=P(V\le v)=P(T\le t)=F_T(t)$$
+
+ > According the definition 1.6.3 of **probability density function**  
+When 0<t<3, V=5, then
+
+$$P(V\le 5)=P(T<3)=\int_{0}^{3}f_T(t)dt=\int_{0}^{3}\frac1{1.5}e^{-\frac{t}{1.5}}dt=\int_{0}^{3}-e^{-\frac{t}{1.5}}d\frac {-t}{1.5}=-e^{-\frac{3}{1.5}}+e^{-\frac{0}{1.5}}=1-e^{-2}$$
+
+ > When $t\ge3,\ V\ge6$, then
  
+$$P(V\le v)=P(2T<v)=P(T<\frac{v}2)=\int_{0}^{\frac{v}2}f_T(v)dv=\int_{0}^{\frac{v}2}\frac1{1.5}e^{-\frac{v}{1.5}}dv=\int_{0}^{\frac{v}2}-e^{-\frac{v}{1.5}}d\frac {-v}{1.5}=-e^{-\frac{v}{3}}+e^{-\frac{0}{3}}=1-e^{-\frac{v}3}$$
+
+$$\therefore  F_V(v)=\begin{cases}1-e^{-2}&6\le v\\1-e^{-\frac{v}3}&0<v<6\\0&-\infty<v<0\end{cases}$$
+
