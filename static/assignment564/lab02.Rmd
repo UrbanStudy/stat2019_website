@@ -17,13 +17,14 @@ options(repos="https://cran.rstudio.com")
 ## Problem 1: 
 
 Exercise 2.3 (Page 58): Table B.2 presents data collected during a solar energy project at Georgia Tech.
-y: Total heat flux (kwatts)
-x1 : Insolation (watts/m2) 
-x2 : Position of focal point in east direction (inches) 
-x3 : Position of focal point in south direction (inches) 
-x4 : Position of focal point in north direction (inches) 
+y: Total heat flux (kwatts)  
+x1 : Insolation (watts/m2)   
+x2 : Position of focal point in east direction (inches)   
+x3 : Position of focal point in south direction (inches)   
+x4 : Position of focal point in north direction (inches)   
 x5 : Time of day
 
+ <!--https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals-->
 
 ```{r, echo=TRUE}
 # Load the package 
@@ -48,7 +49,7 @@ model_y_x4 <- lm(y ~ x4, data=table_b2)
 model_y_x4
 ```
 
-The model is $y=607.1-21.4x_4$
+ > The model is $y=607.1-21.4x_4$
 
 b. Construct the analysis-of-variance table and test for significance of regression.
 
@@ -56,19 +57,35 @@ b. Construct the analysis-of-variance table and test for significance of regress
 model_y_x4 %>% summary()
 ```
 
+ > The table shows that p-value is less than 5.935e-09. The regression model is significant.
+
 c. Find a 99% CI on the slope.
 
+ > obtain the 99% CI for parameter estimates.
+
+$$\beta_1 \pm t_{\alpha / 2, n - 2} \left(\frac{\sqrt{MSE}}{\sqrt{\sum (x_i - \bar{x})^2}}\right)$$
+
 ```{r}
-model_y_x4 %>% augment()
+model_y_x4 %>% confint(level=0.99)
 ```
+
+ > The 99% confidence interval for slope of the regression line is (-28.50995, -14.29497).
 
 d. Calculate $R^2$.
 
+ > According to the analysis-of-variance table (b.), Multiple R-squared is 0.7205, Adjusted R-squared is 0.7102.
+
 e. Find a 95% CI on the mean heat flux when the radial deflection is 16.5 milliradians.
 
+
+
+$$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$$
+
 ```{r}
-predict(model_y_x4, newdata = data.frame(x4=16.5), level=0.95)
+model_y_x4 %>% predict(newdata = data.frame(x4=16.5), interval = "confidence", level=0.95)
 ```
+
+ > When the radial deflection is 16.5 milliradians, the 95% CI on the mean heat flux is (249.1468, 258.7787)
 
 ## Problem 2: 
 
@@ -100,16 +117,56 @@ table_b3 %>% ggplot(aes(x1,y))+geom_point()+geom_smooth(method="lm")
 
 a. Fit a simple linear regression model relating gasoline mileage y (miles per gallon) to engine displacement x l (cubic inches).
 
+
+```{r}
+# build the model
+model_y_x1 <- lm(y ~ x1, data=table_b3)
+model_y_x1
+```
+
 b. Construct the analysis-of-variance table and test for significance of regression.
+
+
+```{r}
+model_y_x1 %>% summary()
+```
+
+ > The table shows that p-value is 3.82e-11. The regression model is significant.
 
 c. What percent of the total variability in gasoline mileage is accounted for by the linear relationship with engine displacement?
 
-d. Find a 95% CI on the mean gasoline mileage if the engine displacement is 275 in.3
+ > According to the Multiple R-squared value, there are 77.2% variability in gasoline mileage is accounted for by the linear relationship with engine displacement.
+
+d. Find a 95% CI on the mean gasoline mileage if the engine displacement is 275 in.^3
+
+
+$$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$$
+
+```{r}
+
+model_y_x1 %>% predict(newdata = data.frame(x1=275), interval = "confidence", level=0.95)
+
+```
+
+ > When the engine displacement is 275 in.^3, the 95% CI on the mean gasoline mileage is (14.32311, 27.04622).
+
 
 e. Suppose that we wish to predict the gasoline mileage obtained from a car with a 275-in.3 engine. Give a point estimate of mileage. Find a 95% prediction interval on the mileage.
 
+$$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(1 + \frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum (x_i - \bar{x})^2} \right)}$$
+
+```{r}
+
+model_y_x1 %>% predict(newdata = data.frame(x1=275), interval = "prediction", level=0.95)
+
+```
+
+ > When the engine displacement is 275 in.^3, the 95% CI on the mean gasoline mileage is (14.32311, 27.04622).
+
 f. Compare the two intervals obtained in parts d and e. Explain the difference between them. Which one is wider, and why?
 
+ > The prediction interval is wider than confidence interval. Because the prediction interval depends
+on both the error from the fitted model and the error associated with future observations.
 
 ## Problem 3: 
 
@@ -123,17 +180,39 @@ table_12 <- read_xlsx("Problem 2.12.xlsx")
 # Observe the data frame
 glimpse(table_12)
 
-# visualizng y and x1
+# visualizng `Usage/l000` and Temperature
 table_12 %>% ggplot(aes(Temperature,`Usage/l000`,col=as.factor(Month)))+geom_point( )+geom_smooth(method="lm")
 ```
 
 a. Fit a simple linear regression model to the data.
 
+```{r}
+# build the model
+model_use_tem <- lm(`Usage/l000` ~ Temperature, data=table_12)
+
+model_use_tem %>% summary()
+```
+
+ > The model is `Usage/l000`=-6.33209+9.20847*Temperature
+
 b. Test for significance of regression.
+
+> According to the analysis-of-variance table (a.), the table shows that p-value is less than 2.2e-16. The regression model is significant.
 
 c. Plant management believes that an increase in average ambient temperature of 1 degree will increase average monthly steam consumption by 10,000lb. Do the data support this statement?
 
+ > Both of the multiple R-squared and Adjusted R-squared are 0.9999, the statement is a ballpark estimate.
+
 d. Construct a 99% prediction interval on steam usage in a month with average ambient temperature of 58°.
+
+
+```{r}
+
+model_use_tem %>% predict(newdata = data.frame(Temperature=58), interval = "prediction", level=0.99)
+
+```
+
+ > When the Temperature is 58°, the 99% CI on the steam usage is (521.2237, 534.2944).
 
 ## Problem 4: 
 
