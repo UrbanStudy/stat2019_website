@@ -61,7 +61,7 @@ model_y_x4 %>% summary()
 
 c. Find a 99% CI on the slope.
 
- > obtain the 99% CI for parameter estimates.
+ > The equation for the 99% CI for the estimated β1 is defined as:
 
 $$\beta_1 \pm t_{\alpha / 2, n - 2} \left(\frac{\sqrt{MSE}}{\sqrt{\sum (x_i - \bar{x})^2}}\right)$$
 
@@ -69,7 +69,9 @@ $$\beta_1 \pm t_{\alpha / 2, n - 2} \left(\frac{\sqrt{MSE}}{\sqrt{\sum (x_i - \b
 model_y_x4 %>% confint(level=0.99)
 ```
 
- > The 99% confidence interval for slope of the regression line is (-28.50995, -14.29497).
+ > The fitted β1 is -21.402. The 99% confidence interval for slope of the regression line is (-28.50995, -14.29497).
+If the confidence interval for β1 contains 0, it can be concluded there is no significant evidence of a linear relationship between predictor x4 and response y in the population.
+
 
 d. Calculate $R^2$.
 
@@ -77,15 +79,18 @@ d. Calculate $R^2$.
 
 e. Find a 95% CI on the mean heat flux when the radial deflection is 16.5 milliradians.
 
-
+> The confidence interval around the mean response, denoted $\mu_y$, when the predictor value is $x_k$ is defined as:
 
 $$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$$
 
+ > Where $\hat{y}_h$ is the fitted response for predictor value $x_h$, $t_{\alpha/2,n-2}$ is the t-value with n−2 degrees of freedom, while $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$ is the standard error of the fit.
+ 
 ```{r}
 model_y_x4 %>% predict(newdata = data.frame(x4=16.5), interval = "confidence", level=0.95)
 ```
 
  > When the radial deflection is 16.5 milliradians, the 95% CI on the mean heat flux is (249.1468, 258.7787)
+ > From the output, the fitted heat flux is 253.9627 kwatts when the radial deflection is 16.5 milliradians. The confidence interval of (249.1468, 258.7787) signifies the range in which the true population parameter lies at a 95% level of confidence.
 
 ## Problem 2: 
 
@@ -139,8 +144,11 @@ c. What percent of the total variability in gasoline mileage is accounted for by
 
 d. Find a 95% CI on the mean gasoline mileage if the engine displacement is 275 in.^3
 
+ > The confidence interval around the mean response, denoted $\mu_y$, when the predictor value is $x_k$ is defined as:
 
 $$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$$
+
+ > Where $\hat{y}_h$ is the fitted response for predictor value $x_h$, $t_{\alpha/2,n-2}$ is the t-value with n−2 degrees of freedom, while $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$ is the standard error of the fit.
 
 ```{r}
 
@@ -148,12 +156,15 @@ model_y_x1 %>% predict(newdata = data.frame(x1=275), interval = "confidence", le
 
 ```
 
- > When the engine displacement is 275 in.^3, the 95% CI on the mean gasoline mileage is (14.32311, 27.04622).
-
+ > From the output, the fitted gasoline mileage when the engine displacement is 275 in.^3 is 20.68466 gasoline mileage. The confidence interval of (19.57343, 21.79589) signifies the range in which the true population parameter lies at a 95% level of confidence.
 
 e. Suppose that we wish to predict the gasoline mileage obtained from a car with a 275-in.3 engine. Give a point estimate of mileage. Find a 95% prediction interval on the mileage.
 
+ > The prediction interval is rather similar to the confidence interval in calculation, but as mentioned earlier, there are significant differences. The prediction interval equation is defined as:
+
 $$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(1 + \frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum (x_i - \bar{x})^2} \right)}$$
+
+ > Where $\hat{y}_h$ is the fitted response for predictor value $x_h$, $t_{\alpha/2,n-2}$ is the t-value with n−2 degrees of freedom, while $\sqrt{MSE \left(1+\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$ is the standard error of the fit.
 
 ```{r}
 
@@ -161,12 +172,12 @@ model_y_x1 %>% predict(newdata = data.frame(x1=275), interval = "prediction", le
 
 ```
 
- > When the engine displacement is 275 in.^3, the 95% CI on the mean gasoline mileage is (14.32311, 27.04622).
+ > When the engine displacement is 275 in.^3, the 95% prediction interval on the mean gasoline mileage is (14.32311, 27.04622).
 
 f. Compare the two intervals obtained in parts d and e. Explain the difference between them. Which one is wider, and why?
 
- > The prediction interval is wider than confidence interval. Because the prediction interval depends
-on both the error from the fitted model and the error associated with future observations.
+ > The fitted value is the same, but the prediction interval is wider than confidence interval due to the additional term in the standard error of prediction. Prediction and confidence intervals are similar in that they are both predicting a response, however, they differ in what is being represented and interpreted.The best predictor of a random variable (assuming the variable is normally distributed) is the mean $\mu$. The best predictor for an observation from a sample of x data points, x1,x2,⋯,xn and error $\mu$ is $\overline x$.
+The prediction interval depends on both the error from the fitted model and the error associated with future observations.
 
 ## Problem 3: 
 
@@ -212,7 +223,7 @@ model_use_tem %>% predict(newdata = data.frame(Temperature=58), interval = "pred
 
 ```
 
- > When the Temperature is 58°, the 99% CI on the steam usage is (521.2237, 534.2944).
+ > When the Temperature is 58°, the 99% prediction interval on the steam usage is (521.2237, 534.2944).
 
 ## Problem 4: 
 
