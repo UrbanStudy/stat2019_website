@@ -443,3 +443,4 @@ A measure of the spread or variability of a distribution, equaling the average v
 
 1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
 
+[Probability Theory and Mathematical Statistics](https://onlinecourses.science.psu.edu/stat414/node/109/)

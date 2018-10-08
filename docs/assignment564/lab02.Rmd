@@ -89,24 +89,23 @@ $$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k -
 model_y_x4 %>% predict(newdata = data.frame(x4=16.5), interval = "confidence", level=0.95)
 ```
 
- > When the radial deflection is 16.5 milliradians, the 95% CI on the mean heat flux is (249.1468, 258.7787)
  > From the output, the fitted heat flux is 253.9627 kwatts when the radial deflection is 16.5 milliradians. The confidence interval of (249.1468, 258.7787) signifies the range in which the true population parameter lies at a 95% level of confidence.
 
 ## Problem 2: 
 
-Exercise 2.4 (Page 58): Table B.3 presents data on the gasoline mileage performance of 32 different automobiles.
-y : Miles/gallon 
-x1 : Displacement (cubic in.) 
-x2 : Horsepower (ft-lb) 
-x3 : Torqne (ft-lb) 
-x4 : Compression ratio 
-x5 : Rear axle ratio Source : Motor Trend , 1975
-x6 : Carburetor (barrels)
-x7 : No. of transmission speeds 
-x8 : Overall length (in.) 
-x9 : Width (in.) 
-x10 : Weight (lb) 
-x11 : Type of transmission (A automatic; M manual)
+Exercise 2.4 (Page 58): Table B.3 presents data on the gasoline mileage performance of 32 different automobiles.  
+y : Miles/gallon   
+x1 : Displacement (cubic in.)   
+x2 : Horsepower (ft-lb)   
+x3 : Torqne (ft-lb)   
+x4 : Compression ratio   
+x5 : Rear axle ratio Source : Motor Trend , 1975  
+x6 : Carburetor (barrels)  
+x7 : No. of transmission speeds   
+x8 : Overall length (in.)   
+x9 : Width (in.)   
+x10 : Weight (lb)   
+x11 : Type of transmission (A automatic; M manual)  
 
 ```{r, echo=TRUE}
 
@@ -120,7 +119,7 @@ head(table_b3)
 table_b3 %>% ggplot(aes(x1,y))+geom_point()+geom_smooth(method="lm")
 ```
 
-a. Fit a simple linear regression model relating gasoline mileage y (miles per gallon) to engine displacement x l (cubic inches).
+a. Fit a simple linear regression model relating gasoline mileage y (miles per gallon) to engine displacement x1 (cubic inches).
 
 
 ```{r}
@@ -176,7 +175,7 @@ model_y_x1 %>% predict(newdata = data.frame(x1=275), interval = "prediction", le
 
 f. Compare the two intervals obtained in parts d and e. Explain the difference between them. Which one is wider, and why?
 
- > The fitted value is the same, but the prediction interval is wider than confidence interval due to the additional term in the standard error of prediction. Prediction and confidence intervals are similar in that they are both predicting a response, however, they differ in what is being represented and interpreted.The best predictor of a random variable (assuming the variable is normally distributed) is the mean $\mu$. The best predictor for an observation from a sample of x data points, x1,x2,⋯,xn and error $\mu$ is $\overline x$.
+ > The fitted value is the same, but the prediction interval is wider than confidence interval due to the additional term in the standard error of prediction. Prediction and confidence intervals are similar in that they are both predicting a response, however, they differ in what is being represented and interpreted.The best predictor of a random variable (assuming the variable is normally distributed) is the mean $\mu$. The best predictor for an observation from a sample of x data points, x1,x2,⋯,xn and error $\epsilon$ is $\bar x$.
 The prediction interval depends on both the error from the fitted model and the error associated with future observations.
 
 ## Problem 3: 
@@ -227,37 +226,90 @@ model_use_tem %>% predict(newdata = data.frame(Temperature=58), interval = "pred
 
 ## Problem 4: 
 
-Exercise 2.25 (Page 65): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$, with $E(\epsilon)=0,\ Var(\epsilon)=\sigma^2$, and $\epsilon$ uncorrelated.
+Exercise 2.25 (Page 65): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$, with $E(\epsilon)=0,\ Var(\epsilon)=\sigma^2$, and $\epsilon$ uncorrelated.  
 
-$$Cov(a_1X_1+a_2X_2,\ b_1Y_1+b_2Y_2)=a_1b_1Cov(X_1,Y_1)+a_1b_2Cov(X_1,Y_2)+a_2b_1Cov(X_2,Y_1)+a_2b_2Cov(X_2,Y_2)$$
+ > According the definition of covariance,  
+ 
+$$Cov(X,Y)=\sigma_{XY}=E[(X-\bar X)(Y-\bar Y)]=\frac1n\sum_{i=1}^n(x_i-\bar X)(y_i-\bar Y)$$
+
+ > According the properties of covariance,  
+
+$$Cov(X,a)=0,\quad Cov(X,X)=Var(X)\equiv\sigma^2(X)\equiv\sigma_X^2$$
+
+$$Cov(X,Y)=Cov(Y,X),\quad Cov(aX,bY)=ab\ Cov(X,Y)$$
+
+$$Cov(X+a,Y+b)=Cov(X,Y)$$
+
+$$And\quad Cov(a_1X_1+a_2X_2,\ b_1Y_1+b_2Y_2)=a_1b_1Cov(X_1,Y_1)+a_1b_2Cov(X_1,Y_2)+a_2b_1Cov(X_2,Y_1)+a_2b_2Cov(X_2,Y_2)$$
 
 a. Show that $Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$.
 
-b. Show that $Cov(\overline y,\beta_1) = 0$.
+ > Accroding the properties of the Least-Squares Estimators and the Fitted Regression Model (2.2.2)
+
+$$\hat\beta_0=\bar y-\hat\beta_1\bar x,\quad Var(\hat\beta_1)=\frac{\sigma^2}{S_{xx}}$$
+
+
+
+$$Cov(\hat\beta_0, \hatβ_1)=Cov(\bar y-\hat\beta_1\bar x,\ \hatβ_1)=-\bar x\ Cov(\hatβ_1,\hatβ_1)=-\bar x\ Var(\hat\beta_1)=−\bar x\frac{\sigma^2}{S_{xx}}$$
+
+
+b. Show that $Cov(\bar y,\beta_1) = 0$.
+
+For a simple linear regression model $y=\beta_0+\beta_1x + \epsilon$, with $E(\epsilon)=0,\ Var(\epsilon)=\sigma^2$, and $\epsilon$ uncorrelated, $\bar y$ is a constant.
+
+$$\therefore\quad Cov(\bar y,\beta_1) = 0$$
 
 ## Problem 5: 
 Exercise 2.26 (Page 65): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$, with $E(\epsilon)=0,\ Var(\epsilon)=\sigma^2$, and $\epsilon$ uncorrelated.
 
 a. Show that $E(MS_R)=\sigma^2+\beta_1^2S_{xx}$
 
+$$E(MSR)=\frac{E(SSR)}1=E(\hat\beta_1^2S_{xx})=S_{xx}\{Var(\hat\beta_1)+[E(\hat\beta_1)]^2\}=S_{xx}(\frac{\sigma^2}{S_{xx}}+\beta_1^2)=\sigma^2+\beta_1^2S_{xx}$$
+
+
 b. Show that $E(MS_{Res})=\sigma^2$.
+
+ > According the appendix C.3.2,  MSE=SSE/(n-2) is an unbiased estimator for $\sigma^2$
+
+$$E(MSE)=E(\frac{SSR}{n-2})=\frac{\sigma^2}{n-2}E(\chi_{n-2}^2)=\sigma^2$$
 
 ## Problem 6: 
 
-Exercise 2.27 (Page 65): Suppose that we have fit the straight-line regression model $\hat y=\hat\beta_0+\hat\beta_1x$ but the response is affected by a second variable x 2 such that the true regression function is
+Exercise 2.27 (Page 65): Suppose that we have fit the straight-line regression model $\hat y=\hat\beta_0+\hat\beta_1x$ but the response is affected by a second variable $x_2$ such that the true regression function is
 
 $$E(y)=\beta_0+\beta_1x_1+\beta_2x_2$$
 
 a. Is the least-squares estimator of the slope in the original simple linear regression model unbiased?
 
+$$E(SSR)=$$
+
+$$E(\hat\beta_1)=E(\frac{\sum(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum(x_{i1}-\bar x)}{Sxx}(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})=\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}$$
+
 b. Show the bias in $\hat\beta_1$
+
+$$\beta_1-E(\hat\beta_1)=\frac{-\sum(x_{i1}-\bar x)x_{i2}}{Sxx}$$
 
 ## Problem 7: 
 Exercise 2.32 (Page 66): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$ where the intercept $\beta_0$ is known.
 
 a. Find the least-squares estimator of $\beta_1$ for this model. Does this answer seem reasonable?
 
+$$S(\beta_0,\beta_1)=\sum(y_i-\beta_0-\beta_1x_i)^2$$
+
+$$-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2=0$$
+
+$$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$$
+
+$$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$$
+
 b. What is the variance of the slope ($\hat\beta_1$) for the least-squares estimator found in part a?
 
-c. Find a 100(1−α) percent CI for $\beta_1$. Is this interval narrower than the
-estimator for the case where both slope and intercept are unknown?
+$$Var(\hat\beta_1)=\frac1{\sum_{i=1}^nx_i^2}Var(\sum_{i=1}^ny_ix_i)=\frac1{(\sum_{i=1}^nx_i^2)^2}(\sum_{i=1}^nx_i^2)\sigma^2=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
+
+c. Find a 100(1−α) percent CI for $\beta_1$. Is this interval narrower than the estimator for the case where both slope and intercept are unknown?
+
+$$\frac{\hat\beta_1-\beta_1}{\sqrt\frac{MSE}{\sum x_i^2}}\sim t_{n-2}$$
+
+$$\hat\beta_1\pm t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum x_i^2} $$
+
+is narrower than when both are unknown
