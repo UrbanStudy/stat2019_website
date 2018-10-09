@@ -3,6 +3,8 @@ title: Notes
 markup: "mmark"
 ---
 
+https://www.symbolab.com/
+
 ## Glossary of Statistical Terms
 
 ### adjusting or controlling for a variable: 

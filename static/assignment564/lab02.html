@@ -366,25 +366,15 @@ model_y_x4</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Construct the analysis-of-variance table and test for significance of regression.</li>
 </ol>
-<pre class="r"><code>model_y_x4 %&gt;% summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ x4, data = table_b2)
+<pre class="r"><code>anova(model_y_x4)</code></pre>
+<pre><code>## Analysis of Variance Table
 ## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -26.2487  -4.5029   0.5202   7.9093  24.5080 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  607.103     42.906  14.150 5.24e-14 ***
-## x4           -21.402      2.565  -8.343 5.94e-09 ***
+## Response: y
+##           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## x4         1 10578.7   10579  69.609 5.935e-09 ***
+## Residuals 27  4103.2     152                      
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 12.33 on 27 degrees of freedom
-## Multiple R-squared:  0.7205, Adjusted R-squared:  0.7102 
-## F-statistic: 69.61 on 1 and 27 DF,  p-value: 5.935e-09</code></pre>
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <blockquote>
 <p>The table shows that p-value is less than 5.935e-09. The regression model is significant.</p>
 </blockquote>
@@ -405,8 +395,27 @@ model_y_x4</code></pre>
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Calculate <span class="math inline">\(R^2\)</span>.</li>
 </ol>
+<pre class="r"><code>model_y_x4 %&gt;% summary()</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ x4, data = table_b2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -26.2487  -4.5029   0.5202   7.9093  24.5080 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  607.103     42.906  14.150 5.24e-14 ***
+## x4           -21.402      2.565  -8.343 5.94e-09 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 12.33 on 27 degrees of freedom
+## Multiple R-squared:  0.7205, Adjusted R-squared:  0.7102 
+## F-statistic: 69.61 on 1 and 27 DF,  p-value: 5.935e-09</code></pre>
 <blockquote>
-<p>According to the analysis-of-variance table (b.), Multiple R-squared is 0.7205, Adjusted R-squared is 0.7102.</p>
+<p>According to the table, Multiple R-squared is 0.7205, Adjusted R-squared is 0.7102.</p>
 </blockquote>
 <ol start="5" style="list-style-type: lower-alpha">
 <li>Find a 95% CI on the mean heat flux when the radial deflection is 16.5 milliradians.</li>
@@ -476,25 +485,15 @@ model_y_x1</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Construct the analysis-of-variance table and test for significance of regression.</li>
 </ol>
-<pre class="r"><code>model_y_x1 %&gt;% summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ x1, data = table_b3)
+<pre class="r"><code>anova(model_y_x1)</code></pre>
+<pre><code>## Analysis of Variance Table
 ## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -6.7875 -1.9616  0.0206  1.7878  6.8182 
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) 33.727439   1.445559   23.33  &lt; 2e-16 ***
-## x1          -0.047428   0.004706  -10.08 3.82e-11 ***
+## Response: y
+##           Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## x1         1 955.34  955.34  101.56 3.82e-11 ***
+## Residuals 30 282.20    9.41                     
 ## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 3.067 on 30 degrees of freedom
-## Multiple R-squared:  0.772,  Adjusted R-squared:  0.7644 
-## F-statistic: 101.6 on 1 and 30 DF,  p-value: 3.82e-11</code></pre>
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <blockquote>
 <p>The table shows that p-value is 3.82e-11. The regression model is significant.</p>
 </blockquote>
@@ -600,7 +599,13 @@ model_use_tem %&gt;% summary()</code></pre>
 <li>Plant management believes that an increase in average ambient temperature of 1 degree will increase average monthly steam consumption by 10,000lb. Do the data support this statement?</li>
 </ol>
 <blockquote>
-<p>Both of the multiple R-squared and Adjusted R-squared are 0.9999, the statement is a ballpark estimate.</p>
+<p>We made the null hypothesis H0: <span class="math inline">\(\hat\beta_1=10\)</span> the altertative hypothesis H1: <span class="math inline">\(\hat\beta_1\ne10\)</span>. Accroding the method of t test (2.3.1)</p>
+</blockquote>
+<p><span class="math display">\[t_0=\frac{\hat\beta_1-\beta_{10}}{\sqrt\frac{M SE}{S_{xx}}}=\frac{\hat\beta_1-\beta_{10}}{se(\hat\beta_1)}\]</span></p>
+<pre class="r"><code>2*pt(q = (9.20847-10)/0.03382, df = nrow(table_12)-2 , lower.tail = TRUE)</code></pre>
+<pre><code>## [1] 4.593537e-10</code></pre>
+<blockquote>
+<p>The result shows that the p_value is 4.593537e-10, which is far less than 0.05. Therefore, we can reject the H0 and the true slope is not equal 10. The data don’t support the statement.</p>
 </blockquote>
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Construct a 99% prediction interval on steam usage in a month with average ambient temperature of 58°.</li>
@@ -635,10 +640,10 @@ model_use_tem %&gt;% summary()</code></pre>
 <p><span class="math display">\[\hat\beta_0=\bar y-\hat\beta_1\bar x,\quad Var(\hat\beta_1)=\frac{\sigma^2}{S_{xx}}\]</span></p>
 <p><span class="math display">\[Cov(\hat\beta_0, \hatβ_1)=Cov(\bar y-\hat\beta_1\bar x,\ \hatβ_1)=-\bar x\ Cov(\hatβ_1,\hatβ_1)=-\bar x\ Var(\hat\beta_1)=−\bar x\frac{\sigma^2}{S_{xx}}\]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>Show that <span class="math inline">\(Cov(\bar y,\beta_1) = 0\)</span>.</li>
+<li>Show that <span class="math inline">\(Cov(\bar y,\hat\beta_1) = 0\)</span>.</li>
 </ol>
 <p>For a simple linear regression model <span class="math inline">\(y=\beta_0+\beta_1x + \epsilon\)</span>, with <span class="math inline">\(E(\epsilon)=0,\ Var(\epsilon)=\sigma^2\)</span>, and <span class="math inline">\(\epsilon\)</span> uncorrelated, <span class="math inline">\(\bar y\)</span> is a constant.</p>
-<p><span class="math display">\[\therefore\quad Cov(\bar y,\beta_1) = 0\]</span></p>
+<p><span class="math display">\[\therefore\quad Cov(\bar y,\hat\beta_1) = 0\]</span></p>
 </div>
 <div id="problem-5" class="section level2">
 <h2>Problem 5:</h2>
@@ -653,7 +658,7 @@ model_use_tem %&gt;% summary()</code></pre>
 <blockquote>
 <p>According the appendix C.3.2, MSE=SSE/(n-2) is an unbiased estimator for <span class="math inline">\(\sigma^2\)</span></p>
 </blockquote>
-<p><span class="math display">\[E(MSE)=E(\frac{SSR}{n-2})=\frac{\sigma^2}{n-2}E(\chi_{n-2}^2)=\sigma^2\]</span></p>
+<p><span class="math display">\[E(MSE)=E(\frac{SSE}{n-2})=\frac{\sigma^2}{n-2}E(\chi_{n-2}^2)=\sigma^2\]</span></p>
 </div>
 <div id="problem-6" class="section level2">
 <h2>Problem 6:</h2>
