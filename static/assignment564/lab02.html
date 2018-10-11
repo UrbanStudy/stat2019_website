@@ -656,13 +656,18 @@ model_use_tem %&gt;% summary()</code></pre>
 <blockquote>
 <p>Accroding the properties of the Least-Squares Estimators and the Fitted Regression Model (2.2.2)</p>
 </blockquote>
-<p><span class="math display">\[\hat\beta_0=\bar y-\hat\beta_1\bar x,\quad Var(\hat\beta_1)=\frac{\sigma^2}{S_{xx}}\]</span></p>
-<p><span class="math display">\[Cov(\hat\beta_0, \hatβ_1)=Cov(\bar y-\hat\beta_1\bar x,\ \hatβ_1)=-\bar x\ Cov(\hatβ_1,\hatβ_1)=-\bar x\ Var(\hat\beta_1)=−\bar x\frac{\sigma^2}{S_{xx}}\]</span></p>
+<p><span class="math display">\[\hat\beta_1=\sum_{i=1}^n c_iy_i=\frac{\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i\]</span></p>
+<p><span class="math display">\[\hat\beta_0=\bar y-\hat\beta_1\bar x=\frac{\sum_{i=1}^n y_i}n-\frac{\bar x\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i=\sum_{i=1}^n\left(\frac1n-\frac{\bar x(x_i-\bar x)}{S_{xx}}\right)y_i\]</span></p>
+<p>For <span class="math inline">\(Cov(aX,bY)=ab\ Cov(X,Y)\)</span></p>
+<p><span class="math display">\[Cov(\hat\beta_0, \hatβ_1)=Cov\left[\sum_{i=1}^n\left(\frac1n-\frac{\bar x(x_i-\bar x)}{S_{xx}}\right)y_i,\ \frac{\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i \right]=\sum_{i=1}^n\left(\frac1n-\frac{\bar x(x_i-\bar x)}{S_{xx}}\right)\frac{(x_i-\bar x)}{S_{xx}}Cov(y_i,y_i)\]</span></p>
+<p><span class="math display">\[=\left[\frac{\sum_{i=1}^n(x_i-\bar x)}{nS_{xx}}-\frac{\bar x\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}\right]Cov(y_i,y_i)\]</span></p>
+<p><span class="math display">\[\because\quad \sum_{i=1}^n(x_i-\bar x)=0,\quad \sum_{i=1}^n(x_i-\bar x)^2=S_{xx},\quad Cov(y_i,y_i)=Var(y_i)=\sigma^2\]</span></p>
+<p><span class="math display">\[\therefore Cov(\hat\beta_0, \hatβ_1)=\left[\frac0{nS_{xx}}-\frac{\bar x}{S_{xx}^2}\right]\sigma^2=−\bar x\frac{\sigma^2}{S_{xx}}\]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Show that <span class="math inline">\(Cov(\bar y,\hat\beta_1) = 0\)</span>.</li>
 </ol>
-<p>For a simple linear regression model <span class="math inline">\(y=\beta_0+\beta_1x + \epsilon\)</span>, with <span class="math inline">\(E(\epsilon)=0,\ Var(\epsilon)=\sigma^2\)</span>, and <span class="math inline">\(\epsilon\)</span> uncorrelated, <span class="math inline">\(\bar y\)</span> is a constant.</p>
-<p><span class="math display">\[\therefore\quad Cov(\bar y,\hat\beta_1) = 0\]</span></p>
+<p>According to above results,</p>
+<p><span class="math display">\[Cov(\bar y,\hat\beta_1)=Cov\left[\frac{\sum_{i=1}^n y_i}n,\ \frac{\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i\right]=\frac{\sum_{i=1}^n(x_i-\bar x)}{nS_{xx}}Cov(y_i,y_i)=\frac0{nS_{xx}}Var(y_i)=0\]</span></p>
 </div>
 <div id="problem-5" class="section level2">
 <h2>Problem 5:</h2>
@@ -687,7 +692,8 @@ model_use_tem %&gt;% summary()</code></pre>
 <li>Is the least-squares estimator of the slope in the original simple linear regression model unbiased?</li>
 </ol>
 <p><span class="math display">\[E(SSR)=\]</span></p>
-<p><span class="math display">\[E(\hat\beta_1)=E(\frac{\sum(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum(x_{i1}-\bar x)}{Sxx}(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})=\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}\]</span></p>
+<p><span class="math display">\[E(\hat\beta_1)=E(\frac{\sum(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum(x_{i1}-\bar x)}{Sxx}(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})\]</span></p>
+<p><span class="math display">\[=\frac0{S_{xx}}\beta_0+\frac{\sum(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}\]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Show the bias in <span class="math inline">\(\hat\beta_1\)</span></li>
 </ol>
@@ -700,7 +706,8 @@ model_use_tem %&gt;% summary()</code></pre>
 <li>Find the least-squares estimator of <span class="math inline">\(\beta_1\)</span> for this model. Does this answer seem reasonable?</li>
 </ol>
 <p><span class="math display">\[S(\beta_0,\beta_1)=\sum(y_i-\beta_0-\beta_1x_i)^2\]</span></p>
-<p><span class="math display">\[-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2=0\]</span></p>
+<p>take the derivative of this with respect to /31 and set it equal to zero.</p>
+<p><span class="math display">\[-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0\]</span></p>
 <p><span class="math display">\[\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i\]</span></p>
 <p><span class="math display">\[\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">

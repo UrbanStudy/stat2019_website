@@ -267,18 +267,26 @@ a. Show that $Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$.
 
  > Accroding the properties of the Least-Squares Estimators and the Fitted Regression Model (2.2.2)
 
-$$\hat\beta_0=\bar y-\hat\beta_1\bar x,\quad Var(\hat\beta_1)=\frac{\sigma^2}{S_{xx}}$$
+$$\hat\beta_1=\sum_{i=1}^n c_iy_i=\frac{\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i$$
 
+$$\hat\beta_0=\bar y-\hat\beta_1\bar x=\frac{\sum_{i=1}^n y_i}n-\frac{\bar x\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i=\sum_{i=1}^n\left(\frac1n-\frac{\bar x(x_i-\bar x)}{S_{xx}}\right)y_i$$
 
+For $Cov(aX,bY)=ab\ Cov(X,Y)$
 
-$$Cov(\hat\beta_0, \hatβ_1)=Cov(\bar y-\hat\beta_1\bar x,\ \hatβ_1)=-\bar x\ Cov(\hatβ_1,\hatβ_1)=-\bar x\ Var(\hat\beta_1)=−\bar x\frac{\sigma^2}{S_{xx}}$$
+$$Cov(\hat\beta_0, \hatβ_1)=Cov\left[\sum_{i=1}^n\left(\frac1n-\frac{\bar x(x_i-\bar x)}{S_{xx}}\right)y_i,\ \frac{\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i \right]=\sum_{i=1}^n\left(\frac1n-\frac{\bar x(x_i-\bar x)}{S_{xx}}\right)\frac{(x_i-\bar x)}{S_{xx}}Cov(y_i,y_i)$$
+
+$$=\left[\frac{\sum_{i=1}^n(x_i-\bar x)}{nS_{xx}}-\frac{\bar x\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}\right]Cov(y_i,y_i)$$
+
+$$\because\quad \sum_{i=1}^n(x_i-\bar x)=0,\quad \sum_{i=1}^n(x_i-\bar x)^2=S_{xx},\quad Cov(y_i,y_i)=Var(y_i)=\sigma^2$$
+
+$$\therefore Cov(\hat\beta_0, \hatβ_1)=\left[\frac0{nS_{xx}}-\frac{\bar x}{S_{xx}^2}\right]\sigma^2=−\bar x\frac{\sigma^2}{S_{xx}}$$
 
 
 b. Show that $Cov(\bar y,\hat\beta_1) = 0$.
 
-For a simple linear regression model $y=\beta_0+\beta_1x + \epsilon$, with $E(\epsilon)=0,\ Var(\epsilon)=\sigma^2$, and $\epsilon$ uncorrelated, $\bar y$ is a constant.
+According to above results,
 
-$$\therefore\quad Cov(\bar y,\hat\beta_1) = 0$$
+$$Cov(\bar y,\hat\beta_1)=Cov\left[\frac{\sum_{i=1}^n y_i}n,\ \frac{\sum_{i=1}^n (x_i-\bar x)}{S_{xx}}y_i\right]=\frac{\sum_{i=1}^n(x_i-\bar x)}{nS_{xx}}Cov(y_i,y_i)=\frac0{nS_{xx}}Var(y_i)=0$$
 
 ## Problem 5: 
 Exercise 2.26 (Page 65): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$, with $E(\epsilon)=0,\ Var(\epsilon)=\sigma^2$, and $\epsilon$ uncorrelated.
@@ -304,7 +312,9 @@ a. Is the least-squares estimator of the slope in the original simple linear reg
 
 $$E(SSR)=$$
 
-$$E(\hat\beta_1)=E(\frac{\sum(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum(x_{i1}-\bar x)}{Sxx}(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})=\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}$$
+$$E(\hat\beta_1)=E(\frac{\sum(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum(x_{i1}-\bar x)}{Sxx}(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})$$
+
+$$=\frac0{S_{xx}}\beta_0+\frac{\sum(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}$$
 
 b. Show the bias in $\hat\beta_1$
 
@@ -317,7 +327,9 @@ a. Find the least-squares estimator of $\beta_1$ for this model. Does this answe
 
 $$S(\beta_0,\beta_1)=\sum(y_i-\beta_0-\beta_1x_i)^2$$
 
-$$-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2=0$$
+take the derivative of this with respect to /31 and set it equal to zero.
+
+$$-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$$
 
 $$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$$
 
