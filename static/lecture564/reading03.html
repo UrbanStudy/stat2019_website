@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-10-09" />
+<meta name="date" content="2018-10-11" />
 
 <title>2.4 Interval Estimation</title>
 
@@ -345,7 +345,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">2.4 Interval Estimation</h1>
 <h3 class="subtitle"><em>STAT 564 Week 3</em></h3>
-<h4 class="date"><em>October 09, 2018</em></h4>
+<h4 class="date"><em>October 11, 2018</em></h4>
 
 </div>
 
@@ -365,20 +365,126 @@ $(document).ready(function () {
 <div id="alpha-confidence-interval-for-the-true-error-variance-sigma2" class="section level4">
 <h4><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true error variance <span class="math inline">\((\sigma^2)\)</span>:</h4>
 <p><span class="math display">\[\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]\]</span></p>
-<ul>
-<li>Ex 2 Contd Consider the following data set, in which the variables of interest are x and y.
-<ul>
-<li>[a] Test whether the true slope of the simple linear regression model is significantly different from zero.</li>
-<li>[b] Estimate the 95% confidence interval for the true slope of the simple linear regression model.</li>
-<li>[c] Estimate the 95% confidence interval for the true intercept of the simple linear regression model.</li>
-</ul></li>
-</ul>
 <p><code>2018.10.8 Lab1</code></p>
 </div>
 </div>
 <div id="interval-estimation-of-the-mean-response" class="section level3">
 <h3>2.4.2 Interval Estimation of the Mean Response</h3>
 <p><code>2018.10.10</code></p>
+</div>
+<div id="ex-2-contd" class="section level3">
+<h3>Ex 2 Contd</h3>
+<p>Consider the following data set, in which the variables of interest are x=conmmuting distance(miles) and y=commuting time (min).</p>
+<table>
+<thead>
+<tr class="header">
+<th>x</th>
+<th>5</th>
+<th>10</th>
+<th>15</th>
+<th>20</th>
+<th>25</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>y</td>
+<td>8</td>
+<td>16</td>
+<td>22</td>
+<td>23</td>
+<td>31</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat y=4.1+1.06x\)</span></td>
+<td>9.4</td>
+<td>14.7</td>
+<td>20</td>
+<td>25.3</td>
+<td>30.6</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(e^2=(y-\hat y)^2\)</span></td>
+<td>1.96</td>
+<td>1.69</td>
+<td>4</td>
+<td>5.29</td>
+<td>0.16</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math display">\[\hat\sigma^2=MSE=\frac{SSE}{n-2}=\frac{\sum_1^n(y-\hat y)^2}{n-2}=\frac{13.1}{5-2}=4.367 \]</span></p>
+<ol style="list-style-type: lower-alpha">
+<li>Compute the values of ANOVA table and test the significance of simple linear regression model for these data.</li>
+</ol>
+<p><span class="math display">\[n=5,\quad \bar y=20,\quad \sum y_i^2=2294,\quad \hat\sigma^2=4.367,\quad S{xy}=265,\quad S{xx}=250,\quad \hat\beta_1=1.06\]</span></p>
+<table style="width:100%;">
+<colgroup>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source of Variation</th>
+<th>Sum of Squars(SS)</th>
+<th>Degrees of Freedom(df)</th>
+<th>Mean Squares(MS)</th>
+<th>F test statistic</th>
+<th>P-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model(Regresion)</td>
+<td><span class="math inline">\(\hat\beta_1S{xy}=1.06\times265=280.9\)</span></td>
+<td>1</td>
+<td><span class="math inline">\(\frac{280.9}1\)</span></td>
+<td><span class="math inline">\(\frac{280.9}{4.367}\)</span></td>
+<td><span class="math inline">\(P(F&gt;64.328)\approx0.01\)</span></td>
+</tr>
+<tr class="even">
+<td>Error(Residual)</td>
+<td>SST-SSR=294-280.9=13.1</td>
+<td>n-2=5-2=3</td>
+<td><span class="math inline">\(\frac{13.1}3=4.3667\)</span></td>
+<td>64.328</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td><span class="math inline">\(\sum(y_i-\bar y)^2=\sum{y_i^2}-n\bar y^2=2294-5\times20^2=294\)</span></td>
+<td>n-1=4</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div id="ex-2-contd-consider-the-following-data-set-in-which-the-variables-of-interest-are-x-and-y." class="section level4">
+<h4>Ex 2 Contd Consider the following data set, in which the variables of interest are x and y.</h4>
+<pre><code>- [a] Test whether the true slope of the simple linear regression model is significantly different from zero.</code></pre>
+<p><span class="math display">\[H_0:\ \beta_1=0,\quad H_1: \beta_1\ne0\]</span></p>
+<p><span class="math display">\[Test\ statistic: t_0=\frac{\hat\beta_1-0}{se(\hat\beta_1)}=\frac{\hat\beta_1}{se(\hat\beta_1)}=\frac{1.06}{0.1322}=8.02\]</span></p>
+<p><span class="math display">\[se(\hat\beta_1)=\sqrt \frac{\hat\sigma^2}{S{xx}}=\sqrt{\frac{4.367}{250}}=0.1322\]</span></p>
+<p><span class="math display">\[df=n-2=5-2=3\]</span></p>
+<p><span class="math display">\[P-value=2\times P(t&gt;|t_0|)2\times0.0025=0.005\]</span></p>
+<blockquote>
+<p>P-value&lt;0.05, therefore, ture slope is different from zero.</p>
+</blockquote>
+<pre><code>- [b] Estimate the 95% confidence interval for the true slope of the simple linear regression model.</code></pre>
+<p><span class="math display">\[\because\ df=n-2=5-2=3,\quad t_{\frac\alpha2}=t_{0.025}=3.182\]</span></p>
+<p><span class="math display">\[\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=1.06\pm3.182\times0.1322=(0.639,1.481)\]</span></p>
+<pre><code>- [c] Estimate the 95% confidence interval for the true intercept of the simple linear regression model.</code></pre>
+<p><span class="math display">\[se(\hat{\beta_0})=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=4.367(\frac15+\frac{15^2}{250})=2.1917\]</span></p>
+<p><span class="math display">\[\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=4.1\pm3.182\times2.1917=(-2.874,11.074)\]</span></p>
+<blockquote>
+<p>Since zero is inside thsi interval, ture intercept (<span class="math inline">\(\beta_0\)</span>) can be zero with 95% confidence.</p>
+</blockquote>
+</div>
 </div>
 </div>
 
