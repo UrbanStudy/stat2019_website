@@ -337,39 +337,52 @@ $$E(y)=\beta_0+\beta_1x_1+\beta_2x_2$$
 
 a. Is the least-squares estimator of the slope in the original simple linear regression model unbiased?
 
-$$\because \sum(x_{i1}-\bar x)=\sum{x_{i1}}-n\bar x=\sum{x_{i1}}-n\frac{\sum{x_{i1}}}n=0,\quad S_{xx}=\sum(x_{i1}-\bar x)x_{i1}$$
+$$\because \sum_{i=1}^n(x_{i1}-\bar x)=\sum_{i=1}^n{x_{i1}}-n\bar x=\sum_{i=1}^n{x_{i1}}-n\frac{\sum_{i=1}^n{x_{i1}}}n=0,\quad S_{xx}=\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}$$
 
-$$\therefore E(\hat\beta_1)=E(\frac{\sum(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum(x_{i1}-\bar x)}{Sxx}E(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})$$
+$$\therefore E(\hat\beta_1)=E(\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})$$
 
-$$=\frac0{S_{xx}}\beta_0+\frac{\sum(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2$$
+$$=\frac0{S_{xx}}\beta_0+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2$$
 
 b. Show the bias in $\hat\beta_1$
 
-$$\beta_1-E(\hat\beta_1)=\frac{-\sum(x_{i1}-\bar x)x_{i2}}{Sxx}\beta_2$$
+$$\beta_1-E(\hat\beta_1)=\frac{-\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{Sxx}\beta_2$$
 
 ## Problem 7: 
 Exercise 2.32 (Page 66): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$ where the intercept $\beta_0$ is known.
 
 a. Find the least-squares estimator of $\beta_1$ for this model. Does this answer seem reasonable?
 
-$$S(\beta_0,\beta_1)=\sum(y_i-\beta_0-\beta_1x_i)^2$$
+$$S(\beta_0,\beta_1)=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2$$
 
-take the derivative of this with respect to $\beta_1$ and set it equal to zero.
+> The least-squares estimators of $\beta_1$, must satisfy
 
-$$\left.\frac{\partial{SSE}}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$$
+$$\left.\frac{\partial S}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$$
 
 $$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$$
 
-$$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$$
+$$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^n(x_i-0)x_i}$$
+
+Accroding to the property of the least-squares fit, the least-squares regression line always passes through the point
+($\bar y,\bar x$) of the data.
+
+$$\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}$$
+
+> It is reasonable that the least-squares regression line passes through the point ($\beta_0,0$) when the intercept$\beta_0$ is known. $\bar y=\beta_0,\ \bar x=0$
 
 b. What is the variance of the slope ($\hat\beta_1$) for the least-squares estimator found in part a?
 
-$$Var(\hat\beta_1)=\frac1{\sum_{i=1}^nx_i^2}Var(\sum_{i=1}^ny_ix_i)=\frac1{(\sum_{i=1}^nx_i^2)^2}(\sum_{i=1}^nx_i^2)\sigma^2=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
+$$Var(\hat\beta_1)=Var\left(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i-\sum_{i=1}^n\beta_0x_i)$$
+
+$$=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i)=\frac{\sum_{i=1}^nx_i^2}{(\sum_{i=1}^nx_i^2)^2}Var(y_i)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
 
 c. Find a 100(1−α) percent CI for $\beta_1$. Is this interval narrower than the estimator for the case where both slope and intercept are unknown?
 
-$$\frac{\hat\beta_1-\beta_1}{\sqrt\frac{MSE}{\sum x_i^2}}\sim t_{n-2}$$
+When $\beta_0$ is known, $\bar x=0$
 
-$$\hat\beta_1\pm t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum x_i^2} $$
+$$\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n (x_i-\bar{x})^2}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n x_i^2}}$$
 
-is narrower than when both are unknown
+> a 100(1−α) percent CI for $\beta_1$ is given by
+
+$$\hat\beta_1-t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} $$
+
+It is narrower than when both are unknown.
