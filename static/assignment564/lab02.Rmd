@@ -10,7 +10,7 @@ output:
 
 ```{r setup, include=F}
 knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
-options(width = 600)
+options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
@@ -41,7 +41,7 @@ head(table_b2)
 table_b2 %>% ggplot(aes(x4,y))+geom_point()+geom_smooth(method="lm", level=0.99)
 ```
 
- > The plot shows a decreasing approximately linear pattern.
+ > There seems to be a decreasing (negative) medium approximately linear relationship..
 
 a. Fit a simple linear regression model relating total heat flux y (kilowatts) to the radial deflection of the deflected rays $x_4$ (milliradians).
 
@@ -59,7 +59,7 @@ b. Construct the analysis-of-variance table and test for significance of regress
 anova(model_y_x4)
 ```
 
- > The table shows that p-value is less than 5.935e-09. The regression model is significant.
+ > The table shows that p-value is less than 5.935e-09. There is strong evidence that the fitted model is statistically significant at 5% significance level because p-value is much smaller than 0.05.
 
 c. Find a 99% CI on the slope.
 
@@ -71,8 +71,8 @@ $$\beta_1 \pm t_{\alpha / 2, n - 2} \left(\frac{\sqrt{MSE}}{\sqrt{\sum (x_i - \b
 model_y_x4 %>% confint(level=0.99)
 ```
 
- > The fitted β1 is -21.402. The 99% confidence interval for slope of the regression line is (-28.50995, -14.29497).
-If the confidence interval for β1 contains 0, it can be concluded there is no significant evidence of a linear relationship between predictor x4 and response y in the population.
+ > The 99% confidence interval for slope of the regression line is (-28.50995, -14.29497).
+The confidence interval for β1 does not contain 0.Therefore, we are 95% confidence that the true slope is different from zero.
 
 
 d. Calculate $R^2$.
@@ -81,11 +81,11 @@ d. Calculate $R^2$.
 model_y_x4 %>% summary()
 ```
 
- > According to the table, Multiple R-squared is 0.7205, Adjusted R-squared is 0.7102.
+ > According to the table, Multiple R-squared is 0.7205, Adjusted R-squared is 0.7102. This is not so close to 100% and therefore, fitted model explain moderate amount of variation is the heat flux with radial deflection.
 
 e. Find a 95% CI on the mean heat flux when the radial deflection is 16.5 milliradians.
 
-> The confidence interval around the mean response, denoted $\mu_y$, when the predictor value is $x_k$ is defined as:
+> The confidence interval around the mean response, when the predictor value is $x_k$ is defined as:
 
 $$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$$
 
@@ -125,7 +125,7 @@ head(table_b3)
 table_b3 %>% ggplot(aes(x1,y))+geom_point()+geom_smooth(method="lm")
 ```
 
- > The plot shows a decreasing approximately linear pattern.
+ > There seems to be a decreasing (negative) medium approximately linear relationship.
 
 a. Fit a simple linear regression model relating gasoline mileage y (miles per gallon) to engine displacement x1 (cubic inches).
 
@@ -136,6 +136,8 @@ model_y_x1 <- lm(y ~ x1, data=table_b3)
 model_y_x1
 ```
 
+ > The model is $y=33.72744-0.04743x_1$.
+
 b. Construct the analysis-of-variance table and test for significance of regression.
 
 
@@ -143,7 +145,7 @@ b. Construct the analysis-of-variance table and test for significance of regress
 anova(model_y_x1)
 ```
 
- > The table shows that p-value is 3.82e-11. The regression model is significant.
+ > The table shows that p-value is 3.82e-11. There is strong evidence that the fitted model is statistically significant at 5% significance level because p-value is much smaller than 0.05.
 
 c. What percent of the total variability in gasoline mileage is accounted for by the linear relationship with engine displacement?
 
@@ -151,7 +153,7 @@ c. What percent of the total variability in gasoline mileage is accounted for by
 model_y_x1 %>% summary()
 ```
 
- > According to the Multiple R-squared value, there are 77.2% variability in gasoline mileage is accounted for by the linear relationship with engine displacement.
+ > According to the Multiple R-squared value, there are 77.2% variability in gasoline mileage is accounted for by the linear relationship with engine displacement. This is not so close to 100% and fitted model explain moderate amount of variation.
 
 d. Find a 95% CI on the mean gasoline mileage if the engine displacement is 275 in.^3
 
@@ -187,9 +189,8 @@ model_y_x1 %>% predict(newdata = data.frame(x1=275), interval = "prediction", le
 
 f. Compare the two intervals obtained in parts d and e. Explain the difference between them. Which one is wider, and why?
 
- > The fitted value is the same, but the prediction interval is wider than confidence interval due to the additional term in the standard error of prediction. Prediction and confidence intervals are similar in that they are both predicting a response, however, they differ in what is being represented and interpreted.The best predictor of a random variable (assuming the variable is normally distributed) is the mean $\mu$. The best predictor for an observation from a sample of x data points, x1,x2,⋯,xn and error $\epsilon$ is $\bar x$.
-The prediction interval depends on both the error from the fitted model and the error associated with future observations.
-
+ > The fitted value is the same, but the prediction interval is wider than confidence interval due to the additional term in the standard error of prediction. The prediction interval is wider than the confidence interval because prediction interval is for a single observation of response while confidence interval is for the mean response. The prediction interval depends on both the error from the fitted model and the error associated with future observations. It is difficult to predict a single observation than mean response and hence there is more variation in the new observation.
+ 
 ## Problem 3: 
 
 Exercise 2.12 (Page 60): The number of pounds of steam used per month at a plant is thought to be related to the average monthly ambient temperature. The past year’s usages and temperatures follow.
@@ -206,7 +207,7 @@ glimpse(table_12)
 table_12 %>% ggplot(aes(Temperature,`Usage/l000`,col=as.factor(Month)))+geom_point( )+geom_smooth(method="lm")
 ```
 
- > The plot shows a increasing approximately linear pattern.
+> There seems to be a increasing strong linear relationship.
 
 a. Fit a simple linear regression model to the data.
 
@@ -221,7 +222,7 @@ model_use_tem %>% summary()
 
 b. Test for significance of regression.
 
-> According to the analysis-of-variance table (a.), the table shows that p-value is less than 2.2e-16. The regression model is significant.
+> According to the analysis-of-variance table (a.), the table shows that p-value is less than 2.2e-16. There is strong evidence that the fitted model is statistically significant at 5% significance level because p-value is much smaller than 0.05.
 
 c. Plant management believes that an increase in average ambient temperature of 1 degree will increase average monthly steam consumption by 10,000lb. Do the data support this statement?
 
@@ -339,7 +340,7 @@ a. Is the least-squares estimator of the slope in the original simple linear reg
 
 $$\because \sum_{i=1}^n(x_{i1}-\bar x)=\sum_{i=1}^n{x_{i1}}-n\bar x=\sum_{i=1}^n{x_{i1}}-n\frac{\sum_{i=1}^n{x_{i1}}}n=0,\quad S_{xx}=\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}$$
 
-$$\therefore E(\hat\beta_1)=E(\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})$$
+$$\therefore E(\hat\beta_1)=E(\sum_{i=1}^nc_iy_i)=E(\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})$$
 
 $$=\frac0{S_{xx}}\beta_0+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2$$
 
@@ -352,11 +353,11 @@ Exercise 2.32 (Page 66): Consider the simple linear regression model $y=\beta_0+
 
 a. Find the least-squares estimator of $\beta_1$ for this model. Does this answer seem reasonable?
 
-$$S(\beta_0,\beta_1)=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2$$
+$$Let\quad SSE=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2$$
 
 > The least-squares estimators of $\beta_1$, must satisfy
 
-$$\left.\frac{\partial S}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$$
+$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$$
 
 $$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$$
 
@@ -367,7 +368,7 @@ Accroding to the property of the least-squares fit, the least-squares regression
 
 $$\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}$$
 
-> It is reasonable that the least-squares regression line passes through the point ($\beta_0,0$) when the intercept$\beta_0$ is known. $\bar y=\beta_0,\ \bar x=0$
+> It is reasonable that the least-squares regression line passes through the point ($\beta_0,0$) when the intercept$\beta_0$ is known. 
 
 b. What is the variance of the slope ($\hat\beta_1$) for the least-squares estimator found in part a?
 
@@ -377,7 +378,7 @@ $$=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i)=\frac{\sum_{i=1}^nx_i^2}
 
 c. Find a 100(1−α) percent CI for $\beta_1$. Is this interval narrower than the estimator for the case where both slope and intercept are unknown?
 
-When $\beta_0$ is known, $\bar x=0$
+When $\beta_0$ is known and is a consistant.
 
 $$\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n (x_i-\bar{x})^2}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n x_i^2}}$$
 
@@ -385,4 +386,7 @@ $$\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_
 
 $$\hat\beta_1-t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} $$
 
-It is narrower than when both are unknown.
+$$$$
+
+ > confidence intervals for $\beat_1$ will be narrower when $\beat_0$ is known,
+regardless of sample size (unless $\bar x=0$).
