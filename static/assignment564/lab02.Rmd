@@ -321,8 +321,11 @@ $$\implies SSE=S_{yy}-2\hat\beta_1\hat\beta_1S_{xx}+\hat\beta_1^2S_{xx}=S_{yy}-\
 
 > Step 2:
 
-$$E(S_{yy})=[omitted]=\hat\beta_1^2S_{xx}+(n-1)\sigma^2$$
+$$E(S_{yy})=E\sum_{i=1}^n(y_i-\bar y)^2=E\sum_{i=1}^n\left[(\beta_0+\beta_1x_i+\epsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\epsilon_i)\right]^2=E\left(\sum_{i=1}^n[\beta_1(x_i-\bar x)+\epsilon_i-\bar\epsilon]^2\right)$$
 
+$$E\left(\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\epsilon_i-\bar\epsilon)+(\epsilon_i-\bar\epsilon)^2\right)=\hat\beta_1^2S_{xx}+2\beta_1\sum_{i=1}^n(x_i-\bar x)[E(\epsilon_i)-E(\bar\epsilon)]+E(S_{\epsilon\epsilon})$$
+
+$$=\hat\beta_1^2S_{xx}+E(S_{\epsilon\epsilon})=\hat\beta_1^2S_{xx}+(n-1)E(S_{\epsilon}^2)=\hat\beta_1^2S_{xx}+(n-1)\sigma^2$$
 
 $$\therefore E(SSE)=E(S_{yy})-E(SSR)=\hat\beta_1^2S_{xx}+(n-1)\sigma^2-(\sigma^2+\hat\beta_1^2S_{xx})=(n-2)\sigma^2$$
 
@@ -363,12 +366,16 @@ $$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$$
 
 $$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^n(x_i-0)x_i}$$
 
-Accroding to the property of the least-squares fit, the least-squares regression line always passes through the point
+> Accroding to the property of the least-squares fit, the least-squares regression line always passes through the point
 ($\bar y,\bar x$) of the data.
 
 $$\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}$$
 
-> It is reasonable that the least-squares regression line passes through the point ($\beta_0,0$) when the intercept$\beta_0$ is known. 
+$$E(\hat\beta_1)=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac1{\sum_{i=1}^nx_i^2}\left(\sum_{i=1}^nx_i(\beta_0+\beta_1x_i+\epsilon)-\beta_0\sum_{i=1}^nx_i\right)=\frac1{\sum_{i=1}^nx_i^2}\left(\beta_0\sum_{i=1}^nx_i+\beta_1\sum_{i=1}^nx_i^2-\beta_0\sum_{i=1}^nx_i\right)$$
+
+$$=\frac{\beta_1}{\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}=\beta_1$$
+
+> The estimator $\beta_1$ is unbiased. It is reasonable that the least-squares regression line passes through the point ($\beta_0,0$) when the intercept$\beta_0$ is known. 
 
 b. What is the variance of the slope ($\hat\beta_1$) for the least-squares estimator found in part a?
 
@@ -378,7 +385,7 @@ $$=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i)=\frac{\sum_{i=1}^nx_i^2}
 
 c. Find a 100(1−α) percent CI for $\beta_1$. Is this interval narrower than the estimator for the case where both slope and intercept are unknown?
 
-When $\beta_0$ is known and is a consistant.
+ > When $\beta_0$ is known and is a consistant.
 
 $$\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n (x_i-\bar{x})^2}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n x_i^2}}$$
 
@@ -386,7 +393,9 @@ $$\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_
 
 $$\hat\beta_1-t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} $$
 
-$$$$
+> Because there isn't variance for a known parameter,
+
+$$Var(\beta_1)\ge Var(\beta_0)$$
 
  > confidence intervals for $\beat_1$ will be narrower when $\beat_0$ is known,
 regardless of sample size (unless $\bar x=0$).

@@ -695,7 +695,9 @@ model_use_tem %&gt;% summary()</code></pre>
 <blockquote>
 <p>Step 2:</p>
 </blockquote>
-<p><span class="math display">\[E(S_{yy})=[omitted]=\hat\beta_1^2S_{xx}+(n-1)\sigma^2\]</span></p>
+<p><span class="math display">\[E(S_{yy})=E\sum_{i=1}^n(y_i-\bar y)^2=E\sum_{i=1}^n\left[(\beta_0+\beta_1x_i+\epsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\epsilon_i)\right]^2=E\left(\sum_{i=1}^n[\beta_1(x_i-\bar x)+\epsilon_i-\bar\epsilon]^2\right)\]</span></p>
+<p><span class="math display">\[E\left(\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\epsilon_i-\bar\epsilon)+(\epsilon_i-\bar\epsilon)^2\right)=\hat\beta_1^2S_{xx}+2\beta_1\sum_{i=1}^n(x_i-\bar x)[E(\epsilon_i)-E(\bar\epsilon)]+E(S_{\epsilon\epsilon})\]</span></p>
+<p><span class="math display">\[=\hat\beta_1^2S_{xx}+E(S_{\epsilon\epsilon})=\hat\beta_1^2S_{xx}+(n-1)E(S_{\epsilon}^2)=\hat\beta_1^2S_{xx}+(n-1)\sigma^2\]</span></p>
 <p><span class="math display">\[\therefore E(SSE)=E(S_{yy})-E(SSR)=\hat\beta_1^2S_{xx}+(n-1)\sigma^2-(\sigma^2+\hat\beta_1^2S_{xx})=(n-2)\sigma^2\]</span></p>
 <blockquote>
 <p>Step 3:</p>
@@ -730,10 +732,14 @@ model_use_tem %&gt;% summary()</code></pre>
 <p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0\]</span></p>
 <p><span class="math display">\[\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i\]</span></p>
 <p><span class="math display">\[\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^n(x_i-0)x_i}\]</span></p>
-<p>Accroding to the property of the least-squares fit, the least-squares regression line always passes through the point (<span class="math inline">\(\bar y,\bar x\)</span>) of the data.</p>
-<p><span class="math display">\[\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}\]</span></p>
 <blockquote>
-<p>It is reasonable that the least-squares regression line passes through the point (<span class="math inline">\(\beta_0,0\)</span>) when the intercept<span class="math inline">\(\beta_0\)</span> is known.</p>
+<p>Accroding to the property of the least-squares fit, the least-squares regression line always passes through the point (<span class="math inline">\(\bar y,\bar x\)</span>) of the data.</p>
+</blockquote>
+<p><span class="math display">\[\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}\]</span></p>
+<p><span class="math display">\[E(\hat\beta_1)=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac1{\sum_{i=1}^nx_i^2}\left(\sum_{i=1}^nx_i(\beta_0+\beta_1x_i+\epsilon)-\beta_0\sum_{i=1}^nx_i\right)=\frac1{\sum_{i=1}^nx_i^2}\left(\beta_0\sum_{i=1}^nx_i+\beta_1\sum_{i=1}^nx_i^2-\beta_0\sum_{i=1}^nx_i\right)\]</span></p>
+<p><span class="math display">\[=\frac{\beta_1}{\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}=\beta_1\]</span></p>
+<blockquote>
+<p>The estimator <span class="math inline">\(\beta_1\)</span> is unbiased. It is reasonable that the least-squares regression line passes through the point (<span class="math inline">\(\beta_0,0\)</span>) when the intercept<span class="math inline">\(\beta_0\)</span> is known.</p>
 </blockquote>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>What is the variance of the slope (<span class="math inline">\(\hat\beta_1\)</span>) for the least-squares estimator found in part a?</li>
@@ -743,13 +749,18 @@ model_use_tem %&gt;% summary()</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Find a 100(1−α) percent CI for <span class="math inline">\(\beta_1\)</span>. Is this interval narrower than the estimator for the case where both slope and intercept are unknown?</li>
 </ol>
+<blockquote>
 <p>When <span class="math inline">\(\beta_0\)</span> is known and is a consistant.</p>
+</blockquote>
 <p><span class="math display">\[\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n (x_i-\bar{x})^2}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n x_i^2}}\]</span></p>
 <blockquote>
 <p>a 100(1−α) percent CI for <span class="math inline">\(\beta_1\)</span> is given by</p>
 </blockquote>
 <p><span class="math display">\[\hat\beta_1-t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} \]</span></p>
-<p>$$$$</p>
+<blockquote>
+<p>Because there isn’t variance for a known parameter,</p>
+</blockquote>
+<p><span class="math display">\[Var(\beta_1)\ge Var(\beta_0)\]</span></p>
 <blockquote>
 <p>confidence intervals for <span class="math inline">\(\beat_1\)</span> will be narrower when <span class="math inline">\(\beat_0\)</span> is known, regardless of sample size (unless <span class="math inline">\(\bar x=0\)</span>).</p>
 </blockquote>
