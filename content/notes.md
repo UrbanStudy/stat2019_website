@@ -11,17 +11,13 @@ https://www.symbolab.com/
 
 ### Demonstration
 
-!<https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg>
 
-<https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg>
+![Normal_Distribution_PDF](https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg)
 
-![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
+![Normal_Distribution_PDF]https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Normal_distribution_pdf.png/320px-Normal_distribution_pdf.png
 
-[Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
-
-!(https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg)
-
-(https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
+![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png)
+![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)
 
 #### interactive visualization
 
