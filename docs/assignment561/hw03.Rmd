@@ -14,7 +14,7 @@ a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$;
 b. F is non-decreasing; and   
 c. F is right-continuous; that is, for every number x0, $\lim_{x\to\infty}F(x)=F(x_0)$
 
--Proof c.
+> Step 1: proof (c)
 
 let $C_1,C_2$,...be a sequance of events such that $C1\subset C_2\subset$... 
 
@@ -54,8 +54,24 @@ $$left\quad \lim_{n\to\infty}P(B_n)=\lim_{n\to\infty}P\left((-\infty,\ x+\frac1n
 
 $$\therefore \lim_{n\to\infty}F_X(x+\frac1n)=F_X(x)$$
 
+> According to the uniform convergence theorem, we can proof condition c, a CDF is right-continuous.
+
+> Step2: Proof (b)
+
+> let $x_i<x_j,\ C_i\in(-\infty,x_i), C_j\in(-\infty,x_j)$, hence $C_i\subset C_j$
+
+$$\therefore P(\lim_{n\to\infty}C_i)<P(\lim_{n\to\infty}C_j) \implies \lim_{n\to\infty}P(C_i)<\lim_{n\to\infty}P(C_j)\implies \lim_{n\to\infty}F(x_i)<\lim_{n\to\infty}F(x_j)$$
+
+> Therefore, for any $x_i<x_j,\ \lim_{n\to\infty}F(x_i)<\lim_{n\to\infty}F(x_j)$. A CDF is non-decreasing.
+
+> Step3: Proof (a)
+
+$$\lim_{n\to\infty}F(x)=\lim_{n\to\infty}P((-\infty, x])=P(\lim_{n\to\infty}(-\infty, x])=P(-\infty, \infty)=1$$
+
+$$\lim_{n\to-\infty}F(x)=\lim_{n\to-\infty}P((-\infty, x])=P(\lim_{n\to-\infty}(-\infty, x])=P(\emptyset)=0$$
 
 **2.2** In each of the following find the pdf of Y.
+
 (a) $Y=X^2\quad and\quad f_X(x)=1, 0<x<1$
 
 $$F_Y(y)=P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)=P(X\le\sqrt y)-P(X\le-\sqrt y)$$
@@ -85,20 +101,19 @@ $$fx(x)=\frac1{\sigma^2}xe^{-(x/\sigma)^2/2},\quad 0<x<\infty,\quad\sigma^2\ a\ 
 
 $$\because Y=e^X,\quad \therefore X=\ln Y$$
 
-$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\frac1{\sigma^2}xe^\frac{-(\frac x\sigma)^2}2|\frac{d(\ln y)}{dy}|=\frac{\ln (y)}{\sigma^2y}e^\frac{-(\frac{\ln y}\sigma)^2}2$$
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\frac1{\sigma^2}xe^\frac{-(\frac x\sigma)^2}2|\frac{d(\ln y)}{dy}|=\frac{\ln (y)}{\sigma^2y}e^\frac{-(\frac{\ln y}\sigma)^2}2,\quad 1<y<\infty$$
 
 **2.12** A random right triangle can be constructed in the following manner. Let X be a random angle whose distribution is uniform on $(0, \pi/2)$. For each X, construct a triangle as pictured below. Here, Y = height of the random triangle. For a fixed constant d, find the distribution of Y and EY.
 
-$$\because Y=d\tan X,\quad 0<x<\pi/2\quad \therefore X=\arctan\frac Yd$$
-
-<!--
-$$\because f_X(x)=x,\ 0<x<\pi/2,\quad \therefore F_X(x)=\int f_X(x)=\int x=\frac{x^2}2 $$
-$$F_Y(y)=P(Y\le y)=P(d\tan X\le y)=P(X\le\arctan\frac Yd)$$
-$$=F_X(\arctan\frac yd)=\frac12(\arctan\frac yd)^2,\ 0<\arctan\frac yd<\pi/2$$ -->
+$$\because Y=d\tan X,\quad \therefore X=\arctan\frac Yd$$
 
  > $Y=d\tan X$ is a monotone inecreasing function. We can use shortcut.
 
-$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\arctan\frac yd|\frac{d(\arctan\frac yd)}{dy}|=\arctan(\frac yd)\frac{1}{[(\frac yd)^2+1]d}=?=\frac{2}{\pi[(\frac yd)^2+1]d}$$
+Let $F_X(x)=cx$ is a cdf, $\lim_{n\to\infty}cx=1,\quad0<x<\pi/2$. Hence, $c=\frac2\pi$ safisfy the equation.
+
+$$\therefore F_X(x)=\frac{2x}\pi,\quad  f_X(x)=\frac2\pi\quad 0<x<\pi/2$$
+
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\frac2\pi|\frac{d(\arctan\frac yd)}{dy}|=\frac2\pi\frac{d(\frac yd)}{[(\frac yd)^2+1]}=\frac{2}{\pi d[(\frac yd)^2+1]}$$
 
  > This is the Cauchy distribution restricted to (0,1), and the mean is infinite.
 
@@ -108,16 +123,28 @@ $$E[Y]=\int_0^{\frac\pi2}d\tan x\sim\infty$$
 
 (a) $f(x)=3x^2,\quad 0<X<1$  
 
-$$F_X(x)=\int{f(x)dx}=\int3x^2=x^3$$
 
-$$F_M(m)=P(M\le m)=P(X\le m)=F_X(m)=m^3=\frac12$$
+$$F_X(x)=\int{f(x)dx}=\int3x^2=x^3\quad 0<x<1$$
 
-$$m=(\frac12)^{\frac13}$$
+$$\lim_{x\to\infty}F_X(x)=\lim_{x\to\infty}x^3=1\quad 0<x<1$$
 
-(b) $f(x)=\frac1{\pi(1+x^2)},\quad-\infty<X<\infty$
+> F(x) is a cdf and has a pdf f(x).
 
-> The function is symmetric about zero, therefore m=0 as long as the integral is finite.
+$$(1)\quad \int_{0}^m{f(x)dx}=m^3-0=\frac12,\quad m=(\frac12)^{\frac13}$$
 
-$$F_X(x)=\int{f(x)dx}=\int\frac1{\pi(1+x^2)}=\left.\frac{\arctan x}{\pi}\right|_{-\infty}^\infty=\frac1\pi(\frac\pi2+\frac\pi2)=1$$
+$$(2)\quad \int_m^{1}{f(x)dx}=1-m^3=\frac12$$
 
- > This is the Cauchy pdf.?
+Therefore, $m=(\frac12)^{\frac13}$ saitisfies $P(X\le m)\ge\frac12\ and\ P(X\ge m)\ge\frac12$ and is the median of this distribution.
+
+(b) $f(x)=\frac1{\pi(1+x^2)},\quad-\infty<x<\infty$
+
+$$F_X(x)=\int{f(x)dx}=\int\frac1{\pi(1+x^2)}=\frac{\arctan x}{\pi},\quad -\infty<x<\infty$$
+$$\lim_{x\to\infty}F_X(x)=\frac1\pi(\frac\pi2+\frac\pi2)=1$$
+
+> F(x) is a cdf and has a pdf f(x).
+
+$$(1)\quad \int_{-\infty}^m{f(x)dx}=\frac{\arctan m-\pi/2}{\pi}=\frac12,\quad \arctan m=0,\quad m=0$$
+
+$$(2)\quad\int_m^{\infty}{f(x)dx}=\frac{\pi/2-\arctan m}{\pi}=\frac12$$
+
+Therefore, $m=0$ saitisfies $P(X\le m)\ge\frac12\ and\ P(X\ge m)\ge\frac12$ and is the median of this distribution.
