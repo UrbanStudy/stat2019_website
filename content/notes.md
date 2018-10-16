@@ -12,12 +12,16 @@ https://www.symbolab.com/
 ### Demonstration
 
 
-![Normal_Distribution_PDF](https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg)
+![Normal_Distribution_PDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Normal_distribution_pdf.png/320px-Normal_distribution_pdf.png) ![Normal_Distribution_CDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Normal_distribution_cdf.png/320px-Normal_distribution_cdf.png)
 
-![Normal_Distribution_PDF]https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Normal_distribution_pdf.png/320px-Normal_distribution_pdf.png
+![Chi-square_distributionPDF](https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Chi-square_distributionPDF.png/320px-Chi-square_distributionPDF.png)|
+![Chi-square_distributionCDF](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Chi-square_distributionCDF.png/320px-Chi-square_distributionCDF.png)
 
-![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png)
-![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)
+
+---|---
+![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png)| ![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)
+
+
 
 #### interactive visualization
 
