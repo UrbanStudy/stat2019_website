@@ -15,11 +15,11 @@ https://www.symbolab.com/
 
 <https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg>
 
-![Cauchy_pdf](https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg)
+![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
 
-[Cauchy_pdf](https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg)
+[Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
 
-!(https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
+!(https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg)
 
 (https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
 
