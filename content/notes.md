@@ -1,17 +1,49 @@
 ---
 title: Notes
 markup: "mmark"
+output: html_document
 ---
 
-# {.tabset .tabset-fade .tabset-pills}
+## {.tabset .tabset-fade .tabset-pills}
 
-<https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg>
-
-<https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg>
 
 https://www.symbolab.com/
 
-## Glossary of Statistical Terms
+### Demonstration
+
+!<https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg>
+
+<https://upload.wikimedia.org/wikipedia/commons/7/74/Normal_Distribution_PDF.svg>
+
+![Cauchy_pdf](https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg)
+
+[Cauchy_pdf](https://commons.wikimedia.org/wiki/File:Cauchy_pdf.svg)
+
+!(https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
+
+(https://upload.wikimedia.org/wikipedia/commons/e/e4/Cauchy_distribution_cdf.png)
+
+#### interactive visualization
+
+
+- [Interpreting Confidence Intervals](http://rpsychologist.com/d3/CI/) 
+
+- [Interpreting Cohen's d effect size](http://rpsychologist.com/d3/cohend/)
+
+- [Interpreting Correlations](http://rpsychologist.com/d3/correlation/)
+
+- [Understanding Statistical Power and Significance Testing](http://rpsychologist.com/d3/NHST/)
+
+### Univariable Distribution
+
+1. [Chart of Univariable Distribution](https://www.wolfram.com/mathematica/new-in-8/parametric-probability-distributions/index.html)
+
+
+1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
+
+[Probability Theory and Mathematical Statistics](https://onlinecourses.science.psu.edu/stat414/node/109/)
+
+### Glossary of Statistical Terms
 
 ##### adjusting or controlling for a variable: 
 Assessing the effect of one variable while accounting for the effect of another (confounding) variable. Adjustment for the other variable can be carried out by stratifying the analysis (especially if the variable is categorical) or by statistically estimating the relationship between the variable and the outcome and then subtracting out that effect to study which effects are “left over.” For example, in a non-randomized study comparing the effects of treatments A and B on blood pressure reduction, the patients’ ages may have been used to select the treatment. It would be advisable in that case to control for the effect of age before estimating the treatment effect. This can be done using a regression model with blood pressure as the dependent variable and treatment and age as the independent variables (controlling for age using subtraction) or by stratifying by deciles of age and averaging the treatment effects estimated within the deciles. Adjustment results in adjusted odds ratios, adjusted hazard ratios, adjusted slopes, etc.
@@ -421,19 +453,9 @@ Failing to detect an effect that is real, i.e., the false negative rate. The typ
 A measure of the spread or variability of a distribution, equaling the average value of the squared difference between measurements and the population mean measurement. From a sample of measurements, the variance is estimated by the sample variance, which is the sum of squared differences from the sample mean, divided by the number of measurements minus 1. The minus 1 is a kind of “penalty” that corrects for estimating the population mean with the sample mean. Variances are typically only useful when the measurements follow a normal or at least a symmetric distribution.
 
 
-## Demonstration
-#### interactive visualization
 
 
-- [Interpreting Confidence Intervals](http://rpsychologist.com/d3/CI/) 
-
-- [Interpreting Cohen's d effect size](http://rpsychologist.com/d3/cohend/)
-
-- [Interpreting Correlations](http://rpsychologist.com/d3/correlation/)
-
-- [Understanding Statistical Power and Significance Testing](http://rpsychologist.com/d3/NHST/)
-
-## Machine Learning by PwC
+### Machine Learning by PwC
 
 <img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-overview-thumb.png" style="max-width:15%;min-width:40px;" >
 [Machine learning overview](http://usblogs.pwc.com/emerging-technology/machine-learning-overview-infographic-redirect/)
@@ -444,11 +466,4 @@ A measure of the spread or variability of a distribution, equaling the average v
 <img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-evolution-thumb.png" style="max-width:15%;min-width:40px;" >
 [Machine learning evolution](https://usblogs.pwc.com/emerging-technology/machine-learning-evolution-infographic/)
 
-## Univariable Distribution
 
-1. [Chart of Univariable Distribution](https://www.wolfram.com/mathematica/new-in-8/parametric-probability-distributions/index.html)
-
-
-1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
-
-[Probability Theory and Mathematical Statistics](https://onlinecourses.science.psu.edu/stat414/node/109/)
