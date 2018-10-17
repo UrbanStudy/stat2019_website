@@ -6,20 +6,18 @@ output: html_document
 
 ## {.tabset .tabset-fade .tabset-pills}
 
+### Demonstration  {.tabset .tabset-fade .tabset-pills}
 
 https://www.symbolab.com/
 
-### Demonstration
+PDF|CDF|PDF|CDF
+---|---|---|---
+![Normal_Distribution_PDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Normal_distribution_pdf.png/320px-Normal_distribution_pdf.png) | ![Normal_Distribution_CDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Normal_distribution_cdf.png/320px-Normal_distribution_cdf.png) | ![Chi-square_distributionPDF](https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Chi-square_distributionPDF.png/320px-Chi-square_distributionPDF.png) | ![Chi-square_distributionCDF](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Chi-square_distributionCDF.png/320px-Chi-square_distributionCDF.png)
+![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png)| ![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)||
 
 
-![Normal_Distribution_PDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Normal_distribution_pdf.png/320px-Normal_distribution_pdf.png) ![Normal_Distribution_CDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Normal_distribution_cdf.png/320px-Normal_distribution_cdf.png)
-
-![Chi-square_distributionPDF](https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Chi-square_distributionPDF.png/320px-Chi-square_distributionPDF.png)|
-![Chi-square_distributionCDF](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Chi-square_distributionCDF.png/320px-Chi-square_distributionCDF.png)
 
 
----|---
-![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png)| ![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)
 
 
 
