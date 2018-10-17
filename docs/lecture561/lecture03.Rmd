@@ -1,5 +1,5 @@
 ---
-title: "2. Transformation & Expectations"
+title: "1.6 pdf & 2.1 Transformation"
 subtitle: "STAT 561 Week 3,4"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output:
@@ -13,6 +13,68 @@ output:
 ---
 
 ## {.tabset .tabset-fade .tabset-pills}
+
+### 1.6 Density and Mass Functions 
+
+`2018.10.9`
+
+#### 1. cdf conditions
+Theorem 1.5.3 
+
+>A cdf F(x) should satisfy 3 conditions:   
+a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$;  
+b. F is non-decreasing; and   
+c. F is right-continuous, which means $\lim_{x\to\infty}f(x)=f(x)$
+
+#### 2-6. proof condition c.
+
+> let $C_1,C_2$,...be a sequance of events such that $C1\subset C_2\subset$... 
+
+> let $A_1=C_1$ and for $n\ge2,\ A_n=C_n\setminus C_{n-1}$, then
+
+$$\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty C_i$$
+
+$$P[\lim_{n\to\infty}C_n]=P[\lim_{n\to\infty}\bigcup_{i=1}^nC_i]=P[\bigcup_{i=1}^{\infty}C_i]=P[\bigcup_{i=1}^{\infty}A_i]=\sum_{i=1}^{\infty}P(A_i)=\lim_{n\to\infty}\sum_{i=1}^nP(A_i)$$
+
+$$=\lim_{n\to\infty}\Big[P(A_1)+\sum_{i=2}^nP(A_i)\Big]=\lim_{n\to\infty}\Bigg[P(C_1)+\sum_{i=2}^n\Big[P(C_i)-P(C_i\cap C_{i-1})\Big]\Bigg]$$
+
+$$=\lim_{n\to\infty}\Bigg[P(C_1)+\sum_{i=2}^n\Big[P(C_i)-P(C_{i-1})\Big]\Bigg]=\lim_{n\to\infty}P(C_n)$$
+
+$$So\quad P(\lim_{n\to\infty}C_n)=\lim_{n\to\infty}P(C_n)$$
+
+> Now let $B_1,B_2$,...be a sequance of events such that $B1\supset B_2\supset$... 
+
+$$Then\ B_1^c\subset B_2^c\subset...$$
+
+$$So\quad P(\lim_{n\to\infty}B_n^c)=\lim_{n\to\infty}P(B_n^c)$$
+
+$$left\quad P(\lim_{n\to\infty}B_n^c)=P\left(\lim_{n\to\infty}\bigcup_{i=1}^nB_i^c\right)=P\left(\bigcup_{i=1}^{\infty}B_i^c\right)=P\left({\bigcap_{i=1}^{\infty}B_i}^c\right)$$
+
+$$=1-P\left(\bigcap_{i=1}^{\infty}B_i\right)=1-P\left(\lim_{n\to\infty}\bigcap_{i=1}^nB_i\right)=1-P\left(\lim_{n\to\infty}B_n\right)\quad $$
+
+$$right\quad \lim_{n\to\infty}P(B_n^c)=\lim_{n\to\infty}(1-P(B_n))=1-\lim_{n\to\infty}P(B_n)$$
+
+$$So\quad \lim_{n\to\infty}P(B_n)=P(\lim_{n\to\infty}B_n)$$
+
+> let $B_n=(-\infty,\ x+\frac1n]$, n=1,2,3,...
+> Note: $B_i\supset B_2\supset$...
+
+$$\lim_{n\to\infty}B_n=(-\infty,\ x]$$
+
+$$P\left(\lim_{n\to\infty}B_n\right)=P\left((-\infty,\ x]\right)=F_X(x)$$
+
+$$left\quad \lim_{n\to\infty}P(B_n)=\lim_{n\to\infty}P\left((-\infty,\ x+\frac1n]\right)=\lim_{n\to\infty}F_X(x+\frac1n)$$
+
+$$\therefore \lim_{n\to\infty}F_X(x+\frac1n)=F_X(x)$$
+
+#### 7. Probability Density Function
+Definition 1.6.3
+
+
+
+
+#### 8. Example
+
 
 ### 2.1 Distribution of Functions of a Random Variable  
 
@@ -90,90 +152,11 @@ $$f_Y(y)=\begin{cases}\frac1{\sqrt{2\pi y}}e^{-\frac{y}2} &y>0\\0 &elsewhere\end
 
 `2018.10.16`
 
-### 2.2 Expected Values
+#### 1.2. Another transformation example
 
-#### 2. Expectation
+Let X have cdf $F_X(x)$ and assume that F is continuous and monotone increasing. define Y=F(X). Find the pdf for Y
 
-Definition:
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|\quad and\quad \frac{dx}{dy}=\frac1{\frac{dy}{dx}}=\frac1{f_X(x)}$$
 
-If X is discrete and Y=g(X), then
+$$So\quad f_Y(y)=f_X(x)\frac1{f_X(x)}=1\quad for\ 0\le y\le1$$
 
-$$E(g(X))=\sum_{all\ x}g(x)p_x(x)$$
-
-provided that 
-
-$$\sum_{all\ x}|g(x)|p_x(x)<\infty$$
-
-If X is continnuous and Y=g(X), then
-
-$$E(g(X))=\int_{-\infty}^{\infty}g(x)f_x(x)dx$$
-
-provided that 
-
-$$\int_{-\infty}^{\infty}g(x)f_x(x)dx<\infty$$
-
-In particular,
-
-$$E(X)=\begin{cases}\sum_{all\ x}xp_x(x) &descrete\\\int_{-\infty}^{\infty}xf_x(x)dx &continuous\end{cases}$$
-
-#### 3. Mean
-
-Definition: E(X) is the mean of the random variable
-
-$$\mu=E(X)$$
-
-#### 4. Example-Exponential_distribution
-
-$$Let\quad f_X(x)=\frac1\lambda e^{-\frac x\lambda},\ x>0 $$
-
-Exponential_pmf|Exponential_cdf
----|---
-![Exponential_distribution_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Exponential_distribution_pdf.png/320px-Exponential_distribution_pdf.png)|![Exponential_distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Exponential_distribution_cdf.png/320px-Exponential_distribution_cdf.png)
-
-
-Find E(X). **[integration by parts]**
-
-$$E(X)=\int_0^\infty x\frac1\lambda e^{-\frac x\lambda}dx=\left.-xe^{-\frac x\lambda}\right|_0^\infty+\int_0^\infty e^{-\frac x\lambda}dx=\int_0^\infty e^{-\frac x\lambda}dx=\lambda$$
-
-#### 5-7. Example-Binomial_distribution
-
-$$let\quad p_X(x)=\binom{n}xp^x(1-p)^{n-x},\ x=0,1,2,...n,\ 0<p<1$$
-
-Binomial_pmf|Binomial_cdf
----|---
-![Binomial_distribution_pmf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Binomial_distribution_pmf.svg/320px-Binomial_distribution_pmf.svg.png)|![Binomial_distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Binomial_distribution_cdf.svg/320px-Binomial_distribution_cdf.svg.png)
-
-$$\text{By the Binomial Theorem}\quad \sum_{x=0}^n\binom{n}xp^x(1-p)^{n-x}=(p+(1-p))^n=1$$
-
-$$E(X)=\sum_{x=0}^n\binom{n}xp^x(1-p)^{n-x}=\sum_{x=1}^n\binom{n}xp^x(1-p)^{n-x}$$
-
-$$E(X)=np$$
-
-#### 8. Example-Cauchy_distribution
-
-$$Let\quad f_X(x)=\frac1\pi\frac1{1+x^2},\quad -\infty<x<\infty$$
-
-> E(X) is undefined
-
-#### 9-10. Properties of Expectation
-
-$$E(K)=K$$
-
-$$E(Kg(X))=KE(g(X))$$
-
-$$E(g(X)+h(X))=E(g(X))+E(h(X))$$
-
-> Property (2), (3) imply that E() is a linear operator.
-
-### 2.3 Moments and Moment Generating Functions
-
-#### 3. Monment
-
-Definition: $E(X^n)$ is the mean of the random variable
-
-$$\mu_n'=E(X^n),\quad note\quad \mu_1'=\mu$$
-
-### 2.4 Diffenetiating Under an Integral Sign
-
-
- 
