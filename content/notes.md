@@ -10,11 +10,13 @@ output: html_document
 
 https://www.symbolab.com/
 
-PDF|CDF|PDF|CDF
+Normal_PDF|Normal_CDF|Chi^2_PDF|Chi^2_CDF
 ---|---|---|---
 ![Normal_Distribution_PDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Normal_distribution_pdf.png/320px-Normal_distribution_pdf.png) | ![Normal_Distribution_CDF](https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Normal_distribution_cdf.png/320px-Normal_distribution_cdf.png) | ![Chi-square_distributionPDF](https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Chi-square_distributionPDF.png/320px-Chi-square_distributionPDF.png) | ![Chi-square_distributionCDF](https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Chi-square_distributionCDF.png/320px-Chi-square_distributionCDF.png)
-![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png)| ![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)||
-
+F_PDF|F_CDF|Cauchy_PDF|Cauchy_CDF
+![F-distribution_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/F-distribution_pdf.svg/320px-F-distribution_pdf.svg.png)|![F-distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/F_distributionCDF.png/320px-F_distributionCDF.png)|![Cauchy_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Cauchy_distribution_pdf.png/320px-Cauchy_distribution_pdf.png)|![Cauchy_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Cauchy_distribution_cdf.png/320px-Cauchy_distribution_cdf.png) 
+Exponential_pmf|Exponential_cdf|Binomial_pmf|Binomial_cdf
+![Exponential_distribution_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Exponential_distribution_pdf.png/320px-Exponential_distribution_pdf.png)|![Exponential_distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Exponential_distribution_cdf.png/320px-Exponential_distribution_cdf.png)|![Binomial_distribution_pmf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Binomial_distribution_pmf.svg/320px-Binomial_distribution_pmf.svg.png)|![Binomial_distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Binomial_distribution_cdf.svg/320px-Binomial_distribution_cdf.svg.png)
 
 
 
