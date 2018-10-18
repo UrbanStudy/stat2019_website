@@ -1,0 +1,149 @@
+---
+title: 'linear Regression'
+author: "Shen Qu"
+date: "10/17/2018"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+# {.tabset .tabset-fade .tabset-pills}
+
+## Regression Analysis
+
+http://rich-iannone.github.io/DiagrammeR/index.html
+
+```{r, echo=TRUE}
+
+library(DiagrammeR)
+
+grViz("
+digraph nicegraph {
+
+  # graph, node, and edge definitions
+  graph [compound = true, nodesep = .5, ranksep = .25,
+         color = crimson]
+
+  node [fontname = Helvetica, fontcolor = darkslategray,
+        shape = rectangle, fixedsize = true, width = 1,
+        color = darkslategray]
+
+  edge [color = grey, arrowhead = none, arrowtail = none]
+
+  # subgraph for R information
+  subgraph cluster0 {
+    node [fixedsize = true, width = 3]
+    '@@1-1' -> '@@1-2' -> '@@1-3' -> '@@1-4'
+    '@@1-4' -> '@@1-5' -> '@@1-6' -> '@@1-7'
+  }
+
+  # subgraph for RStudio information
+  subgraph cluster1 {
+    node [fixedsize = true, width = 3]
+    '@@2' -> '@@3'
+  }
+
+  Information             [width = 1.5]
+  Information -> R
+  Information -> RStudio
+  R -> '@@1-1'            [lhead = cluster0]
+  RStudio -> '@@2'        [lhead = cluster1]
+
+}
+
+[1]: 1:7
+[2]: 38
+[3]: 'Current \\n xxx'
+
+")
+
+```
+
+``````{r, echo=TRUE}
+
+DiagrammeR::mermaid("
+graph LR
+A(Rounded)-->B[Rectangular]
+B-->C{A Rhombus}
+C-->D[Rectangle One]
+C-->E[Rectangle Two]
+")
+```
+
+
+```{r, echo=TRUE}
+###
+# Create two graphs and combine them into one
+###
+
+library(DiagrammeR)
+
+# Create the first graph
+nodes_1 <-
+  create_node_df(10, nodes = 1:10,
+    label = FALSE,
+    type = "lower",
+    style = "filled",
+    color = "aqua",
+    shape = "square",
+    data = c(3.5, 2.6, 9.4, 2.7))
+
+edges_1 <-
+  create_edge_df(
+    from = 1:9,
+    to = 2:10,
+    rel = "requires",
+    color = "green",
+    data = c(2.7, 8.9, 2.6, 0.6))
+
+graph_1 <-
+  create_graph(
+    nodes_df = nodes_1,
+    edges_df = edges_1,
+    directed = TRUE)
+
+# Create the second graph (note that node ID values
+# are different from those of the first graph)
+nodes_2 <-
+  create_node_df(10, nodes = 1:10,
+    label = TRUE,
+    type = "upper",
+    style = "filled",
+    color = "red",
+    shape = "rectangle",
+    data = c("0.5", "3.9", "3.7", "8.2"))
+
+edges_2 <-
+  create_edge_df(
+    from = 1:9,
+    to = 2:10,
+    rel = "receives",
+    arrowhead = "vee",
+    color = "red")
+
+graph_2 <-
+  create_graph(
+    nodes_df = nodes_2,
+    edges_df = edges_2,
+    directed = F)
+
+# Combine the two graphs, the
+# global graph attribute
+# `graph_attrs = "rankdir = LR"`
+# will be retained since it is
+# part of the graph supplied as `x`
+combined_graph <-
+  combine_graphs(x = graph_1, y = graph_2)
+
+# Display the combined graph
+render_graph(combined_graph)
+
+
+```
+## Multiple Regression Models
