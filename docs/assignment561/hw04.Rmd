@@ -88,6 +88,9 @@ $$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4e^{-x}dx=????=3$$
 
 $$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac31=3$$
 
+> comment on the peakedness：
+
+
 $$f(x)=\frac12,-1<x<1$$
 
 $$\mu=E(X)=\int_{-1}^{1}x\frac12dx=\frac14x^2\bigg|_{-1}^{1}=0$$
@@ -98,27 +101,97 @@ $$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4\frac12dx=\frac1{10}x^5\bigg|_{-1}^
 
 $$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{\frac15}{\frac19}=\frac95$$
 
+> comment on the peakedness：
+
+
 $$f(x)=\frac12e^{-|x|},-\infty<x<\infty$$
 
 This pdf is symmetric about x=0. 
 
-$$\mu=E(X)=\int_{-\infty}^{\infty}x\frac12e^{-|x|}dx=\frac14x^2\bigg|_{-1}^{1}=0$$
+Let $u=x, dv=\frac12e^{-x}dx$, then $du=dx, v=-\frac12e^{-x}$
 
-$$\mu_2=(X-\mu)^2=EX^2=\int_{-1}^{1}x^2\frac12dx=\frac16x^3\bigg|_{-1}^{1}=\frac13$$
+$$\mu=E(X)=2\int_{0}^{\infty}x\frac12e^{-x}dx=-2x\frac12e^{-x}\bigg|_{0}^{\infty}-2\int_{0}^{\infty}-\frac12e^{-x}dx=0-e^{-x}\bigg|_{0}^{\infty}=1\quad x\in(0,\infty)$$
 
-$$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4\frac12dx=\frac1{10}x^5\bigg|_{-1}^{1}=\frac15$$
+$$\mu=E(X)=\int_{0}^{\infty}x\frac12e^{-x}dx+\int_{-\infty}^{0}x\frac12e^{-(-x)}dx=\int_{0}^{\infty}x\frac12e^{-x}dx+\int_{0}^{\infty}(-x)\frac12e^{-x}dx=0$$
 
-$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{\frac15}{\frac19}=\frac95$$
+$$\mu_2=(X-\mu)^2=EX^2=\int_{0}^{\infty}x^2\frac12e^{-x}dx+\int_{-\infty}^{0}x^2\frac12e^{-(-x)}dx=2\int_{0}^{\infty}x^2\frac12e^{-x}dx$$
 
-Ruppert (1987) uses influence functions (see Miscellanea 10.6.4) to explore further the
-meaning of kurtosis, and Groeneveld (1991) uses them to explore skewness; see also
-Balanda and MacGillivray (1988) for more on the interpreta.tion of $\alpha_4$.
+Let $u=x^2, dv=\frac12e^{-x}dx$, then $du=2dx, v=-\frac12e^{-x}$
 
-**2.33** In each of the following cases verify the expression given for the moment generating
-function, and in each case use the mgf to calculate E X and Var X.
+$$=2(-x^2\frac12e^{-x})\bigg|_{0}^{\infty}-2(\int_{0}^{\infty}\frac12e^{-x}2dx)=0-2e^{-x}\bigg|_{0}^{\infty}=2$$
 
-(a) $P(X=x)=\frac{e^{-\lambda}\ \lambda^x}{x}, M_X(t)=e^{\lambda(e^t-1)}, x=0,1,...; \lambda>0$
+Let $u=x^4, dv=\frac12e^{-x}dx$, then $du=4!dx, v=-\frac12e^{-x}$
+
+$$\mu_4=E(X-\mu)^4=\int_{0}^{\infty}x^4\frac12e^{-x}dx+\int_{-\infty}^{0}x^4\frac12e^{-(-x)}dx=2\int_{0}^{\infty}x^4\frac12e^{-x}dx$$
+
+$$=2(-x^4\frac12e^{-x})\bigg|_{0}^{\infty}-2(\int_{0}^{\infty}\frac12e^{-x}4!dx)=0-4!e^{-x}\bigg|_{0}^{\infty}=24$$
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{24}{4}=6$$
+
+> comment on the peakedness：
+
+Ruppert (1987) uses influence functions (see Miscellanea 10.6.4) to explore further the meaning of kurtosis, and Groeneveld (1991) uses them to explore skewness; see also Balanda and MacGillivray (1988) for more on the interpreta.tion of $\alpha_4$.
+
+**2.33** In each of the following cases verify the expression given for the moment generating function, and in each case use the mgf to calculate EX and VarX.
+
+(a) $P(X=x)=\frac{e^{-\lambda}\ \lambda^x}{x!}, M_X(t)=e^{\lambda(e^t-1)}, x=0,1,...; \lambda>0$
+
+This is a descrete function.
+
+$$M_X(t)=E(e^{tx})=\sum_{x=0}^{\infty}e^{tx}\frac{e^{-\lambda}\lambda^x}{x!}=e^{-\lambda}\sum_{x=0}^{\infty}\frac{(e^t\lambda)^x}{x!}=???=e^{-\lambda}e^{\lambda e^t}=e^{\lambda(e^t-1)}$$
+
+$$Check\quad M_X(0)=E(e^{0x})=e^{\lambda(e^0-1)}=1$$
+
+$$M_X'(t)=e^{\lambda(e^t-1)}\lambda e^t=\lambda e^{\lambda e^t+t-\lambda}$$
+
+$$E(X)=M_X'(0)=\lambda e^{\lambda e^0+0-\lambda}=\lambda$$
+
+$$M_X''(t)=\lambda e^{\lambda e^t+t-\lambda}(\lambda e^t+1)=\lambda^2 e^{\lambda e^t+2t-\lambda}+\lambda e^{\lambda e^t+t-\lambda}$$
+
+$$E(X^2)=M_X''(0)=\lambda^2 e^{\lambda e^0+0-\lambda}+\lambda e^{\lambda e^0+0-\lambda}=\lambda^2+\lambda$$
+
+$$Var(X)=E(X^2)-(EX)^2=\lambda^2+\lambda-\lambda^2=\lambda$$
 
 (b) $P(X=x)=p(1-p)^x, M_X(t)=\frac{p}{1-(1-p)e^t}, x=0,1,...; 0<p<1$
 
+This is a descrete function.
+
+$$M_X(t)=E(e^{tx})=\sum_{x=0}^{\infty}e^{tx}p(1-p)^x=p\sum_{x=0}^{\infty}[e^{t}(1-p)]^x=???=\frac{p}{1+(p-1)e^{t}},\quad 1+(p-1)e^{t}>0\implies t<-log(1-p)$$
+
+$$Check\quad M_X(0)=E(e^{0x})=\frac{p}{1+(p-1)e^{0}}=1$$
+
+$$M_X'(t)=\frac{-p}{[1+(p-1)e^{t}]^2}(p-1)e^{t}=\frac{-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}$$
+
+$$E(X)=M_X'(0)=\frac{-p(p-1)e^{0}}{[1+(p-1)e^{0}]^2}=\frac{1-p}p$$
+
+$$M_X''(t)=\left(\frac{-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}\right)'=\left(\frac{p-p-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}\right)'=\left(\frac{p}{[1+(p-1)e^{t}]^2}-\frac{p}{1+(p-1)e^{t}}\right)'$$
+
+$$=\frac{-2p(p-1)e^{t}}{[1+(p-1)e^{t}]^3}-\frac{-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}=\frac{p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}-\frac{2p(p-1)e^{t}}{[1+(p-1)e^{t}]^3}$$
+
+$$E(X^2)=M_X''(0)=\frac{p(p-1)e^{0}}{[1+(p-1)e^{0}]^2}-\frac{2p(p-1)e^{0}}{[1+(p-1)e^{0}]^3}=\frac{p(p-1)}{p^2}-\frac{2(p-1)}{p^2}=\frac{p^2-3p+2}{p^2}$$
+
+$$Var(X)=E(X^2)-(EX)^2=\frac{p^2-3p+2}{p^2}-\frac{(1-p)^2}{p^2}=\frac{1-p}{p^2}$$
+
 (c) $f_X(x)=\frac{e^{-(x-\mu)^2/(2\sigma^2)}}{\sqrt{2\pi}\sigma},\quad M_X(t)=e^{\mu t+\sigma^2t^2/2}, -\infty<x<\infty; -\infty<\mu<\infty, \sigma>0$
+
+This is a continuous function.
+
+$$M_X(t)=E(e^{tx})=\int_{-\infty}^{\infty}e^{tx}\frac{e^{-\frac{(x-\mu)^2}{2\sigma^2}}}{\sqrt{2\pi}\sigma}dx=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{tx-\frac{(x-\mu)^2}{2\sigma^2}}dx=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{\frac{-1}{2\sigma^2}[x^2-(2\mu+2\sigma^2t)x+\mu^2]}dx$$
+
+Transform the part of exponent
+
+$$\frac{-1}{2\sigma^2}[x^2-(2\mu+2\sigma^2t)x+\mu^2]=\frac{-1}{2\sigma^2}[(x-\mu-\sigma^2t)^2-(\mu+\sigma^2t)^2+\mu^2]=\frac{-1}{2\sigma^2}[(x-\mu-\sigma^2t)^2-2\mu\sigma^2t-\sigma^4t^2]=\frac{-1}{2\sigma^2}(x-\mu-\sigma^2t)^2+\mu t+\frac{\sigma^2t^2}2$$
+
+$$M_X(t)=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{\frac{-(x-\mu-\sigma^2t)^2}{2\sigma^2}}e^{\mu t+\frac{\sigma^2t^2}2}dx=\frac{e^{\mu t+\frac{\sigma^2t^2}2}}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{\frac{-(x-\mu-\sigma^2t)^2}{2\sigma^2}}dx=???=e^{\mu t+\frac{\sigma^2t^2}2}$$
+
+$$Check\quad M_X(0)=E(e^{0x})=e^{\mu 0+\frac{\sigma^2{0}^2}2}=1$$
+
+$$M_X'(t)=e^{\mu t+\frac{\sigma^2t^2}2}(\mu+\sigma^2t)$$
+
+$$E(X)=M_X'(0)=e^{\mu 0+\frac{\sigma^2(0)^2}2}(\mu+\sigma^20)=\mu$$
+
+$$M_X''(t)=\left(e^{\mu t+\frac{\sigma^2t^2}2}\right)'(\mu+\sigma^2t)+e^{\mu t+\frac{\sigma^2t^2}2}(\mu+\sigma^2t)'=(\mu+\sigma^2t)^2e^{\mu t+\frac{\sigma^2t^2}2}+\sigma^2e^{\mu t+\frac{\sigma^2t^2}2}$$
+
+$$E(X^2)=M_X''(0)=(\mu+\sigma^20)^2e^{\mu 0+\frac{\sigma^2{0}^2}2}+\sigma^2e^{\mu 0+\frac{\sigma^2{0}^2}2}=\mu^2+\sigma^2$$
+
+$$Var(X)=E(X^2)-(EX)^2=\mu^2+\sigma^2-\mu^2=\sigma^2$$
