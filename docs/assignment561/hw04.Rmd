@@ -9,11 +9,33 @@ output: html_document
 
 (a) $f_X(x)=ax^{a-1}, 0<x<1, a>0$
 
+Because X is a continuous variable.
+
+$$EX=\int_0^1xax^{a-1}dx=\int_0^1ax^{a}dx=\frac{a}{a+1}x^{a+1}\bigg|_0^1=\frac{a}{a+1}-0=\frac{a}{a+1},\quad a>0$$
+
+$$EX^2=\int_0^1x^2ax^{a-1}dx=\int_0^1ax^{a+1}dx=\frac{a}{a+2}x^{a+2}\bigg|_0^1=\frac{a}{a+2}-0=\frac{a}{a+2},\quad a>0$$
+
+$$VarX=EX^2-(EX)^2=\frac{a}{a+2}-(\frac{a}{a+1})^2=\frac{a(a+1)^2-a^2(a+2)}{(a+2)(a+1)^2}=\frac{a}{(a+2)(a+1)^2},\quad a>0$$
+
 (b) $fx(x)=\frac1n,\ x=1,2,..., n, n>0$ an integer
+
+Because X is a discrete variable.
+
+$$EX=\sum_1^nx\frac1n=\frac1n\frac{n(n+1)}2=\frac{n+1}2,\quad n>0$$
+
+$$EX^2=\sum_1^nx^2\frac1n=\frac1n\frac{n(n+1)(2n+1)}6=\frac{(n+1)(2n+1)}6,\quad n>0$$
+
+$$VarX=EX^2-(EX)^2=\frac{(n+1)(2n+1)}6-(\frac{n+1}2)^2=\frac{(n+1)(4n+2-3n-3)}{12}=\frac{n^2-1}{12},\quad n>0\ ????$$
 
 (c) $fx(x)=\frac32(x-1)^2, 0<X<2$
 
+Because X is a continuous variable.
 
+$$EX=\int_0^2x\frac32(x-1)^2dx=\frac32\int_0^2(x^3-2x^2+x)dx=\frac32(\frac{x^4}4\bigg|_0^2-\frac{2x^3}3\bigg|_0^2+\frac{x^2}2\bigg|_0^2)=\frac32(4-\frac{16}3+2)=1$$
+
+$$EX^2=\int_0^2x^2\frac32(x-1)^2dx=\frac32\int_0^2(x^4-2x^3+x^2)dx=\frac32(\frac{x^5}5\bigg|_0^2-\frac{2x^4}4\bigg|_0^2+\frac{x^3}3\bigg|_0^2)=\frac32(\frac{32}5-8+\frac{8}3)=\frac85$$
+
+$$VarX=EX^2-(EX)^2=\frac85-1^2=\frac35$$
 
 **2.28** Let $\mu_n$ denote the nth central moment of a random variable X. Two quantities of
 interest, in addition to the mean and variance, are
@@ -26,16 +48,67 @@ interpret, measures the peakedness or flatness of the pdf.
 
 (a) Show that if a pdf is symmetric about a point a, then $\alpha_3=O$.
 
-(b) Calculate $\alpha_3$ as for $f(x)=e^{-x}$, a pdf that is skewed to the right.
+A symmetric pdf about a point a means $\mu=a$ and $f_X(a-x)=f_X(a+x)$
 
-(c) Calculate $\alpha_4$ for each of the following pdfs and comment on the peakedness .of
-each.
+$$\mu_3=E(X-\mu)^3=\int_{-\infty}^{\infty}(x-a)^3f(x)dx=\int_{-\infty}^{a}(x-a)^3f(x)dx+\int_{a}^{\infty}(x-a)^3f(x)dx$$
+
+Let u=x-a, x=u+a, then
+
+$$\mu_3=\int_{-\infty}^{a}u^3f(u+a)d(u+a)+\int_{a}^{\infty}u^3f(u+a)d(u+a)=\int_{-\infty}^{0}u^3f(u+a)d(u)+\int_{0}^{\infty}u^3f(u+a)d(u)=\int_{0}^{\infty}-u^3f(-u+a)d(u)+\int_{0}^{\infty}u^3f(u+a)d(u)=0$$
+
+(b) Calculate $\alpha_3$ as for $f(x)=e^{-x},\ x\ge0$, a pdf that is skewed to the right.
+
+Let $u=x,\ dv=e^{-x}dx$, then $du=dx,\ v=-e^{-x}$
+
+$$\mu=E(X)=\int_{0}^{\infty}xe^{-x}dx=\int_{0}^{\infty}udv=uv\bigg|_0^{\infty}-\int_{0}^{\infty}vdu=-xe^{-x}\bigg|_0^{\infty}-\int_{0}^{\infty}-e^{-x}dx=0-e^{-x}\bigg|_0^{\infty}=0-0+1=1$$
+
+Let $u=x^2,\ dv=e^{-x}dx$, then $du=2dx,\ v=-e^{-x}$
+
+$$\mu_2=E(X-\mu)^2=EX^2-\mu^2=\int_{0}^{\infty}x^2e^{-x}dx-1=\int_{0}^{\infty}udv-1=uv\bigg|_0^{\infty}-\int_{0}^{\infty}vdu-1$$
+
+$$=-x^2e^{-x}\bigg|_0^{\infty}-\int_{0}^{\infty}-e^{-x}2dx-1=0-2e^{-x}\bigg|_0^{\infty}-1=0-0+2-1=1$$
+
+
+$$\mu_3=E(X-\mu)^3=\int_{0}^{\infty}(x-1)^3e^{-x}dx=\int_{0}^{\infty}(x^3-3x^2+3x-1)e^{-x}dx=\Gamma4-3\Gamma3+3\Gamma2-1=3!-3\times2!+3-1=3\ **???**2$$
+
+$$\therefore\quad \alpha_3=\frac{\mu_3}{(\mu_2)^{3/2}}=\frac31=3$$
+
+(c) Calculate $\alpha_4$ for each of the following pdfs and comment on the peakedness of each.
 
 $$f(x)=\frac1{\sqrt{2\pi}}e^{-x^2/2},-\infty<x<\infty$$
 
+This is the pdf of standard normal distribution, $\mu=E(X)=0,\ \mu_2=Var(X)=1$.
+
+$$\mu=E(X)=\int_{-\infty}^{\infty}x\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=-\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}\bigg|_{-\infty}^{\infty}=0$$
+
+$$\mu_2=E(X-\mu)^2=EX^2=\int_{-\infty}^{\infty}x^2\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=???=1$$
+
+$$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4e^{-x}dx=????=3$$
+
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac31=3$$
+
 $$f(x)=\frac12,-1<x<1$$
 
+$$\mu=E(X)=\int_{-1}^{1}x\frac12dx=\frac14x^2\bigg|_{-1}^{1}=0$$
+
+$$\mu_2=(X-\mu)^2=EX^2=\int_{-1}^{1}x^2\frac12dx=\frac16x^3\bigg|_{-1}^{1}=\frac13$$
+
+$$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4\frac12dx=\frac1{10}x^5\bigg|_{-1}^{1}=\frac15$$
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{\frac15}{\frac19}=\frac95$$
+
 $$f(x)=\frac12e^{-|x|},-\infty<x<\infty$$
+
+This pdf is symmetric about x=0. 
+
+$$\mu=E(X)=\int_{-\infty}^{\infty}x\frac12e^{-|x|}dx=\frac14x^2\bigg|_{-1}^{1}=0$$
+
+$$\mu_2=(X-\mu)^2=EX^2=\int_{-1}^{1}x^2\frac12dx=\frac16x^3\bigg|_{-1}^{1}=\frac13$$
+
+$$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4\frac12dx=\frac1{10}x^5\bigg|_{-1}^{1}=\frac15$$
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{\frac15}{\frac19}=\frac95$$
 
 Ruppert (1987) uses influence functions (see Miscellanea 10.6.4) to explore further the
 meaning of kurtosis, and Groeneveld (1991) uses them to explore skewness; see also
