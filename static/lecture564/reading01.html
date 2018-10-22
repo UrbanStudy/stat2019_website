@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-10-09" />
+<meta name="date" content="2018-10-22" />
 
 <title>1 Introduction &amp; 2 Simple Linear Regression</title>
 
@@ -345,7 +345,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">1 Introduction &amp; 2 Simple Linear Regression</h1>
 <h3 class="subtitle"><em>STAT 564 Week 1</em></h3>
-<h4 class="date"><em>October 09, 2018</em></h4>
+<h4 class="date"><em>October 22, 2018</em></h4>
 
 </div>
 
@@ -365,7 +365,7 @@ $(document).ready(function () {
 <li><p>Example 1</p></li>
 <li><p>Main Goals of Regression Analysis</p></li>
 <li><p>Regression Models</p></li>
-<li><p>Regression Models building process</p></li>
+<li><p>Regression Models building process <span class="math display">\[y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n\]</span></p></li>
 </ul>
 </div>
 </div>
@@ -390,13 +390,20 @@ $(document).ready(function () {
 <ul>
 <li>Estimate Regression Parameters (or Coefficients)</li>
 </ul>
+<p><span class="math display">\[SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2\]</span></p>
+<p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\implies \sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x\]</span></p>
+<p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\implies\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2\]</span></p>
 <p><code>2018.09.28</code></p>
 <ul>
-<li>The other forms of <span class="math inline">\(S_{xx}\ and\ S_{xy}\)</span>
+<li>The other forms of <span class="math inline">\(S_{xx}\ and\ S_{xy}\)</span> <span class="math display">\[S_{xx}=\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2/n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2\]</span> <span class="math display">\[S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)\]</span></li>
+</ul>
+<p><span class="math display">\[S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2\]</span></p>
+<p><span class="math display">\[S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}\]</span></p>
+<p><span class="math display">\[c_i=\frac{x_i-\bar x}{S_{xx}}\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^nc_i=\sum_{i=1}^n\frac{x_i-\bar x}{S_{xx}}=\frac1{S_{xx}}\sum_{i=1}^n(x_i-\bar x)=\frac1{S_{xx}}(n\bar x-n\bar x)=0\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}}\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^nc_ix_i=\frac1{S_{xx}}\sum_{i=1}^nx_i(x_i-\bar x)=\frac{S_{xx}}{S_{xx}}=1\]</span></p>
 <ul>
-<li>[1.1]</li>
-<li>[1.3]</li>
-</ul></li>
 <li>Example 2
 <ul>
 <li>[2.2.1]</li>
@@ -410,22 +417,30 @@ $(document).ready(function () {
 <h3>2.2.2 Properties of the least-Squares Estimators</h3>
 <div id="they-are-linear-funcitons" class="section level4">
 <h4>1. They are linear funcitons</h4>
+<p><span class="math display">\[\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i\]</span> <span class="math display">\[\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i\]</span></p>
 </div>
 <div id="they-are-unbiased-estimators-of-regression-coefficients" class="section level4">
 <h4>2. They are unbiased estimators of regression coefficients</h4>
-<pre><code>- [1.1]</code></pre>
+<p><span class="math display">\[E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\varepsilon_i]=\beta_0\frac{\sum_{i-1}^n(x_i-\bar x)}{S_{xx}}+{\beta_1}\frac{\sum_{i-1}^n(x_i-\bar x)x_i}{S_{xx}}+0=\beta_1\]</span></p>
+<p><span class="math display">\[E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0\]</span></p>
 <p><code>2018.10.1</code></p>
 </div>
 <div id="variances-and-coariances" class="section level4">
 <h4>3. Variances and coariances</h4>
+<p><span class="math display">\[Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2\]</span></p>
+<p><span class="math display">\[For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0\]</span></p>
+<p><span class="math display">\[Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}\]</span></p>
+<p><span class="math display">\[Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})\]</span></p>
 </div>
 <div id="gauss-markov-theorem" class="section level4">
 <h4>4. Gauss Markov Theorem</h4>
+<p><span class="math display">\[\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^ne_i=0;\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0\]</span></p>
 </div>
 <div id="when-errors" class="section level4">
 <h4>5. When errors</h4>
-<p><span class="math display">\[\hat{\beta_0}\sim N\left(\beta_0,\dfrac{\sigma^2}{n}\right)\]</span></p>
-<p><span class="math display">\[\hat{\beta_1}\sim N\left(\beta_1,\dfrac{\sigma^2}{\sum_{i=1}^n (x_i-\bar{x})^2}\right)\]</span></p>
+<p><span class="math display">\[\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\]</span></p>
+<p><span class="math display">\[\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\]</span></p>
 </div>
 </div>
 </div>
