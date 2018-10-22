@@ -716,10 +716,11 @@ model_use_tem %&gt;% summary()</code></pre>
 <p><span class="math display">\[\because \sum_{i=1}^n(x_{i1}-\bar x)=\sum_{i=1}^n{x_{i1}}-n\bar x=\sum_{i=1}^n{x_{i1}}-n\frac{\sum_{i=1}^n{x_{i1}}}n=0,\quad S_{xx}=\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}\]</span></p>
 <p><span class="math display">\[\therefore E(\hat\beta_1)=E(\sum_{i=1}^nc_iy_i)=E(\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}})=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(y_i)=\frac{\sum_{i=1}^n(x_{i1}-\bar x)}{Sxx}E(\beta_0+\beta_1x_{i1}+\beta_2x_{i2})\]</span></p>
 <p><span class="math display">\[=\frac0{S_{xx}}\beta_0+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2\]</span></p>
+<p>Thus, <span class="math inline">\(\hat\beta_1\)</span> have bias.</p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Show the bias in <span class="math inline">\(\hat\beta_1\)</span></li>
 </ol>
-<p><span class="math display">\[\beta_1-E(\hat\beta_1)=\frac{-\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{Sxx}\beta_2\]</span></p>
+<p><span class="math display">\[E(\hat\beta_1)-\beta_1=\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{Sxx}\beta_2\]</span></p>
 </div>
 <div id="problem-7" class="section level2">
 <h2>Problem 7:</h2>
@@ -727,19 +728,16 @@ model_use_tem %&gt;% summary()</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Find the least-squares estimator of <span class="math inline">\(\beta_1\)</span> for this model. Does this answer seem reasonable?</li>
 </ol>
-<p><span class="math display">\[Let\quad SSE=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2\]</span></p>
+<p><span class="math display">\[Let\quad SSE=\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2\]</span></p>
 <blockquote>
 <p>The least-squares estimators of <span class="math inline">\(\beta_1\)</span>, must satisfy</p>
 </blockquote>
 <p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0\]</span></p>
-<p><span class="math display">\[\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i\]</span></p>
-<p><span class="math display">\[\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^n(x_i-0)x_i}\]</span></p>
-<p><span class="math display">\[\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}\]</span></p>
+<p><span class="math display">\[\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i\implies \hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\]</span></p>
 <blockquote>
-<p>The least-squares regression line passes through the point (<span class="math inline">\(\beta_0,0\)</span>) when the intercept<span class="math inline">\(\beta_0\)</span> is known.</p>
+<p>The least-squares regression line passes through the point (<span class="math inline">\(\beta_0,0\)</span>). Because <span class="math inline">\(y_i-\beta_0=\beta_1x_i+\varepsilon\)</span></p>
 </blockquote>
-<p><span class="math display">\[E(\hat\beta_1)=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac1{\sum_{i=1}^nx_i^2}\left(\sum_{i=1}^nx_i(\beta_0+\beta_1x_i+\epsilon)-\beta_0\sum_{i=1}^nx_i\right)=\frac1{\sum_{i=1}^nx_i^2}\left(\beta_0\sum_{i=1}^nx_i+\beta_1\sum_{i=1}^nx_i^2-\beta_0\sum_{i=1}^nx_i\right)\]</span></p>
-<p><span class="math display">\[=\frac{\beta_1}{\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}=\beta_1\]</span></p>
+<p><span class="math display">\[E(\hat\beta_1)=E\left[\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right]=\frac1{\sum_{i=1}^nx_i^2}E\left[\sum_{i=1}^nx_i(\beta_1x_i+\varepsilon)\right]=\frac{\beta_1\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i}{\sum_{i=1}^nx_i^2}E[\varepsilon]=\beta_1\]</span></p>
 <blockquote>
 <p>The estimator <span class="math inline">\(\beta_1\)</span> is unbiased and reasonable.</p>
 </blockquote>
@@ -754,15 +752,12 @@ model_use_tem %&gt;% summary()</code></pre>
 <blockquote>
 <p>When <span class="math inline">\(\beta_0\)</span> is known and is a consistant.</p>
 </blockquote>
-<p><span class="math display">\[\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n (x_i-\bar{x})^2}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n x_i^2}}\]</span></p>
+<p><span class="math display">\[\therefore se(\hat{\beta_1})=\sqrt{Var(\hat\beta_1)}=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}=\sqrt{\frac{MSE}{\sum_{i=1}^n x_i^2}}\]</span></p>
 <blockquote>
 <p>a 100(1−α) percent CI for <span class="math inline">\(\beta_1\)</span> is given by</p>
 </blockquote>
-<p><span class="math display">\[\hat\beta_1-t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} \]</span></p>
-<blockquote>
-<p>Because there isn’t variance for a known parameter,</p>
-</blockquote>
-<p><span class="math display">\[Var(\beta_1)\ge Var(\beta_0)\]</span></p>
+<p><span class="math display">\[\hat\beta_1-t_{\frac\alpha2,n-1}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-1}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} \]</span></p>
+<p><span class="math display">\[\because \sum_{i=1}^n x_i^2\ge\sum_{i=1}^n x_i^2-n\bar x^2\quad and\quad t_{\frac\alpha2,n-1}&lt;t_{\frac\alpha2,n-2}\]</span></p>
 <blockquote>
 <p>confidence intervals for <span class="math inline">\(\beta_1\)</span> will be narrower when <span class="math inline">\(\beta_0\)</span> is known, regardless of sample size (unless <span class="math inline">\(\bar x=0\)</span>).</p>
 </blockquote>

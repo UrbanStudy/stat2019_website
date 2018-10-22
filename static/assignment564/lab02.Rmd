@@ -347,32 +347,28 @@ $$\therefore E(\hat\beta_1)=E(\sum_{i=1}^nc_iy_i)=E(\frac{\sum_{i=1}^n(x_i-\bar 
 
 $$=\frac0{S_{xx}}\beta_0+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i1}}{S_{xx}}\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2=\beta_1+\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{S_{xx}}\beta_2$$
 
+Thus, $\hat\beta_1$ have bias.
+
 b. Show the bias in $\hat\beta_1$
 
-$$\beta_1-E(\hat\beta_1)=\frac{-\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{Sxx}\beta_2$$
+$$E(\hat\beta_1)-\beta_1=\frac{\sum_{i=1}^n(x_{i1}-\bar x)x_{i2}}{Sxx}\beta_2$$
 
 ## Problem 7: 
 Exercise 2.32 (Page 66): Consider the simple linear regression model $y=\beta_0+\beta_1x + \epsilon$ where the intercept $\beta_0$ is known.
 
 a. Find the least-squares estimator of $\beta_1$ for this model. Does this answer seem reasonable?
 
-$$Let\quad SSE=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2$$
+$$Let\quad SSE=\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2$$
 
 > The least-squares estimators of $\beta_1$, must satisfy
 
 $$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$$
 
-$$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$$
+$$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i\implies \hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$$
 
-$$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^n(x_i-0)x_i}$$
+> The least-squares regression line passes through the point ($\beta_0,0$). Because $y_i-\beta_0=\beta_1x_i+\varepsilon$
 
-$$\because \hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(y_i-\bar y)x_i}{\sum_{i=1}^n(x_i-\bar x)x_i}$$
-
-> The least-squares regression line passes through the point ($\beta_0,0$) when the intercept$\beta_0$ is known.
-
-$$E(\hat\beta_1)=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}=\frac1{\sum_{i=1}^nx_i^2}\left(\sum_{i=1}^nx_i(\beta_0+\beta_1x_i+\epsilon)-\beta_0\sum_{i=1}^nx_i\right)=\frac1{\sum_{i=1}^nx_i^2}\left(\beta_0\sum_{i=1}^nx_i+\beta_1\sum_{i=1}^nx_i^2-\beta_0\sum_{i=1}^nx_i\right)$$
-
-$$=\frac{\beta_1}{\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}=\beta_1$$
+$$E(\hat\beta_1)=E\left[\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right]=\frac1{\sum_{i=1}^nx_i^2}E\left[\sum_{i=1}^nx_i(\beta_1x_i+\varepsilon)\right]=\frac{\beta_1\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i}{\sum_{i=1}^nx_i^2}E[\varepsilon]=\beta_1$$
 
 > The estimator $\beta_1$ is unbiased and reasonable. 
 
@@ -386,15 +382,13 @@ c. Find a 100(1−α) percent CI for $\beta_1$. Is this interval narrower than t
 
  > When $\beta_0$ is known and is a consistant.
 
-$$\therefore se(\hat{\beta_1})=\sqrt{\frac{MSE}{S_{xx}}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n (x_i-\bar{x})^2}}=\sqrt{\dfrac{MSE}{\sum_{i=1}^n x_i^2}}$$
+$$\therefore se(\hat{\beta_1})=\sqrt{Var(\hat\beta_1)}=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}=\sqrt{\frac{MSE}{\sum_{i=1}^n x_i^2}}$$
 
 > a 100(1−α) percent CI for $\beta_1$ is given by
 
-$$\hat\beta_1-t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-2}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} $$
+$$\hat\beta_1-t_{\frac\alpha2,n-1}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2}\le\beta_1\le\hat\beta_1+t_{\frac\alpha2,n-1}\sqrt\frac{MSE}{\sum_{i=1}^n x_i^2} $$
 
-> Because there isn't variance for a known parameter,
-
-$$Var(\beta_1)\ge Var(\beta_0)$$
+$$\because \sum_{i=1}^n x_i^2\ge\sum_{i=1}^n x_i^2-n\bar x^2\quad and\quad t_{\frac\alpha2,n-1}<t_{\frac\alpha2,n-2}$$
 
  > confidence intervals for $\beta_1$ will be narrower when $\beta_0$ is known,
 regardless of sample size (unless $\bar x=0$).
