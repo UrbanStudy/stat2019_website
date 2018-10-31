@@ -36,6 +36,7 @@ model_wei_bp%>% summary()
 confint(model_wei_bp, level = 0.99)
 anova(model_wei_bp)
 model_wei_bp_origin <- lm(SystolicBP ~ Weight+0, data=table_weight_bp)
+confint(model_wei_bp_origin, level = 0.99)
 model_wei_bp_origin%>% summary()
 anova(model_wei_bp_origin)
 ```
@@ -45,7 +46,7 @@ anova(model_wei_bp_origin)
 
 (b) Test for significance of true intercept of this model at 5% significance and provide the conclusion along with p-value.
 
-*The p-value is $1.71\times e^{-05}$, which is much smaller than 0.05. We can know the true intercept is 69.10437 on 95% confidence level.
+* The p-value is $1.71\times e^{-05}$, which is much smaller than 0.05. We can know the true intercept is 69.10437 on 95% confidence level.
 
 (c) Report a 99% confidence interval for true intercept of this model.
 
@@ -57,7 +58,12 @@ anova(model_wei_bp_origin)
 
 (e) Compare quality of two models and recommend only one model. Provide valid reasons for your recommendation.
 
-We should choose the model with intercept. The model through origin implies the assumption of zero blood presure for zero weight. Either the blood presure or weight has a reasonable range. We also should not extrapolation the trend. 
+* Firstly, The true intercept is different with zero on 99% confident level by the confidence interval. There are strong relationship between weight and blood pressure.
+* Secondly, The estimated intercept (69.104) is confident on 95% confident level by p-value.
+* Thirdly, The R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model without intercept is 0.9929, which can explain more observation
+
+* Finally, Either the blood presure or weight has a reasonable range. The blood presure for zero weight is meaningless. We should not extrapolation the trend. the assumption of through origin with zero blood presure for zero weight is unreasonable.
+I would recommend the model with intercept or find a other models with higher R-square value.  
 
 
 ### Problem 2: 
@@ -93,8 +99,10 @@ $$
 Hint: The inverse of a nonsingular is obtained by 1) replacing every element of the matrix with its cofactor, 2) transposing the resulting matrix, 3) dividing by the determinant of the origin matrix.
 
 $$
-\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}
+\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}
 $$
+
+$$=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n\sum_{i=1}^nx_i^2-(n\bar x_i)^2}=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n(\sum_{i=1}^nx_i^2-n\bar x_i^2)}=\frac1{nS_{xx}}{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}$$
 
 (d) Compute X'Y (show all the main steps)
 
@@ -106,24 +114,25 @@ $$
 (e) Compute (X'X)^(-1) X'Y (show all the main steps).
 The final answer is the expression for the least squares estimator of β
 $$
-\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} $$
-$$=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i & -\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i & n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times2}
-$$
+\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} $$
+
+$$=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}$$
+
 in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.
 
 (f) Also, we know that if $Var(ε_i )=σ^2\ and\ Cov(ε_i,ε_j )=0 for i≠j$, 
-$$Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\frac{\sigma^2}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}$$
+$$Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\sigma^2\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2}{nS_{xx}} & \frac{-\sum_{i=1}^nx_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i)}{nS_{xx}} & \frac1{S_{xx}} \end{bmatrix}_{2\times2}=\sigma^2\begin{bmatrix} C_{11} &  C_{12} \\  C_{21} &  C_{22} \end{bmatrix}_{2\times2}$$
 From this result, show that 
 (i)  $Var(\hatβ_0)= σ^2 [1/n+ x^2/S_{xx}]$  
 
-$$Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}=\sigma^2\frac{\sum_{i=1}^nx_i^2-(n\bar x_i)^2+(n\bar x_i)^2}{n\sum_{i=1}^nx_i^2-(n\bar x_i)^2}$$
+$$Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\sigma^2\frac{\sum_{i=1}^nx_i^2-n\bar x_i^2+n\bar x_i^2}{nS_{xx}}=\sigma^2(\frac{1}{n}+\frac{n\bar x_i^2}{nS_{xx}})=\sigma^2(\frac{1}{n}+\frac{\bar x_i^2}{S_{xx}})$$
 
-$$=\frac{\sigma^2}{n}+\sigma^2\frac{n^2\bar x_i^2}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{n}+\frac{\sigma^2n\bar x_i^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\sigma^2(\frac{1}{n}+\frac{(\sum_{i=1}^nx_i)^2}{S_{xx}})$$
+
 
 (ii)  $Var(\hatβ_1)=σ^2/S_{xx}$
 
-$$Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2n}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}=\sigma^2\frac{n}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{\sigma^2}{S_{xx}}$$
+$$Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}=\sigma^2\frac{n}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{\sigma^2}{S_{xx}}$$
 
 (iii)  $Cov(β_0,β_1)=-(\bar x σ^2)/S_{xx}$
 
-$$Cov(\mathbf{\hatβ_0,\hatβ_1})=σ^2(C_{12})=\frac{\sigma^2(-\sum_{i=1}^nx_i)}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}=\frac{-\sigma^2(n\bar x_i)}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{-\sigma^2\bar x_i}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{-\sigma^2\bar x_i}{S_{xx}}$$
+$$Cov(\mathbf{\hatβ_0,\hatβ_1})=σ^2C_{12}=\frac{\sigma^2(-\sum_{i=1}^nx_i)}{nS_{xx}}=\frac{-\sigma^2(n\bar x_i)}{nS_{xx}}=\frac{-\sigma^2\bar x_i}{S_{xx}}$$
