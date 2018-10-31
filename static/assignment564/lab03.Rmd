@@ -44,7 +44,7 @@ model_wei_bp_origin
 
 (b) Test for significance of true intercept of this model at 5% significance and provide the conclusion along with p-value.
 
-*The p-value is $1.71\time e^05$, which is much smaller than 0.05. We can know the true intercept is 69.10437 on 95% confidence level.
+*The p-value is $1.71\times e^{-05}$, which is much smaller than 0.05. We can know the true intercept is 69.10437 on 95% confidence level.
 
 (c) Report a 99% confidence interval for true intercept of this model.
 
@@ -82,28 +82,33 @@ $$
 $$
  (b) Compute $\mathbf{X'X}$ (show all the main steps)
 
- (c) Compute $\mathbf{(X'X)^{-1}}$ (show all the main steps)
-Hint: The inverse of a nonsingular is obtained by 1) replacing every element of the matrix with its cofactor, 2) transposing the resulting matrix, 3) dividing by the determinant of the origin matrix.
 $$
 \mathbf{X'X}=\begin{bmatrix} 1 &  1 &\cdots &1 \\   x_{1} & x_{2} & \cdots & x_{n} \end{bmatrix}_{2\times{n}} 
 \begin{bmatrix} 1 & x_{1} \\ 1 & x_{2} \\ \vdots & \vdots  \\ 1 & x_{n} \end{bmatrix}_{n\times2}=
 \begin{bmatrix} n & x_{1}+x_{2}+\cdots+x_{n} \\ x_{1}+x_{2}+\cdots+x_{n} & x_1^2+x_2^2+\cdots+x_n^2  \end{bmatrix}_{2\times2} \\
-\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}
 
 $$
+
+ (c) Compute $\mathbf{(X'X)^{-1}}$ (show all the main steps)
+Hint: The inverse of a nonsingular is obtained by 1) replacing every element of the matrix with its cofactor, 2) transposing the resulting matrix, 3) dividing by the determinant of the origin matrix.
+
+$$
+\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}
+$$
+
 (d) Compute X'Y (show all the main steps)
 
 $$
 \mathbf{X'Y}=\begin{bmatrix} 1 &  1 &\cdots &1 \\   x_{1} & x_{2} & \cdots & x_{n} \end{bmatrix}_{2\times{n}} 
 \begin{bmatrix} y_1 \\ y_2 \\ \vdots  \\ y_n \end{bmatrix}_{n\times1}=\begin{bmatrix} y_1 + y_2 +\cdots + y_n \\ x_{1}y_1 + x_{2}y_2 + \cdots + x_{n}y_n \end{bmatrix}_{2\times{1}}=\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}}
-
-
 $$
 
 (e) Compute (X'X)^(-1) X'Y (show all the main steps).
 The final answer is the expression for the least squares estimator of β
 $$
 \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} \\
+
+
 =\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i & -\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i & n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times2}
 $$
 in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.
