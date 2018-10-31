@@ -36,7 +36,8 @@ model_wei_bp%>% summary()
 confint(model_wei_bp, level = 0.99)
 anova(model_wei_bp)
 model_wei_bp_origin <- lm(SystolicBP ~ Weight+0, data=table_weight_bp)
-model_wei_bp_origin
+model_wei_bp_origin%>% summary()
+anova(model_wei_bp_origin)
 ```
 (a) Fit a simple linear regression model to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.
 
@@ -92,7 +93,7 @@ $$
 Hint: The inverse of a nonsingular is obtained by 1) replacing every element of the matrix with its cofactor, 2) transposing the resulting matrix, 3) dividing by the determinant of the origin matrix.
 
 $$
-\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}
+\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}
 $$
 
 (d) Compute X'Y (show all the main steps)
@@ -105,24 +106,24 @@ $$
 (e) Compute (X'X)^(-1) X'Y (show all the main steps).
 The final answer is the expression for the least squares estimator of β
 $$
-\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} \\
-
-
-=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i & -\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i & n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times2}
+\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} $$
+$$=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i & -\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i & n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times2}
 $$
 in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.
 
 (f) Also, we know that if $Var(ε_i )=σ^2\ and\ Cov(ε_i,ε_j )=0 for i≠j$, 
-$$Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}$$
+$$Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\frac{\sigma^2}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}$$
 From this result, show that 
 (i)  $Var(\hatβ_0)= σ^2 [1/n+ x^2/S_{xx}]$  
 
-$$Var(\mathbf{\hatβ_0})=σ^2(\mathbf{X'X})^{-1}=\frac{\sigma^2}{1\sum_{i=1}^1x_i^2-(\sum_{i=1}^1x_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}$$
+$$Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}=\sigma^2\frac{\sum_{i=1}^nx_i^2-(n\bar x_i)^2+(n\bar x_i)^2}{n\sum_{i=1}^nx_i^2-(n\bar x_i)^2}$$
+
+$$=\frac{\sigma^2}{n}+\sigma^2\frac{n^2\bar x_i^2}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{n}+\frac{\sigma^2n\bar x_i^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\sigma^2(\frac{1}{n}+\frac{(\sum_{i=1}^nx_i)^2}{S_{xx}})$$
 
 (ii)  $Var(\hatβ_1)=σ^2/S_{xx}$
 
-$$Var(\mathbf{\hatβ_1})=σ^2(\mathbf{X'X})^{-1}=\frac{\sigma^2}{2\sum_{i=1}^2x_i^2-(\sum_{i=1}^2x_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}$$
+$$Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2n}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}=\sigma^2\frac{n}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{\sigma^2}{S_{xx}}$$
 
 (iii)  $Cov(β_0,β_1)=-(\bar x σ^2)/S_{xx}$
 
-$$Cov(\mathbf{\hatβ_0,\hatβ_1})=σ^2(\mathbf{X'X})^{-1}$$
+$$Cov(\mathbf{\hatβ_0,\hatβ_1})=σ^2(C_{12})=\frac{\sigma^2(-\sum_{i=1}^nx_i)}{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}=\frac{-\sigma^2(n\bar x_i)}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{-\sigma^2\bar x_i}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{-\sigma^2\bar x_i}{S_{xx}}$$
