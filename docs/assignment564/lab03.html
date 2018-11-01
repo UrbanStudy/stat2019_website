@@ -418,7 +418,9 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Report a 99% confidence interval for true intercept of this model.</li>
 </ol>
-<p>*The 99% confidence interval for true intercept of this model is (32.9955223 105.2132233).</p>
+<ul>
+<li>The 99% confidence interval for true intercept of this model is (32.9955223 105.2132233).</li>
+</ul>
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Fit a simple linear regression model through origin to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.</li>
 </ol>
@@ -431,7 +433,8 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 <ul>
 <li>Firstly, The true intercept is different with zero on 99% confident level by the confidence interval. There are strong relationship between weight and blood pressure.</li>
 <li>Secondly, The estimated intercept (69.104) is confident on 95% confident level by p-value.</li>
-<li><p>Thirdly, The R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model without intercept is 0.9929, which can explain more observation</p></li>
+<li>Thirdly, The R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation</li>
+<li><p>Fourthly, the sum square of total variation with intercept is <span class="math inline">\(2693.6+1808.6=4502.2\)</span>, while the value with zero intercept is <span class="math inline">\(551834+3968=555802\)</span>.</p></li>
 <li><p>Finally, Either the blood presure or weight has a reasonable range. The blood presure for zero weight is meaningless. We should not extrapolation the trend. the assumption of through origin with zero blood presure for zero weight is unreasonable. I would recommend the model with intercept or find a other models with higher R-square value.</p></li>
 </ul>
 </div>
@@ -448,7 +451,7 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 \]</span> (a) Write this model in matrix form. Provide all the vectors and design matrix along with dimensions. Use the above format so that you can write only 4 rows for each vector and matrix. For example, Y vector is written as <span class="math display">\[
 \mathbf{Y}=\begin{bmatrix} y_1 \\ y_2 \\ \vdots  \\ y_n \end{bmatrix}_{n\times1} 
 \mathbf{X}=\begin{bmatrix} 1 &amp; x_{1} \\ 1 &amp; x_{2} \\ \vdots &amp; \vdots  \\ 1 &amp; x_{n} \end{bmatrix}_{n\times2} 
-\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \end{bmatrix}_{n\times2}+
+\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \end{bmatrix}_{2\times1}+
 \mathbf{ε}=\begin{bmatrix} \varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n \end{bmatrix}_{n\times1}
 \]</span> (b) Compute <span class="math inline">\(\mathbf{X'X}\)</span> (show all the main steps)</p>
 <p><span class="math display">\[
@@ -477,9 +480,10 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 <p><span class="math display">\[=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}\]</span></p>
 <p>in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.</p>
 <ol start="6" style="list-style-type: lower-alpha">
-<li>Also, we know that if <span class="math inline">\(Var(ε_i )=σ^2\ and\ Cov(ε_i,ε_j )=0 for i≠j\)</span>, <span class="math display">\[Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\sigma^2\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2}{nS_{xx}} &amp; \frac{-\sum_{i=1}^nx_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i)}{nS_{xx}} &amp; \frac1{S_{xx}} \end{bmatrix}_{2\times2}=\sigma^2\begin{bmatrix} C_{11} &amp;  C_{12} \\  C_{21} &amp;  C_{22} \end{bmatrix}_{2\times2}\]</span> From this result, show that</li>
-<li><span class="math inline">\(Var(\hatβ_0)= σ^2 [1/n+ x^2/S_{xx}]\)</span></li>
+<li>Also, we know that if <span class="math inline">\(Var(ε_i )=σ^2\ and\ Cov(ε_i,ε_j )=0 for i≠j\)</span>,</li>
 </ol>
+<p><span class="math display">\[Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\sigma^2\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2}{nS_{xx}} &amp; \frac{-\sum_{i=1}^nx_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i)}{nS_{xx}} &amp; \frac1{S_{xx}} \end{bmatrix}_{2\times2}=\sigma^2\begin{bmatrix} C_{11} &amp;  C_{12} \\  C_{21} &amp;  C_{22} \end{bmatrix}_{2\times2}\]</span></p>
+<p>From this result, show that (i) <span class="math inline">\(Var(\hatβ_0)= σ^2 [1/n+ x^2/S_{xx}]\)</span></p>
 <p><span class="math display">\[Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\sigma^2\frac{\sum_{i=1}^nx_i^2-n\bar x_i^2+n\bar x_i^2}{nS_{xx}}=\sigma^2(\frac{1}{n}+\frac{n\bar x_i^2}{nS_{xx}})=\sigma^2(\frac{1}{n}+\frac{\bar x_i^2}{S_{xx}})\]</span></p>
 <ol start="2" style="list-style-type: lower-roman">
 <li><span class="math inline">\(Var(\hatβ_1)=σ^2/S_{xx}\)</span></li>
