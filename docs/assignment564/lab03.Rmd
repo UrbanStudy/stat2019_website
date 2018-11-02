@@ -115,9 +115,11 @@ $$
 (e) Compute (X'X)^(-1) X'Y (show all the main steps).
 The final answer is the expression for the least squares estimator of β
 $$
-\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} $$
+\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}$$
 
-$$=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}$$
+$$=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2n\bar{y}-n\bar{x}\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}{n}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\bar{y}\sum_{i=1}^nx_i^2-\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n+\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}$$
+
+$$=\begin{bmatrix} \bar{y}\frac{S_{xx}}{S_{xx}}+\frac{\bar{x}\bar{y}\sum_{i=1}^nx_i-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}n}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{S_{xy}}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}{\beta_1} \\ \beta_1 \end{bmatrix}_{2\times1}$$
 
 in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.
 
@@ -132,7 +134,7 @@ $$Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\s
 
 (ii)  $Var(\hatβ_1)=σ^2/S_{xx}$
 
-$$Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}=\sigma^2\frac{n}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{\sigma^2}{S_{xx}}$$
+$$Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}$$
 
 (iii)  $Cov(β_0,β_1)=-(\bar x σ^2)/S_{xx}$
 

@@ -475,9 +475,10 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 \]</span></p>
 <ol start="5" style="list-style-type: lower-alpha">
 <li>Compute (X’X)^(-1) X’Y (show all the main steps). The final answer is the expression for the least squares estimator of β <span class="math display">\[
-\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2 &amp; -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i &amp; n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}} \]</span></li>
+\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2 &amp; -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i &amp; n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}\]</span></li>
 </ol>
-<p><span class="math display">\[=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}\]</span></p>
+<p><span class="math display">\[=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2n\bar{y}-n\bar{x}\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}{n}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\bar{y}\sum_{i=1}^nx_i^2-\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n+\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}\]</span></p>
+<p><span class="math display">\[=\begin{bmatrix} \bar{y}\frac{S_{xx}}{S_{xx}}+\frac{\bar{x}\bar{y}\sum_{i=1}^nx_i-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}n}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{S_{xy}}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}{\beta_1} \\ \beta_1 \end{bmatrix}_{2\times1}\]</span></p>
 <p>in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.</p>
 <ol start="6" style="list-style-type: lower-alpha">
 <li>Also, we know that if <span class="math inline">\(Var(ε_i )=σ^2\ and\ Cov(ε_i,ε_j )=0 for i≠j\)</span>,</li>
@@ -488,7 +489,7 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 <ol start="2" style="list-style-type: lower-roman">
 <li><span class="math inline">\(Var(\hatβ_1)=σ^2/S_{xx}\)</span></li>
 </ol>
-<p><span class="math display">\[Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}=\sigma^2\frac{n}{n\sum_{i=1}^nx_i^2-n^2\bar x_i^2}=\frac{\sigma^2}{\sum_{i=1}^nx_i^2-n\bar x_i^2}=\frac{\sigma^2}{S_{xx}}\]</span></p>
+<p><span class="math display">\[Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}\]</span></p>
 <ol start="3" style="list-style-type: lower-roman">
 <li><span class="math inline">\(Cov(β_0,β_1)=-(\bar x σ^2)/S_{xx}\)</span></li>
 </ol>
