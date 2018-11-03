@@ -23,14 +23,18 @@ $$\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}<0.10
 # by bisection method
 # when K up to 32, the probability of no defective part is smaller than 0.1.
 dhyper(0, 6, 94, 32, log = FALSE)
-# when K down to 31, the defective might not be chosed on 0.1 probability.
+# when K down to 31, the defective might not be chose on 0.1 probability.
 qhyper(0.1, 6, 94, 31, lower.tail = TRUE, log.p = FALSE)
 
 # by function of phyper
-uniroot(function(k)(phyper(0.1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
+uniroot(function(k)(phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
+
+curve(phyper(0, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(32,0, "32"); abline(v = 32, lty = 3)
 
 # by resolving equation
 uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
+
+
 
 ```
 
@@ -45,7 +49,9 @@ $$\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}<0.1
 
 ```{r}
 # by function of phyper
-uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)+phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
+uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=1, upper=100)$root
+
+curve(phyper(1, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(51,0, "51"); abline(v = 51, lty = 3)
 
 # by resolving equation
 uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
