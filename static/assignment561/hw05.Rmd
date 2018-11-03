@@ -61,7 +61,7 @@ uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97
 When the defective parts are 6, K must be at least 51.
 
 ****
-**3.7** Let the number of chocolate chips i n a certain type of cookie have a Poisson distribution. We want the probability that a randomly chosen cookie has at least two chocolate chips to be greater than .99. Find the smallest value of the mean of the distribution that ensures this probability.
+**3.7** Let the number of chocolate chips in a certain type of cookie have a Poisson distribution. We want the probability that a randomly chosen cookie has at least two chocolate chips to be greater than .99. Find the smallest value of the mean of the distribution that ensures this probability.
 
 $$X\sim Poisson(\lambda) \implies P(X=x)=e^{-\lambda}\frac{\lambda^x}{x!}$$
 
@@ -71,10 +71,19 @@ $$\therefore P(X\le 1)=P(X=1)+P(X=2)=e^{-\lambda}\frac{\lambda^0}{0!}+ e^{-\lamb
 $$\implies e^{\lambda}\ge100\lambda+100$$
 
 ```{R}
+# by resolving equation
 uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=1000)$root
+# by bisection method
+# when lambda down to 6, a randomly chosen cookie only has one chocolate chip on 0.01 probability.
+qpois(0.01, 6, lower.tail = TRUE, log.p = FALSE)
+curve(qpois(0.01, x, lower.tail = TRUE, log.p = FALSE), from=0,to=10); text(6.64,0, "6.638351"); abline(v = 6.638351, lty = 3)
+
+# by function of ppois
+uniroot(function(x)(ppois(1, x, lower.tail = TRUE, log.p = FALSE)-0.01), lower=0, upper=100)$root
+curve(ppois(1, x, lower.tail = TRUE, log.p = FALSE), from=4,to=10); abline(h = 0.01, lty = 2); text(6.64,0, "6.638351"); abline(v = 6.638351, lty = 3)
 ```
 
-$$\therefore min(EX)=min(\lambda)=7$$
+$$\therefore min(EX)=min(\lambda)=6.638351$$
 
 ****
 **3.13** A truncated discrete distribution is one in which a. particular class cannot be observed and is eliminated from the sample space. In particular, if X has range 0, 1, 2, . . . and the 0 class cannot be observed (as is usually the case), the O-truncated random variable $X_T$ has pmf
