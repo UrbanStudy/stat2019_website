@@ -322,19 +322,17 @@ $(document).ready(function () {
 <p>For a given probability, When M get the minimum value, the K get the maximum value.</p>
 <p><span class="math display">\[Let\quad P(X=0|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K}}{\binom{100}{K}}&lt;0.10\]</span></p>
 <p><span class="math display">\[\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}&lt;0.10\]</span></p>
-<pre class="r"><code># when K up to 32, the probability of no defective part is smaller than 0.1.
+<pre class="r"><code># by bisection method
+# when K up to 32, the probability of no defective part is smaller than 0.1.
 dhyper(0, 6, 94, 32, log = FALSE)</code></pre>
 <pre><code>## [1] 0.09181924</code></pre>
 <pre class="r"><code># when K down to 31, the defective might not be chosed on 0.1 probability.
 qhyper(0.1, 6, 94, 31, lower.tail = TRUE, log.p = FALSE)</code></pre>
 <pre><code>## [1] 0</code></pre>
-<pre class="r"><code># failed attempt:
-# uniroot(function(k)(dhyper(0, 6, 94, k, log = FALSE)-0.1), lower=0, upper=100)$root
-
-# use function of qhyper
-uniroot(function(k)(qhyper(0.1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root</code></pre>
-<pre><code>## [1] 31.49996</code></pre>
-<pre class="r"><code># use function of algebra
+<pre class="r"><code># by function of phyper
+uniroot(function(k)(phyper(0.1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root</code></pre>
+<pre><code>## [1] 31.49997</code></pre>
+<pre class="r"><code># by resolving equation
 uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root</code></pre>
 <pre><code>## [1] 31.06228</code></pre>
 <p>When the defective parts are 6, K must be at least 32</p>
@@ -344,7 +342,11 @@ uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*9
 </ol>
 <p><span class="math display">\[P(X=0 or 1|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K-0}}{\binom{100}{K}}+\frac{\binom{6}{1}\binom{100-6}{K-1}}{\binom{100}{K}}&lt;0.10\]</span></p>
 <p><span class="math display">\[\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}&lt;0.10\]</span></p>
-<pre class="r"><code>uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root</code></pre>
+<pre class="r"><code># by function of phyper
+uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)+phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root</code></pre>
+<pre><code>## [1] 51.50002</code></pre>
+<pre class="r"><code># by resolving equation
+uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root</code></pre>
 <pre><code>## [1] 50.24173</code></pre>
 <p>When the defective parts are 6, K must be at least 51.</p>
 <hr />
