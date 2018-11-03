@@ -318,19 +318,46 @@ $(document).ready(function () {
 <li>How large does K have to be to ensure that the probability that the manufacturer accepts an unacceptable lot is less than . 10?</li>
 </ol>
 <p>The probability of accepting the unacceptable lot is</p>
-<p><span class="math display">\[P(X=0|N=100,M=6,k)=\frac{\binom{6}{0}\binom{100-6}{k}}{\binom{100}{k}}&lt;0.10\]</span></p>
-<p><span class="math display">\[P(X=0|N=100,5&lt;M&lt;(100-k),k\ge1)=\sum_{M=6}^{100-k}\frac{\binom{M}{0}\binom{100-M}{k}}{\binom{100}{k}}=1-\sum_{M=0}^{5}\frac{\binom{M}{0}\binom{100-M}{k}}{\binom{100}{k}}&lt;0.10\]</span> By trail and error?</p>
+<p><span class="math display">\[P(X=0|N=100,5&lt;M&lt;(100-K),0&lt;K&lt;(100-m))=\sum_{M=6}^{100-K}\frac{\binom{M}{0}\binom{100-M}{K}}{\binom{100}{K}}=\sum_{M=6}^{100-K}\frac{(100-M)!(100-K)!}{100!(100-M-K)!}\]</span></p>
+<p>For a given probability, When M get the minimum value, the K get the maximum value.</p>
+<p><span class="math display">\[Let\quad P(X=0|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K}}{\binom{100}{K}}&lt;0.10\]</span></p>
+<p><span class="math display">\[\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}&lt;0.10\]</span></p>
+<pre class="r"><code># failed
+dhyper(0, 6, 94, 32, log = FALSE)</code></pre>
+<pre><code>## [1] 0.09181924</code></pre>
+<pre class="r"><code>qhyper(0.1, 6, 94, 32, lower.tail = TRUE, log.p = FALSE)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>uniroot(function(k)(dhyper(0, 6, 94, k, log = FALSE)-0.1), lower=0, upper=100)$root</code></pre>
+<pre><code>## Warning in dhyper(0, 6, 94, k, log = FALSE): NaNs produced</code></pre>
+<pre><code>## Warning in uniroot(function(k) (dhyper(0, 6, 94, k, log = FALSE) - 0.1), :
+## NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>## Warning in dhyper(0, 6, 94, k, log = FALSE): NaNs produced</code></pre>
+<pre><code>## Warning in uniroot(function(k) (dhyper(0, 6, 94, k, log = FALSE) - 0.1), :
+## NA/Inf replaced by maximum positive value</code></pre>
+<pre><code>## [1] 45</code></pre>
+<pre class="r"><code># success
+uniroot(function(k)(qhyper(0.1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root</code></pre>
+<pre><code>## [1] 31.49996</code></pre>
+<pre class="r"><code>uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root</code></pre>
+<pre><code>## [1] 31.06228</code></pre>
+<p>When the defective parts are 6, K must be at least 32</p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Suppose the manufacturer decides to accept the lot if there is at most one defective in the sample. How large does K have to be to ensure that the probability that the manufacturer accepts an unacceptable lot is less than . 10?</li>
 </ol>
-<p><span class="math display">\[P(X=0 or 1|N=100,M=6,k)=\frac{\binom{M}{0}\binom{100-M}{k-0}}{\binom{100}{k}}+\frac{\binom{M}{1}\binom{100-M}{k-1}}{\binom{100}{k}}&lt;0.10\]</span></p>
-<p><span class="math display">\[P(X=0 or 1|N=100,5&lt;M&lt;(100-k),k\ge1)=\sum_{M=6}^{100-k}\frac{\binom{M}{0}\binom{100-M}{k-0}+\binom{M}{1}\binom{100-M}{k-1}}{\binom{100}{k}}&lt;0.10\]</span></p>
+<p><span class="math display">\[P(X=0 or 1|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K-0}}{\binom{100}{K}}+\frac{\binom{6}{1}\binom{100-6}{K-1}}{\binom{100}{K}}&lt;0.10\]</span></p>
+<p><span class="math display">\[\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}&lt;0.10\]</span></p>
+<pre class="r"><code>uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root</code></pre>
+<pre><code>## [1] 50.24173</code></pre>
+<p>When the defective parts are 6, K must be at least 51.</p>
 <hr />
 <p><strong>3.7</strong> Let the number of chocolate chips i n a certain type of cookie have a Poisson distribution. We want the probability that a randomly chosen cookie has at least two chocolate chips to be greater than .99. Find the smallest value of the mean of the distribution that ensures this probability.</p>
 <p><span class="math display">\[X\sim Poisson(\lambda) \implies P(X=x)=e^{-\lambda}\frac{\lambda^x}{x!}\]</span></p>
 <p><span class="math display">\[P(X\ge 2)\ge0.99 \implies1-P(X\le 1)\le1-0.01\]</span></p>
-<p><span class="math display">\[\therefore P(X\le 1)=P(X=1)+P(X=2)=e^{-\lambda}\frac{\lambda^0}{0!}+ e^{-\lambda}\frac{\lambda^1}{1!}\le0.01\]</span></p>
+<p><span class="math display">\[\therefore P(X\le 1)=P(X=1)+P(X=2)=e^{-\lambda}\frac{\lambda^0}{0!}+ e^{-\lambda}\frac{\lambda^1}{1!}=(1+\lambda)e^{-\lambda}\le0.01\]</span> <span class="math display">\[\implies e^{\lambda}\ge100\lambda+100\]</span></p>
+<pre class="r"><code>uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=1000)$root</code></pre>
+<pre><code>## [1] 6.638351</code></pre>
+<p><span class="math display">\[\therefore min(EX)=min(\lambda)=7\]</span></p>
 <hr />
 <p><strong>3.13</strong> A truncated discrete distribution is one in which a. particular class cannot be observed and is eliminated from the sample space. In particular, if X has range 0, 1, 2, . . . and the 0 class cannot be observed (as is usually the case), the O-truncated random variable <span class="math inline">\(X_T\)</span> has pmf</p>
 <p><span class="math display">\[P(X_T = x) = \frac{P(X=x)}{P(X&gt;0)},\ x=1,2,..\]</span></p>
@@ -357,17 +384,24 @@ $(document).ready(function () {
 <p><span class="math display">\[E(X_T) =\frac{EX}{P(X&gt;0)}=\frac{rq}{p(1-p^r)},\quad E(X_T^2) =\frac{EX^2}{P(X&gt;0)}=\frac{rq+r^2q^2}{p^2(1-p^r)}\]</span></p>
 <p><span class="math display">\[VarX=E(X_T^2)-[E(X_T)]^2=\frac{rq+r^2q^2}{p^2(1-p^r)}-(\frac{rq}{p(1-p^r)})^2\]</span></p>
 <hr />
-<p><strong>3.17</strong> Establish a formula similar to (3.3.18) for the gamma distribution. If <span class="math inline">\(X \sim gamma(\alpha, \beta)\)</span>, then for any positive constant <span class="math inline">\(\nu\)</span>,</p>
-<p><span class="math display">\[f(x|\alpha,\beta)=\frac1{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}, x \in (0, 1), \beta&gt;0, \alpha&gt;0\]</span></p>
-<p><span class="math display">\[B(\alpha,\beta)=\int_0^1x^{\alpha-1}(1-x)^{\beta-1}dx =\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}; x \in (0, 1), \beta&gt;0, \alpha&gt;0\]</span></p>
-<p><span class="math display">\[(3.3.18)\quad EX^n=\frac{1}{B(\alpha,\beta)}\int_0^1x^nx^{\alpha-1}(1-x)^{\beta-1}dx=\frac{B(a+n,\beta)}{B(\alpha,\beta)}=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)} \]</span></p>
+<p><strong>3.17</strong> Establish a formula similar to (3.3.18) for the gamma distribution. If <span class="math inline">\(X \sim gamma(\alpha, \beta)\)</span>, then for any positive constant <span class="math inline">\(\nu\)</span>, <!--
+$$f(x|\alpha,\beta)=\frac1{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}, x \in (0, 1), \beta>0, \alpha>0$$
+
+$$B(\alpha,\beta)=\int_0^1x^{\alpha-1}(1-x)^{\beta-1}dx =\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}; x \in (0, 1), \beta>0, \alpha>0$$
+
+
+$$(3.3.18)\quad EX^n=\frac{1}{B(\alpha,\beta)}\int_0^1x^nx^{\alpha-1}(1-x)^{\beta-1}dx=\frac{B(a+n,\beta)}{B(\alpha,\beta)}=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)} $$ --></p>
 <p><span class="math display">\[f(x|\alpha,\beta) = \frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}; x \in (0, \infty), \beta&gt;0, \alpha&gt;0\]</span></p>
 <p><span class="math display">\[EX= \frac{1}{\Gamma(a)\beta^{\alpha}}\int_0^{\infty}xx^{a-1}e^{-x/\beta}dx=\frac{1}{\Gamma(a)\beta^{\alpha}}\int_0^{\infty}x^ae^{-x/\beta}dx=\frac{\Gamma(a+1)\beta^{\alpha+1}}{\Gamma(a)\beta^{\alpha}}=\alpha\beta\]</span></p>
 <p><span class="math display">\[EX^{\nu}=\frac{1}{\Gamma(a)\beta^{\alpha}}\int_0^{\infty}x^{\nu}x^{a-1}e^{-x/\beta}dx=\frac{1}{\Gamma(a)\beta^{\alpha}}\int_0^{\infty}x^{a+\nu-1}e^{-x/\beta}dx=\frac{\Gamma(a+\nu)\beta^{\alpha+\nu}}{\Gamma(a)\beta^{\alpha}}=\frac{\beta^{\nu}\Gamma(\alpha+\nu)}{\Gamma(\alpha)},\nu\ge-\alpha\]</span></p>
-<hr />
-<p><span class="math display">\[VarX= \alpha^2\beta;\ M_X(t)=\left(\frac{1}{1 - \beta t}\right)^a, t &lt; \frac1\beta\]</span></p>
-<p><span class="math display">\[When\quad \beta=1,\quad\Gamma(\alpha)= \int_0^{\infty}t^{\alpha-1}e^{-t}dx\]</span></p>
-<p><span class="math display">\[When \beta=\frac1\lambda,\quad(\Gamma (a, \lambda); f(x) = \frac{1}{\Gamma(a)}(\lambda x)^ae^{-\lambda x}\frac{1}{x}; x \in (0, \infty) \frac{a}{\lambda} \frac{a}{\lambda^2} \left(\frac{\lambda}{\lambda - t}\right)^a, t &lt; \lambda)\]</span></p>
+<!--
+
+$$VarX= \alpha\beta^2;\ M_X(t)=\left(\frac{1}{1 - \beta t}\right)^a, t < \frac1\beta$$
+
+$$When\quad \beta=1,\quad\Gamma(\alpha)= \int_0^{\infty}t^{\alpha-1}e^{-t}dx$$
+
+
+$$When \beta=\frac1\lambda,\quad(\Gamma (a, \lambda); f(x) = \frac{1}{\Gamma(a)}(\lambda x)^ae^{-\lambda x}\frac{1}{x}; x \in (0, \infty) \frac{a}{\lambda} \frac{a}{\lambda^2} \left(\frac{\lambda}{\lambda - t}\right)^a, t < \lambda)$$ -->
 
 
 
