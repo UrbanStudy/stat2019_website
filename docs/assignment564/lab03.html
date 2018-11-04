@@ -430,12 +430,120 @@ confint(model_wei_bp_origin, level = 0.99)</code></pre>
 <ol start="5" style="list-style-type: lower-alpha">
 <li>Compare quality of two models and recommend only one model. Provide valid reasons for your recommendation.</li>
 </ol>
+<pre class="r"><code>texreg::screenreg(l=list(model_wei_bp, model_wei_bp_origin))</code></pre>
+<pre><code>## 
+## ==================================
+##              Model 1     Model 2  
+## ----------------------------------
+## (Intercept)   69.10 ***           
+##              (12.91)              
+## Weight         0.42 ***   0.79 ***
+##               (0.07)     (0.01)   
+## ----------------------------------
+## R^2            0.60       0.99    
+## Adj. R^2       0.58       0.99    
+## Num. obs.     26         26       
+## RMSE           8.68      12.60    
+## ==================================
+## *** p &lt; 0.001, ** p &lt; 0.01, * p &lt; 0.05</code></pre>
+<pre class="r"><code>huxtable::huxreg(model_wei_bp, model_wei_bp_origin, statistics = NULL)</code></pre>
+<table class="huxtable" style="border-collapse: collapse; margin-bottom: 2em; margin-top: 2em; width: 50%; margin-left: auto; margin-right: auto; ">
+<col><col><col><tr>
+<td style="vertical-align: top; text-align: center; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0pt 0pt; padding: 4pt 4pt 4pt 4pt;"></td>
+<td style="vertical-align: top; text-align: center; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">(1)</td>
+<td style="vertical-align: top; text-align: center; white-space: nowrap; border-style: solid solid solid solid; border-width: 0.8pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">(2)</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">(Intercept)</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">69.104 ***</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;"></td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">(12.910)&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">Weight</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.419 ***</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.792 ***</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;"></td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">(0.070)&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.4pt 0pt; padding: 4pt 4pt 4pt 4pt;">(0.013)&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">nobs</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">26&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">r.squared</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.598&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.993&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">adj.r.squared</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.582&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.993&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">sigma</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">8.681&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">12.598&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">statistic</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">35.744&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">3477.058&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">p.value</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.000&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">0.000&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">df</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">2.000&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1.000&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">logLik</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">-92.041&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">-102.254&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">AIC</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">190.082&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">208.509&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">BIC</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">193.856&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">211.025&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">deviance</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">1808.573&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; padding: 4pt 4pt 4pt 4pt;">3967.682&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td style="vertical-align: top; text-align: left; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt; padding: 4pt 4pt 4pt 4pt;">df.residual</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt; padding: 4pt 4pt 4pt 4pt;">24.000&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td style="vertical-align: top; text-align: right; white-space: nowrap; border-style: solid solid solid solid; border-width: 0pt 0pt 0.8pt 0pt; padding: 4pt 4pt 4pt 4pt;">25.000&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td colspan="3" style="vertical-align: top; text-align: left; white-space: normal; padding: 4pt 4pt 4pt 4pt;"> *** p &lt; 0.001;  ** p &lt; 0.01;  * p &lt; 0.05.</td>
+</tr>
+</table>
+
 <ul>
-<li>Firstly, The true intercept is different with zero on 99% confident level by the confidence interval. There are strong relationship between weight and blood pressure.</li>
-<li>Secondly, The estimated intercept (69.104) is confident on 95% confident level by p-value.</li>
-<li>Thirdly, The R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation</li>
-<li><p>Fourthly, the sum square of total variation with intercept is <span class="math inline">\(2693.6+1808.6=4502.2\)</span>, while the value with zero intercept is <span class="math inline">\(551834+3968=555802\)</span>.</p></li>
-<li><p>Finally, Either the blood presure or weight has a reasonable range. The blood presure for zero weight is meaningless. We should not extrapolation the trend. the assumption of through origin with zero blood presure for zero weight is unreasonable. I would recommend the model with intercept or find a other models with higher R-square value.</p></li>
+<li>Firstly, the true intercept is different with zero on 99% confident level by the confidence interval. There are strong relationship between weight and blood pressure.</li>
+<li>Secondly, the estimated intercept (69.104) is confident on 95% confident level by p-value(<span class="math inline">\(1.71\times e^{-05}\)</span>).</li>
+<li>Thirdly, the R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation. We can find the sum square of total variation with intercept (<span class="math inline">\(2693.6+1808.6=4502.2\)</span>) is about 1 percent of the value with zero intercept (<span class="math inline">\(551834+3968=555802\)</span>), which contributs most of the R-suqare value.</li>
+<li>Fourthly, the SSE value of model with intercept (1808.573) is about half of the SSE with zero intercept (3967.682), which shows the former is better fitted.</li>
+<li>Finally, Either the blood presure or weight has a reasonable range. The blood presure for zero weight is meaningless. We should not extrapolation the trend. the assumption of through origin with zero blood presure for zero weight is unreasonable. I would recommend the model with intercept or find a other models with higher R-square value.</li>
 </ul>
 </div>
 <div id="problem-2" class="section level3">

@@ -58,11 +58,15 @@ anova(model_wei_bp_origin)
 
 (e) Compare quality of two models and recommend only one model. Provide valid reasons for your recommendation.
 
-* Firstly, The true intercept is different with zero on 99% confident level by the confidence interval. There are strong relationship between weight and blood pressure.
-* Secondly, The estimated intercept (69.104) is confident on 95% confident level by p-value.
-* Thirdly, The R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation
-* Fourthly, the sum square of total variation with intercept is $2693.6+1808.6=4502.2$, while the value with zero intercept is $551834+3968=555802$. 
+```{r}
+texreg::screenreg(l=list(model_wei_bp, model_wei_bp_origin))
+huxtable::huxreg(model_wei_bp, model_wei_bp_origin, statistics = NULL)
+```
 
+* Firstly, the true intercept is different with zero on 99% confident level by the confidence interval. There are strong relationship between weight and blood pressure.
+* Secondly, the estimated intercept (69.104) is confident on 95% confident level by p-value($1.71\times e^{-05}$).
+* Thirdly, the R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation. We can find the sum square of total variation with intercept ($2693.6+1808.6=4502.2$) is about 1 percent of the value with zero intercept ($551834+3968=555802$), which contributs most of the R-suqare value.
+* Fourthly, the SSE value of  model with intercept (1808.573) is about half of the SSE with zero intercept (3967.682), which shows the former is better fitted.
 * Finally, Either the blood presure or weight has a reasonable range. The blood presure for zero weight is meaningless. We should not extrapolation the trend. the assumption of through origin with zero blood presure for zero weight is unreasonable.
 I would recommend the model with intercept or find a other models with higher R-square value.  
 
