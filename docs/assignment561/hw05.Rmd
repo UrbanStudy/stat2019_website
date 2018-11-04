@@ -72,11 +72,12 @@ $$\implies e^{\lambda}\ge100\lambda+100$$
 
 ```{R}
 # by resolving equation
-uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=1000)$root
+uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=10)$root
+
 # by bisection method
-# when lambda down to 6, a randomly chosen cookie only has one chocolate chip on 0.01 probability.
+# when lambda is between 6 and 7, a randomly chosen cookie has at least 2 chocolate chips on 0.01 probability.
 qpois(0.01, 6, lower.tail = TRUE, log.p = FALSE)
-curve(qpois(0.01, x, lower.tail = TRUE, log.p = FALSE), from=0,to=10); text(6.64,0, "6.638351"); abline(v = 6.638351, lty = 3)
+curve(qpois(0.01, x, lower.tail = TRUE, log.p = FALSE), from=0,to=10); text(7,0, "7"); abline(v = 7, lty = 3)
 
 # by function of ppois
 uniroot(function(x)(ppois(1, x, lower.tail = TRUE, log.p = FALSE)-0.01), lower=0, upper=100)$root
