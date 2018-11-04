@@ -19,7 +19,7 @@ $$Let\quad P(X=0|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K}}{\binom{100}{K}
 
 $$\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}<0.10$$
 
-```{r, fig.width = 5}
+```{r, collapse=TRUE, fig.height=3}
 # by bisection method
 # when K up to 32, the probability of no defective part is smaller than 0.1.
 dhyper(0, 6, 94, 32, log = FALSE)
@@ -47,7 +47,7 @@ $$P(X=0 or 1|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K-0}}{\binom{100}{K}}+
 
 $$\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}<0.10$$
 
-```{r, fig.width = 5}
+```{r, collapse=TRUE, fig.height=3}
 # by function of phyper
 uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=1, upper=100)$root
 
@@ -70,7 +70,7 @@ $$P(X\ge 2)\ge0.99 \implies1-P(X\le 1)\le1-0.01$$
 $$\therefore P(X\le 1)=P(X=1)+P(X=2)=e^{-\lambda}\frac{\lambda^0}{0!}+ e^{-\lambda}\frac{\lambda^1}{1!}=(1+\lambda)e^{-\lambda}\le0.01$$
 $$\implies e^{\lambda}\ge100\lambda+100$$
 
-```{R, fig.width = 5}
+```{R, collapse=TRUE, fig.height=3}
 # by resolving equation
 uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=10)$root
 
