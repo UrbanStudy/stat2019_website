@@ -1,7 +1,7 @@
 ---
 title: "STAT561 Fall 2018 HW5"
 author: 'Shen Qu'
-date: "11/1/2018"
+date: "11/8/2018"
 output: html_document
 ---
 
@@ -20,22 +20,17 @@ $$Let\quad P(X=0|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K}}{\binom{100}{K}
 $$\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}<0.10$$
 
 ```{r, collapse=TRUE, fig.height=3}
-# by bisection method
-# when K up to 32, the probability of no defective part is smaller than 0.1.
-dhyper(0, 6, 94, 32, log = FALSE)
-# when K down to 31, the defective might not be chose on 0.1 probability.
-qhyper(0.1, 6, 94, 31, lower.tail = TRUE, log.p = FALSE)
-
-# by function of phyper
-uniroot(function(k)(phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
-
-curve(phyper(0, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(32,0, "32"); abline(v = 32, lty = 3)
-
 # by resolving equation
 uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
-
-
-
+# by bisection method
+## when K up to 32, the probability of no defective part is smaller than 0.1.
+dhyper(0, 6, 94, 32, log = FALSE)
+## when K down to 31, the defective might not be chose on 0.1 probability.
+qhyper(0.1, 6, 94, 31, lower.tail = TRUE, log.p = FALSE)
+# by function of phyper
+uniroot(function(k)(phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
+# draw the curve
+curve(phyper(0, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(32,0, "32"); abline(v = 32, lty = 3)
 ```
 
  When the defective parts are 6, K must be at least 32
@@ -48,14 +43,12 @@ $$P(X=0 or 1|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K-0}}{\binom{100}{K}}+
 $$\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}<0.10$$
 
 ```{r, collapse=TRUE, fig.height=3}
-# by function of phyper
-uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=1, upper=100)$root
-
-curve(phyper(1, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(51,0, "51"); abline(v = 51, lty = 3)
-
 # by resolving equation
 uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
-
+# by function of phyper
+uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=1, upper=100)$root
+# draw the curve
+curve(phyper(1, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(51,0, "51"); abline(v = 51, lty = 3)
 ```
 
 When the defective parts are 6, K must be at least 51.
@@ -119,7 +112,7 @@ In negative binomial distribution, $x\in\{0,1,2..\}$,
 
 $$\therefore\quad P(X>0)=1-P(X=0)=1-\binom{0+r-1}{0}p^r(1-p)^0=1-p^r$$
 
-$$\text{For negative binomial distribution,}\quad P(X=x)=\binom{x+r-1}{x}p^r(1-p)^x,\ EX=\frac{rq}p,\ EX^2=$$
+$$\text{For negative binomial distribution,}\quad P(X=x)=\binom{x+r-1}{x}p^r(1-p)^x,\ EX=\frac{rq}p,\ EX^2=\frac{rq+r^2q^2}{p^2(1-p^r)}$$
 
 $$P(X_t=x)=\frac{\binom{x+r-1}{x}p^r(1-p)^x}{P(X>0)}=\frac{\binom{x+r-1}{x}p^r(1-p)^x}{1-p^r},x\in\{1,2..\}$$
 
