@@ -319,24 +319,19 @@ $(document).ready(function () {
 <p>The weight and systolic blood pressure of 26 randomly selected a group of adults are given in Weight vs BP text file</p>
 <p><!--https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals--></p>
 <pre class="r"><code>library(tidyverse)
-library(ggfortify)
 # Import Data
 table_weight_bp &lt;- read_table2(&quot;Weight vs BP.txt&quot;)
 # Observe the data frame
 head(table_weight_bp)
 # visualizng Satisfaction and Age
 # table_weight_bp %&gt;% ggplot(aes(Weight,SystolicBP))+geom_point()+geom_smooth(method=&quot;lm&quot;, level=0.95)
-
 # build the model
 model_wei_bp &lt;- lm(SystolicBP ~ Weight, data=table_weight_bp)
 model_wei_bp_origin &lt;- lm(SystolicBP ~ Weight+0, data=table_weight_bp)
-
 model_wei_bp%&gt;% summary()
 model_wei_bp_origin%&gt;% summary()
-
 confint(model_wei_bp, level = 0.99)
 confint(model_wei_bp_origin, level = 0.99)
-
 anova(model_wei_bp)
 anova(model_wei_bp_origin)</code></pre>
 <ol style="list-style-type: lower-alpha">
@@ -367,11 +362,11 @@ anova(model_wei_bp_origin)</code></pre>
 <li>Compare quality of two models and recommend only one model. Provide valid reasons for your recommendation.</li>
 </ol>
 <ul>
-<li>Firstly, the estimated intercept (69.104) is not zero on 95% confident level by p-value(<span class="math inline">\(1.71\times e^{-05}\)</span>).</li>
+<li><p>Firstly, the estimated intercept (69.104) is not zero on 95% confident level by p-value(<span class="math inline">\(1.71\times e^{-05}\)</span>).</p></li>
 <li><p>Secondly, the 99% confidence interval (32.996~105.213) for true intercept doesn’t contain zero. There are strong relationship between weight and blood pressure.</p></li>
-<li><p>Thirdly, the MSE value of model with intercept (75.36) is about half of the SSE with zero intercept (159), which shows the former is better fitted.</p></li>
-<li>Fourthly, the R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation. We can find the reason that the sum square of total variation with intercept (<span class="math inline">\(2693.6+1808.6=4502.2\)</span>) is about 1 percent of the SST with zero intercept (<span class="math inline">\(551834+3968=555802\)</span>), which SSR contributs most of the R-suqare value.</li>
-<li><p>Finally, Either the blood presure or weight has a reasonable range. The blood presure for zero weight is meaningless. We should not extrapolation the trend. the assumption of through origin with zero blood presure for zero weight is unreasonable. I would recommend the model with intercept or find a other models with higher R-square value.</p></li>
+<li><p>Thirdly, the MSE value of model with intercept (75.36) is about half of the MSE with zero intercept (159), which shows the former is better fitted.</p></li>
+<li><p>Fourthly, the R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation. We can find the reason that the sum square of total variation with intercept (<span class="math inline">\(2693.6+1808.6=4502.2\)</span>) is about 1 percent of the SST with zero intercept (<span class="math inline">\(551834+3968=555802\)</span>), which SSR contributs most of the R-suqare value. It doesn’t mean the later is better.</p></li>
+<li><p>Finally, Either the blood presure or weight has a reasonable range. The assumption of through origin with zero blood presure for zero weight is unreasonable and is extrapolation of the trend. I would recommend the model with intercept or find a other models with higher R-square value.</p></li>
 </ul>
 </div>
 <div id="problem-2" class="section level3">
