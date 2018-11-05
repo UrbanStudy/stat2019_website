@@ -19,11 +19,9 @@ The weight and systolic blood pressure of 26 randomly selected a group of adults
 
  <!--https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals-->
 
-```{r, echo=TRUE, results='hide', message = FALSE}
-# Load the package 
-library(readxl)
+```{r, echo=TRUE, results='hide', message = FALSE, collapse=TRUE}
 library(tidyverse)
-library(broom)
+library(ggfortify)
 # Import Data
 table_weight_bp <- read_table2("Weight vs BP.txt")
 # Observe the data frame
@@ -33,18 +31,19 @@ table_weight_bp %>% ggplot(aes(Weight,SystolicBP))+geom_point()+geom_smooth(meth
 
 # build the model
 model_wei_bp <- lm(SystolicBP ~ Weight, data=table_weight_bp)
-model_wei_bp%>% summary()
-confint(model_wei_bp, level = 0.99)
-anova(model_wei_bp)
-library(ggfortify)
-model_wei_bp %>% autoplot()
-
 model_wei_bp_origin <- lm(SystolicBP ~ Weight+0, data=table_weight_bp)
-confint(model_wei_bp_origin, level = 0.99)
+
+model_wei_bp%>% summary()
 model_wei_bp_origin%>% summary()
-anova(model_wei_bp_origin)
-library(ggfortify)
+
+confint(model_wei_bp, level = 0.99)
+confint(model_wei_bp_origin, level = 0.99)
+
+anova(model_wei_bp, model_wei_bp_origin)
+
+model_wei_bp %>% autoplot()
 model_wei_bp_origin %>% autoplot()
+
 ```
 (a) Fit a simple linear regression model to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.
 
@@ -64,7 +63,7 @@ model_wei_bp_origin %>% autoplot()
 
 (e) Compare quality of two models and recommend only one model. Provide valid reasons for your recommendation.
 
-```{r}
+```{r, collapse=TRUE}
 texreg::screenreg(l=list(model_wei_bp, model_wei_bp_origin))
 huxtable::huxreg(model_wei_bp, model_wei_bp_origin, statistics = NULL)
 ```
@@ -138,6 +137,7 @@ in the multiple linear regression model when k=1. It reduces to the same express
 $$Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\sigma^2\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2}{nS_{xx}} & \frac{-\sum_{i=1}^nx_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i)}{nS_{xx}} & \frac1{S_{xx}} \end{bmatrix}_{2\times2}=\sigma^2\begin{bmatrix} C_{11} &  C_{12} \\  C_{21} &  C_{22} \end{bmatrix}_{2\times2}$$
 
 From this result, show that 
+
 (i)  $Var(\hatβ_0)= σ^2 [1/n+ x^2/S_{xx}]$  
 
 $$Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\sigma^2\frac{\sum_{i=1}^nx_i^2-n\bar x_i^2+n\bar x_i^2}{nS_{xx}}=\sigma^2(\frac{1}{n}+\frac{n\bar x_i^2}{nS_{xx}})=\sigma^2(\frac{1}{n}+\frac{\bar x_i^2}{S_{xx}})$$
