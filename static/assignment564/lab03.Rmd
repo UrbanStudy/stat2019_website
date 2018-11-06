@@ -26,7 +26,7 @@ table_weight_bp <- read_table2("Weight vs BP.txt")
 # Observe the data frame
 head(table_weight_bp)
 # visualizng Satisfaction and Age
-# table_weight_bp %>% ggplot(aes(Weight,SystolicBP))+geom_point()+geom_smooth(method="lm", level=0.95)
+
 # build the model
 model_wei_bp <- lm(SystolicBP ~ Weight, data=table_weight_bp)
 model_wei_bp_origin <- lm(SystolicBP ~ Weight+0, data=table_weight_bp)
@@ -36,6 +36,14 @@ confint(model_wei_bp, level = 0.99)
 confint(model_wei_bp_origin, level = 0.99)
 anova(model_wei_bp)
 anova(model_wei_bp_origin)
+
+table_weight_bp %>% ggplot(aes(Weight,SystolicBP))+geom_point(alpha=0.5)+xlim(0,max(table_weight_bp$Weight))+ylim(0,max(table_weight_bp$SystolicBP))+geom_abline(mapping=aes(slope=0.4194, intercept=69.1044),linetype=2,col="red")+geom_abline(mapping=aes(slope=0.7916, intercept=0),linetype=3,col="blue")+labs(linetype="")
+
+plot(table_weight_bp$Weight, table_weight_bp$SystolicBP,col="red", pch = 16, xlab = "Weight", ylab = "SystolicBP") 
+abline(model_wei_bp, col = "blue", lwd = 3)
+abline(model_wei_bp_origin, col = "black", lwd = 3, lty = 3)
+legend(30, 780, legend=c("Observed", "Fit 1", "Fit 2 (no intercept)"), col=c("red", "blue", "black"), lty=c(0,1,3), pch = c(16, NA_integer_, NA_integer_), lwd = c(1,3,3), cex=0.8)
+
 ```
 (a) Fit a simple linear regression model to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.
 
