@@ -5,32 +5,101 @@ date: "11/8/2018"
 output: html_document
 ---
 
-**3.15** There is an interesting relationship between negative binomial and gamma random variables, which may sometimes provide a useful approximation. Let Y be a negative binomial random variable with parameters r and p, where p is the success probability.
+**3.18** There is an interesting relationship between negative binomial and gamma random variables, which may sometimes provide a useful approximation. Let Y be a negative binomial random variable with parameters r and p, where p is the success probability.
 Show that as $p\rightarrow0$, the mgf of the random variable pY converges to that of a gamma distribution with parameters r and 1.
 
+$$Y\sim Negative\ Binomial\ (k,p),\quad f_{Y}(y)=\binom{k-1}{y-1}p^{k}(1-p)^{y-k}, y=k, k+1,\ldots$$
 
+$$M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t<-log(1-p)$$
+According to the L’Hˆopital’s rule, $M_{aX+b}(t)=e^{bt}M_X(at)$
+$$\therefore M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r$$
+Because $\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0$ 
+According to the L’Hˆopital’s rule,$\lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}$
 
+$$\therefore \lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}$$
 
+$$\implies M_{pY}(t)=(\frac1{1-t})^r$$
+
+$$Gamma (α,β)\quad f_{X}(x)={{{(x/\beta)^{\alpha-1}{\exp}(-x/\beta)}[{\beta\Gamma (\alpha)]^{-1}}}},\ x\ge0,\ M_X(t)=(\frac1{1-\beta t})^\alpha$$
+When gamma distribution with parameters r and 1,
+
+$$f_{X}(x)={\frac{x^{r-1}}{\beta\Gamma (r)}e^{(-x)}},\ M_X(t)=(\frac1{1-t})^r$$
+
+Therefore, the mgf of the random variable pY ($Y\sim NB(r,p), p\rightarrow0$) converges to that of Gamma (r,1).
 
 ****
 **3.24** Many "named" distributions are special cases of the more common distributions already discussed. For each of the following named distributions derive the form of the pdf, verify that it is a pdf, and calculate the mean and variance.
 
 (a) If $X\sim$ exponential($\beta$), then $Y = X^{1/\gamma}$ has the Weibull($\gamma,\beta$) distribution, where $\gamma>0$ is a constant.
 
+$$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
+
+$$Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma$$
+
+$$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}, x\ge0,\beta>0, \gamma>0$$
+
+$$EY=\int_0^{\infty}\frac\gamma\beta  yy^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\gamma \int_0^{\infty}\frac{y^{\gamma}}\beta  e^{-\frac{y^\gamma}{\beta}}dy$$
+
+This is a Weibull distribution, 
+$$EY=\beta^{\frac1\gamma}\Gamma(1+\frac1\gamma),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
+
+Let $u=\frac{y^\gamma}{\beta}$, $dy=\frac{\gamma y^{\gamma-1}}{\beta}du$
 
 ****
 (b) If $X\sim$ exponential($\beta$), then $Y =(2X/\beta)^{1/2}$ has the _Rayleigh_ _distribution_.
 
+$$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
+
+$$Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2$$
+
+$$\therefore f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0,\beta>0$$
+
+This is a Rayleigh distribution with $\beta=\sqrt2$.
+
+$$EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}$$
+
+$$EY^2=\int_0^{\infty}y^3e^{\frac{-y^2}2}dy=2$$
+
 ****
 (c) If $X\sim$ gamma(a, b), then $Y=1/X$ has the inverted gamma IG(a, b) distribution. (This distribution is useful in Bayesian estimation of variances; see Exercise 7.23.)
 
+
+$$X\sim Gamma(a,b),\quad \therefore f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0$$
+
+$$Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y$$
+
+$$\therefore f_Y(y)=f_X(\frac1y)|\frac{d\frac1y}{dx}|=\frac{y^{1-a}}{\Gamma (a)b^a}e^{-\frac1{by}}|-\frac1{y^2}|=\frac{y^{-a-1}}{\Gamma (a)b^a}e^{-\frac1{by}}$$
+
+Inverted gamma IG(a, b) has $EX=\frac{\beta}{\alpha-1}$
+
+$$EY=\frac{\beta}{\alpha-1}$$
+
+$$VarY=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}, \alpha>2$$
+
 ****
-(d) If $X\sim$ gamma(3/2, b)), then $Y =(X/\beta)^{1/2}$ has the Maxwell distribution.
+(d) If $X\sim$ gamma(3/2, \beta)), then $Y =(X/\beta)^{1/2}$ has the Maxwell distribution.
+
+$$X\sim Gamma(\frac32,\beta),\quad \therefore f_X(x)=\frac{x^{\frac32-1}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}=\frac{x^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}$$
+
+$$EY=2\alpha\sqrt{\frac{2}{\pi}}$$
+
+$$VarY=\frac{\alpha^2(3\pi-8)}{\pi}$$
 
 ****
 (e) If $X\sim$ exponential(1), then $Y =\alpha-\gamma \log X$ has the Gumbel($\alpha,\gamma$) distribution, where $-\infty<\alpha<\infty$ and $\gamma>0$. (The Gumbel distribution is also known as the extreme value distribution.)
 
+$$X\sim expo(1),\quad \therefore f_X(x)=e^{-x}, x\ge0$$
 
+$$Let\ Y=g(X)= \alpha-\gamma\log X, X=g^{-1}(Y)=e^{\frac{\alpha-Y}{\gamma}}\quad\therefore g^{-1}(y)=e^{\frac{\alpha-y}{\gamma}}$$
+
+$$\therefore f_Y(y)=f_X(e^{\frac{\alpha-y}{\gamma}})|\frac{de^{\frac{\alpha-y}{\gamma}}}{dx}|=e^{-e^{\frac{\alpha-y}{\gamma}}}e^{\frac{\alpha-y}{\gamma}}|-\frac1{\gamma}|=\frac1{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}, \gamma>0$$
+
+This is a Gumbel distribution with $\alpha,\beta$.
+$$EY=\alpha+\beta\gamma, \gamma=0.5772157\ \text{is Euler's constant}\quad VarY=\frac{\pi^2\beta^2}{6}$$
+
+
+
+$$EY^2==$$
 
 ****
 **3.39** Consider the Cauchy family defined in Section 3.3. This family can be extended to a location-scale family yielding pdfs of the form.
@@ -83,3 +152,7 @@ The mean and variance do not exist for the Cauchy distribution. So the parameter
 **3.38** Let Z be a random variable with pdf f(z). Define $z_{\alpha}$ to be a number that satisfies this relationship:
 $$\alpha= P ( Z > z_{\alpha}) =\int_{z_{\alpha}}^{\infty}f(z)dz.$$
 Show that if X is a random variable with pdf ($l/\sigma)f((x-\mu)/\sigma$) and $x_{\alpha}=\sigma z_{\alpha}+\mu$, then $P(X>x_{\alpha})=\alpha$. (Thus if a table of $z_{\alpha}$ values were available, then values of $x_{\alpha}$ could be easily computed for any member of the location-scale family.)
+
+According to Theorem 3.5.6, f(x) is pdf, $\mu,\sigma\in\mathbf{R}$, $\sigma>0$. X is a random variable with pdf ($l/\sigma)f((x-\mu)/\sigma$) when and only when Z is a random variable with pdf f(z) and $X=\sigma Z+\mu$
+
+$$\therefore P(X>x_{\alpha})=P(\sigma Z+\mu>\sigma z_{\alpha}+\mu)= P(Z>z_{\alpha})=\alpha $$

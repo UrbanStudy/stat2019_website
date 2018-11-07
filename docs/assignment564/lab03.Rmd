@@ -25,8 +25,6 @@ library(tidyverse)
 table_weight_bp <- read_table2("Weight vs BP.txt")
 # Observe the data frame
 head(table_weight_bp)
-# visualizng Satisfaction and Age
-
 # build the model
 model_wei_bp <- lm(SystolicBP ~ Weight, data=table_weight_bp)
 model_wei_bp_origin <- lm(SystolicBP ~ Weight+0, data=table_weight_bp)
@@ -37,13 +35,14 @@ confint(model_wei_bp_origin, level = 0.99)
 anova(model_wei_bp)
 anova(model_wei_bp_origin)
 
-table_weight_bp %>% ggplot(aes(Weight,SystolicBP))+geom_point(alpha=0.5)+xlim(0,max(table_weight_bp$Weight))+ylim(0,max(table_weight_bp$SystolicBP))+geom_abline(mapping=aes(slope=0.4194, intercept=69.1044),linetype=2,col="red")+geom_abline(mapping=aes(slope=0.7916, intercept=0),linetype=3,col="blue")+labs(linetype="")
+# visualizng
 
-plot(table_weight_bp$Weight, table_weight_bp$SystolicBP,col="red", pch = 16, xlab = "Weight", ylab = "SystolicBP") 
-abline(model_wei_bp, col = "blue", lwd = 3)
-abline(model_wei_bp_origin, col = "black", lwd = 3, lty = 3)
-legend(30, 780, legend=c("Observed", "Fit 1", "Fit 2 (no intercept)"), col=c("red", "blue", "black"), lty=c(0,1,3), pch = c(16, NA_integer_, NA_integer_), lwd = c(1,3,3), cex=0.8)
+## table_weight_bp %>% ggplot(aes(Weight,SystolicBP))+geom_point(alpha=0.5)+xlim(0,max(table_weight_bp$Weight))+ylim(0,max(table_weight_bp$SystolicBP))+geom_abline(mapping=aes(slope=0.4194, intercept=69.1044),linetype=2,col="red")+geom_abline(mapping=aes(slope=0.7916, intercept=0),linetype=3,col="blue")+labs(linetype="")
 
+## plot(table_weight_bp$Weight, table_weight_bp$SystolicBP,col="red", pch = 16, xlab = "Weight", ylab = "SystolicBP") 
+## abline(model_wei_bp, col = "blue", lwd = 3)
+## abline(model_wei_bp_origin, col = "black", lwd = 3, lty = 3)
+## legend(30, 780, legend=c("Observed", "Fit 1", "Fit 2 (no intercept)"), col=c("red", "blue", "black"), lty=c(0,1,3), pch = c(16, NA_integer_, NA_integer_), lwd = c(1,3,3), cex=0.8)
 ```
 (a) Fit a simple linear regression model to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.
 
@@ -72,16 +71,20 @@ texreg::screenreg(l=list(model_wei_bp, model_wei_bp_origin))
 huxtable::huxreg(model_wei_bp, model_wei_bp_origin, statistics = NULL)
 ```
 
-* Firstly, the estimated intercept (69.104) is not zero on 95% confident level by p-value($1.71\times e^{-05}$).
+* Firstly, the estimated intercept (69.104) is not zero on 95% confident level by p-value ($1.71\times e^{-05}$).
 
 * Secondly, the 99% confidence interval (32.996~105.213) for true intercept doesn't contain zero. There are strong relationship between weight and blood pressure.
 
 * Thirdly, the MSE value of model with intercept (75.36) is about half of the MSE with zero intercept (159), which shows the former is better fitted.
 
-* Fourthly, the R-suqare value of model with intercept is 0.5983, means only 59.83% observations can be explained by this model. Meanwhile, the R-suqare value of model with zero intercept is 0.9929, which can explain more observation. We can find the reason that the sum square of total variation with intercept ($2693.6+1808.6=4502.2$) is about 1 percent of the SST with zero intercept ($551834+3968=555802$), which SSR contributs most of the R-suqare value. It doesn't mean the later is better.
+* Fourthly, the R-suqare value of model with intercept is 0.5983, while the R-suqare value of zero-intercept model is 0.9929. We can explain that the much larger SSR in zero-intercept model contributs most of the additional R-suqare value. The sum square of total variation with intercept ($2693.6+1808.6=4502.2$) is only 1 percent of the SST with zero intercept ($551834+3968=555802$). It doesn't mean the later is better.
 
-* Finally, Either the blood presure or weight has a reasonable range. The assumption of through origin with zero blood presure for zero weight is unreasonable and is extrapolation of the trend.
-I would recommend the model with intercept or find a other models with higher R-square value.  
+* Finally, the overlayed fitted models on the scatterplot show significant difference between two models. The assumption of through origin with zero blood presure for zero weight seems arbitrary and unreasonable.
+
+* Overall, the model with intercept is recommended because adding non-zero intercept improves the model with smaller MSE. 
+
+<!--Either the blood presure or weight has a reasonable range. The assumption of through origin with zero blood presure for zero weight is unreasonable and is extrapolation of the trend.
+I would recommend the model with intercept or find a other models with higher R-square value. --> 
 
 
 ### Problem 2: 
