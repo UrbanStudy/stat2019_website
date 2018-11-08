@@ -41,13 +41,14 @@ $$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^
 This is a Weibull distribution, 
 $$\therefore EY=\beta^{\frac1\gamma}\Gamma(1+\frac1\gamma),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
 Proof
-$$EY^n=\int_0^{\infty}\frac\gamma\beta  y^ny^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy= \int_0^{\infty}\frac{y^n}\beta e^{-\frac{y^\gamma}{\beta}}dy^\gamma= \int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}\beta e^{-\frac{y^\gamma}{\beta}}dy^\gamma$$
-let $u=y^\gamma$, then
-$$=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\int_0^{\infty}\frac{u^{(\frac1\gamma+1)-1}}{\beta\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)} e^{-\frac{u}{\beta}}du$$
 
-The left is a CDF of $Gamma(\frac{n}\gamma+1,\beta)$, therefore
+For $W\sim Gamma(\frac{n}\gamma+1,\beta)$,
 
-$$EY=\beta^{\frac1\gamma}\Gamma(\frac1\gamma+1),\quad EY^2=\beta^{\frac2\gamma}\Gamma(\frac2\gamma+1),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(\frac{n}\gamma+1)-1}}{\Gamma (\frac{n}\gamma+1)b^{\frac{n}\gamma+1}}e^{-\frac{w}b}dw=1,\ n=0,1,2,..$$
+
+$$EY^n=\int_0^{\infty}\frac\gamma\beta  y^ny^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\int_0^{\infty}\frac{y^n}{\beta} e^{-\frac{y^\gamma}{\beta}}dy^\gamma=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}{\Gamma(\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}} e^{-\frac{(y^\gamma)}{\beta}}d(y^\gamma)=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)$$
+
+$$\therefore EY=\beta^{\frac1\gamma}\Gamma(\frac1\gamma+1),\quad EY^2=\beta^{\frac2\gamma}\Gamma(\frac2\gamma+1),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
 
 Or Let $u=\frac{y^\gamma}{\beta},y=(\beta u)^{\frac1\gamma}, dy=\frac{1}{\gamma}(\beta u)^{\frac1\gamma-1}du$ has same result.
 
@@ -64,17 +65,24 @@ This is a Rayleigh distribution with $\beta=\sqrt2$.
 
 $$\therefore EY=\frac{\sqrt{\pi}}{\beta}=\frac{\sqrt{2\pi}}{2},\quad EY^2=\beta^2=2,\quad VarY=2-\frac{\pi}2$$
 
-Proof
-For $Z\sim N(0,1), EZ^2=\int_{-\infty}^{\infty}z^2e^{\frac{-z^2}2}dz=2\int_0^{\infty}z^2e^{\frac{-z^2}2}dz=1$
-$$ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy=\sqrt{2\pi}\int_0^{\infty}y^2e^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}$$
+Proof:
 
-For $W\sim Gamma(2,2)$, 
-$$EW=\int_0^{\infty}\frac{w^{2-1}}{\Gamma (2)2^2}e^{-\frac{w}2}dw=1$$
+For $Z\sim N(0,1)$, 
+$$EZ^2=\int_{-\infty}^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=1\quad \implies \int_0^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac12$$
+$$ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy={\sqrt{2\pi}}\int_0^{\infty}\frac{y^2}{\sqrt{2\pi}}e^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}$$
+
+For $W\sim Gamma(2,2)$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{2-1}}{\Gamma (2)2^2}e^{-\frac{w}2}dw=1$$
 
 $$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2=2,\quad VarY=2-\frac{\pi}2$$
 
+Or for $V\sim Expo(1)$
 
-let $u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy$ has same result.
+$$EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1$$
+
+$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}(\frac{y^2}2)e^{\frac{-y^2}2}d(\frac{y^2}2)=2,\quad VarY=2-\frac{\pi}2$$
+
+Or let $u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy$ has same result.
 
 
 ****
@@ -87,20 +95,41 @@ $$Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y$$
 
 $$\therefore f_Y(y)=f_X(\frac1y)|\frac{d\frac1y}{dx}|=\frac{y^{1-a}}{\Gamma (a)b^a}e^{-\frac1{by}}|-\frac1{y^2}|=\frac{y^{-a-1}}{\Gamma (a)b^a}e^{-\frac1{by}}$$
 
-Inverted gamma IG(a, b) has $EX=\frac{\beta}{\alpha-1}$
+Inverted gamma IG(a, b) has $EY=\frac{\beta}{\alpha-1},\ VarY=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}, \alpha>2$
 
-$$EY=\frac{\beta}{\alpha-1}$$
+Proof:
 
-$$VarY=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}, \alpha>2$$
+For $W\sim Gamma(a-1,b)$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(a-n)-1}}{\Gamma (a-n)b^{a-n}}e^{-\frac{w}b}dw=1,\ n=0,1,2,..$$
+
+$$\therefore EY=\int_0^{\infty}\frac{y(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)b}\int_0^{\infty}\frac{(\frac1y)^{(a-1)-1}}{\Gamma (a-1)b^{a-1}}e^{-\frac1b\frac1y}d(\frac1y)=\frac{1}{(a-1)b}$$
+
+$$EY^2=\int_0^{\infty}\frac{y^2(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)(a-2)b^2}\int_0^{\infty}\frac{(\frac1y)^{(a-2)-1}}{\Gamma (a-2)b^{a-2}}e^{-\frac1b\frac1y}d(\frac1y)=\frac{1}{(a-1)(a-2)b^2}$$
+
+$$VarY=\frac{1}{(a-1)(a-2)b^2}-\frac{1}{(a-1)^2b^2}=\frac{a-1-(a-2)}{(a-1)^2(a-2)b^2}=\frac{1}{(a-1)^2(a-2)b^2}, a>2$$
 
 ****
-(d) If $X\sim$ gamma(3/2, \beta)), then $Y =(X/\beta)^{1/2}$ has the Maxwell distribution.
+(d) If $X\sim gamma(3/2, \beta)$, then $Y =(X/\beta)^{1/2}$ has the Maxwell distribution.
 
 $$X\sim Gamma(\frac32,\beta),\quad \therefore f_X(x)=\frac{x^{\frac32-1}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}=\frac{x^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}$$
 
-$$EY=2\alpha\sqrt{\frac{2}{\pi}}$$
+$$Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2$$
 
-$$VarY=\frac{\alpha^2(3\pi-8)}{\pi}$$
+For $\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2$
+
+$$\therefore f_Y(y)=f_X(\beta y^2)|\frac{d\beta y^2}{dx}|=\frac{(\beta y^2)^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{\beta y^2}\beta}2\beta y=\frac{4y^2}{\sqrt\pi}e^{-y^2}$$
+
+For $V\sim Expo(1)$
+
+$$EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1$$
+$$EY=\int_0^{\infty}\frac{y4y^2}{\sqrt\pi}e^{-y^2}dy=\frac2{\sqrt\pi}\int_0^{\infty}y^2e^{-y^2}dy^2=\frac2{\sqrt\pi}$$
+
+For $Z\sim N(0,1)$, 
+$$EZ^4=\int_{-\infty}^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=3\quad \implies \int_0^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac32$$
+
+$$EY^2=\int_0^{\infty}\frac{y^24y^2}{\sqrt\pi}e^{-y^2}dy=\int_0^{\infty}\frac{(\sqrt2y)^4}{\sqrt{2\pi}}e^{-\frac{(\sqrt2y)}2^2}d(\sqrt2y)=\frac32$$
+
+$$VarY=\frac32-\frac4{\pi}$$
 
 ****
 (e) If $X\sim$ exponential(1), then $Y =\alpha-\gamma \log X$ has the Gumbel($\alpha,\gamma$) distribution, where $-\infty<\alpha<\infty$ and $\gamma>0$. (The Gumbel distribution is also known as the extreme value distribution.)
