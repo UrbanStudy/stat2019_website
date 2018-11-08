@@ -11,16 +11,16 @@ Show that as $p\rightarrow0$, the mgf of the random variable pY converges to tha
 $$Y\sim Negative\ Binomial\ (k,p),\quad f_{Y}(y)=\binom{k-1}{y-1}p^{k}(1-p)^{y-k}, y=k, k+1,\ldots$$
 
 $$M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t<-log(1-p)$$
-According to the L’Hˆopital’s rule, $M_{aX+b}(t)=e^{bt}M_X(at)$
-$$\therefore M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r$$
+According to the Theorem, $M_{aX+b}(t)=e^{bt}M_X(at)$
+$$M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r$$
 Because $\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0$ 
 According to the L’Hˆopital’s rule,$\lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}$
 
-$$\therefore \lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}$$
+$$\lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}$$
 
 $$\implies M_{pY}(t)=(\frac1{1-t})^r$$
 
-$$Gamma (α,β)\quad f_{X}(x)={{{(x/\beta)^{\alpha-1}{\exp}(-x/\beta)}[{\beta\Gamma (\alpha)]^{-1}}}},\ x\ge0,\ M_X(t)=(\frac1{1-\beta t})^\alpha$$
+$$\because Gamma (α,β)\quad f_{X}(x)={{{(x/\beta)^{\alpha-1}{\exp}(-x/\beta)}[{\beta\Gamma (\alpha)]^{-1}}}},\ x\ge0,\ M_X(t)=(\frac1{1-\beta t})^\alpha$$
 When gamma distribution with parameters r and 1,
 
 $$f_{X}(x)={\frac{x^{r-1}}{\beta\Gamma (r)}e^{(-x)}},\ M_X(t)=(\frac1{1-t})^r$$
@@ -36,14 +36,20 @@ $$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\
 
 $$Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma$$
 
-$$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}, x\ge0,\beta>0, \gamma>0$$
-
-$$EY=\int_0^{\infty}\frac\gamma\beta  yy^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\gamma \int_0^{\infty}\frac{y^{\gamma}}\beta  e^{-\frac{y^\gamma}{\beta}}dy$$
+$$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}=\frac{\gamma}\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}, x\ge0,\beta>0, \gamma>0$$
 
 This is a Weibull distribution, 
-$$EY=\beta^{\frac1\gamma}\Gamma(1+\frac1\gamma),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
+$$\therefore EY=\beta^{\frac1\gamma}\Gamma(1+\frac1\gamma),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
+Proof
+$$EY^n=\int_0^{\infty}\frac\gamma\beta  y^ny^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy= \int_0^{\infty}\frac{y^n}\beta e^{-\frac{y^\gamma}{\beta}}dy^\gamma= \int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}\beta e^{-\frac{y^\gamma}{\beta}}dy^\gamma$$
+let $u=y^\gamma$, then
+$$=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\int_0^{\infty}\frac{u^{(\frac1\gamma+1)-1}}{\beta\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)} e^{-\frac{u}{\beta}}du$$
 
-Let $u=\frac{y^\gamma}{\beta}$, $dy=\frac{\gamma y^{\gamma-1}}{\beta}du$
+The left is a CDF of $Gamma(\frac{n}\gamma+1,\beta)$, therefore
+
+$$EY=\beta^{\frac1\gamma}\Gamma(\frac1\gamma+1),\quad EY^2=\beta^{\frac2\gamma}\Gamma(\frac2\gamma+1),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
+
+Or Let $u=\frac{y^\gamma}{\beta},y=(\beta u)^{\frac1\gamma}, dy=\frac{1}{\gamma}(\beta u)^{\frac1\gamma-1}du$ has same result.
 
 ****
 (b) If $X\sim$ exponential($\beta$), then $Y =(2X/\beta)^{1/2}$ has the _Rayleigh_ _distribution_.
@@ -52,13 +58,24 @@ $$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\
 
 $$Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2$$
 
-$$\therefore f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0,\beta>0$$
+$$f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0,\beta>0$$
 
 This is a Rayleigh distribution with $\beta=\sqrt2$.
 
-$$EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}$$
+$$\therefore EY=\frac{\sqrt{\pi}}{\beta}=\frac{\sqrt{2\pi}}{2},\quad EY^2=\beta^2=2,\quad VarY=2-\frac{\pi}2$$
 
-$$EY^2=\int_0^{\infty}y^3e^{\frac{-y^2}2}dy=2$$
+Proof
+For $Z\sim N(0,1), EZ^2=\int_{-\infty}^{\infty}z^2e^{\frac{-z^2}2}dz=2\int_0^{\infty}z^2e^{\frac{-z^2}2}dz=1$
+$$ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy=\sqrt{2\pi}\int_0^{\infty}y^2e^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}$$
+
+For $W\sim Gamma(2,2)$, 
+$$EW=\int_0^{\infty}\frac{w^{2-1}}{\Gamma (2)2^2}e^{-\frac{w}2}dw=1$$
+
+$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2=2,\quad VarY=2-\frac{\pi}2$$
+
+
+let $u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy$ has same result.
+
 
 ****
 (c) If $X\sim$ gamma(a, b), then $Y=1/X$ has the inverted gamma IG(a, b) distribution. (This distribution is useful in Bayesian estimation of variances; see Exercise 7.23.)

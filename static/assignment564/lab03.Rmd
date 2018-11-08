@@ -46,19 +46,19 @@ anova(model_wei_bp_origin)
 ```
 (a) Fit a simple linear regression model to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.
 
-* The simple linear model is $\hat{systolic blood pressure}=69.1044+0.4194Weight$
+The simple linear model is $\hat{systolic blood pressure}=69.1044+0.4194Weight$
 
 (b) Test for significance of true intercept of this model at 5% significance and provide the conclusion along with p-value.
 
-* The p-value is $1.71\times e^{-05}$, which is much smaller than 0.05. We can know the true intercept is not zero on 95% confidence level.
+The p-value is $1.71\times e^{-05}$, which is much smaller than 0.05. We can know the true intercept is not zero on 95% confidence level.
 
 (c) Report a 99% confidence interval for true intercept of this model.
 
-* The 99% confidence interval for true intercept of this model is (32.9955223 105.2132233).
+The 99% confidence interval for true intercept of this model is (32.9955223 105.2132233).
 
 (d) Fit a simple linear regression model through origin to predict blood pressure using weight. Provide only the fitted equation with correct variable names here.
 
-* The model through origin is $\hat{systolic blood pressure}=0.7916Weight$
+The model through origin is $\hat{systolic blood pressure}=0.7916Weight$
 
 (e) Compare quality of two models and recommend only one model. Provide valid reasons for your recommendation.
 
@@ -71,20 +71,15 @@ texreg::screenreg(l=list(model_wei_bp, model_wei_bp_origin))
 huxtable::huxreg(model_wei_bp, model_wei_bp_origin, statistics = NULL)
 ```
 
-* Firstly, the estimated intercept (69.104) is not zero on 95% confident level by p-value ($1.71\times e^{-05}$).
+Firstly, the estimated intercept (69.104) is not zero on 95% confident level by p-value ($1.71\times e^{-05}$).Moreover, the 99% confidence interval (32.996~105.213) for true intercept doesn't contain zero. There are strong relationship between weight and blood pressure.
 
-* Secondly, the 99% confidence interval (32.996~105.213) for true intercept doesn't contain zero. There are strong relationship between weight and blood pressure.
+Secondly, the MSE value of model with intercept (75.36) is about half of the MSE with zero intercept (159), which shows the former is better fitted.
 
-* Thirdly, the MSE value of model with intercept (75.36) is about half of the MSE with zero intercept (159), which shows the former is better fitted.
+Thirdly, the R-suqare value of model with intercept is 0.5983, while the R-suqare value of zero-intercept model is 0.9929. We can explain that the much larger SSR in zero-intercept model contributs most of the additional R-suqare value. The sum square of total variation with intercept ($2693.6+1808.6=4502.2$) is only 1 percent of the SST with zero intercept ($551834+3968=555802$). It doesn't mean the later is better.
 
-* Fourthly, the R-suqare value of model with intercept is 0.5983, while the R-suqare value of zero-intercept model is 0.9929. We can explain that the much larger SSR in zero-intercept model contributs most of the additional R-suqare value. The sum square of total variation with intercept ($2693.6+1808.6=4502.2$) is only 1 percent of the SST with zero intercept ($551834+3968=555802$). It doesn't mean the later is better.
+Fourthly, the overlayed fitted models on the scatterplot show significant difference between two models. The line through origin doesn't fit the pattern better.
 
-* Finally, the overlayed fitted models on the scatterplot show significant difference between two models. The assumption of through origin with zero blood presure for zero weight seems arbitrary and unreasonable.
-
-* Overall, the model with intercept is recommended because adding non-zero intercept improves the model with smaller MSE. 
-
-<!--Either the blood presure or weight has a reasonable range. The assumption of through origin with zero blood presure for zero weight is unreasonable and is extrapolation of the trend.
-I would recommend the model with intercept or find a other models with higher R-square value. --> 
+Overall, the model with intercept is recommended because adding non-zero intercept improves the model with smaller MSE. To increase R-square or fit the pattern better, we should look for other advanced models. 
 
 
 ### Problem 2: 
@@ -112,14 +107,14 @@ $$
 $$
 \mathbf{X'X}=\begin{bmatrix} 1 &  1 &\cdots &1 \\   x_{1} & x_{2} & \cdots & x_{n} \end{bmatrix}_{2\times{n}} 
 \begin{bmatrix} 1 & x_{1} \\ 1 & x_{2} \\ \vdots & \vdots  \\ 1 & x_{n} \end{bmatrix}_{n\times2}=
-\begin{bmatrix} n & x_{1}+x_{2}+\cdots+x_{n} \\ x_{1}+x_{2}+\cdots+x_{n} & x_1^2+x_2^2+\cdots+x_n^2  \end{bmatrix}_{2\times2}
+\begin{bmatrix} n & x_{1}+x_{2}+\cdots+x_{n} \\ x_{1}+x_{2}+\cdots+x_{n} & x_1^2+x_2^2+\cdots+x_n^2  \end{bmatrix}_{2\times2}=\begin{bmatrix} n & \sum_{i=1}^nx_i \\ \sum_{i=1}^nx_i & \sum_{i=1}^nx_i^2 \end{bmatrix}_{2\times2}
 $$
 
  (c) Compute $\mathbf{(X'X)^{-1}}$ (show all the main steps)
 Hint: The inverse of a nonsingular is obtained by 1) replacing every element of the matrix with its cofactor, 2) transposing the resulting matrix, 3) dividing by the determinant of the origin matrix.
 
 $$
-\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} x_1^2+x_2^2+\cdots+x_n^2  & -(x_{1}+x_{2}+\cdots+x_{n}) \\ -(x_{1}+x_{2}+\cdots+x_{n}) & n \end{bmatrix}_{2\times2}
+\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2  & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}
 $$
 
 $$=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n\sum_{i=1}^nx_i^2-(n\bar x_i)^2}=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n(\sum_{i=1}^nx_i^2-n\bar x_i^2)}=\frac1{nS_{xx}}{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}$$
@@ -138,7 +133,7 @@ $$
 
 $$=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2n\bar{y}-n\bar{x}\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}{n}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\bar{y}\sum_{i=1}^nx_i^2-\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n+\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}$$
 
-$$=\begin{bmatrix} \bar{y}\frac{S_{xx}}{S_{xx}}+\frac{\bar{x}\bar{y}\sum_{i=1}^nx_i-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}n}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{S_{xy}}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}{\beta_1} \\ \beta_1 \end{bmatrix}_{2\times1}$$
+$$=\begin{bmatrix} \bar{y}\frac{S_{xx}}{S_{xx}}+\frac{\bar{x}\bar{y}\sum_{i=1}^nx_i-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}n}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{S_{xy}}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}{\hat\beta_1} \\ \hat\beta_1 \end{bmatrix}_{2\times1}$$
 
 in the multiple linear regression model when k=1. It reduces to the same expression you learned for the slope and intercept for simple linear regression model.
 
@@ -150,12 +145,12 @@ From this result, show that
 
 (i)  $Var(\hatβ_0)= σ^2 [1/n+ x^2/S_{xx}]$  
 
-$$Var(\mathbf{\hatβ_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\sigma^2\frac{\sum_{i=1}^nx_i^2-n\bar x_i^2+n\bar x_i^2}{nS_{xx}}=\sigma^2(\frac{1}{n}+\frac{n\bar x_i^2}{nS_{xx}})=\sigma^2(\frac{1}{n}+\frac{\bar x_i^2}{S_{xx}})$$
+$$Var(\mathbf{\hat\beta_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\sigma^2\frac{\sum_{i=1}^nx_i^2-n\bar x_i^2+n\bar x_i^2}{nS_{xx}}=\sigma^2(\frac{1}{n}+\frac{n\bar x_i^2}{nS_{xx}})=\sigma^2(\frac{1}{n}+\frac{\bar x_i^2}{S_{xx}})$$
 
 (ii)  $Var(\hatβ_1)=σ^2/S_{xx}$
 
-$$Var(\mathbf{\hatβ_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}$$
+$$Var(\mathbf{\hat\beta_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}$$
 
 (iii)  $Cov(β_0,β_1)=-(\bar x σ^2)/S_{xx}$
 
-$$Cov(\mathbf{\hatβ_0,\hatβ_1})=σ^2C_{12}=\frac{\sigma^2(-\sum_{i=1}^nx_i)}{nS_{xx}}=\frac{-\sigma^2(n\bar x_i)}{nS_{xx}}=\frac{-\sigma^2\bar x_i}{S_{xx}}$$
+$$Cov(\mathbf{\hat\beta_0,\hat\beta_1})=σ^2C_{12}=\frac{\sigma^2(-\sum_{i=1}^nx_i)}{nS_{xx}}=\frac{-\sigma^2(n\bar x_i)}{nS_{xx}}=\frac{-\sigma^2\bar x_i}{S_{xx}}$$
