@@ -1,10 +1,11 @@
 ---
-title: 'USP654 Lab 4: Multiple Regression'
-author: "Liming Wang"
-date: "10/16/2017"
+title: 'STAT564 Homework 3'
+author: "Shen Qu"
+date: "11/21/2018"
 output: 
   html_document:
-    toc: true
+    toc: false
+    toc_float: false
 ---
 
 ```{r setup, include=F}
@@ -13,144 +14,162 @@ options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
-## Data manipulation with the `dplyr` package (part of `tidyverse`)
-`dplyr` works most efficiently with "tidy data"
+### Problem 1
+Exercise 3.25 (Just report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for each part).
 
-![Tidy Data](http://r4ds.had.co.nz/images/tidy-1.png)
+$$y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$$
+ (a) $H_0:\ β_1=β_2=β_3=β_4=β$
 
-It has 5 basic verbs for manipulating R data frame (or tibble):
+$$y=β_0+β(x_1+x_2+x_3+x_4)+ε$$
 
-- `mutate()` adds new variables that are functions of existing variables (Note there is a new column `kmpl` to the right)
-```{r, echo=TRUE}
-require(tidyverse)
-# convert mpg to kilometers per liter
-mtcars %>% mutate(kmpl = mpg * 0.425144)
+ (b) $H_0:\ β_1=β_2,\ β_3=β_4$
+ 
+$$y=β_0+β_1(x_1+x_2)+β_3(x_3+x_4)+ε$$
+ 
+ (c) $H_0:\ β_1-2β_2=4β_3,\ β_1+2β_2=0$
+
+$$β_1=-2β_2=2β_3$$
+
+$$y=β_0+β_1(x_1-\frac12x_2+\frac12x_3)+β_4 x_4+ε$$
+ 
+<!-- 
+$$
+\mathbf{Y}=\begin{bmatrix} y_1 \\ y_2 \\ \vdots  \\ y_n \end{bmatrix}_{n\times1} 
+\mathbf{X}=\begin{bmatrix} 1 & x_{1} \\ 1 & x_{2} \\ \vdots & \vdots  \\ 1 & x_{n} \end{bmatrix}_{n\times2} 
+\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \end{bmatrix}_{2\times1}+
+\mathbf{ε}=\begin{bmatrix} \varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n \end{bmatrix}_{n\times1}
+$$
+
+
+$$
+\mathbf{X'X}=\begin{bmatrix} 1 &  1 &\cdots &1 \\   x_{1} & x_{2} & \cdots & x_{n} \end{bmatrix}_{2\times{n}} 
+\begin{bmatrix} 1 & x_{1} \\ 1 & x_{2} \\ \vdots & \vdots  \\ 1 & x_{n} \end{bmatrix}_{n\times2}=
+\begin{bmatrix} n & x_{1}+x_{2}+\cdots+x_{n} \\ x_{1}+x_{2}+\cdots+x_{n} & x_1^2+x_2^2+\cdots+x_n^2  \end{bmatrix}_{2\times2}=\begin{bmatrix} n & \sum_{i=1}^nx_i \\ \sum_{i=1}^nx_i & \sum_{i=1}^nx_i^2 \end{bmatrix}_{2\times2}
+$$
+
+
+
+$$
+\mathbf{|X'X|}^{-1}=\frac1{n\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2}\begin{bmatrix} \sum_{i=1}^nx_i^2  & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}
+$$
+
+$$=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n\sum_{i=1}^nx_i^2-(n\bar x_i)^2}=\frac{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}{n(\sum_{i=1}^nx_i^2-n\bar x_i^2)}=\frac1{nS_{xx}}{\begin{bmatrix} \sum_{i=1}^nx_i^2 & -(\sum_{i=1}^nx_i) \\ -(\sum_{i=1}^nx_i) & n \end{bmatrix}_{2\times2}}$$
+
+
+$$
+\mathbf{X'Y}=\begin{bmatrix} 1 &  1 &\cdots &1 \\   x_{1} & x_{2} & \cdots & x_{n} \end{bmatrix}_{2\times{n}} 
+\begin{bmatrix} y_1 \\ y_2 \\ \vdots  \\ y_n \end{bmatrix}_{n\times1}=\begin{bmatrix} y_1 + y_2 +\cdots + y_n \\ x_{1}y_1 + x_{2}y_2 + \cdots + x_{n}y_n \end{bmatrix}_{2\times{1}}=\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}}
+$$
+
+
+$$
+\mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2 & -\sum_{i=1}^nx_i \\ -\sum_{i=1}^nx_i & n \end{bmatrix}_{2\times2}\begin{bmatrix} \sum_{i=1}^ny_i \\ \sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times{1}}=\frac1{nS_{xx}}\begin{bmatrix} \sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i \\ -\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i \end{bmatrix}_{2\times1}$$
+
+$$=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2\sum_{i=1}^ny_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i\sum_{i=1}^ny_i + n\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2n\bar{y}-n\bar{x}\sum_{i=1}^nx_{i}y_i}{nS_{xx}} \\ \frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}{n}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \frac{\bar{y}\sum_{i=1}^nx_i^2-\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n+\bar{y}\frac{(\sum_{i=1}^nx_i)^2}n-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}$$
+
+$$=\begin{bmatrix} \bar{y}\frac{S_{xx}}{S_{xx}}+\frac{\bar{x}\bar{y}\sum_{i=1}^nx_i-\bar{x}\sum_{i=1}^nx_{i}y_i}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{\sum_{i=1}^nx_{i}y_i-\frac{\sum_{i=1}^nx_i\sum_{i=1}^ny_i}n}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}\frac{S_{xy}}{S_{xx}} \\ \frac{S_{xy}}{S_{xx}} \end{bmatrix}_{2\times1}=\begin{bmatrix} \bar{y}-\bar{x}{\hat\beta_1} \\ \hat\beta_1 \end{bmatrix}_{2\times1}$$
+
+$$Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}=\sigma^2\begin{bmatrix} \frac{\sum_{i=1}^nx_i^2}{nS_{xx}} & \frac{-\sum_{i=1}^nx_i}{nS_{xx}} \\ \frac{-\sum_{i=1}^nx_i)}{nS_{xx}} & \frac1{S_{xx}} \end{bmatrix}_{2\times2}=\sigma^2\begin{bmatrix} C_{11} &  C_{12} \\  C_{21} &  C_{22} \end{bmatrix}_{2\times2}$$
+
+
+$$Var(\mathbf{\hat\beta_0})=σ^2C_{11}=\frac{\sigma^2\sum_{i=1}^nx_i^2}{nS_{xx}}=\sigma^2\frac{\sum_{i=1}^nx_i^2-n\bar x_i^2+n\bar x_i^2}{nS_{xx}}=\sigma^2(\frac{1}{n}+\frac{n\bar x_i^2}{nS_{xx}})=\sigma^2(\frac{1}{n}+\frac{\bar x_i^2}{S_{xx}})$$
+
+
+$$Var(\mathbf{\hat\beta_1})=σ^2C_{22}=\frac{\sigma^2}{S_{xx}}$$
+
+
+$$Cov(\mathbf{\hat\beta_0,\hat\beta_1})=σ^2C_{12}=\frac{\sigma^2(-\sum_{i=1}^nx_i)}{nS_{xx}}=\frac{-\sigma^2(n\bar x_i)}{nS_{xx}}=\frac{-\sigma^2\bar x_i}{S_{xx}}$$
+-->
+
+### Problem 2: 
+
+Exercise 3.27 (Use y=Xβ+ε, y ̂=Xβ ̂ , Cov(Ay)=A Cov(y)A' and H=X(X'X)^(-1) X')
+Show that $Var(\mathbf{\hat y})=\sigma^2\mathbf{H}$
+
+### Problem 3: 
+
+The (X'X)^(-1) for the y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε is given below.
+
+```{R}
+B<- data.frame(
+   b0=c(11.423,-4.349,-0.790, 0.486,-0.196),
+   b1=c(-4.349, 4.624,-3.057,-0.346, 0.024),
+   b2=c(-0.790,-3.057, 3.978, 0.135, 0.063),
+   b3=c( 0.486,-0.346, 0.135, 0.031,-0.005),
+   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011)
+)
+  var(B$b1)  
+  sqrt(var(B$b3))
+  cov(B$b1,B$b3)
+  cor(B$b1,B$b3)
+function(){B<-cor(X)MSE}
 ```
 
-(Note we do not assign the results back to `mtcars`, the new `kmpl` is for showing only and lost afterwards. To retain the new variable, assign the results back to `mtcars` or to a new name).
 
-- `select()` picks variables based on their names.
+If MSE = 0.513 and n = 9, compute the (Keep 4 or more decimal places, DO NOT round in the intermediate steps)
+(a) $Var(\hatβ_1)$
 
-The above example is hard to see the results as there are too many columns. Here only show the columns of interest:
-```{r}
-# convert mpg to kilometers per liter
-mtcars %>% mutate(kmpl = mpg * 0.425144) %>% 
-  select(mpg, kmpl)
+(b) $se(\hatβ_3)$
+
+(c) $Cov(\hatβ_1,\hatβ_3)$
+
+(d) $Cor(\hatβ_1\hat,β_3)$
+
+(e) Based on what you found in the previous part(s), explain the relationship between $\hatβ_1, \hatβ_3$.
+
+(f) Without computing variance for all the estimators, explain which estimator is the least consistent.
+
+(g) Without computing covariances for all the pairs of estiamtors, list the pair(s) of estimators that are negatively correlated. Provide a reason.
+
+
+### Problem 4: 
+a. the fitted model
+
+$$y=-1.808372+0.003598x_2+0.193960x_7+-0.004816x_8$$
+
+b. ANOVA
+
+$$P(x2)=3.100e^{-5},\
+P(x7)=3.698e^{-7},\
+P(x8)=0.0009378$$
+
+Conclusion:
+
+c. R-square and adjusted R-square
+
+d. The fitted model in Part
+
+e. The partial F test statistic
+
+3.2 The correlation
+
+3.3 The confidence intervals
+
+
+Report your code and output from the software at the end.
+
+```{r, echo=TRUE, message = FALSE, collapse=TRUE}
+library(tidyverse)
+# Import Data
+table_b1 <- read_table2("TableB.1.txt")
+# Observe the data frame
+head(table_b1)
+# build the model
+model_2_7_8 <- lm(y ~ x2+x7+x8, data=table_b1)
+model_2_7_8%>% summary()
+anova(model_2_7_8)
+confint(model_2_7_8, level = 0.95)
+# visualizng
+library(GGally)
+ggpairs(data=table_b1[c(1,3,8,9)])
+
 ```
 
-- `filter()` picks cases based on their values.
 
-Let's select cars with mpg above 20:
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% filter(mpg > 20) %>% 
-  select(mpg, cyl, hp)
+```{r, include = FALSE, collapse=TRUE}
+library(ggfortify)
+model_2_7_8 %>% autoplot()
+
+texreg::screenreg(l=list(model_2_7_8))
+huxtable::huxreg(model_2_7_8, statistics = NULL)
 ```
-
-How many cars are there with `mpg` > 20?
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% filter(mpg > 20) %>% 
-  nrow()
-```
-
-- `summarise()` reduces multiple values down to a single summary (working with `group_by()`).
-
-Let's see how many cars with auto and manual transimission (`am`: 0-automatic, 1-manual):
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% group_by(am) %>% 
-  summarize(n=n())
-```
-
-Let's get the average mpg by the type of transimission (`am`: 0-automatic, 1-manual):
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% group_by(am) %>% 
-  summarize(mean_mpg=mean(mpg))
-```
-
-You can easily combine multiple `summarize` functions with the same grouping:
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% group_by(am) %>% 
-  summarize(n=n(),
-            mean_mpg=mean(mpg),
-            sd_mpg=sd(mpg),
-            min_mpg=min(mpg),
-            max_mpg=max(mpg))
-```
-
-- `arrange()` changes the ordering of the rows.
-
-Let's reorder the mtcars by `mpg` (ascending by default):
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% arrange(mpg)
-```
-
-Descending order:
-```{r, echo=TRUE}
-# convert mpg to kilometers per liter
-mtcars %>% arrange(desc(mpg))
-```
-
-## Hypothesis testing of nested models
-
-```{r, echo=TRUE}
-###########################################
-## General linear F test
-
-require(tidyverse)
-
-fit_R <- lm(mpg ~ wt, data=mtcars)
-fit_F <- lm(mpg ~ wt + cyl, data=mtcars)
-
-anova(fit_R, fit_F)
-
-
-## To do the F test manually
-SSE_R <- resid(fit_R)^2 %>% sum
-SSE_F <- resid(fit_F)^2 %>% sum
-df_R <- df.residual(fit_R)
-df_F <- df.residual(fit_F)
-
-F_val <- ((SSE_R - SSE_F)/(df_R - df_F))/(SSE_F/df_F)
-
-# Look up the critical F value for alpha=0.05
-alpha <- 0.05
-qf(alpha, (df_R - df_F), df_F, lower.tail=F)
-
-# Alternatively, find the p-value corresponding to our F_val
-pf(F_val, (df_R - df_F), df_F, lower.tail=F)
-
-###########################################
-
-n <- nrow(mtcars)          # number of observations
-k <- length(coef(fit_R))   # number of coefficients
-
-## Calculate R2 and adjusted R2 manually
-TSS <- sd(mtcars$mpg)^2 * (n - 1)
-# OR
-TSS <- var(mtcars$mpg) * (n - 1)
-
-(R2_R <- 1 - SSE_R/TSS)
-(R2_R_adj <- 1 - (SSE_R/(n - k))/(TSS/(n - 1)))
-```
-
-Note that R uses the term `RSS` (residual Sum Squares) instead of `SSE` (Sum Square Error) in the textbook, they are the same.
-
-## Tasks
-
-1. Load your dataset, and then use the `dplyr` verbs to manipulate it:
-    - Add a new variable that is converted from (an) existing variable(s);
-    - Select a subset of the observation based on (a) condition(s);
-    - Count number of observations in your dataset with distinct values of a discrete numeric or a categorical variable (e.g, number of cars with 4, 6, and 8 cylinders);
-    - Summarize the mean of a nuermic variable by values of a discrete/categorical variable (e.g. mean mpg for cars with auto or manual transmission(`am`));
-1. Fit a pair of nested multiple regression models with your own dataset and use the general linear F test to test for significance between the restricted and full model:
-    - What is your hypothesis? And what is the practical interpretation/implication of your hypothesis?
-    - Think about whether your models are nested, which is the restricted model and the full model?
-    - Even though you don't need to do this manually, think about how you'd conduct the hypothesis test manually;
-    - Conduct an F test of your nested models and determine the conclusion of your hypothesis test;
-    - What is the implication of the result of your hypothesis testing?
-
