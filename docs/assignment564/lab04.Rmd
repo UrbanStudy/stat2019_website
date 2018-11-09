@@ -164,6 +164,16 @@ model_2_7_8%>% summary()
 anova(model_2_7_8)
 confint(model_2_7_8, level = 0.95)
 
+cor(table_b1)
+vcov(model_2_7_8)
+
+car::lht(model_2_7_8, "x2 = x7")
+
+if (!require(olsrr)) {
+  install.packages("olsrr"); library(olsrr)
+}
+ols_best_subset(model_2_7_8)
+
 model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "confidence", level=0.95)
 model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "prediction", level=0.95)
 # visualizng
