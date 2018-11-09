@@ -21,9 +21,9 @@ Exercise 3.25 (Just report the T matrix, β vector and c vector along with their
 $$y=β_0+β(x_1+x_2+x_3+x_4)+ε$$
 
 $$
-\mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 \\ 0 & 0 & 0 & 1 & -1  \end{bmatrix}_{3\times5} 
+\mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 \\ 0 & 0 & 0 & 1 & -1  \\ 0 & 0 & 0 & 0 & 1 \end{bmatrix}_{3\times5} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ \beta \\ \beta  \\ \beta  \\ \beta \end{bmatrix}_{5\times1} rank(T)=2
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0  \\ \beta \end{bmatrix}_{5\times1} rank(T)=4
 $$
 
  (b) $H_0:\ β_1=β_2,\ β_3=β_4$
@@ -33,7 +33,7 @@ $$y=β_0+β_1(x_1+x_2)+β_3(x_3+x_4)+ε$$
  $$
 \mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 \end{bmatrix}_{2\times5} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=3
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2
 $$
  
  (c) $H_0:\ β_1-2β_2=4β_3,\ β_1+2β_2=0$
@@ -45,7 +45,7 @@ $$y=β_0+β_1(x_1-\frac12x_2+\frac12x_3)+β_4 x_4+ε$$
  $$
 \mathbf{T}=\begin{bmatrix} 0 & 1 & -2 & 0 & -4 \\ 0 & 1 & 2 & 0 & 0 \end{bmatrix}_{2\times5} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=3
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2
 $$
 
 ### Problem 2: 
@@ -53,21 +53,17 @@ $$
 Exercise 3.27 (Use y=Xβ+ε, y ̂=Xβ ̂ , Cov(Ay)=A Cov(y)A' and H=X(X'X)^(-1) X')
 Show that $Var(\mathbf{\hat y})=\sigma^2\mathbf{H}$
 
-$$\because \mathbf{\hat y=X\hatβ},\ \therefore Var(\mathbf{\hat y})=Var(\mathbf{X\hatβ})$$
+$$\because \mathbf{\hat y=X\hatβ},\  \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}$$
 
-$$\because \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y},\ \therefore Var(\mathbf{X\hatβ})=Var(\mathbf{X(X'X)^{-1} X'Y})$$
+$$\therefore Var(\mathbf{\hat y})=Var(\mathbf{X\hatβ})=Var(\mathbf{X(X'X)^{-1} X'Y})=Var(\mathbf{HY})=HVar(\mathbf{Y})H'$$
 
-$$\because \mathbf{y=Xβ+ε},\ \therefore Var(\mathbf{X(X'X)^{-1} X'Y})=\mathbf{X(X'X)^{-1} X'}Var(\mathbf{Xβ+ε})$$
+$$\because \mathbf{y=Xβ+ε},\quad  Var(ε)=\sigma^2\mathbf{I}$$
 
-$$\because  Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}, Cov(\mathbf{y})=\sigma^2\mathbf{I},\ \mathbf{e=(I-H)Y}$$
-
-$$ Cov(\mathbf{X\hatβ})=\mathbf{Cov(X(X'X)^{-1} X'YX')}=\mathbf{X(X'X)^{-1} X'Cov(Y)}=\mathbf{H\sigma^2I}=\sigma^2\mathbf{H}$$
+$$\therefore Var(\mathbf{\hat y})=H\cdot Var(\mathbf{Xβ+ε})\cdot H'=H\cdot Var(\mathbf{ε})\cdot H'=H\cdot \sigma^2\mathbf{I}\cdot H'=\sigma^2\mathbf{H}$$
 
 ### Problem 3: 
 
-The $(X'X)^(-1)$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$ is given below.
-
-If MSE = 0.513 and n = 9, compute the (Keep 4 or more decimal places, DO NOT round in the intermediate steps)
+The $(X'X)^{(-1)}$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$ is given below. If MSE = 0.513 and n=9, compute the 
 
 (a) $Var(\hatβ_1)$
 
@@ -77,113 +73,142 @@ $$Var(\mathbf{\hat\beta_1})=MSE\times C_{11}=0.513\times11.423=5.85999$$
 
 $$se(\mathbf{\hat\beta_3})=\sqrt{MSE\times C_{33}}=\sqrt{0.513\times3.978}=1.428536$$
 
-
 (c) $Cov(\hatβ_1,\hatβ_3)$
 
 $$Cov(\mathbf{\hat\beta_1,\hat\beta_3})=MSE\times C_{13}=0.513\times(-0.790)$$
 
 (d) $Cor(\hatβ_1\hat,β_3)$
 
-```{r}
-sqrt(0.513*11.423)
-sqrt(0.513*3.978)
-0.513*(-0.790)
 
-0.513*(-0.790)/((sqrt(0.513*11.423))*(sqrt(0.513*3.978)))
-```
 
 $$Cor(\mathbf{\hat\beta_1,\hat\beta_3})=\frac{Cov(\mathbf{\hat\beta_1,\hat\beta_3})}{se(\mathbf{\hat\beta_1})se(\mathbf{\hat\beta_3})}=\frac{-0.40527}{2.420743\times1.428536}=-0.1171938$$
 
-(e) Based on what you found in the previous part(s), explain the relationship between $\hatβ_1, \hatβ_3$.
+(e) Based on what you found in the previous part(s), explain the relationship between $\hatβ_1$ and $\hatβ_3$.
 
-slightly negative relationship
+The value of $Cor(\mathbf{\hat\beta_1,\hat\beta_3})$ is negative and close to zero. There is a slightly negative relationship between $\hatβ_1$ and $\hatβ_3$.
 
 (f) Without computing variance for all the estimators, explain which estimator is the least consistent.
 
-$C_{11}=11.423\ or\ C_{33}=0.011 ?$
+$C_{11}=11.423$ is the lagest variance of parameter. $\hatβ_0$ is the least consistent.
 
 (g) Without computing covariances for all the pairs of estiamtors, list the pair(s) of estimators that are negatively correlated. Provide a reason.
 
-$C_{12},\ C_{13},\ C_{23},\ C_{24},\ C_{15}$
+According to the $(X'X)^{(-1)},\ C_{12},\ C_{13},\ C_{23},\ C_{24},\ C_{15}$ are negative. Therefore, negatively correlated pairs of estimators include $\hatβ_1$ and $\hatβ_2$, $\hatβ_1$ and $\hatβ_3$, $\hatβ_3$ and $\hatβ_3$, $\hatβ_2$ and $\hatβ_4$, $\hatβ_1$ and $\hatβ_5$.
 
 ### Problem 4: 
 
-```{r, echo=TRUE, message = FALSE, collapse=TRUE}
-library(tidyverse)
-# Import Data
-table_b1 <- read_table2("TableB.1.txt")
-# Observe the data frame
-head(table_b1)
-# build the model
-model_2_7_8 <- lm(y ~ x2+x7+x8, data=table_b1)
-model_2_7_8%>% summary()
-anova(model_2_7_8)
-confint(model_2_7_8, level = 0.95)
-
-model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "confidence", level=0.95)
-
-model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "prediction", level=0.95)
-# visualizng
-# library(GGally)
-# ggpairs(data=table_b1[c(1,3,8,9)])
-
-```
-
 a. the fitted model
 
-$$y=-1.808372+0.003598x_2+0.193960x_7+-0.004816x_8$$
+$$\hat y=-1.808372+0.003598x_2+0.193960x_7-0.004816x_8$$
 
 b. ANOVA
 
-```{r}
-anova(model_2_7_8)
-```
+Analysis of Variance Table;
+Response: y
 
-$$P(x2)=3.100e^{-5},\
-P(x7)=3.698e^{-7},\
-P(x8)=0.0009378$$
+   |Df| Sum Sq| Mean Sq |Fvalue|   Pr(>F)    
+---|--|-------| --------| ---- | ---
+x2 |1 | 76.193|  76.193 |26.172|3.100e-05 ***
+x7 |1 |139.501| 139.501 |47.918|3.698e-07 ***
+x8 |1 | 41.400|  41.400 |14.221|0.0009378 ***
+Residuals |24 | 69.870  |2.911  
 
-Conclusion: All significant
+According to the ANOVA table, the P-values is much smaller than 0.05. The regression is significant.
 
-c. R-square and adjusted R-square
+c. The t test.
+
+   | Estimate |Std. Error|t value|Pr($>|t|$)    
+---|----------| --------| ---- |
+x2 |0.003598  |0.000695 |5.177 |2.66e-05
+x7 |0.193960  |0.088233 |2.198 |0.037815
+x8 |-0.004816 |0.001277 |-3.771|0.000938
+
+Each variable has a significantly effect on the response variable for 95% confident level. x2 has slight positive affect. x7 has strong positive affect but not as significant as other variables. x8 has slight negative affect.
+
+d. R-square and adjusted R-square
 
 $$R^2=0.7863,\quad  R_{adjusted}^2=0.7596$$
 
-d. The fitted model in Part
-
-```{r}
-model_2_7_8%>% summary()
-```
-
 e. The partial F test statistic
 
-$$F_0=\frac{(SSE_{reduced}-SSE_{full})/r}{MSE}=\frac{(SSE_{x2}+SSE_{x7}+SSE_{x8}-?)/r}{2.911}=$$
+$$F_0=\frac{(SSE_{x_7reduced}-SSE_{full})/r}{MSE}=\frac{(83.938-69.870)/1}{2.911}=4.832704$$
+
+This partial F satistic is the square of the t sattistic for x7 in full modle.
 
 3.2 The correlation
 
-$$Cor(y_i,\hat y_i)=r=\sqrt{R^2}=\sqrt{0.7863}=0.887$$
+$$Cor(y_i,\hat y_i)=0.8867395\quad \text{which is same with}\quad r=\sqrt{R^2}=\sqrt{0.7863}=0.8867356$$
 
 3.3 The confidence intervals
 
-a. $CI(\beta_7)=(0.011855322  0.376065098)$
+a. The 95% CI on $\beta_7$ is
 
-b. $CI(\hat y)=(6.436203 7.996645)$
+$$\hat\beta_7\pm t_{\frac{\alpha}2,24}se(\hat\beta_7)=(0.011855322,\ 0.376065098)$$
 
+b. For x2=2300, x7=56.0, x8=2100, the 95% CI on the mean numbers of games won by a team is
 
-
+$$\hat y\pm t_{\frac{\alpha}2,24}se(\hat y)=(6.436203,\ 7.996645)$$
 
 ```{R, collapse=TRUE}
+# Problem 3
 B<- data.frame(
    b0=c(11.423,-4.349,-0.790, 0.486,-0.196),
    b1=c(-4.349, 4.624,-3.057,-0.346, 0.024),
    b2=c(-0.790,-3.057, 3.978, 0.135, 0.063),
    b3=c( 0.486,-0.346, 0.135, 0.031,-0.005),
-   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011)
-)
-  var(B$b1)  
-  sqrt(var(B$b3))
-  cov(B$b1,B$b3)
-  cor(B$b1,B$b3)
+   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011))
+# Var($\hat b_1$)
+0.513*B[1,1]
+# se(b1)
+sqrt(0.513*B[1,1])
+# se(b3)
+sqrt(0.513*B[3,3])
+# cov(b1,b3)
+0.513*B[1,3]
+# cor(b1,b3)
+(0.513*B[1,3])/((sqrt(0.513*B[1,1]))*(sqrt(0.513*B[3,3])))
+```
+
+
+```{r, echo=TRUE, message = FALSE, collapse=TRUE}
+library(tidyverse)
+library(broom)
+# Import Data
+table_b1 <- read_table2("TableB.1.txt")
+# Observe the data frame
+head(table_b1)
+# build the full model
+model_2_7_8 <- lm(y ~ x2+x7+x8, data=table_b1)
+# build the reduced model on x7
+model_2_8 <- lm(y ~ x2+x8, data=table_b1)
+
+
+# 3.1a/c/d t statistics for each hypotheses.
+model_2_7_8%>% summary()
+
+# 3.1b ANOVA for full model
+anova(model_2_7_8)
+
+# 3.1e ANOVA for reduced model on x7
+anova(model_2_8)
+# calculate partial F
+(83.938-69.870)/1/2.911
+
+# 3.2 calculate cor(yi,\hat yi)
+augment(model_2_7_8)
+cor(select(augment(model_2_7_8),y,.fitted))
+# calculate r
+sqrt(0.7863)
+
+# 3.3a calculate CI on b7
+confint(model_2_7_8, level = 0.95)
+# 3.3b calculate CI on the mean response variable
+model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "confidence", level=0.95)
+
+# visualizng
+# library(GGally)
+# ggpairs(data=table_b1[c(1,3,8,9)])
+
 ```
 
 

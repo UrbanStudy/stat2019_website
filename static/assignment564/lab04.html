@@ -319,9 +319,9 @@ $(document).ready(function () {
 <p>Exercise 3.25 (Just report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for each part).<span class="math inline">\(y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε\)</span> (a) <span class="math inline">\(H_0:\ β_1=β_2=β_3=β_4=β\)</span></p>
 <p><span class="math display">\[y=β_0+β(x_1+x_2+x_3+x_4)+ε\]</span></p>
 <p><span class="math display">\[
-\mathbf{T}=\begin{bmatrix} 0 &amp; 1 &amp; -1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; -1 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 1 &amp; -1  \end{bmatrix}_{3\times5} 
+\mathbf{T}=\begin{bmatrix} 0 &amp; 1 &amp; -1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; -1 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 1 &amp; -1  \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 1 \end{bmatrix}_{3\times5} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ \beta \\ \beta  \\ \beta  \\ \beta \end{bmatrix}_{5\times1} rank(T)=2
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0  \\ \beta \end{bmatrix}_{5\times1} rank(T)=4
 \]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li><span class="math inline">\(H_0:\ β_1=β_2,\ β_3=β_4\)</span></li>
@@ -330,7 +330,7 @@ $(document).ready(function () {
 <p><span class="math display">\[
 \mathbf{T}=\begin{bmatrix} 0 &amp; 1 &amp; -1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; -1 &amp; 0 \end{bmatrix}_{2\times5} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=3
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2
 \]</span></p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li><span class="math inline">\(H_0:\ β_1-2β_2=4β_3,\ β_1+2β_2=0\)</span></li>
@@ -340,22 +340,20 @@ $(document).ready(function () {
 <p><span class="math display">\[
 \mathbf{T}=\begin{bmatrix} 0 &amp; 1 &amp; -2 &amp; 0 &amp; -4 \\ 0 &amp; 1 &amp; 2 &amp; 0 &amp; 0 \end{bmatrix}_{2\times5} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=3
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2
 \]</span></p>
 </div>
 <div id="problem-2" class="section level3">
 <h3>Problem 2:</h3>
 <p>Exercise 3.27 (Use y=Xβ+ε, y ̂=Xβ ̂ , Cov(Ay)=A Cov(y)A’ and H=X(X’X)^(-1) X’) Show that <span class="math inline">\(Var(\mathbf{\hat y})=\sigma^2\mathbf{H}\)</span></p>
-<p><span class="math display">\[\because \mathbf{\hat y=X\hatβ},\ \therefore Var(\mathbf{\hat y})=Var(\mathbf{X\hatβ})\]</span></p>
-<p><span class="math display">\[\because \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y},\ \therefore Var(\mathbf{X\hatβ})=Var(\mathbf{X(X'X)^{-1} X'Y})\]</span></p>
-<p><span class="math display">\[\because \mathbf{y=Xβ+ε},\ \therefore Var(\mathbf{X(X'X)^{-1} X'Y})=\mathbf{X(X'X)^{-1} X'}Var(\mathbf{Xβ+ε})\]</span></p>
-<p><span class="math display">\[\because  Var(\mathbf{\hatβ})=σ^2(\mathbf{X'X})^{-1}, Cov(\mathbf{y})=\sigma^2\mathbf{I},\ \mathbf{e=(I-H)Y}\]</span></p>
-<p><span class="math display">\[ Cov(\mathbf{X\hatβ})=\mathbf{Cov(X(X'X)^{-1} X'YX')}=\mathbf{X(X'X)^{-1} X'Cov(Y)}=\mathbf{H\sigma^2I}=\sigma^2\mathbf{H}\]</span></p>
+<p><span class="math display">\[\because \mathbf{\hat y=X\hatβ},\  \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}\]</span></p>
+<p><span class="math display">\[\therefore Var(\mathbf{\hat y})=Var(\mathbf{X\hatβ})=Var(\mathbf{X(X'X)^{-1} X'Y})=Var(\mathbf{HY})=HVar(\mathbf{Y})H'\]</span></p>
+<p><span class="math display">\[\because \mathbf{y=Xβ+ε},\quad  Var(ε)=\sigma^2\mathbf{I}\]</span></p>
+<p><span class="math display">\[\therefore Var(\mathbf{\hat y})=H\cdot Var(\mathbf{Xβ+ε})\cdot H'=H\cdot Var(\mathbf{ε})\cdot H'=H\cdot \sigma^2\mathbf{I}\cdot H'=\sigma^2\mathbf{H}\]</span></p>
 </div>
 <div id="problem-3" class="section level3">
 <h3>Problem 3:</h3>
-<p>The <span class="math inline">\((X'X)^(-1)\)</span> for the <span class="math inline">\(y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε\)</span> is given below.</p>
-<p>If MSE = 0.513 and n = 9, compute the (Keep 4 or more decimal places, DO NOT round in the intermediate steps)</p>
+<p>The <span class="math inline">\((X'X)^{(-1)}\)</span> for the <span class="math inline">\(y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε\)</span> is given below. If MSE = 0.513 and n=9, compute the</p>
 <ol style="list-style-type: lower-alpha">
 <li><span class="math inline">\(Var(\hatβ_1)\)</span></li>
 </ol>
@@ -371,31 +369,152 @@ $(document).ready(function () {
 <ol start="4" style="list-style-type: lower-alpha">
 <li><span class="math inline">\(Cor(\hatβ_1\hat,β_3)\)</span></li>
 </ol>
-<pre class="r"><code>sqrt(0.513*11.423)</code></pre>
-<pre><code>## [1] 2.420743</code></pre>
-<pre class="r"><code>sqrt(0.513*3.978)</code></pre>
-<pre><code>## [1] 1.428536</code></pre>
-<pre class="r"><code>0.513*(-0.790)</code></pre>
-<pre><code>## [1] -0.40527</code></pre>
-<pre class="r"><code>0.513*(-0.790)/((sqrt(0.513*11.423))*(sqrt(0.513*3.978)))</code></pre>
-<pre><code>## [1] -0.1171938</code></pre>
 <p><span class="math display">\[Cor(\mathbf{\hat\beta_1,\hat\beta_3})=\frac{Cov(\mathbf{\hat\beta_1,\hat\beta_3})}{se(\mathbf{\hat\beta_1})se(\mathbf{\hat\beta_3})}=\frac{-0.40527}{2.420743\times1.428536}=-0.1171938\]</span></p>
 <ol start="5" style="list-style-type: lower-alpha">
-<li>Based on what you found in the previous part(s), explain the relationship between <span class="math inline">\(\hatβ_1, \hatβ_3\)</span>.</li>
+<li>Based on what you found in the previous part(s), explain the relationship between <span class="math inline">\(\hatβ_1\)</span> and <span class="math inline">\(\hatβ_3\)</span>.</li>
 </ol>
-<p>slightly negative relationship</p>
+<p>The value of <span class="math inline">\(Cor(\mathbf{\hat\beta_1,\hat\beta_3})\)</span> is negative and close to zero. There is a slightly negative relationship between <span class="math inline">\(\hatβ_1\)</span> and <span class="math inline">\(\hatβ_3\)</span>.</p>
 <ol start="6" style="list-style-type: lower-alpha">
 <li>Without computing variance for all the estimators, explain which estimator is the least consistent.</li>
 </ol>
-<p><span class="math inline">\(C_{11}=11.423\ or\ C_{33}=0.011 ?\)</span></p>
+<p><span class="math inline">\(C_{11}=11.423\)</span> is the lagest variance of parameter. <span class="math inline">\(\hatβ_0\)</span> is the least consistent.</p>
 <ol start="7" style="list-style-type: lower-alpha">
 <li>Without computing covariances for all the pairs of estiamtors, list the pair(s) of estimators that are negatively correlated. Provide a reason.</li>
 </ol>
-<p><span class="math inline">\(C_{12},\ C_{13},\ C_{23},\ C_{24},\ C_{15}\)</span></p>
+<p>According to the <span class="math inline">\((X'X)^{(-1)},\ C_{12},\ C_{13},\ C_{23},\ C_{24},\ C_{15}\)</span> are negative. Therefore, negatively correlated pairs of estimators include <span class="math inline">\(\hatβ_1\)</span> and <span class="math inline">\(\hatβ_2\)</span>, <span class="math inline">\(\hatβ_1\)</span> and <span class="math inline">\(\hatβ_3\)</span>, <span class="math inline">\(\hatβ_3\)</span> and <span class="math inline">\(\hatβ_3\)</span>, <span class="math inline">\(\hatβ_2\)</span> and <span class="math inline">\(\hatβ_4\)</span>, <span class="math inline">\(\hatβ_1\)</span> and <span class="math inline">\(\hatβ_5\)</span>.</p>
 </div>
 <div id="problem-4" class="section level3">
 <h3>Problem 4:</h3>
+<ol style="list-style-type: lower-alpha">
+<li>the fitted model</li>
+</ol>
+<p><span class="math display">\[\hat y=-1.808372+0.003598x_2+0.193960x_7-0.004816x_8\]</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>ANOVA</li>
+</ol>
+<p>Analysis of Variance Table; Response: y</p>
+<table>
+<thead>
+<tr class="header">
+<th>Df</th>
+<th>Sum Sq</th>
+<th>Mean Sq</th>
+<th>Fvalue</th>
+<th>Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>x2</td>
+<td>1</td>
+<td>76.193</td>
+<td>76.193</td>
+<td>26.172</td>
+<td>3.100e-05 ***</td>
+</tr>
+<tr class="even">
+<td>x7</td>
+<td>1</td>
+<td>139.501</td>
+<td>139.501</td>
+<td>47.918</td>
+<td>3.698e-07 ***</td>
+</tr>
+<tr class="odd">
+<td>x8</td>
+<td>1</td>
+<td>41.400</td>
+<td>41.400</td>
+<td>14.221</td>
+<td>0.0009378 ***</td>
+</tr>
+<tr class="even">
+<td>Residuals</td>
+<td>24</td>
+<td>69.870</td>
+<td>2.911</td>
+</tr>
+</tbody>
+</table>
+<p>According to the ANOVA table, the P-values is much smaller than 0.05. The regression is significant.</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li><p>The t test.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Estimate</th>
+<th>Std. Error</th>
+<th>t value</th>
+<th>Pr(<span class="math inline">\(&gt;|t|\)</span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>x2</td>
+<td>0.003598</td>
+<td>0.000695</td>
+<td>5.177</td>
+</tr>
+<tr class="even">
+<td>x7</td>
+<td>0.193960</td>
+<td>0.088233</td>
+<td>2.198</td>
+</tr>
+<tr class="odd">
+<td>x8</td>
+<td>-0.004816</td>
+<td>0.001277</td>
+<td>-3.771</td>
+</tr>
+</tbody>
+</table></li>
+</ol>
+<p>Each variable has a significantly effect on the response variable for 95% confident level. x2 has slight positive affect. x7 has strong positive affect but not as significant as other variables. x8 has slight negative affect.</p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>R-square and adjusted R-square</li>
+</ol>
+<p><span class="math display">\[R^2=0.7863,\quad  R_{adjusted}^2=0.7596\]</span></p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>The partial F test statistic</li>
+</ol>
+<p><span class="math display">\[F_0=\frac{(SSE_{x_7reduced}-SSE_{full})/r}{MSE}=\frac{(83.938-69.870)/1}{2.911}=4.832704\]</span></p>
+<p>This partial F satistic is the square of the t sattistic for x7 in full modle.</p>
+<p>3.2 The correlation</p>
+<p><span class="math display">\[Cor(y_i,\hat y_i)=0.8867395\quad \text{which is same with}\quad r=\sqrt{R^2}=\sqrt{0.7863}=0.8867356\]</span></p>
+<p>3.3 The confidence intervals</p>
+<ol style="list-style-type: lower-alpha">
+<li>The 95% CI on <span class="math inline">\(\beta_7\)</span> is</li>
+</ol>
+<p><span class="math display">\[\hat\beta_7\pm t_{\frac{\alpha}2,24}se(\hat\beta_7)=(0.011855322,\ 0.376065098)\]</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>For x2=2300, x7=56.0, x8=2100, the 95% CI on the mean numbers of games won by a team is</li>
+</ol>
+<p><span class="math display">\[\hat y\pm t_{\frac{\alpha}2,24}se(\hat y)=(6.436203,\ 7.996645)\]</span></p>
+<pre class="r"><code># Problem 3
+B&lt;- data.frame(
+   b0=c(11.423,-4.349,-0.790, 0.486,-0.196),
+   b1=c(-4.349, 4.624,-3.057,-0.346, 0.024),
+   b2=c(-0.790,-3.057, 3.978, 0.135, 0.063),
+   b3=c( 0.486,-0.346, 0.135, 0.031,-0.005),
+   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011))
+# Var($\hat b_1$)
+0.513*B[1,1]
+## [1] 5.859999
+# se(b1)
+sqrt(0.513*B[1,1])
+## [1] 2.420743
+# se(b3)
+sqrt(0.513*B[3,3])
+## [1] 1.428536
+# cov(b1,b3)
+0.513*B[1,3]
+## [1] -0.40527
+# cor(b1,b3)
+(0.513*B[1,3])/((sqrt(0.513*B[1,1]))*(sqrt(0.513*B[3,3])))
+## [1] -0.1171938</code></pre>
 <pre class="r"><code>library(tidyverse)
+library(broom)
 # Import Data
 table_b1 &lt;- read_table2(&quot;TableB.1.txt&quot;)
 # Observe the data frame
@@ -409,8 +528,13 @@ head(table_b1)
 ## 4    13  2285  2905  41.6  45.3    -4   957  61.4  1903  2476
 ## 5    10  2971  1666  39.2  53.8    15   836  66.1  1457  1866
 ## 6    11  2309  2927  39.7  74.1     8   786  61    1848  2339
-# build the model
+# build the full model
 model_2_7_8 &lt;- lm(y ~ x2+x7+x8, data=table_b1)
+# build the reduced model on x7
+model_2_8 &lt;- lm(y ~ x2+x8, data=table_b1)
+
+
+# 3.1a/c/d t statistics for each hypotheses.
 model_2_7_8%&gt;% summary()
 ## 
 ## Call:
@@ -432,6 +556,8 @@ model_2_7_8%&gt;% summary()
 ## Residual standard error: 1.706 on 24 degrees of freedom
 ## Multiple R-squared:  0.7863, Adjusted R-squared:  0.7596 
 ## F-statistic: 29.44 on 3 and 24 DF,  p-value: 3.273e-08
+
+# 3.1b ANOVA for full model
 anova(model_2_7_8)
 ## Analysis of Variance Table
 ## 
@@ -443,99 +569,61 @@ anova(model_2_7_8)
 ## Residuals 24  69.870   2.911                      
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+# 3.1e ANOVA for reduced model on x7
+anova(model_2_8)
+## Analysis of Variance Table
+## 
+## Response: y
+##           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+## x2         1  76.193  76.193  22.693 6.873e-05 ***
+## x8         1 166.833 166.833  49.689 2.177e-07 ***
+## Residuals 25  83.938   3.358                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+# calculate partial F
+(83.938-69.870)/1/2.911
+## [1] 4.832704
+
+# 3.2 calculate cor(yi,\hat yi)
+augment(model_2_7_8)
+## # A tibble: 28 x 11
+##        y    x2    x7    x8 .fitted .se.fit   .resid   .hat .sigma    .cooksd .std.resid
+##  * &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+##  1    10  1985  59.7  2205    6.30   0.394  3.70    0.0534   1.55 0.0703        2.23   
+##  2    11  2855  55    2096    9.04   0.592  1.96    0.120    1.69 0.0514        1.23   
+##  3    11  1737  65.6  1847    8.27   0.585  2.73    0.118    1.63 0.0966        1.70   
+##  4    13  2905  61.4  1903   11.4    0.682  1.61    0.160    1.70 0.0504        1.03   
+##  5    10  1666  66.1  1457    9.99   0.748  0.00939 0.192    1.74 0.00000223    0.00612
+##  6    11  2927  61    1848   11.7    0.679 -0.656   0.158    1.74 0.00825      -0.419  
+##  7    10  2341  66.1  1564   11.9    0.650 -1.90    0.145    1.69 0.0617       -1.21   
+##  8    11  2737  58    1821   10.5    0.585  0.480   0.118    1.74 0.00298       0.299  
+##  9     4  1414  57    2577    1.93   0.712  2.07    0.174    1.68 0.0945        1.34   
+## 10     2  1838  58.9  2476    4.31   0.594 -2.31    0.121    1.67 0.0717       -1.44   
+## # ... with 18 more rows
+cor(select(augment(model_2_7_8),y,.fitted))
+##                 y   .fitted
+## y       1.0000000 0.8867395
+## .fitted 0.8867395 1.0000000
+# calculate r
+sqrt(0.7863)
+## [1] 0.8867356
+
+# 3.3a calculate CI on b7
 confint(model_2_7_8, level = 0.95)
 ##                     2.5 %       97.5 %
 ## (Intercept) -18.114944410 14.498200293
 ## x2            0.002163664  0.005032477
 ## x7            0.011855322  0.376065098
 ## x8           -0.007451027 -0.002179961
-
+# 3.3b calculate CI on the mean response variable
 model_2_7_8 %&gt;% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = &quot;confidence&quot;, level=0.95)
 ##        fit      lwr      upr
 ## 1 7.216424 6.436203 7.996645
 
-model_2_7_8 %&gt;% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = &quot;prediction&quot;, level=0.95)
-##        fit      lwr      upr
-## 1 7.216424 3.609523 10.82332
 # visualizng
 # library(GGally)
 # ggpairs(data=table_b1[c(1,3,8,9)])</code></pre>
-<ol style="list-style-type: lower-alpha">
-<li>the fitted model</li>
-</ol>
-<p><span class="math display">\[y=-1.808372+0.003598x_2+0.193960x_7+-0.004816x_8\]</span></p>
-<ol start="2" style="list-style-type: lower-alpha">
-<li>ANOVA</li>
-</ol>
-<pre class="r"><code>anova(model_2_7_8)</code></pre>
-<pre><code>## Analysis of Variance Table
-## 
-## Response: y
-##           Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
-## x2         1  76.193  76.193  26.172 3.100e-05 ***
-## x7         1 139.501 139.501  47.918 3.698e-07 ***
-## x8         1  41.400  41.400  14.221 0.0009378 ***
-## Residuals 24  69.870   2.911                      
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-<p><span class="math display">\[P(x2)=3.100e^{-5},\
-P(x7)=3.698e^{-7},\
-P(x8)=0.0009378\]</span></p>
-<p>Conclusion: All significant</p>
-<ol start="3" style="list-style-type: lower-alpha">
-<li>R-square and adjusted R-square</li>
-</ol>
-<p><span class="math display">\[R^2=0.7863,\quad  R_{adjusted}^2=0.7596\]</span></p>
-<ol start="4" style="list-style-type: lower-alpha">
-<li>The fitted model in Part</li>
-</ol>
-<pre class="r"><code>model_2_7_8%&gt;% summary()</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = y ~ x2 + x7 + x8, data = table_b1)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -3.0370 -0.7129 -0.2043  1.1101  3.7049 
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -1.808372   7.900859  -0.229 0.820899    
-## x2           0.003598   0.000695   5.177 2.66e-05 ***
-## x7           0.193960   0.088233   2.198 0.037815 *  
-## x8          -0.004816   0.001277  -3.771 0.000938 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 1.706 on 24 degrees of freedom
-## Multiple R-squared:  0.7863, Adjusted R-squared:  0.7596 
-## F-statistic: 29.44 on 3 and 24 DF,  p-value: 3.273e-08</code></pre>
-<ol start="5" style="list-style-type: lower-alpha">
-<li>The partial F test statistic</li>
-</ol>
-<p><span class="math display">\[F_0=\frac{(SSE_{reduced}-SSE_{full})/r}{MSE}=\frac{(SSE_{x2}+SSE_{x7}+SSE_{x8}-?)/r}{2.911}=\]</span></p>
-<p>3.2 The correlation</p>
-<p><span class="math display">\[Cor(y_i,\hat y_i)=r=\sqrt{R^2}=\sqrt{0.7863}=0.887\]</span></p>
-<p>3.3 The confidence intervals</p>
-<ol style="list-style-type: lower-alpha">
-<li><p><span class="math inline">\(CI(\beta_7)=(0.011855322 0.376065098)\)</span></p></li>
-<li><p><span class="math inline">\(CI(\hat y)=(6.436203 7.996645)\)</span></p></li>
-</ol>
-<pre class="r"><code>B&lt;- data.frame(
-   b0=c(11.423,-4.349,-0.790, 0.486,-0.196),
-   b1=c(-4.349, 4.624,-3.057,-0.346, 0.024),
-   b2=c(-0.790,-3.057, 3.978, 0.135, 0.063),
-   b3=c( 0.486,-0.346, 0.135, 0.031,-0.005),
-   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011)
-)
-  var(B$b1)  
-## [1] 11.95844
-  sqrt(var(B$b3))
-## [1] 0.2987486
-  cov(B$b1,B$b3)
-## [1] -0.9875495
-  cor(B$b1,B$b3)
-## [1] -0.9559074</code></pre>
 </div>
 
 
