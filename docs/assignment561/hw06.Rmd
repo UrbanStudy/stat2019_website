@@ -8,22 +8,20 @@ output: html_document
 **3.18** There is an interesting relationship between negative binomial and gamma random variables, which may sometimes provide a useful approximation. Let Y be a negative binomial random variable with parameters r and p, where p is the success probability.
 Show that as $p\rightarrow0$, the mgf of the random variable pY converges to that of a gamma distribution with parameters r and 1.
 
-$$Y\sim Negative\ Binomial\ (k,p),\quad f_{Y}(y)=\binom{k-1}{y-1}p^{k}(1-p)^{y-k}, y=k, k+1,\ldots$$
+$$For\quad Y\sim Negative\ Binomial\ (r,p),\quad M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t<-log(1-p)$$
 
-$$M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t<-log(1-p)$$
-According to the Theorem, $M_{aX+b}(t)=e^{bt}M_X(at)$
+According to the Theorem 2.3.15, $M_{aX+b}(t)=e^{bt}M_X(at)$
 $$M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r$$
-Because $\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0$ 
-According to the L’Hˆopital’s rule,$\lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}$
+ 
+According to the L’Hˆopital’s rule, for $\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0,\quad \lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}$
 
 $$\lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}$$
 
 $$\implies M_{pY}(t)=(\frac1{1-t})^r$$
 
-$$\because Gamma (α,β)\quad f_{X}(x)={{{(x/\beta)^{\alpha-1}{\exp}(-x/\beta)}[{\beta\Gamma (\alpha)]^{-1}}}},\ x\ge0,\ M_X(t)=(\frac1{1-\beta t})^\alpha$$
-When gamma distribution with parameters r and 1,
+For Gamma (r,1),
 
-$$f_{X}(x)={\frac{x^{r-1}}{\beta\Gamma (r)}e^{(-x)}},\ M_X(t)=(\frac1{1-t})^r$$
+$$M_X(t)=(\frac1{1-\beta t})^\alpha=(\frac1{1-t})^r$$
 
 Therefore, the mgf of the random variable pY ($Y\sim NB(r,p), p\rightarrow0$) converges to that of Gamma (r,1).
 
@@ -34,19 +32,17 @@ Therefore, the mgf of the random variable pY ($Y\sim NB(r,p), p\rightarrow0$) co
 
 $$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
 
-$$Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma$$
+$$Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma\quad \text{is monotone}$$
 
 $$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}=\frac{\gamma}\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}, x\ge0,\beta>0, \gamma>0$$
 
-This is a Weibull distribution, 
-$$\therefore EY=\beta^{\frac1\gamma}\Gamma(1+\frac1\gamma),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
-Proof
+This is a Weibull distribution.\\
 
-For $W\sim Gamma(\frac{n}\gamma+1,\beta)$,
+For $W\sim Gamma(\frac{n}\gamma+1,\beta)$, CDF
 
-$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(\frac{n}\gamma+1)-1}}{\Gamma (\frac{n}\gamma+1)b^{\frac{n}\gamma+1}}e^{-\frac{w}b}dw=1,\ n=0,1,2,..$$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(\frac{n}\gamma+1)-1}}{\Gamma (\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}}e^{-\frac{w}\beta}dw=1,\ n=0,1,2,..$$
 
-$$EY^n=\int_0^{\infty}\frac\gamma\beta  y^ny^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\int_0^{\infty}\frac{y^n}{\beta} e^{-\frac{y^\gamma}{\beta}}dy^\gamma=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}{\Gamma(\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}} e^{-\frac{(y^\gamma)}{\beta}}d(y^\gamma)=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)$$
+$$EY^n=\int_0^{\infty}y^n\frac\gamma\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\int_0^{\infty}\frac{y^n}{\beta} e^{-\frac{y^\gamma}{\beta}}dy^\gamma=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\left[\int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}{\Gamma(\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}} e^{-\frac{(y^\gamma)}{\beta}}d(y^\gamma)\right]=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)$$
 
 $$\therefore EY=\beta^{\frac1\gamma}\Gamma(\frac1\gamma+1),\quad EY^2=\beta^{\frac2\gamma}\Gamma(\frac2\gamma+1),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]$$
 
@@ -55,32 +51,28 @@ Or Let $u=\frac{y^\gamma}{\beta},y=(\beta u)^{\frac1\gamma}, dy=\frac{1}{\gamma}
 ****
 (b) If $X\sim$ exponential($\beta$), then $Y =(2X/\beta)^{1/2}$ has the _Rayleigh_ _distribution_.
 
-$$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
+$$X\sim expo(\beta),\quad  f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
 
-$$Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2$$
+$$Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2\quad \text{is monotone}$$
 
 $$f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0,\beta>0$$
 
 This is a Rayleigh distribution with $\beta=\sqrt2$.
 
-$$\therefore EY=\frac{\sqrt{\pi}}{\beta}=\frac{\sqrt{2\pi}}{2},\quad EY^2=\beta^2=2,\quad VarY=2-\frac{\pi}2$$
-
-Proof:
-
 For $Z\sim N(0,1)$, 
 $$EZ^2=\int_{-\infty}^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=1\quad \implies \int_0^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac12$$
-$$ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy={\sqrt{2\pi}}\int_0^{\infty}\frac{y^2}{\sqrt{2\pi}}e^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}$$
+$$ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy={\sqrt{2\pi}}\left[\int_0^{\infty}\frac{y^2}{\sqrt{2\pi}}e^{\frac{-y^2}2}dy\right]=\frac{\sqrt{2\pi}}{2}$$
 
 For $W\sim Gamma(2,2)$
 $$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{2-1}}{\Gamma (2)2^2}e^{-\frac{w}2}dw=1$$
 
-$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2=2,\quad VarY=2-\frac{\pi}2$$
+$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\left[\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2\right]=2,\quad VarY=2-\frac{\pi}2$$
 
 Or for $V\sim Expo(1)$
 
 $$EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1$$
 
-$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}(\frac{y^2}2)e^{\frac{-y^2}2}d(\frac{y^2}2)=2,\quad VarY=2-\frac{\pi}2$$
+$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\left[\int_0^{\infty}(\frac{y^2}2)e^{\frac{-y^2}2}d(\frac{y^2}2)\right]=2,\quad VarY=2-\frac{\pi}2$$
 
 Or let $u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy$ has same result.
 
@@ -89,22 +81,20 @@ Or let $u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy$ has same re
 (c) If $X\sim$ gamma(a, b), then $Y=1/X$ has the inverted gamma IG(a, b) distribution. (This distribution is useful in Bayesian estimation of variances; see Exercise 7.23.)
 
 
-$$X\sim Gamma(a,b),\quad \therefore f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0$$
+$$X\sim Gamma(a,b),\quad f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0$$
 
-$$Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y$$
+$$Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y\quad \text{is monotone}$$
 
 $$\therefore f_Y(y)=f_X(\frac1y)|\frac{d\frac1y}{dx}|=\frac{y^{1-a}}{\Gamma (a)b^a}e^{-\frac1{by}}|-\frac1{y^2}|=\frac{y^{-a-1}}{\Gamma (a)b^a}e^{-\frac1{by}}$$
 
-Inverted gamma IG(a, b) has $EY=\frac{\beta}{\alpha-1},\ VarY=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}, \alpha>2$
+This is an Inverted gamma IG(a, b)
 
-Proof:
+For $W\sim Gamma(a-n,b)$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(a-n)-1}}{\Gamma (a-n)b^{a-n}}e^{-\frac{w}b}dw=1, n=0,1,2,..\quad \text{and}\ \Gamma(a)=(a-1)\Gamma(a-1)$$
 
-For $W\sim Gamma(a-1,b)$
-$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(a-n)-1}}{\Gamma (a-n)b^{a-n}}e^{-\frac{w}b}dw=1,\ n=0,1,2,..$$
+$$\therefore EY=\int_0^{\infty}\frac{y(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)b}\left[\int_0^{\infty}\frac{(\frac1y)^{(a-1)-1}}{\Gamma (a-1)b^{a-1}}e^{-\frac1b\frac1y}d(\frac1y)\right]=\frac{1}{(a-1)b}$$
 
-$$\therefore EY=\int_0^{\infty}\frac{y(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)b}\int_0^{\infty}\frac{(\frac1y)^{(a-1)-1}}{\Gamma (a-1)b^{a-1}}e^{-\frac1b\frac1y}d(\frac1y)=\frac{1}{(a-1)b}$$
-
-$$EY^2=\int_0^{\infty}\frac{y^2(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)(a-2)b^2}\int_0^{\infty}\frac{(\frac1y)^{(a-2)-1}}{\Gamma (a-2)b^{a-2}}e^{-\frac1b\frac1y}d(\frac1y)=\frac{1}{(a-1)(a-2)b^2}$$
+$$EY^2=\int_0^{\infty}\frac{y^2(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)(a-2)b^2}\left[\int_0^{\infty}\frac{(\frac1y)^{(a-2)-1}}{\Gamma (a-2)b^{a-2}}e^{-\frac1b\frac1y}d(\frac1y)\right]=\frac{1}{(a-1)(a-2)b^2}$$
 
 $$VarY=\frac{1}{(a-1)(a-2)b^2}-\frac{1}{(a-1)^2b^2}=\frac{a-1-(a-2)}{(a-1)^2(a-2)b^2}=\frac{1}{(a-1)^2(a-2)b^2}, a>2$$
 
@@ -113,16 +103,16 @@ $$VarY=\frac{1}{(a-1)(a-2)b^2}-\frac{1}{(a-1)^2b^2}=\frac{a-1-(a-2)}{(a-1)^2(a-2
 
 $$X\sim Gamma(\frac32,\beta),\quad \therefore f_X(x)=\frac{x^{\frac32-1}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}=\frac{x^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}$$
 
-$$Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2$$
+$$Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2\quad \text{is monotone}$$
 
-For $\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2$
+Because $\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2$
 
 $$\therefore f_Y(y)=f_X(\beta y^2)|\frac{d\beta y^2}{dx}|=\frac{(\beta y^2)^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{\beta y^2}\beta}2\beta y=\frac{4y^2}{\sqrt\pi}e^{-y^2}$$
 
 For $V\sim Expo(1)$
 
 $$EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1$$
-$$EY=\int_0^{\infty}\frac{y4y^2}{\sqrt\pi}e^{-y^2}dy=\frac2{\sqrt\pi}\int_0^{\infty}y^2e^{-y^2}dy^2=\frac2{\sqrt\pi}$$
+$$EY=\int_0^{\infty}\frac{y4y^2}{\sqrt\pi}e^{-y^2}dy=\frac2{\sqrt\pi}\left[\int_0^{\infty}y^2e^{-y^2}dy^2\right]=\frac2{\sqrt\pi}$$
 
 For $Z\sim N(0,1)$, 
 $$EZ^4=\int_{-\infty}^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=3\quad \implies \int_0^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac32$$
@@ -140,15 +130,18 @@ $$Let\ Y=g(X)= \alpha-\gamma\log X, X=g^{-1}(Y)=e^{\frac{\alpha-Y}{\gamma}}\quad
 
 $$\therefore f_Y(y)=f_X(e^{\frac{\alpha-y}{\gamma}})|\frac{de^{\frac{\alpha-y}{\gamma}}}{dx}|=e^{-e^{\frac{\alpha-y}{\gamma}}}e^{\frac{\alpha-y}{\gamma}}|-\frac1{\gamma}|=\frac1{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}, \gamma>0$$
 
-$$EY=\int_0^{\infty}\frac{y}{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}dy=\int_0^{\infty}{e^{-e^{\frac{\alpha-y}{\gamma}}}}de^{\frac{\alpha-y}{\gamma}}$$
-le
-
 This is a Gumbel distribution with $\alpha,\beta$.
-$$EY=\alpha+\beta\gamma, \gamma=0.5772157\ \text{is Euler's constant}\quad VarY=\frac{\pi^2\beta^2}{6}$$
 
+Because $E(ax+b)=aE(x)+b$, let $I_1=E(\ln x)=\int_0^{\infty}\ln xe^{-x}dx,\ I_2=E(\ln x)^2=\int_0^{\infty}(\ln x)^2e^{-x}dx$
 
+$$EY=E(\alpha+\gamma\ln x)=\alpha+\gamma E(\ln x)=\alpha+\gamma I_1$$
 
-$$EY^2==$$
+$$EY^2=E(\alpha+\gamma\ln x)^2=\alpha^2+2\alpha\gamma I_1+\gamma^2 I_2$$
+
+$$VarY=EY^2-(EY)^2=\gamma^2 [I_2-I_1^2]=\frac{\pi^2\gamma^2}{6}$$
+
+$$EY=\int_0^{\infty}\frac{y}{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}dy=\int_0^{\infty}{e^{-e^{\frac{\alpha-y}{\gamma}}}}de^{\frac{\alpha-y}{\gamma}},\ I_1=0.5772157\ \text{is Euler's constant}$$
+
 
 ****
 **3.39** Consider the Cauchy family defined in Section 3.3. This family can be extended to a location-scale family yielding pdfs of the form.

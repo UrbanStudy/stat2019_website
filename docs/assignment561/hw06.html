@@ -314,12 +314,13 @@ $(document).ready(function () {
 
 
 <p><strong>3.18</strong> There is an interesting relationship between negative binomial and gamma random variables, which may sometimes provide a useful approximation. Let Y be a negative binomial random variable with parameters r and p, where p is the success probability. Show that as <span class="math inline">\(p\rightarrow0\)</span>, the mgf of the random variable pY converges to that of a gamma distribution with parameters r and 1.</p>
-<p><span class="math display">\[Y\sim Negative\ Binomial\ (k,p),\quad f_{Y}(y)=\binom{k-1}{y-1}p^{k}(1-p)^{y-k}, y=k, k+1,\ldots\]</span></p>
-<p><span class="math display">\[M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t&lt;-log(1-p)\]</span> According to the Theorem, <span class="math inline">\(M_{aX+b}(t)=e^{bt}M_X(at)\)</span> <span class="math display">\[M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r\]</span> Because <span class="math inline">\(\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0\)</span> According to the L’Hˆopital’s rule,<span class="math inline">\(\lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}\)</span></p>
+<p><span class="math display">\[For\quad Y\sim Negative\ Binomial\ (r,p),\quad M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t&lt;-log(1-p)\]</span></p>
+<p>According to the Theorem 2.3.15, <span class="math inline">\(M_{aX+b}(t)=e^{bt}M_X(at)\)</span> <span class="math display">\[M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r\]</span></p>
+<p>According to the L’Hˆopital’s rule, for <span class="math inline">\(\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0,\quad \lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}\)</span></p>
 <p><span class="math display">\[\lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}\]</span></p>
 <p><span class="math display">\[\implies M_{pY}(t)=(\frac1{1-t})^r\]</span></p>
-<p><span class="math display">\[\because Gamma (α,β)\quad f_{X}(x)={{{(x/\beta)^{\alpha-1}{\exp}(-x/\beta)}[{\beta\Gamma (\alpha)]^{-1}}}},\ x\ge0,\ M_X(t)=(\frac1{1-\beta t})^\alpha\]</span> When gamma distribution with parameters r and 1,</p>
-<p><span class="math display">\[f_{X}(x)={\frac{x^{r-1}}{\beta\Gamma (r)}e^{(-x)}},\ M_X(t)=(\frac1{1-t})^r\]</span></p>
+<p>For Gamma (r,1),</p>
+<p><span class="math display">\[M_X(t)=(\frac1{1-\beta t})^\alpha=(\frac1{1-t})^r\]</span></p>
 <p>Therefore, the mgf of the random variable pY (<span class="math inline">\(Y\sim NB(r,p), p\rightarrow0\)</span>) converges to that of Gamma (r,1).</p>
 <hr />
 <p><strong>3.24</strong> Many “named” distributions are special cases of the more common distributions already discussed. For each of the following named distributions derive the form of the pdf, verify that it is a pdf, and calculate the mean and variance.</p>
@@ -327,54 +328,51 @@ $(document).ready(function () {
 <li>If <span class="math inline">\(X\sim\)</span> exponential(<span class="math inline">\(\beta\)</span>), then <span class="math inline">\(Y = X^{1/\gamma}\)</span> has the Weibull(<span class="math inline">\(\gamma,\beta\)</span>) distribution, where <span class="math inline">\(\gamma&gt;0\)</span> is a constant.</li>
 </ol>
 <p><span class="math display">\[X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta&gt;0\]</span></p>
-<p><span class="math display">\[Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma\]</span></p>
+<p><span class="math display">\[Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma\quad \text{is monotone}\]</span></p>
 <p><span class="math display">\[\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}=\frac{\gamma}\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}, x\ge0,\beta&gt;0, \gamma&gt;0\]</span></p>
-<p>This is a Weibull distribution, <span class="math display">\[\therefore EY=\beta^{\frac1\gamma}\Gamma(1+\frac1\gamma),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]\]</span> Proof</p>
-<p>For <span class="math inline">\(W\sim Gamma(\frac{n}\gamma+1,\beta)\)</span>,</p>
-<p><span class="math display">\[\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(\frac{n}\gamma+1)-1}}{\Gamma (\frac{n}\gamma+1)b^{\frac{n}\gamma+1}}e^{-\frac{w}b}dw=1,\ n=0,1,2,..\]</span></p>
-<p><span class="math display">\[EY^n=\int_0^{\infty}\frac\gamma\beta  y^ny^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\int_0^{\infty}\frac{y^n}{\beta} e^{-\frac{y^\gamma}{\beta}}dy^\gamma=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}{\Gamma(\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}} e^{-\frac{(y^\gamma)}{\beta}}d(y^\gamma)=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\]</span></p>
+<p>This is a Weibull distribution.\</p>
+<p>For <span class="math inline">\(W\sim Gamma(\frac{n}\gamma+1,\beta)\)</span>, CDF</p>
+<p><span class="math display">\[\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(\frac{n}\gamma+1)-1}}{\Gamma (\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}}e^{-\frac{w}\beta}dw=1,\ n=0,1,2,..\]</span></p>
+<p><span class="math display">\[EY^n=\int_0^{\infty}y^n\frac\gamma\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\int_0^{\infty}\frac{y^n}{\beta} e^{-\frac{y^\gamma}{\beta}}dy^\gamma=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\left[\int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}{\Gamma(\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}} e^{-\frac{(y^\gamma)}{\beta}}d(y^\gamma)\right]=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\]</span></p>
 <p><span class="math display">\[\therefore EY=\beta^{\frac1\gamma}\Gamma(\frac1\gamma+1),\quad EY^2=\beta^{\frac2\gamma}\Gamma(\frac2\gamma+1),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)]\]</span></p>
 <p>Or Let <span class="math inline">\(u=\frac{y^\gamma}{\beta},y=(\beta u)^{\frac1\gamma}, dy=\frac{1}{\gamma}(\beta u)^{\frac1\gamma-1}du\)</span> has same result.</p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>If <span class="math inline">\(X\sim\)</span> exponential(<span class="math inline">\(\beta\)</span>), then <span class="math inline">\(Y =(2X/\beta)^{1/2}\)</span> has the <em>Rayleigh</em> <em>distribution</em>.</li>
 </ol>
-<p><span class="math display">\[X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta&gt;0\]</span></p>
-<p><span class="math display">\[Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2\]</span></p>
+<p><span class="math display">\[X\sim expo(\beta),\quad  f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta&gt;0\]</span></p>
+<p><span class="math display">\[Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2\quad \text{is monotone}\]</span></p>
 <p><span class="math display">\[f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0,\beta&gt;0\]</span></p>
 <p>This is a Rayleigh distribution with <span class="math inline">\(\beta=\sqrt2\)</span>.</p>
-<p><span class="math display">\[\therefore EY=\frac{\sqrt{\pi}}{\beta}=\frac{\sqrt{2\pi}}{2},\quad EY^2=\beta^2=2,\quad VarY=2-\frac{\pi}2\]</span></p>
-<p>Proof:</p>
-<p>For <span class="math inline">\(Z\sim N(0,1)\)</span>, <span class="math display">\[EZ^2=\int_{-\infty}^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=1\quad \implies \int_0^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac12\]</span> <span class="math display">\[ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy={\sqrt{2\pi}}\int_0^{\infty}\frac{y^2}{\sqrt{2\pi}}e^{\frac{-y^2}2}dy=\frac{\sqrt{2\pi}}{2}\]</span></p>
+<p>For <span class="math inline">\(Z\sim N(0,1)\)</span>, <span class="math display">\[EZ^2=\int_{-\infty}^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=1\quad \implies \int_0^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac12\]</span> <span class="math display">\[ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy={\sqrt{2\pi}}\left[\int_0^{\infty}\frac{y^2}{\sqrt{2\pi}}e^{\frac{-y^2}2}dy\right]=\frac{\sqrt{2\pi}}{2}\]</span></p>
 <p>For <span class="math inline">\(W\sim Gamma(2,2)\)</span> <span class="math display">\[\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{2-1}}{\Gamma (2)2^2}e^{-\frac{w}2}dw=1\]</span></p>
-<p><span class="math display">\[\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2=2,\quad VarY=2-\frac{\pi}2\]</span></p>
+<p><span class="math display">\[\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\left[\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2\right]=2,\quad VarY=2-\frac{\pi}2\]</span></p>
 <p>Or for <span class="math inline">\(V\sim Expo(1)\)</span></p>
 <p><span class="math display">\[EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1\]</span></p>
-<p><span class="math display">\[\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\int_0^{\infty}(\frac{y^2}2)e^{\frac{-y^2}2}d(\frac{y^2}2)=2,\quad VarY=2-\frac{\pi}2\]</span></p>
+<p><span class="math display">\[\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\left[\int_0^{\infty}(\frac{y^2}2)e^{\frac{-y^2}2}d(\frac{y^2}2)\right]=2,\quad VarY=2-\frac{\pi}2\]</span></p>
 <p>Or let <span class="math inline">\(u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy\)</span> has same result.</p>
 <hr />
 <ol start="3" style="list-style-type: lower-alpha">
 <li>If <span class="math inline">\(X\sim\)</span> gamma(a, b), then <span class="math inline">\(Y=1/X\)</span> has the inverted gamma IG(a, b) distribution. (This distribution is useful in Bayesian estimation of variances; see Exercise 7.23.)</li>
 </ol>
-<p><span class="math display">\[X\sim Gamma(a,b),\quad \therefore f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0\]</span></p>
-<p><span class="math display">\[Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y\]</span></p>
+<p><span class="math display">\[X\sim Gamma(a,b),\quad f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0\]</span></p>
+<p><span class="math display">\[Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y\quad \text{is monotone}\]</span></p>
 <p><span class="math display">\[\therefore f_Y(y)=f_X(\frac1y)|\frac{d\frac1y}{dx}|=\frac{y^{1-a}}{\Gamma (a)b^a}e^{-\frac1{by}}|-\frac1{y^2}|=\frac{y^{-a-1}}{\Gamma (a)b^a}e^{-\frac1{by}}\]</span></p>
-<p>Inverted gamma IG(a, b) has <span class="math inline">\(EY=\frac{\beta}{\alpha-1},\ VarY=\frac{\beta^2}{(\alpha-1)^2(\alpha-2)}, \alpha&gt;2\)</span></p>
-<p>Proof:</p>
-<p>For <span class="math inline">\(W\sim Gamma(a-1,b)\)</span> <span class="math display">\[\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(a-n)-1}}{\Gamma (a-n)b^{a-n}}e^{-\frac{w}b}dw=1,\ n=0,1,2,..\]</span></p>
-<p><span class="math display">\[\therefore EY=\int_0^{\infty}\frac{y(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)b}\int_0^{\infty}\frac{(\frac1y)^{(a-1)-1}}{\Gamma (a-1)b^{a-1}}e^{-\frac1b\frac1y}d(\frac1y)=\frac{1}{(a-1)b}\]</span></p>
-<p><span class="math display">\[EY^2=\int_0^{\infty}\frac{y^2(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)(a-2)b^2}\int_0^{\infty}\frac{(\frac1y)^{(a-2)-1}}{\Gamma (a-2)b^{a-2}}e^{-\frac1b\frac1y}d(\frac1y)=\frac{1}{(a-1)(a-2)b^2}\]</span></p>
+<p>This is an Inverted gamma IG(a, b)</p>
+<p>For <span class="math inline">\(W\sim Gamma(a-n,b)\)</span> <span class="math display">\[\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(a-n)-1}}{\Gamma (a-n)b^{a-n}}e^{-\frac{w}b}dw=1, n=0,1,2,..\quad \text{and}\ \Gamma(a)=(a-1)\Gamma(a-1)\]</span></p>
+<p><span class="math display">\[\therefore EY=\int_0^{\infty}\frac{y(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)b}\left[\int_0^{\infty}\frac{(\frac1y)^{(a-1)-1}}{\Gamma (a-1)b^{a-1}}e^{-\frac1b\frac1y}d(\frac1y)\right]=\frac{1}{(a-1)b}\]</span></p>
+<p><span class="math display">\[EY^2=\int_0^{\infty}\frac{y^2(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)(a-2)b^2}\left[\int_0^{\infty}\frac{(\frac1y)^{(a-2)-1}}{\Gamma (a-2)b^{a-2}}e^{-\frac1b\frac1y}d(\frac1y)\right]=\frac{1}{(a-1)(a-2)b^2}\]</span></p>
 <p><span class="math display">\[VarY=\frac{1}{(a-1)(a-2)b^2}-\frac{1}{(a-1)^2b^2}=\frac{a-1-(a-2)}{(a-1)^2(a-2)b^2}=\frac{1}{(a-1)^2(a-2)b^2}, a&gt;2\]</span></p>
 <hr />
 <ol start="4" style="list-style-type: lower-alpha">
 <li>If <span class="math inline">\(X\sim gamma(3/2, \beta)\)</span>, then <span class="math inline">\(Y =(X/\beta)^{1/2}\)</span> has the Maxwell distribution.</li>
 </ol>
 <p><span class="math display">\[X\sim Gamma(\frac32,\beta),\quad \therefore f_X(x)=\frac{x^{\frac32-1}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}=\frac{x^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}\]</span></p>
-<p><span class="math display">\[Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2\]</span></p>
-<p>For <span class="math inline">\(\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2\)</span></p>
+<p><span class="math display">\[Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2\quad \text{is monotone}\]</span></p>
+<p>Because <span class="math inline">\(\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2\)</span></p>
 <p><span class="math display">\[\therefore f_Y(y)=f_X(\beta y^2)|\frac{d\beta y^2}{dx}|=\frac{(\beta y^2)^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{\beta y^2}\beta}2\beta y=\frac{4y^2}{\sqrt\pi}e^{-y^2}\]</span></p>
 <p>For <span class="math inline">\(V\sim Expo(1)\)</span></p>
-<p><span class="math display">\[EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1\]</span> <span class="math display">\[EY=\int_0^{\infty}\frac{y4y^2}{\sqrt\pi}e^{-y^2}dy=\frac2{\sqrt\pi}\int_0^{\infty}y^2e^{-y^2}dy^2=\frac2{\sqrt\pi}\]</span></p>
+<p><span class="math display">\[EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1\]</span> <span class="math display">\[EY=\int_0^{\infty}\frac{y4y^2}{\sqrt\pi}e^{-y^2}dy=\frac2{\sqrt\pi}\left[\int_0^{\infty}y^2e^{-y^2}dy^2\right]=\frac2{\sqrt\pi}\]</span></p>
 <p>For <span class="math inline">\(Z\sim N(0,1)\)</span>, <span class="math display">\[EZ^4=\int_{-\infty}^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=3\quad \implies \int_0^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac32\]</span></p>
 <p><span class="math display">\[EY^2=\int_0^{\infty}\frac{y^24y^2}{\sqrt\pi}e^{-y^2}dy=\int_0^{\infty}\frac{(\sqrt2y)^4}{\sqrt{2\pi}}e^{-\frac{(\sqrt2y)}2^2}d(\sqrt2y)=\frac32\]</span></p>
 <p><span class="math display">\[VarY=\frac32-\frac4{\pi}\]</span></p>
@@ -385,9 +383,12 @@ $(document).ready(function () {
 <p><span class="math display">\[X\sim expo(1),\quad \therefore f_X(x)=e^{-x}, x\ge0\]</span></p>
 <p><span class="math display">\[Let\ Y=g(X)= \alpha-\gamma\log X, X=g^{-1}(Y)=e^{\frac{\alpha-Y}{\gamma}}\quad\therefore g^{-1}(y)=e^{\frac{\alpha-y}{\gamma}}\]</span></p>
 <p><span class="math display">\[\therefore f_Y(y)=f_X(e^{\frac{\alpha-y}{\gamma}})|\frac{de^{\frac{\alpha-y}{\gamma}}}{dx}|=e^{-e^{\frac{\alpha-y}{\gamma}}}e^{\frac{\alpha-y}{\gamma}}|-\frac1{\gamma}|=\frac1{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}, \gamma&gt;0\]</span></p>
-<p><span class="math display">\[EY=\int_0^{\infty}\frac{y}{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}dy=\int_0^{\infty}{e^{-e^{\frac{\alpha-y}{\gamma}}}}de^{\frac{\alpha-y}{\gamma}}\]</span> le</p>
-<p>This is a Gumbel distribution with <span class="math inline">\(\alpha,\beta\)</span>. <span class="math display">\[EY=\alpha+\beta\gamma, \gamma=0.5772157\ \text{is Euler's constant}\quad VarY=\frac{\pi^2\beta^2}{6}\]</span></p>
-<p><span class="math display">\[EY^2==\]</span></p>
+<p>This is a Gumbel distribution with <span class="math inline">\(\alpha,\beta\)</span>.</p>
+<p>Because <span class="math inline">\(E(ax+b)=aE(x)+b\)</span>, let <span class="math inline">\(I_1=E(\ln x)=\int_0^{\infty}\ln xe^{-x}dx,\ I_2=E(\ln x)^2=\int_0^{\infty}(\ln x)^2e^{-x}dx\)</span></p>
+<p><span class="math display">\[EY=E(\alpha+\gamma\ln x)=\alpha+\gamma E(\ln x)=\alpha+\gamma I_1\]</span></p>
+<p><span class="math display">\[EY^2=E(\alpha+\gamma\ln x)^2=\alpha^2+2\alpha\gamma I_1+\gamma^2 I_2\]</span></p>
+<p><span class="math display">\[VarY=EY^2-(EY)^2=\gamma^2 [I_2-I_1^2]=\frac{\pi^2\gamma^2}{6}\]</span></p>
+<p><span class="math display">\[EY=\int_0^{\infty}\frac{y}{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}dy=\int_0^{\infty}{e^{-e^{\frac{\alpha-y}{\gamma}}}}de^{\frac{\alpha-y}{\gamma}},\ I_1=0.5772157\ \text{is Euler's constant}\]</span></p>
 <hr />
 <p><strong>3.39</strong> Consider the Cauchy family defined in Section 3.3. This family can be extended to a location-scale family yielding pdfs of the form.</p>
 <p><span class="math display">\[f(x|\mu,\sigma)=\frac{1}{\sigma\pi\left(1+(\frac{x-\mu}{\sigma})^2\right)},\ -\infty&lt;x&lt;\infty\]</span></p>
