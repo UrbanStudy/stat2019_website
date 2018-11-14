@@ -733,6 +733,24 @@ xpx.inv_wine</code></pre>
 ## Flavor          -0.0216  0.0117 -0.0345 -0.0283  0.0687  -0.0028 -0.0029
 ## Oakiness        -0.1001 -0.0786 -0.0091 -0.0099 -0.0028   0.0582  0.0154
 ## Region           0.0232 -0.0149 -0.0274 -0.0097 -0.0029   0.0154  0.0627</code></pre>
+<pre class="r"><code>vcov(model_wine_quality)</code></pre>
+<pre><code>##             (Intercept)     Clarity       Aroma        Body       Flavor    Oakiness       Region
+## (Intercept)  5.15132110 -3.02109116  0.06421359 -0.41806518 -0.030101842 -0.13961124  0.032417705
+## Clarity     -3.02109116  3.11036589 -0.10453322  0.23100625  0.016382513 -0.10962018 -0.020836626
+## Aroma        0.06421359 -0.10453322  0.09324193 -0.01388976 -0.048123191 -0.01264579 -0.038155490
+## Body        -0.41806518  0.23100625 -0.01388976  0.11622284 -0.039477806 -0.01381604 -0.013571583
+## Flavor      -0.03010184  0.01638251 -0.04812319 -0.03947781  0.095842214 -0.00384713 -0.004004834
+## Oakiness    -0.13961124 -0.10962018 -0.01264579 -0.01381604 -0.003847130  0.08112883  0.021409465
+## Region       0.03241770 -0.02083663 -0.03815549 -0.01357158 -0.004004834  0.02140947  0.087425932</code></pre>
+<pre class="r"><code>table_wine %&gt;% corrr::correlate() %&gt;% corrr::fashion()</code></pre>
+<pre><code>##    rowname Clarity Aroma Body Flavor Oakiness Quality Region
+## 1  Clarity           .06 -.31   -.09      .18     .03   -.02
+## 2    Aroma     .06        .55    .74      .20     .71    .62
+## 3     Body    -.31   .55         .65      .15     .55    .44
+## 4   Flavor    -.09   .74  .65             .18     .79    .51
+## 5 Oakiness     .18   .20  .15    .18             -.05   -.06
+## 6  Quality     .03   .71  .55    .79     -.05            .51
+## 7   Region    -.02   .62  .44    .51     -.06     .51</code></pre>
 <pre class="r"><code># Check confidence and prediction interval of response #
 x0_wine &lt;- c(1,0.9,4.7, 6.1, 5.2, 3, 2)
 predict_x0_wine &lt;- t(x0_wine)%*%B.hat_wine
