@@ -188,6 +188,8 @@ plot(table_wine,pch=16)
 
 # matrix of correlation coefficients
 round(cor(table_wine),digits = 3)
+table_wine %>% corrr::correlate() %>% corrr::fashion()
+table_wine %>% corrr::correlate() %>% corrr::rplot()
 
 # build the model
 model_wine_quality <- lm(Quality ~ Clarity + Aroma + Body + Flavor + Oakiness + Region, data=table_wine)
@@ -222,12 +224,11 @@ x_wine <- model.matrix(~ Clarity + Aroma + Body + Flavor + Oakiness + Region, da
 table_wine)
 head(x_wine) # Display the design matrix #
 xpx.inv_wine <- solve(t(x_wine)%*%x_wine) # Computes Inverse of (X'X) matrix #
-xpx.inv_wine
-round(xpx.inv_wine, digits=4) # round with 4 decimal places #
 
-vcov(model_wine_quality)
+1.395*xpx.inv_wine # cov(\beta)= MSE * (X'X)^-1 #
+vcov(model_wine_quality) # another way getting cov(\beta)
 
-table_wine %>% corrr::correlate() %>% corrr::fashion()
+
 
 # Check confidence and prediction interval of response #
 x0_wine <- c(1,0.9,4.7, 6.1, 5.2, 3, 2)
@@ -248,23 +249,84 @@ T_b4_wine <- c(0,0,0,0,1,0,0) # Define T matrix for testing B4=0 versus B4 not= 
 T_b4_wine <- c(rep(0,4),1,0,0) # Define T matrix for testing B4=0 versus B4 not= 0 #
 T_b4_wine
 car::linearHypothesis(model = model_wine_quality, hypothesis.matrix =T_b4_wine , rhs=0)
+## another way
+car::lht(model_wine_quality, "Flavor=0 ")
+
 # The rhs option specifies value on the right hand side of hypotheses #
 T_2b2_b3_wine <- c(0, 0, 2, -1, 0, 0, 0) # Define T matrix for testing 2B2=B3 versus 2B2 not= B3 #
 T_2b2_b3_wine
-car::linearHypothesis(model = model_wine_quality, hypothesis.matrix = T_2b2_b3_wine, rhs=0) #Test T2=0 versus T2 not= 0 #
+car::linearHypothesis(model = model_wine_quality, hypothesis.matrix = T_2b2_b3_wine, rhs=0) 
+
+## another way
+car::lht(model_wine_quality, "2*Aroma=Body ")
+
+#Test T2=0 versus T2 not= 0 #
 # Define T matrix for testing the above hypotheses simultaneously #
 # Use rbind function to bind two rows, The rep function is used to create replications of the same value #
 T_b4.2b2_b3_wine <- rbind(c(rep(0,4), 1, 0, 0), c(0, 0, 2, -1, 0, 0, 0))
 T_b4.2b2_b3_wine
 car::linearHypothesis(model = model_wine_quality, hypothesis.matrix = T_b4.2b2_b3_wine, rhs=c(0,0)) # Test the above two hypotheses simultaneously #
+## another way
+car::lht(model_wine_quality, c("Flavor=0", "2*Aroma=Body"))
+
 # Check for multicollinearity #
 # Use the vif function defined in the car package #
 car::vif(mod = model_wine_quality)
+
+## another way
+#if (!require(olsrr))  install.packages("olsrr") & require(olsrr)
+library(olsrr)
+ols_vif_tol(model_wine_quality)
+
 # Fit reduced multiple linear regression model with only flavor and oakiness predictors #
 model_wine_flavor_oakiness <- lm(Quality ~ Flavor + Oakiness , data = table_wine)
 # The anova function gives Sequential (Type I) Sum of Squares of Regression #
 anova(model_wine_flavor_oakiness)
 # SS for Model (or Regression) = Total of Sum Sq values for Predictors #
 # df for Model (or Regression) = Total of Df values for Predictors #
+
+```
+
+
+## class Nov 13th
+
+```{r, echo=TRUE}
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+# Import Data
+table_b6 <- read_table2("TableB6.txt")
+# Observe the data frame
+head(table_b6)
+
+# build the model
+model_NbOCl3 <- lm(y ~. , data=table_b6)
+model_NbOCl3_1_2_4 <- lm(y ~ x1+x2+x4 , data=table_b6)
+model_NbOCl3_1_3_4 <- lm(y ~ x1+x3+x4 , data=table_b6)
+
+model_NbOCl3%>% summary()
+model_NbOCl3_1_2_4%>% summary()
+model_NbOCl3_1_3_4%>% summary()
+# visualizng Satisfaction and Age
+library(ggfortify)
+model_NbOCl3 %>% autoplot()
+
+anova(model_NbOCl3)
+anova(model_NbOCl3_1_2_4)
+anova(model_NbOCl3_1_3_4)
+anova(model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, model_NbOCl3)
+
+car::vif(model_NbOCl3)
+car::vif(model_NbOCl3_1_2_4)
+car::vif(model_NbOCl3_1_3_4)
+
+library(olsrr)
+ols_vif_tol(model_NbOCl3)
+ols_vif_tol(model_NbOCl3_1_2_4)
+ols_vif_tol(model_NbOCl3_1_3_4)
+
+texreg::screenreg(l=list(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4))
+huxtable::huxreg(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, statistics = NULL)
 
 ```
