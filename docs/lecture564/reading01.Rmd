@@ -1,6 +1,6 @@
 ---
-title: "1 Introduction & 2 Simple Linear Regression"
-subtitle: "STAT 564 Week 1"
+title: "STAT564"
+subtitle: "Linbear Regression"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
   html_document: 
@@ -13,54 +13,40 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## {.tabset .tabset-fade .tabset-pills}
 
-https://onlinecourses.science.psu.edu/stat414/node/262/
+### Model 
 
-### 1 Introduction
+#### Regression and Model Building
 
-#### 1.1 Regression and Model Building
-
-`2018.09.24`
-
-#### Regression Analysis
-- Example 1
-
-- Main Goals of Regression Analysis
-
-- Regression Models
-
-- Regression Models building process
 $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
 
-### 2.1 Simple Linear Regression Model
+#### Assumptions
+Gauss Markov Theorem
+- [1]
+- [2]
+- [3]
+- [4]
+- [5]
 
-- Assumptions
-    - [1]
-    - [2]
-    - [3]
-    - [4]
-    - [5]
+### Sum
 
-### 2.2 Least-Suqares Estimation of the Parameters
-#### 2.2.1 Estimation of β0 and β1
-`2018.09.26`
 
-- Estimate Regression Parameters (or Coefficients)
-
-$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2$$
-
-$$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\implies \sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
-
-$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\implies\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
-
-`2018.09.28`
-
-- The other forms of $S_{xx}\ and\ S_{xy}$
+- Corrected sum of squares $S_{xx}$
 $$S_{xx}=\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2/n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2$$
-$$S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$$
+
+- Sample Variance
+
+$$S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}$$
+
+- Corrected sum of squares $S_{yy}$
 
 $$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2$$
 
-$$S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}$$
+
+- Covariance
+
+$$S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$$
+
+- $C_i$
 
 $$c_i=\frac{x_i-\bar x}{S_{xx}}$$
 
@@ -70,47 +56,73 @@ $$\sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}}$$
 
 $$\sum_{i=1}^nc_ix_i=\frac1{S_{xx}}\sum_{i=1}^nx_i(x_i-\bar x)=\frac{S_{xx}}{S_{xx}}=1$$
 
-- Example 2
-    - [2.2.1]
-    - [2.2.2]
-    - [2.2.3]
 
-### 2.2.2 Properties of the least-Squares Estimators
 
-#### 1. They are linear funcitons
+### Estimation {.tabset .tabset-fade .tabset-pills}
+
+#### Least-Suqares Estimation of Parameters (Coefficients)
+
+'Assumption 2'
+
+- Residual Sum of Squares
+
+$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2$$
+
+- Normal Equation
+
+$$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\implies \sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
+
+$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\implies\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
+
+- Expected value
 
 $$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i$$
 $$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
 
-#### 2. They are unbiased estimators of regression coefficients
+- Unbiased estimators of regression coefficients
 
 $$E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\varepsilon_i]=\beta_0\frac{\sum_{i-1}^n(x_i-\bar x)}{S_{xx}}+{\beta_1}\frac{\sum_{i-1}^n(x_i-\bar x)x_i}{S_{xx}}+0=\beta_1$$
 
 $$E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0$$
 
 
-`2018.10.1`
 
-#### 3. Variances and coariances
+
+#### Variances
+
+'Assumption 3'
 
 $$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
 
-$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
+
 
 $$Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}$$
 
 $$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$$
 
-#### 4. Gauss Markov Theorem
+#### Standard Deviation (Error)
+
+
+#### Error Variance
+
+'Assumption 4'
+
+$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
 
 $$\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^ne_i=0;\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y$$
 
 $$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
 
-#### 5. When errors
+### Test and inference {.tabset .tabset-fade .tabset-pills}
+
+'Assumption 5'
 
 $$\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)$$
 
 $$\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)$$
 
-  
+#### Confidence Interval
+
+#### Goodness of fit
+
+#### Prediction
