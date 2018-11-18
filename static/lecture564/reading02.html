@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-10-22" />
+<meta name="date" content="2018-11-18" />
 
 <title>2.2 Least-Suqares Estimation &amp; 2.3 Hypothesis Testing</title>
 
@@ -345,150 +345,23 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">2.2 Least-Suqares Estimation &amp; 2.3 Hypothesis Testing</h1>
 <h3 class="subtitle"><em>STAT 564 Week 2</em></h3>
-<h4 class="date"><em>October 22, 2018</em></h4>
+<h4 class="date"><em>November 18, 2018</em></h4>
 
 </div>
 
 
 <div id="section" class="section level2 tabset tabset-fade tabset-pills">
 <h2></h2>
-<div id="estimation-of-sigma2" class="section level3">
-<h3>2.2.3 Estimation of <span class="math inline">\(\sigma^2\)</span></h3>
-<p><code>2018.10.3</code> <span class="math display">\[SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}\]</span> <span class="math display">\[S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\]</span></p>
-<p><span class="math display">\[E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}\]</span></p>
-<p><span class="math display">\[E[S_{yy}]=(n-1)\sigma^2+\hat\beta_1^2S_{xx}\]</span></p>
-<p><span class="math display">\[E[SSE]=E[S_{yy}]-E[SSR]=(n-2)\sigma^2\]</span></p>
-<p><span class="math display">\[E[MSE]=\frac{E[SSE]}{n-2}=\frac{\sigma^2(n-2)}{n-2}=\sigma^2\]</span></p>
-</div>
-<div id="hypothesis-testing-on-the-slope-and-intercept" class="section level3">
-<h3>2.3 Hypothesis Testing on the Slope and Intercept</h3>
-<p><code>2018.10.5</code></p>
-<p>Recall: Under the assumptions about random errors of simple linear regression model,</p>
-<p><span class="math display">\[\hat{\beta_0}\sim N\bigg(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\bigg)=N\left(\beta_0,\dfrac{\sigma^2}{n}\right)\implies\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)\]</span></p>
-<p><span class="math display">\[\hat{\beta_1}\sim N(\beta_1,\dfrac{\sigma^2}{S_{xx}})=N\left(\beta_1,\dfrac{\sigma^2}{\sum_{i=1}^n (x_i-\bar{x})^2}\right)\implies\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)\]</span></p>
-<p>Typically, <span class="math inline">\(\sigma^2\)</span> is unknown and is estimated using MSE (Mean Squared Error).</p>
-<p><span class="math display">\[\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)}\]</span></p>
-<div id="use-of-the-tests" class="section level4">
-<h4>2.3.1 Use of the Tests</h4>
-<p><span class="math display">\[H_0:\beta_1=\beta_{10}\]</span></p>
-<p><span class="math display">\[H_A:\beta_1\neq \beta_{10}\]</span></p>
-<p><span class="math display">\[t=\frac{\hat{\beta_1}-\beta_{10}}{se(\beta_1)}=
-\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/S_{xx}}}=
-\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}\]</span></p>
-</div>
-<div id="testing-significance-of-regression" class="section level4">
-<h4>2.3.2 Testing Significance of Regression</h4>
-<p><span class="math display">\[H_0:\beta_1=0\]</span></p>
-<p><span class="math display">\[H_A:\beta_1\ne0\]</span></p>
-<p><span class="math display">\[t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}\]</span></p>
-</div>
-<div id="analysis-of-variance" class="section level4">
-<h4>2.3.3 Analysis of Variance</h4>
-Partitioning the Total Variability in the response (y_i’s)
-<figure>
-<p>The total variability in the ’s is measured by</p>
-<p><span class="math display">\[SST=\sum_{i=1}^n(y_i-\bar y)^2\]</span></p>
-<p>Suppose we fit the least squares regression line which gives the fitted value <span class="math inline">\(\hat y_i\)</span>. Then <span class="math display">\[y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies\]</span></p>
-<table>
-<colgroup>
-<col width="25%"></col>
-<col width="25%"></col>
-<col width="25%"></col>
-<col width="25%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th><span class="math inline">\(\sum_{i=1}^n(y_i-\bar y)^2\)</span></th>
-<th><span class="math inline">\(\sum_{i=1}^n(y_i-\hat y_i)^2\)</span></th>
-<th><span class="math inline">\(\sum_{i=1}^n(\hat y_i-\bar y)^2\)</span></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>SST=</td>
-<td>SSE+</td>
-<td>SSR</td>
-<td>where SSR=<span class="math inline">\(\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}\)</span></td>
-</tr>
-<tr class="even">
-<td>dfT=</td>
-<td>dfE+</td>
-<td>dfR</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>n-1=</td>
-<td>n-2+</td>
-<td>2-1</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known. For example, the df of SST gives the number of data values need to know if the mean of the data is known.</p>
-<p>The mean square (MS) of each sum of square (SS) is computed by</p>
-<p><span class="math display">\[MS=\frac{SS}{df}\]</span></p>
-<p>and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.</p>
-<p>The ANOVA is useful when testing about the true slope in simple linear regression analysis.</p>
-<p><span class="math display">\[H_0:\beta_1=0;\quad H_1:\beta_1\ne0\]</span></p>
-<p>Appendix C.3 shows that</p>
-<p><span class="math display">\[\dfrac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}=\sim \chi^2_{(n-2)}\]</span></p>
-<p>and if <span class="math inline">\(\beta_1=0\)</span>, then</p>
-<p><span class="math display">\[\dfrac{dfR\times MSR}{\sigma^2}=\dfrac{SSR/dfR}{\sigma^2}=\dfrac{SSR/1}{\sigma^2}=\sim \chi^2_{(1)}\]</span></p>
-<p><span class="math display">\[\because E(MSR)=\sigma^2+\beta_1^2S_{xx}=\sigma^2+\beta_1S_{xy}\]</span></p>
-<p>Further, SSE and SSR are independent.</p>
-<p>Therefore, by definition of F distribution</p>
-<p><span class="math display">\[\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/1}{SSE/(n-2)}=\frac{MSR}{MSE}\sim F_{(1,(n-2))}\]</span></p>
-<p>The F test statistic (<span class="math inline">\(F_0\)</span>) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.</p>
-<p>Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression</p>
-<table style="width:100%;">
-<colgroup>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th>Source of Variation</th>
-<th>Sum of Squars(SS)</th>
-<th>Degrees of Freedom(df)</th>
-<th>Mean Squares(MS)</th>
-<th>F test statistic</th>
-<th>P-value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Model(Regresion)</td>
-<td><span class="math inline">\(SSR=\hat\beta_1S{xy}\)</span></td>
-<td>1</td>
-<td><span class="math inline">\(MSR=\frac{SSR}1\)</span></td>
-<td><span class="math inline">\(\frac{MSR}{MSE}\)</span></td>
-<td><span class="math inline">\(P(F&gt;F_0)\)</span></td>
-</tr>
-<tr class="even">
-<td>Error(Residual)</td>
-<td><span class="math inline">\(SSE=SST-SSR\)</span></td>
-<td>n-2</td>
-<td><span class="math inline">\(MSE=\frac{SSE}{n-2}\)</span></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Total</td>
-<td><span class="math inline">\(SST=\sum_{i=1}^n(y_i-\bar y)^2\)</span></td>
-<td>n-1</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>If the test statistic is much larger than 1 (<span class="math inline">\(F_0&gt;F(\alpha,1,n-2)\)</span>) (or p-value <span class="math inline">\(\le\)</span> significance level), then the true slope is different from zero and hence least squares line is statistically significant.</p>
-</div>
+<div id="regression-through-the-origin" class="section level3">
+<h3>2.10 Regression through the origin</h3>
+<p>There are situations where we know that intercept of the simple linear regression model is zero. Then we fit the model with intercept,<span class="math inline">\(\beta_0=0\)</span> so the line goes through origin (0,0).</p>
+<p><span class="math display">\[y_i=\beta_1x_i+\epsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)\]</span> Find the least squares estimator of slope (<span class="math inline">\(\beta_1\)</span>) for the simple linear regression model through origin.</p>
+<p><span class="math display">\[\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}\]</span></p>
+<p><span class="math display">\[E(\hat\beta_1)==\beta_1\]</span></p>
+<p><span class="math display">\[E(y_i)=\beta_0+\hat\beta_1x_i\]</span> is unbiased; <span class="math display">\[Var(\hat\beta_1)==\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\]</span></p>
+<p><span class="math display">\[se(\hat{\beta_1})=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\]</span></p>
+<p><span class="math display">\[\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})\]</span></p>
+<p>Where <span class="math inline">\(t_\frac\alpha2\)</span> is critical value from t distribution with df=n-1</p>
 </div>
 </div>
 

@@ -1,6 +1,6 @@
 ---
 title: "STAT564"
-subtitle: "Linbear Regression"
+subtitle: "Linear Regression"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
   html_document: 
@@ -15,9 +15,31 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Model 
 
-#### Regression and Model Building
+#### Simple Regression
 
 $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
+
+#### Multiple Regression
+
+$$y_i=\beta_0+\beta_1x_i1+\beta_2x_i2+..+\beta_kx_ik+\varepsilon_i=\beta_0+\sum_{\beta_j}x_ij+\varepsilon_i, i=1,2,..n, \varepsilon_i\sim^{iid} N(0,\sigma^2) $$
+
+$$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n, \varepsilon\sim^{iid} N(0,\sigma^2\mathbf I) $$
+
+$$\begin{pmatrix}
+  y_1 \\ y_2 \\ \vdots  \\ y_n 
+ \end{pmatrix} = 
+ \begin{pmatrix}
+  1 & x_{1,1} & x_{1,2} & \cdots & x_{1,k} \\
+  1 & x_{2,1} & x_{2,2} & \cdots & x_{2,k} \\
+  \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+  1 & x_{n,1} & x_{n,2} & \cdots & x_{n,k} 
+ \end{pmatrix}
+ \begin{pmatrix}
+  \beta_0 \\ \beta_1 \\ \beta_2 \\ \vdots  \\ \beta_k 
+ \end{pmatrix}+
+ \begin{pmatrix}
+  \varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n 
+ \end{pmatrix}$$
 
 #### Assumptions
 Gauss Markov Theorem
@@ -37,6 +59,12 @@ $$S_{xx}=\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2/n=\sum_{i=1}^nx_i^2-n\bar x^2=\su
 
 $$S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}$$
 
+- $C_i$
+
+$$c_i=\frac{x_i-\bar x}{S_{xx}}$$
+
+$$\sum_{i=1}^nc_i=\sum_{i=1}^n\frac{x_i-\bar x}{S_{xx}}=\frac1{S_{xx}}\sum_{i=1}^n(x_i-\bar x)=\frac1{S_{xx}}(n\bar x-n\bar x)=0$$
+
 - Corrected sum of squares $S_{yy}$
 
 $$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2$$
@@ -46,33 +74,45 @@ $$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2$$
 
 $$S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$$
 
-- $C_i$
 
-$$c_i=\frac{x_i-\bar x}{S_{xx}}$$
-
-$$\sum_{i=1}^nc_i=\sum_{i=1}^n\frac{x_i-\bar x}{S_{xx}}=\frac1{S_{xx}}\sum_{i=1}^n(x_i-\bar x)=\frac1{S_{xx}}(n\bar x-n\bar x)=0$$
 
 $$\sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}}$$
 
 $$\sum_{i=1}^nc_ix_i=\frac1{S_{xx}}\sum_{i=1}^nx_i(x_i-\bar x)=\frac{S_{xx}}{S_{xx}}=1$$
 
+- 2.6 Coefficient of Determination
 
+If the fitted model is statistically significant, we expect
+
+-Definition
+
+ Coefficient of Determination $=R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$
+
+ Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
+
+-The coefficient of variation and correlation coefficient are related
+
+$$|Correlation Coefficient|=|r|=\sqrt R^2=\sqrt {Coefficient of Determination}$$
+
+-Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
 
 ### Estimation {.tabset .tabset-fade .tabset-pills}
 
 #### Least-Suqares Estimation of Parameters (Coefficients)
 
-'Assumption 2'
+`Assumption 2`
 
 - Residual Sum of Squares
 
-$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2$$
+$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=0$$
+$$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
+$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
 
 - Normal Equation
 
-$$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\implies \sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
+$$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
 
-$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\implies\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
+$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
 
 - Expected value
 
@@ -88,9 +128,9 @@ $$E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[
 
 
 
-#### Variances
+#### Variancesand Estimation of $\sigma^2$
 
-'Assumption 3'
+`Assumption 3`
 
 $$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
 
@@ -102,27 +142,195 @@ $$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar
 
 #### Standard Deviation (Error)
 
+$$\frac{\sigma^2}{n}$$
 
 #### Error Variance
 
-'Assumption 4'
+`Assumption 4`
 
 $$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
 
-$$\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^ne_i=0;\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y$$
+$$\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y$$
 
 $$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
 
+$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}$$
+$$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=$$
+
+$$E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}$$
+
+$$E[S_{yy}]=(n-1)\sigma^2+\hat\beta_1^2S_{xx}$$
+
+$$E[SSE]=E[S_{yy}]-E[SSR]=(n-2)\sigma^2$$
+
+$$E[MSE]=\frac{E[SSE]}{n-2}=\frac{\sigma^2(n-2)}{n-2}=\sigma^2$$
+
+
 ### Test and inference {.tabset .tabset-fade .tabset-pills}
 
-'Assumption 5'
+#### Hypothesis Testing on the Slope and Intercept
 
-$$\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)$$
+`Assumption 5`
 
-$$\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)$$
+$$\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)$$
+
+$$\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)$$
+
+`Assumption ?`
+
+Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
+
+$$\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)}$$
+
+- T Tests
+
+
+$$H_0:\beta_1=\beta_{10}$$
+
+$$H_A:\beta_1\neq \beta_{10}$$
+
+$$t=\frac{\hat{\beta_1}-\beta_{10}}{se(\beta_1)}=
+\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/S_{xx}}}=
+\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
+
+- Testing Significance of Regression
+
+$$H_0:\beta_1=0$$
+
+$$H_A:\beta_1\ne0$$
+
+$$t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
+
+
+#### 2.3.3 Analysis of Variance
+
+Partitioning the Total Variability in the response ($y_i$’s)
+
+The total variability in the ’s is measured by
+
+$$SST=\sum_{i=1}^n(y_i-\bar y)^2$$
+
+Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
+$$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies$$
+
+|$\sum_{i=1}^n(y_i-\bar y)^2$|$\sum_{i=1}^n(y_i-\hat y_i)^2$|$\sum_{i=1}^n(\hat y_i-\bar y)^2$||
+|---|---|---|---|
+|SST=|SSE+|SSR|where SSR=$\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$|
+|dfT=|dfE+|dfR||
+|n-1=|n-2+|2-1||
+
+Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
+For example, the df of SST gives the number of data values need to know if the mean of the data is known.
+
+The mean square (MS) of each sum of square (SS) is computed by
+
+$$MS=\frac{SS}{df}$$
+
+and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
+
+The ANOVA is useful when testing about the true slope in simple linear regression analysis.
+
+$$H_0:\beta_1=0;\quad H_1:\beta_1\ne0$$
+
+Appendix C.3 shows that
+
+$$\dfrac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}=\sim \chi^2_{(n-2)}$$
+
+and if $\beta_1=0$, then
+
+$$\dfrac{dfR\times MSR}{\sigma^2}=\dfrac{SSR/dfR}{\sigma^2}=\dfrac{SSR/1}{\sigma^2}=\sim \chi^2_{(1)}$$
+
+$$\because E(MSR)=\sigma^2+\beta_1^2S_{xx}=\sigma^2+\beta_1S_{xy}$$
+
+Further, SSE and SSR are independent.
+
+Therefore, by definition of F distribution
+
+$$\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/1}{SSE/(n-2)}=\frac{MSR}{MSE}\sim F_{(1,(n-2))}$$
+
+The F test statistic ($F_0$) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.
+
+Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression
+
+Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
+---|---|---|---|---|---
+Model(Regresion)|$SSR=\hat\beta_1S{xy}$|1|$MSR=\frac{SSR}1$|$\frac{MSR}{MSE}$|$P(F>F_0)$
+Error(Residual)|$SSE=SST-SSR$|n-2|$MSE=\frac{SSE}{n-2}$||
+Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2$|n-1|||
+
+If the test statistic is much larger than 1 ($F_0>F(\alpha,1,n-2)$) (or p-value $\le$ significance level), then the true slope is different from zero and hence least squares line is statistically significant.
+
 
 #### Confidence Interval
+
+- $\beta_0$
+
+ $100(1-\alpha)%$ Confidence Interval for the true slope $(\beta_1)$:
+
+$$\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \sqrt{\frac{\hat\sigma^2}{S_{xx}}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \sqrt{\frac{MSE}{\sum (x_i-\bar{x})^2}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \left(\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\right)$$
+
+- $\beta_1$
+ $100(1-\alpha)%$ Confidence Interval for the true intercept $(\beta_0)$:
+
+$$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)$$
+
+- $\sigma^2$
+
+ $100(1-\alpha)%$ Confidence Interval for the true error variance $(\sigma^2)$:
+
+$$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]$$
+
+ If $T\sim t(df=\upsilon)$, then $T^2\sim F(1,\upsilon)$
+
+Therefore, test statistic ($t_0$) for testing true slope ($\beta_1$) different from zero and F test statistic ($F_0$) in ANOVA for simple linear regression are related as
+
+$$t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0$$
+
+The t test has more flexibility than F test because,  
+
+ t test can be used when testing $H_0:\ \beta_1=c$ versus $H_1:\ \beta_1\ne c$ where c is NOT zero while F test can be used only when c=0
+
+ t test can be used when it is a one-tailed test (such as $H_1:\ \beta_1>c$ or $H_1:\ \beta_1<c$ while F test can be used for only two-tailed test.
+
+
 
 #### Goodness of fit
 
 #### Prediction
+2.4.2 Interval Estimation of the Mean Response & 2.5 Prediction of New Observations
+
+One of the goals in regression analysis is to predict the response (y) for a given value/s of predictor/s (x).  
+Assume there are n pairs of observatin $(x_1,y_1),(x_2,y_2),...,(x_n,y_n)$ to fit least squares simple linear regression model.    
+Let’s say we observe k number of new values of response (y) at a new value of predictor (x) denoted by $x_0$ where $x_0$ between minimum and maximum observed values of predictor (x).  
+Let $\bar y_0|x_0=\bar y_0$ be the true mean of k values of response at new value (x_0) of predictor.   
+Then$\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0$ is the estimated mean of k values of response at new value ($x_0$)) of predictor using the fitted least squares model.   
+Therefore, $100(1−\alpha)%$ **confidence** interval for the **MEAN** response at a given new value ($x_0$) of predictor is given by
+
+$$\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})}=\hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}\sqrt{MSE\left[\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$$
+
+Therefore, $100(1−\alpha)%$ **prediction** interval for a **single value** of response at a given new value ($x_0$) of predictor is given by
+
+$$\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})}=\hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}\sqrt{MSE\left[1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$$
+
+ Where $t_{\alpha/2}$ is the critical value from t distribution with (n-2) degrees of freedom
+
+#### Consider the random variable $\hat y_0-\bar y_0$ and find its expected value and variance.
+
+
+We know $\hat\beta_1$ and $\hat\beta_1$ have normal distributions. Therefore,
+
+$$\hat y=\hat\beta_0+\hat\beta_1x \sim N$$
+
+Similarly,
+
+$$\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0 \sim N$$
+
+$$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t (df=n-2)$$
+
+
+
+The figure below is an output graph from SAS for the scatterplot of data in Computer Lab 1 with overlaid fitted model, 95% confidence interval for mean response, and 95% prediction interval for a single new observation.
+
+Be careful when predicting response for a given new value of predictor.
+
+-Do not extrapolate!

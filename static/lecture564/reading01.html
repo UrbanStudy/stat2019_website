@@ -344,7 +344,7 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">STAT564</h1>
-<h3 class="subtitle"><em>Linbear Regression</em></h3>
+<h3 class="subtitle"><em>Linear Regression</em></h3>
 <h4 class="date"><em>November 18, 2018</em></h4>
 
 </div>
@@ -354,9 +354,29 @@ $(document).ready(function () {
 <h2></h2>
 <div id="model" class="section level3">
 <h3>Model</h3>
-<div id="regression-and-model-building" class="section level4">
-<h4>Regression and Model Building</h4>
+<div id="simple-regression" class="section level4">
+<h4>Simple Regression</h4>
 <p><span class="math display">\[y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n\]</span></p>
+</div>
+<div id="multiple-regression" class="section level4">
+<h4>Multiple Regression</h4>
+<p><span class="math display">\[y_i=\beta_0+\beta_1x_i1+\beta_2x_i2+..+\beta_kx_ik+\varepsilon_i=\beta_0+\sum_{\beta_j}x_ij+\varepsilon_i, i=1,2,..n, \varepsilon_i\sim^{iid} N(0,\sigma^2) \]</span></p>
+<p><span class="math display">\[\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n, \varepsilon\sim^{iid} N(0,\sigma^2\mathbf I) \]</span></p>
+<p><span class="math display">\[\begin{pmatrix}
+  y_1 \\ y_2 \\ \vdots  \\ y_n 
+ \end{pmatrix} = 
+ \begin{pmatrix}
+  1 &amp; x_{1,1} &amp; x_{1,2} &amp; \cdots &amp; x_{1,k} \\
+  1 &amp; x_{2,1} &amp; x_{2,2} &amp; \cdots &amp; x_{2,k} \\
+  \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+  1 &amp; x_{n,1} &amp; x_{n,2} &amp; \cdots &amp; x_{n,k} 
+ \end{pmatrix}
+ \begin{pmatrix}
+  \beta_0 \\ \beta_1 \\ \beta_2 \\ \vdots  \\ \beta_k 
+ \end{pmatrix}+
+ \begin{pmatrix}
+  \varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n 
+ \end{pmatrix}\]</span></p>
 </div>
 <div id="assumptions" class="section level4">
 <h4>Assumptions</h4>
@@ -371,6 +391,11 @@ $(document).ready(function () {
 </ul>
 <p><span class="math display">\[S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}\]</span></p>
 <ul>
+<li><span class="math inline">\(C_i\)</span></li>
+</ul>
+<p><span class="math display">\[c_i=\frac{x_i-\bar x}{S_{xx}}\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^nc_i=\sum_{i=1}^n\frac{x_i-\bar x}{S_{xx}}=\frac1{S_{xx}}\sum_{i=1}^n(x_i-\bar x)=\frac1{S_{xx}}(n\bar x-n\bar x)=0\]</span></p>
+<ul>
 <li>Corrected sum of squares <span class="math inline">\(S_{yy}\)</span></li>
 </ul>
 <p><span class="math display">\[S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2\]</span></p>
@@ -378,28 +403,33 @@ $(document).ready(function () {
 <li>Covariance</li>
 </ul>
 <p><span class="math display">\[S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)\]</span></p>
-<ul>
-<li><span class="math inline">\(C_i\)</span></li>
-</ul>
-<p><span class="math display">\[c_i=\frac{x_i-\bar x}{S_{xx}}\]</span></p>
-<p><span class="math display">\[\sum_{i=1}^nc_i=\sum_{i=1}^n\frac{x_i-\bar x}{S_{xx}}=\frac1{S_{xx}}\sum_{i=1}^n(x_i-\bar x)=\frac1{S_{xx}}(n\bar x-n\bar x)=0\]</span></p>
 <p><span class="math display">\[\sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}}\]</span></p>
 <p><span class="math display">\[\sum_{i=1}^nc_ix_i=\frac1{S_{xx}}\sum_{i=1}^nx_i(x_i-\bar x)=\frac{S_{xx}}{S_{xx}}=1\]</span></p>
+<ul>
+<li>2.6 Coefficient of Determination</li>
+</ul>
+<p>If the fitted model is statistically significant, we expect</p>
+<p>-Definition</p>
+<p>Coefficient of Determination <span class="math inline">\(=R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}\)</span></p>
+<p>Proportion of variation in response(y) explained by the fitted model with predictor(s) <span class="math inline">\(0\ge R^2\ge1\)</span></p>
+<p>-The coefficient of variation and correlation coefficient are related</p>
+<p><span class="math display">\[|Correlation Coefficient|=|r|=\sqrt R^2=\sqrt {Coefficient of Determination}\]</span></p>
+<p>-Unfortunately, adding predictor(s) to the model does not decrease <span class="math inline">\(R^2\)</span>. Therefore, it cannot be used to compare models with different number of predictors.</p>
 </div>
 <div id="estimation" class="section level3 tabset tabset-fade tabset-pills">
 <h3>Estimation</h3>
 <div id="least-suqares-estimation-of-parameters-coefficients" class="section level4">
 <h4>Least-Suqares Estimation of Parameters (Coefficients)</h4>
-<p>‘Assumption 2’</p>
+<p><code>Assumption 2</code></p>
 <ul>
 <li>Residual Sum of Squares</li>
 </ul>
-<p><span class="math display">\[SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2\]</span></p>
+<p><span class="math display">\[SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=0\]</span> <span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\]</span> <span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\]</span></p>
 <ul>
 <li>Normal Equation</li>
 </ul>
-<p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\implies \sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x\]</span></p>
-<p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\implies\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x\]</span></p>
+<p><span class="math display">\[\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2\]</span></p>
 <ul>
 <li>Expected value</li>
 </ul>
@@ -410,37 +440,211 @@ $(document).ready(function () {
 <p><span class="math display">\[E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\varepsilon_i]=\beta_0\frac{\sum_{i-1}^n(x_i-\bar x)}{S_{xx}}+{\beta_1}\frac{\sum_{i-1}^n(x_i-\bar x)x_i}{S_{xx}}+0=\beta_1\]</span></p>
 <p><span class="math display">\[E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0\]</span></p>
 </div>
-<div id="variances" class="section level4">
-<h4>Variances</h4>
-<p>‘Assumption 3’</p>
+<div id="variancesand-estimation-of-sigma2" class="section level4">
+<h4>Variancesand Estimation of <span class="math inline">\(\sigma^2\)</span></h4>
+<p><code>Assumption 3</code></p>
 <p><span class="math display">\[Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2\]</span></p>
 <p><span class="math display">\[Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}\]</span></p>
 <p><span class="math display">\[Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})\]</span></p>
 </div>
 <div id="standard-deviation-error" class="section level4">
 <h4>Standard Deviation (Error)</h4>
+<p><span class="math display">\[\frac{\sigma^2}{n}\]</span></p>
 </div>
 <div id="error-variance" class="section level4">
 <h4>Error Variance</h4>
-<p>‘Assumption 4’</p>
+<p><code>Assumption 4</code></p>
 <p><span class="math display">\[For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0\]</span></p>
-<p><span class="math display">\[\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^ne_i=0;\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y\]</span></p>
+<p><span class="math display">\[\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y\]</span></p>
 <p><span class="math display">\[\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0\]</span></p>
+<p><span class="math display">\[SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}\]</span> <span class="math display">\[S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\]</span></p>
+<p><span class="math display">\[E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}\]</span></p>
+<p><span class="math display">\[E[S_{yy}]=(n-1)\sigma^2+\hat\beta_1^2S_{xx}\]</span></p>
+<p><span class="math display">\[E[SSE]=E[S_{yy}]-E[SSR]=(n-2)\sigma^2\]</span></p>
+<p><span class="math display">\[E[MSE]=\frac{E[SSE]}{n-2}=\frac{\sigma^2(n-2)}{n-2}=\sigma^2\]</span></p>
 </div>
 </div>
 <div id="test-and-inference" class="section level3 tabset tabset-fade tabset-pills">
 <h3>Test and inference</h3>
-<p>‘Assumption 5’</p>
-<p><span class="math display">\[\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\]</span></p>
-<p><span class="math display">\[\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\]</span></p>
+<div id="hypothesis-testing-on-the-slope-and-intercept" class="section level4">
+<h4>Hypothesis Testing on the Slope and Intercept</h4>
+<p><code>Assumption 5</code></p>
+<p><span class="math display">\[\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)\]</span></p>
+<p><span class="math display">\[\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)\]</span></p>
+<p><code>Assumption ?</code></p>
+<p>Typically, <span class="math inline">\(\sigma^2\)</span> is unknown and is estimated using MSE (Mean Squared Error).</p>
+<p><span class="math display">\[\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)}\]</span></p>
+<ul>
+<li>T Tests</li>
+</ul>
+<p><span class="math display">\[H_0:\beta_1=\beta_{10}\]</span></p>
+<p><span class="math display">\[H_A:\beta_1\neq \beta_{10}\]</span></p>
+<p><span class="math display">\[t=\frac{\hat{\beta_1}-\beta_{10}}{se(\beta_1)}=
+\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/S_{xx}}}=
+\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}\]</span></p>
+<ul>
+<li>Testing Significance of Regression</li>
+</ul>
+<p><span class="math display">\[H_0:\beta_1=0\]</span></p>
+<p><span class="math display">\[H_A:\beta_1\ne0\]</span></p>
+<p><span class="math display">\[t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}\]</span></p>
+</div>
+<div id="analysis-of-variance" class="section level4">
+<h4>2.3.3 Analysis of Variance</h4>
+<p>Partitioning the Total Variability in the response (<span class="math inline">\(y_i\)</span>’s)</p>
+<p>The total variability in the ’s is measured by</p>
+<p><span class="math display">\[SST=\sum_{i=1}^n(y_i-\bar y)^2\]</span></p>
+<p>Suppose we fit the least squares regression line which gives the fitted value <span class="math inline">\(\hat y_i\)</span>. Then <span class="math display">\[y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies\]</span></p>
+<table>
+<colgroup>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\sum_{i=1}^n(y_i-\bar y)^2\)</span></th>
+<th><span class="math inline">\(\sum_{i=1}^n(y_i-\hat y_i)^2\)</span></th>
+<th><span class="math inline">\(\sum_{i=1}^n(\hat y_i-\bar y)^2\)</span></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SST=</td>
+<td>SSE+</td>
+<td>SSR</td>
+<td>where SSR=<span class="math inline">\(\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}\)</span></td>
+</tr>
+<tr class="even">
+<td>dfT=</td>
+<td>dfE+</td>
+<td>dfR</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>n-1=</td>
+<td>n-2+</td>
+<td>2-1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known. For example, the df of SST gives the number of data values need to know if the mean of the data is known.</p>
+<p>The mean square (MS) of each sum of square (SS) is computed by</p>
+<p><span class="math display">\[MS=\frac{SS}{df}\]</span></p>
+<p>and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.</p>
+<p>The ANOVA is useful when testing about the true slope in simple linear regression analysis.</p>
+<p><span class="math display">\[H_0:\beta_1=0;\quad H_1:\beta_1\ne0\]</span></p>
+<p>Appendix C.3 shows that</p>
+<p><span class="math display">\[\dfrac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}=\sim \chi^2_{(n-2)}\]</span></p>
+<p>and if <span class="math inline">\(\beta_1=0\)</span>, then</p>
+<p><span class="math display">\[\dfrac{dfR\times MSR}{\sigma^2}=\dfrac{SSR/dfR}{\sigma^2}=\dfrac{SSR/1}{\sigma^2}=\sim \chi^2_{(1)}\]</span></p>
+<p><span class="math display">\[\because E(MSR)=\sigma^2+\beta_1^2S_{xx}=\sigma^2+\beta_1S_{xy}\]</span></p>
+<p>Further, SSE and SSR are independent.</p>
+<p>Therefore, by definition of F distribution</p>
+<p><span class="math display">\[\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/1}{SSE/(n-2)}=\frac{MSR}{MSE}\sim F_{(1,(n-2))}\]</span></p>
+<p>The F test statistic (<span class="math inline">\(F_0\)</span>) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.</p>
+<p>Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression</p>
+<table style="width:100%;">
+<colgroup>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source of Variation</th>
+<th>Sum of Squars(SS)</th>
+<th>Degrees of Freedom(df)</th>
+<th>Mean Squares(MS)</th>
+<th>F test statistic</th>
+<th>P-value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model(Regresion)</td>
+<td><span class="math inline">\(SSR=\hat\beta_1S{xy}\)</span></td>
+<td>1</td>
+<td><span class="math inline">\(MSR=\frac{SSR}1\)</span></td>
+<td><span class="math inline">\(\frac{MSR}{MSE}\)</span></td>
+<td><span class="math inline">\(P(F&gt;F_0)\)</span></td>
+</tr>
+<tr class="even">
+<td>Error(Residual)</td>
+<td><span class="math inline">\(SSE=SST-SSR\)</span></td>
+<td>n-2</td>
+<td><span class="math inline">\(MSE=\frac{SSE}{n-2}\)</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td><span class="math inline">\(SST=\sum_{i=1}^n(y_i-\bar y)^2\)</span></td>
+<td>n-1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>If the test statistic is much larger than 1 (<span class="math inline">\(F_0&gt;F(\alpha,1,n-2)\)</span>) (or p-value <span class="math inline">\(\le\)</span> significance level), then the true slope is different from zero and hence least squares line is statistically significant.</p>
+</div>
 <div id="confidence-interval" class="section level4">
 <h4>Confidence Interval</h4>
+<ul>
+<li><span class="math inline">\(\beta_0\)</span></li>
+</ul>
+<p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true slope <span class="math inline">\((\beta_1)\)</span>:</p>
+<p><span class="math display">\[\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \sqrt{\frac{\hat\sigma^2}{S_{xx}}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \sqrt{\frac{MSE}{\sum (x_i-\bar{x})^2}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \left(\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\right)\]</span></p>
+<ul>
+<li><span class="math inline">\(\beta_1\)</span> <span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true intercept <span class="math inline">\((\beta_0)\)</span>:</li>
+</ul>
+<p><span class="math display">\[\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)\]</span></p>
+<ul>
+<li><span class="math inline">\(\sigma^2\)</span></li>
+</ul>
+<p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true error variance <span class="math inline">\((\sigma^2)\)</span>:</p>
+<p><span class="math display">\[\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]\]</span></p>
+<p>If <span class="math inline">\(T\sim t(df=\upsilon)\)</span>, then <span class="math inline">\(T^2\sim F(1,\upsilon)\)</span></p>
+<p>Therefore, test statistic (<span class="math inline">\(t_0\)</span>) for testing true slope (<span class="math inline">\(\beta_1\)</span>) different from zero and F test statistic (<span class="math inline">\(F_0\)</span>) in ANOVA for simple linear regression are related as</p>
+<p><span class="math display">\[t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0\]</span></p>
+<p>The t test has more flexibility than F test because,</p>
+<p>t test can be used when testing <span class="math inline">\(H_0:\ \beta_1=c\)</span> versus <span class="math inline">\(H_1:\ \beta_1\ne c\)</span> where c is NOT zero while F test can be used only when c=0</p>
+<p>t test can be used when it is a one-tailed test (such as <span class="math inline">\(H_1:\ \beta_1&gt;c\)</span> or <span class="math inline">\(H_1:\ \beta_1&lt;c\)</span> while F test can be used for only two-tailed test.</p>
 </div>
 <div id="goodness-of-fit" class="section level4">
 <h4>Goodness of fit</h4>
 </div>
 <div id="prediction" class="section level4">
 <h4>Prediction</h4>
+<p>2.4.2 Interval Estimation of the Mean Response &amp; 2.5 Prediction of New Observations</p>
+<p>One of the goals in regression analysis is to predict the response (y) for a given value/s of predictor/s (x).<br />
+Assume there are n pairs of observatin <span class="math inline">\((x_1,y_1),(x_2,y_2),...,(x_n,y_n)\)</span> to fit least squares simple linear regression model.<br />
+Let’s say we observe k number of new values of response (y) at a new value of predictor (x) denoted by <span class="math inline">\(x_0\)</span> where <span class="math inline">\(x_0\)</span> between minimum and maximum observed values of predictor (x).<br />
+Let <span class="math inline">\(\bar y_0|x_0=\bar y_0\)</span> be the true mean of k values of response at new value (x_0) of predictor.<br />
+Then<span class="math inline">\(\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0\)</span> is the estimated mean of k values of response at new value (<span class="math inline">\(x_0\)</span>)) of predictor using the fitted least squares model.<br />
+Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confidence</strong> interval for the <strong>MEAN</strong> response at a given new value (<span class="math inline">\(x_0\)</span>) of predictor is given by</p>
+<p><span class="math display">\[\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})}=\hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}\sqrt{MSE\left[\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}\]</span></p>
+<p>Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>prediction</strong> interval for a <strong>single value</strong> of response at a given new value (<span class="math inline">\(x_0\)</span>) of predictor is given by</p>
+<p><span class="math display">\[\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})}=\hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}\sqrt{MSE\left[1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}\]</span></p>
+<p>Where <span class="math inline">\(t_{\alpha/2}\)</span> is the critical value from t distribution with (n-2) degrees of freedom</p>
+</div>
+<div id="consider-the-random-variable-hat-y_0-bar-y_0-and-find-its-expected-value-and-variance." class="section level4">
+<h4>Consider the random variable <span class="math inline">\(\hat y_0-\bar y_0\)</span> and find its expected value and variance.</h4>
+<p>We know <span class="math inline">\(\hat\beta_1\)</span> and <span class="math inline">\(\hat\beta_1\)</span> have normal distributions. Therefore,</p>
+<p><span class="math display">\[\hat y=\hat\beta_0+\hat\beta_1x \sim N\]</span></p>
+<p>Similarly,</p>
+<p><span class="math display">\[\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0 \sim N\]</span></p>
+<p><span class="math display">\[\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t (df=n-2)\]</span></p>
+<p>The figure below is an output graph from SAS for the scatterplot of data in Computer Lab 1 with overlaid fitted model, 95% confidence interval for mean response, and 95% prediction interval for a single new observation.</p>
+<p>Be careful when predicting response for a given new value of predictor.</p>
+<p>-Do not extrapolate!</p>
 </div>
 </div>
 </div>

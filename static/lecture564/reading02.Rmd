@@ -14,106 +14,25 @@ knitr::opts_chunk$set(echo = TRUE)
 ## {.tabset .tabset-fade .tabset-pills}
 
 
-### 2.2.3 Estimation of $\sigma^2$
-`2018.10.3`
-$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}$$
-$$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=$$
+### 2.10 Regression through the origin
 
-$$E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}$$
+There are situations where we know that intercept of the simple linear regression model is zero. Then we fit the model with intercept,$\beta_0=0$ so the line goes through origin (0,0). 
 
-$$E[S_{yy}]=(n-1)\sigma^2+\hat\beta_1^2S_{xx}$$
+$$y_i=\beta_1x_i+\epsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)$$
+Find the least squares estimator of slope ($\beta_1$) for the simple linear regression model through origin.
 
-$$E[SSE]=E[S_{yy}]-E[SSR]=(n-2)\sigma^2$$
+$$\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$$
 
-$$E[MSE]=\frac{E[SSE]}{n-2}=\frac{\sigma^2(n-2)}{n-2}=\sigma^2$$
+$$E(\hat\beta_1)==\beta_1$$
 
-### 2.3 Hypothesis Testing on the Slope and Intercept
+$$E(y_i)=\beta_0+\hat\beta_1x_i$$ is unbiased;
+$$Var(\hat\beta_1)==\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
 
-`2018.10.5`
+$$se(\hat{\beta_1})=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$$
 
-Recall: Under the assumptions about random errors of simple linear regression model,
+$$\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$$
 
-$$\hat{\beta_0}\sim N\bigg(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\bigg)=N\left(\beta_0,\dfrac{\sigma^2}{n}\right)\implies\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)$$
-
-$$\hat{\beta_1}\sim N(\beta_1,\dfrac{\sigma^2}{S_{xx}})=N\left(\beta_1,\dfrac{\sigma^2}{\sum_{i=1}^n (x_i-\bar{x})^2}\right)\implies\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)$$
-
-Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
-
-$$\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)}$$
-
-#### 2.3.1 Use of the Tests
+Where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
 
 
-$$H_0:\beta_1=\beta_{10}$$
 
-$$H_A:\beta_1\neq \beta_{10}$$
-
-$$t=\frac{\hat{\beta_1}-\beta_{10}}{se(\beta_1)}=
-\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/S_{xx}}}=
-\frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
-
-#### 2.3.2 Testing Significance of Regression
-
-
-$$H_0:\beta_1=0$$
-
-$$H_A:\beta_1\ne0$$
-
-$$t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
-
-#### 2.3.3 Analysis of Variance
-Partitioning the Total Variability in the response (y_i’s)
-<figure>
-The total variability in the ’s is measured by
-
-$$SST=\sum_{i=1}^n(y_i-\bar y)^2$$
-
-Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
-$$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies$$
-
-|$\sum_{i=1}^n(y_i-\bar y)^2$|$\sum_{i=1}^n(y_i-\hat y_i)^2$|$\sum_{i=1}^n(\hat y_i-\bar y)^2$||
-|---|---|---|---|
-|SST=|SSE+|SSR|where SSR=$\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$|
-|dfT=|dfE+|dfR||
-|n-1=|n-2+|2-1||
-
-Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
-For example, the df of SST gives the number of data values need to know if the mean of the data is known.
-
-The mean square (MS) of each sum of square (SS) is computed by
-
-$$MS=\frac{SS}{df}$$
-
-and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
-
-The ANOVA is useful when testing about the true slope in simple linear regression analysis.
-
-$$H_0:\beta_1=0;\quad H_1:\beta_1\ne0$$
-
-Appendix C.3 shows that
-
-$$\dfrac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}=\sim \chi^2_{(n-2)}$$
-
-and if $\beta_1=0$, then
-
-$$\dfrac{dfR\times MSR}{\sigma^2}=\dfrac{SSR/dfR}{\sigma^2}=\dfrac{SSR/1}{\sigma^2}=\sim \chi^2_{(1)}$$
-
-$$\because E(MSR)=\sigma^2+\beta_1^2S_{xx}=\sigma^2+\beta_1S_{xy}$$
-
-Further, SSE and SSR are independent.
-
-Therefore, by definition of F distribution
-
-$$\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/1}{SSE/(n-2)}=\frac{MSR}{MSE}\sim F_{(1,(n-2))}$$
-
-The F test statistic ($F_0$) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.
-
-Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression
-
-Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
----|---|---|---|---|---
-Model(Regresion)|$SSR=\hat\beta_1S{xy}$|1|$MSR=\frac{SSR}1$|$\frac{MSR}{MSE}$|$P(F>F_0)$
-Error(Residual)|$SSE=SST-SSR$|n-2|$MSE=\frac{SSE}{n-2}$||
-Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2$|n-1|||
-
-If the test statistic is much larger than 1 ($F_0>F(\alpha,1,n-2)$) (or p-value $\le$ significance level), then the true slope is different from zero and hence least squares line is statistically significant.

@@ -1,6 +1,6 @@
 ---
-title: "2.4 Interval Estimation"
-subtitle: "STAT 564 Week 3"
+title: "STAT 565"
+subtitle: "Design & Analysis of Experiments"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: 
   html_document: 
@@ -13,10 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## {.tabset .tabset-fade .tabset-pills}
-
-`2018.10.8 Lab1`
-
-`2018.10.10`
 
 ### Example
 
@@ -76,102 +72,5 @@ $$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=4.1\pm3.182\times2.1917=(-2.874
 
  > Since zero is inside thsi interval, ture intercept ($\beta_0$) can be zero with 95% confidence.
 
-### 2.4.1 Confidence Intervals on $\beta_0,\ \beta_1$, and $\sigma^2$
-
-> $100(1-\alpha)%$ Confidence Interval for the true slope $(\beta_1)$:
-
-$$\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \sqrt{\frac{\hat\sigma^2}{S_{xx}}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \sqrt{\frac{MSE}{\sum (x_i-\bar{x})^2}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \left(\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\right)$$
-
-> $100(1-\alpha)%$ Confidence Interval for the true intercept $(\beta_0)$:
-
-$$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)$$
-
-> $100(1-\alpha)%$ Confidence Interval for the true error variance $(\sigma^2)$:
-
-$$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]$$
-
-> If $T\sim t(df=\upsilon)$, then $T^2\sim F(1,\upsilon)$
-
-Therefore, test statistic ($t_0$) for testing true slope ($\beta_1$) different from zero and F test statistic ($F_0$) in ANOVA for simple linear regression are related as
-
-$$t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0$$
-
-The t test has more flexibility than F test because,  
-
-> t test can be used when testing $H_0:\ \beta_1=c$ versus $H_1:\ \beta_1\ne c$ where c is NOT zero while F test can be used only when c=0
-
-> t test can be used when it is a one-tailed test (such as $H_1:\ \beta_1>c$ or $H_1:\ \beta_1<c$ while F test can be used for only two-tailed test.
-
-### 2.4.2 Interval Estimation of the Mean Response & 2.5 Prediction of New Observations
-
-One of the goals in regression analysis is to predict the response (y) for a given value/s of predictor/s (x).  
-Assume there are n pairs of observatin $(x_1,y_1),(x_2,y_2),...,(x_n,y_n)$ to fit least squares simple linear regression model.    
-Let’s say we observe k number of new values of response (y) at a new value of predictor (x) denoted by $x_0$ where $x_0$ between minimum and maximum observed values of predictor (x).  
-Let $\bar y_0|x_0=\bar y_0$ be the true mean of k values of response at new value (x_0) of predictor.   
-Then$\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0$ is the estimated mean of k values of response at new value ($x_0$)) of predictor using the fitted least squares model.   
-Therefore, $100(1−\alpha)%$ **confidence** interval for the **MEAN** response at a given new value ($x_0$) of predictor is given by
-
-$$\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})}=\hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}\sqrt{MSE\left[\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$$
-
-Therefore, $100(1−\alpha)%$ **prediction** interval for a **single value** of response at a given new value ($x_0$) of predictor is given by
-
-$$\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})}=\hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}\sqrt{MSE\left[1+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$$
-
-> Where $t_{\alpha/2}$ is the critical value from t distribution with (n-2) degrees of freedom
-
-#### Consider the random variable $\hat y_0-\bar y_0$ and find its expected value and variance.
 
 
-We know $\hat\beta_1$ and $\hat\beta_1$ have normal distributions. Therefore,
-
-$$\hat y=\hat\beta_0+\hat\beta_1x \sim N$$
-
-Similarly,
-
-$$\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0 \sim N$$
-
-$$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t (df=n-2)$$
-
-
-
-The figure below is an output graph from SAS for the scatterplot of data in Computer Lab 1 with overlaid fitted model, 95% confidence interval for mean response, and 95% prediction interval for a single new observation.
-
-Be careful when predicting response for a given new value of predictor.
-
--Do not extrapolate!
-
-### 2.6 Coefficient of Determination
-
-If the fitted model is statistically significant, we expect
-
--Definition
-
-> Coefficient of Determination $=R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$
-
-> Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
-
--The coefficient of variation and correlation coefficient are related
-
-$$|Correlation Coefficient|=|r|=\sqrt R^2=\sqrt {Coefficient of Determination}$$
-
--Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
-
-### 2.10 Regression through the origin
-
-There are situations where we know that intercept of the simple linear regression model is zero. Then we fit the model with intercept,$\beta_0=0$ so the line goes through origin (0,0). 
-
-$$y_i=\beta_1x_i+\epsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)$$
-Find the least squares estimator of slope ($\beta_1$) for the simple linear regression model through origin.
-
-$$\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$$
-
-$$E(\hat\beta_1)==\beta_1$$
-
-$$E(y_i)=\beta_0+\hat\beta_1x_i$$ is unbiased;
-$$Var(\hat\beta_1)==\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
-
-$$se(\hat{\beta_1})=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$$
-
-$$\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$$
-
-Where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
