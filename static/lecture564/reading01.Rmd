@@ -21,7 +21,7 @@ $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
 
 #### Multiple Regression
 
-$$y_i=\beta_0+\beta_1x_i1+\beta_2x_i2+..+\beta_kx_ik+\varepsilon_i=\beta_0+\sum_{\beta_j}x_ij+\varepsilon_i$$
+$$y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}+..+\beta_kx_{ik}+\varepsilon_i=\beta_0+\sum_{\beta_j}x_{ij}+\varepsilon_i$$
 
 $$\begin{pmatrix}
   y_1 \\ y_2 \\ \vdots  \\ y_n 
@@ -40,8 +40,12 @@ $$\begin{pmatrix}
  \end{pmatrix}$$
 $$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n$$
 
+where 0 is a $n\times1$ vector of zero and $\mathbf{I}$ is a $n\times n$ identity matrix.
+
 #### Assumptions
- Gauss Markov Theorem
+
+Gauss Markov Theorem
+ 
 - [1]linear relationship between x,y;
 - [2]$E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
 - [3]homoscedasticity
@@ -60,6 +64,8 @@ $$\text{Sample squares}\quad S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{
 $$c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1$$
 
 $$\text{Corrected sum of squares}\quad SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2=SSR+SSE$$
+
+$$$$
 
 $$\text{Sample squares}\quad S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}=Var(y)$$
 
@@ -101,8 +107,7 @@ $$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}
 
 -Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
 
-### Estimation {.tabset .tabset-fade .tabset-pills}
-
+### Estimation 
 
 #### Least-Suqares Estimation of Parameters (Coefficients)
 
@@ -110,7 +115,11 @@ $$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}
 
 - Residual Sum of Squares
 
-$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2$$
+$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2$$
+
+$$=\sum_{i=1}^n[(y_i-\bar y)-\hat{\beta_1}(x_i-\bar x)]^2=\sum_{i=1}^n(y_i-\bar y)^2-2\hat{\beta_1}\sum_{i=1}^n(y_i-\bar y)(x_i-\bar x)+\sum_{i=1}^n(x_i-\bar x)^2=S_{yy}-2\hat\beta_1^2S_{xy}+\hat\beta_1^2S_{xx}$$
+
+$$=\mathbf{S_{yy}-\hat\beta_1^2S_{xx}}=S_{yy}-\hat\beta_1S_{xy}$$
 
 $$=(Y-X\beta)'(Y-X\beta)=YY'-2Y'X\beta+\beta'X'X\beta$$$
 
@@ -129,6 +138,10 @@ $$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\qu
 
 $$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
 $$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
+
+There seems to be a decreasing (negative) medium approximately linear relationship.
+
+The average y increases by $\beta_1$ units as the x increases by 1 unit.
 
 $$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i=X\hat\beta=X(X'X)^{-1}X'Y=HY$$
 
@@ -157,32 +170,81 @@ $$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
 
 $$Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}$$
 
-$$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$$
+$$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]$$
+$$=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$$
 
-#### Standard Deviation (Error)
+- Standard Deviation (Error)
+
+$$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
+$$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
 
 $$\frac{\sigma^2}{n}$$
 
-#### Error Variance
-
+#### Estimation of Variance
 
 
 $$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
 
+$$\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)=S_{\varepsilon_i\varepsilon_i}=(n-1)S_\varepsilon^2;\quad E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$$
 
+$$\mathbf{S_{yy}}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2$$
+$$=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$$
 
-$$E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$$
+$$E[SST]=\beta_1^2S_{xx}+2\beta_1\sum_{i=1}^n(x_i-\bar x)(E[\varepsilon_i]-E[\bar\varepsilon_i])+E[(n-1)S_\varepsilon^2]=\mathbf{\beta_1^2S_{xx}+(n-1)\sigma^2}$$
+
 
 $$E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}$$
+$$E[\hat\beta_1^2]=Var(\hat\beta_1)-E[\hat\beta_1]^2=\frac{\sigma^2}{S_xx}+\beta_1^2$$
 
-$$E[S_{yy}]=(n-1)\sigma^2+\hat\beta_1^2S_{xx}$$
+$$E[SSE]=E[\mathbf{S_{yy}}]-S_{xx}E[\hat\beta_1^2]=(n-2)\sigma^2$$
 
-$$E[SSE]=E[S_{yy}]-E[SSR]=(n-2)\sigma^2$$
-
-$$E[MSE]=\frac{E[SSE]}{n-2}=\frac{\sigma^2(n-2)}{n-2}=\sigma^2$$
-
+$$E[MSE]=\sigma^2=Var(y_i)=Var(\varepsilon)$$
+MSE is an unbiased estimator for error variance
 
 #### Special Cases
+
+- intercept known
+
+$y=\beta_0+\hat\beta_1x+\varepsilon$;
+
+$Let SSE=\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2$;
+
+$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$;
+
+$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$;
+
+$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$;
+
+$E(\hat\beta_1)=E\left[\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right]=\frac1{\sum_{i=1}^nx_i^2}E\left[\sum_{i=1}^nx_i(\beta_1x_i+\varepsilon)\right]=\frac{\beta_1\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i}{\sum_{i=1}^nx_i^2}E[\varepsilon]=\beta_1$ is unbiased;
+
+Because $Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0,for\ {i}\ne{j}$ and
+$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$ 
+
+Therefore $Var(\hat\beta_1)=Var\left(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i-\sum_{i=1}^n\beta_0x_i)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i)=\frac{\sum_{i=1}^nx_i^2}{(\sum_{i=1}^nx_i^2)^2}Var(y_i)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$;
+
+$se(\hat{\beta_1})=\sqrt{Var(\hat\beta_1)}=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$
+
+- slope known
+
+$y=\hat\beta_0+\beta_1x+\varepsilon$
+
+$Let SSE=\sum_{i=1}^n(y_i-\hat\beta_0-\beta_1x_i)^2$
+
+$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0}=-2\sum_{i=1}^n(y_i-\hat\beta_0-\beta_1x_i)=0$
+
+$n\hat\beta_0=\sum_{i=1}^ny_i-\beta_1\sum_{i=1}^nx_i$
+
+$\hat\beta_0=\bar y-\beta_1\bar x$
+
+$E(\hat\beta_0)=E\left[\frac1n\sum_{i=1}^ny_i-\frac1n\beta_1\sum_{i=1}^nx_i\right]=\frac1nE\left[\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon)-\beta_1\sum_{i=1}^nx_i\right]=\frac1n\sum_{i=1}^nE(\beta_0+\beta_1x_i)+E(\varepsilon)-\beta_1\sum_{i=1}^nx_i=\beta_0$  is unbiased
+
+Because $Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0,for\ {i}\ne{j}$ and
+$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$ 
+
+Therefore $Var(\hat\beta_0)=\frac1{n^2}Var\left(\sum_{i=1}^ny_i-\beta_1\sum_{i=1}^nx_i\right)=\frac1{n^2}\sum_{i=1}^nVar(y_i)=\frac{\sigma^2}n$
+
+$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\frac{\sigma^2}n}=\sqrt{\frac{MSE}n}$
+
 
 - 2.10 Regression through the origin
 
@@ -193,10 +255,10 @@ Find the least squares estimator of slope ($\beta_1$) for the simple linear regr
 
 $$\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$$
 
-$$E(\hat\beta_1)==\beta_1$$
+$$E(\hat\beta_1)=\beta_1$$
 
 $$E(y_i)=\beta_0+\hat\beta_1x_i$$ is unbiased;
-$$Var(\hat\beta_1)==\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
+$$Var(\hat\beta_1)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
 
 $$se(\hat{\beta_1})=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$$
 
@@ -205,10 +267,7 @@ $$\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$$
 Where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
 
 
-
-
-
-### Test and inference {.tabset .tabset-fade .tabset-pills}
+### Test and inference 
 
 #### Hypothesis Test
 
@@ -237,6 +296,8 @@ $$t=\frac{\hat{\beta_1}-\beta_{10}}{se(\beta_1)}=
 \frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/S_{xx}}}=
 \frac{\hat{\beta_1}-\beta_{10}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
 
+Decision: Since the p-value$>(<)$significance level ($\alpha$=0.05), there is no enough evidence to conclude that the true slope is different from c (reject $H_0$ and conclude $H_1$ is true).
+
 - Testing Significance of Regression
 
 $$H_0:\beta_1=0$$
@@ -245,6 +306,7 @@ $$H_A:\beta_1\ne0$$
 
 $$t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
 
+There is strong (not enoygh ) evidence that the true slope of fitted model is significantly different from zero at 5% significance level because p value is much smaller than 0.05;
 
 #### 2.3.3 Analysis of Variance
 
@@ -304,6 +366,7 @@ Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2$|n-1|||
 
 If the test statistic is much larger than 1 ($F_0>F(\alpha,1,n-2)$) (or p-value $\le$ significance level), then the true slope is different from zero and hence least squares line is statistically significant.
 
+There is strong evidence that the fitted model is statistically significant at 5\% significance level because p value is much smaller than 0.05
 
 #### Confidence Interval
 
@@ -317,6 +380,10 @@ $$\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \
  $100(1-\alpha)%$ Confidence Interval for the true intercept $(\beta_0)$:
 
 $$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)$$
+
+Since zero is (not) inside this interval, true intercept can (not) be zero with $1-\alpha$ confidence.
+
+The 95% confidence interval (does not) contain zero. Therefore, we are 95% confidence that the true intercept is different from (can be) zero;
 
 - $\sigma^2$
 
@@ -368,15 +435,25 @@ Similarly,
 
 $$\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0 \sim N$$
 
-$$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t (df=n-2)$$
-
-
+$$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t_{df=n-2}$$
 
 The figure below is an output graph from SAS for the scatterplot of data in Computer Lab 1 with overlaid fitted model, 95% confidence interval for mean response, and 95% prediction interval for a single new observation.
 
 Be careful when predicting response for a given new value of predictor.
 
 -Do not extrapolate!
+
+estimated mean (point estimate) of response \textbf{(UNITS)} $\hat y_0=\hat{\beta_0}+\hat{\beta_1}x_0$ True mean $\bar y_0$
+k number of new values of response at a new value of predictor denoted by $x_0$ \textbf{without extapolation}.
+$se(\hat y_0)=\sqrt{MSE\left[(1)+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$;
+100(1−$\alpha$) \% confidence interval for the MEAN (a single value of) response at a given new value $x_0$ of predictor is
+$(\hat y_0) \hat{\beta_0}+\hat{\beta_1}x_0\pm t_{\alpha/2,n-2}se(\hat y_0)$;
+$E[\hat y_0-\bar y_0]=E[\hat{\beta_0}+\hat{\beta_1}x_0-\beta_0-\beta_1x_0-\frac1k\sum_{i=1}^k\varepsilon_i]=0$; 
+$\hat y_0$ is unbiased estimator of $\bar y_0$;
+
+$Var[\hat y_0-\bar y_0]=Var[\hat{\beta_0}+\hat{\beta_1}x_0-\beta_0-\beta_1x_0-\frac1k\sum_{i=1}^k\varepsilon_i]=Var[\bar y-\hat\beta_1\bar x+\hat{\beta_1}x_0-\frac1k\sum_{i=1}^k\varepsilon_i]=Var[\frac{\sum_{i=1}^ny_i}n-\sum_{i=1}^nc_iy_i(\bar x-x_0)-\frac1k\sum_{i=1}^k\varepsilon_i]=Var\Big[\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]y_i\Big]+Var[\sum_{i=1}^k\frac1k\varepsilon_i]-2Cov[y_i,\varepsilon_i]$
+Because $y_i$ and $\varepsilon_i$ are independent for new observations.
+$=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\varepsilon_i)=\sigma^2[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2]=\sigma^2[\frac1n+\frac{(\bar x-x_0)^2}{S_{xx}}+\frac1k]$
 
 
 ### Example
