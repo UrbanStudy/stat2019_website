@@ -4,7 +4,7 @@ description: "Basic concepts of regression analysis, matrix approach to linear r
 markup: "mmark"
 ---
 
-*Overall course goals:*
+*STAT564*
 In this course we focus on learning the various mathematical and statistical criteria used to build models, find the “best model”, check for model adequacy, alleviate, if possible, the problems so as to improve the model adequacy, estimate the parameters (quantities) of interest, and predict future outcomes. The corresponding formal tests of statistical inference are discussed. Case studies via computer application are used to motivate and illustrate the various techniques.
 
 ### Course info
