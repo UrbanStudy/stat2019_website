@@ -14,16 +14,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ## {.tabset .tabset-fade .tabset-pills}
 
 ### Model 
+response variable=parameters(coefficients).predictor+random error;
 
 #### Simple Regression
-
 $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
 
 #### Multiple Regression
 
-$$y_i=\beta_0+\beta_1x_i1+\beta_2x_i2+..+\beta_kx_ik+\varepsilon_i=\beta_0+\sum_{\beta_j}x_ij+\varepsilon_i, i=1,2,..n, \varepsilon_i\sim^{iid} N(0,\sigma^2) $$
-
-$$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n, \varepsilon\sim^{iid} N(0,\sigma^2\mathbf I) $$
+$$y_i=\beta_0+\beta_1x_i1+\beta_2x_i2+..+\beta_kx_ik+\varepsilon_i=\beta_0+\sum_{\beta_j}x_ij+\varepsilon_i$$
 
 $$\begin{pmatrix}
   y_1 \\ y_2 \\ \vdots  \\ y_n 
@@ -40,63 +38,71 @@ $$\begin{pmatrix}
  \begin{pmatrix}
   \varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n 
  \end{pmatrix}$$
+$$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n$$
 
 #### Assumptions
-Gauss Markov Theorem
-- [1]
-- [2]
-- [3]
-- [4]
-- [5]
-
-### Sum
+ Gauss Markov Theorem
+- [1]linear relationship between x,y;
+- [2]$E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
+- [3]homoscedasticity
+- [4]$Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$
+- [5]$\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$
 
 
-- Corrected sum of squares $S_{xx}$
-$$S_{xx}=\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i)^2/n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2$$
+#### Sum
 
-- Sample Variance
+$$\sum_{i=1}^n(x_i)=n\bar x;\quad \sum_{i=1}^n(y_i)=\sum_{i=1}^n\hat y=n\bar y$$
 
-$$S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}$$
+$$\text{Corrected sum of squares}\quad S_{xx}=\sum_{i=1}^nx_i^2-\frac{(\sum_{i=1}^nx_i)^2}n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2$$
 
-- $C_i$
+$$\text{Sample squares}\quad S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{S_{xx}}{n-1}=Var(x)$$
 
-$$c_i=\frac{x_i-\bar x}{S_{xx}}$$
+$$c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1$$
 
-$$\sum_{i=1}^nc_i=\sum_{i=1}^n\frac{x_i-\bar x}{S_{xx}}=\frac1{S_{xx}}\sum_{i=1}^n(x_i-\bar x)=\frac1{S_{xx}}(n\bar x-n\bar x)=0$$
+$$\text{Corrected sum of squares}\quad SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2=SSR+SSE$$
 
-- Corrected sum of squares $S_{yy}$
+$$\text{Sample squares}\quad S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}=Var(y)$$
 
-$$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2$$
-
+$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$$
 
 - Covariance
 
 $$S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$$
 
+$$Cov(x,y)=\sigma_{xy}=E[(x-\bar x)(y-\bar y)]=\frac{\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)}n=\frac{S_{xy}}n$$
 
+$Cov(x,a)=0; Cov(x,x)=Var(x)\equiv\sigma^2(x)\equiv\sigma_x^2$
 
-$$\sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}}$$
+$Cov(x,y)=Cov(y,x); Cov(ax,by)=abCov(x,y)$
 
-$$\sum_{i=1}^nc_ix_i=\frac1{S_{xx}}\sum_{i=1}^nx_i(x_i-\bar x)=\frac{S_{xx}}{S_{xx}}=1$$
+$Cov(x+a,y+b)=Cov(x,y)$
+
+$Cov(a_1x_1+a_2x_2, b_1y_1+b_2y_2)=a_1b_1Cov(x_1,y_1)+a_1b_2Cov(x_1,y_2)+a_2b_1Cov(x_2,y_1)+a_2b_2Cov(x_2,y_2)$
+
+$Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$
+
+$Cov(\bar y,\hat\beta_1) = 0$
+
+- Correlation Coefficient
+
+$$|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}Var{y}}}=\frac{Cov(x,y)}{S_xS_y}=\frac{Cov(\hat\beta_0,\hat\beta_1)}{se(\hat\beta_0)se(\hat\beta_1)}$$
 
 - 2.6 Coefficient of Determination
 
 If the fitted model is statistically significant, we expect
 
--Definition
-
- Coefficient of Determination $=R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$
+$$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$$
 
  Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
 
 -The coefficient of variation and correlation coefficient are related
 
-$$|Correlation Coefficient|=|r|=\sqrt R^2=\sqrt {Coefficient of Determination}$$
+
 
 -Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
 
 ### Estimation {.tabset .tabset-fade .tabset-pills}
+
 
 #### Least-Suqares Estimation of Parameters (Coefficients)
 
@@ -104,20 +110,29 @@ $$|Correlation Coefficient|=|r|=\sqrt R^2=\sqrt {Coefficient of Determination}$$
 
 - Residual Sum of Squares
 
-$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=0$$
+$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2$$
+
+$$=(Y-X\beta)'(Y-X\beta)=YY'-2Y'X\beta+\beta'X'X\beta$$$
+
 $$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
 $$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
+
+$$\frac{\partial{a'w}}{\partial{w}}=a;\quad \frac{\partial{w'Aw}}{\partial{w}}=2Aw$$
 
 - Normal Equation
 
 $$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
 
-$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
+$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\quad \mathbf{X'Y=X'X\beta}$$
 
 - Expected value
 
-$$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i$$
+$$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
 $$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
+
+$$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i=X\hat\beta=X(X'X)^{-1}X'Y=HY$$
+
+$$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
 
 - Unbiased estimators of regression coefficients
 
@@ -125,15 +140,19 @@ $$E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\va
 
 $$E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0$$
 
-
-
-
 #### Variancesand Estimation of $\sigma^2$
 
-`Assumption 3`
+As $n\rightarrow \infty,Var[\hat\beta_{0/1}]\rightarrow 0$;
+
+$\hat\beta_{0/1}$ are consistant estimators for $\beta_{0/1}$;
+
+$Var[ax,by]=a^2Var(x)+b^2Var(y)+2Cov(x,y)$
+ 
+`Assumption 3``Assumption 4`
+
+$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
 
 $$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
-
 
 
 $$Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}$$
@@ -146,16 +165,13 @@ $$\frac{\sigma^2}{n}$$
 
 #### Error Variance
 
-`Assumption 4`
 
-$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
-
-$$\quad \sum_{i=1}^ny_i=\sum_{i=1}^n\hat y$$
 
 $$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
 
-$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}$$
-$$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=$$
+
+
+$$E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$$
 
 $$E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}$$
 
@@ -166,9 +182,37 @@ $$E[SSE]=E[S_{yy}]-E[SSR]=(n-2)\sigma^2$$
 $$E[MSE]=\frac{E[SSE]}{n-2}=\frac{\sigma^2(n-2)}{n-2}=\sigma^2$$
 
 
+#### Special Cases
+
+- 2.10 Regression through the origin
+
+There are situations where we know that intercept of the simple linear regression model is zero. Then we fit the model with intercept,$\beta_0=0$ so the line goes through origin (0,0). 
+
+$$y_i=\beta_1x_i+\epsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)$$
+Find the least squares estimator of slope ($\beta_1$) for the simple linear regression model through origin.
+
+$$\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$$
+
+$$E(\hat\beta_1)==\beta_1$$
+
+$$E(y_i)=\beta_0+\hat\beta_1x_i$$ is unbiased;
+$$Var(\hat\beta_1)==\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
+
+$$se(\hat{\beta_1})=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$$
+
+$$\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$$
+
+Where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
+
+
+
+
+
 ### Test and inference {.tabset .tabset-fade .tabset-pills}
 
-#### Hypothesis Testing on the Slope and Intercept
+#### Hypothesis Test
+
+on the Slope and Intercept
 
 `Assumption 5`
 
@@ -176,7 +220,7 @@ $$\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\rig
 
 $$\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)$$
 
-`Assumption ?`
+`Assumption or distribution transform?`
 
 Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
 
@@ -294,10 +338,9 @@ The t test has more flexibility than F test because,
 
 
 
-#### Goodness of fit
-
 #### Prediction
-2.4.2 Interval Estimation of the Mean Response & 2.5 Prediction of New Observations
+
+- 2.4.2 Interval Estimation of the Mean Response & 2.5 Prediction of New Observations
 
 One of the goals in regression analysis is to predict the response (y) for a given value/s of predictor/s (x).  
 Assume there are n pairs of observatin $(x_1,y_1),(x_2,y_2),...,(x_n,y_n)$ to fit least squares simple linear regression model.    
@@ -314,7 +357,7 @@ $$\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(1+\frac1n+\frac{(x_0-\bar x)^2}{S
 
  Where $t_{\alpha/2}$ is the critical value from t distribution with (n-2) degrees of freedom
 
-#### Consider the random variable $\hat y_0-\bar y_0$ and find its expected value and variance.
+- Consider the random variable $\hat y_0-\bar y_0$ and find its expected value and variance.
 
 
 We know $\hat\beta_1$ and $\hat\beta_1$ have normal distributions. Therefore,
@@ -334,3 +377,62 @@ The figure below is an output graph from SAS for the scatterplot of data in Comp
 Be careful when predicting response for a given new value of predictor.
 
 -Do not extrapolate!
+
+
+### Example
+
+Consider the following data set, in which the variables of interest are x=conmmuting distance(miles) and y=commuting time (min).  
+
+
+x|5|10|15|20|25 
+---|---|---|---|---|--- 
+y|8|16|22|23|31 
+$\hat y=4.1+1.06x$|9.4|14.7|20|25.3|30.6 
+$e^2=(y-\hat y)^2$|1.96|1.69|4|5.29|0.16 
+
+
+$$\hat\sigma^2=MSE=\frac{SSE}{n-2}=\frac{\sum_1^n(y-\hat y)^2}{n-2}=\frac{13.1}{5-2}=4.367 $$
+
+(a) Compute the values of ANOVA table and test the significance of simple linear regression model for these data.
+
+$$n=5,\quad \bar y=20,\quad \sum y_i^2=2294,\quad \hat\sigma^2=4.367,\quad S{xy}=265,\quad S{xx}=250,\quad \hat\beta_1=1.06$$
+
+
+Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
+---|---|---|---|---|---
+Model(Regresion)|$\hat\beta_1S{xy}=1.06\times265=280.9$|1|$\frac{280.9}1$|$\frac{280.9}{4.367}=64.328$|$P(F>64.328)\approx0.01$
+Error(Residual)|SST-SSR=294-280.9=13.1|n-2=5-2=3|$\frac{13.1}3=4.3667$||
+Total|$\sum(y_i-\bar y)^2=\sum{y_i^2}-n\bar y^2=2294-5\times20^2=294$|n-1=4|||
+
+At 5% significance level, the fitted model is significant because P-value<0.05.
+
+#### Ex 2 Contd Consider the following data set, in which the variables of interest are x and y.
+
+ - [a] Test whether the true slope of the simple linear regression model is significantly different from zero.
+
+$$H_0:\ \beta_1=0,\quad H_1: \beta_1\ne0$$
+
+$$Test\ statistic: t_0=\frac{\hat\beta_1-0}{se(\hat\beta_1)}=\frac{\hat\beta_1}{se(\hat\beta_1)}=\frac{1.06}{0.1322}=8.02$$
+
+$$se(\hat\beta_1)=\sqrt \frac{\hat\sigma^2}{S{xx}}=\sqrt{\frac{4.367}{250}}=0.1322$$
+
+$$df=n-2=5-2=3$$
+
+$$P-value=2\times P(t>|t_0|)2\times0.0025=0.005$$
+
+  P-value<0.05, therefore, ture slope is different from zero.
+
+ - [b] Estimate the 95% confidence interval for the true slope of the simple linear regression model.
+
+$$\because\ df=n-2=5-2=3,\quad t_{\frac\alpha2}=t_{0.025}=3.182$$
+
+
+$$\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=1.06\pm3.182\times0.1322=(0.639,1.481)$$
+
+ - [c] Estimate the 95% confidence interval for the true intercept of the simple linear regression model.
+
+$$se(\hat{\beta_0})=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=4.367(\frac15+\frac{15^2}{250})=2.1917$$
+
+$$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=4.1\pm3.182\times2.1917=(-2.874,11.074)$$
+
+  Since zero is inside thsi interval, ture intercept ($\beta_0$) can be zero with 95% confidence.
