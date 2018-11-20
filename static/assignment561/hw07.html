@@ -664,47 +664,6 @@ $(document).ready(function () {
 </tbody>
 </table>
 <p>Therefore, this function is an exponential family. The <span class="math inline">\(\theta\)</span> parameter vector lies on a 3D line.</p>
-<pre class="r"><code>library(plot_ly)
-library(reshape2)
-
-#pp &lt;- function (n,r=4) {
-    x &lt;- seq(-r*pi, r*pi, len=n)
-    df &lt;- expand.grid(x=x, y=x)
-    df$r &lt;- sqrt(df$x^2 + df$y^2)
-    df$z &lt;- cos(df$r^2)*exp(-df$r/6)
-    df
-#}
-#data_xyz &lt;- pp(100)
-#data_z &lt;- acast(data_xyz, x~y, value.var = &quot;z&quot;)
-#plot_ly(z = data_z,  type = &quot;surface&quot;)
-
-#x &lt;- seq(-pi, pi, len = 20)
-#y &lt;- seq(-pi, pi, len = 20)
-#g &lt;- expand.grid(x = x, y = y)
-#g$z &lt;- sin(sqrt(g$x^2 + g$y^2))
-#wireframe(z ~ x * y, g, drape = TRUE,
-#aspect = c(3,1), colorkey = TRUE)</code></pre>
-<pre class="r"><code>library(plotly)
-
-count &lt;- 3000
-
-x &lt;- c()
-y &lt;- c()
-z &lt;- c()
-c &lt;- c()
-
-for (i in 1:count) {
-  r &lt;- i * (count - i)
-  x &lt;- c(x, r * cos(i / 30))
-  y &lt;- c(y, r * sin(i / 30))
-  z &lt;- c(z, i)
-  c &lt;- c(c, i)
-}
-
-data &lt;- data.frame(x, y, z, c)
-
-p &lt;- plot_ly(data, x = ~x, y = ~y, z = ~z, type = 'scatter3d', mode = 'lines',
-        line = list(width = 4, color = ~c, colorscale = list(c(0,'#BA52ED'), c(1,'#FCB040'))))</code></pre>
 <hr />
 <p><strong>3.38</strong> Let Z be a random variable with pdf f(z). Define <span class="math inline">\(z_{\alpha}\)</span> to be a number that satisfies this relationship: <span class="math display">\[\alpha= P ( Z &gt; z_{\alpha}) =\int_{z_{\alpha}}^{\infty}f(z)dz.\]</span> Show that if X is a random variable with pdf (<span class="math inline">\(l/\sigma)f((x-\mu)/\sigma\)</span>) and <span class="math inline">\(x_{\alpha}=\sigma z_{\alpha}+\mu\)</span>, then <span class="math inline">\(P(X&gt;x_{\alpha})=\alpha\)</span>. (Thus if a table of <span class="math inline">\(z_{\alpha}\)</span> values were available, then values of <span class="math inline">\(x_{\alpha}\)</span> could be easily computed for any member of the location-scale family.)</p>
 <p>According to Theorem 3.5.6, f(x) is pdf, <span class="math inline">\(\mu,\sigma\in\mathbf{R}\)</span>, <span class="math inline">\(\sigma&gt;0\)</span>. X is a random variable with pdf (<span class="math inline">\(1/\sigma)f((x-\mu)/\sigma\)</span>) when and only when Z is a random variable with pdf f(z) and <span class="math inline">\(X=\sigma Z+\mu\)</span></p>
