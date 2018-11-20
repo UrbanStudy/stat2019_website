@@ -85,13 +85,17 @@ The value of $Cor(\mathbf{\hat\beta_1,\hat\beta_3})$ is close to negative 1. The
 
 (f) Without computing variance for all the estimators, explain which estimator is the least consistent.
 
-Among the estimators, $\hatβ_1$ has the the lagest variance $C_{22}=4.624$. $x_1$ has the least consistent. While $C_{11}=11.423$ is the lagest variance of parameter.  
+$C_{11}=11.423$ has the lagest value. $\hatβ_0$ has the the lagest variance and the least consistent among the estimators.
 
 (g) Without computing covariances for all the pairs of estiamtors, list the pair(s) of estimators that are negatively correlated. Provide a reason.
 
-According to the $(X'X)^{(-1)},\ C_{12},\ C_{13},\ C_{15},\ C_{23},\ C_{24},\ C_{45}$ are negative. 
-The negatively correlated pairs of parameters are $\hatβ_0$ and $\hatβ_1$, $\hatβ_0$ and $\hatβ_2$, $\hatβ_0$ and $\hatβ_4$, $\hatβ_1$ and $\hatβ_2$, $\hatβ_1$ and $\hatβ_3$, $\hatβ_3$ and $\hatβ_4$.
-Therefore, the negatively correlated pairs of estimators include $x_1$ and $x_2$, $x_1$ and $x_3$, $x_3$ and $x_4$.
+According to the $(X'X)^{(-1)}$,
+
+$C_{12},\ C_{13},\ C_{15},\ C_{23},\ C_{24},\ C_{45}$ are negative. 
+
+The negatively correlated pairs of parameters are
+
+$\hatβ_0$ and $\hatβ_1$, $\hatβ_0$ and $\hatβ_2$, $\hatβ_0$ and $\hatβ_4$, $\hatβ_1$ and $\hatβ_2$, $\hatβ_1$ and $\hatβ_3$, $\hatβ_3$ and $\hatβ_4$.
 
 ### Problem 4: 
 
@@ -172,7 +176,6 @@ sqrt(0.513*B[4,4])
 (0.513*B[2,4])/((sqrt(0.513*B[2,2]))*(sqrt(0.513*B[4,4])))
 ```
 
-
 ```{r, echo=TRUE, message = FALSE, collapse=TRUE}
 # Problem 4
 library(tidyverse)
@@ -188,10 +191,8 @@ model_2_8 <- lm(y ~ x2+x8, data=table_b1)
 
 # 3.1a/c/d t statistics for each hypotheses.
 model_2_7_8%>% summary()
-
 # 3.1b ANOVA for full model
 anova(model_2_7_8)
-
 # 3.1e ANOVA for reduced model on x7
 anova(model_2_8)
 # calculate partial F
@@ -210,15 +211,15 @@ sqrt(0.7863)
 confint(model_2_7_8, level = 0.95)
 # 3.3b calculate CI on the mean response variable
 model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "confidence", level=0.95)
-
-# visualizng
-# library(GGally)
-# ggpairs(data=table_b1[c(1,3,8,9)])
-
 ```
 
 
 ```{r, include = FALSE, collapse=TRUE}
+
+visualizng
+library(GGally)
+ggpairs(data=table_b1[c(1,3,8,9)])
+
 library(ggfortify)
 model_2_7_8 %>% autoplot()
 

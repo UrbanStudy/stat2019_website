@@ -9,8 +9,6 @@ output: html_document
 
 (a) normal family with either parameter $\mu$ or $\sigma$ known
 
-$$f(x)={h(x)}{c(\sigma^2)}e^{w_1(\sigma^2)t_1(x)}$$
-
 When $\mu$ is known, $f(x|\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}={h(x)}{c(\sigma^2)}e^{w_1(\sigma^2)t_1(x)}$
 
 $h(x)$ | $c(\sigma^2)$ | $w_1(\sigma^2)$ | $t_1(x)$
@@ -20,11 +18,11 @@ $h(x)$ | $c(\sigma^2)$ | $w_1(\sigma^2)$ | $t_1(x)$
 
 
 When $\sigma$ is known, 
-$$f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{x^2}{2\sigma^2}+\frac{x\mu}{\sigma^2}-\frac{\mu^2}{2\sigma^2}}=\frac{e^{-\frac{x^2}{2\sigma^2}}}{\sqrt{2\pi\sigma^2}}e^{\frac{x}{\sigma^2}\mu}e^{-\frac{\mu^2}{2\sigma^2}}$$
+$$f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{x^2}{2\sigma^2}+\frac{x\mu}{\sigma^2}-\frac{\mu^2}{2\sigma^2}}=e^{-\frac{x^2}{2\sigma^2}}\frac{e^{-\frac{\mu^2}{2\sigma^2}}}{\sqrt{2\pi\sigma^2}}e^{\frac{x}{\sigma^2}\mu}$$
 
 $h(x)$ | $c(\mu)$ | $w_1(\mu)$ | $t_1(x)$
 ------ | -------- | --------- | ------
- $e^{-\frac{\mu^2}{2\sigma^2}}$ | $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{\mu^2}{2\sigma^2}}$ | $\mu$ | $\frac{x}{\sigma^2}$
+ $e^{-\frac{x^2}{2\sigma^2}}$ | $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{\mu^2}{2\sigma^2}}$ | $\mu$ | $\frac{x}{\sigma^2}$
 
 ****
 (b) gamma family with either parameter $\alpha$ or $\beta$ known or both unknown
@@ -71,7 +69,7 @@ When $\alpha$ and $\beta$ are unknown,
 $$f(x|\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}=\frac{1}{B(\alpha,\beta)}e^{(\alpha-1)\ln x}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\beta)}e^{w_1(\alpha)t_1(x)+w_2(\beta)t_2(x)}$$
 
 $h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
------- | -------- | --------- | ------
+------ | ---- | ---- | ---- | ---- | -----
  $I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\alpha-1$ | $\ln x$ | $\beta-1$ | $\ln(1-x)$
 
 ****
@@ -79,7 +77,7 @@ $h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
 
 When $\lambda$ is known, 
 
-$$f(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}$$
+$$f(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(\lambda)}e^{w_1(\lambda)t_1(x)}$$
 
 $h(x)$ | $c(\lambda)$ | $w_1(\lambda)$ | $t_1(x)$
 ------ | -------- | --------- | ------
@@ -90,7 +88,7 @@ $\frac{1}{x!}I_{0,1,2..}(x)$ | $e^{-\lambda}$ | $\ln(\lambda)$ | $x$
 
 When $p$ is known, 
 
-$$f(x|p)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{r-1}(\frac{p}{1-p})^r(1-p)^{x}=\binom{x-1}{r-1}(\frac{p}{1-p})^re^{(1-p)\ln x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}$$
+$$f(x|p)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{r-1}(\frac{p}{1-p})^r(1-p)^{x}=\binom{x-1}{r-1}(\frac{p}{1-p})^re^{\ln(1-p) x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}$$
 
 $h(x)$ | $c(p)$ | $w_1(p)$ | $t_1(x)$
 ------ | -------- | --------- | ------
@@ -137,7 +135,7 @@ curve(exp(-((x-theta)^2))/(2*theta)/(sqrt(2*pi*theta)), 0, 10)
 $$f(x|\theta,a\theta^2)=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac1{2a\theta^2}(x-\theta)^2}=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}+\frac{x}{a\theta}-\frac{1}{2a}}=\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}}e^{\frac{x}{a\theta}}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)}$$
 
 $h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$
------- | ------------- | -------------- | ------
+------ | ---- | ---- | ---- | ---- | -----
  $I_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}},-\infty<\theta<\infty,a>0$ | $-\frac1{2a\theta^2}$ | $x^2$ | $\frac1{a\theta}$ | $x$
 
 Therefore, this function is an exponential family. The $\theta$ parameter vector lies on a parabola.
@@ -148,10 +146,10 @@ Therefore, this function is an exponential family. The $\theta$ parameter vector
 $$f(x|\alpha,\frac1{\alpha})=\frac{\alpha^{\alpha}}{\Gamma(\alpha)}e^{(\alpha-1)\ln{x}-\alpha{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)+w_2(\alpha)t_2(x)}$$
 
 $h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\alpha,\beta)$ | $t_2(x)$
------- | -------- | --------- | ------
+------ | ---- | ---- | ---- | ---- | -----
  $I_{(0,\infty)}(x)$ | $\frac{\alpha^{\alpha}}{\Gamma(\alpha)}$ | $\alpha-1$ | $\ln x$ | $-\alpha$ | $x$
 
-Therefore, this function is an exponential family. The $\theta$ parameter vector lies on a line.
+Therefore, this function is an exponential family. The $\alpha$ parameter vector lies on a line.
 
 ****
 (d) $f(x|\theta) = C exp (-(x-\theta)^4)$ , C a normalizing constant
@@ -159,7 +157,7 @@ Therefore, this function is an exponential family. The $\theta$ parameter vector
 $$f(x|\theta)=Ce^{-(x-\theta)^4}=Ce^{-x^4}e^{-\theta^4}e^{4x^3\theta}e^{-6x^2\theta^2}e^{4x\theta^3}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)+w_2(\theta)t_2(x)+w_3(\theta)t_3(x)}$$
 
 $h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$ | $w_3(\theta)$ | $t_3(x)$
------- | -------- | --------- | ------
+------ | ---- | ---- | ---- | ---- | ----- | ---- | -----
  $Ce^{-x^4}I_{(-\infty,\infty)}(x)$ | $e^{-\theta^4},-\infty<\theta<\infty$ | $4\theta$ | $x^3$ | $-6\theta^2$ | $x^2$ | $4\theta^3$ | $x$
 
 Therefore, this function is an exponential family. The $\theta$ parameter vector lies on a 3D line.

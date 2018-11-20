@@ -318,7 +318,6 @@ $(document).ready(function () {
 <ol style="list-style-type: lower-alpha">
 <li>normal family with either parameter <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\sigma\)</span> known</li>
 </ol>
-<p><span class="math display">\[f(x)={h(x)}{c(\sigma^2)}e^{w_1(\sigma^2)t_1(x)}\]</span></p>
 <p>When <span class="math inline">\(\mu\)</span> is known, <span class="math inline">\(f(x|\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}={h(x)}{c(\sigma^2)}e^{w_1(\sigma^2)t_1(x)}\)</span></p>
 <table>
 <colgroup>
@@ -350,7 +349,7 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
-<p>When <span class="math inline">\(\sigma\)</span> is known, <span class="math display">\[f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{x^2}{2\sigma^2}+\frac{x\mu}{\sigma^2}-\frac{\mu^2}{2\sigma^2}}=\frac{e^{-\frac{x^2}{2\sigma^2}}}{\sqrt{2\pi\sigma^2}}e^{\frac{x}{\sigma^2}\mu}e^{-\frac{\mu^2}{2\sigma^2}}\]</span></p>
+<p>When <span class="math inline">\(\sigma\)</span> is known, <span class="math display">\[f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{x^2}{2\sigma^2}+\frac{x\mu}{\sigma^2}-\frac{\mu^2}{2\sigma^2}}=e^{-\frac{x^2}{2\sigma^2}}\frac{e^{-\frac{\mu^2}{2\sigma^2}}}{\sqrt{2\pi\sigma^2}}e^{\frac{x}{\sigma^2}\mu}\]</span></p>
 <table>
 <colgroup>
 <col width="20%"></col>
@@ -368,7 +367,7 @@ $(document).ready(function () {
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(e^{-\frac{\mu^2}{2\sigma^2}}\)</span></td>
+<td><span class="math inline">\(e^{-\frac{x^2}{2\sigma^2}}\)</span></td>
 <td><span class="math inline">\(\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{\mu^2}{2\sigma^2}}\)</span></td>
 <td><span class="math inline">\(\mu\)</span></td>
 <td><span class="math inline">\(\frac{x}{\sigma^2}\)</span></td>
@@ -492,6 +491,8 @@ $(document).ready(function () {
 <th><span class="math inline">\(c(\alpha,\beta)\)</span></th>
 <th><span class="math inline">\(w_1(\alpha)\)</span></th>
 <th><span class="math inline">\(t_1(x)\)</span></th>
+<th><span class="math inline">\(w_2(\beta)\)</span></th>
+<th><span class="math inline">\(t_2(x)\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -500,6 +501,8 @@ $(document).ready(function () {
 <td><span class="math inline">\(\frac{1}{B(\alpha,\beta)}\)</span></td>
 <td><span class="math inline">\(\alpha-1\)</span></td>
 <td><span class="math inline">\(\ln x\)</span></td>
+<td><span class="math inline">\(\beta-1\)</span></td>
+<td><span class="math inline">\(\ln(1-x)\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -508,7 +511,7 @@ $(document).ready(function () {
 <li>Poisson family</li>
 </ol>
 <p>When <span class="math inline">\(\lambda\)</span> is known,</p>
-<p><span class="math display">\[f(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}\]</span></p>
+<p><span class="math display">\[f(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(\lambda)}e^{w_1(\lambda)t_1(x)}\]</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -532,7 +535,7 @@ $(document).ready(function () {
 <li>negative binomial family with r known, 0&lt;p&lt;1</li>
 </ol>
 <p>When <span class="math inline">\(p\)</span> is known,</p>
-<p><span class="math display">\[f(x|p)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{r-1}(\frac{p}{1-p})^r(1-p)^{x}=\binom{x-1}{r-1}(\frac{p}{1-p})^re^{(1-p)\ln x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}\]</span></p>
+<p><span class="math display">\[f(x|p)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{r-1}(\frac{p}{1-p})^r(1-p)^{x}=\binom{x-1}{r-1}(\frac{p}{1-p})^re^{\ln(1-p) x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}\]</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -593,10 +596,12 @@ $(document).ready(function () {
 <p><span class="math display">\[f(x|\theta,a\theta^2)=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac1{2a\theta^2}(x-\theta)^2}=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}+\frac{x}{a\theta}-\frac{1}{2a}}=\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}}e^{\frac{x}{a\theta}}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)}\]</span></p>
 <table>
 <colgroup>
-<col width="15%"></col>
-<col width="33%"></col>
-<col width="35%"></col>
-<col width="15%"></col>
+<col width="22%"></col>
+<col width="14%"></col>
+<col width="14%"></col>
+<col width="14%"></col>
+<col width="14%"></col>
+<col width="18%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -604,6 +609,8 @@ $(document).ready(function () {
 <th><span class="math inline">\(c(\theta)\)</span></th>
 <th><span class="math inline">\(w_1(\theta)\)</span></th>
 <th><span class="math inline">\(t_1(x)\)</span></th>
+<th><span class="math inline">\(w_2(\theta)\)</span></th>
+<th><span class="math inline">\(t_2(x)\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -612,6 +619,8 @@ $(document).ready(function () {
 <td><span class="math inline">\(\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}},-\infty&lt;\theta&lt;\infty,a&gt;0\)</span></td>
 <td><span class="math inline">\(-\frac1{2a\theta^2}\)</span></td>
 <td><span class="math inline">\(x^2\)</span></td>
+<td><span class="math inline">\(\frac1{a\theta}\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -622,12 +631,22 @@ $(document).ready(function () {
 </ol>
 <p><span class="math display">\[f(x|\alpha,\frac1{\alpha})=\frac{\alpha^{\alpha}}{\Gamma(\alpha)}e^{(\alpha-1)\ln{x}-\alpha{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)+w_2(\alpha)t_2(x)}\]</span></p>
 <table>
+<colgroup>
+<col width="22%"></col>
+<col width="14%"></col>
+<col width="14%"></col>
+<col width="14%"></col>
+<col width="14%"></col>
+<col width="18%"></col>
+</colgroup>
 <thead>
 <tr class="header">
 <th><span class="math inline">\(h(x)\)</span></th>
 <th><span class="math inline">\(c(\alpha,\beta)\)</span></th>
 <th><span class="math inline">\(w_1(\alpha)\)</span></th>
 <th><span class="math inline">\(t_1(x)\)</span></th>
+<th><span class="math inline">\(w_2(\alpha,\beta)\)</span></th>
+<th><span class="math inline">\(t_2(x)\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -636,10 +655,12 @@ $(document).ready(function () {
 <td><span class="math inline">\(\frac{\alpha^{\alpha}}{\Gamma(\alpha)}\)</span></td>
 <td><span class="math inline">\(\alpha-1\)</span></td>
 <td><span class="math inline">\(\ln x\)</span></td>
+<td><span class="math inline">\(-\alpha\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>Therefore, this function is an exponential family. The <span class="math inline">\(\theta\)</span> parameter vector lies on a line.</p>
+<p>Therefore, this function is an exponential family. The <span class="math inline">\(\alpha\)</span> parameter vector lies on a line.</p>
 <hr />
 <ol start="4" style="list-style-type: lower-alpha">
 <li><span class="math inline">\(f(x|\theta) = C exp (-(x-\theta)^4)\)</span> , C a normalizing constant</li>
@@ -647,10 +668,14 @@ $(document).ready(function () {
 <p><span class="math display">\[f(x|\theta)=Ce^{-(x-\theta)^4}=Ce^{-x^4}e^{-\theta^4}e^{4x^3\theta}e^{-6x^2\theta^2}e^{4x\theta^3}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)+w_2(\theta)t_2(x)+w_3(\theta)t_3(x)}\]</span></p>
 <table>
 <colgroup>
-<col width="20%"></col>
-<col width="27%"></col>
-<col width="31%"></col>
-<col width="20%"></col>
+<col width="16%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
+<col width="13%"></col>
+<col width="11%"></col>
+<col width="13%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -658,6 +683,10 @@ $(document).ready(function () {
 <th><span class="math inline">\(c(\theta)\)</span></th>
 <th><span class="math inline">\(w_1(\theta)\)</span></th>
 <th><span class="math inline">\(t_1(x)\)</span></th>
+<th><span class="math inline">\(w_2(\theta)\)</span></th>
+<th><span class="math inline">\(t_2(x)\)</span></th>
+<th><span class="math inline">\(w_3(\theta)\)</span></th>
+<th><span class="math inline">\(t_3(x)\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -666,6 +695,10 @@ $(document).ready(function () {
 <td><span class="math inline">\(e^{-\theta^4},-\infty&lt;\theta&lt;\infty\)</span></td>
 <td><span class="math inline">\(4\theta\)</span></td>
 <td><span class="math inline">\(x^3\)</span></td>
+<td><span class="math inline">\(-6\theta^2\)</span></td>
+<td><span class="math inline">\(x^2\)</span></td>
+<td><span class="math inline">\(4\theta^3\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
 </tr>
 </tbody>
 </table>
