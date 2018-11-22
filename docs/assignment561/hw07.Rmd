@@ -38,10 +38,10 @@ $h(x)$ | $c(\alpha)$ | $w_1(\alpha)$ | $t_1(x)$
 ------ | -------- | --------- | ------
  $e^{-\frac{x}{\beta}}$ | $\frac{1}{\Gamma(\alpha)\beta^{\alpha}}$ | $\alpha-1$ | $\ln x$
 
-When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}-\frac{x}{\beta}}={h(x)}{c(\beta)}e^{w_1(\beta)t_1(x)+w_2(\alpha,\beta)t_2(x)}$
+When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}-\frac{x}{\beta}}={h(x)}{c(\alpha,\beta)}e^{w_1(\beta)t_1(x)+w_2(\alpha)t_2(x)}$
 
-$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\alpha,\beta)$ | $t_2(x)$
------- | -------- | --------- | ------
+$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
+------ | ---- | ---- | ---- | ---- | -----
  $I_{(0,\infty)}(x)$ | $\frac{1}{\Gamma(\alpha)\beta^{\alpha}}$ | $\alpha-1$ | $\ln x$ | $-\frac1\beta$ | $x$
 
 ****
@@ -59,7 +59,7 @@ $h(x)$ | $c(\alpha)$ | $w_1(\alpha)$ | $t_1(x)$
 ------ | -------- | --------- | ------
  $(1-x)^{\beta-1}I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\alpha-1$ | $\ln x$
 
-When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}=\frac{1}{B(\alpha,\beta)}e^{(\alpha-1)\ln x}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\beta)}e^{w_1(\alpha)t_1(x)+w_2(\beta)t_2(x)}$
+When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}=\frac{1}{B(\alpha,\beta)}e^{(\alpha-1)\ln x}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\alpha,\beta)}e^{w_1(\alpha)t_1(x)+w_2(\beta)t_2(x)}$
 
 $h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
 ------ | ---- | ---- | ---- | ---- | -----
@@ -98,25 +98,9 @@ $f(x|\theta,\theta)=\frac{1}{\sqrt{2\pi\theta}}e^{-\frac1{2\theta}(x-\theta)^2}=
 
 $h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$
 ------ | ------------- | -------------- | ------
- $e^xI_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{\theta}{2}}}{\sqrt{2\pi\theta}},\theta>0$ | $-\frac1{2\theta}$ | $x^2$
+ $e^xI_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{\theta}{2}}}{\sqrt{2\pi\theta}},\theta>0$ | $\frac1{2\theta}$ | $-x^2$
 
-Therefore, this function is an exponential family. The $\theta$ parameter vector lies on a nonnegative real line.
-
-```{r, eval=FALSE, include=FALSE}
-curve(dnorm(10, mean = x, sd = x, log = FALSE), -100, 100)
-
-curve(pnorm(10, mean = x, sd = x, lower.tail = TRUE, log.p = FALSE), -100, 100)
-
-curve(qnorm(0.5, mean = x, sd = 2*x, lower.tail = TRUE, log.p = FALSE), -100, 100)
-
-curve(rnorm(x, mean = 0, sd = 1), -1000, 1000)
-
-
-
-curve(exp(-((x-theta)^2))/(2*theta)/(sqrt(2*pi*theta)), 0, 10)
-
-```
-
+Therefore, this function is an exponential family. The natural parameter is $\eta=-\frac1{2\theta}$ and the natural parameter space is {$\eta:\eta>0$}. The $\theta$ parameter vector lies on a nonnegative real line.
 
 ****
 `(b)` $n(\theta, a\theta^2)$, a known
@@ -125,9 +109,9 @@ $f(x|\theta,a\theta^2)=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac1{2a\theta^2}(x-
 
 $h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$
 ------ | ---- | ---- | ---- | ---- | -----
- $I_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}},-\infty<\theta<\infty,a>0$ | $-\frac1{2a\theta^2}$ | $x^2$ | $\frac1{a\theta}$ | $x$
+ $I_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}},-\infty<\theta<\infty,a>0$ | $\frac1{2a\theta^2}$ | $-x^2$ | $\frac1{a\theta}$ | $x$
 
-Therefore, this function is an exponential family. The $\theta$ parameter vector lies on a parabola.
+Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2)=(-\frac1{2a\theta^2},\frac1{a\theta})$ with natural parameter space{$():\eta_1<0,-\infty<\eta_2<\infty$}. The $\theta$ parameter vector lies on a parabola.
 
 ****
 `(c)` gamma($\alpha, 1/\alpha$)
@@ -138,7 +122,7 @@ $h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\alpha,\beta)$ | $t
 ------ | ---- | ---- | ---- | ---- | -----
  $I_{(0,\infty)}(x)$ | $\frac{\alpha^{\alpha}}{\Gamma(\alpha)}$ | $\alpha-1$ | $\ln x$ | $-\alpha$ | $x$
 
-Therefore, this function is an exponential family. The $\alpha$ parameter vector lies on a line.
+Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2)=(\alpha-1,-\alpha)$ with natural parameter space{$(\eta_1,\eta_2):\eta_1>-1,\eta_2<0$}. The $\alpha$ parameter vector lies on a line.
 
 ****
 `(d)` $f(x|\theta) = C exp (-(x-\theta)^4)$ , C a normalizing constant
@@ -147,9 +131,18 @@ $f(x|\theta)=Ce^{-(x-\theta)^4}=Ce^{-x^4}e^{-\theta^4}e^{4x^3\theta}e^{-6x^2\the
 
 $h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$ | $w_3(\theta)$ | $t_3(x)$
 ------ | ---- | ---- | ---- | ---- | ----- | ---- | -----
- $Ce^{-x^4}I_{(-\infty,\infty)}(x)$ | $e^{-\theta^4},-\infty<\theta<\infty$ | $4\theta$ | $x^3$ | $-6\theta^2$ | $x^2$ | $4\theta^3$ | $x$
+ $Ce^{-x^4}I_{(-\infty,\infty)}(x)$ | $e^{-\theta^4},-\infty<\theta<\infty$ | $\theta$ | $4x^3$ | $\theta^2$ | $-6x^2$ | $\theta^3$ | $4x$
 
-Therefore, this function is an exponential family. The $\theta$ parameter vector lies on a 3D line.
+Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2,\eta_3)=(4\theta,-6\theta^2, 4\theta^3)$ with natural parameter space{$(\eta_1,\eta_2,\eta_3): -\infty<\eta_1>\infty,\eta_2<0,-\infty<\eta_3>\infty$}. The $\theta$ parameter vector lies on a 3D line.
+
+```{r}
+library(plotly)
+x <- seq(-10,10, len = 18)
+plot_ly(mpg, x = ~x, y = ~x^2, z = ~x^3, width = 9) %>%
+  add_lines()
+```
+
+
 
 ```{r, eval=FALSE, include=FALSE}
 library(plot_ly)
@@ -195,7 +188,7 @@ for (i in 1:count) {
 
 data <- data.frame(x, y, z, c)
 
-p <- plot_ly(data, x = ~x, y = ~y, z = ~z, type = 'scatter3d', mode = 'lines',
+plot_ly(data, x = ~x, y = ~y, z = ~z, type = 'scatter3d', mode = 'lines',
         line = list(width = 4, color = ~c, colorscale = list(c(0,'#BA52ED'), c(1,'#FCB040'))))
 ```
 
@@ -205,6 +198,11 @@ p <- plot_ly(data, x = ~x, y = ~y, z = ~z, type = 'scatter3d', mode = 'lines',
 $$\alpha= P ( Z > z_{\alpha}) =\int_{z_{\alpha}}^{\infty}f(z)dz.$$
 Show that if X is a random variable with pdf ($l/\sigma)f((x-\mu)/\sigma$) and $x_{\alpha}=\sigma z_{\alpha}+\mu$, then $P(X>x_{\alpha})=\alpha$. (Thus if a table of $z_{\alpha}$ values were available, then values of $x_{\alpha}$ could be easily computed for any member of the location-scale family.)
 
-According to Theorem 3.5.6, f(x) is pdf, $\mu,\sigma\in\mathbf{R}$, $\sigma>0$. X is a random variable with pdf ($1/\sigma)f((x-\mu)/\sigma$) when and only when Z is a random variable with pdf f(z) and $X=\sigma Z+\mu$
+According to Theorem 3.5.6, f(x) is pdf, $\mu,\sigma\in\mathbf{R}$, $\sigma>0$. when and only when Z is a random variable with pdf f(z) and $X=\sigma Z+\mu$, X is a random variable with pdf ($1/\sigma)f((x-\mu)/\sigma$) 
 
-$$\therefore P(X>x_{\alpha})=P(\sigma Z+\mu>\sigma z_{\alpha}+\mu)= P(Z>z_{\alpha})=\alpha $$
+Beacuse $x_{\alpha}=\sigma z_{\alpha}+\mu$, $z_{\alpha}=\frac{x_{\alpha}-\mu}{\sigma}$
+
+
+$$f_X(\sigma z+\mu)|\frac{d(\sigma z+\mu)}{dz}|=\frac1{\sigma}f(\frac{\sigma z+\mu-\mu}{\sigma})\sigma=f_Z(z)$$
+
+$$P(X>x_{\alpha})=P(\sigma Z+\mu>\sigma z_{\alpha}+\mu)= P(Z>z_{\alpha})=\alpha $$
