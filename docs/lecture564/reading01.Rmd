@@ -16,6 +16,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Model 
 response variable=parameters(coefficients).predictor+random error;
+### Assumptions
+
+Gauss Markov Theorem
+ 
+- [1]linear relationship between x,y;
+- [2]$E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
+- [3]homoscedasticity
+- [4]$Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$
+- [5]$\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$
+
 
 ### Simple Regression
 $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
@@ -44,37 +54,39 @@ $$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n$$
 
 where 0 is a $n\times1$ vector of zero and $\mathbf{I}$ is a $n\times n$ identity matrix.
 
-### Assumptions
-
-Gauss Markov Theorem
- 
-- [1]linear relationship between x,y;
-- [2]$E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
-- [3]homoscedasticity
-- [4]$Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$
-- [5]$\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$
-
 
 
 ### Sum
 
+#### Sample means
+
 $$\sum_{i=1}^n(x_i)=n\bar x;\quad \sum_{i=1}^n(y_i)=\sum_{i=1}^n\hat y=n\bar y$$
 
-$$\text{Corrected sum of squares}\quad S_{xx}=\sum_{i=1}^nx_i^2-\frac{(\sum_{i=1}^nx_i)^2}n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2$$
+#### Corrected sum of squares
+
+$$S_{xx}=\sum_{i=1}^nx_i^2-\frac{(\sum_{i=1}^nx_i)^2}n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2$$
+
+$$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2=SSR+SSE$$
+
+
+
+
+#### Sample Variance and Standard Deviation
 
 $$\text{Sample squares}\quad S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{S_{xx}}{n-1}=Var(x)$$
 
 $$c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1$$
 
-$$\text{Corrected sum of squares}\quad SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2=SSR+SSE$$
+
 
 $$$$
 
-$$\text{Sample squares}\quad S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}=Var(y)$$
+$$S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}=Var(y)$$
 
-$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$$
 
-- Covariance
+
+
+#### Covariance
 
 $$S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$$
 
@@ -94,11 +106,11 @@ $Cov(\bar y,\hat\beta_1) = 0$
 
 $$Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A$$
 
-- Correlation Coefficient
+#### Correlation Coefficient
 
 $$|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}Var{y}}}=\frac{Cov(x,y)}{S_xS_y}=\frac{Cov(\hat\beta_0,\hat\beta_1)}{se(\hat\beta_0)se(\hat\beta_1)}$$
 
-- 2.6 Coefficient of Determination
+#### 2.6 Coefficient of Determination
 
 If the fitted model is statistically significant, we expect
 
@@ -115,11 +127,41 @@ $$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
 
 ## Estimation 
 
-### Least-Suqares Estimation of Parameters (Coefficients)
 
+#### total sum of squares
+
+Partitioning the Total Variability in the response ($y_i$’s)
+
+The total variability in the ’s is measured by
+
+$$SST=\sum_{i=1}^n(y_i-\bar y)^2$$
+
+Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
+$$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies$$
+
+|$\sum_{i=1}^n(y_i-\bar y)^2$|$\sum_{i=1}^n(y_i-\hat y_i)^2$|$\sum_{i=1}^n(\hat y_i-\bar y)^2$||
+|---|---|---|---|
+|SST=|SSE+|SSR|where SSR=$\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$|
+|dfT=|dfE+|dfR||
+|n-1=|n-2+|2-1||
+
+Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
+For example, the df of SST gives the number of data values need to know if the mean of the data is known.
+
+The mean square (MS) of each sum of square (SS) is computed by
+
+$$MS=\frac{SS}{df}$$
+
+and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
+
+#### Explained sum of squares
+
+
+
+$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$$
+
+#### Residual sum of squares
 `Assumption 2`
-
-- Residual Sum of Squares
 
 $$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2$$
 
@@ -133,6 +175,8 @@ $$\text{symmetric}\quad H'=H;\quad (I-H)'=I-H$$
 
 $$\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H$$
 
+### Least-Suqares
+
 $$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
 $$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
 
@@ -143,6 +187,8 @@ $$\frac{\partial{a'w}}{\partial{w}}=a;\quad \frac{\partial{w'Aw}}{\partial{w}}=2
 $$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
 
 $$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\quad \mathbf{X'Y=X'Xβ}$$
+
+
 
 - Expected value
 
@@ -159,6 +205,10 @@ $$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
 
 $$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
 
+### Estimation of Parameters (Coefficients)
+
+#### Mean of Parameters (Coefficients)
+
 - Unbiased estimators of regression coefficients
 
 $$E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\varepsilon_i]=\beta_0\frac{\sum_{i-1}^n(x_i-\bar x)}{S_{xx}}+{\beta_1}\frac{\sum_{i-1}^n(x_i-\bar x)x_i}{S_{xx}}+0=\beta_1$$
@@ -168,7 +218,7 @@ $$E(\hatβ)=E((X'X)^{-1}X'Y)=(X'X)^{-1}X'E(Y)=(X'X)^{-1}X'Xβ=β$$
 
 $$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
 
-### Variancesand Estimation of $\sigma^2$
+#### Variance of Parameters (Coefficients)
 
 As $n\rightarrow \infty,Var[\hat\beta_{0/1}]\rightarrow 0$;
 
@@ -190,7 +240,7 @@ $$=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar 
 
 $$Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ Var(\hatβ_{i-1})=\sigma^2C_{ii}$$
 
-- Standard Deviation (Error)
+#### Standard Error of Parameters
 
 $$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
 $$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
@@ -198,7 +248,7 @@ $$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\ba
 $$\frac{\sigma^2}{n}$$
 
 
-### Estimation of Variance
+### Estimation of Sum Square
 
 
 $$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
@@ -302,11 +352,14 @@ Where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
 
 
 ## Test and inference 
-### Hypothesis Test
 
-on the Slope and Intercept
+### Normal Distribution
 
 `Assumption 5`
+
+#### Hypothesis Test
+
+on the Slope and Intercept
 
 $$\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)$$
 
@@ -314,56 +367,13 @@ $$\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\fra
 
 $$\hat{β}\sim N\left(β,\sigma^2(X'X)^{-1}\right)$$
 
-`Assumption or distribution transform?`
+### Chi-squared Distribution
+
+`Estimat $\sigma^2$ using MSE`
 
 Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
 
 $$\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)};\quad \frac{[n-(k+1)]MSE}{\sigma^2}=\frac{SSE}{\sigma^2}=\frac{Y'(I-H)Y}{\sigma^2}\sim \chi^2_{df=rank(I-H)=n-(k+1)}$$
-
-- T Tests
-
-$$H_0:\beta_1=c;\quad H_A:\beta_1\ne c$$
-
-$$\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}$$
-
-$$t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}$$
-
-Decision: Since the p-value$>(<)$significance level ($\alpha$=0.05), there is no enough evidence to conclude that the true slope is different from c (reject $H_0$ and conclude $H_1$ is true).
-
-- Testing Significance of Regression
-
-$$H_0:\beta_1=0;\quad H_A:\beta_1\ne0$$
-
-$$t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
-
-There is strong (not enoygh ) evidence that the true slope of fitted model is significantly different from zero at 5% significance level because p value is much smaller than 0.05;
-
-
-### Analysis of Variance
-
-Partitioning the Total Variability in the response ($y_i$’s)
-
-The total variability in the ’s is measured by
-
-$$SST=\sum_{i=1}^n(y_i-\bar y)^2$$
-
-Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
-$$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies$$
-
-|$\sum_{i=1}^n(y_i-\bar y)^2$|$\sum_{i=1}^n(y_i-\hat y_i)^2$|$\sum_{i=1}^n(\hat y_i-\bar y)^2$||
-|---|---|---|---|
-|SST=|SSE+|SSR|where SSR=$\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$|
-|dfT=|dfE+|dfR||
-|n-1=|n-2+|2-1||
-
-Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
-For example, the df of SST gives the number of data values need to know if the mean of the data is known.
-
-The mean square (MS) of each sum of square (SS) is computed by
-
-$$MS=\frac{SS}{df}$$
-
-and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
 The ANOVA is useful when testing about the true slope in simple linear regression analysis.
 
@@ -383,40 +393,32 @@ $$\frac{dfR\times MSR}{\sigma^2}=\frac{kMSR}{\sigma^2}=\dfrac{SSR}{\sigma^2}=\si
 
 $$\because E(MSR)=\sigma^2+\beta_1^2S_{xx}=\sigma^2+\beta_1S_{xy}$$
 
-Further, SSE and SSR are independent.
+#### CI
+- $\sigma^2$
 
-Therefore, by definition of F distribution
+ $100(1-\alpha)%$ Confidence Interval for the true error variance $(\sigma^2)$:
 
-$$\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/k}{SSE/[n-(k+1)]}=\frac{MSR}{MSE}\sim F_{(k,[n-(k+1)])}$$
+$$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]$$
 
-$$SSE_{Full}=Y'Y-\hatβ'X'Y,\quad dfE_{Full}=n-(k+1)$$
+### T Distribution
 
-$$H_0:\ Tβ=0;\quad H_1:\ Tβ\ne0$$
-$$SSE_{Reduced}=\mathbf{Y'Y-\hatγ'Z'Y},\quad dfE_{Reduced}=n-(k+1-r)$$
+$$H_0:\beta_1=c;\quad H_A:\beta_1\ne c$$
 
-$$\frac{(SSE_{Reduced}-SSE_{Full})/r}{SSE_{Full}/[n-(k+1)]}\sim F_{(r,[n-(k+1)])}$$
+$$\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}$$
 
-$dfE_{Reduced}-dfE_{Full}=n-(k+1-r)-[n-(k+1)]=r$
+$$t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}$$
 
-additional (extra) sum of squares F test (partial F test), $dfE_{Reduced}-dfE_{Full}=r=1$
+Decision: Since the p-value$>(<)$significance level ($\alpha$=0.05), there is no enough evidence to conclude that the true slope is different from c (reject $H_0$ and conclude $H_1$ is true).
 
-$$\frac{SSE_{Reduced}-SSE_{Full}}{MSE_{Full}}\sim F_{(1,[n-(k+1)])}$$
+- Testing Significance of Regression
 
-The F test statistic ($F_0$) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.
+$$H_0:\beta_1=0;\quad H_A:\beta_1\ne0$$
 
-Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression
+$$t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
 
-Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
----|---|---|---|---|---
-Model(Regresion)|$SSR=\hat\beta_1S{xy}; \hatβX'Y-n\bar{y}^2$|1;k|$MSR=\frac{SSR}k$|$\frac{MSR}{MSE}$|$P(F>F_0)$
-Error(Residual)|$SSE=SST-SSR=Y'(I-H)Y$|n-(k+1)|$MSE=\frac{SSE}{n-(k+1)}$||
-Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2=(Y-\bar{y}\mathbf{1})'(Y-\bar{y}\mathbf{1})$|n-1|||
+There is strong (not enoygh ) evidence that the true slope of fitted model is significantly different from zero at 5% significance level because p value is much smaller than 0.05;
 
-If the test statistic is much larger than 1 ($F_0>F(\alpha,1,n-2)$) (or p-value $\le$ significance level), then the true slope is different from zero and hence least squares line is statistically significant.
-
-There is strong evidence that the fitted model is statistically significant at 5\% significance level because p value is much smaller than 0.05
-
-### Confidence Interval
+#### Confidence Interval (N~T)
 
 - $\beta_0$
 
@@ -433,28 +435,7 @@ Since zero is (not) inside this interval, true intercept can (not) be zero with 
 
 The 95% confidence interval (does not) contain zero. Therefore, we are 95% confidence that the true intercept is different from (can be) zero;
 
-- $\sigma^2$
-
- $100(1-\alpha)%$ Confidence Interval for the true error variance $(\sigma^2)$:
-
-$$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]$$
-
- If $T\sim t(df=\upsilon)$, then $T^2\sim F(1,\upsilon)$
-
-Therefore, test statistic ($t_0$) for testing true slope ($\beta_1$) different from zero and F test statistic ($F_0$) in ANOVA for simple linear regression are related as
-
-$$t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0$$
-
-The t test has more flexibility than F test because,  
-
- t test can be used when testing $H_0:\ \beta_1=c$ versus $H_1:\ \beta_1\ne c$ where c is NOT zero while F test can be used only when c=0
-
- t test can be used when it is a one-tailed test (such as $H_1:\ \beta_1>c$ or $H_1:\ \beta_1<c$ while F test can be used for only two-tailed test.
-
-
-
-
-### Prediction
+#### Prediction (N~T)
 
 - 2.4.2 Interval Estimation of the Mean Response & 2.5 Prediction of New Observations
 
@@ -506,6 +487,72 @@ $=Var[\frac{\sum_{i=1}^ny_i}n-\sum_{i=1}^nc_iy_i(\bar x-x_0)-\frac1k\sum_{i=1}^k
 
 Because $y_i$ and $\varepsilon_i$ are independent for new observations.
 $=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\varepsilon_i)=\sigma^2[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2]=\sigma^2[\frac1n+\frac{(\bar x-x_0)^2}{S_{xx}}+\frac1k]$
+
+
+
+
+
+
+
+### F Distribution
+
+#### Analysis of Variance
+
+The F test statistic ($F_0$) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.
+
+Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression
+
+Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
+---|---|---|---|---|---
+Model(Regresion)|$SSR=\hat\beta_1S{xy}; \hatβX'Y-n\bar{y}^2$|1;k|$MSR=\frac{SSR}k$|$\frac{MSR}{MSE}$|$P(F>F_0)$
+Error(Residual)|$SSE=SST-SSR=Y'(I-H)Y$|n-(k+1)|$MSE=\frac{SSE}{n-(k+1)}$||
+Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2=(Y-\bar{y}\mathbf{1})'(Y-\bar{y}\mathbf{1})$|n-1|||
+
+If the test statistic is much larger than 1 ($F_0>F(\alpha,1,n-2)$) (or p-value $\le$ significance level), then the true slope is different from zero and hence least squares line is statistically significant.
+
+There is strong evidence that the fitted model is statistically significant at 5\% significance level because p value is much smaller than 0.05
+
+
+
+Further, SSE and SSR are independent.
+
+Therefore, by definition of F distribution
+
+$$\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/k}{SSE/[n-(k+1)]}=\frac{MSR}{MSE}\sim F_{(k,[n-(k+1)])}$$
+
+$$SSE_{Full}=Y'Y-\hatβ'X'Y,\quad dfE_{Full}=n-(k+1)$$
+
+$$H_0:\ Tβ=0;\quad H_1:\ Tβ\ne0$$
+$$SSE_{Reduced}=\mathbf{Y'Y-\hatγ'Z'Y},\quad dfE_{Reduced}=n-(k+1-r)$$
+
+$$\frac{(SSE_{Reduced}-SSE_{Full})/r}{SSE_{Full}/[n-(k+1)]}\sim F_{(r,[n-(k+1)])}$$
+
+$dfE_{Reduced}-dfE_{Full}=n-(k+1-r)-[n-(k+1)]=r$
+
+additional (extra) sum of squares F test (partial F test), $dfE_{Reduced}-dfE_{Full}=r=1$
+
+$$\frac{SSE_{Reduced}-SSE_{Full}}{MSE_{Full}}\sim F_{(1,[n-(k+1)])}$$
+
+
+
+
+
+
+
+
+ If $T\sim t(df=\upsilon)$, then $T^2\sim F(1,\upsilon)$
+
+Therefore, test statistic ($t_0$) for testing true slope ($\beta_1$) different from zero and F test statistic ($F_0$) in ANOVA for simple linear regression are related as
+
+$$t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0$$
+
+The t test has more flexibility than F test because,  
+
+ t test can be used when testing $H_0:\ \beta_1=c$ versus $H_1:\ \beta_1\ne c$ where c is NOT zero while F test can be used only when c=0
+
+ t test can be used when it is a one-tailed test (such as $H_1:\ \beta_1>c$ or $H_1:\ \beta_1<c$ while F test can be used for only two-tailed test.
+
+
 
 
 
