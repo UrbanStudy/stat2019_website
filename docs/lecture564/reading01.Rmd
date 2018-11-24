@@ -15,26 +15,23 @@ knitr::opts_chunk$set(echo = TRUE)
 # {.tabset .tabset-fade .tabset-pills}
 
 ## Model 
-response variable=parameters(coefficients).predictor+random error;
-### Assumptions
+
+### Build Model
+response variable=parameters(coefficients).predictor+random error
+- Assumptions
 
 Gauss Markov Theorem
- 
-- [1]linear relationship between x,y;
-- [2]$E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
-- [3]homoscedasticity
-- [4]$Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$
-- [5]$\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$
 
+[1] Linear relationship between x,y;
+[2] $E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
+[3] Homoscedasticity
+[4] $Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$
+[5] $\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$
 
-### Simple Regression
+- Simple Regression
 $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
-
-
-### Multiple Regression
-
+- Multiple Regression
 $$y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}+..+\beta_kx_{ik}+\varepsilon_i=\beta_0+\sum_{\beta_j}x_{ij}+\varepsilon_i$$
-
 $$\begin{bmatrix}
   y_1 \\ y_2 \\ \vdots  \\ y_n 
  \end{bmatrix}_{n\times1} = 
@@ -54,81 +51,45 @@ $$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n$$
 
 where 0 is a $n\times1$ vector of zero and $\mathbf{I}$ is a $n\times n$ identity matrix.
 
+### From Observation
 
-
-### Sum
-
-#### Sample means
+- Sample means
 
 $$\sum_{i=1}^n(x_i)=n\bar x;\quad \sum_{i=1}^n(y_i)=\sum_{i=1}^n\hat y=n\bar y$$
 
-#### Corrected sum of squares
+- Sample Variance and Standard Deviation
+
+$$Var(x)=S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{S_{xx}}{n-1}$$
+$$Var(y)=S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}$$
+
+- Corrected sum of squares
 
 $$S_{xx}=\sum_{i=1}^nx_i^2-\frac{(\sum_{i=1}^nx_i)^2}n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2$$
 
-$$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2=SSR+SSE$$
-
-
-
-
-#### Sample Variance and Standard Deviation
-
-$$\text{Sample squares}\quad S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{S_{xx}}{n-1}=Var(x)$$
-
-$$c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1$$
-
-
-
-$$$$
-
-$$S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}=Var(y)$$
-
-
-
-
-#### Covariance
+$$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2$$
 
 $$S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$$
+$$c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1$$
+
+- Covariance
+
+$Cov(x,x)=Var(x)\equiv\sigma^2(x)\equiv\sigma_x^2$
 
 $$Cov(x,y)=\sigma_{xy}=E[(x-\bar x)(y-\bar y)]=\frac{\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)}n=\frac{S_{xy}}n$$
 
-$Cov(x,a)=0; Cov(x,x)=Var(x)\equiv\sigma^2(x)\equiv\sigma_x^2$
-
-$Cov(x,y)=Cov(y,x); Cov(ax,by)=abCov(x,y)$
-
-$Cov(x+a,y+b)=Cov(x,y)$
+$Cov(x,y)=Cov(y,x); Cov(ax,by)=abCov(x,y);Cov(x+a,y+b)=Cov(x,y)$
 
 $Cov(a_1x_1+a_2x_2, b_1y_1+b_2y_2)=a_1b_1Cov(x_1,y_1)+a_1b_2Cov(x_1,y_2)+a_2b_1Cov(x_2,y_1)+a_2b_2Cov(x_2,y_2)$
 
-$Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$
 
-$Cov(\bar y,\hat\beta_1) = 0$
 
-$$Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A$$
-
-#### Correlation Coefficient
+- Correlation Coefficient
 
 $$|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}Var{y}}}=\frac{Cov(x,y)}{S_xS_y}=\frac{Cov(\hat\beta_0,\hat\beta_1)}{se(\hat\beta_0)se(\hat\beta_1)}$$
 
-#### 2.6 Coefficient of Determination
+### Sum of Squares
 
-If the fitted model is statistically significant, we expect
-
-$$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$$
-
- Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
-
--The coefficient of variation and correlation coefficient are related
-
-$$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
-
--Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
-
-
-## Estimation 
-
-
-#### total sum of squares
+- Total Sum of Squares
 
 Partitioning the Total Variability in the response ($y_i$’s)
 
@@ -154,13 +115,12 @@ $$MS=\frac{SS}{df}$$
 
 and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
-#### Explained sum of squares
-
-
+- Explained sum of squares
 
 $$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$$
 
-#### Residual sum of squares
+- Residual sum of squares
+
 `Assumption 2`
 
 $$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2$$
@@ -174,6 +134,25 @@ $$=(Y-\hat Y)'(Y-\hat Y)=(Y-Xβ)'(Y-Xβ)=YY'-2Y'Xβ+β'X'Xβ=Y'(I-H)Y=Y'Y-\hatβ
 $$\text{symmetric}\quad H'=H;\quad (I-H)'=I-H$$
 
 $$\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H$$
+
+
+- 2.6 Coefficient of Determination
+
+If the fitted model is statistically significant, we expect
+
+$$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$$
+
+ Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
+
+-The coefficient of variation and correlation coefficient are related
+
+$$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
+
+-Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
+
+
+## Estimation 
+
 
 ### Least-Suqares
 
@@ -190,7 +169,7 @@ $$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\qu
 
 
 
-- Expected value
+### Expected value
 
 $$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
 $$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
@@ -205,7 +184,7 @@ $$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
 
 $$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
 
-### Estimation of Parameters (Coefficients)
+### Estimation of Mean
 
 #### Mean of Parameters (Coefficients)
 
@@ -216,36 +195,9 @@ $$E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\va
 $$E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0$$
 $$E(\hatβ)=E((X'X)^{-1}X'Y)=(X'X)^{-1}X'E(Y)=(X'X)^{-1}X'Xβ=β$$
 
+#### Mean of Response value
+
 $$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
-
-#### Variance of Parameters (Coefficients)
-
-As $n\rightarrow \infty,Var[\hat\beta_{0/1}]\rightarrow 0$;
-
-$\hat\beta_{0/1}$ are consistant estimators for $\beta_{0/1}$;
-
-$Var[ax,by]=a^2Var(x)+b^2Var(y)+2Cov(x,y)$
- 
-`Assumption 3``Assumption 4`
-
-$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
-
-$$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
-$$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$$
-
-$$Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}$$
-
-$$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]$$
-$$=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$$
-
-$$Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ Var(\hatβ_{i-1})=\sigma^2C_{ii}$$
-
-#### Standard Error of Parameters
-
-$$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
-$$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
-
-$$\frac{\sigma^2}{n}$$
 
 
 ### Estimation of Sum Square
@@ -282,6 +234,48 @@ $$E[MSE]=\sigma^2=Var(y_i)=Var(\varepsilon)$$
 MSE is an unbiased estimator for error variance
 
 $$\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}$$
+
+
+### Estimation of Variance
+
+#### Variance of Response vriable
+
+`Assumption 3``Assumption 4`
+
+$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
+
+$$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
+$$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$$
+
+#### Variance of Parameters (Coefficients)
+
+As $n\rightarrow \infty,Var[\hat\beta_{0/1}]\rightarrow 0$;
+
+$\hat\beta_{0/1}$ are consistant estimators for $\beta_{0/1}$;
+
+$Var[ax,by]=a^2Var(x)+b^2Var(y)+2Cov(x,y)$
+ 
+$$Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}$$
+
+$$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]$$
+$$=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$$
+
+$Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$
+
+$Cov(x,a)=0; Cov(\bar y,\hat\beta_1) = 0$
+
+$$Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A$$
+
+$$Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ Var(\hatβ_{i-1})=\sigma^2C_{ii}$$
+
+#### Standard Error of Parameters
+
+$$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
+$$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
+
+$$\frac{\sigma^2}{n}$$
+
+
 
 
 ### Special Cases

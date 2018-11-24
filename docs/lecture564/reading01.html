@@ -317,88 +317,64 @@ $(document).ready(function () {
 <h1></h1>
 <div id="model" class="section level2">
 <h2>Model</h2>
-<p>response variable=parameters(coefficients).predictor+random error; ### Assumptions</p>
+<div id="build-model" class="section level3">
+<h3>Build Model</h3>
+<p>response variable=parameters(coefficients).predictor+random error - Assumptions</p>
 <p>Gauss Markov Theorem</p>
+<p>[1] Linear relationship between x,y; [2] <span class="math inline">\(E(\varepsilon)=0\)</span>, <span class="math inline">\(Var(\varepsilon)=\sigma^2\)</span> [3] Homoscedasticity [4] <span class="math inline">\(Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}\)</span> [5] <span class="math inline">\(\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)\)</span></p>
 <ul>
-<li>[1]linear relationship between x,y;</li>
-<li>[2]<span class="math inline">\(E(\varepsilon)=0\)</span>, <span class="math inline">\(Var(\varepsilon)=\sigma^2\)</span></li>
-<li>[3]homoscedasticity</li>
-<li>[4]<span class="math inline">\(Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}\)</span></li>
-<li>[5]<span class="math inline">\(\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)\)</span></li>
-</ul>
-<div id="simple-regression" class="section level3">
-<h3>Simple Regression</h3>
-<p><span class="math display">\[y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n\]</span></p>
-</div>
-<div id="multiple-regression" class="section level3">
-<h3>Multiple Regression</h3>
-<p><span class="math display">\[y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}+..+\beta_kx_{ik}+\varepsilon_i=\beta_0+\sum_{\beta_j}x_{ij}+\varepsilon_i\]</span></p>
-<p><span class="math display">\[\begin{bmatrix}
-  y_1 \\ y_2 \\ \vdots  \\ y_n 
+<li>Simple Regression <span class="math display">\[y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n\]</span></li>
+<li>Multiple Regression <span class="math display">\[y_i=\beta_0+\beta_1x_{i1}+\beta_2x_{i2}+..+\beta_kx_{ik}+\varepsilon_i=\beta_0+\sum_{\beta_j}x_{ij}+\varepsilon_i\]</span> <span class="math display">\[\begin{bmatrix}
+y_1 \\ y_2 \\ \vdots  \\ y_n 
  \end{bmatrix}_{n\times1} = 
  \begin{bmatrix}
-  1 &amp; x_{1,1} &amp; x_{1,2} &amp; \cdots &amp; x_{1,k} \\
-  1 &amp; x_{2,1} &amp; x_{2,2} &amp; \cdots &amp; x_{2,k} \\
-  \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-  1 &amp; x_{n,1} &amp; x_{n,2} &amp; \cdots &amp; x_{n,k} 
+1 &amp; x_{1,1} &amp; x_{1,2} &amp; \cdots &amp; x_{1,k} \\
+1 &amp; x_{2,1} &amp; x_{2,2} &amp; \cdots &amp; x_{2,k} \\
+\vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+1 &amp; x_{n,1} &amp; x_{n,2} &amp; \cdots &amp; x_{n,k} 
  \end{bmatrix}_{n\times(k+1)}
  \begin{bmatrix}
-  \beta_0 \\ \beta_1 \\ \beta_2 \\ \vdots  \\ \beta_k 
+\beta_0 \\ \beta_1 \\ \beta_2 \\ \vdots  \\ \beta_k 
  \end{bmatrix}_{(k+1)\times1}+
  \begin{bmatrix}
-  \varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n 
- \end{bmatrix}_{n\times1}\]</span> <span class="math display">\[\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n\]</span></p>
+\varepsilon_1 \\ \varepsilon_2 \\ \vdots  \\ \varepsilon_n 
+ \end{bmatrix}_{n\times1}\]</span> <span class="math display">\[\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n\]</span></li>
+</ul>
 <p>where 0 is a <span class="math inline">\(n\times1\)</span> vector of zero and <span class="math inline">\(\mathbf{I}\)</span> is a <span class="math inline">\(n\times n\)</span> identity matrix.</p>
 </div>
-<div id="sum" class="section level3">
-<h3>Sum</h3>
-<div id="sample-means" class="section level4">
-<h4>Sample means</h4>
+<div id="from-observation" class="section level3">
+<h3>From Observation</h3>
+<ul>
+<li>Sample means</li>
+</ul>
 <p><span class="math display">\[\sum_{i=1}^n(x_i)=n\bar x;\quad \sum_{i=1}^n(y_i)=\sum_{i=1}^n\hat y=n\bar y\]</span></p>
-</div>
-<div id="corrected-sum-of-squares" class="section level4">
-<h4>Corrected sum of squares</h4>
+<ul>
+<li>Sample Variance and Standard Deviation</li>
+</ul>
+<p><span class="math display">\[Var(x)=S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{S_{xx}}{n-1}\]</span> <span class="math display">\[Var(y)=S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}\]</span></p>
+<ul>
+<li>Corrected sum of squares</li>
+</ul>
 <p><span class="math display">\[S_{xx}=\sum_{i=1}^nx_i^2-\frac{(\sum_{i=1}^nx_i)^2}n=\sum_{i=1}^nx_i^2-n\bar x^2=\sum_{i=1}^nx_i(x_i-\bar x)=\sum_{i=1}^n(x_i-\bar x)^2\]</span></p>
-<p><span class="math display">\[SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2=SSR+SSE\]</span></p>
-</div>
-<div id="sample-variance-and-standard-deviation" class="section level4">
-<h4>Sample Variance and Standard Deviation</h4>
-<p><span class="math display">\[\text{Sample squares}\quad S_x^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n-1}=\frac{S_{xx}}{n-1}=Var(x)\]</span></p>
-<p><span class="math display">\[c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1\]</span></p>
-<p>$$$$</p>
-<p><span class="math display">\[S_y^2=\frac{\sum_{i=1}^n(y_i-\bar y)^2}{n-1}=\frac{S_{yy}}{n-1}=Var(y)\]</span></p>
-</div>
-<div id="covariance" class="section level4">
-<h4>Covariance</h4>
-<p><span class="math display">\[S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)\]</span></p>
+<p><span class="math display">\[S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-\hat y_i)^2+\sum_{i=1}^n(\hat y_i-\bar y)^2\]</span></p>
+<p><span class="math display">\[S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)\]</span> <span class="math display">\[c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1\]</span></p>
+<ul>
+<li>Covariance</li>
+</ul>
+<p><span class="math inline">\(Cov(x,x)=Var(x)\equiv\sigma^2(x)\equiv\sigma_x^2\)</span></p>
 <p><span class="math display">\[Cov(x,y)=\sigma_{xy}=E[(x-\bar x)(y-\bar y)]=\frac{\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)}n=\frac{S_{xy}}n\]</span></p>
-<p><span class="math inline">\(Cov(x,a)=0; Cov(x,x)=Var(x)\equiv\sigma^2(x)\equiv\sigma_x^2\)</span></p>
-<p><span class="math inline">\(Cov(x,y)=Cov(y,x); Cov(ax,by)=abCov(x,y)\)</span></p>
-<p><span class="math inline">\(Cov(x+a,y+b)=Cov(x,y)\)</span></p>
+<p><span class="math inline">\(Cov(x,y)=Cov(y,x); Cov(ax,by)=abCov(x,y);Cov(x+a,y+b)=Cov(x,y)\)</span></p>
 <p><span class="math inline">\(Cov(a_1x_1+a_2x_2, b_1y_1+b_2y_2)=a_1b_1Cov(x_1,y_1)+a_1b_2Cov(x_1,y_2)+a_2b_1Cov(x_2,y_1)+a_2b_2Cov(x_2,y_2)\)</span></p>
-<p><span class="math inline">\(Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}\)</span></p>
-<p><span class="math inline">\(Cov(\bar y,\hat\beta_1) = 0\)</span></p>
-<p><span class="math display">\[Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A\]</span></p>
-</div>
-<div id="correlation-coefficient" class="section level4">
-<h4>Correlation Coefficient</h4>
+<ul>
+<li>Correlation Coefficient</li>
+</ul>
 <p><span class="math display">\[|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}Var{y}}}=\frac{Cov(x,y)}{S_xS_y}=\frac{Cov(\hat\beta_0,\hat\beta_1)}{se(\hat\beta_0)se(\hat\beta_1)}\]</span></p>
 </div>
-<div id="coefficient-of-determination" class="section level4">
-<h4>2.6 Coefficient of Determination</h4>
-<p>If the fitted model is statistically significant, we expect</p>
-<p><span class="math display">\[\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}\]</span></p>
-<p>Proportion of variation in response(y) explained by the fitted model with predictor(s) <span class="math inline">\(0\ge R^2\ge1\)</span></p>
-<p>-The coefficient of variation and correlation coefficient are related</p>
-<p><span class="math display">\[\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}\]</span></p>
-<p>-Unfortunately, adding predictor(s) to the model does not decrease <span class="math inline">\(R^2\)</span>. Therefore, it cannot be used to compare models with different number of predictors.</p>
-</div>
-</div>
-</div>
-<div id="estimation" class="section level2">
-<h2>Estimation</h2>
-<div id="total-sum-of-squares" class="section level4">
-<h4>total sum of squares</h4>
+<div id="sum-of-squares" class="section level3">
+<h3>Sum of Squares</h3>
+<ul>
+<li>Total Sum of Squares</li>
+</ul>
 <p>Partitioning the Total Variability in the response (<span class="math inline">\(y_i\)</span>’s)</p>
 <p>The total variability in the ’s is measured by</p>
 <p><span class="math display">\[SST=\sum_{i=1}^n(y_i-\bar y)^2\]</span></p>
@@ -443,13 +419,13 @@ $(document).ready(function () {
 <p>The mean square (MS) of each sum of square (SS) is computed by</p>
 <p><span class="math display">\[MS=\frac{SS}{df}\]</span></p>
 <p>and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.</p>
-</div>
-<div id="explained-sum-of-squares" class="section level4">
-<h4>Explained sum of squares</h4>
+<ul>
+<li>Explained sum of squares</li>
+</ul>
 <p><span class="math display">\[SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}\]</span></p>
-</div>
-<div id="residual-sum-of-squares" class="section level4">
-<h4>Residual sum of squares</h4>
+<ul>
+<li>Residual sum of squares</li>
+</ul>
 <p><code>Assumption 2</code></p>
 <p><span class="math display">\[SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2\]</span></p>
 <p><span class="math display">\[=\sum_{i=1}^n[(y_i-\bar y)-\hat{\beta_1}(x_i-\bar x)]^2=\sum_{i=1}^n(y_i-\bar y)^2-2\hat{\beta_1}\sum_{i=1}^n(y_i-\bar y)(x_i-\bar x)+\sum_{i=1}^n(x_i-\bar x)^2=S_{yy}-2\hat\beta_1^2S_{xy}+\hat\beta_1^2S_{xx}\]</span></p>
@@ -457,7 +433,19 @@ $(document).ready(function () {
 <p><span class="math display">\[=(Y-\hat Y)'(Y-\hat Y)=(Y-Xβ)'(Y-Xβ)=YY'-2Y'Xβ+β'X'Xβ=Y'(I-H)Y=Y'Y-\hatβ'X'Y\]</span></p>
 <p><span class="math display">\[\text{symmetric}\quad H'=H;\quad (I-H)'=I-H\]</span></p>
 <p><span class="math display">\[\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H\]</span></p>
+<ul>
+<li>2.6 Coefficient of Determination</li>
+</ul>
+<p>If the fitted model is statistically significant, we expect</p>
+<p><span class="math display">\[\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}\]</span></p>
+<p>Proportion of variation in response(y) explained by the fitted model with predictor(s) <span class="math inline">\(0\ge R^2\ge1\)</span></p>
+<p>-The coefficient of variation and correlation coefficient are related</p>
+<p><span class="math display">\[\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}\]</span></p>
+<p>-Unfortunately, adding predictor(s) to the model does not decrease <span class="math inline">\(R^2\)</span>. Therefore, it cannot be used to compare models with different number of predictors.</p>
 </div>
+</div>
+<div id="estimation" class="section level2">
+<h2>Estimation</h2>
 <div id="least-suqares" class="section level3">
 <h3>Least-Suqares</h3>
 <p><span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0\]</span> <span class="math display">\[\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0\]</span></p>
@@ -467,9 +455,9 @@ $(document).ready(function () {
 </ul>
 <p><span class="math display">\[\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x\]</span></p>
 <p><span class="math display">\[\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\quad \mathbf{X'Y=X'Xβ}\]</span></p>
-<ul>
-<li>Expected value</li>
-</ul>
+</div>
+<div id="expected-value" class="section level3">
+<h3>Expected value</h3>
 <p><span class="math display">\[\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y\]</span> <span class="math display">\[\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i\]</span></p>
 <p>‘There seems to be a decreasing (negative) medium approximately linear relationship.’</p>
 <p>‘The average y increases by <span class="math inline">\(\beta_1\)</span> units as the x increases by 1 unit.’</p>
@@ -477,8 +465,8 @@ $(document).ready(function () {
 <p><span class="math display">\[\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}\]</span></p>
 <p><span class="math display">\[\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}\]</span></p>
 </div>
-<div id="estimation-of-parameters-coefficients" class="section level3">
-<h3>Estimation of Parameters (Coefficients)</h3>
+<div id="estimation-of-mean" class="section level3">
+<h3>Estimation of Mean</h3>
 <div id="mean-of-parameters-coefficients" class="section level4">
 <h4>Mean of Parameters (Coefficients)</h4>
 <ul>
@@ -486,24 +474,10 @@ $(document).ready(function () {
 </ul>
 <p><span class="math display">\[E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\varepsilon_i]=\beta_0\frac{\sum_{i-1}^n(x_i-\bar x)}{S_{xx}}+{\beta_1}\frac{\sum_{i-1}^n(x_i-\bar x)x_i}{S_{xx}}+0=\beta_1\]</span></p>
 <p><span class="math display">\[E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0\]</span> <span class="math display">\[E(\hatβ)=E((X'X)^{-1}X'Y)=(X'X)^{-1}X'E(Y)=(X'X)^{-1}X'Xβ=β\]</span></p>
+</div>
+<div id="mean-of-response-value" class="section level4">
+<h4>Mean of Response value</h4>
 <p><span class="math display">\[\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}\]</span></p>
-</div>
-<div id="variance-of-parameters-coefficients" class="section level4">
-<h4>Variance of Parameters (Coefficients)</h4>
-<p>As <span class="math inline">\(n\rightarrow \infty,Var[\hat\beta_{0/1}]\rightarrow 0\)</span>;</p>
-<p><span class="math inline">\(\hat\beta_{0/1}\)</span> are consistant estimators for <span class="math inline">\(\beta_{0/1}\)</span>;</p>
-<p><span class="math inline">\(Var[ax,by]=a^2Var(x)+b^2Var(y)+2Cov(x,y)\)</span></p>
-<p><code>Assumption 3``Assumption 4</code></p>
-<p><span class="math display">\[For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0\]</span></p>
-<p><span class="math display">\[Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2\]</span> <span class="math display">\[\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}\]</span></p>
-<p><span class="math display">\[Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}\]</span></p>
-<p><span class="math display">\[Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]\]</span> <span class="math display">\[=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})\]</span></p>
-<p><span class="math display">\[Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ Var(\hatβ_{i-1})=\sigma^2C_{ii}\]</span></p>
-</div>
-<div id="standard-error-of-parameters" class="section level4">
-<h4>Standard Error of Parameters</h4>
-<p><span class="math display">\[se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}\]</span> <span class="math display">\[se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}\]</span></p>
-<p><span class="math display">\[\frac{\sigma^2}{n}\]</span></p>
 </div>
 </div>
 <div id="estimation-of-sum-square" class="section level3">
@@ -525,6 +499,32 @@ $(document).ready(function () {
 <p><span class="math display">\[E[SSE]=E[\mathbf{S_{yy}}]-S_{xx}E[\hat\beta_1^2]=(n-2)\sigma^2\]</span></p>
 <p><span class="math display">\[E[MSE]=\sigma^2=Var(y_i)=Var(\varepsilon)\]</span> MSE is an unbiased estimator for error variance</p>
 <p><span class="math display">\[\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}\]</span></p>
+</div>
+<div id="estimation-of-variance" class="section level3">
+<h3>Estimation of Variance</h3>
+<div id="variance-of-response-vriable" class="section level4">
+<h4>Variance of Response vriable</h4>
+<p><code>Assumption 3``Assumption 4</code></p>
+<p><span class="math display">\[For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0\]</span></p>
+<p><span class="math display">\[Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2\]</span> <span class="math display">\[\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}\]</span></p>
+</div>
+<div id="variance-of-parameters-coefficients" class="section level4">
+<h4>Variance of Parameters (Coefficients)</h4>
+<p>As <span class="math inline">\(n\rightarrow \infty,Var[\hat\beta_{0/1}]\rightarrow 0\)</span>;</p>
+<p><span class="math inline">\(\hat\beta_{0/1}\)</span> are consistant estimators for <span class="math inline">\(\beta_{0/1}\)</span>;</p>
+<p><span class="math inline">\(Var[ax,by]=a^2Var(x)+b^2Var(y)+2Cov(x,y)\)</span></p>
+<p><span class="math display">\[Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\sigma^2}{S_{xx}}=\frac{\sigma^2}{(n-1)S_x^2}\]</span></p>
+<p><span class="math display">\[Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]\]</span> <span class="math display">\[=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})\]</span></p>
+<p><span class="math inline">\(Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}\)</span></p>
+<p><span class="math inline">\(Cov(x,a)=0; Cov(\bar y,\hat\beta_1) = 0\)</span></p>
+<p><span class="math display">\[Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A\]</span></p>
+<p><span class="math display">\[Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ Var(\hatβ_{i-1})=\sigma^2C_{ii}\]</span></p>
+</div>
+<div id="standard-error-of-parameters" class="section level4">
+<h4>Standard Error of Parameters</h4>
+<p><span class="math display">\[se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}\]</span> <span class="math display">\[se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}\]</span></p>
+<p><span class="math display">\[\frac{\sigma^2}{n}\]</span></p>
+</div>
 </div>
 <div id="special-cases" class="section level3">
 <h3>Special Cases</h3>
