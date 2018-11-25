@@ -344,28 +344,19 @@ $(document).ready(function () {
 <tr class="odd">
 <td><span class="math inline">\(\bar x=\frac{\sum_{i=1}^n(x_i)}n\)</span></td>
 <td><span class="math inline">\(S_{xx}=\sum_{i=1}^n(x_i-\bar x)^2\)</span></td>
-<td><span class="math inline">\(Var(x)=S_x^2\)</span></td>
+<td><span class="math inline">\(Var(x)=S_x^2=\frac{S_{xx}}{n-1}\)</span></td>
 <td><span class="math inline">\(S_x\)</span></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\bar y=\frac{\sum_{i=1}^n(y_i)}n\)</span></td>
 <td><span class="math inline">\(S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2\)</span></td>
-<td><span class="math inline">\(Var(y)=S_y^2\)</span></td>
+<td><span class="math inline">\(Var(y)=S_y^2=\frac{S_{yy}}{n-1}\)</span></td>
 <td><span class="math inline">\(S_y\)</span></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr class="odd">
+<td>-</td>
 <td><span class="math inline">\(S_{xy}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)\)</span></td>
-<td><span class="math inline">\(Cov(x,y)\)</span></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td><span class="math inline">\(Cov(x,y)=\frac{S_{xy}}{n}\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -508,7 +499,6 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <div id="standard-error-of-parameters" class="section level4">
 <h4>Standard Error of Parameters</h4>
 <p><span class="math display">\[se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}\]</span> <span class="math display">\[se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}\]</span></p>
-<p><span class="math display">\[\frac{\sigma^2}{n}\]</span></p>
 </div>
 </div>
 <div id="estimation-of-error-variance-sigma2" class="section level3">
@@ -541,17 +531,17 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td>SST</td>
 <td><span class="math inline">\(\sum_{i=1}^n(y_i-\bar y)^2\)</span></td>
 <td><span class="math inline">\(S_{yy}\)</span></td>
-<td></td>
+<td><span class="math inline">\((Y-\bar{y}\mathbf{1})'(Y-\bar{y}\mathbf{1})\)</span></td>
 <td>n-1</td>
-<td>MST</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>Explained sum of squares</td>
 <td>SSR</td>
 <td><span class="math inline">\(\sum_{i=1}^n(y_i-\hat y_i)^2\)</span></td>
 <td><span class="math inline">\(\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}\)</span></td>
-<td></td>
-<td>2-1</td>
+<td><span class="math inline">\(\hatβX'Y-n\bar{y}^2\)</span></td>
+<td>k</td>
 <td>MSR</td>
 </tr>
 <tr class="odd">
@@ -559,15 +549,15 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td>SSE</td>
 <td><span class="math inline">\(\sum_{i=1}^n(\hat y_i-\bar y)^2\)</span></td>
 <td><span class="math inline">\(S_{yy}-\hat\beta_1S_{xy}\)</span></td>
-<td><span class="math inline">\(Y'Y-\hatβ'X'Y\)</span></td>
-<td>n-2</td>
+<td><span class="math inline">\(Y'Y-\hatβ'X'Y=Y'(I-H)Y\)</span></td>
+<td>n-(k+1)</td>
 <td>MSE</td>
 </tr>
 </tbody>
 </table>
-<p><span class="math inline">\(SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2\)</span> <span class="math inline">\(=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2\)</span></p>
+<p><span class="math inline">\(SST=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2\)</span> <span class="math inline">\(=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2\)</span></p>
 <p><span class="math inline">\(SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2\)</span> <span class="math inline">\(=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}\)</span></p>
-<p><span class="math inline">\(SSE=\sum_{i=1}^ne_i^2=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2\)</span> <span class="math inline">\(=\sum_{i=1}^n[(y_i-\bar y)-\hat{\beta_1}(x_i-\bar x)]^2=\sum_{i=1}^n(y_i-\bar y)^2-2\hat{\beta_1}\sum_{i=1}^n(y_i-\bar y)(x_i-\bar x)+\sum_{i=1}^n(x_i-\bar x)^2=S_{yy}-2\hat\beta_1^2S_{xy}+\hat\beta_1^2S_{xx}=\mathbf{S_{yy}-\hat\beta_1^2S_{xx}}=S_{yy}-\hat\beta_1S_{xy}\)</span></p>
+<p><span class="math inline">\(SSE=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2=\sum_{i=1}^n[(y_i-\bar y)-\hat{\beta_1}(x_i-\bar x)]^2\)</span> <span class="math inline">\(=\sum_{i=1}^n(y_i-\bar y)^2-2\hat{\beta_1}\sum_{i=1}^n(y_i-\bar y)(x_i-\bar x)+\sum_{i=1}^n(x_i-\bar x)^2=S_{yy}-2\hat\beta_1^2S_{xy}+\hat\beta_1^2S_{xx}=\mathbf{S_{yy}-\hat\beta_1^2S_{xx}}=S_{yy}-\hat\beta_1S_{xy}\)</span></p>
 <p><span class="math display">\[=(Y-\hat Y)'(Y-\hat Y)=(Y-Xβ)'(Y-Xβ)=YY'-2Y'Xβ+β'X'Xβ=\mathbf{Y'(I-H)Y=Y'Y-\hatβ'X'Y}\]</span></p>
 <p><span class="math inline">\(\text{symmetric}\quad H'=H;\quad (I-H)'=I-H\)</span></p>
 <p><span class="math inline">\(\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H\)</span></p>
@@ -618,7 +608,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <div id="coefficient-of-determination" class="section level4">
 <h4>2.6 Coefficient of Determination</h4>
 <p>If the fitted model is statistically significant, we expect</p>
-<p><span class="math display">\[\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}\]</span></p>
+<p><span class="math display">\[R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}\]</span></p>
 <p>Proportion of variation in response(y) explained by the fitted model with predictor(s) <span class="math inline">\(0\ge R^2\ge1\)</span></p>
 <p>-The coefficient of variation and correlation coefficient are related</p>
 <p><span class="math display">\[\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}\]</span></p>
@@ -627,10 +617,57 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 </div>
 <div id="special-cases" class="section level3">
 <h3>Special Cases</h3>
+<table>
+<colgroup>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>intercept known</th>
+<th>slope known</th>
+<th>through origin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>model <span class="math inline">\(y_i\)</span></td>
+<td><span class="math inline">\(\beta_0+\hat\beta_1x_i+\varepsilon\)</span></td>
+<td><span class="math inline">\(\beta_1x_i+\varepsilon_i\)</span></td>
+<td><span class="math inline">\(\hat\beta_0+\beta_1x_i+\varepsilon\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\beta_{1,0}\)</span></td>
+<td><span class="math inline">\(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\bar y-\beta_1\bar x\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(E()\)</span></td>
+<td><span class="math inline">\(beta_1\)</span></td>
+<td><span class="math inline">\(beta_1\)</span></td>
+<td><span class="math inline">\(beta_0\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Var()\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{n}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(se()\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{\sigma^2}n}\)</span></td>
+</tr>
+</tbody>
+</table>
 <ul>
 <li>intercept known</li>
 </ul>
-<p><span class="math inline">\(y=\beta_0+\hat\beta_1x+\varepsilon\)</span>;</p>
+<p><span class="math inline">\(y_i=\beta_0+\hat\beta_1x_i+\varepsilon\)</span>;</p>
 <p><span class="math inline">\(Let SSE=\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2\)</span>;</p>
 <p><span class="math inline">\(\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0\)</span>;</p>
 <p><span class="math inline">\(\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i\)</span>;</p>
@@ -642,7 +679,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <ul>
 <li>slope known</li>
 </ul>
-<p><span class="math inline">\(y=\hat\beta_0+\beta_1x+\varepsilon\)</span></p>
+<p><span class="math inline">\(y_i=\hat\beta_0+\beta_1x_i+\varepsilon\)</span></p>
 <p><span class="math inline">\(Let SSE=\sum_{i=1}^n(y_i-\hat\beta_0-\beta_1x_i)^2\)</span></p>
 <p><span class="math inline">\(\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0}=-2\sum_{i=1}^n(y_i-\hat\beta_0-\beta_1x_i)=0\)</span></p>
 <p><span class="math inline">\(n\hat\beta_0=\sum_{i=1}^ny_i-\beta_1\sum_{i=1}^nx_i\)</span></p>
@@ -655,7 +692,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <li>2.10 Regression through the origin</li>
 </ul>
 <p>There are situations where we know that intercept of the simple linear regression model is zero. Then we fit the model with intercept,<span class="math inline">\(\beta_0=0\)</span> so the line goes through origin (0,0).</p>
-<p><span class="math display">\[y_i=\beta_1x_i+\epsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)\]</span> Find the least squares estimator of slope (<span class="math inline">\(\beta_1\)</span>) for the simple linear regression model through origin.</p>
+<p><span class="math display">\[y_i=\beta_1x_i+\varepsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)\]</span> Find the least squares estimator of slope (<span class="math inline">\(\beta_1\)</span>) for the simple linear regression model through origin.</p>
 <p><span class="math display">\[\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}\]</span></p>
 <p><span class="math display">\[E(\hat\beta_1)=\beta_1\]</span></p>
 <p><span class="math display">\[E(y_i)=\beta_0+\hat\beta_1x_i\]</span> is unbiased; <span class="math display">\[Var(\hat\beta_1)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\]</span></p>
@@ -669,13 +706,10 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <div id="normal-distribution" class="section level3">
 <h3>Normal Distribution</h3>
 <p><code>Assumption 5</code></p>
-<div id="hypothesis-test" class="section level4">
-<h4>Hypothesis Test</h4>
 <p>on the Slope and Intercept</p>
 <p><span class="math display">\[\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)\]</span></p>
 <p><span class="math display">\[\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)\]</span></p>
 <p><span class="math display">\[\hat{β}\sim N\left(β,\sigma^2(X'X)^{-1}\right)\]</span></p>
-</div>
 </div>
 <div id="chi-squared-distribution" class="section level3">
 <h3>Chi-squared Distribution</h3>
@@ -690,7 +724,6 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <p><span class="math display">\[\frac{dfR\times MSR}{\sigma^2}=\frac{SSR}{\sigma^2}\sim \chi^2_{(1)}\]</span></p>
 <p>if <span class="math inline">\(β^{*'}=0\)</span>, then</p>
 <p><span class="math display">\[\frac{dfR\times MSR}{\sigma^2}=\frac{kMSR}{\sigma^2}=\dfrac{SSR}{\sigma^2}=\sim \chi^2_{df=k}\]</span></p>
-<p><span class="math display">\[\because E(MSR)=\sigma^2+\beta_1^2S_{xx}=\sigma^2+\beta_1S_{xy}\]</span></p>
 <div id="ci" class="section level4">
 <h4>CI</h4>
 <ul>
@@ -702,25 +735,28 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 </div>
 <div id="t-distribution" class="section level3">
 <h3>T Distribution</h3>
-<p><span class="math display">\[H_0:\beta_1=c;\quad H_A:\beta_1\ne c\]</span></p>
-<p><span class="math display">\[\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}\]</span></p>
-<p><span class="math display">\[t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}\]</span></p>
-<p>Decision: Since the p-value<span class="math inline">\(&gt;(&lt;)\)</span>significance level (<span class="math inline">\(\alpha\)</span>=0.05), there is no enough evidence to conclude that the true slope is different from c (reject <span class="math inline">\(H_0\)</span> and conclude <span class="math inline">\(H_1\)</span> is true).</p>
+<div id="hypothesis-test" class="section level4">
+<h4>Hypothesis Test</h4>
 <ul>
 <li>Testing Significance of Regression</li>
 </ul>
 <p><span class="math display">\[H_0:\beta_1=0;\quad H_A:\beta_1\ne0\]</span></p>
 <p><span class="math display">\[t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}\]</span></p>
 <p>There is strong (not enoygh ) evidence that the true slope of fitted model is significantly different from zero at 5% significance level because p value is much smaller than 0.05;</p>
+<p>Decision: Since the p-value<span class="math inline">\(&gt;(&lt;)\)</span>significance level (<span class="math inline">\(\alpha\)</span>=0.05), there is no enough evidence to conclude that the true slope is different from c (reject <span class="math inline">\(H_0\)</span> and conclude <span class="math inline">\(H_1\)</span> is true).</p>
+<p><span class="math display">\[H_0:\beta_1=c;\quad H_A:\beta_1\ne c\]</span></p>
+<p><span class="math display">\[\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}\]</span></p>
+<p><span class="math display">\[t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}\]</span></p>
+</div>
 <div id="confidence-interval-nt" class="section level4">
 <h4>Confidence Interval (N~T)</h4>
 <ul>
-<li><span class="math inline">\(\beta_0\)</span></li>
+<li><span class="math inline">\(\beta_1\)</span></li>
 </ul>
 <p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true slope <span class="math inline">\((\beta_1)\)</span>:</p>
 <p><span class="math display">\[\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \sqrt{\frac{\hat\sigma^2}{S_{xx}}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \sqrt{\frac{MSE}{\sum (x_i-\bar{x})^2}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \left(\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\right)\]</span></p>
 <ul>
-<li><span class="math inline">\(\beta_1\)</span> <span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true intercept <span class="math inline">\((\beta_0)\)</span>:</li>
+<li><span class="math inline">\(\beta_0\)</span> <span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true intercept <span class="math inline">\((\beta_0)\)</span>:</li>
 </ul>
 <p><span class="math display">\[\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)\]</span></p>
 <p>Since zero is (not) inside this interval, true intercept can (not) be zero with <span class="math inline">\(1-\alpha\)</span> confidence.</p>
