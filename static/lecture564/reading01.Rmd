@@ -20,13 +20,11 @@ knitr::opts_chunk$set(echo = TRUE)
 response variable=parameters(coefficients).predictor+random error
 - Assumptions
 
-Gauss Markov Theorem
-
-[1] Linear relationship between x,y;
-[2] $E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$
-[3] Homoscedasticity
-[4] $Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$
-[5] $\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$
+[1] Linear relationship between x,y;  
+[2] $E(\varepsilon)=0$, $Var(\varepsilon)=\sigma^2$  
+[3] Homoscedasticity  
+[4] $Cov(\varepsilon_i,\varepsilon_j)=0 for i\ne{j}$  
+[5] $\varepsilon_i\sim^{iid}N(0,\sigma^2\mathbf I)$  
 
 - Simple Regression
 $$y_i=\beta_0+\beta_1x_i+\varepsilon_i,\ i=1,2..n$$
@@ -89,6 +87,15 @@ $$|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}
 
 ### Sum of Squares
 
+Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
+$$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies (y_i-\bar y)^2=(y_i−\hat y_i)^2+(\hat y_i−y_i)^2$$
+
+|SS|=|df|MS|
+|---|---|---|---|---
+|SST|$\sum_{i=1}^n(y_i-\bar y)^2$     |n-1| MST |
+|SSR|$\sum_{i=1}^n(y_i-\hat y_i)^2$   |2-1| MSR | $\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$
+|SSE|$\sum_{i=1}^n(\hat y_i-\bar y)^2$|n-2| MSE |
+
 - Total Sum of Squares
 
 Partitioning the Total Variability in the response ($y_i$’s)
@@ -96,24 +103,6 @@ Partitioning the Total Variability in the response ($y_i$’s)
 The total variability in the ’s is measured by
 
 $$SST=\sum_{i=1}^n(y_i-\bar y)^2$$
-
-Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
-$$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies$$
-
-|$\sum_{i=1}^n(y_i-\bar y)^2$|$\sum_{i=1}^n(y_i-\hat y_i)^2$|$\sum_{i=1}^n(\hat y_i-\bar y)^2$||
-|---|---|---|---|
-|SST=|SSE+|SSR|where SSR=$\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$|
-|dfT=|dfE+|dfR||
-|n-1=|n-2+|2-1||
-
-Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
-For example, the df of SST gives the number of data values need to know if the mean of the data is known.
-
-The mean square (MS) of each sum of square (SS) is computed by
-
-$$MS=\frac{SS}{df}$$
-
-and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
 - Explained sum of squares
 
@@ -135,6 +124,15 @@ $$\text{symmetric}\quad H'=H;\quad (I-H)'=I-H$$
 
 $$\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H$$
 
+Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
+
+For example, the df of SST gives the number of data values need to know if the mean of the data is known.
+
+The mean square (MS) of each sum of square (SS) is computed by
+
+$$MS=\frac{SS}{df}$$
+
+and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
 - 2.6 Coefficient of Determination
 
@@ -153,8 +151,53 @@ $$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
 
 ## Estimation 
 
+### Estimation of Variance $sigma^2$
 
-### Least-Suqares
+$$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2$$
+$$=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$$
+
+`Assumption 3``Assumption 4`
+
+$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
+
+$$\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)=S_{\varepsilon_i\varepsilon_i}=(n-1)S_\varepsilon^2;\quad E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$$
+
+$$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
+$$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$$
+
+### Expected Sum of Square
+
+$$E[SST]=\beta_1^2S_{xx}+2\beta_1\sum_{i=1}^n(x_i-\bar x)(E[\varepsilon_i]-E[\bar\varepsilon_i])+E[(n-1)S_\varepsilon^2]=\mathbf{\beta_1^2S_{xx}+(n-1)\sigma^2}$$
+
+
+$$E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}=k\sigma^2+β^{*'}X'_cX_cβ^{*}$$
+
+$β^{*'}=[β_1 β_2..β_k]_{1\times k}$
+
+$$X_c=\begin{bmatrix}
+  x_{11}-\bar{x} & x_{12}-\bar{x} & \cdots & x_{1k}-\bar{x} \\
+  x_{21}-\bar{x} & x_{22}-\bar{x} & \cdots & x_{2k}-\bar{x} \\
+  \vdots  & \vdots  & \ddots & \vdots  \\
+  x_{n1}-\bar{x} & x_{n2}-\bar{x} & \cdots & x_{nk}-\bar{x} 
+ \end{bmatrix}_{n\times k}$$
+
+
+
+$$E[SSE]=E[\mathbf{S_{yy}}]-S_{xx}E[\hat\beta_1^2]=(n-2)\sigma^2$$
+
+$$E[MSE]=\sigma^2=Var(y_i)=Var(\varepsilon)$$
+MSE is an unbiased estimator for error variance
+
+$$\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}$$
+
+
+$$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
+
+### Estimation of Parameters
+
+#### Least-Suqares
+
+Gauss Markov Theorem: The least-Squared is unbiasd
 
 $$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
 $$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
@@ -169,83 +212,21 @@ $$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\qu
 
 
 
-### Expected value
+#### Expected value
+
+-Expected estimators
 
 $$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
 $$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
 
-'There seems to be a decreasing (negative) medium approximately linear relationship.'
 
-'The average y increases by $\beta_1$ units as the x increases by 1 unit.'
 
-$$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i;\quad \mathbf{Y=X\hatβ=X(X'X)^{-1}X'Y=HY}$$
-
-$$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
-
-$$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
-
-### Estimation of Mean
-
-#### Mean of Parameters (Coefficients)
-
-- Unbiased estimators of regression coefficients
+#### Unbiased estimators of regression coefficients
 
 $$E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\varepsilon_i]=\beta_0\frac{\sum_{i-1}^n(x_i-\bar x)}{S_{xx}}+{\beta_1}\frac{\sum_{i-1}^n(x_i-\bar x)x_i}{S_{xx}}+0=\beta_1$$
 
 $$E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0$$
 $$E(\hatβ)=E((X'X)^{-1}X'Y)=(X'X)^{-1}X'E(Y)=(X'X)^{-1}X'Xβ=β$$
-
-#### Mean of Response value
-
-$$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
-
-
-### Estimation of Sum Square
-
-
-$$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
-
-$$\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)=S_{\varepsilon_i\varepsilon_i}=(n-1)S_\varepsilon^2;\quad E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$$
-
-$$\mathbf{S_{yy}}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2$$
-$$=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$$
-
-$$E[SST]=\beta_1^2S_{xx}+2\beta_1\sum_{i=1}^n(x_i-\bar x)(E[\varepsilon_i]-E[\bar\varepsilon_i])+E[(n-1)S_\varepsilon^2]=\mathbf{\beta_1^2S_{xx}+(n-1)\sigma^2}$$
-
-
-$$E[SSR]=\sigma^2+\hat\beta_1^2S_{xx}$$
-
-$$E[SSR]=k\sigma^2+β^{*'}X'_cX_cβ^{*}$$
-
-$β^{*'}=[β_1 β_2..β_k]_{1\times k}$
-
-$$X_c=\begin{bmatrix}
-  x_{11}-\bar{x} & x_{12}-\bar{x} & \cdots & x_{1k}-\bar{x} \\
-  x_{21}-\bar{x} & x_{22}-\bar{x} & \cdots & x_{2k}-\bar{x} \\
-  \vdots  & \vdots  & \ddots & \vdots  \\
-  x_{n1}-\bar{x} & x_{n2}-\bar{x} & \cdots & x_{nk}-\bar{x} 
- \end{bmatrix}_{n\times k}$$
-
-$$E[\hat\beta_1^2]=Var(\hat\beta_1)-E[\hat\beta_1]^2=\frac{\sigma^2}{S_xx}+\beta_1^2$$
-
-$$E[SSE]=E[\mathbf{S_{yy}}]-S_{xx}E[\hat\beta_1^2]=(n-2)\sigma^2$$
-
-$$E[MSE]=\sigma^2=Var(y_i)=Var(\varepsilon)$$
-MSE is an unbiased estimator for error variance
-
-$$\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}$$
-
-
-### Estimation of Variance
-
-#### Variance of Response vriable
-
-`Assumption 3``Assumption 4`
-
-$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
-
-$$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
-$$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$$
 
 #### Variance of Parameters (Coefficients)
 
@@ -260,6 +241,8 @@ $$Var(\hat{\beta_1})=Var[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_i^2Var[y_i]=\frac{\si
 $$Var(\hat{\beta_0})=Var[\bar y-\hat\beta_1\bar x]=Var[\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i]=\sum_{i=1}^n(\frac1n-\bar{x}c_i)^2Var[y_i]$$
 $$=\sigma^2\Big[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2\Big]=\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})=\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$$
 
+$$E[\hat\beta_1^2]=Var(\hat\beta_1)-E[\hat\beta_1]^2=\frac{\sigma^2}{S_xx}+\beta_1^2$$
+
 $Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$
 
 $Cov(x,a)=0; Cov(\bar y,\hat\beta_1) = 0$
@@ -272,6 +255,21 @@ $$Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ V
 
 $$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
 $$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
+
+### Expected fitted value
+
+$$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i;\quad \mathbf{Y=X\hatβ=X(X'X)^{-1}X'Y=HY}$$
+
+'There seems to be a decreasing (negative) medium approximately linear relationship.'
+'The average y increases by $\beta_1$ units as the x increases by 1 unit.'
+
+$$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
+
+$$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
+
+
+$$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
+
 
 $$\frac{\sigma^2}{n}$$
 
