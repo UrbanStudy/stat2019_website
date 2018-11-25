@@ -92,11 +92,12 @@ $$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies (y_i-\bar y)^2=(y_i−\h
 
 Name||SS|Simple|Multi|df|MS=SS/df|
 ---|---|---|---|---|---|---
-Total Sum of Squares    |SST|$\sum_{i=1}^n(y_i-\bar y)^2$     | S_{yy} | |n-1| MST 
+Total Sum of Squares    |SST|$\sum_{i=1}^n(y_i-\bar y)^2$     | $S_{yy}$ | |n-1| MST 
 Explained sum of squares|SSR|$\sum_{i=1}^n(y_i-\hat y_i)^2$   | $\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$ | |2-1| MSR
 Residual sum of squares |SSE|$\sum_{i=1}^n(\hat y_i-\bar y)^2$| $S_{yy}-\hat\beta_1S_{xy}$| $Y'Y-\hatβ'X'Y$ |n-2| MSE 
 
-$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$
+$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2$
+$=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$
 
 `Assumption 2`
 
@@ -112,27 +113,45 @@ Similar to partitioning total variation in the response, the degrees of freedom 
 
 For example, the df of SST gives the number of data values need to know if the mean of the data is known. and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
-- 2.6 Coefficient of Determination
+#### Least-Suqares
 
-If the fitted model is statistically significant, we expect
+Gauss Markov Theorem: The least-Squared is unbiasd
 
-$$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$$
+$$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
+$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
 
- Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
+$$\frac{\partial{a'w}}{\partial{w}}=a;\quad \frac{\partial{w'Aw}}{\partial{w}}=2Aw$$
 
--The coefficient of variation and correlation coefficient are related
+- Normal Equation
 
-$$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
+$$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
 
--Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
+$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\quad \mathbf{X'Y=X'Xβ}$$
 
 
-## Estimation 
+
+#### Expected value
+
+-Expected estimators
+
+$$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
+$$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
+- Expected fitted value
+
+$$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i;\quad \mathbf{Y=X\hatβ=X(X'X)^{-1}X'Y=HY}$$
+
+'There seems to be a decreasing (negative) medium approximately linear relationship.'
+'The average y increases by $\beta_1$ units as the x increases by 1 unit.'
+
+$$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
+
+$$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
 
 ### Expected Sum of Square
 
 
-$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$
+$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2$
+$=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$
 
 `Assumption 3``Assumption 4`
 
@@ -165,36 +184,16 @@ MSE is an unbiased estimator for error variance
 
 $$\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}$$
 
+$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$
+$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$
 
 $$\sum_{i=1}^n\hat ye_i=\sum_{i=1}^nx_ie_i=0$$
 
+## Estimation 
+
+
+
 ### Estimation of Parameters
-
-#### Least-Suqares
-
-Gauss Markov Theorem: The least-Squared is unbiasd
-
-$$\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
-$$\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
-
-$$\frac{\partial{a'w}}{\partial{w}}=a;\quad \frac{\partial{w'Aw}}{\partial{w}}=2Aw$$
-
-- Normal Equation
-
-$$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y=\hat\beta_0+\hat\beta_1\bar x$$
-
-$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\quad \mathbf{X'Y=X'Xβ}$$
-
-
-
-#### Expected value
-
--Expected estimators
-
-$$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
-$$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
-
-
 
 #### Unbiased estimators of regression coefficients
 
@@ -202,6 +201,8 @@ $$E(\hat{\beta_1})=E[\sum_{i=1}^nc_iy_i]=\sum_{i=1}^nc_iE[\beta_0+\beta_1x_i+\va
 
 $$E(\hat{\beta_0})=E[\bar y-\hat\beta_1\bar x]=E[\bar y]-\bar xE[\hat\beta_1]=E[\frac{\sum_{i-1}^ny_i}n]-\bar x\hat\beta_1=\frac1n\sum_{i=1}^nE[\beta_0+\beta_1x_i+\varepsilon_i]-\bar x\hat\beta_1=\frac{n\beta_0}n+\frac{\beta_1}n\sum_{i=1}^nx_i+0-\bar x\hat\beta_1=\beta_0$$
 $$E(\hatβ)=E((X'X)^{-1}X'Y)=(X'X)^{-1}X'E(Y)=(X'X)^{-1}X'Xβ=β$$
+
+$$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
 
 #### Variance of Parameters (Coefficients)
 
@@ -231,26 +232,23 @@ $$Cov(\hatβ)=\sigma^2(X'X)^{-1},\ Cov(\hatβ_{i},\hatβ_{j})=\sigma^2C_{ij},\ V
 $$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
 $$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
 
-### Expected fitted value
-
-$$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i;\quad \mathbf{Y=X\hatβ=X(X'X)^{-1}X'Y=HY}$$
-
-'There seems to be a decreasing (negative) medium approximately linear relationship.'
-'The average y increases by $\beta_1$ units as the x increases by 1 unit.'
-
-$$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
-
-$$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
-
-
-$$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
-
-$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$
-$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$
 
 $$\frac{\sigma^2}{n}$$
 
 
+### 2.6 Coefficient of Determination
+
+If the fitted model is statistically significant, we expect
+
+$$\text{Coefficient of Determination}\quad R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}$$
+
+ Proportion of variation in response(y) explained by the fitted model with predictor(s) $0\ge R^2\ge1$
+
+-The coefficient of variation and correlation coefficient are related
+
+$$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
+
+-Unfortunately, adding predictor(s) to the model does not decrease $R^2$. Therefore, it cannot be used to compare models with different number of predictors.
 
 
 ### Special Cases
