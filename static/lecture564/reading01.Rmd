@@ -143,11 +143,11 @@ $$E[\hat\beta_1^2]=Var(\hat\beta_1)-E[\hat\beta_1]^2=\frac{\sigma^2}{S_xx}+\beta
 
 #### Covariance
 
-   |x|y|x,y|$\beta$|$\varepsilon$|e|
+ -   |x           |   y   |$\varepsilon$| x,y |$\hat\beta_1$|$\hat\beta_0$
 ---|---|---|---|---|---|---|---
-Var()|$\sigma_x^2$ | | $ $ 
-Cov()|$\sigma_x^2$ | | $\sigma_{xy}$ 
-Cor()|$ $ | $ $
+Var()|$\sigma_x^2$|$\sigma^2$|$\sigma^2$|$\times$|$\frac{\sigma^2}{(n-1)S_x^2}$|$\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$|
+Cov()|$\sigma_x^2$|   $0$    |   $0$    | $\sigma_{xy}$|$\sigma^2(X'X)^{-1}$| $MSE\cdot C_{11}$
+Cor()|            |          |          | $r$ |
 
 $Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$
 
@@ -207,7 +207,7 @@ Similar to partitioning total variation in the response, the degrees of freedom 
 
 For example, the df of SST gives the number of data values need to know if the mean of the data is known. and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
-   |Simple|Multi
+ - |Simple|Multi
 ---|---|---
 E(SST)|$\beta_1^2S_{xx}+(n-1)\sigma^2$| $ $ 
 E(SSR)|$\sigma^2+\hat\beta_1^2S_{xx}$ | $k\sigma^2+β^{*'}X'_cX_cβ^{*}$ 
@@ -269,46 +269,36 @@ $$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
 
 ### Special Cases
 
-   |intercept known|slope known | through origin
+ - |intercept known| through origin | slope known
 ---|---|---|---
-model $y_i$      |$\beta_0+\hat\beta_1x_i+\varepsilon$|$\beta_1x_i+\varepsilon_i$|$\hat\beta_0+\beta_1x_i+\varepsilon$
-$\hat\beta_{1,0}$|$\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$|$\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$|$\bar y-\beta_1\bar x$
-$E()$            |$beta_1$ | $beta_1$| $beta_0$ 
-$Var()$          |$\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$| $\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$|$\frac{\sigma^2}{n}$ 
-$se()$           |$\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$| $\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$|$\sqrt{\frac{\sigma^2}n}$ 
+model$y_i$ |$\beta_0+\hat\beta_1x_i+\varepsilon_i$|$\hat\beta_1x_i+\varepsilon_i$|$\hat\beta_0+\beta_1x_i+\varepsilon_i$
+$\hat\beta$|$\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$|$\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$|$\bar y-\beta_1\bar x$
+$E()$      |$\beta_1$ | $\beta_1$| $\beta_0$ 
+$Var()$    |$\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$| $\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$|$\frac{\sigma^2}{n}$ 
+$se()$     |$\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$| $\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$|$\sqrt{\frac{\sigma^2}n}$ 
 
 - intercept known
-
-$y_i=\beta_0+\hat\beta_1x_i+\varepsilon$;
 
 $Let SSE=\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)^2$;
 
 $\left.\frac{\partial SSE}{\partial\beta_1}\right|_{\hat\beta_1}=-2\sum_{i=1}^n(y_i-\beta_0-\hat\beta_1x_i)x_i=0$;
 
-$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$;
+$\hat\beta_1\sum_{i=1}^nx_i^2=\sum_{i=1}^n(y_i-\beta_0)x_i$
 
-$\hat\beta_1=\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$;
-
-$E(\hat\beta_1)=E\left[\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right]=\frac1{\sum_{i=1}^nx_i^2}E\left[\sum_{i=1}^nx_i(\beta_1x_i+\varepsilon)\right]=\frac{\beta_1\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i}{\sum_{i=1}^nx_i^2}E[\varepsilon]=\beta_1$ is unbiased;
+$E(\hat\beta_1)=E\left[\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right]=\frac1{\sum_{i=1}^nx_i^2}E\left[\sum_{i=1}^nx_i(\beta_1x_i+\varepsilon)\right]=\frac{\beta_1\sum_{i=1}^nx_i^2}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i}{\sum_{i=1}^nx_i^2}E[\varepsilon]=\beta_1$ is unbiased
 
 Because $Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0,for\ {i}\ne{j}$ and
 $Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$ 
 
-Therefore $Var(\hat\beta_1)=Var\left(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i-\sum_{i=1}^n\beta_0x_i)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i)=\frac{\sum_{i=1}^nx_i^2}{(\sum_{i=1}^nx_i^2)^2}Var(y_i)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$;
-
-$se(\hat{\beta_1})=\sqrt{Var(\hat\beta_1)}=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$
+Therefore $Var(\hat\beta_1)=Var\left(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\right)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i-\sum_{i=1}^n\beta_0x_i)=\frac1{(\sum_{i=1}^nx_i^2)^2}Var(\sum_{i=1}^ny_ix_i)=\frac{\sum_{i=1}^nx_i^2}{(\sum_{i=1}^nx_i^2)^2}Var(y_i)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$
 
 - slope known
-
-$y_i=\hat\beta_0+\beta_1x_i+\varepsilon$
 
 $Let SSE=\sum_{i=1}^n(y_i-\hat\beta_0-\beta_1x_i)^2$
 
 $\left.\frac{\partial SSE}{\partial\beta_0}\right|_{\hat\beta_0}=-2\sum_{i=1}^n(y_i-\hat\beta_0-\beta_1x_i)=0$
 
 $n\hat\beta_0=\sum_{i=1}^ny_i-\beta_1\sum_{i=1}^nx_i$
-
-$\hat\beta_0=\bar y-\beta_1\bar x$
 
 $E(\hat\beta_0)=E\left[\frac1n\sum_{i=1}^ny_i-\frac1n\beta_1\sum_{i=1}^nx_i\right]=\frac1nE\left[\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon)-\beta_1\sum_{i=1}^nx_i\right]=\frac1n\sum_{i=1}^nE(\beta_0+\beta_1x_i)+E(\varepsilon)-\beta_1\sum_{i=1}^nx_i=\beta_0$  is unbiased
 
@@ -317,28 +307,13 @@ $Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$
 
 Therefore $Var(\hat\beta_0)=\frac1{n^2}Var\left(\sum_{i=1}^ny_i-\beta_1\sum_{i=1}^nx_i\right)=\frac1{n^2}\sum_{i=1}^nVar(y_i)=\frac{\sigma^2}n$
 
-$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\frac{\sigma^2}n}=\sqrt{\frac{MSE}n}$
-
-
 - 2.10 Regression through the origin
 
 There are situations where we know that intercept of the simple linear regression model is zero. Then we fit the model with intercept,$\beta_0=0$ so the line goes through origin (0,0). 
 
-$$y_i=\beta_1x_i+\varepsilon_i\quad where\ \epsilon_i\sim iid N(0,\sigma^2)$$
 Find the least squares estimator of slope ($\beta_1$) for the simple linear regression model through origin.
 
-$$\hat\beta_1=\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$$
-
-$$E(\hat\beta_1)=\beta_1$$
-
-$$E(y_i)=\beta_0+\hat\beta_1x_i$$ is unbiased;
-$$Var(\hat\beta_1)=\frac{\sigma^2}{\sum_{i=1}^nx_i^2}$$
-
-$$se(\hat{\beta_1})=\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}$$
-
-$$\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$$
-
-Where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
+$\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$, where $t_\frac\alpha2$ is critical value from t distribution with df=n-1
 
 
 
@@ -407,8 +382,6 @@ $$H_0:\beta_1=c;\quad H_A:\beta_1\ne c$$
 $$\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}$$
 
 $$t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}$$
-
-
 
 
 #### Confidence Interval (N~T)
@@ -487,9 +460,7 @@ $=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\va
 
 #### Analysis of Variance
 
-The F test statistic ($F_0$) is computed as shown in the ANOVA table for the testing significance of simple linear regression model.
-
-Analysis of Variance (ANOVA) for Testing Significance of Simple Linear Regression
+The F test statistic ($F_0$) is computed as shown in the ANOVA table for Testing Significance.
 
 Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
 ---|---|---|---|---|---
@@ -497,17 +468,29 @@ Model(Regresion)|$SSR=\hat\beta_1S{xy}; \hatβX'Y-n\bar{y}^2$|1;k|$MSR=\frac{SSR
 Error(Residual)|$SSE=SST-SSR=Y'(I-H)Y$|n-(k+1)|$MSE=\frac{SSE}{n-(k+1)}$||
 Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2=(Y-\bar{y}\mathbf{1})'(Y-\bar{y}\mathbf{1})$|n-1|||
 
+SSE and SSR are independent.Therefore, by definition of F distribution
+
+$$\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/k}{SSE/[n-(k+1)]}=\frac{MSR}{MSE}\sim F_{(k,[n-(k+1)])}$$
+
 If the test statistic is much larger than 1 ($F_0>F(\alpha,1,n-2)$) (or p-value $\le$ significance level), then the true slope is different from zero and hence least squares line is statistically significant.
 
 There is strong evidence that the fitted model is statistically significant at 5% significance level because p value is much smaller than 0.05
 
+#### T and F
 
+ If $T\sim t(df=\upsilon)$, then $T^2\sim F(1,\upsilon)$
 
-Further, SSE and SSR are independent.
+Therefore, test statistic ($t_0$) for testing true slope ($\beta_1$) different from zero and F test statistic ($F_0$) in ANOVA for simple linear regression are related as
 
-Therefore, by definition of F distribution
+$$t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0$$
 
-$$\frac{SSR/dfR}{SSE/dfE}=\frac{SSR/k}{SSE/[n-(k+1)]}=\frac{MSR}{MSE}\sim F_{(k,[n-(k+1)])}$$
+The t test has more flexibility than F test because,  
+
+ t test can be used when testing $H_0:\ \beta_1=c$ versus $H_1:\ \beta_1\ne c$ where c is NOT zero while F test can be used only when c=0
+
+ t test can be used when it is a one-tailed test (such as $H_1:\ \beta_1>c$ or $H_1:\ \beta_1<c$ while F test can be used for only two-tailed test.
+ 
+#### Testing the General Linear Hypothesis
 
 $$SSE_{Full}=Y'Y-\hatβ'X'Y,\quad dfE_{Full}=n-(k+1)$$
 
@@ -521,28 +504,6 @@ $dfE_{Reduced}-dfE_{Full}=n-(k+1-r)-[n-(k+1)]=r$
 additional (extra) sum of squares F test (partial F test), $dfE_{Reduced}-dfE_{Full}=r=1$
 
 $$\frac{SSE_{Reduced}-SSE_{Full}}{MSE_{Full}}\sim F_{(1,[n-(k+1)])}$$
-
-
-
-
-
-
-
-
- If $T\sim t(df=\upsilon)$, then $T^2\sim F(1,\upsilon)$
-
-Therefore, test statistic ($t_0$) for testing true slope ($\beta_1$) different from zero and F test statistic ($F_0$) in ANOVA for simple linear regression are related as
-
-$$t_0^2=\left(\frac{\hat\beta_1}{se(\hat\beta_1)}\right)^2=\frac{MSR}{MSE}=F_0$$
-
-The t test has more flexibility than F test because,  
-
- t test can be used when testing $H_0:\ \beta_1=c$ versus $H_1:\ \beta_1\ne c$ where c is NOT zero while F test can be used only when c=0
-
- t test can be used when it is a one-tailed test (such as $H_1:\ \beta_1>c$ or $H_1:\ \beta_1<c$ while F test can be used for only two-tailed test.
-
-
-
 
 
 ### Example
