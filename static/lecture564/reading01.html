@@ -448,7 +448,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <div id="covariance" class="section level4">
 <h4>Covariance</h4>
 <pre><code>-|x           |   y   |$\varepsilon$| x,y |$\hat\beta_1$|$\hat\beta_0$</code></pre>
-<p>—|—|—|—|—|—|—|— Var()|<span class="math inline">\(\sigma_x^2\)</span>|<span class="math inline">\(\sigma^2\)</span>|<span class="math inline">\(\sigma^2\)</span>|<span class="math inline">\(MSE\cdot C_{11}\)</span>|<span class="math inline">\(\frac{\sigma^2}{S_{xx}}\)</span>|<span class="math inline">\(\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})\)</span>| Cov()|<span class="math inline">\(\sigma_x^2\)</span>| <span class="math inline">\(0\)</span> | <span class="math inline">\(0\)</span> | <span class="math inline">\(\sigma_{xy}\)</span>|<span class="math inline">\(\sigma^2(X'X)^{-1}\)</span>| Cor()| | | | <span class="math inline">\(r\)</span> |</p>
+<p>|—|—|—|—|—|—|—|— Var()|<span class="math inline">\(\sigma_x^2\)</span>|<span class="math inline">\(\sigma^2\)</span>|<span class="math inline">\(\sigma^2\)</span>|<span class="math inline">\(MSE\cdot C_{11}\)</span>|<span class="math inline">\(\frac{\sigma^2}{S_{xx}}\)</span>|<span class="math inline">\(\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})\)</span>| Cov()|<span class="math inline">\(\sigma_x^2\)</span>| <span class="math inline">\(0\)</span> | <span class="math inline">\(0\)</span> | <span class="math inline">\(\sigma_{xy}\)</span>|<span class="math inline">\(\sigma^2(X'X)^{-1}\)</span>| Cor()| | | | <span class="math inline">\(r\)</span> |</p>
 <p><span class="math inline">\(Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}\)</span></p>
 <p><span class="math inline">\(Cov(x,a)=0; Cov(\bar y,\hat\beta_1) = 0\)</span></p>
 <p><span class="math display">\[Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A\]</span></p>
@@ -525,8 +525,32 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <p><span class="math inline">\(\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H\)</span></p>
 <p>Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.</p>
 <p>For example, the df of SST gives the number of data values need to know if the mean of the data is known. and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.</p>
-<pre><code>- |Simple|Multi</code></pre>
-<p>—|—|— E(SST)|<span class="math inline">\(\beta_1^2S_{xx}+(n-1)\sigma^2\)</span>| $ $ E(SSR)|<span class="math inline">\(\sigma^2+\hat\beta_1^2S_{xx}\)</span> | <span class="math inline">\(k\sigma^2+β^{*'}X'_cX_cβ^{*}\)</span> E(SSE)|<span class="math inline">\((n-2)\sigma^2\)</span> | $ $</p>
+<table>
+<thead>
+<tr class="header">
+<th>item</th>
+<th>Simple</th>
+<th>Multi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>E(SST)</td>
+<td><span class="math inline">\(\beta_1^2S_{xx}+(n-1)\sigma^2\)</span></td>
+<td>$ $</td>
+</tr>
+<tr class="even">
+<td>E(SSR)</td>
+<td><span class="math inline">\(\sigma^2+\hat\beta_1^2S_{xx}\)</span></td>
+<td><span class="math inline">\(k\sigma^2+β^{*'}X'_cX_cβ^{*}\)</span></td>
+</tr>
+<tr class="odd">
+<td>E(SSE)</td>
+<td><span class="math inline">\((n-2)\sigma^2\)</span></td>
+<td>$ $</td>
+</tr>
+</tbody>
+</table>
 <p><code>Assumption 3``Assumption 4</code></p>
 <p><span class="math inline">\(For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0\)</span></p>
 <p><span class="math inline">\(\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)=S_{\varepsilon_i\varepsilon_i}=(n-1)S_\varepsilon^2;\quad E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2\)</span></p>
@@ -556,8 +580,54 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 </div>
 <div id="special-cases" class="section level3">
 <h3>Special Cases</h3>
-<pre><code>     - |intercept known| through origin | slope known</code></pre>
-<p>—|—|—|— model<span class="math inline">\(y_i\)</span> |<span class="math inline">\(\beta_0+\hat\beta_1x_i+\varepsilon_i\)</span>|<span class="math inline">\(\hat\beta_1x_i+\varepsilon_i\)</span>|<span class="math inline">\(\hat\beta_0+\beta_1x_i+\varepsilon_i\)</span> <span class="math inline">\(\hat\beta\)</span>|<span class="math inline">\(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\)</span>|<span class="math inline">\(\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}\)</span>|<span class="math inline">\(\bar y-\beta_1\bar x\)</span> <span class="math inline">\(E()\)</span> |<span class="math inline">\(\beta_1\)</span> | <span class="math inline">\(\beta_1\)</span>| <span class="math inline">\(\beta_0\)</span> <span class="math inline">\(Var()\)</span> |<span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\)</span>| <span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\)</span>|<span class="math inline">\(\frac{\sigma^2}{n}\)</span> <span class="math inline">\(se()\)</span> |<span class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\)</span>| <span class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\)</span>|<span class="math inline">\(\sqrt{\frac{\sigma^2}n}\)</span></p>
+<table>
+<colgroup>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>item</th>
+<th>intercept known</th>
+<th>through origin</th>
+<th>slope known</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>model<span class="math inline">\(y_i\)</span></td>
+<td><span class="math inline">\(\beta_0+\hat\beta_1x_i+\varepsilon_i\)</span></td>
+<td><span class="math inline">\(\hat\beta_1x_i+\varepsilon_i\)</span></td>
+<td><span class="math inline">\(\hat\beta_0+\beta_1x_i+\varepsilon_i\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\beta\)</span></td>
+<td><span class="math inline">\(\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\bar y-\beta_1\bar x\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(E()\)</span></td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\beta_1\)</span></td>
+<td><span class="math inline">\(\beta_0\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(Var()\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{\sum_{i=1}^nx_i^2}\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{n}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(se()\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{\sigma^2}{\sum_{i=1}^nx_i^2}}\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{\sigma^2}n}\)</span></td>
+</tr>
+</tbody>
+</table>
 <ul>
 <li>intercept known</li>
 </ul>
@@ -590,8 +660,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <h3>Normal Distribution</h3>
 <p><code>Assumption 5</code></p>
 <p>on the Slope and Intercept</p>
-<ul>
-<li><table>
+<table>
 <colgroup>
 <col width="33%"></col>
 <col width="33%"></col>
@@ -599,6 +668,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 </colgroup>
 <thead>
 <tr class="header">
+<th>item</th>
 <th><span class="math inline">\(\sim N(\mu,\sigma^2)\)</span></th>
 <th><span class="math inline">\(Z\sim N(0,1)\)</span></th>
 </tr>
@@ -627,18 +697,56 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td><span class="math inline">\(N\left(\hat\beta_0+\hat\beta_1x_0,\sigma^2(\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})\right)\)</span></td>
 </tr>
 </tbody>
-</table></li>
-</ul>
+</table>
 </div>
 <div id="t-distribution" class="section level3">
 <h3>T Distribution</h3>
 <p>Typically, <span class="math inline">\(σ^2\)</span> is unknown. MSE is an unbiased estimator of <span class="math inline">\(σ^2\)</span>.</p>
 <p><span class="math display">\[\frac{\hat{β_j}-β_j}{se(\hatβ_j)}\sim t_{df=dfE=n-(k+1)}\]</span></p>
 <p><span class="math display">\[\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\sim t_{df=n-2}\]</span></p>
+<table>
+<colgroup>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>item</th>
+<th><span class="math inline">\(\hat\beta_0\)</span></th>
+<th><span class="math inline">\(\hat\beta_1\)</span></th>
+<th><span class="math inline">\(\hatβ_j\)</span></th>
+<th>Predict<span class="math inline">\(\hat y_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>se</td>
+<td><span class="math inline">\(\sqrt{MSE(\frac1n+\frac{\bar x^2}{S_{xx}})}\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{MSE}{S{xx}}}\)</span></td>
+<td><span class="math inline">\(\sqrt{C_{jj}MSE}\)</span></td>
+<td><span class="math inline">\(\sqrt{MSE\left[\frac1k+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}\)</span></td>
+</tr>
+<tr class="even">
+<td>T Test</td>
+<td><span class="math inline">\(\frac{\hat{\beta_0}}{se(\hat{\beta_0})}\)</span></td>
+<td><span class="math inline">\(\frac{\hat{\beta_1}}{se(\hat{\beta_1})}\)</span></td>
+<td><span class="math inline">\(\frac{\hat{β_j}-c}{se(β_j)}\)</span></td>
+<td><span class="math inline">\(\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\)</span></td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td><span class="math inline">\(\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})\)</span></td>
+<td><span class="math inline">\(\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})\)</span></td>
+<td></td>
+<td><span class="math inline">\(\hat y_0\pm t_{\alpha/2,n-2}se(\hat y_0)\)</span></td>
+</tr>
+</tbody>
+</table>
 <div id="standard-error-of-parameters" class="section level4">
 <h4>Standard Error of Parameters</h4>
-<pre><code>- |$\hat\beta_0$| $\hat\beta_1$ | $\hatβ_j$ | Predict$\hat y_0$</code></pre>
-<p>—|—|—|—|— se |<span class="math inline">\(\sqrt{MSE(\frac1n+\frac{\bar x^2}{S_{xx}})}\)</span>|<span class="math inline">\(\sqrt{\frac{MSE}{S{xx}}}\)</span>| <span class="math inline">\(\sqrt{C_{jj}MSE}\)</span> | <span class="math inline">\(\sqrt{MSE\left[\frac1k+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}\)</span> T Test| <span class="math inline">\(\frac{\hat{\beta_0}}{se(\hat{\beta_0})}\)</span>|<span class="math inline">\(\frac{\hat{\beta_1}}{se(\hat{\beta_1})}\)</span>| <span class="math inline">\(\frac{\hat{β_j}-c}{se(β_j)}\)</span> | <span class="math inline">\(\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\)</span> CI | <span class="math inline">\(\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})\)</span>| <span class="math inline">\(\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})\)</span>| | <span class="math inline">\(\hat y_0\pm t_{\alpha/2,n-2}se(\hat y_0)\)</span></p>
 <p><span class="math inline">\(se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{\sum(x_i-\bar{x})^2}=\sqrt{\frac{MSE}{S{xx}}}=\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\)</span></p>
 <p><span class="math inline">\(se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}=\sqrt{\dfrac{MSE}{n}}\)</span></p>
 <p><span class="math inline">\(se(\hatβ_j)=\sqrt{C_{jj}\hat\sigma^2}=\sqrt{C_{jj}MSE}\)</span></p>
@@ -681,13 +789,18 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <p><span class="math inline">\(Var[\hat y_0-\bar y_0]=Var[\hat{\beta_0}+\hat{\beta_1}x_0-\beta_0-\beta_1x_0-\frac1k\sum_{i=1}^k\varepsilon_i]=Var[\bar y-\hat\beta_1\bar x+\hat{\beta_1}x_0-\frac1k\sum_{i=1}^k\varepsilon_i]\)</span></p>
 <p><span class="math inline">\(=Var[\frac{\sum_{i=1}^ny_i}n-\sum_{i=1}^nc_iy_i(\bar x-x_0)-\frac1k\sum_{i=1}^k\varepsilon_i]=Var\Big[\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]y_i\Big]+Var[\sum_{i=1}^k\frac1k\varepsilon_i]-2Cov[y_i,\varepsilon_i]\)</span></p>
 <p>Because <span class="math inline">\(y_i\)</span> and <span class="math inline">\(\varepsilon_i\)</span> are independent for new observations. <span class="math inline">\(=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\varepsilon_i)=\sigma^2[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2]=\sigma^2[\frac1n+\frac{(\bar x-x_0)^2}{S_{xx}}+\frac1k]\)</span></p>
+<ul>
+<li>3.5 Prediction of New Observations</li>
+</ul>
+<p>If <span class="math inline">\(\mathbf{X_0'}=[1,x_{01},x_{02},..,x_{0k}]\)</span>, then a point estimate of the future observation y0 at the point <span class="math inline">\(x_{01},x_{02},..,x_{0k}\)</span> is <span class="math inline">\(\mathbf{\hat y_0=x_0'\hatβ}\)</span></p>
+<p>A 100(1−α) percent prediction interval for this future observation is</p>
 </div>
 </div>
 <div id="chi-squared-distribution" class="section level3">
 <h3>Chi-squared Distribution</h3>
 <div id="ci" class="section level4">
 <h4>CI</h4>
-<p><code>Estimat $\sigma^2$ using MSE</code></p>
+<p>Estimat <span class="math inline">\(\sigma^2\)</span> using MSE</p>
 <p>Typically, <span class="math inline">\(\sigma^2\)</span> is unknown and is estimated using MSE (Mean Squared Error).</p>
 <p><span class="math display">\[\frac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}\sim \chi^2_{(n-2)}\]</span> <span class="math display">\[\frac{[n-(k+1)]MSE}{\sigma^2}=\frac{SSE}{\sigma^2}=\frac{Y'(I-H)Y}{\sigma^2}\sim \chi^2_{df=rank(I-H)=n-(k+1)}\]</span></p>
 <p>if <span class="math inline">\(\beta_1=0\)</span>, then</p>
@@ -771,6 +884,18 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <p><span class="math inline">\(dfE_{Reduced}-dfE_{Full}=n-(k+1-r)-[n-(k+1)]=r\)</span></p>
 <p>additional (extra) sum of squares F test (partial F test), <span class="math inline">\(dfE_{Reduced}-dfE_{Full}=r=1\)</span></p>
 <p><span class="math display">\[\frac{SSE_{Reduced}-SSE_{Full}}{MSE_{Full}}\sim F_{(1,[n-(k+1)])}\]</span></p>
+</div>
+<div id="multicollinearity" class="section level4">
+<h4>Multicollinearity</h4>
+<p>Multicollinearity is the linear (or near linear) dependence of predictors of the multiple linear regression model.</p>
+<p>That means, not all the columns of design matrix (X) are linearly independent and hence <span class="math inline">\((\mathbf{X'X})\)</span> is not nonsingular resulting <span class="math inline">\((\mathbf{X'X})^{-1}\)</span> does not exist. The multicollinearity increases standard error of estimated regression coefficients and hence makes estimators are less precise.</p>
+<p><strong>VIF (Variance Inflation Factor)</strong> computed as <span class="math inline">\(VIF=\frac1{1-R_j^2}\)</span></p>
+<p>where <span class="math inline">\(R_j^2\)</span> is the <span class="math inline">\(R^2\)</span> (coefficient of determination) of the fitted model using <span class="math inline">\(j^{th}\)</span>redictor as the response variable and all the other predictors (excluding response) as predictors.</p>
+<p>If VIF &gt;10, then there is a serious problem of multicollinearity and the model is not suitable to use.</p>
+<ul>
+<li>Procedure when multicollinearity exists:</li>
+</ul>
+<p>Fit the full model (with all the predictors) Find the predictor with highest VIF and fit a reduced model without that predictor Check the VIF for the predictors in the new model and repeat the process until all the predictors used in the final reduced model have VIF ≤10</p>
 </div>
 </div>
 <div id="example" class="section level3">
@@ -888,6 +1013,253 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <p><span class="math display">\[se(\hat{\beta_0})=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=4.367(\frac15+\frac{15^2}{250})=2.1917\]</span></p>
 <p><span class="math display">\[\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=4.1\pm3.182\times2.1917=(-2.874,11.074)\]</span></p>
 <p>Since zero is inside thsi interval, ture intercept (<span class="math inline">\(\beta_0\)</span>) can be zero with 95% confidence.</p>
+</div>
+</div>
+</div>
+<div id="adequacy-checking" class="section level2">
+<h2>Adequacy Checking</h2>
+<p>Three of the major problem areas in least squares analysis relate to failures of the basic assumptions: normality, common variance, and independence of the errors. The process of checking the validity of the assumptions is an important step in every regression analysis.</p>
+<p>Normality is needed only for tests of significance and construction of confidence interval estimates of the parameters. The t-test, F-test, and chi-square test require the underlying random variables to be normally distributed. The tests of significance and confidence intervals, however, are affected by nonnormality.</p>
+<div id="residual-analysis" class="section level3">
+<h3>4.2 Residual Analysis</h3>
+<div id="definition-of-residuals" class="section level4">
+<h4>4.2.1 Definition of Residuals</h4>
+<p>The <span class="math inline">\(i^{th}\)</span> observed residual is defined as <span class="math inline">\(e_i=y_i-\hat y_i\)</span> for <span class="math inline">\(i=1,2..,n\)</span> And the mean squared error (MSE) is an unbiased estimator of error variance <span class="math inline">\(\sigma^2\)</span>.</p>
+<p><span class="math display">\[\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}\]</span></p>
+</div>
+<div id="methods-for-scaling-residuals" class="section level4">
+<h4>4.2.2 Methods for Scaling Residuals</h4>
+<p>The plot of scaled residuals helps to recognize outliers or influential observations.</p>
+<table>
+<colgroup>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>for <span class="math inline">\(i=1,2..,n\)</span></th>
+<th>Standardized Residuals</th>
+<th>Studentized Residuals</th>
+<th>PRESS Residuals</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>the <span class="math inline">\(i^{th}\)</span></td>
+<td><span class="math inline">\(d_i\)</span></td>
+<td><span class="math inline">\(r_i\)</span></td>
+<td><span class="math inline">\(e_i\)</span></td>
+</tr>
+<tr class="even">
+<td>the <span class="math inline">\(i^{th}\)</span></td>
+<td><span class="math inline">\(\frac{e_i}{\sqrt{MSE}}\)</span></td>
+<td><span class="math inline">\(\frac{e_i}{\sqrt{MSE(1-h_{ii})}}\)</span></td>
+<td><span class="math inline">\(\frac{e_i}{1-h_{ii}}\)</span></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Standardized Residuals</li>
+</ul>
+<p>The standardized residuals have zero mean and variance of about 1. Therefore, if <span class="math inline">\(|d_i|&gt;3\)</span>, then the corresponding observation is an outlier.</p>
+<ul>
+<li>Studentized Residuals (standardized PRESS residual)</li>
+</ul>
+<p>where <span class="math inline">\(h_{ii}\)</span> is the <span class="math inline">\(i^{th}\)</span> diagonal element of hat (<span class="math inline">\(\mathbf{H}\)</span>) matrix.</p>
+<p>The observed residuals, however, are not independent and do not have common variance, even when the <span class="math inline">\(\mathbf{\sigma^2I}\)</span> assumption is valid. Under the usual least squares assumptions, <span class="math inline">\(\mathbf{e=(I-H)Y}\)</span> has a multivariate normal distribution with <span class="math inline">\(E\mathbf{(e)=0}\)</span> and <span class="math inline">\(Cov\mathbf{(e)=(I-H)\sigma^2}\)</span></p>
+<blockquote>
+<p>The diagonal elements of <span class="math inline">\(Cov\mathbf{(e)}\)</span> are not equal, so the observed residuals do not have common variance</p>
+</blockquote>
+<blockquote>
+<p>The off-diagonal elements of <span class="math inline">\(Cov\mathbf{(e)}\)</span> are not zero, so they are not independent.</p>
+</blockquote>
+<p>The heterogeneous variances in the observed residuals are easily corrected by standardizing each residual. The variances of the residuals are estimated by the diagonal elements of <span class="math inline">\(\mathbf{(I-H)\hat\sigma^2}\)</span></p>
+<ul>
+<li>PRESS Residuals</li>
+</ul>
+<p>The standardized and studentized residuals are effective in detecting outliers. If we delete the <span class="math inline">\(i^{th}\)</span> observation, fit the regression model to the remaining n-1 observations, and calculate the predicted value (<span class="math inline">\(\hat y_i\)</span>) of <span class="math inline">\(y_i\)</span> corresponding to the deleted observation, the corresponding prediction error</p>
+<p>Residuals associated with points for which ℎ𝑖𝑖 is large will have large PRESS residuals. These points will generally be high influence points. Generally, a large difference between the ordinary residual and the PRESS residual will indicate a point where the model fits the data well, but a model built without that point predicts poorly.</p>
+</div>
+<div id="residual-plots" class="section level4">
+<h4>4.2.3 Residual Plots</h4>
+<ul>
+<li>Normal Probability Plot</li>
+</ul>
+<p>Histogram or Boxplot of residuals</p>
+<p>Normal Q-Q Plot</p>
+<p>If the response variable represents counts, then it might be important to fit a generalized linear model with a binomial or Poisson distribution.</p>
+<p>If the response variable represents continuous proportions (0 to 1), then it might be important to fit a generalized linear model with a beta distribution</p>
+<ul>
+<li><p>Plot of Residuals against the Fitted Values <span class="math inline">\(\mathbf{\hat y_i}\)</span></p></li>
+<li><p>Plot of Residuals against the Regressor or Predictor (for multiple regression models)</p></li>
+</ul>
+<p>Plotting the residuals against the corresponding values of each predictor variable can also be helpful. If there is a pattern in this plot, either higher order term of the predictor is added to the model or a transformation is used to fix the problem.</p>
+<p>Further, it is helpful to plot residuals against predictor variables that are not currently in the model but which could potentially be included. Any structure in the plot of residuals versus an omitted predictor indicates that incorporation of that predictor could improve the model.</p>
+<p>Residual <span class="math inline">\(e_{i}=y_i-\hat y_i\)</span> for <span class="math inline">\(i=1,2..,n\)</span></p>
+<p>There is a medium positive linear pattern. Therefore, it is important to add <span class="math inline">\(x_2\)</span> predictor in the model.</p>
+<p>If there was a non-linear pattern, then it suggest adding a polynomial function of predictor.</p>
+<p>If there is no pattern, then the predictor may not be significant.</p>
+<ul>
+<li>Plot of Residuals in Time Sequence</li>
+</ul>
+<p>Data collected over time on individual observational units will often have <strong>serially correlated residuals</strong>. That is, the residual at one point in time depends to some degree on the previous residuals. Classical time series data, such as the data generated by the continuous monitoring of some process, are readily recognized as such and are expected to have <strong>correlated residuals</strong>.</p>
+<p>Durbin–Watson test statistic</p>
+<p><span class="math display">\[D=\frac{\sum_{i=2}^n(e_i-e_{i-1})^2}{\sum_{i=1}^ne_i^2}\]</span></p>
+<p>Under the assumption of independent error, E(D)=2</p>
+<p>A significant Durbin-Watson test statistic indicates a violation of independent assumption.</p>
+<p>When there is a violation of independence, the structure of variance-covariance matrix of errors can be defined along with the model or time variable can be included as a predictor in the model.</p>
+</div>
+<div id="partial-regression-plots" class="section level4">
+<h4>4.2.4 Partial Regression Plots</h4>
+<p><em>To check independence of residuals.</em></p>
+<p>Plot of residuals against the regressor or predictor may not show the importance of adding the specific predictor in to the model with all the other predictors.</p>
+<p>Let <span class="math inline">\(e_{(j)}\)</span> denote the residuals from the regression of the response variable on all predictors except the <span class="math inline">\(j^{th}\)</span> predictor. Similarly, let <span class="math inline">\(u_{(j)}\)</span> denote the residuals from the regression of the <span class="math inline">\(j^{th}\)</span> predictor on all other predictors. The plot of <span class="math inline">\(e_{(j)}\)</span> versus <span class="math inline">\(u_{(j)}\)</span> is the partial regression plot for the <span class="math inline">\(j^{th}\)</span> predictor.</p>
+<table>
+<colgroup>
+<col width="50%"></col>
+<col width="50%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>rediduals</th>
+<th>fitted model</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(e_{(j)}=y_i-\hat y_i\)</span> for each i</td>
+<td><span class="math inline">\(y=\beta_0+\beta_1x_1+\beta_3x_3+\varepsilon\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(u_{(j)}=x_2-\hat x_2\)</span> for <span class="math inline">\(i=1,2..,n\)</span></td>
+<td><span class="math inline">\(x_2=\alpha_0+\alpha_1x_1+\alpha_3x_3+\varepsilon\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>The slope of the linear regression line in the partial regression plot is the regression coefficient for that predictor in the full model.</p>
+<p><em>If the plots have nonlinear pattern, then ploynomial function of predictor should be used.</em></p>
+<p>Any curvilinear relationships not already taken into account in the model should be evident from the partial regression plots. The plot is useful for detecting outliers and high-leverage points and for showing how several leverage points might be interacting to influence the partial regression coefficients.</p>
+<p>These plots may not be helpful if</p>
+<ul>
+<li>Other predictors are incorrectly used in the model</li>
+<li>Multicollinearity exists</li>
+<li>Interaction terms must be included in the model</li>
+</ul>
+<p><em>A leverage point has x,y values far away from most of the other points but it will be in the pattern of most of data point.</em></p>
+<p><em>It does not change model coefficients.</em></p>
+</div>
+</div>
+<div id="press-statistic" class="section level3">
+<h3>4.3 PRESS statistic</h3>
+<p>This statistic shows the predictive capability of the fitted regression model.</p>
+<p><span class="math display">\[R_{Prediction}^2=1-\frac{PRESS}{SST}\]</span></p>
+<p>One very important use of the PRESS statistic is in comparing regression models. Generally, a model with a small value of PRESS is preferable to one where PRESS is large.</p>
+</div>
+<div id="detection-and-treatment-of-outliers" class="section level3">
+<h3>4.4 Detection and Treatment of Outliers</h3>
+</div>
+<div id="lack-of-fit-of-the-regression-model" class="section level3">
+<h3>4.5 Lack of Fit of the regression model</h3>
+<p><span class="math display">\[SSE=\sum_{i=1}^{n}(y_{i}−\hat y_i)^2=\sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij}−\hat y_i)^2\]</span> <span class="math display">\[=\sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij}−\bar y_i)^2+\sum_{i=1}^{m}\sum_{j=1}^{n_i}(\bar y_i−\hat y_{i})^2=SS_{PE}+SS_{LOF}\]</span></p>
+<p><span class="math display">\[dfE=df_{PE}+df_{LOF}=n-(k+1)=(n-m)+[m-(k+1)]=(n-m)+(m-2)=n-2\]</span></p>
+<p><span class="math display">\[F_0=\frac{SS_{LOF}/df_{LOF}}{SS_{PE}/df_{LOF}}=\frac{SS_{LOF}/[m−(k+1)]}{SS_{PE}/(n−m)} \]</span></p>
+<p><span class="math display">\[\hat\sigma^2=MS_{PE}=\frac{SS_{PE}}{df_{PE}}\]</span></p>
+</div>
+</div>
+<div id="transformations-and-weighting" class="section level2">
+<h2>5 Transformations and Weighting</h2>
+<div id="variance-stabilizing-transformations" class="section level3">
+<h3>5.2 Variance-stabilizing Transformations</h3>
+<p>P.172 TABLE 5.1 Useful Variance-Stabilizing Transformations</p>
+<table>
+<colgroup>
+<col width="50%"></col>
+<col width="50%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Relationship of <span class="math inline">\(σ^2\)</span> to E(y)</th>
+<th>Transfonnation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(σ^2 constant\)</span></td>
+<td>$y′=y $ (no transformation)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(σ^2 E(y)\)</span></td>
+<td>$y′=y $ (square root; Poisson data)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(σ^2 E(y)[1−E(y)]\)</span></td>
+<td><span class="math inline">\(y′=\sin^{−1}(\sqrt y)\)</span> (arcsin; binomial proportions <span class="math inline">\(0≤y_i≤1\)</span>)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(σ^2 [E(y)]^2\)</span></td>
+<td><span class="math inline">\(y′=\ln(y)\)</span> (log)</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(σ^2 [E(y)]^3\)</span></td>
+<td>$y′=y^{−1/2} $(reciprocal square root)</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(σ^2 [E(y)]^4\)</span></td>
+<td>$y′=y^{−1} $(reciprocal)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="transformations-to-linearize-the-model" class="section level3">
+<h3>5.3 Transformations to linearize the model</h3>
+<p>P.177 Figure 5.4 Linearizable functions. (From Daniel and Wood [1980])</p>
+<p>TABLE 5.4 Linearizable Functions and Corresponding Linear Form</p>
+<table>
+<thead>
+<tr class="header">
+<th>Figure</th>
+<th>Linearizable Function</th>
+<th>Transformation</th>
+<th>Linear Form</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>5.4a,b</td>
+<td><span class="math inline">\(y=β_0x^{β_1}\)</span></td>
+<td><span class="math inline">\(y′=\log y,x′=\log x\)</span></td>
+<td><span class="math inline">\(y′=\logβ_0+β_1x′\)</span></td>
+</tr>
+<tr class="even">
+<td>5.4c,d</td>
+<td><span class="math inline">\(y=β_0e^{β_1x}\)</span></td>
+<td><span class="math inline">\(y′=\ln y\)</span></td>
+<td><span class="math inline">\(y′=\lnβ_0+β_1x\)</span></td>
+</tr>
+<tr class="odd">
+<td>5.4e,f</td>
+<td><span class="math inline">\(y=β_0+β_1\log x\)</span></td>
+<td><span class="math inline">\(x′=\log x\)</span></td>
+<td><span class="math inline">\(y′=β_0+β_1x′\)</span></td>
+</tr>
+<tr class="even">
+<td>5.4g,h</td>
+<td><span class="math inline">\(y=\frac{x}{β_0x−β_1}\)</span></td>
+<td><span class="math inline">\(y′=\frac1y,x′=\frac1x\)</span></td>
+<td><span class="math inline">\(y′=β_0−β_1x′\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="analytical-methods-for-selecting-a-transformation" class="section level3">
+<h3>5.4 Analytical Methods for Selecting a Transformation</h3>
+<div id="box-cox-transformation-for-the-response-y" class="section level4">
+<h4>5.4.1 Box-Cox transformation for the response (y)</h4>
+<p>Goal: Find a transformation so that the resulting residuals have normal distribution.</p>
+<p>Box and Cox suggested a power transformation of response (<span class="math inline">\(y^\lambda\)</span>) where <span class="math inline">\(\lambda\)</span> is a parameter to be determined. This parameter and the regression coefficients can be estimated simultaneously so that they maximize the joint likelihood function of values in the response.</p>
+<p>There is no analytical method to find <span class="math inline">\(\lambda\)</span>. However, a numerical (computational) method can be used to find a value of <span class="math inline">\(\lambda\)</span> so that it minimizes the residual sum of squares (SSE) of the fitted model with <span class="math inline">\(y^\lambda\)</span> as the response. In practice, find <span class="math inline">\(\lambda\)</span> using above method and use an appropriate value for <span class="math inline">\(\lambda\)</span> so that it is easier to interpret. For example, <span class="math inline">\(\lambda=\frac12,-\frac12,2,-1, 0\)</span> are easy to interpret. If <span class="math inline">\(\lambda=0\)</span>, then use <span class="math inline">\(\ln(y)\)</span> for the response.</p>
 </div>
 </div>
 </div>

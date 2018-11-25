@@ -15,11 +15,10 @@ knitr::opts_chunk$set(echo = TRUE)
 # {.tabset .tabset-fade .tabset-pills}
 
 ## Model 
-
 ### From Observation
 
 Sample mean|Corrected sum of squares|Sample Variance|Standard diviation
----|---|---|---
+|---|---|---|---
 $\bar x=\frac{\sum_{i=1}^n(x_i)}n$|$S_{xx}=\sum_{i=1}^n(x_i-\bar x)^2$|$Var(x)=S_x^2=\frac{S_{xx}}{n-1}$ | $S_x$  
 $\bar y=\frac{\sum_{i=1}^n(y_i)}n$|$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2$|$Var(y)=S_y^2=\frac{S_{yy}}{n-1}$ | $S_y$  
               -                   |$S_{xy}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)$|$Cov(x,y)=\frac{S_{xy}}{n}$  
@@ -43,7 +42,6 @@ $S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^ny_i^2-n\bar y^2=\sum_{i=1}^n(y_i-
 $S_{xy}=\sum_{i=1}^nx_iy_i-(\sum_{i=1}^nx_i\sum_{i=1}^ny_i)/n=\sum_{i=1}^nx_iy_i-n\bar{x}\bar{y}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)=\sum_{i=1}^ny_i(x_i-\bar x)=\sum_{i=1}^nx_i(y_i-\bar y)$
 
 $c_i=\frac{x_i-\bar x}{S_{xx}};\quad \sum_{i=1}^nc_i=0;\quad \sum_{i=1}^nc_i^2=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{S_{xx}^2}=\frac1{S_{xx}};\quad \sum_{i=1}^nc_ix_i=1$
-
 
 ### Build Model
 
@@ -79,6 +77,7 @@ $$\begin{bmatrix}
 $$\mathbf Y=\mathbf X \mathbf\beta+\mathbf\varepsilon, i=1,2,..n$$
 
 where 0 is a $n\times1$ vector of zero and $\mathbf{I}$ is a $n\times n$ identity matrix.
+
 
 ## Estimation 
 
@@ -145,7 +144,7 @@ $$E[\hat\beta_1^2]=Var(\hat\beta_1)-E[\hat\beta_1]^2=\frac{\sigma^2}{S_xx}+\beta
 #### Covariance
 
     -|x           |   y   |$\varepsilon$| x,y |$\hat\beta_1$|$\hat\beta_0$
----|---|---|---|---|---|---|---
+|---|---|---|---|---|---|---|---
 Var()|$\sigma_x^2$|$\sigma^2$|$\sigma^2$|$MSE\cdot C_{11}$|$\frac{\sigma^2}{S_{xx}}$|$\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})$|
 Cov()|$\sigma_x^2$|   $0$    |   $0$    | $\sigma_{xy}$|$\sigma^2(X'X)^{-1}$| 
 Cor()|            |          |          | $r$ |
@@ -177,7 +176,7 @@ Suppose we fit the least squares regression line which gives the fitted value $\
 $$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies (y_i-\bar y)^2=(y_i−\hat y_i)^2+(\hat y_i−y_i)^2$$
 
 Name||SS|Simple|Multi|df|MS=SS/df|
----|---|---|---|---|---|---
+|---|---|---|---|---|---|---
 Total Sum of Squares    |SST|$\sum_{i=1}^n(y_i-\bar y)^2$     | $S_{yy}$ |$(Y-\bar{y}\mathbf{1})'(Y-\bar{y}\mathbf{1})$ |n-1| 
 Explained sum of squares|SSR|$\sum_{i=1}^n(y_i-\hat y_i)^2$   | $\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$ | $\hatβX'Y-n\bar{y}^2$ |k| MSR
 Residual sum of squares |SSE|$\sum_{i=1}^n(\hat y_i-\bar y)^2$| $S_{yy}-\hat\beta_1S_{xy}$| $Y'Y-\hatβ'X'Y=Y'(I-H)Y$ |n-(k+1)| MSE 
@@ -202,8 +201,8 @@ Similar to partitioning total variation in the response, the degrees of freedom 
 
 For example, the df of SST gives the number of data values need to know if the mean of the data is known. and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
-    - |Simple|Multi
----|---|---
+ item |Simple|Multi
+|---|---|---
 E(SST)|$\beta_1^2S_{xx}+(n-1)\sigma^2$| $ $ 
 E(SSR)|$\sigma^2+\hat\beta_1^2S_{xx}$ | $k\sigma^2+β^{*'}X'_cX_cβ^{*}$ 
 E(SSE)|$(n-2)\sigma^2$                | $ $
@@ -264,8 +263,8 @@ $$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
 
 ### Special Cases
 
-         - |intercept known| through origin | slope known
----|---|---|---
+ item |intercept known| through origin | slope known
+|---|---|---|---
 model$y_i$ |$\beta_0+\hat\beta_1x_i+\varepsilon_i$|$\hat\beta_1x_i+\varepsilon_i$|$\hat\beta_0+\beta_1x_i+\varepsilon_i$
 $\hat\beta$|$\frac{\sum_{i=1}^n(y_i-\beta_0)x_i}{\sum_{i=1}^nx_i^2}$|$\frac{\sum_{i=1}^ny_ix_i}{\sum_{i=1}^nx_i^2}$|$\bar y-\beta_1\bar x$
 $E()$      |$\beta_1$ | $\beta_1$| $\beta_0$ 
@@ -312,6 +311,7 @@ $\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$, where $t_\frac\alpha2$ is cr
 
 
 
+
 ## Test and inference 
 
 ### Normal Distribution
@@ -320,8 +320,8 @@ $\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$, where $t_\frac\alpha2$ is cr
 
 on the Slope and Intercept
 
- - |$\sim N(\mu,\sigma^2)$| $Z\sim N(0,1)$
----|---|---
+ item |$\sim N(\mu,\sigma^2)$| $Z\sim N(0,1)$
+|---|---|---
 $\hat\beta_0$ |$N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)$|$\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}$
 $\hat\beta_1$ |$N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)$|$\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}$
 $\hat{β}$       | $N\left(β,\sigma^2(X'X)^{-1}\right)$
@@ -337,14 +337,14 @@ $$\frac{\hat{β_j}-β_j}{se(\hatβ_j)}\sim t_{df=dfE=n-(k+1)}$$
 
 $$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\sim t_{df=n-2}$$
 
-#### Standard Error of Parameters
-
-    - |$\hat\beta_0$| $\hat\beta_1$ | $\hatβ_j$ | Predict$\hat y_0$
----|---|---|---|---
+ item |$\hat\beta_0$| $\hat\beta_1$ | $\hatβ_j$ | Predict$\hat y_0$
+|---|---|---|---|---
 se |$\sqrt{MSE(\frac1n+\frac{\bar x^2}{S_{xx}})}$|$\sqrt{\frac{MSE}{S{xx}}}$| $\sqrt{C_{jj}MSE}$ | $\sqrt{MSE\left[\frac1k+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$
 T Test| $\frac{\hat{\beta_0}}{se(\hat{\beta_0})}$|$\frac{\hat{\beta_1}}{se(\hat{\beta_1})}$| $\frac{\hat{β_j}-c}{se(β_j)}$ | $\frac{\hat y_0-\bar y_0}{se(\hat y_0)}$
 CI | $\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})$| $\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})$| | $\hat y_0\pm t_{\alpha/2,n-2}se(\hat y_0)$
 
+
+#### Standard Error of Parameters
 
 $se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{\sum(x_i-\bar{x})^2}=\sqrt{\frac{MSE}{S{xx}}}=\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}$
 
@@ -413,11 +413,17 @@ Because $y_i$ and $\varepsilon_i$ are independent for new observations.
 $=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\varepsilon_i)=\sigma^2[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2]=\sigma^2[\frac1n+\frac{(\bar x-x_0)^2}{S_{xx}}+\frac1k]$
 
 
+- 3.5 Prediction of New Observations
+
+If $\mathbf{X_0'}=[1,x_{01},x_{02},..,x_{0k}]$, then a point estimate of the future observation y0 at the point $x_{01},x_{02},..,x_{0k}$ is $\mathbf{\hat y_0=x_0'\hatβ}$
+
+A 100(1−α) percent prediction interval for this future observation is
 
 ### Chi-squared Distribution
 
 #### CI
-`Estimat $\sigma^2$ using MSE`
+
+Estimat $\sigma^2$ using MSE
 
 Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
 
@@ -445,7 +451,7 @@ $$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\si
 The F test statistic ($F_0$) is computed as shown in the ANOVA table for Testing Significance.
 
 Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
----|---|---|---|---|---
+|---|---|---|---|---|---
 Model(Regresion)|$SSR=\hat\beta_1S{xy}; \hatβX'Y-n\bar{y}^2$|1;k|$MSR=\frac{SSR}k$|$\frac{MSR}{MSE}$|$P(F>F_0)$
 Error(Residual)|$SSE=SST-SSR=Y'(I-H)Y$|n-(k+1)|$MSE=\frac{SSE}{n-(k+1)}$||
 Total|$SST=\sum_{i=1}^n(y_i-\bar y)^2=(Y-\bar{y}\mathbf{1})'(Y-\bar{y}\mathbf{1})$|n-1|||
@@ -488,13 +494,33 @@ additional (extra) sum of squares F test (partial F test), $dfE_{Reduced}-dfE_{F
 $$\frac{SSE_{Reduced}-SSE_{Full}}{MSE_{Full}}\sim F_{(1,[n-(k+1)])}$$
 
 
+
+#### Multicollinearity
+
+Multicollinearity is the linear (or near linear) dependence of predictors of the multiple linear regression model.
+
+That means, not all the columns of design matrix (X) are linearly independent and hence $(\mathbf{X'X})$ is not nonsingular resulting $(\mathbf{X'X})^{-1}$ does not exist.
+The multicollinearity increases standard error of estimated regression coefficients and hence makes estimators are less precise.
+
+**VIF (Variance Inflation Factor)** computed as $VIF=\frac1{1-R_j^2}$
+
+where $R_j^2$ is the $R^2$ (coefficient of determination) of the fitted model using $j^{th}$redictor as the response variable and all the other predictors (excluding response) as predictors. 
+
+If VIF >10, then there is a serious problem of multicollinearity and the model is not suitable to use.
+
+- Procedure when multicollinearity exists:
+
+Fit the full model (with all the predictors)
+Find the predictor with highest VIF and fit a reduced model without that predictor
+Check the VIF for the predictors in the new model and repeat the process until all the predictors used in the final reduced model have VIF ≤10
+
 ### Example
 
 Consider the following data set, in which the variables of interest are x=conmmuting distance(miles) and y=commuting time (min).  
 
 
 x|5|10|15|20|25 
----|---|---|---|---|--- 
+|---|---|---|---|---|--- 
 y|8|16|22|23|31 
 $\hat y=4.1+1.06x$|9.4|14.7|20|25.3|30.6 
 $e^2=(y-\hat y)^2$|1.96|1.69|4|5.29|0.16 
@@ -508,7 +534,7 @@ $$n=5,\quad \bar y=20,\quad \sum y_i^2=2294,\quad \hat\sigma^2=4.367,\quad S{xy}
 
 
 Source of Variation|Sum of Squars(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|P-value
----|---|---|---|---|---
+|---|---|---|---|---|---
 Model(Regresion)|$\hat\beta_1S{xy}=1.06\times265=280.9$|1|$\frac{280.9}1$|$\frac{280.9}{4.367}=64.328$|$P(F>64.328)\approx0.01$
 Error(Residual)|SST-SSR=294-280.9=13.1|n-2=5-2=3|$\frac{13.1}3=4.3667$||
 Total|$\sum(y_i-\bar y)^2=\sum{y_i^2}-n\bar y^2=2294-5\times20^2=294$|n-1=4|||
@@ -545,3 +571,190 @@ $$se(\hat{\beta_0})=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=4.367(\
 $$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=4.1\pm3.182\times2.1917=(-2.874,11.074)$$
 
   Since zero is inside thsi interval, ture intercept ($\beta_0$) can be zero with 95% confidence.
+
+
+
+
+
+
+## Adequacy Checking
+
+Three of the major problem areas in least squares analysis relate to failures of the basic assumptions: normality, common variance, and independence of the errors. The process of checking the validity of the assumptions is an important step in every regression analysis.
+
+Normality is needed only for tests of significance and construction of confidence interval estimates of the parameters. The t-test, F-test, and chi-square test require the underlying random variables to be normally distributed. The tests of significance and confidence intervals, however, are affected by nonnormality.
+
+### 4.2 Residual Analysis
+
+#### 4.2.1 Definition of Residuals
+
+The $i^{th}$ observed residual is defined as $e_i=y_i-\hat y_i$ for $i=1,2..,n$
+And the mean squared error (MSE) is an unbiased estimator of error variance $\sigma^2$.
+
+$$\hat\sigma^2=MSE=\frac{(Y-Xβ)'(Y-Xβ)}{dfE}=\frac{Y'(I-H)Y}{rank(I-H)}$$
+
+#### 4.2.2 Methods for Scaling Residuals
+
+The plot of scaled residuals helps to recognize outliers or influential observations.
+
+for $i=1,2..,n$ | Standardized Residuals | Studentized Residuals | PRESS Residuals
+|---|---|---|---
+the $i^{th}$ | $d_i$ | $r_i$ | $e_i$
+the $i^{th}$ | $\frac{e_i}{\sqrt{MSE}}$ | $\frac{e_i}{\sqrt{MSE(1-h_{ii})}}$ | $\frac{e_i}{1-h_{ii}}$
+
+- Standardized Residuals
+
+The standardized residuals have zero mean and variance of about 1. Therefore, if $|d_i|>3$, then the corresponding observation is an outlier.
+
+- Studentized Residuals (standardized PRESS residual)
+
+where $h_{ii}$ is the $i^{th}$ diagonal element of hat ($\mathbf{H}$) matrix.
+
+The observed residuals, however, are not independent and do not have common variance, even when the $\mathbf{\sigma^2I}$ assumption is valid. Under the usual least squares assumptions, $\mathbf{e=(I-H)Y}$ has a multivariate normal distribution with $E\mathbf{(e)=0}$ and $Cov\mathbf{(e)=(I-H)\sigma^2}$
+
+> The diagonal elements of $Cov\mathbf{(e)}$ are not equal, so the observed residuals do not have common variance
+
+> The off-diagonal elements of $Cov\mathbf{(e)}$ are not zero, so they are not independent.
+
+The heterogeneous variances in the observed residuals are easily corrected by standardizing each residual. The variances of the residuals are estimated by the diagonal elements of $\mathbf{(I-H)\hat\sigma^2}$
+
+- PRESS Residuals
+
+The standardized and studentized residuals are effective in detecting outliers.
+If we delete the $i^{th}$ observation, fit the regression model to the remaining n-1 observations, and calculate the predicted value ($\hat y_i$) of $y_i$ corresponding to the deleted observation, the corresponding prediction error
+
+Residuals associated with points for which ℎ𝑖𝑖 is large will have large PRESS residuals. These points will generally be high influence points. Generally, a large difference between the ordinary residual and the PRESS residual will indicate a point where the model fits the data well, but a model built without that point predicts poorly.
+
+#### 4.2.3 Residual Plots
+
+- Normal Probability Plot
+
+Histogram or Boxplot of residuals
+
+Normal Q-Q Plot
+
+If the response variable represents counts, then it might be important to fit a generalized linear model with a binomial or Poisson distribution.
+
+If the response variable represents continuous proportions (0 to 1), then it might be important to fit a generalized linear model with a beta distribution
+
+- Plot of Residuals against the Fitted Values $\mathbf{\hat y_i}$
+
+- Plot of Residuals against the Regressor or Predictor (for multiple regression models)
+
+Plotting the residuals against the corresponding values of each predictor variable can also be helpful. If there is a pattern in this plot, either higher order term of the predictor is added to the model or a transformation is used to fix the problem.
+
+Further, it is helpful to plot residuals against predictor variables that are not currently in the model but which could potentially be included. Any structure in the plot of residuals versus an omitted predictor indicates that incorporation of that predictor could improve the model.
+
+Residual $e_{i}=y_i-\hat y_i$ for $i=1,2..,n$
+
+There is a medium positive linear pattern. Therefore, it is important to add $x_2$ predictor in the model.
+
+If there was a non-linear pattern, then it suggest adding a polynomial function of predictor.
+
+If there is no pattern, then the predictor may not be significant.
+
+- Plot of Residuals in Time Sequence
+
+Data collected over time on individual observational units will often have **serially correlated residuals**. That is, the residual at one point in time depends to some degree on the previous residuals. Classical time series data, such as the data generated by the continuous monitoring of some process, are readily recognized as such and are expected to have **correlated residuals**.
+
+Durbin–Watson test statistic
+
+$$D=\frac{\sum_{i=2}^n(e_i-e_{i-1})^2}{\sum_{i=1}^ne_i^2}$$
+
+Under the assumption of independent error, E(D)=2
+
+A significant Durbin-Watson test statistic indicates a violation of independent assumption.
+
+When there is a violation of independence, the structure of variance-covariance matrix of errors can be defined along with the model or time variable can be included as a predictor in the model.
+
+#### 4.2.4 Partial Regression Plots
+
+_To check independence of residuals._
+
+Plot of residuals against the regressor or predictor may not show the importance of adding the specific predictor in to the model with all the other predictors.
+
+Let $e_{(j)}$ denote the residuals from the regression of the response variable on all predictors except the $j^{th}$ predictor. Similarly, let $u_{(j)}$ denote the residuals from the regression of the $j^{th}$ predictor on all other predictors. The plot of $e_{(j)}$ versus $u_{(j)}$ is the partial regression plot for the $j^{th}$ predictor.
+
+rediduals | fitted model |
+|---|---
+$e_{(j)}=y_i-\hat y_i$ for each i | $y=\beta_0+\beta_1x_1+\beta_3x_3+\varepsilon$
+$u_{(j)}=x_2-\hat x_2$ for $i=1,2..,n$| $x_2=\alpha_0+\alpha_1x_1+\alpha_3x_3+\varepsilon$
+
+The slope of the linear regression line in the partial regression plot is the regression coefficient for that predictor in the full model.
+
+_If the plots have nonlinear pattern, then ploynomial function of predictor should be used._
+
+Any curvilinear relationships not already taken into account in the model should be evident from the partial regression plots. The plot is useful for detecting outliers and high-leverage points and for showing how several leverage points might be interacting to influence the partial regression coefficients.
+
+These plots may not be helpful if
+
+- Other predictors are incorrectly used in the model
+- Multicollinearity exists
+- Interaction terms must be included in the model
+
+_A leverage point has x,y values far away from most of the other points but it will be in the pattern of most of data point._
+
+_It does not change model coefficients._
+
+
+### 4.3 PRESS statistic
+
+This statistic shows the predictive capability of the fitted regression model.
+
+$$R_{Prediction}^2=1-\frac{PRESS}{SST}$$
+
+One very important use of the PRESS statistic is in comparing regression models. Generally, a model with a small value of PRESS is preferable to one where PRESS is large.
+
+### 4.4 Detection and Treatment of Outliers
+
+
+### 4.5 Lack of Fit of the regression model
+
+$$SSE=\sum_{i=1}^{n}(y_{i}−\hat y_i)^2=\sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij}−\hat y_i)^2$$
+$$=\sum_{i=1}^{m}\sum_{j=1}^{n_i}(y_{ij}−\bar y_i)^2+\sum_{i=1}^{m}\sum_{j=1}^{n_i}(\bar y_i−\hat y_{i})^2=SS_{PE}+SS_{LOF}$$
+
+$$dfE=df_{PE}+df_{LOF}=n-(k+1)=(n-m)+[m-(k+1)]=(n-m)+(m-2)=n-2$$
+
+$$F_0=\frac{SS_{LOF}/df_{LOF}}{SS_{PE}/df_{LOF}}=\frac{SS_{LOF}/[m−(k+1)]}{SS_{PE}/(n−m)} $$
+  
+$$\hat\sigma^2=MS_{PE}=\frac{SS_{PE}}{df_{PE}}$$
+
+
+## 5 Transformations and Weighting
+
+### 5.2 Variance-stabilizing Transformations
+P.172 TABLE 5.1 Useful Variance-Stabilizing Transformations
+
+Relationship of $σ^2$ to E(y)|Transfonnation
+|---|---
+$σ^2 constant$    |$y′=y $ (no transformation)
+$σ^2 E(y)$        |$y′=\sqrt y $ (square root; Poisson data)
+$σ^2 E(y)[1−E(y)]$|$y′=\sin^{−1}(\sqrt y)$ (arcsin; binomial proportions $0≤y_i≤1$)
+$σ^2 [E(y)]^2$    |$y′=\ln(y)$ (log)
+$σ^2 [E(y)]^3$    |$y′=y^{−1/2} $(reciprocal square root)
+$σ^2 [E(y)]^4$    |$y′=y^{−1} $(reciprocal)
+
+### 5.3 Transformations to linearize the model
+P.177 Figure 5.4 Linearizable functions. (From Daniel and Wood [1980])
+
+TABLE 5.4 Linearizable Functions and Corresponding Linear Form
+
+Figure | Linearizable Function | Transformation | Linear Form
+|---|---|---|---
+5.4a,b |$y=β_0x^{β_1}$        |$y′=\log y,x′=\log x$  |$y′=\logβ_0+β_1x′$
+5.4c,d |$y=β_0e^{β_1x}$       |$y′=\ln y$             |$y′=\lnβ_0+β_1x$
+5.4e,f |$y=β_0+β_1\log x$     |$x′=\log x$            |$y′=β_0+β_1x′$
+5.4g,h |$y=\frac{x}{β_0x−β_1}$|$y′=\frac1y,x′=\frac1x$|$y′=β_0−β_1x′$
+
+
+
+
+### 5.4 Analytical Methods for Selecting a Transformation
+
+#### 5.4.1 Box-Cox transformation for the response (y)
+
+Goal: Find a transformation so that the resulting residuals have normal distribution.
+
+Box and Cox suggested a power transformation of response ($y^\lambda$) where $\lambda$ is a parameter to be determined. This parameter and the regression coefficients can be estimated simultaneously so that they maximize the joint likelihood function of values in the response.
+
+There is no analytical method to find $\lambda$. However, a numerical (computational) method can be used to find a value of $\lambda$ so that it minimizes the residual sum of squares (SSE) of the fitted model with $y^\lambda$ as the response.
+In practice, find $\lambda$ using above method and use an appropriate value for $\lambda$ so that it is easier to interpret. For example, $\lambda=\frac12,-\frac12,2,-1, 0$ are easy to interpret. If $\lambda=0$, then use $\ln(y)$ for the response.
