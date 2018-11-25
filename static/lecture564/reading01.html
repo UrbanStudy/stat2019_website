@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2018-11-24" />
+<meta name="date" content="2018-11-25" />
 
 <title>STAT564</title>
 
@@ -308,7 +308,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">STAT564</h1>
 <h3 class="subtitle"><em>Linear Regression</em></h3>
-<h4 class="date"><em>November 24, 2018</em></h4>
+<h4 class="date"><em>November 25, 2018</em></h4>
 
 </div>
 
@@ -319,15 +319,12 @@ $(document).ready(function () {
 <h2>Model</h2>
 <div id="from-observation" class="section level3">
 <h3>From Observation</h3>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
+<col width="25%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -335,9 +332,6 @@ $(document).ready(function () {
 <th>Corrected sum of squares</th>
 <th>Sample Variance</th>
 <th>Standard diviation</th>
-<th></th>
-<th></th>
-<th></th>
 </tr>
 </thead>
 <tbody>
@@ -428,11 +422,13 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <p><span class="math display">\[\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y\]</span> <span class="math display">\[\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i\]</span></p>
 </div>
 <div id="fitted-model" class="section level4">
-<h4>fitted model</h4>
+<h4>Fitted model</h4>
 <p><span class="math display">\[\hat{y_i}=\hat\beta_0+\hat\beta_1x_i;\quad \mathbf{Y=X\hatβ=X(X'X)^{-1}X'Y=HY}\]</span></p>
 <p>‘There seems to be a decreasing (negative) medium approximately linear relationship.’ ‘The average y increases by <span class="math inline">\(\beta_1\)</span> units as the x increases by 1 unit.’</p>
-<p><span class="math display">\[\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}\]</span></p>
-<p><span class="math display">\[\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}\]</span></p>
+<ul>
+<li>Standardized</li>
+</ul>
+<p><span class="math display">\[\hat{w}=\frac{\hat{y-\hat{y}}}{S_y}=rZ=r\frac{\hat{x-\hat{x}}}{S_x}\]</span> <span class="math display">\[\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}\]</span></p>
 </div>
 <div id="unbiased-estimators-of-regression-coefficients" class="section level4">
 <h4>Unbiased estimators of regression coefficients</h4>
@@ -479,9 +475,9 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td><span class="math inline">\(\sigma_x^2\)</span></td>
 <td><span class="math inline">\(\sigma^2\)</span></td>
 <td><span class="math inline">\(\sigma^2\)</span></td>
-<td><span class="math inline">\(\times\)</span></td>
-<td><span class="math inline">\(\frac{\sigma^2}{(n-1)S_x^2}\)</span></td>
-<td><span class="math inline">\(\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})\)</span></td>
+<td><span class="math inline">\(MSE\cdot C_{11}\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{S_{xx}}\)</span></td>
+<td><span class="math inline">\(\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})\)</span></td>
 <td></td>
 </tr>
 <tr class="even">
@@ -491,7 +487,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td><span class="math inline">\(0\)</span></td>
 <td><span class="math inline">\(\sigma_{xy}\)</span></td>
 <td><span class="math inline">\(\sigma^2(X'X)^{-1}\)</span></td>
-<td><span class="math inline">\(MSE\cdot C_{11}\)</span></td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>Cor()</td>
@@ -516,10 +512,6 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <li>Correlation Coefficient</li>
 </ul>
 <p><span class="math display">\[|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}Var{y}}}=\frac{Cov(x,y)}{S_xS_y}=\frac{Cov(\hat\beta_0,\hat\beta_1)}{se(\hat\beta_0)se(\hat\beta_1)}\]</span></p>
-</div>
-<div id="standard-error-of-parameters" class="section level4">
-<h4>Standard Error of Parameters</h4>
-<p><span class="math display">\[se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}\]</span> <span class="math display">\[se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}\]</span></p>
 </div>
 </div>
 <div id="estimation-of-error-variance-sigma2" class="section level3">
@@ -719,58 +711,103 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <h3>Normal Distribution</h3>
 <p><code>Assumption 5</code></p>
 <p>on the Slope and Intercept</p>
-<p><span class="math display">\[\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)\]</span></p>
-<p><span class="math display">\[\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)\]</span></p>
-<p><span class="math display">\[\hat{β}\sim N\left(β,\sigma^2(X'X)^{-1}\right)\]</span></p>
-</div>
-<div id="chi-squared-distribution" class="section level3">
-<h3>Chi-squared Distribution</h3>
-<p><code>Estimat $\sigma^2$ using MSE</code></p>
-<p>Typically, <span class="math inline">\(\sigma^2\)</span> is unknown and is estimated using MSE (Mean Squared Error).</p>
-<p><span class="math display">\[\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)};\quad \frac{[n-(k+1)]MSE}{\sigma^2}=\frac{SSE}{\sigma^2}=\frac{Y'(I-H)Y}{\sigma^2}\sim \chi^2_{df=rank(I-H)=n-(k+1)}\]</span></p>
-<p>The ANOVA is useful when testing about the true slope in simple linear regression analysis.</p>
-<p><span class="math display">\[H_0:\beta_1=0;\quad H_1:\beta_1\ne0\]</span></p>
-<p>Appendix C.3 shows that</p>
-<p><span class="math display">\[\dfrac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}\sim \chi^2_{(n-2)}\]</span></p>
-<p>and if <span class="math inline">\(\beta_1=0\)</span>, then</p>
-<p><span class="math display">\[\frac{dfR\times MSR}{\sigma^2}=\frac{SSR}{\sigma^2}\sim \chi^2_{(1)}\]</span></p>
-<p>if <span class="math inline">\(β^{*'}=0\)</span>, then</p>
-<p><span class="math display">\[\frac{dfR\times MSR}{\sigma^2}=\frac{kMSR}{\sigma^2}=\dfrac{SSR}{\sigma^2}=\sim \chi^2_{df=k}\]</span></p>
-<div id="ci" class="section level4">
-<h4>CI</h4>
 <ul>
-<li><span class="math inline">\(\sigma^2\)</span></li>
+<li><table>
+<colgroup>
+<col width="33%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\sim N(\mu,\sigma^2)\)</span></th>
+<th><span class="math inline">\(Z\sim N(0,1)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat\beta_0\)</span></td>
+<td><span class="math inline">\(N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\)</span></td>
+<td><span class="math inline">\(\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat\beta_1\)</span></td>
+<td><span class="math inline">\(N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\)</span></td>
+<td><span class="math inline">\(\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat{β}\)</span></td>
+<td><span class="math inline">\(N\left(β,\sigma^2(X'X)^{-1}\right)\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\hat{y}\)</span></td>
+<td><span class="math inline">\(N\left(\hat\beta_0+\hat\beta_1x_0,\sigma^2(\frac1n+\frac{(x-\bar x)^2}{S_{xx}})\right)\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\hat{y_0}|x_0\)</span></td>
+<td><span class="math inline">\(N\left(\hat\beta_0+\hat\beta_1x_0,\sigma^2(\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})\right)\)</span></td>
+</tr>
+</tbody>
+</table></li>
 </ul>
-<p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true error variance <span class="math inline">\((\sigma^2)\)</span>:</p>
-<p><span class="math display">\[\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]\]</span></p>
-</div>
 </div>
 <div id="t-distribution" class="section level3">
 <h3>T Distribution</h3>
+<p>Typically, <span class="math inline">\(σ^2\)</span> is unknown. MSE is an unbiased estimator of <span class="math inline">\(σ^2\)</span>.</p>
+<p><span class="math display">\[\frac{\hat{β_j}-β_j}{se(\hatβ_j)}\sim t_{df=dfE=n-(k+1)}\]</span></p>
+<p><span class="math display">\[\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\sim t_{df=n-2}\]</span></p>
+<div id="standard-error-of-parameters" class="section level4">
+<h4>Standard Error of Parameters</h4>
+<ul>
+<li><table>
+<colgroup>
+<col width="33%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\hat\beta_0\)</span></th>
+<th><span class="math inline">\(\hat\beta_1\)</span></th>
+<th><span class="math inline">\(se(\hatβ_j)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>se</td>
+<td><span class="math inline">\(\sqrt{MSE(\frac1n+\frac{\bar x^2}{S_{xx}})}\)</span></td>
+<td><span class="math inline">\(\sqrt{\frac{MSE}{S{xx}}}\)</span></td>
+</tr>
+<tr class="even">
+<td>T Test</td>
+<td><span class="math inline">\(\frac{\hat{\beta_0}}{se(\hat{\beta_0})}\)</span></td>
+<td><span class="math inline">\(\frac{\hat{\beta_1}}{se(\hat{\beta_1})}\)</span></td>
+</tr>
+<tr class="odd">
+<td>CI</td>
+<td><span class="math inline">\(\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})\)</span></td>
+<td><span class="math inline">\(\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})\)</span></td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+<p><span class="math display">\[se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{\sum(x_i-\bar{x})^2}=\sqrt{\frac{MSE}{S{xx}}}=\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\]</span> <span class="math display">\[se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}=\sqrt{\dfrac{MSE}{n}}\]</span></p>
+<p><span class="math display">\[se(\hatβ_j)=\sqrt{C_{jj}\hat\sigma^2}=\sqrt{C_{jj}MSE}\]</span></p>
+</div>
 <div id="hypothesis-test" class="section level4">
 <h4>Hypothesis Test</h4>
 <ul>
 <li>Testing Significance of Regression</li>
 </ul>
 <p><span class="math display">\[H_0:\beta_1=0;\quad H_A:\beta_1\ne0\]</span></p>
-<p><span class="math display">\[t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}\]</span></p>
 <p>There is strong (not enoygh ) evidence that the true slope of fitted model is significantly different from zero at 5% significance level because p value is much smaller than 0.05;</p>
-<p>Decision: Since the p-value<span class="math inline">\(&gt;(&lt;)\)</span>significance level (<span class="math inline">\(\alpha\)</span>=0.05), there is no enough evidence to conclude that the true slope is different from c (reject <span class="math inline">\(H_0\)</span> and conclude <span class="math inline">\(H_1\)</span> is true).</p>
 <p><span class="math display">\[H_0:\beta_1=c;\quad H_A:\beta_1\ne c\]</span></p>
-<p><span class="math display">\[\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}\]</span></p>
-<p><span class="math display">\[t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}\]</span></p>
+<p>Decision: Since the p-value<span class="math inline">\(&gt;(&lt;)\)</span>significance level (<span class="math inline">\(\alpha\)</span>=0.05), there is no enough evidence to conclude that the true slope is different from c (reject <span class="math inline">\(H_0\)</span> and conclude <span class="math inline">\(H_1\)</span> is true).</p>
 </div>
 <div id="confidence-interval-nt" class="section level4">
 <h4>Confidence Interval (N~T)</h4>
-<ul>
-<li><span class="math inline">\(\beta_1\)</span></li>
-</ul>
 <p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true slope <span class="math inline">\((\beta_1)\)</span>:</p>
-<p><span class="math display">\[\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \sqrt{\frac{\hat\sigma^2}{S_{xx}}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \sqrt{\frac{MSE}{\sum (x_i-\bar{x})^2}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \left(\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\right)\]</span></p>
-<ul>
-<li><span class="math inline">\(\beta_0\)</span> <span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true intercept <span class="math inline">\((\beta_0)\)</span>:</li>
-</ul>
-<p><span class="math display">\[\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)\]</span></p>
+<p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true intercept <span class="math inline">\((\beta_0)\)</span>:</p>
 <p>Since zero is (not) inside this interval, true intercept can (not) be zero with <span class="math inline">\(1-\alpha\)</span> confidence.</p>
 <p>The 95% confidence interval (does not) contain zero. Therefore, we are 95% confidence that the true intercept is different from (can be) zero;</p>
 </div>
@@ -792,11 +829,6 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <ul>
 <li>Consider the random variable <span class="math inline">\(\hat y_0-\bar y_0\)</span> and find its expected value and variance.</li>
 </ul>
-<p>We know <span class="math inline">\(\hat\beta_1\)</span> and <span class="math inline">\(\hat\beta_1\)</span> have normal distributions. Therefore,</p>
-<p><span class="math display">\[\hat y=\hat\beta_0+\hat\beta_1x \sim N\]</span></p>
-<p>Similarly,</p>
-<p><span class="math display">\[\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0 \sim N\]</span></p>
-<p><span class="math display">\[\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t_{df=n-2}\]</span></p>
 <p>The figure below is an output graph from SAS for the scatterplot of data in Computer Lab 1 with overlaid fitted model, 95% confidence interval for mean response, and 95% prediction interval for a single new observation.</p>
 <p>Be careful when predicting response for a given new value of predictor.</p>
 <p>-Do not extrapolate!</p>
@@ -804,6 +836,21 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <p><span class="math inline">\(Var[\hat y_0-\bar y_0]=Var[\hat{\beta_0}+\hat{\beta_1}x_0-\beta_0-\beta_1x_0-\frac1k\sum_{i=1}^k\varepsilon_i]=Var[\bar y-\hat\beta_1\bar x+\hat{\beta_1}x_0-\frac1k\sum_{i=1}^k\varepsilon_i]\)</span></p>
 <p><span class="math inline">\(=Var[\frac{\sum_{i=1}^ny_i}n-\sum_{i=1}^nc_iy_i(\bar x-x_0)-\frac1k\sum_{i=1}^k\varepsilon_i]=Var\Big[\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]y_i\Big]+Var[\sum_{i=1}^k\frac1k\varepsilon_i]-2Cov[y_i,\varepsilon_i]\)</span></p>
 <p>Because <span class="math inline">\(y_i\)</span> and <span class="math inline">\(\varepsilon_i\)</span> are independent for new observations. <span class="math inline">\(=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\varepsilon_i)=\sigma^2[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2]=\sigma^2[\frac1n+\frac{(\bar x-x_0)^2}{S_{xx}}+\frac1k]\)</span></p>
+</div>
+</div>
+<div id="chi-squared-distribution" class="section level3">
+<h3>Chi-squared Distribution</h3>
+<div id="ci" class="section level4">
+<h4>CI</h4>
+<p><code>Estimat $\sigma^2$ using MSE</code></p>
+<p>Typically, <span class="math inline">\(\sigma^2\)</span> is unknown and is estimated using MSE (Mean Squared Error).</p>
+<p><span class="math display">\[\frac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}\sim \chi^2_{(n-2)}\]</span> <span class="math display">\[\frac{[n-(k+1)]MSE}{\sigma^2}=\frac{SSE}{\sigma^2}=\frac{Y'(I-H)Y}{\sigma^2}\sim \chi^2_{df=rank(I-H)=n-(k+1)}\]</span></p>
+<p>if <span class="math inline">\(\beta_1=0\)</span>, then</p>
+<p><span class="math display">\[\frac{dfR\times MSR}{\sigma^2}=\frac{SSR}{\sigma^2}\sim \chi^2_{(1)}\]</span></p>
+<p>if <span class="math inline">\(β^{*'}=0\)</span>, then</p>
+<p><span class="math display">\[\frac{dfR\times MSR}{\sigma^2}=\frac{kMSR}{\sigma^2}=\dfrac{SSR}{\sigma^2}=\sim \chi^2_{df=k}\]</span></p>
+<p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true error variance <span class="math inline">\((\sigma^2)\)</span>:</p>
+<p><span class="math display">\[\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]\]</span></p>
 </div>
 </div>
 <div id="f-distribution" class="section level3">

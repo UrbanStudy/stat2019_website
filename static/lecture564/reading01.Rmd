@@ -18,8 +18,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### From Observation
 
-Sample mean|Corrected sum of squares|Sample Variance|Standard diviation| | | 
----|---|---|---|---|---|---
+Sample mean|Corrected sum of squares|Sample Variance|Standard diviation
+---|---|---|---
 $\bar x=\frac{\sum_{i=1}^n(x_i)}n$|$S_{xx}=\sum_{i=1}^n(x_i-\bar x)^2$|$Var(x)=S_x^2=\frac{S_{xx}}{n-1}$ | $S_x$  
 $\bar y=\frac{\sum_{i=1}^n(y_i)}n$|$S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2$|$Var(y)=S_y^2=\frac{S_{yy}}{n-1}$ | $S_y$  
               -                   |$S_{xy}=\sum_{i=1}^n(x_i-\bar x)(y_i-\bar y)$|$Cov(x,y)=\frac{S_{xy}}{n}$  
@@ -106,16 +106,17 @@ $$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2;\qu
 $$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=(X'X)^{-1}X'Y$$
 $$\hat{\beta_0}=\bar y-\hat{\beta_1}\bar x=\frac1n{\sum_{i=1}^ny_i}-\bar x(\sum_{i=1}^n c_iy_i)=\sum_{i=1}^n(\frac1n-\bar{x}c_i)y_i$$
 
-#### fitted model
+#### Fitted model
 
 $$\hat{y_i}=\hat\beta_0+\hat\beta_1x_i;\quad \mathbf{Y=X\hatβ=X(X'X)^{-1}X'Y=HY}$$
 
 'There seems to be a decreasing (negative) medium approximately linear relationship.'
 'The average y increases by $\beta_1$ units as the x increases by 1 unit.'
 
-$$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
+- Standardized 
 
-$$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
+$$\hat{w}=\frac{\hat{y-\hat{y}}}{S_y}=rZ=r\frac{\hat{x-\hat{x}}}{S_x}$$
+$$\mathbf{e=Y-\hat Y=Y-X\hatβ=(I-H)Y}$$
 
 #### Unbiased estimators of regression coefficients
 
@@ -143,10 +144,10 @@ $$E[\hat\beta_1^2]=Var(\hat\beta_1)-E[\hat\beta_1]^2=\frac{\sigma^2}{S_xx}+\beta
 
 #### Covariance
 
- -   |x           |   y   |$\varepsilon$| x,y |$\hat\beta_1$|$\hat\beta_0$
+  -  |x           |   y   |$\varepsilon$| x,y |$\hat\beta_1$|$\hat\beta_0$
 ---|---|---|---|---|---|---|---
-Var()|$\sigma_x^2$|$\sigma^2$|$\sigma^2$|$\times$|$\frac{\sigma^2}{(n-1)S_x^2}$|$\sigma^2(\frac1n+\frac{\bar x^2}{(n-1)S_x^2})$|
-Cov()|$\sigma_x^2$|   $0$    |   $0$    | $\sigma_{xy}$|$\sigma^2(X'X)^{-1}$| $MSE\cdot C_{11}$
+Var()|$\sigma_x^2$|$\sigma^2$|$\sigma^2$|$MSE\cdot C_{11}$|$\frac{\sigma^2}{S_{xx}}$|$\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})$|
+Cov()|$\sigma_x^2$|   $0$    |   $0$    | $\sigma_{xy}$|$\sigma^2(X'X)^{-1}$| 
 Cor()|            |          |          | $r$ |
 
 $Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}$
@@ -168,12 +169,6 @@ $Cov(a_1x_1+a_2x_2, b_1y_1+b_2y_2)=a_1b_1Cov(x_1,y_1)+a_1b_2Cov(x_1,y_2)+a_2b_1C
 - Correlation Coefficient
 
 $$|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}Var{y}}}=\frac{Cov(x,y)}{S_xS_y}=\frac{Cov(\hat\beta_0,\hat\beta_1)}{se(\hat\beta_0)se(\hat\beta_1)}$$
-
-#### Standard Error of Parameters
-
-$$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{S{xx}}$$
-$$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}$$
-
 
 
 ### Estimation of Error Variance $\sigma^2$
@@ -325,45 +320,40 @@ $\hat{\beta_1}\pm t_\frac\alpha2se(\hat{\beta_1})$, where $t_\frac\alpha2$ is cr
 
 on the Slope and Intercept
 
-$$\hat{\beta_0}\sim N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}\sim N(0,1)$$
-
-$$\hat{\beta_1}\sim N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)\implies Z=\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}\sim N(0,1)$$
-
-$$\hat{β}\sim N\left(β,\sigma^2(X'X)^{-1}\right)$$
-
-### Chi-squared Distribution
-
-`Estimat $\sigma^2$ using MSE`
-
-Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
-
-$$\frac{(n-2)\hat{\sigma}^2}{\sigma^2}\sim \chi^2_{(n-2)};\quad \frac{[n-(k+1)]MSE}{\sigma^2}=\frac{SSE}{\sigma^2}=\frac{Y'(I-H)Y}{\sigma^2}\sim \chi^2_{df=rank(I-H)=n-(k+1)}$$
-
-The ANOVA is useful when testing about the true slope in simple linear regression analysis.
-
-$$H_0:\beta_1=0;\quad H_1:\beta_1\ne0$$
-
-Appendix C.3 shows that
-
-$$\dfrac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}\sim \chi^2_{(n-2)}$$
-
-and if $\beta_1=0$, then
-
-$$\frac{dfR\times MSR}{\sigma^2}=\frac{SSR}{\sigma^2}\sim \chi^2_{(1)}$$
-
-if $β^{*'}=0$, then
-
-$$\frac{dfR\times MSR}{\sigma^2}=\frac{kMSR}{\sigma^2}=\dfrac{SSR}{\sigma^2}=\sim \chi^2_{df=k}$$
+ - |$\sim N(\mu,\sigma^2)$| $Z\sim N(0,1)$
+---|---|---
+$\hat\beta_0$ |$N\left(\beta_0,\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})\right)$|$\frac{\hat\beta_0-\beta_0}{\sqrt{\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}}$
+$\hat\beta_1$ |$N\left(\beta_1,\frac{\sigma^2}{S_{xx}}\right)$|$\frac{\hat\beta_0-\beta_0}{\sqrt{\frac{\sigma^2}{S_{xx}}}}$
+$\hat{β}$       | $N\left(β,\sigma^2(X'X)^{-1}\right)$
+$\hat{y}$       | $N\left(\hat\beta_0+\hat\beta_1x_0,\sigma^2(\frac1n+\frac{(x-\bar x)^2}{S_{xx}})\right)$
+$\hat{y_0}|x_0$ | $N\left(\hat\beta_0+\hat\beta_1x_0,\sigma^2(\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}})\right)$
 
 
-#### CI
-- $\sigma^2$
 
- $100(1-\alpha)%$ Confidence Interval for the true error variance $(\sigma^2)$:
 
-$$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]$$
+
 
 ### T Distribution
+
+Typically, $σ^2$ is unknown. MSE is an unbiased estimator of $σ^2$.
+
+$$\frac{\hat{β_j}-β_j}{se(\hatβ_j)}\sim t_{df=dfE=n-(k+1)}$$
+
+$$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\sim t_{df=n-2}$$
+
+#### Standard Error of Parameters
+
+ - |$\hat\beta_0$| $\hat\beta_1$ | $se(\hatβ_j)$ | Prediction $\hat y$
+---|---|---
+se |$\sqrt{MSE(\frac1n+\frac{\bar x^2}{S_{xx}})}$|$\sqrt{\frac{MSE}{S{xx}}}$| $\sqrt{C_{jj}MSE}$ | $\sqrt{MSE\left[\frac1k+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}$
+T Test| $\frac{\hat{\beta_0}}{se(\hat{\beta_0})}$|$\frac{\hat{\beta_1}}{se(\hat{\beta_1})}$| $\frac{\hat{β_j}-c}{se(β_j)}$ | $\frac{\hat y_0-\bar y_0}{se(\hat y_0)}$
+CI | $\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})$| $\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})$| $\hat y_0\pm t_{\alpha/2,n-2}se(\hat y_0)$
+
+
+$$se(\hat\beta_1)=\sqrt{Var(\hat\beta_1)}=\sqrt \frac{\hat\sigma^2}{\sum(x_i-\bar{x})^2}=\sqrt{\frac{MSE}{S{xx}}}=\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}$$
+$$se(\hat{\beta_0})=\sqrt{Var(\hat\beta_0)}=\sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}=\sqrt{\dfrac{MSE}{n}}$$
+
+$$se(\hatβ_j)=\sqrt{C_{jj}\hat\sigma^2}=\sqrt{C_{jj}MSE}$$
 
 #### Hypothesis Test
 
@@ -371,31 +361,17 @@ $$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\si
 
 $$H_0:\beta_1=0;\quad H_A:\beta_1\ne0$$
 
-$$t=\dfrac{\hat{\beta_1}}{se(\hat{\beta_1})}=\dfrac{\hat{\beta_1}}{\sqrt{MSE/\sum(x_i-\bar{x})^2}}$$
-
 There is strong (not enoygh ) evidence that the true slope of fitted model is significantly different from zero at 5% significance level because p value is much smaller than 0.05;
-
-Decision: Since the p-value$>(<)$significance level ($\alpha$=0.05), there is no enough evidence to conclude that the true slope is different from c (reject $H_0$ and conclude $H_1$ is true).
 
 $$H_0:\beta_1=c;\quad H_A:\beta_1\ne c$$
 
-$$\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-β_j}{\sqrt{C_{jj}\hat\sigma^2}}\sim t_{df=dfE=n-(k+1)}$$
-
-$$t_0=\frac{\hat{β_j}-c}{se(β_j)}=\frac{\hat{β_1}-c}{\sqrt{MSE/S_{xx}}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}MSE}}=\frac{\hat{β_j}-c}{\sqrt{C_{jj}\hat\sigma^2}}$$
-
+Decision: Since the p-value$>(<)$significance level ($\alpha$=0.05), there is no enough evidence to conclude that the true slope is different from c (reject $H_0$ and conclude $H_1$ is true).
 
 #### Confidence Interval (N~T)
 
-- $\beta_1$
-
  $100(1-\alpha)%$ Confidence Interval for the true slope $(\beta_1)$:
 
-$$\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})=\hat{\beta_1}\pm t_{\alpha/2} \sqrt{\frac{\hat\sigma^2}{S_{xx}}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \sqrt{\frac{MSE}{\sum (x_i-\bar{x})^2}}=\hat{\beta_1}\pm t_{\alpha/2,n-2}\times \left(\frac{\sqrt{n}\hat{\sigma}}{\sqrt{n-2} \sqrt{\sum (x_i-\bar{x})^2}}\right)$$
-
-- $\beta_0$
  $100(1-\alpha)%$ Confidence Interval for the true intercept $(\beta_0)$:
-
-$$\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})=\hat{\beta_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(\frac1n+\frac{\bar x^2}{S_{xx}})}=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{MSE}{n}}\right)=\hat{\beta_0}\pm t_{\alpha/2,n-2}\times \left(\sqrt{\dfrac{\hat{\sigma}^2}{n-2}}\right)$$
 
 Since zero is (not) inside this interval, true intercept can (not) be zero with $1-\alpha$ confidence.
 
@@ -423,15 +399,7 @@ $$\hat{y_0}\pm t_{\alpha/2} \sqrt{\hat\sigma^2(1+\frac1n+\frac{(x_0-\bar x)^2}{S
 - Consider the random variable $\hat y_0-\bar y_0$ and find its expected value and variance.
 
 
-We know $\hat\beta_1$ and $\hat\beta_1$ have normal distributions. Therefore,
 
-$$\hat y=\hat\beta_0+\hat\beta_1x \sim N$$
-
-Similarly,
-
-$$\hat y_0|x_0=\hat y_0=\hat\beta_0+\hat\beta_1x_0 \sim N$$
-
-$$\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}= \sim t_{df=n-2}$$
 
 The figure below is an output graph from SAS for the scatterplot of data in Computer Lab 1 with overlaid fitted model, 95% confidence interval for mean response, and 95% prediction interval for a single new observation.
 
@@ -453,6 +421,30 @@ $=Var[\frac{\sum_{i=1}^ny_i}n-\sum_{i=1}^nc_iy_i(\bar x-x_0)-\frac1k\sum_{i=1}^k
 
 Because $y_i$ and $\varepsilon_i$ are independent for new observations.
 $=\sum_{i=1}^n[\frac1n-(\bar x-x_0)c_i]^2Var(y_i)+\sum_{i=1}^k\frac1{k^2}Var(\varepsilon_i)=\sigma^2[\sum_{i=1}^n{\frac1{n^2}}-\frac{2\bar x}{n}\sum_{i=1}^nc_i+\bar x^2\sum_{i=1}^nc_i^2]=\sigma^2[\frac1n+\frac{(\bar x-x_0)^2}{S_{xx}}+\frac1k]$
+
+
+
+### Chi-squared Distribution
+
+#### CI
+`Estimat $\sigma^2$ using MSE`
+
+Typically, $\sigma^2$ is unknown and is estimated using MSE (Mean Squared Error).
+
+$$\frac{(n-2)\hat{\sigma}^2}{\sigma^2}=\dfrac{dfE\times MSE}{\sigma^2}=\dfrac{(n-2)MSE}{\sigma^2}=\dfrac{SSE}{\sigma^2}\sim \chi^2_{(n-2)}$$
+$$\frac{[n-(k+1)]MSE}{\sigma^2}=\frac{SSE}{\sigma^2}=\frac{Y'(I-H)Y}{\sigma^2}\sim \chi^2_{df=rank(I-H)=n-(k+1)}$$
+
+if $\beta_1=0$, then
+
+$$\frac{dfR\times MSR}{\sigma^2}=\frac{SSR}{\sigma^2}\sim \chi^2_{(1)}$$
+
+if $β^{*'}=0$, then
+
+$$\frac{dfR\times MSR}{\sigma^2}=\frac{kMSR}{\sigma^2}=\dfrac{SSR}{\sigma^2}=\sim \chi^2_{df=k}$$
+
+ $100(1-\alpha)%$ Confidence Interval for the true error variance $(\sigma^2)$:
+
+$$\Bigg[\dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{\frac\alpha2}}, \dfrac{(n-2)\hat{\sigma}^2}{\chi^2_{1-\frac\alpha2}}\Bigg ]$$
 
 
 
