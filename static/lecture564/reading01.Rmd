@@ -90,49 +90,27 @@ $$|r|=\sqrt{R^2}=\frac{S_{xy}}{\sqrt{S_{xx}S_{yy}}}=\frac{Cov(x,y)}{\sqrt{Var{x}
 Suppose we fit the least squares regression line which gives the fitted value $\hat y_i$. Then
 $$y_i-\bar y=(y_i−\hat y_i)+(\hat y_i−y_i) \implies (y_i-\bar y)^2=(y_i−\hat y_i)^2+(\hat y_i−y_i)^2$$
 
-|SS|=|df|MS|
-|---|---|---|---|---
-|SST|$\sum_{i=1}^n(y_i-\bar y)^2$     |n-1| MST |
-|SSR|$\sum_{i=1}^n(y_i-\hat y_i)^2$   |2-1| MSR | $\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$
-|SSE|$\sum_{i=1}^n(\hat y_i-\bar y)^2$|n-2| MSE |
+Name||SS|Simple|Multi|df|MS=SS/df|
+---|---|---|---|---|---|---
+Total Sum of Squares    |SST|$\sum_{i=1}^n(y_i-\bar y)^2$     | S_{yy} | |n-1| MST 
+Explained sum of squares|SSR|$\sum_{i=1}^n(y_i-\hat y_i)^2$   | $\hat\beta_1S_{xy}=\hat\beta_1^2S_{xx}$ | |2-1| MSR
+Residual sum of squares |SSE|$\sum_{i=1}^n(\hat y_i-\bar y)^2$| $S_{yy}-\hat\beta_1S_{xy}$| $Y'Y-\hatβ'X'Y$ |n-2| MSE 
 
-- Total Sum of Squares
-
-Partitioning the Total Variability in the response ($y_i$’s)
-
-The total variability in the ’s is measured by
-
-$$SST=\sum_{i=1}^n(y_i-\bar y)^2$$
-
-- Explained sum of squares
-
-$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$$
-
-- Residual sum of squares
+$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat\beta_0+\hat\beta_1x_i-\bar y)^2=\sum_{i=1}^n(\bar y-\bar x\hat\beta_1+\hat\beta_1x_i-\bar y)^2=\hat\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2=\hat\beta_1^2S_{xx}=\hat\beta_1S_{xy}$
 
 `Assumption 2`
 
-$$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2$$
+$SSE=S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2=\sum_{i=1}^n(y_i-(\bar y-\hat{\beta_1}\bar x)-\hat\beta_1x_i)^2=\sum_{i=1}^n[(y_i-\bar y)-\hat{\beta_1}(x_i-\bar x)]^2=\sum_{i=1}^n(y_i-\bar y)^2-2\hat{\beta_1}\sum_{i=1}^n(y_i-\bar y)(x_i-\bar x)+\sum_{i=1}^n(x_i-\bar x)^2=S_{yy}-2\hat\beta_1^2S_{xy}+\hat\beta_1^2S_{xx}=\mathbf{S_{yy}-\hat\beta_1^2S_{xx}}=S_{yy}-\hat\beta_1S_{xy}$
 
-$$=\sum_{i=1}^n[(y_i-\bar y)-\hat{\beta_1}(x_i-\bar x)]^2=\sum_{i=1}^n(y_i-\bar y)^2-2\hat{\beta_1}\sum_{i=1}^n(y_i-\bar y)(x_i-\bar x)+\sum_{i=1}^n(x_i-\bar x)^2=S_{yy}-2\hat\beta_1^2S_{xy}+\hat\beta_1^2S_{xx}$$
+$$=(Y-\hat Y)'(Y-\hat Y)=(Y-Xβ)'(Y-Xβ)=YY'-2Y'Xβ+β'X'Xβ=\mathbf{Y'(I-H)Y=Y'Y-\hatβ'X'Y}$$
 
-$$=\mathbf{S_{yy}-\hat\beta_1^2S_{xx}}=S_{yy}-\hat\beta_1S_{xy}$$
+$\text{symmetric}\quad H'=H;\quad (I-H)'=I-H$
 
-$$=(Y-\hat Y)'(Y-\hat Y)=(Y-Xβ)'(Y-Xβ)=YY'-2Y'Xβ+β'X'Xβ=Y'(I-H)Y=Y'Y-\hatβ'X'Y$$
-
-$$\text{symmetric}\quad H'=H;\quad (I-H)'=I-H$$
-
-$$\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H$$
+$\text{idempotent}\quad HH=H;\quad (I-H)(I-H)=I-H$
 
 Similar to partitioning total variation in the response, the degrees of freedom also can be partition. The degrees of freedom (df) indicates the amount of information (number of data values) required to know if some other information is known.
 
-For example, the df of SST gives the number of data values need to know if the mean of the data is known.
-
-The mean square (MS) of each sum of square (SS) is computed by
-
-$$MS=\frac{SS}{df}$$
-
-and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
+For example, the df of SST gives the number of data values need to know if the mean of the data is known. and the mean square explains the average variation in each (total, regression or error) after taking sample size ( ) and number of regression parameters into account.
 
 - 2.6 Coefficient of Determination
 
@@ -151,21 +129,18 @@ $$\text{Adjusted}\ R^2=1-\frac{MSE}{MST}=1-\frac{SSE/{[n-(k-1)]}}{SST/(n-1)}$$
 
 ## Estimation 
 
-### Estimation of Variance $sigma^2$
+### Expected Sum of Square
 
-$$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2$$
-$$=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$$
+
+$SST=S_{yy}=\sum_{i=1}^n(y_i-\bar y)^2=\sum_{i=1}^n[(\beta_0+\beta_1x_i+\varepsilon_i)-\frac1n\sum_{i=1}^n(\beta_0+\beta_1x_i+\varepsilon_i)]^2=\sum_{i=1}^n[\beta_1(x_i-\bar x)+(\varepsilon_i-\bar\varepsilon_i)]^2=\beta_1^2\sum_{i=1}^n(x_i-\bar x)^2+2\beta_1\sum_{i=1}^n(x_i-\bar x)(\varepsilon_i-\bar\varepsilon_i)+\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)^2$
 
 `Assumption 3``Assumption 4`
 
-$$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$$
+$For\ {i}\ne{j}\quad Cov(y_i,y_j)=Cov(\varepsilon_i,\varepsilon_j)=0$
 
-$$\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)=S_{\varepsilon_i\varepsilon_i}=(n-1)S_\varepsilon^2;\quad E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$$
+$\sum_{i=1}^n(\varepsilon_i-\bar\varepsilon_i)=S_{\varepsilon_i\varepsilon_i}=(n-1)S_\varepsilon^2;\quad E(S_{\varepsilon\varepsilon})=E(S_{\varepsilon}^2)=\sigma^2$
 
-$$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$$
-$$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$$
 
-### Expected Sum of Square
 
 $$E[SST]=\beta_1^2S_{xx}+2\beta_1\sum_{i=1}^n(x_i-\bar x)(E[\varepsilon_i]-E[\bar\varepsilon_i])+E[(n-1)S_\varepsilon^2]=\mathbf{\beta_1^2S_{xx}+(n-1)\sigma^2}$$
 
@@ -270,6 +245,8 @@ $$\hat{w}=rZ=\frac{\hat{y-\hat{y}}}{S_y}=r\frac{\hat{x-\hat{x}}}{S_x}$$
 
 $$\mathbf{E(Y)=\mu1,\ E(a'Y)=a'E(Y)\ E(AY)=AE(Y)}$$
 
+$Var(y_i)=Var(\beta_0+\beta_1x_i+\varepsilon_i)=Var(\varepsilon_i)=\sigma^2$
+$\mathbf{Var(Y)=\sigma^2,\ Cov(Y)=\sigma^2I}$
 
 $$\frac{\sigma^2}{n}$$
 
