@@ -447,8 +447,58 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 </div>
 <div id="covariance" class="section level4">
 <h4>Covariance</h4>
-<pre><code>-|x           |   y   |$\varepsilon$| x,y |$\hat\beta_1$|$\hat\beta_0$</code></pre>
-<p>|—|—|—|—|—|—|—|— Var()|<span class="math inline">\(\sigma_x^2\)</span>|<span class="math inline">\(\sigma^2\)</span>|<span class="math inline">\(\sigma^2\)</span>|<span class="math inline">\(MSE\cdot C_{11}\)</span>|<span class="math inline">\(\frac{\sigma^2}{S_{xx}}\)</span>|<span class="math inline">\(\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})\)</span>| Cov()|<span class="math inline">\(\sigma_x^2\)</span>| <span class="math inline">\(0\)</span> | <span class="math inline">\(0\)</span> | <span class="math inline">\(\sigma_{xy}\)</span>|<span class="math inline">\(\sigma^2(X'X)^{-1}\)</span>| Cor()| | | | <span class="math inline">\(r\)</span> |</p>
+<table>
+<colgroup>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>item</th>
+<th>x</th>
+<th>y</th>
+<th><span class="math inline">\(\varepsilon\)</span></th>
+<th>x,y</th>
+<th><span class="math inline">\(\hat\beta_1\)</span></th>
+<th><span class="math inline">\(\hat\beta_0\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Var()</td>
+<td><span class="math inline">\(\sigma_x^2\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+<td><span class="math inline">\(MSE\cdot C_{11}\)</span></td>
+<td><span class="math inline">\(\frac{\sigma^2}{S_{xx}}\)</span></td>
+<td><span class="math inline">\(\sigma^2(\frac1n+\frac{\bar{x}^2}{S_{xx}})\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Cov()</td>
+<td><span class="math inline">\(\sigma_x^2\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+<td><span class="math inline">\(\sigma_{xy}\)</span></td>
+<td><span class="math inline">\(\sigma^2(X'X)^{-1}\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Cor()</td>
+<td></td>
+<td></td>
+<td></td>
+<td><span class="math inline">\(r\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <p><span class="math inline">\(Cov(\hat\beta_0, \hatβ_1)=−\overline x\sigma^2 S_{xx}\)</span></p>
 <p><span class="math inline">\(Cov(x,a)=0; Cov(\bar y,\hat\beta_1) = 0\)</span></p>
 <p><span class="math display">\[Cov(a'Y)=a'Cov(Y)a,\ Cov(AY)=A'Cov(Y)A\]</span></p>
@@ -704,13 +754,14 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <p>Typically, <span class="math inline">\(σ^2\)</span> is unknown. MSE is an unbiased estimator of <span class="math inline">\(σ^2\)</span>.</p>
 <p><span class="math display">\[\frac{\hat{β_j}-β_j}{se(\hatβ_j)}\sim t_{df=dfE=n-(k+1)}\]</span></p>
 <p><span class="math display">\[\frac{\hat y_0|x_0-(\hat\beta_0+\hat\beta_1x_0)}{se(\hat y_0|x_0)}=\frac{\hat y_0-\bar y_0}{se(\hat y_0)}\sim t_{df=n-2}\]</span></p>
-<table>
+<table style="width:100%;">
 <colgroup>
-<col width="20%"></col>
-<col width="20%"></col>
-<col width="20%"></col>
-<col width="20%"></col>
-<col width="20%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -719,6 +770,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <th><span class="math inline">\(\hat\beta_1\)</span></th>
 <th><span class="math inline">\(\hatβ_j\)</span></th>
 <th>Predict<span class="math inline">\(\hat y_0\)</span></th>
+<th>Multi<span class="math inline">\(\hat y_0\)</span></th>
 </tr>
 </thead>
 <tbody>
@@ -728,6 +780,7 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td><span class="math inline">\(\sqrt{\frac{MSE}{S{xx}}}\)</span></td>
 <td><span class="math inline">\(\sqrt{C_{jj}MSE}\)</span></td>
 <td><span class="math inline">\(\sqrt{MSE\left[\frac1k+\frac1n+\frac{(x_0-\bar x)^2}{S_{xx}}\right]}\)</span></td>
+<td><span class="math inline">\(\sqrt{\hat\sigma^2(1+\mathbf{x_0'(X'X)^{-1}x_0})}\)</span></td>
 </tr>
 <tr class="even">
 <td>T Test</td>
@@ -740,8 +793,9 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <td>CI</td>
 <td><span class="math inline">\(\hat{\beta_0}\pm t_{\alpha/2}se(\hat{\beta_0})\)</span></td>
 <td><span class="math inline">\(\hat{\beta_1}\pm t_{\alpha/2}se(\hat{\beta_1})\)</span></td>
-<td></td>
+<td><span class="math inline">\(\mathbf{\hat{β}}\pm t_{\alpha/2}se(\mathbf{\hat{β}})\)</span></td>
 <td><span class="math inline">\(\hat y_0\pm t_{\alpha/2,n-2}se(\hat y_0)\)</span></td>
+<td><span class="math inline">\(\hat y_0\pm t_{\alpha/2,n-(k+1)}se(\hat y_0)\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -767,6 +821,10 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <p><span class="math inline">\(100(1-\alpha)%\)</span> Confidence Interval for the true intercept <span class="math inline">\((\beta_0)\)</span>:</p>
 <p>Since zero is (not) inside this interval, true intercept can (not) be zero with <span class="math inline">\(1-\alpha\)</span> confidence.</p>
 <p>The 95% confidence interval (does not) contain zero. Therefore, we are 95% confidence that the true intercept is different from (can be) zero;</p>
+<ul>
+<li>simultaneous confidence region</li>
+</ul>
+<p><span class="math display">\[𝐴(𝑥−ℎ)2+𝐵(𝑥−ℎ)(𝑦−𝑘)+𝐶(𝑦−𝑘)2=1\]</span></p>
 </div>
 <div id="prediction-nt" class="section level4">
 <h4>Prediction (N~T)</h4>
