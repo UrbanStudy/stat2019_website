@@ -374,9 +374,32 @@ Since zero is (not) inside this interval, true intercept can (not) be zero with 
 
 The 95% confidence interval (does not) contain zero. Therefore, we are 95% confidence that the true intercept is different from (can be) zero;
 
-- simultaneous confidence region
+- 3.4.3 simultaneous confidence region
 
-$$𝐴(𝑥−ℎ)2+𝐵(𝑥−ℎ)(𝑦−𝑘)+𝐶(𝑦−𝑘)2=1$$
+We will need to estimate several confidence intervals for a set of regression coefficients **simultaneously** with 100(1−a)% confidence level. These intervals are called **simultaneous** or **joint confidence intervals**.
+
+There is a problem of computing confidence interval for each parameter with the same confidence level and use those interval for simultaneous or joint confidence interval with the same confidence level.
+
+Hence, a 100(1−a)% joint confidence region is defined for all the regression coefficients in the model as
+
+$$\frac{\mathbf{(\hatβ-β)'(X'X)(\hatβ-β)}}{dfE\times MSE}=\frac{\mathbf{(\hatβ-β)'(X'X)(\hatβ-β)}}{[n-(k+1)] MSE}\le F_a$$
+
+This inequality describes an elliptically shaped region.
+
+Apply the joint or simultaneous confidence region to coefficients of Simple Linear Regression:
+
+$$A(x-h)^2+B(x-h)(y-k)+C(y-k)^2=1$$
+
+
+- Bonferroni Method
+
+For each regression coefficient, $\hatβ\pm t_{\frac{a}{2(k+1)}}se(β)$, where $\frac{a}{2(k+1)$ is the critical value from the t distribution with df=n-(k+1)
+
+There is at least 100(1−a)% confidence about the Bonferroni intervals.
+
+- Scheffé method
+
+For each regression coefficient, $\hatβ\pm\sqrt{2F_a}se(β)$, where $F_a$ is the critical value from the F distribution with df1=k+1 and df2=n-(k+1)
 
 #### Prediction (N~T)
 
@@ -603,7 +626,7 @@ The plot of scaled residuals helps to recognize outliers or influential observat
 for $i=1,2..,n$ | Standardized Residuals | Studentized Residuals | PRESS Residuals
 |---|---|---|---
 the $i^{th}$ | $d_i$ | $r_i$ | $e_i$
-the $i^{th}$ | $\frac{e_i}{\sqrt{MSE}}$ | $\frac{e_i}{\sqrt{MSE(1-h_{ii})}}$ | $\frac{e_i}{1-h_{ii}}$
+$h_{ii}=\frac1n+\frac{(x_i-\bar x)^2}{S_{xx}}$ | $\frac{e_i}{\sqrt{MSE}}$ | $\frac{e_i}{\sqrt{MSE(1-h_{ii})}}$ | $\frac{e_i}{1-h_{ii}}$
 
 - Standardized Residuals
 
@@ -619,12 +642,20 @@ The observed residuals, however, are not independent and do not have common vari
 
 > The off-diagonal elements of $Cov\mathbf{(e)}$ are not zero, so they are not independent.
 
+
+
 The heterogeneous variances in the observed residuals are easily corrected by standardizing each residual. The variances of the residuals are estimated by the diagonal elements of $\mathbf{(I-H)\hat\sigma^2}$
+
+
+$$Var(e_i)=\hat\sigma^2(1-h_{ij})=MSE(1-h_{ii})$$
+$$Cov(e_i,e_j)=\hat\sigma^2(-h_{ij})=-MSE(h_{ij})$$
 
 - PRESS Residuals
 
 The standardized and studentized residuals are effective in detecting outliers.
 If we delete the $i^{th}$ observation, fit the regression model to the remaining n-1 observations, and calculate the predicted value ($\hat y_i$) of $y_i$ corresponding to the deleted observation, the corresponding prediction error
+
+$$PRESS=\sum_1^ne_{(i)}^2$$
 
 Residuals associated with points for which ℎ𝑖𝑖 is large will have large PRESS residuals. These points will generally be high influence points. Generally, a large difference between the ordinary residual and the PRESS residual will indicate a point where the model fits the data well, but a model built without that point predicts poorly.
 

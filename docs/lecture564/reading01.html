@@ -822,9 +822,24 @@ y_1 \\ y_2 \\ \vdots  \\ y_n
 <p>Since zero is (not) inside this interval, true intercept can (not) be zero with <span class="math inline">\(1-\alpha\)</span> confidence.</p>
 <p>The 95% confidence interval (does not) contain zero. Therefore, we are 95% confidence that the true intercept is different from (can be) zero;</p>
 <ul>
-<li>simultaneous confidence region</li>
+<li>3.4.3 simultaneous confidence region</li>
 </ul>
-<p><span class="math display">\[𝐴(𝑥−ℎ)2+𝐵(𝑥−ℎ)(𝑦−𝑘)+𝐶(𝑦−𝑘)2=1\]</span></p>
+<p>We will need to estimate several confidence intervals for a set of regression coefficients <strong>simultaneously</strong> with 100(1−a)% confidence level. These intervals are called <strong>simultaneous</strong> or <strong>joint confidence intervals</strong>.</p>
+<p>There is a problem of computing confidence interval for each parameter with the same confidence level and use those interval for simultaneous or joint confidence interval with the same confidence level.</p>
+<p>Hence, a 100(1−a)% joint confidence region is defined for all the regression coefficients in the model as</p>
+<p><span class="math display">\[\frac{\mathbf{(\hatβ-β)'(X'X)(\hatβ-β)}}{dfE\times MSE}=\frac{\mathbf{(\hatβ-β)'(X'X)(\hatβ-β)}}{[n-(k+1)] MSE}\le F_a\]</span></p>
+<p>This inequality describes an elliptically shaped region.</p>
+<p>Apply the joint or simultaneous confidence region to coefficients of Simple Linear Regression:</p>
+<p><span class="math display">\[A(x-h)^2+B(x-h)(y-k)+C(y-k)^2=1\]</span></p>
+<ul>
+<li>Bonferroni Method</li>
+</ul>
+<p>For each regression coefficient, <span class="math inline">\(\hatβ\pm t_{\frac{a}{2(k+1)}}se(β)\)</span>, where <span class="math inline">\(\frac{a}{2(k+1)\)</span> is the critical value from the t distribution with df=n-(k+1)</p>
+<p>There is at least 100(1−a)% confidence about the Bonferroni intervals.</p>
+<ul>
+<li>Scheffé method</li>
+</ul>
+<p>For each regression coefficient, <span class="math inline">\(\hatβ\pm\sqrt{2F_a}se(β)\)</span>, where <span class="math inline">\(F_a\)</span> is the critical value from the F distribution with df1=k+1 and df2=n-(k+1)</p>
 </div>
 <div id="prediction-nt" class="section level4">
 <h4>Prediction (N~T)</h4>
@@ -1111,7 +1126,7 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <td><span class="math inline">\(e_i\)</span></td>
 </tr>
 <tr class="even">
-<td>the <span class="math inline">\(i^{th}\)</span></td>
+<td><span class="math inline">\(h_{ii}=\frac1n+\frac{(x_i-\bar x)^2}{S_{xx}}\)</span></td>
 <td><span class="math inline">\(\frac{e_i}{\sqrt{MSE}}\)</span></td>
 <td><span class="math inline">\(\frac{e_i}{\sqrt{MSE(1-h_{ii})}}\)</span></td>
 <td><span class="math inline">\(\frac{e_i}{1-h_{ii}}\)</span></td>
@@ -1134,10 +1149,12 @@ Therefore, <span class="math inline">\(100(1−\alpha)%\)</span> <strong>confide
 <p>The off-diagonal elements of <span class="math inline">\(Cov\mathbf{(e)}\)</span> are not zero, so they are not independent.</p>
 </blockquote>
 <p>The heterogeneous variances in the observed residuals are easily corrected by standardizing each residual. The variances of the residuals are estimated by the diagonal elements of <span class="math inline">\(\mathbf{(I-H)\hat\sigma^2}\)</span></p>
+<p><span class="math display">\[Var(e_i)=\hat\sigma^2(1-h_{ij})=MSE(1-h_{ii})\]</span> <span class="math display">\[Cov(e_i,e_j)=\hat\sigma^2(-h_{ij})=-MSE(h_{ij})\]</span></p>
 <ul>
 <li>PRESS Residuals</li>
 </ul>
 <p>The standardized and studentized residuals are effective in detecting outliers. If we delete the <span class="math inline">\(i^{th}\)</span> observation, fit the regression model to the remaining n-1 observations, and calculate the predicted value (<span class="math inline">\(\hat y_i\)</span>) of <span class="math inline">\(y_i\)</span> corresponding to the deleted observation, the corresponding prediction error</p>
+<p><span class="math display">\[PRESS=\sum_1^ne_{(i)}^2\]</span></p>
 <p>Residuals associated with points for which ℎ𝑖𝑖 is large will have large PRESS residuals. These points will generally be high influence points. Generally, a large difference between the ordinary residual and the PRESS residual will indicate a point where the model fits the data well, but a model built without that point predicts poorly.</p>
 </div>
 <div id="residual-plots" class="section level4">
