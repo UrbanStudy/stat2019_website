@@ -1,0 +1,238 @@
+---
+title: 'Shen Qu, 918881147'
+author: "STAT564 Fall 2018 Final Exam"
+date: "12/05/2018"
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+### Problem 1
+Exercise 3.25 (Just report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for each part).$y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$
+ (a) $H_0:\ β_1=β_2=β_3=β_4=β$
+
+$$y=β_0+β(x_1+x_2+x_3+x_4)+ε$$
+
+$$
+\mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 \\ 0 & 0 & 0 & 1 & -1  \\ 0 & 0 & 0 & 0 & 1 \end{bmatrix}_{4\times5} 
+\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0  \\ \beta \end{bmatrix}_{4\times1} rank(T)=4
+$$
+
+ (b) $H_0:\ β_1=β_2,\ β_3=β_4$
+ 
+$$y=β_0+β_1(x_1+x_2)+β_3(x_3+x_4)+ε$$
+ 
+ $$\mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 0 & 1 & -1 \end{bmatrix}_{2\times5} 
+\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2$$
+ 
+ (c) $H_0:\ β_1-2β_2=4β_3,\ β_1+2β_2=0$
+ 
+$$β_1=-2β_2=2β_3 \\
+y=β_0+β_1(x_1-\frac12x_2+\frac12x_3)+β_4 x_4+ε$$
+
+
+$$\mathbf{T}=\begin{bmatrix} 0 & 1 & -2 & -4 & 0 \\ 0 & 1 & 2 & 0 & 0 \end{bmatrix}_{2\times5} 
+\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2$$
+
+### Problem 2: 
+
+Exercise 3.27 Show that $Var(\mathbf{\hat y})=\sigma^2\mathbf{H}$
+
+$$\because \mathbf{\hat y=X\hatβ},\  \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}$$
+
+$$\therefore Var(\mathbf{\hat y})=Var(\mathbf{X\hatβ})=Var(\mathbf{X(X'X)^{-1} X'Y})=Var(\mathbf{HY})=HVar(\mathbf{Y})H'$$
+
+$$\because \mathbf{y=Xβ+ε},\quad  Var(ε)=\sigma^2\mathbf{I}$$
+
+$$\therefore Var(\mathbf{\hat y})=H\cdot Var(\mathbf{Xβ+ε})\cdot H'=H\cdot Var(\mathbf{ε})\cdot H'=H\cdot \sigma^2\mathbf{I}\cdot H'=\sigma^2\mathbf{H}$$
+
+$$\because \sigma\ \text{is a constant, H is symmatric and idenogent.}$$
+$$\therefore H\cdot \sigma^2\mathbf{I}\cdot H'=\sigma^2\mathbf{HH'}=\sigma^2\mathbf{HH}=\sigma^2\mathbf{H}$$
+
+### Problem 3: 
+
+The $(X'X)^{(-1)}$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$ is given below. If MSE = 0.513 and n=9, compute the 
+
+(a) $Var(\hatβ_1)$
+
+$$Var(\mathbf{\hat\beta_1})=MSE\times C_{22}=0.513\times4.624=2.372112$$
+
+(b) $se(\hatβ_3)$
+
+$$se(\mathbf{\hat\beta_3})=\sqrt{MSE\times C_{44}}=\sqrt{0.513\times0.031}=0.1261071$$
+
+(c) $Cov(\hatβ_1,\hatβ_3)$
+
+$$Cov(\mathbf{\hat\beta_1,\hat\beta_3})=MSE\times C_{24}=0.513\times(-0.346)=-0.177498$$
+
+(d) $Cor(\hatβ_1\hat,β_3)$
+
+$$Cor(\mathbf{\hat\beta_1,\hat\beta_3})=\frac{Cov(\mathbf{\hat\beta_1,\hat\beta_3})}{se(\mathbf{\hat\beta_1})se(\mathbf{\hat\beta_3})}=\frac{-0.177498}{1.540166\times0.1261071}=-0.913874$$
+
+(e) Based on what you found in the previous part(s), explain the relationship between $\hatβ_1$ and $\hatβ_3$.
+
+The value of $Cor(\mathbf{\hat\beta_1,\hat\beta_3})$ is close to negative 1. There is a strong negative relationship between $\hatβ_1$ and $\hatβ_3$.
+
+(f) Without computing variance for all the estimators, explain which estimator is the least consistent.
+
+$C_{11}=11.423$ has the lagest value. $\hatβ_0$ has the the lagest variance and the least consistent among the estimators.
+
+(g) Without computing covariances for all the pairs of estiamtors, list the pair(s) of estimators that are negatively correlated. Provide a reason.
+
+According to the $(X'X)^{(-1)}$,
+
+$C_{12},\ C_{13},\ C_{15},\ C_{23},\ C_{24},\ C_{45}$ are negative. 
+
+The negatively correlated pairs of parameters are
+
+$\hatβ_0$ and $\hatβ_1$, $\hatβ_0$ and $\hatβ_2$, $\hatβ_0$ and $\hatβ_4$, $\hatβ_1$ and $\hatβ_2$, $\hatβ_1$ and $\hatβ_3$, $\hatβ_3$ and $\hatβ_4$.
+
+### Problem 4: 
+
+a. the fitted model
+
+$$\hat y=-1.808372+0.003598x_2+0.193960x_7-0.004816x_8$$
+
+b. ANOVA
+
+Analysis of Variance Table;
+Response: y
+
+---|Df| Sum Sq| Mean Sq |Fvalue| Pr(>F)    
+---|--|-------| --------| ---- | ---
+x2 |1 | 76.193|  76.193 |26.172|3.100e-05 ***
+x7 |1 |139.501| 139.501 |47.918|3.698e-07 ***
+x8 |1 | 41.400|  41.400 |14.221|0.0009378 ***
+Residuals |24 | 69.870  |2.911  
+
+According to the ANOVA table, the P-values is much smaller than 0.05. The regression is significant on 95% confident level.
+
+c. The t test.
+
+---| Estimate |Std Error|t value|Pr($>|t|$)    
+---|----------| --------| ----- |---
+x2 |0.003598  |0.000695 | 5.177 |2.66e-05
+x7 |0.193960  |0.088233 | 2.198 |0.037815
+x8 |-0.004816 |0.001277 | -3.771|0.000938
+
+Each parameter is significant differnct with zero on 95% confident level. x2 has weak positive affect on response variable. x7 has strong positive affect but not as significant as other variables. x8 has weak negative affect.
+
+d. R-square and adjusted R-square
+
+$$R^2=0.7863,\quad  R_{adjusted}^2=0.7596$$
+
+e. The partial F test statistic
+
+$$F_0=\frac{(SSE_{x_7reduced}-SSE_{full})/r}{MSE}=\frac{(83.938-69.870)/1}{2.911}=4.832704$$
+
+This partial F satistic is the square of the t sattistic for x7 in full modle.
+
+3.2 The correlation
+
+$$Cor(y_i,\hat y_i)=\frac{Cov(y_i,\hat y_i)}{\sqrt{Var(y_i)Var(\hat y_i)}}
+=\sqrt{\frac{Var(y_i,\hat y_i)}{Var(y_i)Var(\hat y_i)}}=\sqrt{\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i)^2\sum(\hat y_i)^2}}=\sqrt{0.7863}=0.8867395$$
+
+$$R^2=1-\frac{SSE}{SST}=1-\frac{69.870}{326.964}=0.7863$$
+
+Therefore, square of simple corelation coefficient between $y_i$ and $\hat y_i$ equal R-squared.
+
+3.3 The confidence intervals
+
+a. The 95% CI on $\beta_7$ is
+
+$$\hat\beta_7\pm t_{\frac{\alpha}2,24}se(\hat\beta_7)=(0.011855322,\ 0.376065098)$$
+
+b. For x2=2300, x7=56.0, x8=2100, the 95% CI on the mean numbers of games won by a team is
+
+$$\hat y\pm t_{\frac{\alpha}2,24}se(\hat y)=(6.436203,\ 7.996645)$$
+
+```{R, collapse=TRUE}
+# Problem 3
+B<- data.frame(
+   b0=c(11.423,-4.349,-0.790, 0.486,-0.196),
+   b1=c(-4.349, 4.624,-3.057,-0.346, 0.024),
+   b2=c(-0.790,-3.057, 3.978, 0.135, 0.063),
+   b3=c( 0.486,-0.346, 0.135, 0.031,-0.005),
+   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011))
+# Var($\hat b_1$)
+0.513*B[2,2]
+# se(b1)
+sqrt(0.513*B[2,2])
+# se(b3)
+sqrt(0.513*B[4,4])
+# cov(b1,b3)
+0.513*B[2,4]
+# cor(b1,b3)
+(0.513*B[2,4])/((sqrt(0.513*B[2,2]))*(sqrt(0.513*B[4,4])))
+```
+
+```{r, echo=TRUE, message = FALSE, collapse=TRUE}
+# Problem 4
+library(tidyverse)
+library(broom)
+# Import Data
+table_b1 <- read_table2("TableB.1.txt")
+# Observe the data frame
+head(table_b1)
+# build the full model
+model_2_7_8 <- lm(y ~ x2+x7+x8, data=table_b1)
+# build the reduced model on x7
+model_2_8 <- lm(y ~ x2+x8, data=table_b1)
+
+# 3.1a/c/d t statistics for each hypotheses.
+model_2_7_8%>% summary()
+# 3.1b ANOVA for full model
+anova(model_2_7_8)
+# 3.1e ANOVA for reduced model on x7
+anova(model_2_8)
+# calculate partial F
+anova(model_2_7_8,model_2_8)
+(83.938-69.870)/1/2.911
+
+# 3.2 calculate cor(yi,\hat yi)
+augment(model_2_7_8)
+cor(select(augment(model_2_7_8),y,.fitted))
+# another way
+cor(table_b1[,1],predict(model_2_7_8, table_b1[,c(3,8,9)]))
+# calculate r
+sqrt(0.7863)
+
+# 3.3a calculate CI on b7
+confint(model_2_7_8, level = 0.95)
+# 3.3b calculate CI on the mean response variable
+model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "confidence", level=0.95)
+```
+
+### other codes
+
+```{r, eval=FALSE, include = FALSE, collapse=TRUE}
+
+visualizng
+library(GGally)
+ggpairs(data=table_b1[c(1,3,8,9)])
+
+library(ggfortify)
+model_2_7_8 %>% autoplot()
+
+texreg::screenreg(l=list(model_2_7_8))
+huxtable::huxreg(model_2_7_8, statistics = NULL)
+
+cor(table_b1)
+vcov(model_2_7_8)
+
+car::lht(model_2_7_8, "x2 = x7")
+
+library(olsrr)
+ols_best_subset(model_2_7_8)
+
+```
