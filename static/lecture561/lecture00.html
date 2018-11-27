@@ -1221,8 +1221,14 @@ Theorem 1.2.11 (a).<br />
 </ol>
 <p>Population of 10000 people take a sample of 1000, without replacement. In the population, 500 have blue eyes. Find the probability of getting exactly 45 people in the sample with blue eyes.</p>
 <p><span class="math inline">\(Hyper(N=10000, M=500, K=1000), P(X=45)=\frac{\binom{500}{45}\binom{9500}{955}}{\binom{10000}{1000}}=0.047136\)</span></p>
+<pre class="r"><code>dhyper(45, 500, 9500, 1000, log = FALSE)</code></pre>
+<pre><code>## [1] 0.04713584</code></pre>
 <p><span class="math inline">\(Binom(n=1000,p=0.05), P(X=45)=\binom{1000}{45}(0.05)^{45}(0.95)^{955}=0.046281\)</span></p>
+<pre class="r"><code>dbinom(45, 1000, 0.05, log = FALSE)</code></pre>
+<pre><code>## [1] 0.0462814</code></pre>
 <p><span class="math inline">\(Poisson(\mu=50), P(X=45)=\frac{{50}^{45}}{45!}e^{-50}=0.045826\)</span></p>
+<pre class="r"><code>dpois(45, 50, log = FALSE)</code></pre>
+<pre><code>## [1] 0.04582624</code></pre>
 <ol start="13" style="list-style-type: decimal">
 <li>Poisson and Exponential</li>
 </ol>
@@ -1270,11 +1276,15 @@ Theorem 1.2.11 (a).<br />
 <p><span class="math inline">\(P(T&gt;t)=P(X\le\alpha-1)\)</span>, where <span class="math inline">\(T\sim Gamma(\alpha,\beta)\)</span>, <span class="math inline">\(X\sim Poisson(\lambda=\frac{t}\beta)\)</span></p>
 <p>That is, T is measuring the waiting time for the <span class="math inline">\(\alpha^{th}\)</span> occurrence in a Poisson process.</p>
 <ol start="7" style="list-style-type: decimal">
-<li>Example:</li>
+<li>Example: Pizza</li>
 </ol>
-<blockquote>
-<p>Pizza</p>
-</blockquote>
+<p>Suppose a pizza place gets 1 order every 3 miniutes, following a Poisson process. Assume that the driver is engaged when the 5th order arrives. Find the probability that this happen in 10 minutes or less.</p>
+<p>Let T=waiting time for 5 orders, <span class="math inline">\(T\sim Gamma(\alpha=5,\beta=3)\)</span> (later is expected time between occurences)</p>
+<p><span class="math display">\[P(T\le10)=1-P(T&gt;10)=1-P(X\le4)=1-0.7565=0.2435\]</span> Where <span class="math inline">\(X\sim Poisson(\lambda=\frac{t}\beta=\frac{10}3)\)</span></p>
+<pre class="r"><code>pgamma(10, 5, rate = 1/3, lower.tail = TRUE,log.p = FALSE)</code></pre>
+<pre><code>## [1] 0.2435058</code></pre>
+<pre class="r"><code>ppois(4, 10/3, lower.tail = TRUE, log.p = FALSE)</code></pre>
+<pre><code>## [1] 0.7564942</code></pre>
 </div>
 <div id="beta-distribution" class="section level3">
 <h3>Beta distribution</h3>

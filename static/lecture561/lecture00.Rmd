@@ -820,9 +820,24 @@ Population of 10000 people take a sample of 1000, without replacement. In the po
 
 $Hyper(N=10000, M=500, K=1000), P(X=45)=\frac{\binom{500}{45}\binom{9500}{955}}{\binom{10000}{1000}}=0.047136$
 
+```{r}
+dhyper(45, 500, 9500, 1000, log = FALSE)
+
+```
+
+
 $Binom(n=1000,p=0.05), P(X=45)=\binom{1000}{45}(0.05)^{45}(0.95)^{955}=0.046281$
 
+```{r}
+dbinom(45, 1000, 0.05, log = FALSE)
+
+```
+
 $Poisson(\mu=50), P(X=45)=\frac{{50}^{45}}{45!}e^{-50}=0.045826$
+
+```{r}
+dpois(45, 50, log = FALSE)
+```
 
 13. Poisson and Exponential
 
@@ -878,9 +893,22 @@ $P(T>t)=P(X\le\alpha-1)$, where $T\sim Gamma(\alpha,\beta)$, $X\sim Poisson(\lam
 
 That is, T is measuring the waiting time for the $\alpha^{th}$ occurrence in a Poisson process.
 
-7. Example: 
+7. Example: Pizza
 
-> Pizza
+Suppose a pizza place gets 1 order every 3 miniutes, following a Poisson process. Assume that the driver is engaged when the 5th order arrives. Find the probability that this happen in 10 minutes or less.
+
+Let T=waiting time for 5 orders, $T\sim Gamma(\alpha=5,\beta=3)$ (later is expected time between occurences)
+
+$$P(T\le10)=1-P(T>10)=1-P(X\le4)=1-0.7565=0.2435$$
+Where $X\sim Poisson(\lambda=\frac{t}\beta=\frac{10}3)$
+
+```{r}
+pgamma(10, 5, rate = 1/3, lower.tail = TRUE,log.p = FALSE)
+
+ppois(4, 10/3, lower.tail = TRUE, log.p = FALSE)
+
+```
+
 
 ### Beta distribution
 
