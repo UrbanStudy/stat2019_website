@@ -94,7 +94,7 @@ When you want to do multiple linear regression in R, you can add other predictor
 
 ### The Solution by tidyverse
 ```{r, eval=FALSE}
-install.packages("tidyverse")
+# install.packages("tidyverse")
 ```
 
 To use R packages you have installed, include this line in your script or in the Console:
@@ -163,7 +163,7 @@ lm(MilImp ~ Spend, data=my_df) %>%
 For better formatting of the results (pretty print), we can use the `texreg` package:
 ```{r, echo=TRUE}
 ## Install and load texreg package
-install.packages("texreg")
+# install.packages("texreg")
 library(texreg)
 
 # Pretty print regression results on screen
@@ -186,7 +186,7 @@ ggplot(my_df, aes(x=Spend, y=MilImp)) + geom_point() + geom_smooth(method = "lm"
 We will use the `ggfortify` package to generate the diagnostic plots for regression
 ```{r, echo=TRUE}
 ## Install and load ggfortify package
-install.packages("ggfortify")
+# install.packages("ggfortify")
 library(ggfortify)
 
 lm(MilImp ~ Spend, data=my_df) %>%
@@ -216,9 +216,9 @@ The patient satisfaction is thought to be related to the patient age.
 
 
 
- <!--https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals-->
+https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals
 
-```{r, echo=TRUE}
+```{r, eval=FALSE, include = T, collapse=TRUE, echo=TRUE}
 # Load the package 
 library(readxl)
 library(tidyverse)
@@ -234,7 +234,7 @@ head(table_b17)
 ### (a) Create a scatterplot of satisfaction and age variables. Copy and paste it here. 
 
 
-```{r}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 # visualizng Satisfaction and Age
 table_b17 %>% ggplot(aes(Age,Satisfaction))+geom_point()+geom_smooth(method="lm", level=0.95)
 ```
@@ -245,7 +245,7 @@ table_b17 %>% ggplot(aes(Age,Satisfaction))+geom_point()+geom_smooth(method="lm"
 
 (c) Fit a simple linear regression model to the data. Write the fitted regression model with estimated coefficients. Edit the following math equation to write your fitted model (replace y and x with appropriate variable names).
 
-```{r}
+```{r,eval=FALSE, include = FALSE, collapse=TRUE}
 # build the model
 model_satis_age <- lm(Satisfaction ~ Age, data=table_b17)
 model_satis_age
@@ -256,7 +256,7 @@ model_satis_age
 (d) The coefficient of determination, denoted by R^2, (Multiple R-squared in R) provides the percentage of total variation in response variable explained by the fitted model. It can be any value from 0 to 100% and a higher value is better.
 What is the percentage of total variation in the patient satisfaction explained by the fitted model for these data?
 
-```{r}
+```{r,eval=FALSE, include = T, collapse=TRUE}
 model_satis_age %>% summary()
 ```
 
@@ -276,7 +276,7 @@ model_satis_age %>% summary()
 
 $$\beta_1 \pm t_{\alpha / 2, n - 2} \left(\frac{\sqrt{MSE}}{\sqrt{\sum (x_i - \bar{x})^2}}\right)$$
 
-```{r}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 model_satis_age %>% confint(level=0.95)
 ```
 
@@ -285,7 +285,7 @@ The confidence interval for β0 does not contain 0, it can be concluded the true
 
 (h) Construct the analysis of variance (ANOVA) table using software and test for significance of regression model. Report the p-value.
 
-```{r}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 anova(model_satis_age)
 ```
 
@@ -299,7 +299,7 @@ $$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k -
 
  > Where $\hat{y}_h$ is the fitted response for predictor value $x_h$, $t_{\alpha/2,n-2}$ is the t-value with n−2 degrees of freedom, while $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$ is the standard error of the fit.
  
-```{r}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 model_satis_age %>% predict(newdata = data.frame(Age=65), interval = "confidence", level=0.95)
 ```
 
@@ -311,7 +311,7 @@ model_satis_age %>% predict(newdata = data.frame(Age=65), interval = "confidence
  
 (k) Compute the 95% prediction interval for the patient satisfaction when the patient is 65 years old. (Prediction interval is for a new value of response and not for mean response)
 
-```{r}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 model_satis_age %>% predict(newdata = data.frame(Age=65), interval = "prediction", level=0.95)
 ```
 
@@ -324,7 +324,7 @@ The prediction interval depends on both the error from the fitted model and the 
 
 (m) Use the estimated slope and its standard error from software output to test whether the true slope is different from -1 (negative 1). Provide all the steps of test.
 
-```{r}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 t0= (-1.2490+1)/0.1471
 2*pt(q = t0, df = nrow(table_b17)-2 , lower.tail = TRUE) # Gives the P(T < t0) from the t distribution. Enter the value for df of the t distribution. Use FALSE instead of TRUE to compute P(T >t0). #
 ```
@@ -334,7 +334,7 @@ t0= (-1.2490+1)/0.1471
 
 ## lab 2
 
-```{r, echo=TRUE}
+```{r, eval=FALSE, include = FALSE, collapse=TRUE}
 # Load the package 
 library(readxl)
 library(tidyverse)
@@ -357,7 +357,7 @@ anova(model_solar_mass_origin)
 
 ## lab 3
 
-```{r, echo=TRUE}
+```{r, eval=FALSE, include = FALSE, collapse=TRUE}
 # Load the package 
 library(readxl)
 library(tidyverse)
@@ -474,7 +474,7 @@ anova(model_wine_flavor_oakiness)
 
 ## class Nov 13th
 
-```{r, echo=TRUE}
+```{r, eval=FALSE, include = FALSE, collapse=TRUE}
 # Load the package 
 library(readxl)
 library(tidyverse)
@@ -518,7 +518,7 @@ huxtable::huxreg(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, statistic
 
 ## lab 4
 
-```{r, eval=FALSE, include = FALSE, collapse=TRUE}
+```{r, eval=FALSE, include = T, collapse=TRUE}
 # Load the package 
 library(readxl)
 library(tidyverse)
