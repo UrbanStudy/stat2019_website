@@ -105,25 +105,10 @@ $$\hat y=-1.808372+0.003598x_2+0.193960x_7-0.004816x_8$$
 
 b. ANOVA
 
-Analysis of Variance Table;
-Response: y
-
----|Df| Sum Sq| Mean Sq |Fvalue| Pr(>F)    
----|--|-------| --------| ---- | ---
-x2 |1 | 76.193|  76.193 |26.172|3.100e-05 ***
-x7 |1 |139.501| 139.501 |47.918|3.698e-07 ***
-x8 |1 | 41.400|  41.400 |14.221|0.0009378 ***
-Residuals |24 | 69.870  |2.911  
 
 According to the ANOVA table, the P-values is much smaller than 0.05. The regression is significant on 95% confident level.
 
 c. The t test.
-
----| Estimate |Std Error|t value|Pr($>|t|$)    
----|----------| --------| ----- |---
-x2 |0.003598  |0.000695 | 5.177 |2.66e-05
-x7 |0.193960  |0.088233 | 2.198 |0.037815
-x8 |-0.004816 |0.001277 | -3.771|0.000938
 
 Each parameter is significant differnct with zero on 95% confident level. x2 has weak positive affect on response variable. x7 has strong positive affect but not as significant as other variables. x8 has weak negative affect.
 
@@ -217,22 +202,225 @@ model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval 
 
 ```{r, eval=FALSE, include = FALSE, collapse=TRUE}
 
-visualizng
+library(texreg)
+# Pretty print regression results on screen
+lm(mpg ~ wt, data=my_df) %>% screenreg
+texreg::screenreg(l=list(model_2_7_8))
+
+# visualizng
 library(GGally)
 ggpairs(data=table_b1[c(1,3,8,9)])
 
+# Correlation
+cor(table_b1)
+
+# Half correlation matrix:
+library(corrr)
+mtcars %>% correlate() %>% shave() %>% fashion()
+Visulize correlation matrix:
+mtcars %>% correlate() %>% shave() %>% rplot()
+
+# Scatterplot Matrix
+mtcars[1:6] %>% plot
+# Better looking version
 library(ggfortify)
 model_2_7_8 %>% autoplot()
 
-texreg::screenreg(l=list(model_2_7_8))
-huxtable::huxreg(model_2_7_8, statistics = NULL)
+# Confidence interval of coefficients
+lm(mpg ~ wt + cyl, data=mtcars) %>% confint()
 
-cor(table_b1)
-vcov(model_2_7_8)
+# Hypothesis testing of nested models
+lm_mpg_wt <- lm(mpg ~ wt, data=mtcars)
+lm_mpg_wt.cyl <- lm(mpg ~ wt + cyl, data=mtcars)
+anova(lm_mpg_wt, lm_mpg_wt.cyl)
 
+# convert mpg to kilometers per liter
+mtcars %>% mutate(kmpl = mpg * 0.425144) %>% select(mpg, kmpl) %>% filter(mpg > 20)
+nrow()
+mtcars %>% group_by(am) %>% 
+  summarize(n=n(),
+            mean_mpg=mean(mpg),
+            sd_mpg=sd(mpg),
+            min_mpg=min(mpg),
+            max_mpg=max(mpg)
+mtcars %>% arrange(desc(mpg))
+
+# mean & sd
+mtcars %>% summarize(am_mean=mean(am), am_sd=sd(am))
+# Frequencies by categories
+mtcars %>% group_by(am) %>% tally
+
+# Assume we want to combine LA + SD to Southern CA and Bay Area and Sacramento
+## as Northern CA
+(californiatod <- californiatod %>% 
+  mutate(transit_level=case_when(
+    transit>0.4~"high",
+    transit>0.2~"medium",
+    TRUE ~ "low")))
+
+
+## General linear F test
+fit_R <- lm(mpg ~ wt, data=mtcars)
+fit_F <- lm(mpg ~ wt + cyl, data=mtcars)
+anova(fit_R, fit_F)
+
+SSE_R <- resid(fit_R)^2 %>% sum
+SSE_F <- resid(fit_F)^2 %>% sum
+df_R <- df.residual(fit_R)
+df_F <- df.residual(fit_F)
+F_val <- ((SSE_R - SSE_F)/(df_R - df_F))/(SSE_F/df_F)
+
+# Look up the critical F value for alpha=0.05
+alpha <- 0.05
+qf(alpha, (df_R - df_F), df_F, lower.tail=F)
+# Alternatively, find the p-value corresponding to our F_val
+pf(F_val, (df_R - df_F), df_F, lower.tail=F)
+n <- nrow(mtcars)          # number of observations
+k <- length(coef(fit_R))   # number of coefficients
+## Calculate R2 and adjusted R2 manually
+TSS <- sd(mtcars$mpg)^2 * (n - 1)
+# OR
+TSS <- var(mtcars$mpg) * (n - 1)
+(R2_R <- 1 - SSE_R/TSS)
+(R2_R_adj <- 1 - (SSE_R/(n - k))/(TSS/(n - 1)))
+
+# Interaction Terms
+huxreg(
+  lm(houseval ~ transit, data=californiatod),
+  lm(houseval ~ transit * railtype, data=californiatod),
+  lm(houseval ~ transit * region, data=californiatod),
+  lm(houseval ~ transit * CA, data=californiatod))
+
+# redefine the region variables with a new reference category (4 for SD)
+catod2 <- californiatod %>% mutate(region = relevel(as.factor(region), ref = 4))
+lm(houseval ~ region, data=catod2)  %>%  summary
+
+# Partial F test:
+catod3 <- californiatod %>% mutate(region = ifelse(region =="LA" | region == "SD", "LA_SD", region))
+lm(houseval ~ region, data=catod3)  %>% summary
+anova(lm(houseval ~ region, data=catod3), lm(houseval ~ region, data=californiatod))
+
+# Hypothesis testing of linear combination of coefficients
 car::lht(model_2_7_8, "x2 = x7")
+# Partial F test:H0:β2+β2=0
+car::lht(lm(hours ~ married*women, data=chores), "women + married:women = 0")
+
+# linear combination of coefficients
+# The point estimate is β2^+β3^ In this case, our linear combination involves the sum rather than the difference between two coefficients, and the formula for estimating the standard error of the sum of two coefficients is:
+# $\sqrt{\hat{\sigma^2_{\hat{\beta_2}}} + \hat{\sigma^2_{\hat{\beta_3}}} + 2\hat{cov}_{\hat{\beta_2}\hat{\beta_3}}}$
+fit1 <- lm(hours ~ married*women, data=chores)
+beta2 <- coef(fit1)["women"]
+beta3 <- coef(fit1)["married:women"]
+betas_vcov <- vcov(fit1)
+se <- sqrt(betas_vcov["women", "women"] + betas_vcov["married:women", "married:women"] + 2 * betas_vcov["women", "married:women"])
+(t_stat <- (beta2 + beta3)/se)
+
+## Degrees of Freedom
+dof <- fit1$df.residual
+
+## compare t_stat to critical t-value
+(t_crit <- qt(0.025, df=dof, lower.tail = F))
+## OR find the corresponding p-value
+(p_val <- 2 * pt(t_stat, lower.tail = F, df=dof))
+
+# Partial F test on the nonlinear term
+anova(lm(houseval ~ density, data=californiatod),lm(houseval ~ density + I(density^2), data=californiatod))
+#To be on the safe side, enclose your tranformation in an I() function. This is not necessary for log transformation.
 
 library(olsrr)
+# leverage (hat)
+leverage <- ols_leverage(lm_sfr)
+ols_rsdlev_plot(lm_sfr)
+# Cook's distance
+ols_cooksd_chart(lm_sfr)
+# DFFITS
+ols_dffits_plot(lm_sfr)
+# DFBETAS
+ols_dfbetas_panel(lm_sfr)
+# Heteroskedasticity
+ols_rvsp_plot(lm_sfr)
+ols_rsd_qqplot(lm_sfr)
+# hypothesis test of normality of residuals
+ols_norm_test(lm_sfr
+# Test of Heteroskedasticity with Breusch-Pagan Test
+ols_bp_test(lm_sfr)
+#Heteroskedasticity-Consistent Standard Errors
+# standard variance-covariance matrix
+vcov0 <- vcov(lm_sfr)
+vcov(model_2_7_8)
+# convert to correlation
+vcov0
+# Heteroskedasticity-Consistent variance covariance matrix
+require(car)
+vcov_hc3 <- hccm(lm_sfr, type="hc3")
+# In presence of Heteroskedasticity, vcov_hc3 is larger than vcov0, to redo hypothesis tests
+# with the Heteroskedasticity-Consistent variance covariance matrix
+if (!require(lmtest)) install.packages("lmtest") & library(lmtest)
+coeftest(lm_sfr, vcov_hc3)
+# All possible subset
+sfrmodel <- lm(TOTALVAL ~ BLDGSQFT + YEARBUILT + GIS_ACRES + dpioneer + dfwy + dpark + dmax + dbikehq, data = taxlot_sfr)
+(sfrmodel_all_subset <- ols_all_subset(sfrmodel))
+# Best Subset Regression
 ols_best_subset(model_2_7_8)
+# Multicollinary with VIF
+ols_vif_tol(lm_sfr)
+## Stepwise Forward Regression
+# based on p-value
+(sfrmodel_stepfwd.p <- ols_step_forward(sfrmodel))
+# based on AIC
+(sfrmodel_stepfwd.aic <- ols_stepaic_forward(sfrmodel))
+## Stepwise Backward Regression
+# based on p-value
+(sfrmodel_stepbwd.p <- ols_step_backward(sfrmodel))
+# based on AIC
+(sfrmodel_stepbwd.aic <- ols_stepaic_backward(sfrmodel))
+## Step AIC regression
+# Build regression model from a set of candidate predictor variables by entering and removing predictors based on Akaike Information Criteria, in a stepwise manner until there is no variable left to enter or remove any more. The model should include all the candidate predictor variables.
+(sfrmodel_stepboth.aic <- ols_stepaic_both(sfrmodel))
+
+# Cross Validation: CV assesses how the results of a model will generalize to an independent data set. It is mainly used in settings where the goal is prediction, and one wants to estimate how accurately a predictive model will perform in practice.
+library(modelr)
+library(purrr)
+(taxlot_sfr_kcv <- taxlot_sfr %>% 
+  modelr::crossv_kfold() %>% 
+  mutate(model=map(train, ~lm(TOTALVAL~BLDGSQFT+YEARBUILT+GIS_ACRES+dpioneer+dfwy, data=.x)),
+         rmse=map2_dbl(model, test, modelr::rmse),
+         rsquare=map2_dbl(model, test, modelr::rsquare)))
+taxlot_sfr_kcv %>% 
+  summarise_at(c("rmse", "rsquare"), funs(mean))
+
+## DID omitted
+## Discrete Outcome: Count/Poisson Regression
+require(MASS)
+require(huxtable)
+fit_lm <- lm(carb ~ mpg + qsec, data=mtcars)
+fit_glm <- glm(carb ~ mpg + qsec, data=mtcars, family="poisson")
+huxreg(OLS=fit_lm, Poisson=fit_glm)
+
+fit_lm <- lm(am ~ qsec + hp, data=mtcars)
+fit_glm <- glm(am ~ qsec + hp, data=mtcars, family=binomial("logit"))
+huxreg(OLS=fit_lm, logit=fit_glm)
+
+# log Likelihood
+logLik(fit_glm)
+fit_glm0 <- update(fit_glm, .~1)
+logLik(fit_glm0)
+## 'log Lik.' -21.61487 (df=1)
+# pseudo R2
+1 - logLik(fit_glm)/logLik(fit_glm0)
+## 'log Lik.' 0.381052 (df=3)
+Interpretation of coefficients
+# odds ratio
+(odds <- exp(coef(fit_glm)))
+#prob
+odds/(1 + odds)
+
+
+
+huxtable::huxreg(model_2_7_8, statistics = NULL)
+
+
+
+
 
 ```
