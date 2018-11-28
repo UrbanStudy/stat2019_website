@@ -518,11 +518,13 @@ huxtable::huxreg(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, statistic
 
 ## lab 4
 
-```{r, eval=FALSE, include = T, collapse=TRUE}
+```{r, eval=FALSE, include = T}
 # Load the package 
 library(readxl)
 library(tidyverse)
 library(broom)
+library(olsrr)
+library(car)
 # Import Data
 table_b4 <- read_table2("TableB4.txt")
 # Observe the data frame
@@ -541,17 +543,25 @@ model_b4_full <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9, data=table_b
 model_b4_full%>% summary()
 anova(model_b4_full)
 vcov(model_b4_full)
-car::vif(model_b4_full)
+
+vif(model_b4_full)
 ols_vif_tol(model_b4_full)
+
 plot(model_b4_full,pch=16,col="blue")
 
-car::avPlots(model_b4_full)
+avPlots(model_b4_full)
+
+ols_plot_added_variable(model_b4_full)
 
 yhat_b4_full <- model_b4_full$fit # Save predicted y to an object #
 t_b4_full <- rstudent(model_b4_full) # Save studentized residuals to an object #
 # Another way to check non-normality of studentized residuals #
 hist(t_b4_full)
+ols_plot_resid_hist(model_b4_full)
+
 qqnorm(t_b4_full, pch=15)
+ols_plot_resid_qq(model_b4_full)
+
 shapiro.test(t_b4_full) #If p-value is bigger, then no problem of non-normality #
 plot(yhat_b4_full,t_b4_full, pch=16) # Studentized residuals versus predicted y #
 plot(table_b4$x1,t_b4_full, pch=16) # Studentized residuals versus x1 predictor #
@@ -564,8 +574,558 @@ plot(table_b4$x7,t_b4_full, pch=16) # Studentized residuals versus x7 predictor 
 plot(table_b4$x8,t_b4_full, pch=16) # Studentized residuals versus x8 predictor #
 plot(table_b4$x9,t_b4_full, pch=16) # Studentized residuals versus x9 predictor #
 
+table_b4 %>% mutate(student_residual=t_b4_full) %>% plot()
+
+
+ols_plot_diagnostics(model_b4_full)
+
+ols_plot_dfbetas(model_b4_full)
+
+
+# Lack of Fit F Test
+ols_pure_error_anova(lm(y~x1, data = table_b4))
+
 ols_plot_resid_stud(model_b4_full)
+
+
+MPV::PRESS(model_b4_full)
 ols_press(model_b4_full)
 
+library(MASS)
+bc <- boxcox(model_b4_full)
+#To plot log-likelihood versus lambda #
+lambda <- bc$x[which(bc$y==max(bc$y))]
+lambda <- bc$x[which(bc$y==max(bc$y))]
+
+# another package forecast for boxcox
+# library(forecast)
+# lambda <- BoxCox.lambda(model_b4_full)
+
+# BoxCox(model_b4_full, lambda="auto")
+# InvBoxCox(model_b4_full, lambda="auto", biasadj = FALSE, fvar = NULL)
+
+# < log Likelihood
+logLik(model_b4_full)
+model_b4_none <- update(model_b4_full, .~1)
+logLik(model_b4_none)
+## 'log Lik.' -21.61487 (df=1)
+# pseudo R2
+1 - logLik(model_b4_full)/logLik(model_b4_none)
+## 'log Lik.' 0.381052 (df=3)
+# Interpretation of coefficients
+# odds ratio
+odds <- exp(coef(model_b4_full))
+#prob >
+odds/(1 + odds)
+
+# Forward Selection Regression #
+model_b4_none <- lm (y ~ 1, data = table_b4)
+step(model_b4_none, direction= "forward", scope=(~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9), k=2)
+
+ols_step_forward_p(model_b4_full, details = TRUE)
+ols_step_forward_aic(model_b4_full, details = TRUE)
+# k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
+# Backward Elimination Regression #
+step(model_b4_full, direction = "backward")
+
+ols_step_forward_p(model_b4_full, details = TRUE)
+ols_step_forward_aic(model_b4_full, details = TRUE)
+
+# Subset method #
+library(leaps) # Load the package #
+model_b4_subset <- regsubsets(y ~ x1 + x2 + x3 +x4 + x5 + x6 + x7 + x8 + x9, data=table_b4, nbest=10 ) # nbest is the number of models from each size #
+summary(model_b4_subset) # Hard to read output from this #
+
+ols_step_all_possible(model_b4_full)
+
+## plot adjusted R square for each model ##
+plot(model_b4_subset, scale='adjr2')
+## can use Cp, r2 or bic for scale ##
+plot(model_b4_subset, scale='bic')
+plot(model_b4_subset, scale='Cp')
+
+ols_step_best_subset(model_b4_full)
+
+# The following function in the SignifReg package can be used to change selection criterion easily to p value or others. Change options accordingly before running it #
+library(SignifReg)
+# SignifReg(scope, data, alpha = 0.05, direction = "forward", criterion = "p-value", correction = "FDR") #
+# Check it on your own later #
+
+
+
+# Final models #
+
+model_b4_1 <- lm(y ~ x1 + x2, data=table_b4)
+summary(model_b4_1)
+anova(model_b4_1)
+vif(model_b4_1)
+
+confint(model_b4_1, level=0.1/1) # Bonferroni joint confidence interval #
+
+plot(model_b4_1, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_b4_1)
+
+
+model_b4_backward <- lm(y ~ x1 + x2 + x5 + x7, data=table_b4)
+summary(model_b4_backward)
+anova(model_b4_backward)
+vif(model_b4_backward)
+
+confint(model_b4_backward, level=0.1/3) # Bonferroni joint confidence interval #
+plot(model_b4_backward, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_b4_backward)
+
+
+deviation <- table_b4$y-mean(table_b4$y)
+
+# Predit_Power=1-(PRESS.stat/SST)
+1-((MPV::PRESS(model_b4_full))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
+
+1-((MPV::PRESS(model_b4_full))/(var(table_b4$y)*(nrow(table_b4)-1)))
+
+
 ```
+
+## olsrr {.tabset .tabset-fade .tabset-pills}
+
+### Introduction
+
+1 Regression
+
+In the presence of interaction terms in the model, the predictors are scaled and centered before computing the standardized betas. ols_regress() will detect interaction terms automatically but in case you have created a new variable instead of using the inline function *, you can indicate the presence of interaction terms by setting iterm to TRUE.
+
+ols_regress(mpg ~ disp + hp + wt + qsec, data = mtcars)
+
+2 Residual vs Fitted Values Plot
+
+Plot to detect non-linearity, unequal error variances, and outliers.
+
+**ols_plot_resid_fit(model)**
+
+3 DFBETAs Panel
+
+DFBETAs measure the difference in each parameter estimate with and without the influential observation. dfbetas_panel creates plots to detect influential observations using DFBETAs.
+
+**ols_plot_dfbetas(model)**
+
+4 Residual Fit Spread Plot
+
+Plot to detect non-linearity, influential observations and outliers.
+
+ols_plot_resid_fit_spread(model)
+
+5 Breusch Pagan Test
+
+Breusch Pagan test is used to test for herteroskedasticity (non-constant error variance). It tests whether the variance of the errors from a regression is dependent on the values of the independent variables. It is a χ2 test.
+
+ols_test_breusch_pagan(model)
+
+6 Collinearity Diagnostics
+
+**ols_coll_diag(model)**
+
+7 Stepwise Regression
+
+Build regression model from a set of candidate predictor variables by entering and removing predictors based on p values, in a stepwise manner until there is no variable left to enter or remove any more.
+
+- Variable Selection
+
+model <- lm(y ~ ., data = surgical)
+**ols_step_both_p(model)**
+
+- Plot
+
+8 Stepwise AIC Backward Regression
+
+Build regression model from a set of candidate predictor variables by removing predictors based on Akaike Information Criteria, in a stepwise manner until there is no variable left to remove any more.
+
+- Variable Selection
+
+**k <- ols_step_backward_aic(model)**
+
+- Plot
+
+### Variable Selection Methods
+
+1 All Possible Regression
+
+**ols_step_all_possible(model)**
+
+plot(k)
+
+2 Best Subset Regression
+
+Select the subset of predictors that do the best at meeting some well-defined objective criterion, such as having the largest R2 value or the smallest MSE, Mallow’s Cp or AIC.
+
+**ols_step_best_subset(model)**
+
+plot(k)
+
+3 Stepwise Forward Regression
+
+- Variable Selection
+
+ols_step_forward_p(model)
+
+plot(k)
+
+- Detailed Output
+
+**ols_step_forward_p(model, details = TRUE)**
+
+4 Stepwise Backward Regression
+
+**ols_step_backward_p(model, details = TRUE)**
+
+5 Stepwise Regression
+
+**ols_step_both_p(model, details = TRUE)**
+
+6 Stepwise AIC Forward Regression
+
+**ols_step_forward_aic(model, details = TRUE)**
+
+7 Stepwise AIC Backward Regression
+
+**ols_step_backward_aic(model, details = TRUE)**
+
+8 Stepwise AIC Regression
+
+**ols_step_both_aic(model, details = TRUE)**
+
+
+
+### Residual Diagnostics
+
+The standard regression assumptions include the following about residuals/errors:
+- The error has a normal distribution (normality assumption).
+- The errors have mean zero.
+- The errors have same but unknown variance (homoscedasticity assumption).
+- The error are independent of each other (independent errors assumption)
+
+1 Residual QQ Plot
+
+**ols_plot_resid_qq(model)**
+
+2 Residual Normality Test
+
+Test for detecting violation of normality assumption.
+
+ols_test_normality(model)
+
+Correlation between observed residuals and expected residuals under normality.
+
+ols_test_correlation(model)
+
+3 Residual vs Fitted Values Plot
+
+Characteristics of a well behaved residual vs fitted plot:
+
+- The residuals spread randomly around the 0 line indicating that the relationship is linear.
+- The residuals form an approximate horizontal band around the 0 line indicating homogeneity of error variance.
+- No one residual is visibly away from the random pattern of the residuals indicating that there are no outliers.
+
+**ols_plot_resid_fit(model)**
+
+4 Residual Histogram
+
+Histogram of residuals for detecting violation of normality assumption.
+
+ols_plot_resid_hist(model)
+
+
+### Heteroskedasticity
+
+1 Bartlett Test
+
+- Use grouping variable
+
+ols_test_bartlett(hsb, read, group_var = female)
+
+- Using variables
+
+ols_test_bartlett(hsb, read, write)
+
+2 Breusch Pagan Test
+
+-Use fitted values of the model
+
+ols_test_breusch_pagan(model)
+
+- Use independent variables of the model
+
+ols_test_breusch_pagan(model, rhs = TRUE)
+
+- Use independent variables of the model and perform multiple tests
+
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE)
+
+- Bonferroni p value Adjustment
+
+**ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'bonferroni')**
+
+- Sidak p value Adjustment
+
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'sidak')
+
+- Holm’s p value Adjustment
+
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'holm')
+
+3 Score Test
+
+- Use fitted values of the model
+
+ols_test_score(model)
+
+- Use independent variables of the model
+
+ols_test_score(model, rhs = TRUE)
+
+- Specify variables
+
+ols_test_score(model, vars = c('disp', 'hp'))
+
+4 F Test
+
+- Use fitted values of the model
+
+ols_test_f(model)
+
+- Use independent variables of the model
+
+ols_test_f(model, rhs = TRUE)
+
+- Specify variables
+
+ols_test_f(model, vars = c('disp', 'hp'))
+
+### Measures of Influence
+
+1 Cook’s D Bar Plot
+
+Steps to compute Cook’s distance:
+
+- delete observations one at a time.  
+- refit the regression model on remaining (n−1) observations.  
+- examine how much all of the fitted values change when the ith observation is deleted.
+
+A data point having a large cook’s d indicates that the data point strongly influences the fitted values
+
+ols_plot_cooksd_bar(model)
+
+2 Cook’s D Chart
+
+ols_plot_cooksd_chart(model)
+
+3 DFBETAs Panel
+
+DFBETA measures the difference in each parameter estimate with and without the influential point. There is a DFBETA for each data point i.e if there are n observations and k variables, there will be n∗k DFBETAs. In general, large values of DFBETAS indicate observations that are influential in estimating a given parameter. Belsley, Kuh, and Welsch recommend 2 as a general cutoff value to indicate influential observations and $\frac{2}{\sqrt{n}}$ as a size-adjusted cutoff.
+
+**ols_plot_dfbetas(model)**
+
+4 DFFITs Plot
+
+Steps to compute DFFITs:
+
+- delete observations one at a time.  
+- refit the regression model on remaining observations.  
+- examine how much all of the fitted values change when the ith observation is deleted.
+
+An observation is deemed influential if the absolute value of its DFFITS value is greater than:${2}*{\frac{\sqrt{(p + 1)}}{(n - p -1)}}$ where n is the number of observations and p is the number of predictors including intercept.
+
+ols_plot_dffits(model)
+
+5 Studentized Residual Plot
+
+Plot for detecting outliers. Studentized deleted residuals (or externally studentized residuals) is the deleted residual divided by its estimated standard deviation. Studentized residuals are going to be more effective for detecting outlying Y observations than standardized residuals. If an observation has an externally studentized residual that is larger than 3 (in absolute value) we can call it an outlier.
+
+**ols_plot_resid_stud(model)**
+
+6 Standardized Residual Chart
+
+Chart for detecting outliers. Standardized residual (internally studentized) is the residual divided by estimated standard deviation.
+
+ols_plot_resid_stand(model)
+
+7 Studentized Residuals vs Leverage Plot
+
+Graph for detecting influential observations.
+
+ols_plot_resid_lev(model)
+
+8 Deleted Studentized Residual vs Fitted Values Plot
+
+ols_plot_resid_stud_fit(model)
+
+9 Hadi Plot
+
+Hadi’s measure of influence based on the fact that influential observations can be present in either the response variable or in the predictors or both. The plot is used to detect influential observations based on Hadi’s measure.
+
+ols_plot_hadi(model)
+
+10 Potential Residual Plot
+
+Plot to aid in classifying unusual observations as high-leverage points, outliers, or a combination of both.
+
+ols_plot_resid_pot(model)
+
+### Collinearity, Model Fit & Variable Contribution
+
+1 Collinearity Diagnostics
+
+-VIF
+
+ols_vif_tol(model)
+
+-Tolerance
+
+Percent of variance in the predictor that cannot be accounted for by other predictors.
+
+- Condition Index
+
+Most multivariate statistical approaches involve decomposing a correlation matrix into linear combinations of variables. The linear combinations are chosen so that the first combination has the largest possible variance (subject to some restrictions we won’t discuss), the second combination has the next largest variance, subject to being uncorrelated with the first, the third has the largest possible variance, subject to being uncorrelated with the first and second, and so forth. The variance of each of these linear combinations is called an eigenvalue. Collinearity is spotted by finding 2 or more variables that have large proportions of variance (.50 or more) that correspond to large condition indices. A rule of thumb is to label as large those condition indices in the range of 30 or larger.
+
+ols_eigen_cindex(model)
+
+- Collinearity Diagnostics
+
+**ols_coll_diag(model)**
+
+2 Model Fit Assessment
+
+- Residual Fit Spread Plot
+
+ols_plot_resid_fit_spread(model)
+
+- Part & Partial Correlations
+
+Correlations: Relative importance of independent variables in determining Y. How much each variable uniquely contributes to R2 over and above that which can be accounted for by the other predictors.
+
+Zero Order: Pearson correlation coefficient between the dependent variable and the independent variables.
+
+Part: Unique contribution of independent variables. How much R2 will decrease if that variable is removed from the model?
+
+Partial: How much of the variance in Y, which is not estimated by the other independent variables in the model, is estimated by the specific variable?
+
+**ols_correlations(model)**
+
+- Observed vs Predicted Plot
+
+ols_plot_obs_fit(model)
+
+- Lack of Fit F Test
+
+**ols_pure_error_anova(model)**
+
+- Diagnostics Panel
+
+**ols_plot_diagnostics(model)**
+
+3 Variable Contributions
+
+- Residual vs Regressor Plots
+
+Graph to determine whether we should add a new predictor to the model already containing other predictors. The residuals from the model is regressed on the new predictor and if the plot shows non random pattern, you should consider adding the new predictor to the model.
+
+ols_plot_resid_regressor(model, drat)
+
+- Added Variable Plot
+
+Regress Y on all variables other than X and store the residuals (Y residuals).  
+Regress X on all the other variables included in the model (X residuals).  
+Construct a scatter plot of Y residuals and X residuals.
+
+ols_plot_added_variable(model)
+
+- Residual Plus Component Plot
+
+Regress Y on all variables including X and store the residuals (e).
+Multiply e with regression coefficient of X (eX).
+Construct scatter plot of eX and X
+
+ols_plot_comp_plus_resid(model)
+
+
+ols_plot_resid_stud_fit |	Deleted studentized residual vs fitted values plot
+hsb	| Test Data Set
+auto	| Test Data Set
+fitness	| Test Data Set
+ols_prep_dfbeta_data	| DFBETAs plot data
+ols_plot_hadi	| Hadi plot
+ols_plot_resid_qq	| Residual QQ plot
+ols_plot_cooksd_bar	| Cooks' D bar plot
+ols_test_f	| F test
+ols_plot_cooksd_chart	| Cooks' D chart
+ols_plot_resid_regressor	| Residual vs regressor plot
+ols_sbc	Bayesian information criterion
+ols_plot_resid_hist	Residual histogram
+ols_plot_diagnostics	Diagnostics panel
+ols_sbic	Sawa's bayesian information criterion
+ols_prep_outlier_obs	Cooks' D outlier observations
+ols_plot_resid_fit_spread	Residual fit spread plot
+ols_plot_added_variable	Added variable plots
+ols_coll_diag	Collinearity diagnostics
+ols_launch_app	Launch shiny app
+ols_prep_regress_y	Regress y on other predictors
+ols_step_all_possible_betas	All possible regression variable coefficients
+ols_leverage	Leverage
+ols_prep_regress_x	Regress predictor on other predictors
+ols_pred_rsq	Predicted rsquare
+ols_step_forward_p	Stepwise forward regression
+cement	Test Data Set
+ols_plot_dfbetas	DFBETAs panel
+ols_hadi	Hadi's influence measure
+stepdata	Test Data Set
+ols_hsp	Hocking's Sp
+ols_prep_rstudlev_data	Studentized residual vs leverage plot data
+ols_prep_rfsplot_fmdata	Residual fit spread plot data
+rvsr_plot_shiny	Residual vs regressors plot for shiny app
+ols_plot_response	Response variable profile
+ols_step_backward_p	Stepwise backward regression
+ols_step_all_possible	All possible regression
+ols_correlations	Part and partial correlations
+ols_prep_rvsrplot_data	Residual vs regressor plot data
+ols_plot_comp_plus_resid	Residual plus component plot
+ols_step_backward_aic	Stepwise AIC backward regression
+ols_aic	Akaike information criterion
+ols_prep_cdplot_data	Cooks' D plot data
+ols_prep_avplot_data	Added variable plot data
+ols_test_breusch_pagan	Breusch pagan test
+ols_test_normality	Test for normality
+ols_plot_dffits	DFFITS plot
+ols_apc	Amemiya's prediction criterion
+ols_prep_dsrvf_data	Deleted studentized residual plot data
+ols_step_best_subset	Best subsets regression
+ols_test_correlation	Correlation test for normality
+ols_prep_srchart_data	Standardized residual chart data
+ols_step_both_aic	Stepwise AIC regression
+surgical	Surgical Unit Data Set
+ols_plot_obs_fit	Observed vs fitted values plot
+ols_plot_resid_stand	Standardized residual chart
+ols_plot_reg_line	Simple linear regression line
+ols_mallows_cp	Mallow's Cp
+ols_plot_resid_stud	Studentized residual plot
+ols_prep_dfbeta_outliers	DFBETAs plot outliers
+ols_fpe	Final prediction error
+rivers	Test Data Set
+ols_deps	Check olsrr Version
+ols_plot_resid_lev	Studentized residuals vs leverage plot
+ols_msep	MSEP
+ols_pure_error_anova	Lack of fit F test
+ols_regress	Ordinary least squares regression
+ols_prep_srplot_data	Studentized residual plot data
+ols_plot_resid_box	Residual box plot
+ols_plot_resid_fit	Residual vs fitted plot
+olsrr	olsrr package
+ols_plot_resid_pot	Potential residual plot
+ols_prep_cdplot_outliers	Cooks' d outlier data
+ols_step_both_p	Stepwise regression
+ols_test_bartlett	Bartlett test
+ols_press	PRESS
+ols_step_forward_aic	Stepwise AIC forward regression
+ols_test_score	Score test
+ols_update	Update olsrr package
 
