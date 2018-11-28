@@ -514,3 +514,56 @@ texreg::screenreg(l=list(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4))
 huxtable::huxreg(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, statistics = NULL)
 
 ```
+## lab 4
+
+```{r, eval=FALSE, include = FALSE, collapse=TRUE}
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+# Import Data
+table_b4 <- read_table2("TableB4.txt")
+# Observe the data frame
+head(table_b4)
+summary(table_b4)
+# visualizng Satisfaction and Age
+plot(table_b4,pch=16)
+
+# matrix of correlation coefficients
+cor(table_b4)
+table_b4 %>% corrr::correlate() %>% corrr::fashion()
+table_b4 %>% corrr::correlate() %>% corrr::rplot()
+
+# build the model
+model_b4_full <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9, data=table_b4)
+model_b4_full%>% summary()
+anova(model_b4_full)
+vcov(model_b4_full)
+car::vif(model_b4_full)
+ols_vif_tol(model_b4_full)
+plot(model_b4_full,pch=16,col="blue")
+
+car::avPlots(model_b4_full)
+
+yhat_b4_full <- model_b4_full$fit # Save predicted y to an object #
+t_b4_full <- rstudent(model_b4_full) # Save studentized residuals to an object #
+# Another way to check non-normality of studentized residuals #
+hist(t_b4_full)
+qqnorm(t_b4_full, pch=15)
+shapiro.test(t_b4_full) #If p-value is bigger, then no problem of non-normality #
+plot(yhat_b4_full,t_b4_full, pch=16) # Studentized residuals versus predicted y #
+plot(table_b4$x1,t_b4_full, pch=16) # Studentized residuals versus x1 predictor #
+plot(table_b4$x2,t_b4_full, pch=16) # Studentized residuals versus x2 predictor #
+plot(table_b4$x3,t_b4_full, pch=16) # Studentized residuals versus x3 predictor #
+plot(table_b4$x4,t_b4_full, pch=16) # Studentized residuals versus x4 predictor #
+plot(table_b4$x5,t_b4_full, pch=16) # Studentized residuals versus x5 predictor #
+plot(table_b4$x6,t_b4_full, pch=16) # Studentized residuals versus x6 predictor #
+plot(table_b4$x7,t_b4_full, pch=16) # Studentized residuals versus x7 predictor #
+plot(table_b4$x8,t_b4_full, pch=16) # Studentized residuals versus x8 predictor #
+plot(table_b4$x9,t_b4_full, pch=16) # Studentized residuals versus x9 predictor #
+
+ols_plot_resid_stud(model_b4_full)
+ols_press(model_b4_full)
+
+```
+
