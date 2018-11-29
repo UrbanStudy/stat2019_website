@@ -505,6 +505,8 @@ car::vif(model_NbOCl3)
 car::vif(model_NbOCl3_1_2_4)
 car::vif(model_NbOCl3_1_3_4)
 
+
+
 library(olsrr)
 ols_vif_tol(model_NbOCl3)
 ols_vif_tol(model_NbOCl3_1_2_4)
@@ -546,6 +548,8 @@ vcov(model_b4_full)
 
 vif(model_b4_full)
 ols_vif_tol(model_b4_full)
+
+alias(lm(y ~ as.factor(x2) + as.factor(x5) + as.factor(x6) + as.factor(x7) + as.factor(x9), data=table_b4))
 
 plot(model_b4_full,pch=16,col="blue")
 
@@ -592,7 +596,7 @@ library(MASS)
 bc <- boxcox(model_b4_full)
 #To plot log-likelihood versus lambda #
 lambda <- bc$x[which(bc$y==max(bc$y))]
-lambda <- bc$x[which(bc$y==max(bc$y))]
+lambda
 
 # another package forecast for boxcox
 # library(forecast)
@@ -619,14 +623,16 @@ odds/(1 + odds)
 model_b4_none <- lm (y ~ 1, data = table_b4)
 step(model_b4_none, direction= "forward", scope=(~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9), k=2)
 
-ols_step_forward_p(model_b4_full, details = TRUE)
-ols_step_forward_aic(model_b4_full, details = TRUE)
+ols_step_forward_aic(model_b4_full)
+ols_step_forward_p(model_b4_full)
+
 # k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
 # Backward Elimination Regression #
 step(model_b4_full, direction = "backward")
 
-ols_step_backward_p(model_b4_full, details = TRUE)
-ols_step_backward_aic(model_b4_full, details = TRUE)
+ols_step_backward_aic(model_b4_full)
+ols_step_backward_p(model_b4_full)
+
 
 # Subset method #
 library(leaps) # Load the package #
@@ -642,6 +648,12 @@ plot(model_b4_subset, scale='bic')
 plot(model_b4_subset, scale='Cp')
 
 k <- ols_step_best_subset(model_b4_full)
+plot(k)
+
+k <- ols_step_both_p(model_b4_full, details = TRUE)
+plot(k)
+
+k<- ols_step_both_aic(model_b4_full)
 plot(k)
 
 # The following function in the SignifReg package can be used to change selection criterion easily to p value or others. Change options accordingly before running it #
