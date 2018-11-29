@@ -585,9 +585,6 @@ ols_plot_dfbetas(model_b4_full)
 # Lack of Fit F Test
 ols_pure_error_anova(lm(y~x1, data = table_b4))
 
-ols_plot_resid_stud(model_b4_full)
-
-
 MPV::PRESS(model_b4_full)
 ols_press(model_b4_full)
 
@@ -628,23 +625,24 @@ ols_step_forward_aic(model_b4_full, details = TRUE)
 # Backward Elimination Regression #
 step(model_b4_full, direction = "backward")
 
-ols_step_forward_p(model_b4_full, details = TRUE)
-ols_step_forward_aic(model_b4_full, details = TRUE)
+ols_step_backward_p(model_b4_full, details = TRUE)
+ols_step_backward_aic(model_b4_full, details = TRUE)
 
 # Subset method #
 library(leaps) # Load the package #
 model_b4_subset <- regsubsets(y ~ x1 + x2 + x3 +x4 + x5 + x6 + x7 + x8 + x9, data=table_b4, nbest=10 ) # nbest is the number of models from each size #
 summary(model_b4_subset) # Hard to read output from this #
 
-ols_step_all_possible(model_b4_full)
-
+k <- ols_step_all_possible(model_b4_full)
+plot(k)
 ## plot adjusted R square for each model ##
 plot(model_b4_subset, scale='adjr2')
 ## can use Cp, r2 or bic for scale ##
 plot(model_b4_subset, scale='bic')
 plot(model_b4_subset, scale='Cp')
 
-ols_step_best_subset(model_b4_full)
+k <- ols_step_best_subset(model_b4_full)
+plot(k)
 
 # The following function in the SignifReg package can be used to change selection criterion easily to p value or others. Change options accordingly before running it #
 library(SignifReg)
