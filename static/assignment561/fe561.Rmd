@@ -13,7 +13,7 @@ output: html_document
 
 For k is an integer,
 
-$$\Gamma(\frac{2k+1}2)=(k-\frac12)\Gamma(k-\frac12)=(k-\frac12)(k-\frac32)\Gamma(k-\frac32)=...=\prod_{i=1}^k(k-i+\frac{1}2)\Gamma(\frac12)=\prod_{i=2}^{k}(i-\frac{1}2)\sqrt{\pi}$$
+$$\Gamma(\frac{2k+1}2)=\frac{2k-1}2\Gamma(\frac{2k-1}2)=\frac{2k-1}2\frac{2k-3}2\Gamma(\frac{2k-3}2)=...=\prod_{1}^{k}\frac{2k-1}{2}\Gamma(\frac12)=\frac{(2k)!}{2^{2k}k!}\sqrt{\pi}=\frac{(2k-1)!}{2^{2k-1}(k-1)!}\sqrt{\pi}$$
 
 ****
 
@@ -46,17 +46,22 @@ For $X\sim Gamma$, $f_X(\alpha,\beta)=\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^
 
 To find the maximized value of X, let $f_X(\alpha,\beta)'=\left(\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta}\right)'=0$
 
-$$\implies (x^{a-1}e^{-\frac{x}\beta})'=(a-1)x^{a-2}e^{-\frac{x}\beta}-(-\frac{1}\beta)x^{a-1}e^{-\frac{x}\beta}=e^{-\frac{x}\beta}x^{a-2}(a-1+\frac{x}\beta)=0$$
+$$\implies (x^{a-1}e^{-\frac{x}\beta})'=(a-1)x^{a-2}e^{-\frac{x}\beta}+(-\frac{1}\beta)x^{a-1}e^{-\frac{x}\beta}=e^{-\frac{x}\beta}x^{a-2}(a-1-\frac{x}\beta)=0$$
 
 Because $x>0,\beta>0,\alpha>0$, then
 
-$$(a-1+\frac{x}\beta)=0\implies x=\frac{1-\alpha}\beta$$
+$$(a-1+\frac{x}\beta)=0\implies x=(\alpha-1)\beta$$
 
 ****
 
 #### 4.
 
 For $X\sim Uniform(a, b),b>a μ=\frac{a+b}2,\sigma^2=\frac{(b-a)^2}{12}$, thus
+
+$$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(X<(\mu+1.5\sigma)-P(X<(\mu-1.5\sigma)=\frac{\mu+1.5\sigma-a}{b-a}-\frac{\mu-1.5\sigma-a}{b-a}$$
+
+$$=\frac{3\sigma}{b-a}=\frac{3(b-a)}{\sqrt{12}(b-a)}=\frac{\sqrt{3}}{2}=0.8660254$$
+
 
 $$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(\frac{a+b}2−\frac{1.5(b-a)}{\sqrt{12}}<X<\frac{a+b}2+\frac{1.5(b-a)}{\sqrt{12}})$$
 
@@ -66,7 +71,10 @@ According to Chebyshev's Inequality: for constant k>0, $P(|X−\mu|<\sigma k)\ge
 
 $$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(|X−\mu|<1.5\sigma)\ge1−\frac1{{1.5}^2}=0.5555556$$
 
+The result shows that  $P(\mu−1.5\sigma<X<\mu+1.5\sigma)$ is larger than the amount guaranteed by Chebyshev's Inequality. Chebyshev's Inequality provides a conservative amount.
+
 ```{r, include=FALSE}
+sqrt(3)/2
 1-1/(1.5^2)
 ```
 
@@ -74,17 +82,17 @@ $$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(|X−\mu|<1.5\sigma)\ge1−\frac1{{1.5}^2
 
 #### 5.
 
-Let x is the number of draws. When $x=1,3,5,7..$, the probability of achieving this goal is 0. When $x=2,4,6,8..$, the probability of achieving this goal is $\frac12$. 
+Let x is the number of draws. When $x=1,3,5,7..$, the probability of achieving this goal is 0. When $x=2,4,6,8..$, the probability of achieving this goal is $\frac14$. 
 
-let $y=\frac{x}2$. For $Y\sim Geometric(\frac12)$
+let $y=\frac{x}2$. For $Y\sim Geometric(\frac14)$
 
-$$f_Y(y)=p(1-p)^{y-1}=2^{-y}=2^{-\frac{x}2}, x=2,4,6..$$
+$$f_Y(y)=\frac14(1-\frac14)^{y-1}=\frac13(\frac34)^{y}=\frac13(\frac34)^{\frac{x}2}, x=2,4,6..$$
 
-$$f_X(x)=\begin{cases}2^{-\frac{x}2}& x=2,4,6..\\ 0 & x=1,3,5.. \end{cases}$$
+$$f_X(x)=\begin{cases}\frac13(\frac34)^{\frac{x}2}& x=2,4,6..\\ 0 & x=1,3,5.. \end{cases}$$
 
 Because the mean and variance of Geometric function just related with p, thus
 
-$$E[X]=(\frac{1}p)=2;\quad Var[X]=\frac{1-p}{p^2}=2$$
+$$E[X]=\frac{1}p=4;\quad Var[X]=\frac{1-p}{p^2}=12$$
 
 ****
 
@@ -164,7 +172,7 @@ $$p_{x+1}\le p_x\implies \frac{p_{x+1}}{p_x}=\frac{\frac{\lambda^{x+1}}{(x+1)!}e
 
 If $\lambda$ is a positive integer then, by virtue of $\lambda-1\le x\le \lambda$, the distribution is bimodal with the two modes located at $x=\lambda-1$ and $x=\lambda$. (D.S.Broca, 2005)
 
-Since $x=1$ is the unique mode, so $x=\lambda$ where $\lambda$ denotes the greatest integer that does not exceed $\lambda$. 
+Since $x=1$ is the unique mode, so $x=[\lambda]$ where $[\lambda]$ denotes the greatest integer that does not exceed $\lambda$. 
 
 Therefore, when $\mu\in(1,2)$, $x=1$ is the unique mode.
 
