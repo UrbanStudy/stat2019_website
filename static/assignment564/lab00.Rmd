@@ -520,7 +520,7 @@ huxtable::huxreg(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, statistic
 
 ## lab 4
 
-```{r, eval=T, include = T}
+```{r, eval=T, include = F}
 # Load the package 
 library(readxl)
 library(tidyverse)
@@ -532,25 +532,88 @@ table_b4 <- read_table2("TableB4.txt")
 # Observe the data frame
 head(table_b4)
 summary(table_b4)
+```
+
+### 1. 
+
+(a) Create a matrix of scatterplots for all the variables in the data file.
+
+```{r, eval=T, include = T}
 # visualizng Satisfaction and Age
 plot(table_b4,pch=16)
+```
 
+(b) Compute the matrix of correlation coefficients all the variables in the data file.
+
+```{r, include = F}
+library(GGally)
+ggpairs(data=table_b4[c(1:10)])
+
+```
+
+
+```{r, eval=F, include = T}
 # matrix of correlation coefficients
 cor(table_b4)
 table_b4 %>% corrr::correlate() %>% corrr::fashion()
 table_b4 %>% corrr::correlate() %>% corrr::rplot()
+```
 
+(c) Based on scatterplots and correlation coefficients, explain and provide order of the predictors according to the significance of their relationship to the selling price of these houses. 
+
+x1, x2, x4, x3, x6, x5, x8, x7, and x9. The scatterplots of y versus x1, x3, and x4 show a medium to strong positive linear relationship and it is confirmed by the correlation coefficients (more than 0.6) in part (b). Predictor x8 has weak to medium negative linear relationship with y.
+
+### 2. 
+
+(a) Fit a multiple linear regression model relating selling price (y) to all nine predictors. Write the fitted regression model with estimated coefficients
+
+
+```{r, eval=T, include = T}
 # build the model
 model_b4_full <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9, data=table_b4)
 model_b4_full%>% summary()
 anova(model_b4_full)
 vcov(model_b4_full)
+```
 
+(b) Test the overall significance of the full model at 10% significance level. 
+
+The fitted model is statistically significant at 10% significance level (p value = 0.000 or 0.00185 or 0.0002)
+
+(c) Explain which predictor is least significant based on partial F test. 
+
+The predictor x6 which is number of rooms is the least significant predictor because p value for partial F test (or the t test) is 0.866 which is the highest p value and it is more than 10%.
+
+(d) Explain whether there is a problem of multicollinearity. The predictor x6 has the highest VIF which is 11.71 and it is the only VIF more than 10. Further, scatterplot of x6 versus x7 and correlation coefficient between x6 and x7 (which is 0.870) show a strong positive linear relationship between the two variables. 
+
+Predictor x6 is the number of rooms while x7 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
+
+There is a problem of multicollinearity. 
+
+(e) Overall, explain which predictor you would eliminate first to simplify the model. 
+
+It will be important to solve multicollinearity first, and hence predictor x6 is the first to remove. However, according to the variable names of x6 and x7, predictor x6 may contain same information contains in x7. The bedrooms are rooms in a house. 
+
+Further, according to the correlation coefficients, x7 is less correlated with y than x6 is correlated. 
+
+It is better to remove x7 first and check whether the multicollinearity is solved. If it was not solved, then definitely, x6 has to be removed first.
+
+```{r, eval=T, include = T}
 vif(model_b4_full)
 ols_vif_tol(model_b4_full)
 
 alias(lm(y ~ as.factor(x2) + as.factor(x5) + as.factor(x6) + as.factor(x7) + as.factor(x9), data=table_b4))
+```
 
+(f) Check the adequacy of model assumptions and suggest any corrections if necessary. 
+
+Plot of standardized residuals versus predicted values does not show a specific pattern and hence the fitted linear model is good for the data. The residuals are symmetrically distributed about zero and hence the zero mean assumption of errors is not violated. The vertical deviations of residuals form zero are not significantly different at different values of predictions. Therefore, constant variance assumption is not violated. 
+
+The q-q plot does not show that data points deviated from the straight line much and assumption of normal distribution about errors is not violated. 
+
+Plot of studentized residuals versus observation number does not show positive or negative autocorrelation. Therefore, assumption of independence in errors is not violated.
+
+```{r, eval=F, include = T}
 plot(model_b4_full,pch=16,col="blue")
 
 avPlots(model_b4_full)
@@ -580,18 +643,15 @@ plot(table_b4$x9,t_b4_full, pch=16) # Studentized residuals versus x9 predictor 
 
 table_b4 %>% mutate(student_residual=t_b4_full) %>% plot()
 
-
 ols_plot_diagnostics(model_b4_full)
 
 ols_plot_dfbetas(model_b4_full)
+```
 
 
-# Lack of Fit F Test
-ols_pure_error_anova(lm(y~x7, data = table_b4))
 
-MPV::PRESS(model_b4_full)
-ols_press(model_b4_full)
 
+```{r, eval=T, include = T}
 library(MASS)
 bc <- boxcox(model_b4_full)
 #To plot log-likelihood versus lambda #
@@ -618,22 +678,61 @@ logLik(model_b4_none)
 odds <- exp(coef(model_b4_full))
 #prob >
 odds/(1 + odds)
+```
 
+3. 
+
+(a) Fit the multiple linear regression model again after removing least significant predictor. Check the significance of the remaining predictors and continue removing the least significant predictor at each stage and refit the model. Stop when all the predictors in the model are significant at 10% significance level. Write the final fitted regression model with estimated coefficients.
+
+```{r, eval=F, include = T}
+
+k <- ols_step_all_possible(model_b4_full)
+k %>%slice(511:n()) %>% arrange(desc("Adj. R-Square"))
+plot(k)
+
+ols_step_forward_p(model_b4_full)
+ols_step_backward_p(model_b4_full)
+
+k <- ols_step_both_p(model_b4_full, details = TRUE)
+k
+plot(k)
+
+```
+
+4. 
+(a) Use forward selection method to find the best model for these data (use $\alpha=0.25$) and report the final fitted model with estimated coefficients here.
+
+```{r, eval=F, include = T}
 # Forward Selection Regression #
 model_b4_none <- lm (y ~ 1, data = table_b4)
 step(model_b4_none, direction= "forward", scope=(~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9), k=2)
 
 ols_step_forward_aic(model_b4_full)
-ols_step_forward_p(model_b4_full)
 
 # k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
+```
+
+(b) Use backward elimination method to find the best model for these data (use $\alpha=0.1$) and report the final fitted model with estimated coefficients here. Does the backward elimination method give the same model as forward selection method?
+
+```{r, eval=F, include = T}
 # Backward Elimination Regression #
 step(model_b4_full, direction = "backward")
 
 ols_step_backward_aic(model_b4_full)
-ols_step_backward_p(model_b4_full)
+```
 
+(c) Use stepwise selection method to find the best model for these data (use to enter and stay or remove) and report the final fitted model with estimated coefficients here. Does the stepwise selection method give the same model as forward selection method and backward elimination method?
 
+```{r, eval=F, include = T}
+k<- ols_step_both_aic(model_b4_full)
+k
+plot(k)
+
+```
+
+(d) Use best subsets method to find the best model for these data and report the final fitted model with estimated coefficients here. Does this method give the same model as in the previous three methods?
+
+```{r, eval=F, include = T}
 # Subset method #
 library(leaps) # Load the package #
 model_b4_subset <- regsubsets(y ~ x1 + x2 + x3 +x4 + x5 + x6 + x7 + x8 + x9, data=table_b4, nbest=10 ) # nbest is the number of models from each size #
@@ -645,33 +744,44 @@ plot(model_b4_subset, scale='adjr2')
 plot(model_b4_subset, scale='bic')
 plot(model_b4_subset, scale='Cp')
 
-k <- ols_step_all_possible(model_b4_full)
-k %>%slice(511:n()) %>% arrange(desc("Adj. R-Square"))
-plot(k)
-
 k <- ols_step_best_subset(model_b4_full)
 k
 plot(k)
+```
 
-k <- ols_step_both_p(model_b4_full, details = TRUE)
-k
-plot(k)
+(e) If the final models in the previous 4 methods are different, compare their model adequacy and suggest one best model.
 
-k<- ols_step_both_aic(model_b4_full)
-k
-plot(k)
-
+```{r, eval=F, include = T}
 # The following function in the SignifReg package can be used to change selection criterion easily to p value or others. Change options accordingly before running it #
 library(SignifReg)
 # SignifReg(scope, data, alpha = 0.05, direction = "forward", criterion = "p-value", correction = "FDR") #
 # Check it on your own later #
+```
 
+-If you had the two different models as above from the four methods, then your answer will be:
 
+Both models do not have a problem of multicollinearity (VIF <10), and violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
 
+The model with 4 predictors has a slightly higher (about by 2%) adjusted R square compared to the model with only x1 and x2. Further, x5 and x7 predictors are not statistically significant at 10% significance level (p values are 0.11479 and 0.10356, respectively). There is no significant pattern on the plot of studentized residuals versus predicted values from the model with only x1 and x2. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
+
+Finally, the model with 2 predictors is simpler that model with 4 predictors. Therefore, the best model will be
+
+- If you had the same models from the above 4 methods, then your answer will be: 
+
+The model does not have a problem of multicollinearity (VIF <10), and violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). Both predictors are significant at 10% significance level and the model explains about 78.4% variation in the sale price of houses. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
+
+Therefore, the best model will be
+
+```{r, eval=T, include = T}
 # Final models #
 
 model_b4_1 <- lm(y ~ x1 + x2, data=table_b4)
 summary(model_b4_1)
+```
+
+(f) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 90% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
+
+```{r, eval=T, include = T}
 anova(model_b4_1)
 vif(model_b4_1)
 
@@ -680,8 +790,10 @@ confint(model_b4_1, level=0.1/1) # Bonferroni joint confidence interval #
 plot(model_b4_1, pch=16, col="blue")
 #Create Partial Regression plots #
 avPlots(model_b4_1)
+```
 
 
+```{r, eval=F, include = T}
 model_b4_backward <- lm(y ~ x1 + x2 + x5 + x7, data=table_b4)
 summary(model_b4_backward)
 anova(model_b4_backward)
@@ -691,15 +803,53 @@ confint(model_b4_backward, level=0.1/3) # Bonferroni joint confidence interval #
 plot(model_b4_backward, pch=16, col="blue")
 #Create Partial Regression plots #
 avPlots(model_b4_backward)
+```
 
+(f) Conduct a lack-of-fit test for the best model and report conclusion along with p-value here.
 
+There are no enough repeating values for at least one possible combination of predictors. Therefore, a lack of fit cannot be performed.
+
+```{r, eval=T, include = T}
+# Lack of Fit F Test
+ols_pure_error_anova(lm(y~x7, data = table_b4))
+
+MPV::PRESS(model_b4_full)
+ols_press(model_b4_full)
+```
+
+(g) Check the adequacy of model assumptions and suggest necessary corrections. 
+
+The model does not have a problem of multicollinearity (VIF <10). 
+
+There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+
+The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough.
+
+(h) Interpret each estimated regression coefficient using question context. 
+
+Intercept of 10.04 suggests the average sale price (in 1000s dollars) of a house with zero taxes and zero baths. This does not make sense because there cannot be a house without a bathroom.
+
+Coefficient of 5.595 suggests the average sale price of houses increases by $ 5.595 when the tax increases by 1000 and number of baths is a constant. 
+
+Coefficient of 1.935 suggests the average sale price of houses increases by $ 1.935 when the number of baths increases by 1 and tax is a constant.
+
+(i) According the question context, do the predictors in the best model make sense? Explain.
+
+(j) Compute and report the prediction power of the best model.
+
+72.93% About 72.93% of variation in predicting the sale price of houses in Erie, Pennsylvania.
+
+```{r, eval=T, include = T}
 deviation <- table_b4$y-mean(table_b4$y)
 
 # Predit_Power=1-(PRESS.stat/SST)
 1-((MPV::PRESS(model_b4_full))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
-
+# prediction power of full
 1-((MPV::PRESS(model_b4_full))/(var(table_b4$y)*(nrow(table_b4)-1)))
-
+# prediction power of 1
+1-((MPV::PRESS(model_b4_1))/(var(table_b4$y)*(nrow(table_b4)-1)))
+# prediction power of backward
+1-((MPV::PRESS(model_b4_backward))/(var(table_b4$y)*(nrow(table_b4)-1)))
 
 ```
 
