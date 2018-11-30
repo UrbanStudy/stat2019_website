@@ -5,6 +5,164 @@ date: "12/04/2018"
 output: html_document
 ---
 
+## {.tabset .tabset-fade .tabset-pills}
+
+###
+
+
+#### 1. 
+
+For k is an integer,
+
+$$\Gamma(\frac{2k+1}2)=(k-\frac12)\Gamma(k-\frac12)=(k-\frac12)(k-\frac32)\Gamma(k-\frac32)=...=\prod_{i=1}^k(k-i+\frac{1}2)\Gamma(\frac12)=\prod_{i=1}^{k}(i-\frac{1}2)\sqrt{\pi}$$
+
+#### 2. 
+
+The probability that 10 visits longer than 8 minutes:
+
+$$P(T>8)=1-P(X\le10-1)$$
+
+which following a Poisson process with $\lambda=\frac8{\frac23}=12$. 
+
+$$=1-\frac{12^9}{9!}e^{-12}=0.7576078$$
+
+or following a Gamma process with $\alpha=10,\beta=1.5$. 
+
+$$\frac{1}{\Gamma(10)1.5^{10}}8^{10-1}e^{-\frac{8}{1.5}}=0.7576078$$
+
+```{r}
+1-ppois(9, 8/(2/3), lower.tail = TRUE, log.p = FALSE)
+
+pgamma(8, 10, rate = 1.5, lower.tail = TRUE,log.p = FALSE)
+
+```
+
+#### 3.
+
+For $X\sim Gamma$, $f_X(\alpha,\beta)=\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta},x>0,\beta>0，\alpha>0$
+
+To find the maximized value of X, let $f_X(\alpha,\beta)'=\left(\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta}\right)'=0$
+
+$$\implies (x^{a-1}e^{-\frac{x}\beta})'=(a-1)x^{a-2}e^{-\frac{x}\beta}-(-\frac{1}\beta)x^{a-1}e^{-\frac{x}\beta}=e^{-\frac{x}\beta}x^{a-2}(a-1+\frac{x}\beta)=0$$
+
+Because $x>0,\beta>0,\alpha>0$, then
+
+$$(a-1+\frac{x}\beta)=0\implies x=\frac{1-\alpha}\beta$$
+
+#### 4.
+
+For $X\sim Uniform(a, b),b>a μ=\frac{a+b}2,\sigma^2=\frac{(b-a)^2}{12}$, thus
+
+$$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(\frac{a+b}2−\frac{1.5(b-a)}{\sqrt{12}}<X<\frac{a+b}2+\frac{1.5(b-a)}{\sqrt{12}})$$
+
+$$=P(\frac{2+\sqrt3}4a+\frac{2-\sqrt3}4b<X<\frac{2-\sqrt3}4a+\frac{2+\sqrt3}4b)$$
+
+According to Chebyshev's Inequality: for constant k>0, $P(|X−\mu|<\sigma k)\ge1-\frac{1}{k^2}$. Since k=1.5, thus
+
+$$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(|X−\mu|<1.5\sigma)\ge1−\frac1{{1.5}^2}=0.5555556$$
+
+```{r}
+1-1/(1.5^2)
+```
+
+#### 5.
+
+Let x is the number of draws. When $x=1,3,5,7..$, the probability of achieving this goal is 0. When $x=2,4,6,8..$, the probability of achieving this goal is $\frac12$. 
+
+let $y=\frac{x}2$. For $Y\sim Geometric(\frac12)$
+
+$$f_Y(y)=p(1-p)^{y-1}=2^{-y}=2^{-\frac{x}2}, x=2,4,6..$$
+
+$$f_X(x)=\begin{cases}2^{-\frac{x}2}& x=2,4,6..\\ 0 & x=1,3,5.. \end{cases}$$
+
+Because the mean and variance of Geometric function just related with p, thus
+
+$$E[X]=(\frac{1}p)=2;\quad Var[X]=\frac{1-p}{p^2}=2$$
+
+#### 6. 
+
+Accoridng the Bayes’s Rule,
+
+$$P(Disease|Positive)=\frac{P(Positive|Disease)P(Disease)}{P(Positive|Disease)P(Disease)+P(Positive|Health)P(Health)}=\frac{0.005\times 0.99}{0.005\times0.99+0.995\times0.02}=0.1991952$$
+
+```{r}
+(0.005*0.99)/(0.005*0.99+0.995*0.02)
+```
+
+The probability of the individual having disease with positive result is 19.92%.
+
+#### 7. if X is a random variable such that E(X)=3 and E(x2)=13,  determine a lower bound P( -2<x<8 )
+
+$$Var(X)=E(X^2)−[E(X)]^2=13-9=4$$
+
+According to Chebyshev's Inequality: for constant k > 0, $P[|X−E(X)|\ge k]\le \frac{Var(X)}{k^2}$
+
+For lower bound by flipping the inequalities:$P[|X−E(X)|<k]>1-\frac{Var(X)}{k^2}$
+
+$$\therefore P(|X-3|<k)=P(3−k<X<k+3)\ge1−\frac4{k^2}$$
+When k=5, 
+$$P(3−k<X<k+3)=P(−2<X<8)\ge 1− \frac4{25}=0.84$$
+
+#### 8.
+
+Let $a$ is the number of "head" in each toss, each result is $(a,6-a)$. then $S=\{(0,6),(1,5),(2,4),(33),(42),(5,1),(6,0)\}$.
+
+The probability of "even head" is $\frac12$.
+
+For $X\sim Negative\ Binomial(r=2,p=\frac12)$,
+
+$$f_X(x)=\binom{x+r-1}{r-1}p^r(1-p)^x=\binom{x+1}{1}\frac12^2\frac12^x=\frac{x+1}42^{-x}, x \in 0,1,2..$$
+
+$$E[X]=\frac{r(1-p)}p=2;\quad Var[X]=\frac{r(1-p)}{p^2}=4$$
+
+#### 9.
+
+For X is a probability function, $\lim_{x\to\infty}F(X)=1$
+
+$$F(X)=\sum_{-\infty}^\infty f(x)=\sum_{a}^\infty cp(1-p)^{x-1}=c\left(\sum_{x=1}^\infty p(1-p)^{x-1}-\sum_{x=1}^{a-1}p(1-p)^{x-1}\right)$$
+
+For CDF for Geometric function, $\sum_{x=1}^\infty p(1-p)^{x-1}=1, x=1,2,3,..$
+
+$$F(X)=c\left(1-\sum_{x=1}^{a-1}p(1-p)^{x-1}\right)=c(1-p)^{a-1}=1$$
+
+$$\therefore c=(1-p)^{1-a}$$
+
+$$f_X(x)=\begin{cases}p(1-p)^{(x+1-a)-1} & x+1-a=1,2,3..\\0 & otherwise\end{cases}$$
+Which still is a Geometric function.
+
+$$E(X)=\frac1p;\quad Var(X)=\frac{1-p}{p^2}$$
+
+#### 10.
+
+In an introductory course on mathematical statistics, the following pmfs are typically
+covered: binomial, Poisson, negative binomial, and hypergeometric. The Bernoulli
+and geometric pmfs are merely special cases of the binomial and negative binomial
+distributions, respectively. We illustrate the mode-determining condition (1) of
+the previous section by using two cases that appear to lie on opposite ends of the
+computational continuum: the Poisson and hypergeometric pmfs.
+
+The Poisson pmf arises both as a stochastic process in its own right and as an
+approximation to the binomial. The Poisson pmf is given by:
+
+$$P(X=x)=p_x=\frac{\lambda^x}{x!}e^{-\lambda}, x=0,1,2.., \lambda>0\quad (2)$$
+
+Applying the first inequality of condition and forming the ratio :
+
+$$\frac {p_x}{p_{x-1}}=\frac{\frac{\lambda^x}{x!}e^{-\lambda}}{\frac{\lambda^{x-1}}{(x-1)!}e^{-\lambda}}\ge1$$
+
+$\frac{\lambda}x\ge1$ or $x\le\lambda\quad (4)$
+
+In applying the second inequality it is apparent that x has been replaced with x+1
+and the direction of the inequality has reversed; this obviates the necessity of
+computations (3) and (4), immediately leading to:
+
+$x+1\ge\lambda$ or $x\ge\lambda-1$
+
+Since x is a non-negative integer which also must satisfy $\lambda-1\le x\le \lambda$, so $x=\lambda$ where $\lambda$ denotes the greatest integer that does not exceed $\lambda$. If the parameter $\lambda$ is itself a positive integer then, by virtue of $\lambda-1\le x\le \lambda$, the distribution is
+bimodal with the two modes located at $x=\lambda-1$ and $x=\lambda$.
+
+Therefore, $\mu\in(2,3)$ for x=1 is the unique mode.
+
 ###
 
 code | distribution
@@ -178,7 +336,7 @@ $h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
 
 (d) Poisson family
 
-When $\lambda$ is known, $f(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(\lambda)}e^{w_1(\lambda)t_1(x)}$
+When $\lambda$ is known, $p(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(\lambda)}e^{w_1(\lambda)t_1(x)}$
 
 $h(x)$ | $c(\lambda)$ | $w_1(\lambda)$ | $t_1(x)$
 ------ | -------- | --------- | ------
