@@ -9,12 +9,12 @@ output: html_document
 
 ###
 
-
 #### 1. 
 
 For k is an integer,
 
 $$\Gamma(\frac{2k+1}2)=(k-\frac12)\Gamma(k-\frac12)=(k-\frac12)(k-\frac32)\Gamma(k-\frac32)=...=\prod_{i=1}^k(k-i+\frac{1}2)\Gamma(\frac12)=\prod_{i=2}^{k}(i-\frac{1}2)\sqrt{\pi}$$
+****
 
 #### 2. 
 
@@ -36,7 +36,7 @@ $$\frac{1}{\Gamma(10)1.5^{10}}8^{10-1}e^{-\frac{8}{1.5}}=0.7576078$$
 pgamma(8, 10, rate = 1.5, lower.tail = TRUE,log.p = FALSE)
 
 ```
-
+****
 #### 3.
 
 For $X\sim Gamma$, $f_X(\alpha,\beta)=\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta},x>0,\beta>0，\alpha>0$
@@ -64,7 +64,7 @@ $$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(|X−\mu|<1.5\sigma)\ge1−\frac1{{1.5}^2
 ```{r, include=FALSE}
 1-1/(1.5^2)
 ```
-
+****
 #### 5.
 
 Let x is the number of draws. When $x=1,3,5,7..$, the probability of achieving this goal is 0. When $x=2,4,6,8..$, the probability of achieving this goal is $\frac12$. 
@@ -78,19 +78,19 @@ $$f_X(x)=\begin{cases}2^{-\frac{x}2}& x=2,4,6..\\ 0 & x=1,3,5.. \end{cases}$$
 Because the mean and variance of Geometric function just related with p, thus
 
 $$E[X]=(\frac{1}p)=2;\quad Var[X]=\frac{1-p}{p^2}=2$$
-
+****
 #### 6. 
 
 Accoridng the Bayes’s Rule,
 
 $$P(Disease|Positive)=\frac{P(Positive|Disease)P(Disease)}{P(Positive|Disease)P(Disease)+P(Positive|Health)P(Health)}=\frac{0.005\times 0.99}{0.005\times0.99+0.995\times0.02}=0.1991952$$
 
-```{r}
+```{r, include=FALSE}
 (0.005*0.99)/(0.005*0.99+0.995*0.02)
 ```
 
 The probability of the individual having disease with positive result is 19.92%.
-
+****
 #### 7. if X is a random variable such that E(X)=3 and E(x2)=13,  determine a lower bound P( -2<x<8 )
 
 $$Var(X)=E(X^2)−[E(X)]^2=13-9=4$$
@@ -102,7 +102,7 @@ For lower bound by flipping the inequalities:$P[|X−E(X)|<k]>1-\frac{Var(X)}{k^
 $$\therefore P(|X-3|<k)=P(3−k<X<k+3)\ge1−\frac4{k^2}$$
 When k=5, 
 $$P(3−k<X<k+3)=P(−2<X<8)\ge 1− \frac4{25}=0.84$$
-
+****
 #### 8.
 
 Let $a$ is the number of "head" in each toss, each result is $(a,6-a)$. then $S=\{(0,6),(1,5),(2,4),(33),(42),(5,1),(6,0)\}$.
@@ -114,7 +114,7 @@ For $X\sim Negative\ Binomial(r=2,p=\frac12)$,
 $$f_X(x)=\binom{x+r-1}{r-1}p^r(1-p)^x=\binom{x+1}{1}\frac12^2\frac12^x=\frac{x+1}42^{-x}, x \in 0,1,2..$$
 
 $$E[X]=\frac{r(1-p)}p=2;\quad Var[X]=\frac{r(1-p)}{p^2}=4$$
-
+****
 #### 9.
 
 For X is a probability function, $\lim_{x\to\infty}F(X)=1$
@@ -131,60 +131,28 @@ $$f_X(x)=\begin{cases}p(1-p)^{(x+1-a)-1} & x+1-a=1,2,3..\\0 & otherwise\end{case
 Which still is a Geometric function.
 
 $$E(X)=\frac1p;\quad Var(X)=\frac{1-p}{p^2}$$
-
+****
 #### 10.
 
-In an introductory course on mathematical statistics, the following pmfs are typically
-covered: binomial, Poisson, negative binomial, and hypergeometric. The Bernoulli
-and geometric pmfs are merely special cases of the binomial and negative binomial
-distributions, respectively. We illustrate the mode-determining condition (1) of
-the previous section by using two cases that appear to lie on opposite ends of the
-computational continuum: the Poisson and hypergeometric pmfs.
+This is a Poisson pmf
 
-The Poisson pmf arises both as a stochastic process in its own right and as an
-approximation to the binomial. The Poisson pmf is given by:
+$$P(X=x)=p_x=\frac{\lambda^x}{x!}e^{-\lambda}, x=0,1,2.., \lambda>0$$
 
-$$P(X=x)=p_x=\frac{\lambda^x}{x!}e^{-\lambda}, x=0,1,2.., \lambda>0\quad (2)$$
+For a discrete, non-negative, integer-valued random variable such that $P(X=x)=p_x, x=1,2,..$ If $X=x$ is the mode, then
 
-Applying the first inequality of condition and forming the ratio :
+$$p_{x-1}\le p_x\implies\frac{p_x}{p_{x-1}}=\frac{\frac{\lambda^x}{x!}e^{-\lambda}}{\frac{\lambda^{x-1}}{(x-1)!}e^{-\lambda}}\ge1\implies x\le\lambda$$
 
-$$\frac {p_x}{p_{x-1}}=\frac{\frac{\lambda^x}{x!}e^{-\lambda}}{\frac{\lambda^{x-1}}{(x-1)!}e^{-\lambda}}\ge1$$
 
-$\frac{\lambda}x\ge1$ or $x\le\lambda\quad (4)$
+$$p_{x+1}\le p_x\implies \frac{p_{x+1}}{p_x}=\frac{\frac{\lambda^{x+1}}{(x+1)!}e^{-\lambda}}{\frac{\lambda^x}{x!}e^{-\lambda}}\le1\implies x\ge\lambda-1$$
 
-In applying the second inequality it is apparent that x has been replaced with x+1
-and the direction of the inequality has reversed; this obviates the necessity of
-computations (3) and (4), immediately leading to:
+If $\lambda$ is a positive integer then, by virtue of $\lambda-1\le x\le \lambda$, the distribution is bimodal with the two modes located at $x=\lambda-1$ and $x=\lambda$. (D.S.Broca, 2005)
 
-$x+1\ge\lambda$ or $x\ge\lambda-1$
+Since $x=1$ is the unique mode, so $x=\lambda$ where $\lambda$ denotes the greatest integer that does not exceed $\lambda$. 
 
-Since x is a non-negative integer which also must satisfy $\lambda-1\le x\le \lambda$, so $x=\lambda$ where $\lambda$ denotes the greatest integer that does not exceed $\lambda$. If the parameter $\lambda$ is itself a positive integer then, by virtue of $\lambda-1\le x\le \lambda$, the distribution is
-bimodal with the two modes located at $x=\lambda-1$ and $x=\lambda$.
+Therefore, when $\mu\in(1,2)$, $x=1$ is the unique mode.
 
-Therefore, $\mu\in(1,2)$ for x=1 is the unique mode.
 
 ###
-
-code | distribution
-|---|---
-dbinom(k,n,p) | PMF $P(X=k)$ for $X \sim \Bin(n,p)$
-pbinom(x,n,p) | CDF $P(X \leq x)$ for $X \sim \Bin(n,p)$
-qbinom(a,n,p) |   $a$th quantile for $X \sim \Bin(n,p)$
-rbinom(r,n,p) |  vector of $r$ i.i.d.~$\Bin(n,p)$ r.v.s
-dgeom(k,p) | PMF $P(X=k)$ for $X \sim \Geom(p)$
-dhyper(k,w,b,n) | PMF $P(X=k)$ for $X \sim \HGeom(w,b,n)$
-dnbinom(k,r,p) | PMF $P(X=k)$ for $X \sim \NBin(r,p)$
-dpois(k,r) | PMF $P(X=k)$ for $X \sim \Pois(r)$
-dbeta(x,a,b) | PDF $f(x)$ for $X \sim \Beta(a,b)$
-dchisq(x,n) | PDF $f(x)$ for $X \sim \chi^2_n$
-dexp(x,b) | PDF $f(x)$ for $X \sim \Expo(b)$
-dgamma(x,a,r) | PDF $f(x)$ for $X \sim \Gam(a,r)$
-dlnorm(x,m,s) | PDF $f(x)$ for $X \sim \mathcal{LN(m,s^2)$
-dnorm(x,m,s) | PDF $f(x)$ for $X \sim \N(m,s^2)$
-dt(x,n) | PDF $f(x)$ for $X \sim t_n$
-dunif(x,a,b) | PDF $f(x)$ for $X \sim \Unif(a,b)$
-
-**1.1** the exponential family.
 
 #### N
 
@@ -541,28 +509,5 @@ dpois(45, 50, log = FALSE)
 
 
 
-####
 
-**3.1** Let Z be a random variable with pdf f(z). Define $z_{\alpha}$ to be a number that satisfies this relationship:
-$$\alpha= P ( Z > z_{\alpha}) =\int_{z_{\alpha}}^{\infty}f(z)dz.$$
-Show that if X is a random variable with pdf ($l/\sigma)f((x-\mu)/\sigma$) and $x_{\alpha}=\sigma z_{\alpha}+\mu$, then $P(X>x_{\alpha})=\alpha$. (Thus if a table of $z_{\alpha}$ values were available, then values of $x_{\alpha}$ could be easily computed for any member of the location-scale family.)
 
-According to Theorem 3.5.6, f(x) is pdf, $\mu,\sigma\in\mathbf{R}$, $\sigma>0$. when and only when Z is a random variable with pdf f(z) and $X=\sigma Z+\mu$, X is a random variable with pdf ($1/\sigma)f((x-\mu)/\sigma$) 
-
-Beacuse $x_{\alpha}=\sigma z_{\alpha}+\mu$,
-
-$$P(X>x_{\alpha})=\int_{x_a}^{\infty}\frac1\sigma f(\frac{x-\mu}{\sigma})dx=\int_{\sigma z_a+\mu}^{\infty}\frac1{\sigma}f(\frac{\sigma z+\mu-\mu}{\sigma}) d(\sigma z+\mu)=\int_{z_{\alpha}}^{\infty}f(z)dz$$
-
-$$=P(\sigma Z+\mu>\sigma z_{\alpha}+\mu)= P(Z>z_{\alpha})=\alpha $$
-
-#### Cauchy family
-
- defined in Section 3.3. This family can be extended to a location-scale family yielding pdfs of the form.
-
-$$f(x|\mu,\sigma)=\frac{1}{\sigma\pi\left(1+(\frac{x-\mu}{\sigma})^2\right)},\ -\infty<x<\infty$$
-
-The mean and variance do not exist for the Cauchy distribution. So the parameters $\mu$ and $\sigma^2$ are not the mean and variance. But they do have important meaning. Show that if X is a random variable with a Cauchy distribution with parameters $\mu$ and $\sigma^2$, then:
-
-(a) $\mu$ is the median of the distribution of X, that is, $P(X\ge\mu)=P(X\le\mu)=1/2$.
-
-(b) $\mu+\sigma$ and $\mu-\sigma$ are the quartiles of the distribution of X, that is, $P(X\ge\mu+\sigma)=P(X\le\mu-\sigma)=1/4$. (Hint: Prove this first for $\mu=0$ and $\sigma=1$ and then use Exercise 3.38.)
