@@ -172,9 +172,9 @@ vif(model_wf_full)
 ols_vif_tol(model_wf_full)
 
 vif(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
+summary(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
 vif(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
+summary(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
 alias(lm(y ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
 
 ```
@@ -196,6 +196,9 @@ It is better to remove x7 first and check whether the multicollinearity is solve
 ```{r, eval=T, include = T}
 model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
 model_wf_full_log%>% summary()
+
+model_wf_reduce_log <- lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+model_wf_reduce_log%>% summary()
 ```
 
 
@@ -206,14 +209,8 @@ The fitted model is statistically significant at 5% significance level (p value 
 (2) Explain whether there is a problem of multicollinearity.
 
 ```{r, eval=T, include = T}
-vif(model_wf_full_log)
-ols_vif_tol(model_wf_full_log)
-
-vif(lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
-vif(lm(log(y) ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
-alias(lm((y) ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
+vif(model_wf_reduce_log)
+ols_vif_tol(model_wf_reduce_log)
 
 ```
 
@@ -227,18 +224,18 @@ There is a problem of multicollinearity.
 ```{r, eval=T, include = T}
 plot(model_wf_full_log,pch=16,col="blue")
 
-avPlots(model_wf_full_log)
 ols_plot_diagnostics(model_wf_full_log)
+
+avPlots(model_wf_full_log)
+
 ols_plot_added_variable(model_wf_full_log)
+
 ols_plot_dfbetas(model_wf_full_log)
 
-ols_plot_resid_hist(model_wf_full_log)
-
-ols_plot_resid_qq(model_wf_full_log)
-
 shapiro.test(rstudent(model_wf_full_log)) #If p-value is bigger, then no problem of non-normality #
+shapiro.test(rstudent(model_wf_reduce_log))
 
-table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_full_log))
+table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
 ggpairs(data=table_wf_resi[c(1:11)])
 
 
@@ -250,11 +247,11 @@ ggpairs(data=table_wf_resi[c(1:11)])
 ```{r, eval=T, include = T}
 # Forward Selection Regression #
 model_wf_none <- lm (log(y) ~ 1, data = table_wf)
-step(model_wf_none, direction= "forward", scope=(~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9), k=2)
+step(model_wf_none, direction= "forward", scope=(~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9), k=2)
 # k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
 
-ols_step_forward_aic(model_wf_full_log)
-ols_step_forward_p(model_wf_full_log, penter = 0.15)
+ols_step_forward_aic(model_wf_reduce_log)
+ols_step_forward_p(model_wf_reduce_log, penter = 0.15)
 
 ```
 
@@ -262,10 +259,10 @@ ols_step_forward_p(model_wf_full_log, penter = 0.15)
 
 ```{r, eval=T, include = T}
 # Backward Elimination Regression #
-step(model_wf_full_log, direction = "backward")
+step(model_wf_reduce_log, direction = "backward")
 
-ols_step_backward_aic(model_wf_full_log)
-ols_step_backward_p(model_wf_full_log, penter = 0.05)
+ols_step_backward_aic(model_wf_reduce_log)
+ols_step_backward_p(model_wf_reduce_log, penter = 0.05)
 
 ```
 
@@ -274,7 +271,7 @@ ols_step_backward_p(model_wf_full_log, penter = 0.05)
 ```{r, eval=T, include = T}
 # Subset method #
 library(leaps) # Load the package #
-model_wf_subset <- regsubsets(log(y) ~ X1 + X2 + X3 +X4 + X5 + X6 + X7 + X8 + X9, data=table_wf, nbest=10 ) # nbest is the number of models from each size #
+model_wf_subset <- regsubsets(log(y) ~X2 + X3 +X4 + X5 + X6 + X7 + X8 + X9, data=table_wf, nbest=10 ) # nbest is the number of models from each size #
 summary(model_wf_subset) # Hard to read output from this #
 
 ## plot adjusted R square for each model ##
@@ -283,9 +280,10 @@ plot(model_wf_subset, scale='adjr2')
 plot(model_wf_subset, scale='bic')
 plot(model_wf_subset, scale='Cp')
 
-k <- ols_step_best_subset(model_wf_full_log)
+k <- ols_step_best_subset(model_wf_reduce_log)
 k
 plot(k)
+
 ```
 
 (7) If the final models in the previous 3 methods are different, compare their model adequacy and suggest one best model.
@@ -300,7 +298,7 @@ Finally, the model with 2 predictors is simpler that model with 4 predictors. Th
 ```{r, eval=T, include = T}
 # Final models #
 
-model_wf_final <- lm(y ~ X3 + X2, data=table_wf)
+model_wf_final <- lm(y ~ X4+X3+X7+X8+X9+X6, data=table_wf)
 summary(model_wf_final)
 ```
 
@@ -328,7 +326,7 @@ avPlots(model_wf_final)
 
 ```{r, eval=T, include = T}
 # Lack of Fit F Test
-ols_pure_error_anova(lm(y~X7, data = table_wf))
+ols_pure_error_anova(lm(y~X4, data = table_wf))
 
 MPV::PRESS(model_wf_final)
 ols_press(model_wf_final)
@@ -344,9 +342,9 @@ deviation <- table_wf$y-mean(table_wf$y)
 # Predit_Power=1-(PRESS.stat/SST)
 1-((MPV::PRESS(model_wf_final))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
 # prediction power of full
-1-((MPV::PRESS(model_wf_full))/(var(table_wf$y)*(nrow(table_wf)-1)))
-# prediction power of 1
 1-((MPV::PRESS(model_wf_full_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
+# prediction power of 1
+1-((MPV::PRESS(model_wf_reduce_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
 # prediction power of backward
 1-((MPV::PRESS(model_wf_final))/(var(table_wf$y)*(nrow(table_wf)-1)))
 

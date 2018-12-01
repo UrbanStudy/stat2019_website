@@ -21,22 +21,24 @@ $$\Gamma(\frac{2k+1}2)=\frac{2k-1}2\Gamma(\frac{2k-1}2)=\frac{2k-1}2\frac{2k-3}2
 
 The probability that 10 visits longer than 8 minutes:
 
-$$P(T>8)=1-P(X\le10-1)$$
+$$1-P(T>8)=P(X\le10-1)$$
 
 which following a Poisson process with $\lambda=\frac8{\frac23}=12$. 
 
-$$=1-\frac{12^9}{9!}e^{-12}=0.7576078$$
+$$P(X\le10-1)=\frac{12^9}{9!}e^{-12}=0.2423922$$
 
 or following a Gamma process with $\alpha=10,\beta=1.5$. 
 
-$$\frac{1}{\Gamma(10)1.5^{10}}8^{10-1}e^{-\frac{8}{1.5}}=0.7576078$$
+$$1-P(T>8)=1-\frac{1}{\Gamma(10)1.5^{10}}8^{10-1}e^{-\frac{8}{1.5}}=0.2423922$$
 
 ```{r, include=FALSE}
-1-ppois(9, 8/(2/3), lower.tail = TRUE, log.p = FALSE)
+ppois(9, 8/(2/3), lower.tail = TRUE, log.p = FALSE)
 
-pgamma(8, 10, rate = 1.5, lower.tail = TRUE,log.p = FALSE)
+1-pgamma(8, 10, rate = 1.5, lower.tail = TRUE,log.p = FALSE)
 
 ```
+
+Therefore, the probability that 10 visits longer than 8 minutes is 24.24%.
 
 ****
 
