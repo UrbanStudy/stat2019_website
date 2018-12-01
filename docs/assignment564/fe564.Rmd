@@ -14,189 +14,349 @@ options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
-### Problem 1
-Exercise 3.25 (Just report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for each part).$y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$
- (a) $H_0:\ β_1=β_2=β_3=β_4=β$
+### Question 1 (Show main steps of your work to get full points)
 
-$$y=β_0+β(x_1+x_2+x_3+x_4)+ε$$
-
-$$
-\mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 \\ 0 & 0 & 0 & 1 & -1  \\ 0 & 0 & 0 & 0 & 1 \end{bmatrix}_{4\times5} 
-\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0  \\ \beta \end{bmatrix}_{4\times1} rank(T)=4
-$$
-
- (b) $H_0:\ β_1=β_2,\ β_3=β_4$
- 
-$$y=β_0+β_1(x_1+x_2)+β_3(x_3+x_4)+ε$$
- 
- $$\mathbf{T}=\begin{bmatrix} 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 0 & 1 & -1 \end{bmatrix}_{2\times5} 
-\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2$$
- 
- (c) $H_0:\ β_1-2β_2=4β_3,\ β_1+2β_2=0$
- 
-$$β_1=-2β_2=2β_3 \\
-y=β_0+β_1(x_1-\frac12x_2+\frac12x_3)+β_4 x_4+ε$$
-
-
-$$\mathbf{T}=\begin{bmatrix} 0 & 1 & -2 & -4 & 0 \\ 0 & 1 & 2 & 0 & 0 \end{bmatrix}_{2\times5} 
-\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \end{bmatrix}_{5\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2$$
-
-### Problem 2: 
-
-Exercise 3.27 Show that $Var(\mathbf{\hat y})=\sigma^2\mathbf{H}$
-
-$$\because \mathbf{\hat y=X\hatβ},\  \mathbf{\hatβ}=\mathbf{(X'X)^{-1} X'Y}$$
-
-$$\therefore Var(\mathbf{\hat y})=Var(\mathbf{X\hatβ})=Var(\mathbf{X(X'X)^{-1} X'Y})=Var(\mathbf{HY})=HVar(\mathbf{Y})H'$$
-
-$$\because \mathbf{y=Xβ+ε},\quad  Var(ε)=\sigma^2\mathbf{I}$$
-
-$$\therefore Var(\mathbf{\hat y})=H\cdot Var(\mathbf{Xβ+ε})\cdot H'=H\cdot Var(\mathbf{ε})\cdot H'=H\cdot \sigma^2\mathbf{I}\cdot H'=\sigma^2\mathbf{H}$$
-
-$$\because \sigma\ \text{is a constant, H is symmatric and idenogent.}$$
-$$\therefore H\cdot \sigma^2\mathbf{I}\cdot H'=\sigma^2\mathbf{HH'}=\sigma^2\mathbf{HH}=\sigma^2\mathbf{H}$$
-
-### Problem 3: 
-
-The $(X'X)^{(-1)}$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+ε$ is given below. If MSE = 0.513 and n=9, compute the 
-
-(a) $Var(\hatβ_1)$
-
-$$Var(\mathbf{\hat\beta_1})=MSE\times C_{22}=0.513\times4.624=2.372112$$
-
-(b) $se(\hatβ_3)$
-
-$$se(\mathbf{\hat\beta_3})=\sqrt{MSE\times C_{44}}=\sqrt{0.513\times0.031}=0.1261071$$
-
-(c) $Cov(\hatβ_1,\hatβ_3)$
-
-$$Cov(\mathbf{\hat\beta_1,\hat\beta_3})=MSE\times C_{24}=0.513\times(-0.346)=-0.177498$$
-
-(d) $Cor(\hatβ_1\hat,β_3)$
-
-$$Cor(\mathbf{\hat\beta_1,\hat\beta_3})=\frac{Cov(\mathbf{\hat\beta_1,\hat\beta_3})}{se(\mathbf{\hat\beta_1})se(\mathbf{\hat\beta_3})}=\frac{-0.177498}{1.540166\times0.1261071}=-0.913874$$
-
-(e) Based on what you found in the previous part(s), explain the relationship between $\hatβ_1$ and $\hatβ_3$.
-
-The value of $Cor(\mathbf{\hat\beta_1,\hat\beta_3})$ is close to negative 1. There is a strong negative relationship between $\hatβ_1$ and $\hatβ_3$.
-
-(f) Without computing variance for all the estimators, explain which estimator is the least consistent.
-
-$C_{11}=11.423$ has the lagest value. $\hatβ_0$ has the the lagest variance and the least consistent among the estimators.
-
-(g) Without computing covariances for all the pairs of estiamtors, list the pair(s) of estimators that are negatively correlated. Provide a reason.
-
-According to the $(X'X)^{(-1)}$,
-
-$C_{12},\ C_{13},\ C_{15},\ C_{23},\ C_{24},\ C_{45}$ are negative. 
-
-The negatively correlated pairs of parameters are
-
-$\hatβ_0$ and $\hatβ_1$, $\hatβ_0$ and $\hatβ_2$, $\hatβ_0$ and $\hatβ_4$, $\hatβ_1$ and $\hatβ_2$, $\hatβ_1$ and $\hatβ_3$, $\hatβ_3$ and $\hatβ_4$.
-
-### Problem 4: 
-
-a. the fitted model
-
-$$\hat y=-1.808372+0.003598x_2+0.193960x_7-0.004816x_8$$
-
-b. ANOVA
-
-
-According to the ANOVA table, the P-values is much smaller than 0.05. The regression is significant on 95% confident level.
-
-c. The t test.
-
-Each parameter is significant differnct with zero on 95% confident level. x2 has weak positive affect on response variable. x7 has strong positive affect but not as significant as other variables. x8 has weak negative affect.
-
-d. R-square and adjusted R-square
-
-$$R^2=0.7863,\quad  R_{adjusted}^2=0.7596$$
-
-e. The partial F test statistic
-
-$$F_0=\frac{(SSE_{x_7reduced}-SSE_{full})/r}{MSE}=\frac{(83.938-69.870)/1}{2.911}=4.832704$$
-
-This partial F satistic is the square of the t sattistic for x7 in full modle.
-
-3.2 The correlation
-
-$$Cor(y_i,\hat y_i)=\frac{Cov(y_i,\hat y_i)}{\sqrt{Var(y_i)Var(\hat y_i)}}
-=\sqrt{\frac{Var(y_i,\hat y_i)}{Var(y_i)Var(\hat y_i)}}=\sqrt{\frac{\sum(y_i-\hat y_i)^2}{\sum(y_i)^2\sum(\hat y_i)^2}}=\sqrt{0.7863}=0.8867395$$
-
-$$R^2=1-\frac{SSE}{SST}=1-\frac{69.870}{326.964}=0.7863$$
-
-Therefore, square of simple corelation coefficient between $y_i$ and $\hat y_i$ equal R-squared.
-
-3.3 The confidence intervals
-
-a. The 95% CI on $\beta_7$ is
-
-$$\hat\beta_7\pm t_{\frac{\alpha}2,24}se(\hat\beta_7)=(0.011855322,\ 0.376065098)$$
-
-b. For x2=2300, x7=56.0, x8=2100, the 95% CI on the mean numbers of games won by a team is
-
-$$\hat y\pm t_{\frac{\alpha}2,24}se(\hat y)=(6.436203,\ 7.996645)$$
+The $(X'X)^{-1}$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+β_5 x_5+β_6 x_6+ε$ is given below.
 
 ```{R, collapse=TRUE}
 # Problem 3
 B<- data.frame(
-   b0=c(11.423,-4.349,-0.790, 0.486,-0.196),
-   b1=c(-4.349, 4.624,-3.057,-0.346, 0.024),
-   b2=c(-0.790,-3.057, 3.978, 0.135, 0.063),
-   b3=c( 0.486,-0.346, 0.135, 0.031,-0.005),
-   b4=c(-0.196, 0.024, 0.063,-0.005, 0.011))
-# Var($\hat b_1$)
-0.513*B[2,2]
-# se(b1)
-sqrt(0.513*B[2,2])
-# se(b3)
-sqrt(0.513*B[4,4])
-# cov(b1,b3)
-0.513*B[2,4]
-# cor(b1,b3)
-(0.513*B[2,4])/((sqrt(0.513*B[2,2]))*(sqrt(0.513*B[4,4])))
+   b0=c(3.694,	-2.166,	0.046,	-0.300,	-0.022,	-0.100,	0.023),
+   b1=c(-2.166,	2.230,	-0.075,	0.166,	0.012,	-0.079,	-0.015),
+   b2=c(0.046,	-0.075,	0.067,	-0.010,	-0.035,	-0.009,	-0.027),
+   b3=c(-0.300,	0.166,	-0.010,	0.083,	-0.028,	-0.010,	-0.010),
+   b4=c(-0.0216,	0.012,	-0.035,	-0.028,	0.069,	-0.003,	-0.003),
+   b5=c(-0.100,	-0.079,	-0.099,	-0.010,	-0.003,	0.058,	0.015),
+   b6=c(0.023,	-0.015,	-0.027,	-0.010,	-0.003,	0.015,	0.063)
+   )
+# Var($\hat b_4$)
+1.395*B[5,5]
+# se(b4)
+sqrt(1.395*B[5,5])
+# se(b2)
+sqrt(1.395*B[3,3])
+# cov(b2,b4)
+1.395*B[3,5]
+# cor(b2,b4)
+(1.395*B[3,5])/((sqrt(1.395*B[3,3]))*(sqrt(1.395*B[5,5])))
 ```
 
-```{r, echo=TRUE, message = FALSE, collapse=TRUE}
-# Problem 4
+(a) If MSE = 1.395 and n = 38 , compute the (Keep 4 or more decimal places, DO NOT round in the intermediate steps)
+
+(i)   se(β ̂_4)
+
+$$se(\mathbf{\hat\beta_4})=\sqrt{MSE\times C_{55}}=\sqrt{1.395\times0.069}=0.3102499$$
+
+(ii)   Cov(β ̂_2,β ̂_4)
+
+$$Cov(\mathbf{\hat\beta_2,\hat\beta_4})=MSE\times C_{35}=1.395\times(-0.035)=-0.048825$$
+
+(iii)   Cor(β ̂_2,β ̂_4 )
+
+$$se(\mathbf{\hat\beta_2})=\sqrt{MSE\times C_{33}}=\sqrt{1.395\times0.067}=0.3057205$$
+
+$$Cor(\mathbf{\hat\beta_2,\hat\beta_4})=\frac{Cov(\mathbf{\hat\beta_2,\hat\beta_4})}{se(\mathbf{\hat\beta_2})se(\mathbf{\hat\beta_4})}=\frac{-0.048825}{0.3057205\times0.3102499}=-0.5147615$$
+
+(iv) Without computing anything, explain which estimator is the most consistent.
+
+$C_{66}=0.058$ has the smallest value. $\hatβ_5$ has the the least variance and the most consistent among the estimators.
+
+(v) Without computing anything , list the pair(s) of estimators that are positively correlated. Provide a reason.
+
+According to the $(X'X)^{(-1)}$,
+
+$C_{13},\ C_{17},\ C_{24},\ C_{25},\ C_{67}$ are positive. 
+
+The positively correlated pairs of parameters are
+
+$\hatβ_0$ and $\hatβ_2$, 
+$\hatβ_0$ and $\hatβ_6$, 
+$\hatβ_1$ and $\hatβ_3$, 
+$\hatβ_1$ and $\hatβ_4$, 
+$\hatβ_5$ and $\hatβ_6$.
+
+
+(b) Consider the following hypothesis: $H_0:  β_1=2β_3,β_2=β_3,β_5=0$
+
+(i)  Report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for testing the above hypothesis.
+
+$$
+\mathbf{T}=\begin{bmatrix} 0 & 2 & 0 & -1 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 & 0 \end{bmatrix}_{2\times6} 
+\mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \\ \beta_6 \end{bmatrix}_{6\times1}
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{2\times1} rank(T)=2
+$$
+
+(ii) Report the values of numerator and denominator degrees of freedom for the corresponding F test.
+For F test, the numerator is MSR while denominator is MSE, thus
+
+The numerator degrees of freedom is $dfR=k=6$
+
+The denominator degrees of freedom is $dfE=n-(k+1)=38-(6+1)=31$
+
+(c) Show the following equation is an alternative form of the sum of squares of regreesion or model (SSR).
+
+$$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat y_i^2-2\hat y_i\bar y+\bar y^2)=\sum_{i=1}^n\hat y_i^2-2\bar y\sum_{i=1}^n\hat y_i+\sum_{i=1}^n\bar y^2$$
+
+$$=\sum_{i=1}^n\hat y_i^2-2\bar yn\frac{\sum_{i=1}^n\hat y_i}n+n\bar y^2=\sum_{i=1}^n\hat y_i^2-2\bar yn\bar y+n\bar y^2=\sum_{i=1}^n\hat y_i^2-n\bar y^2$$
+
+### Question 2 (Use software to analyze the given data)
+
+The data in the WaterFlow file are simulated data on peak rate of flow (in cfs) of water from six watersheds following storm episodes. The predictors are:
+
+x1 : Area of watershed (mi2) 
+x2 : Area impervious to water (mi2)  
+x3 : Average slope of watershed (percent)   
+x4 : Longest stream flow in watershed (1000s of feet)  
+x5 : surface absorbency index, (0= complete absorbency, 100=no absorbency)  
+x6 : estimated soil storage capacity (inches of water)   
+x7 : Infiltration rate of water into soil (inches/hour)  
+x8 : Rainfall (inches)   
+x9 : Time period during which rainfall exceeded ¼ inch/hour  
+
+```{r, eval=T, include = F}
+# Load the package 
+library(readxl)
 library(tidyverse)
 library(broom)
+library(olsrr)
+library(car)
 # Import Data
-table_b1 <- read_table2("TableB.1.txt")
+table_wf <- read_table2("WaterFlow.txt")
 # Observe the data frame
-head(table_b1)
-# build the full model
-model_2_7_8 <- lm(y ~ x2+x7+x8, data=table_b1)
-# build the reduced model on x7
-model_2_8 <- lm(y ~ x2+x8, data=table_b1)
-
-# 3.1a/c/d t statistics for each hypotheses.
-model_2_7_8%>% summary()
-# 3.1b ANOVA for full model
-anova(model_2_7_8)
-# 3.1e ANOVA for reduced model on x7
-anova(model_2_8)
-# calculate partial F
-anova(model_2_7_8,model_2_8)
-(83.938-69.870)/1/2.911
-
-# 3.2 calculate cor(yi,\hat yi)
-augment(model_2_7_8)
-cor(select(augment(model_2_7_8),y,.fitted))
-# another way
-cor(table_b1[,1],predict(model_2_7_8, table_b1[,c(3,8,9)]))
-# calculate r
-sqrt(0.7863)
-
-# 3.3a calculate CI on b7
-confint(model_2_7_8, level = 0.95)
-# 3.3b calculate CI on the mean response variable
-model_2_7_8 %>% predict(newdata = data.frame(x2=2300,x7=56.0,x8=2100), interval = "confidence", level=0.95)
+head(table_wf)
+summary(table_wf)
 ```
+
+(a) Create the matrix of scatterplots and compute the correlation matrix for all the variables. Copy and paste them here.
+
+```{r, include = F}
+library(GGally)
+ggpairs(data=table_wf[c(1:10)])
+
+```
+
+(b) Based on scatterplots and correlation, explain which predictors are significantly related to (most likely to contribute to the variation in) the response variable.
+
+The scatterplots of y versus x1, x3, and x4 show a medium to strong positive linear relationship and it is confirmed by the correlation coefficients (more than 0.6). Predictor x? has strongest negative linear relationship with y.
+
+(c) Fit the full model.
+
+```{r, eval=T, include = F}
+# build the model
+model_wf_full <- lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+model_wf_full%>% summary()
+anova(model_wf_full)
+vcov(model_wf_full)
+```
+
+(i) Explain whether the overall model is significant at 5% significance level.
+
+The fitted model is statistically significant at 5% significance level (p value = )
+
+(ii) Explain whether assumptions of random errors and model are satisfied. If there is a violation of those, then suggest reasonable methods to correct them.
+
+The model does not have a problem of multicollinearity (VIF <10). 
+
+There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+
+The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough.
+
+(iii) How much of the sum of squares is explained by rainfall, given that all the other regression coefficients are in the model?
+
+
+
+(iv) Explain whether there is a problem of multicollinearity.
+
+```{r, eval=T, include = T}
+vif(model_wf_full)
+ols_vif_tol(model_wf_full)
+
+vif(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+vif(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+alias(lm(y ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
+
+```
+
+Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
+
+There is a problem of multicollinearity. 
+
+(v) Interpret the estimated coefficient of rainfall predictor of the full model using question context.
+
+It will be important to solve multicollinearity first, and hence predictor x6 is the first to remove. However, according to the variable names of x1 and x4, predictor x6 may contain same information contains in x7. The bedrooms are rooms in a house. 
+
+Further, according to the correlation coefficients, x7 is less correlated with y than x6 is correlated. 
+
+It is better to remove x7 first and check whether the multicollinearity is solved. If it was not solved, then definitely, x6 has to be removed first.
+
+(d) Create a new variable using natural log of response. Then fit the full model using this new variable as response.
+
+```{r, eval=T, include = F}
+model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+model_wf_full_log%>% summary()
+```
+
+
+(1) Explain whether the overall model is significant at 5% significance level.
+
+The fitted model is statistically significant at 5% significance level (p value = )
+
+(2) Explain whether there is a problem of multicollinearity.
+
+```{r, eval=T, include = F}
+vif(model_wf_full_log)
+ols_vif_tol(model_wf_full_log)
+
+vif(lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+vif(lm(log(y) ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+alias(lm((y) ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
+
+```
+
+Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
+
+There is a problem of multicollinearity. 
+
+
+(3) If you wanted to simplify this full model, explain which predictor you would eliminate first.
+
+```{r, eval=T, include = F}
+plot(model_wf_full_log,pch=16,col="blue")
+
+avPlots(model_wf_full_log)
+ols_plot_diagnostics(model_wf_full_log)
+ols_plot_added_variable(model_wf_full_log)
+ols_plot_dfbetas(model_wf_full_log)
+
+ols_plot_resid_hist(model_wf_full_log)
+
+ols_plot_resid_qq(model_wf_full_log)
+
+shapiro.test(rstudent(model_wf_full_log)) #If p-value is bigger, then no problem of non-normality #
+
+table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_full_log))
+ggpairs(data=table_wf_resi[c(1:11)])
+
+
+```
+
+
+(4) Use the forward selection method to find the best model (use α=0.15) and report the final fitted model with estimated coefficients here.
+
+```{r, eval=T, include = F}
+# Forward Selection Regression #
+model_wf_none <- lm (log(y) ~ 1, data = table_wf)
+step(model_wf_none, direction= "forward", scope=(~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9), k=2)
+# k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
+
+ols_step_forward_aic(model_wf_full_log)
+ols_step_forward_p(model_wf_full_log, penter = 0.15)
+
+```
+
+(5) Use the backward elimination method to find the best model (use α=0.05) and report the final fitted model with estimated coefficients here.
+
+```{r, eval=T, include = F}
+# Backward Elimination Regression #
+step(model_wf_full_log, direction = "backward")
+
+ols_step_backward_aic(model_wf_full_log)
+ols_step_backward_p(model_wf_full_log, penter = 0.05)
+
+```
+
+(6) Use best subsets method (6 models from each size) to find the best model for these data and report the final fitted model with estimated coefficients here.
+
+```{r, eval=T, include = F}
+# Subset method #
+library(leaps) # Load the package #
+model_wf_subset <- regsubsets(log(y) ~ X1 + X2 + X3 +X4 + X5 + X6 + X7 + X8 + X9, data=table_wf, nbest=10 ) # nbest is the number of models from each size #
+summary(model_wf_subset) # Hard to read output from this #
+
+## plot adjusted R square for each model ##
+plot(model_wf_subset, scale='adjr2')
+## can use Cp, r2 or bic for scale ##
+plot(model_wf_subset, scale='bic')
+plot(model_wf_subset, scale='Cp')
+
+k <- ols_step_best_subset(model_wf_full_log)
+k
+plot(k)
+```
+
+(7) If the final models in the previous 3 methods are different, compare their model adequacy and suggest one best model.
+
+Both models do not have a problem of multicollinearity (VIF <10), and violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+
+The model with 4 predictors has a slightly higher (about by 2%) adjusted R square compared to the model with only x1 and x2. Further, x5 and x7 predictors are not statistically significant at 10% significance level (p values are 0.11479 and 0.10356, respectively). There is no significant pattern on the plot of studentized residuals versus predicted values from the model with only x1 and x2. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
+
+Finally, the model with 2 predictors is simpler that model with 4 predictors. Therefore, the best model will be
+
+
+```{r, eval=T, include = T}
+# Final models #
+
+model_wf_final <- lm(y ~ X3 + X2, data=table_wf)
+summary(model_wf_final)
+```
+
+
+(8) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
+
+
+```{r, eval=T, include = T}
+Anova(model_wf_final)
+vif(model_wf_final)
+
+confint(model_wf_final, level=0.05/1) # Bonferroni joint confidence interval #
+
+plot(model_wf_final, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_wf_final)
+```
+
+
+
+(9) How much variation in the response is explained by the best model after taking number of data and regression coefficients in to account?
+
+
+
+
+```{r, eval=T, include = T}
+# Lack of Fit F Test
+ols_pure_error_anova(lm(y~X7, data = table_wf))
+
+MPV::PRESS(model_wf_final)
+ols_press(model_wf_final)
+```
+
+(10) Report the PRESS statistic of the best model.
+
+About 72.93% of variation in predicting the sale price of houses in Erie, Pennsylvania.
+
+```{r, eval=T, include = T}
+deviation <- table_wf$y-mean(table_wf$y)
+
+# Predit_Power=1-(PRESS.stat/SST)
+1-((MPV::PRESS(model_wf_final))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
+# prediction power of full
+1-((MPV::PRESS(model_wf_full))/(var(table_wf$y)*(nrow(table_wf)-1)))
+# prediction power of 1
+1-((MPV::PRESS(model_wf_full_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
+# prediction power of backward
+1-((MPV::PRESS(model_wf_final))/(var(table_wf$y)*(nrow(table_wf)-1)))
+
+```
+
+(e) Report the complete code along with output here.
+
+
+
+
 
 ### other codes
 
@@ -415,12 +575,6 @@ logLik(fit_glm0)
 #prob
 odds/(1 + odds)
 
-
-
 huxtable::huxreg(model_2_7_8, statistics = NULL)
-
-
-
-
 
 ```
