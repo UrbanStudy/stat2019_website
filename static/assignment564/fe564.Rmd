@@ -113,7 +113,7 @@ x7 : Infiltration rate of water into soil (inches/hour)
 x8 : Rainfall (inches)   
 x9 : Time period during which rainfall exceeded ¼ inch/hour  
 
-```{r, eval=T, include = T}
+```{r, eval=T, include = F}
 # Load the package 
 library(readxl)
 library(tidyverse)
@@ -145,8 +145,8 @@ The scatterplots of y versus x1, x3, and x4 show a medium to strong positive lin
 # build the model
 model_wf_full <- lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
 model_wf_full%>% summary()
-anova(model_wf_full)
-vcov(model_wf_full)
+Anova(model_wf_full)
+# vcov(model_wf_full)
 ```
 
 (i) Explain whether the overall model is significant at 5% significance level.
@@ -167,7 +167,7 @@ The partial regression plots do not show nonlinear patterns and hence first-orde
 
 (iv) Explain whether there is a problem of multicollinearity.
 
-```{r, eval=T, include = T}
+```{r, eval=T, include = F}
 vif(model_wf_full)
 ols_vif_tol(model_wf_full)
 
@@ -193,7 +193,7 @@ It is better to remove x7 first and check whether the multicollinearity is solve
 
 (d) Create a new variable using natural log of response. Then fit the full model using this new variable as response.
 
-```{r, eval=T, include = T}
+```{r, eval=T, include = F}
 model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
 model_wf_full_log%>% summary()
 
@@ -208,7 +208,7 @@ The fitted model is statistically significant at 5% significance level (p value 
 
 (2) Explain whether there is a problem of multicollinearity.
 
-```{r, eval=T, include = T}
+```{r, eval=T, include = F}
 vif(model_wf_reduce_log)
 ols_vif_tol(model_wf_reduce_log)
 
@@ -222,21 +222,21 @@ There is a problem of multicollinearity.
 (3) If you wanted to simplify this full model, explain which predictor you would eliminate first.
 
 ```{r, eval=T, include = T}
-plot(model_wf_full_log,pch=16,col="blue")
+plot(model_wf_reduce_log,pch=16,col="blue")
 
-ols_plot_diagnostics(model_wf_full_log)
+ols_plot_diagnostics(model_wf_reduce_log)
 
-avPlots(model_wf_full_log)
+avPlots(model_wf_reduce_log)
 
-ols_plot_added_variable(model_wf_full_log)
+ols_plot_added_variable(model_wf_reduce_log)
 
-ols_plot_dfbetas(model_wf_full_log)
+ols_plot_dfbetas(model_wf_reduce_log)
 
-shapiro.test(rstudent(model_wf_full_log)) #If p-value is bigger, then no problem of non-normality #
+shapiro.test(rstudent(model_wf_reduce_log)) #If p-value is bigger, then no problem of non-normality #
 shapiro.test(rstudent(model_wf_reduce_log))
 
 table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
-ggpairs(data=table_wf_resi[c(1:11)])
+ggpairs(data=table_wf_resi[c(10,3,4,6,7,8,9,11)])
 
 
 ```
@@ -298,7 +298,7 @@ Finally, the model with 2 predictors is simpler that model with 4 predictors. Th
 ```{r, eval=T, include = T}
 # Final models #
 
-model_wf_final <- lm(y ~ X4+X3+X7+X8+X9+X6, data=table_wf)
+model_wf_final <- lm(log(y) ~ X4+X3+X7+X8+X9+X6, data=table_wf)
 summary(model_wf_final)
 ```
 
@@ -326,7 +326,7 @@ avPlots(model_wf_final)
 
 ```{r, eval=T, include = T}
 # Lack of Fit F Test
-ols_pure_error_anova(lm(y~X4, data = table_wf))
+ols_pure_error_anova(lm(y~X3, data = table_wf))
 
 MPV::PRESS(model_wf_final)
 ols_press(model_wf_final)
