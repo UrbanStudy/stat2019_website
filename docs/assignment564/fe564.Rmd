@@ -238,7 +238,8 @@ shapiro.test(rstudent(model_wf_reduce_log))
 table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
 ggpairs(data=table_wf_resi[c(10,3,4,6,7,8,9,11)])
 
-
+table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
+ggpairs(data=table_wf_resi[c(10,3,4,7,11)])
 ```
 
 
@@ -268,7 +269,7 @@ ols_step_backward_p(model_wf_reduce_log, penter = 0.05)
 
 (6) Use best subsets method (6 models from each size) to find the best model for these data and report the final fitted model with estimated coefficients here.
 
-```{r, eval=T, include = T}
+```{r, eval=T, include = F}
 # Subset method #
 library(leaps) # Load the package #
 model_wf_subset <- regsubsets(log(y) ~X2 + X3 +X4 + X5 + X6 + X7 + X8 + X9, data=table_wf, nbest=10 ) # nbest is the number of models from each size #
@@ -286,6 +287,24 @@ plot(k)
 
 ```
 
+
+```{r}
+k<- ols_step_both_aic(model_wf_reduce_log)
+k
+plot(k)
+
+k <- ols_step_both_p(model_wf_reduce_log)
+k
+plot(k)
+
+k <- ols_step_all_possible(model_wf_reduce_log)
+k
+plot(k)
+
+
+```
+
+
 (7) If the final models in the previous 3 methods are different, compare their model adequacy and suggest one best model.
 
 Both models do not have a problem of multicollinearity (VIF <10), and violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
@@ -300,6 +319,9 @@ Finally, the model with 2 predictors is simpler that model with 4 predictors. Th
 
 model_wf_final <- lm(log(y) ~ X4+X3+X7+X8+X9+X6, data=table_wf)
 summary(model_wf_final)
+
+model_wf_437 <- lm(log(y) ~ X4+X3+X7, data=table_wf)
+summary(model_wf_437)
 ```
 
 
@@ -315,6 +337,13 @@ confint(model_wf_final, level=0.05/1) # Bonferroni joint confidence interval #
 plot(model_wf_final, pch=16, col="blue")
 #Create Partial Regression plots #
 avPlots(model_wf_final)
+
+confint(model_wf_437, level=0.05/1) # Bonferroni joint confidence interval #
+
+plot(model_wf_437, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_wf_437)
+
 ```
 
 
@@ -329,7 +358,7 @@ avPlots(model_wf_final)
 ols_pure_error_anova(lm(y~X3, data = table_wf))
 
 MPV::PRESS(model_wf_final)
-ols_press(model_wf_final)
+ols_press(model_wf_437)
 ```
 
 (10) Report the PRESS statistic of the best model.
@@ -342,9 +371,9 @@ deviation <- table_wf$y-mean(table_wf$y)
 # Predit_Power=1-(PRESS.stat/SST)
 1-((MPV::PRESS(model_wf_final))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
 # prediction power of full
-1-((MPV::PRESS(model_wf_full_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
-# prediction power of 1
 1-((MPV::PRESS(model_wf_reduce_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
+# prediction power of 437
+1-((MPV::PRESS(model_wf_437))/(var(table_wf$y)*(nrow(table_wf)-1)))
 # prediction power of backward
 1-((MPV::PRESS(model_wf_final))/(var(table_wf$y)*(nrow(table_wf)-1)))
 
