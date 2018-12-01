@@ -14,11 +14,13 @@ options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
+## {.tabset}
+
 ### Question 1 (Show main steps of your work to get full points)
 
 The $(X'X)^{-1}$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+β_5 x_5+β_6 x_6+ε$ is given below.
 
-```{R, include=F, collapse=TRUE}
+```{R eval=FALSE, collapse=TRUE, include=FALSE}
 # Problem 3
 B<- data.frame(
    b0=c(3.694,	-2.166,	0.046,	-0.300,	-0.022,	-0.100,	0.023),
@@ -81,17 +83,20 @@ $\hatβ_5$ and $\hatβ_6$.
 (i)  Report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for testing the above hypothesis.
 
 $$
-\mathbf{T}=\begin{bmatrix} 0 & 1 & 0 & -2 & 0 & 0 \\ 0 & 0 & 1 & -1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 \end{bmatrix}_{3\times7} 
+\mathbf{T}=\begin{bmatrix} 0 & 1 & 0 & -2 & 0 & 0& 0 \\ 0 & 0 & 1 & -1 & 0 & 0 & 0\\ 0 & 0 & 0 & 0 & 0 & 1 & 0 \end{bmatrix}_{3\times7} 
 \mathbf{β}=\begin{bmatrix} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \\ \beta_4 \\ \beta_5 \\ \beta_6 \end{bmatrix}_{7\times1}
-\mathbf{C}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}_{3\times1} rank(T)=3
+\mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0\end{bmatrix}_{3\times1} rank(T)=3
 $$
 
 (ii) Report the values of numerator and denominator degrees of freedom for the corresponding F test.
 For F test, the numerator is MSR while denominator is MSE, thus
 
-The numerator degrees of freedom is $dfR=k=6$
+In this hypothesis,$y=β_0+2β_3x_1+β_3x_2+β_3x_3+β_4x_4+0x_5+β_6x_6+ε=β_0+β_3(2x_1+x_2+x_3)+β_4x_4+β_6x_6+ε$
 
-The denominator degrees of freedom is $dfE=n-(k+1)=38-(6+1)=31$
+
+The value of numerator is $r=df_{Reduced}-df_{Full}=n-(3+1)-[n-(6+1)]=3$
+
+The denominator degrees of freedom is $df_{Full}=n-(k+1)=38-(6+1)=31$
 
 (c) Show the following equation is an alternative form of the sum of squares of regreesion or model (SSR).
 
@@ -113,77 +118,80 @@ x7 : Infiltration rate of water into soil (inches/hour)
 x8 : Rainfall (inches)   
 x9 : Time period during which rainfall exceeded ¼ inch/hour  
 
-```{r, eval=T, include = F}
-# Load the package 
-library(readxl)
-library(tidyverse)
-library(broom)
-library(olsrr)
-library(car)
-# Import Data
-table_wf <- read_table2("WaterFlow.txt")
-# Observe the data frame
-head(table_wf)
-summary(table_wf)
-```
-
 (a) Create the matrix of scatterplots and compute the correlation matrix for all the variables. Copy and paste them here.
 
-```{r, include = T}
+```{r echo=FALSE, fig.height=6, fig.width=8}
+library(tidyverse)
+
+table_wf <- read_table2("WaterFlow.txt")
 library(GGally)
 ggpairs(data=table_wf[c(1:10)])
 
 ```
 
+****
+
 (b) Based on scatterplots and correlation, explain which predictors are significantly related to (most likely to contribute to the variation in) the response variable.
+
+X2,X7,X1,X4 have medium to strong positive linear relationship to the response variable (more than 0.6). X5 have medium negative linear relationship to the response variable.
 
 The scatterplots of y versus x1, x3, and x4 show a medium to strong positive linear relationship and it is confirmed by the correlation coefficients (more than 0.6). Predictor x? has strongest negative linear relationship with y.
 
+****
+
 (c) Fit the full model.
 
-```{r, eval=T, include = T}
-# build the model
-model_wf_full <- lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
-model_wf_full%>% summary()
-Anova(model_wf_full)
-# vcov(model_wf_full)
-```
+
 
 (i) Explain whether the overall model is significant at 5% significance level.
 
-The fitted model is statistically significant at 5% significance level (p value = )
+The fitted model is statistically significant at 5% significance level (p value =0.0000 )
+
+****
 
 (ii) Explain whether assumptions of random errors and model are satisfied. If there is a violation of those, then suggest reasonable methods to correct them.
 
-The model does not have a problem of multicollinearity (VIF <10). 
+- Residual Diagnostics: 
+
+Includes plots to examine residuals to validate OLS assumptions
 
 There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
 
-The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough.
+- Variable selection: 
+
+Differnt variable selection procedures such as all possible regression, best subset regression, stepwise regression, stepwise forward regression and stepwise backward regression
+
+- Heteroskedasticity: 
+
+Tests for heteroskedasticity include bartlett test, breusch pagan test, score test and f test
+
+- Measures of influence: 
+
+Use different plots to detect and identify influential observations
+
+
+****
 
 (iii) How much of the sum of squares is explained by rainfall, given that all the other regression coefficients are in the model?
 
 
+The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough.
+
+****
 
 (iv) Explain whether there is a problem of multicollinearity.
 
-```{r, eval=T, include = F}
-vif(model_wf_full)
-ols_vif_tol(model_wf_full)
+- Collinearity diagnostics: 
 
-vif(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-summary(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-vif(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-summary(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-alias(lm(y ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
+VIF, Tolerance and condition indices to detect collinearity and plots for assessing mode fit and contributions of variables
 
-```
+The model does have serious problems of multicollinearity (VIF of >10). 
+
+X4, X1, X3, X7, X5
 
 Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
 
 There is a problem of multicollinearity. 
-
-(v) Interpret the estimated coefficient of rainfall predictor of the full model using question context.
 
 It will be important to solve multicollinearity first, and hence predictor x6 is the first to remove. However, according to the variable names of x1 and x4, predictor x6 may contain same information contains in x7. The bedrooms are rooms in a house. 
 
@@ -191,119 +199,104 @@ Further, according to the correlation coefficients, x7 is less correlated with y
 
 It is better to remove x7 first and check whether the multicollinearity is solved. If it was not solved, then definitely, x6 has to be removed first.
 
+
+
+****
+
+(v) Interpret the estimated coefficient of rainfall predictor of the full model using question context.
+
+Intercept of 10.04 suggests the average sale price (in 1000s dollars) of a house with zero taxes and zero baths. This does not make sense because there cannot be a house without a bathroom.
+
+Coefficient of 5.595 suggests the average sale price of houses increases by $ 5.595 when the tax increases by 1000 and number of baths is a constant. 
+
+Coefficient of 1.935 suggests the average sale price of houses increases by $ 1.935 when the number of baths increases by 1 and tax is a constant.
+
+
+****
+
 (d) Create a new variable using natural log of response. Then fit the full model using this new variable as response.
-
-```{r, eval=T, include = F}
-model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
-model_wf_full_log%>% summary()
-
-model_wf_reduce_log <- lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
-model_wf_reduce_log%>% summary()
-```
-
 
 (1) Explain whether the overall model is significant at 5% significance level.
 
 The fitted model is statistically significant at 5% significance level (p value = )
 
+****
+
 (2) Explain whether there is a problem of multicollinearity.
 
-```{r, eval=T, include = F}
-vif(model_wf_reduce_log)
-ols_vif_tol(model_wf_reduce_log)
-
-```
 
 Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
 
 There is a problem of multicollinearity. 
 
+****
 
 (3) If you wanted to simplify this full model, explain which predictor you would eliminate first.
 
-```{r, eval=T, include = T}
-plot(model_wf_reduce_log,pch=16,col="blue")
+If
 
-ols_plot_diagnostics(model_wf_reduce_log)
 
-avPlots(model_wf_reduce_log)
+- Residual Diagnostics: 
 
-ols_plot_added_variable(model_wf_reduce_log)
+Includes plots to examine residuals to validate OLS assumptions
 
-ols_plot_dfbetas(model_wf_reduce_log)
+There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
 
-shapiro.test(rstudent(model_wf_reduce_log)) #If p-value is bigger, then no problem of non-normality #
-shapiro.test(rstudent(model_wf_reduce_log))
+- Variable selection: 
 
-table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
-ggpairs(data=table_wf_resi[c(10,3,4,6,7,8,9,11)])
+Differnt variable selection procedures such as all possible regression, best subset regression, stepwise regression, stepwise forward regression and stepwise backward regression
 
-table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
-ggpairs(data=table_wf_resi[c(10,3,4,7,11)])
-```
+- Heteroskedasticity: 
 
+Tests for heteroskedasticity include bartlett test, breusch pagan test, score test and f test
+
+- Measures of influence: 
+
+Use different plots to detect and identify influential observations
+
+
+- Collinearity diagnostics: 
+
+VIF, Tolerance and condition indices to detect collinearity and plots for assessing mode fit and contributions of variables
+
+The general approaches for dealing with multicollinearity include collecting additional data, model respecification (redefine the regressors, variable elimination), estimation methods (Ridge Regression, Principal-Component Regression)
+
+"Variable elimination is often a highly effective technique. However, it may not provide a satisfactory solution if the regressors dropped from the model have significant explanatory power relative to
+the response y. That is, eliminating regressors to reduce multicollinearity may damage the predictive power of the model." (p.304)
+
+****
 
 (4) Use the forward selection method to find the best model (use α=0.15) and report the final fitted model with estimated coefficients here.
 
-```{r, eval=T, include = T}
-# Forward Selection Regression #
-model_wf_none <- lm (log(y) ~ 1, data = table_wf)
-step(model_wf_none, direction= "forward", scope=(~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9), k=2)
-# k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
+Stepwise Forward Regression based on p values (use α=0.15) 
 
-ols_step_forward_aic(model_wf_reduce_log)
-ols_step_forward_p(model_wf_reduce_log, penter = 0.15)
+Stepwise AIC Forwardd Regression
 
-```
+Full model
+
+eliminated model
+
+****
 
 (5) Use the backward elimination method to find the best model (use α=0.05) and report the final fitted model with estimated coefficients here.
 
-```{r, eval=T, include = T}
-# Backward Elimination Regression #
-step(model_wf_reduce_log, direction = "backward")
+Stepwise Backward Regression based on p values (use α=0.05) 
 
-ols_step_backward_aic(model_wf_reduce_log)
-ols_step_backward_p(model_wf_reduce_log, penter = 0.05)
+Stepwise AIC Backward Regression
 
-```
+Full model
+
+eliminated model
+
+****
 
 (6) Use best subsets method (6 models from each size) to find the best model for these data and report the final fitted model with estimated coefficients here.
 
-```{r, eval=T, include = F}
-# Subset method #
-library(leaps) # Load the package #
-model_wf_subset <- regsubsets(log(y) ~X2 + X3 +X4 + X5 + X6 + X7 + X8 + X9, data=table_wf, nbest=10 ) # nbest is the number of models from each size #
-summary(model_wf_subset) # Hard to read output from this #
+Full model
 
-## plot adjusted R square for each model ##
-plot(model_wf_subset, scale='adjr2')
-## can use Cp, r2 or bic for scale ##
-plot(model_wf_subset, scale='bic')
-plot(model_wf_subset, scale='Cp')
+eliminated model
 
-k <- ols_step_best_subset(model_wf_reduce_log)
-k
-plot(k)
-
-```
-
-
-```{r}
-k<- ols_step_both_aic(model_wf_reduce_log)
-k
-plot(k)
-
-k <- ols_step_both_p(model_wf_reduce_log)
-k
-plot(k)
-
-k <- ols_step_all_possible(model_wf_reduce_log)
-k
-plot(k)
-
-
-```
-
+***
 
 (7) If the final models in the previous 3 methods are different, compare their model adequacy and suggest one best model.
 
@@ -314,80 +307,412 @@ The model with 4 predictors has a slightly higher (about by 2%) adjusted R squar
 Finally, the model with 2 predictors is simpler that model with 4 predictors. Therefore, the best model will be
 
 
-```{r, eval=T, include = T}
-# Final models #
+- Residual Diagnostics: 
 
-model_wf_final <- lm(log(y) ~ X4+X3+X7+X8+X9+X6, data=table_wf)
-summary(model_wf_final)
+Includes plots to examine residuals to validate OLS assumptions
 
-model_wf_437 <- lm(log(y) ~ X4+X3+X7, data=table_wf)
-summary(model_wf_437)
-```
+There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
 
+Residual QQ Plot
+Residual Normality Test
+Residual vs Fitted Values Plot
+Residual Histogram
+
+- Variable selection: 
+
+Differnt variable selection procedures such as all possible regression, best subset regression, stepwise regression, stepwise forward regression and stepwise backward regression
+
+- Heteroskedasticity: 
+
+Tests for heteroskedasticity include bartlett test, breusch pagan test, score test and f test
+
+Bartlett Test
+Breusch Pagan Test
+Score Test
+F Test
+
+- Measures of influence: 
+
+Use different plots to detect and identify influential observations
+
+Cook’s D Bar Plot
+Cook’s D Chart
+DFBETAs Panel
+DFFITs Plot
+Studentized Residual Plot
+Standardized Residual Chart
+Studentized Residuals vs Leverage Plot
+Deleted Studentized Residual vs Fitted Values Plot
+Hadi Plot
+Potential Residual Plot
+
+****
 
 (8) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
 
 
-```{r, eval=T, include = T}
-Anova(model_wf_final)
-vif(model_wf_final)
-
-confint(model_wf_final, level=0.05/1) # Bonferroni joint confidence interval #
-
-plot(model_wf_final, pch=16, col="blue")
-#Create Partial Regression plots #
-avPlots(model_wf_final)
-
-confint(model_wf_437, level=0.05/1) # Bonferroni joint confidence interval #
-
-plot(model_wf_437, pch=16, col="blue")
-#Create Partial Regression plots #
-avPlots(model_wf_437)
-
-```
-
-
+****
 
 (9) How much variation in the response is explained by the best model after taking number of data and regression coefficients in to account?
 
 
 
-
-```{r, eval=T, include = T}
-# Lack of Fit F Test
-ols_pure_error_anova(lm(y~X3, data = table_wf))
-
-MPV::PRESS(model_wf_final)
-ols_press(model_wf_437)
-```
+****
 
 (10) Report the PRESS statistic of the best model.
 
 About 72.93% of variation in predicting the sale price of houses in Erie, Pennsylvania.
 
-```{r, eval=T, include = T}
-deviation <- table_wf$y-mean(table_wf$y)
-
-# Predit_Power=1-(PRESS.stat/SST)
-1-((MPV::PRESS(model_wf_final))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
-# prediction power of full
-1-((MPV::PRESS(model_wf_reduce_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
-# prediction power of 437
-1-((MPV::PRESS(model_wf_437))/(var(table_wf$y)*(nrow(table_wf)-1)))
-# prediction power of backward
-1-((MPV::PRESS(model_wf_final))/(var(table_wf$y)*(nrow(table_wf)-1)))
-
-```
+****
 
 (e) Report the complete code along with output here.
 
 
 
+### 
+
+#### (a) The matrix of scatterplots and the correlation matrix
+
+```{r, eval=T, include = F}
+# Load the package 
+library(olsrr)
+library(car)
+# Import Data
+table_wf <- read_table2("WaterFlow.txt")
+
+```
+
+#### (c) The fitted full model
+
+```{r, eval=T, include = T}
+# build the model
+model_wf_full <- lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+ols_regress(model_wf_full)
+model_wf_full%>% summary()
+Anova(model_wf_full)
+
+```
+
+#### (c) ii Residual diagnostics
+
+```{r, eval=T, include = T}
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_full)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_full) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_full) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+```
+
+#### (c) iii The partial regression and nonlinear diagnostics
+
+```{r, eval=T, include = T}
+#Lack of Fit F Test
+ols_pure_error_anova(lm(y~X8, data = table_wf))
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_full)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_full)
+```
+
+#### (c) iv Collinearity diagnostics
+
+```{r, eval=T, include = F}
+# for full model
+ols_coll_diag(model_wf_full)
+# remove X4
+ols_vif_tol(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+ols_regress(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+# remove X1
+ols_vif_tol(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+ols_regress(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+# remove X3
+ols_vif_tol(lm(y ~ X1 + X2 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+ols_regress(lm(y ~ X1 + X2 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+# remove X7
+ols_vif_tol(lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X8 + X9, data=table_wf))
+ols_regress(lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X8 + X9, data=table_wf))
+
+# remove X5
+ols_vif_tol(lm(y ~ X1 + X2 + X3 + X4 + X6 + X7 + X8 + X9, data=table_wf))
+ols_regress(lm(y ~ X1 + X2 + X3 + X4 + X6 + X7 + X8 + X9, data=table_wf))
+
+```
+
+#### (d)  The fitted log model
+
+```{r, eval=T, include = F}
+# build full log model
+model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+ols_regress(model_wf_full_log)
+# build X4 eliminated log model
+model_wf_rm4_log <- lm(log(y) ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+ols_regress(model_wf_rm4_log)
+
+# build X1 eliminated log model
+model_wf_rm1_log <- lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+ols_regress(model_wf_rm1_log)
+
+```
+
+#### (d) (2) Collinearity diagnostics
 
 
-### other codes
 
-```{r, eval=FALSE, include = FALSE, collapse=TRUE}
+#### (d) (3) Variable selection
+
+```{r, eval=T, include = T}
+
+alias(lm(y ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
+
+```
+
+
+#### (d) (4) Forward selection 
+
+Stepwise Forward Regression for full model
+
+```{r, eval=T, include = T}
+# Stepwise Forward Regression based on p values (use α=0.15) #
+ols_step_forward_p(model_wf_full_log, penter = 0.15)
+
+# Stepwise AIC Forward Regression #
+ols_step_forward_aic(model_wf_full_log)
+
+```
+
+Stepwise Forward Regression for X4 eliminated model
+
+```{r, eval=T, include = T}
+# Stepwise Forward Regression based on p values (use α=0.15) #
+ols_step_forward_p(model_wf_rm4_log, penter = 0.15)
+# Stepwise AIC Forward Regression #
+ols_step_forward_aic(model_wf_rm4_log)
+```
+
+Stepwise Forward Regression for X1 eliminated model
+
+```{r, eval=T, include = T}
+# Stepwise Forward Regression based on p values (use α=0.15) #
+ols_step_forward_p(model_wf_rm1_log, penter = 0.15)
+# Stepwise AIC Forward Regression #
+ols_step_forward_aic(model_wf_rm1_log)
+```
+
+#### (d) (5) Backward selection 
+
+Stepwise Backward Regression for full model
+
+```{r, eval=T, include = T}
+# Stepwise Backward Regression based on p values (use α=0.05) #
+ols_step_backward_p(model_wf_full_log, penter = 0.05)
+# Stepwise AIC Backward Regression #
+ols_step_backward_aic(model_wf_full_log)
+```
+
+Stepwise Backward Regression for X4 eliminated model
+
+```{r, eval=T, include = T}
+# Stepwise Backward Regression based on p values (use α=0.05) #
+ols_step_backward_p(model_wf_rm4_log, penter = 0.05)
+# Stepwise AIC Backward Regression #
+ols_step_backward_aic(model_wf_rm4_log)
+```
+
+Stepwise Backward Regression for X1 eliminated model
+
+```{r, eval=T, include = T}
+# Stepwise Backward Regression based on p values (use α=0.05) #
+ols_step_backward_p(model_wf_rm1_log, penter = 0.05)
+# Stepwise AIC Backward Regression #
+ols_step_backward_aic(model_wf_rm1_log)
+
+```
+
+#### (d) (6) Best Subset Regression
+
+```{r echo=FALSE}
+# For full model #
+k <- ols_step_best_subset(model_wf_full_log)
+k
+plot(k)
+
+# For X4 eliminated model #
+k <- ols_step_best_subset(model_wf_rm4_log)
+k
+plot(k)
+
+# For X1 eliminated model #
+k <- ols_step_best_subset(model_wf_rm1_log)
+k
+plot(k)
+
+```
+
+#### (d) (7) Models Comparison
+
+- Additional Regression
+
+```{r echo=FALSE}
+
+# All Possible Regression for full model #
+k <- ols_step_all_possible(model_wf_full_log)
+k
+plot(k)
+
+# All Possible Regression for X4 eliminated model #
+k <- ols_step_all_possible(model_wf_rm4_log)
+k
+plot(k)
+
+# All Possible Regression for X1 eliminated model #
+k <- ols_step_all_possible(model_wf_rm1_log)
+k
+plot(k)
+
+# Stepwise AIC Regression based on p values for full model#
+k <- ols_step_both_p(model_wf_full_log)
+k
+plot(k)
+
+# Stepwise AIC Regression for full model#
+k<- ols_step_both_aic(model_wf_full_log)
+k
+plot(k)
+
+# Stepwise AIC Regression based on p values for X4 eliminated model#
+k <- ols_step_both_p(model_wf_rm4_log)
+k
+plot(k)
+
+# Stepwise AIC Regression for X4 eliminated model#
+k<- ols_step_both_aic(model_wf_rm4_log)
+k
+plot(k)
+
+# Stepwise AIC Regression based on p values for X1 eliminated model#
+k <- ols_step_both_p(model_wf_rm1_log)
+k
+plot(k)
+
+# Stepwise AIC Regression for X1 eliminated model#
+k<- ols_step_both_aic(model_wf_rm1_log)
+k
+plot(k)
+
+```
+
+- Model 437896
+
+```{r, eval=T, include = T}
+# build model 437896
+model_wf_437896_log <- lm(log(y) ~ X4 + X3 + X7 + X8 + X9 + X6, data=table_wf)
+ols_regress(model_wf_437896_log)
+
+# Collinearity Diagnostics #
+ols_coll_diag(model_wf_437896_log)
+
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_437896_log)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_437896_log) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_437896_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_437896_log)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_437896_log)
+
+```
+
+- Model 437
+
+```{r, eval=T, include = T}
+# build model 437
+model_wf_437_log <- lm(log(y) ~ X4 + X3 + X7, data=table_wf)
+ols_regress(model_wf_437_log)
+
+# Collinearity Diagnostics #
+ols_coll_diag(model_wf_437_log)
+
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_437_log)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_437_log) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_437_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_437_log)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_437_log)
+
+```
+
+- Model 137689
+
+```{r, eval=T, include = T}
+# build model 137689
+model_wf_137689_log <- lm(log(y) ~ X1 + X3 + X7 + X6 + X8 + X9, data=table_wf)
+ols_regress(model_wf_137689_log)
+
+# Collinearity Diagnostics #
+ols_coll_diag(model_wf_137689_log)
+
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_137689_log)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_137689_log) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_137689_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_137689_log)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_137689_log)
+
+```
+
+
+#### Final models
+
+```{r, eval=T, include = T}
+
+#Lack of Fit F Test
+ols_pure_error_anova(lm(y~X8, data = table_wf))
+
+ols_press(model_wf_437896_log)
+ols_press(model_wf_437_log)
+ols_press(model_wf_137689_log)
+
+# prediction power of 1
+1-((ols_press(model_wf_437896_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
+
+```
+
+
+
+####
+
+```{r, eval=F, include = T}
 
 library(texreg)
 # Pretty print regression results on screen
@@ -603,5 +928,52 @@ logLik(fit_glm0)
 odds/(1 + odds)
 
 huxtable::huxreg(model_2_7_8, statistics = NULL)
+
+library(leaps) # Load the package #
+model_wf_subset <- regsubsets(log(y) ~X2 + X3 +X4 + X5 + X6 + X7 + X8 + X9, data=table_wf, nbest=10 ) # nbest is the number of models from each size #
+summary(model_wf_subset) # Hard to read output from this #
+
+## plot adjusted R square for each model ##
+plot(model_wf_subset, scale='adjr2')
+## can use Cp, r2 or bic for scale ##
+plot(model_wf_subset, scale='bic')
+plot(model_wf_subset, scale='Cp')
+
+shapiro.test(rstudent(model_wf_reduce_log)) #If p-value is bigger, then no problem of non-normality #
+shapiro.test(rstudent(model_wf_reduce_log))
+
+table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
+ggpairs(data=table_wf_resi[c(10,3,4,6,7,8,9,11)])
+
+table_wf_resi <- table_wf %>% mutate(student_residual=rstudent(model_wf_reduce_log))
+ggpairs(data=table_wf_resi[c(10,3,4,7,11)])
+
+
+Anova(model_wf_final)
+vif(model_wf_final)
+
+confint(model_wf_final, level=0.05/1) # Bonferroni joint confidence interval #
+
+plot(model_wf_final, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_wf_final)
+
+confint(model_wf_437, level=0.05/1) # Bonferroni joint confidence interval #
+
+plot(model_wf_437, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_wf_437)
+
+
+deviation <- table_wf$y-mean(table_wf$y)
+
+# Predit_Power=1-(PRESS.stat/SST)
+1-((MPV::PRESS(model_wf_final))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
+# prediction power of full
+1-((MPV::PRESS(model_wf_reduce_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
+# prediction power of 437
+1-((MPV::PRESS(model_wf_437))/(var(table_wf$y)*(nrow(table_wf)-1)))
+# prediction power of backward
+1-((MPV::PRESS(model_wf_final))/(var(table_wf$y)*(nrow(table_wf)-1)))
 
 ```
