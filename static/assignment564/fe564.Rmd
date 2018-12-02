@@ -133,49 +133,45 @@ ggpairs(data=table_wf[c(1:10)])
 
 (b) Based on scatterplots and correlation, explain which predictors are significantly related to (most likely to contribute to the variation in) the response variable.
 
-X2,X7,X1,X4 have medium to strong positive linear relationship to the response variable (more than 0.6). X5 have medium negative linear relationship to the response variable.
-
-The scatterplots of y versus x1, x3, and x4 show a medium to strong positive linear relationship and it is confirmed by the correlation coefficients (more than 0.6). Predictor x? has strongest negative linear relationship with y.
+Based on scatterplots and correlation, X2(0.666),X7(0.668),X1(0.781),X4(0.866) have medium to strong positive linear relationship to the response variable (Correlation coefficient is more than 0.6). X5(-0.62) have medium negative linear relationship to the response variable.
 
 ****
 
 (c) Fit the full model.
 
+$$\hat y=292.561-203.144X_1+ 1055.782X_2-49.24X_3+209.762X_4-10.197X_5-24.558X_6+142.778X_7+511.713X_8-301.872X_9$$
 
+****
 
 (i) Explain whether the overall model is significant at 5% significance level.
 
-The fitted model is statistically significant at 5% significance level (p value =0.0000 )
+The fitted model is statistically significant at 5% significance level (p-value=0.0000). But most of the coefficients are not significent. This model is not the best fitted model.
 
 ****
 
 (ii) Explain whether assumptions of random errors and model are satisfied. If there is a violation of those, then suggest reasonable methods to correct them.
 
-- Residual Diagnostics: 
+- Residual Diagnostics: Use plots to examine residuals to validate OLS assumptions
 
-Includes plots to examine residuals to validate OLS assumptions
+There is some violation of assumptions about the errors: 
 
-There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+On the residual plot, there is a funnel pattern.
 
-- Variable selection: 
+On the outlier and leverage plot, there are two outlier.
 
-Differnt variable selection procedures such as all possible regression, best subset regression, stepwise regression, stepwise forward regression and stepwise backward regression
+On the qq plot, most of points follow approximately straight line but have some positive skew. 
 
-- Heteroskedasticity: 
+- Suggestion: Transform and other diagnostics.
 
-Tests for heteroskedasticity include bartlett test, breusch pagan test, score test and f test
+I suggest using natural log of response to make a variance-stabilizing transformations. 
 
-- Measures of influence: 
-
-Use different plots to detect and identify influential observations
-
+Other diagnostics of heteroskedasticity, variable selection, measures of influence also should be considered.
 
 ****
 
 (iii) How much of the sum of squares is explained by rainfall, given that all the other regression coefficients are in the model?
 
-
-The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough.
+Accroding to the  F test, the partial sum of squares explained by rainfall is 2209825, given that all the other regression coefficients are in the model.
 
 ****
 
@@ -183,51 +179,37 @@ The partial regression plots do not show nonlinear patterns and hence first-orde
 
 - Collinearity diagnostics: 
 
-VIF, Tolerance and condition indices to detect collinearity and plots for assessing mode fit and contributions of variables
+The model does have serious problems of multicollinearity. The VIF of variables X4(105.754708), X1(101.859709), X3(31.446394
+), X7(20.53505) are larger than 10. 
 
-The model does have serious problems of multicollinearity (VIF of >10). 
-
-X4, X1, X3, X7, X5
-
-Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
-
-There is a problem of multicollinearity. 
-
-It will be important to solve multicollinearity first, and hence predictor x6 is the first to remove. However, according to the variable names of x1 and x4, predictor x6 may contain same information contains in x7. The bedrooms are rooms in a house. 
-
-Further, according to the correlation coefficients, x7 is less correlated with y than x6 is correlated. 
-
-It is better to remove x7 first and check whether the multicollinearity is solved. If it was not solved, then definitely, x6 has to be removed first.
-
-
+It will be important to solve multicollinearity. However, X7, X1, and X4 have medium to strong positive linear relationship to the response variable. It is also dangerous to remove these variables. We should have more diagnostics and comparisons.
 
 ****
 
 (v) Interpret the estimated coefficient of rainfall predictor of the full model using question context.
 
-Intercept of 10.04 suggests the average sale price (in 1000s dollars) of a house with zero taxes and zero baths. This does not make sense because there cannot be a house without a bathroom.
-
-Coefficient of 5.595 suggests the average sale price of houses increases by $ 5.595 when the tax increases by 1000 and number of baths is a constant. 
-
-Coefficient of 1.935 suggests the average sale price of houses increases by $ 1.935 when the number of baths increases by 1 and tax is a constant.
-
+Coefficient of 511.713 suggests the peak rate of flow increases by 511.713 cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
 
 ****
 
 (d) Create a new variable using natural log of response. Then fit the full model using this new variable as response.
 
+$$\hat y=3.402256-0.013532X_1-1.023664X_2+0.177966X_3+0.108788X_4-0.009622X_5-0.389474X_6+4.233475X_7+0.63007X_8-0.462276X_9$$
+
 (1) Explain whether the overall model is significant at 5% significance level.
 
-The fitted model is statistically significant at 5% significance level (p value = )
+The fitted model is statistically significant at 5% significance level (p-value=0000). But most of the coefficients are not significent. This model is not the best fitted model.
 
 ****
 
 (2) Explain whether there is a problem of multicollinearity.
 
+The variance-stabilizing transformations does not change the problem of multicollinearit.
 
-Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
+The model still has serious problems of multicollinearity. The VIF of variables X4(105.754708), X1(101.859709), X3(31.446394
+), X7(20.53505) are larger than 10. 
 
-There is a problem of multicollinearity. 
+It will be important to solve multicollinearity. However, X7, X1, and X4 have medium to strong positive linear relationship to the response variable. It is also dangerous to remove these variables. We should have more diagnostics and comparisons.
 
 ****
 
@@ -263,6 +245,32 @@ The general approaches for dealing with multicollinearity include collecting add
 
 "Variable elimination is often a highly effective technique. However, it may not provide a satisfactory solution if the regressors dropped from the model have significant explanatory power relative to
 the response y. That is, eliminating regressors to reduce multicollinearity may damage the predictive power of the model." (p.304)
+
+
+
+Predictor X1 is the number of rooms while X4 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
+
+ and hence predictor x6 is the first to remove. However, according to the variable names of x1 and x4, predictor x6 may contain same information contains in x7. The bedrooms are rooms in a house. 
+
+Further, according to the correlation coefficients, x7 is less correlated with y than x6 is correlated. 
+
+It is better to remove x7 first and check whether the multicollinearity is solved. If it was not solved, then definitely, x6 has to be removed first.
+
+
+
+x1 : Area of watershed (mi2)  
+x8 : Rainfall (inches)   
+
+x9 : Time period during which rainfall exceeded ¼ inch/hour  
+x4 : Longest stream flow in watershed (1000s of feet)  
+
+x3 : Average slope of watershed (percent)  
+
+
+x2 : Area impervious to water (mi2)  
+x5 : surface absorbency index, (0= complete absorbency, 100=no absorbency)  
+x7 : Infiltration rate of water into soil (inches/hour)  
+x6 : estimated soil storage capacity (inches of water)  
 
 ****
 
@@ -422,56 +430,79 @@ ols_plot_comp_plus_resid(model_wf_full)
 
 #### (c) iv Collinearity diagnostics
 
-```{r, eval=T, include = F}
+```{r, eval=T, include = T}
 # for full model
 ols_coll_diag(model_wf_full)
-# remove X4
-ols_vif_tol(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-ols_regress(lm(y ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
-# remove X1
-ols_vif_tol(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-ols_regress(lm(y ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
-# remove X3
-ols_vif_tol(lm(y ~ X1 + X2 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-ols_regress(lm(y ~ X1 + X2 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
-
-# remove X7
-ols_vif_tol(lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X8 + X9, data=table_wf))
-ols_regress(lm(y ~ X1 + X2 + X3 + X4 + X5 + X6 + X8 + X9, data=table_wf))
-
-# remove X5
-ols_vif_tol(lm(y ~ X1 + X2 + X3 + X4 + X6 + X7 + X8 + X9, data=table_wf))
-ols_regress(lm(y ~ X1 + X2 + X3 + X4 + X6 + X7 + X8 + X9, data=table_wf))
 
 ```
 
 #### (d)  The fitted log model
 
-```{r, eval=T, include = F}
+```{r, eval=T, include = T}
 # build full log model
 model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
 ols_regress(model_wf_full_log)
-# build X4 eliminated log model
-model_wf_rm4_log <- lm(log(y) ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf)
-ols_regress(model_wf_rm4_log)
 
-# build X1 eliminated log model
-model_wf_rm1_log <- lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
-ols_regress(model_wf_rm1_log)
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_full_log)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_full_log) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_full_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
 
 ```
 
 #### (d) (2) Collinearity diagnostics
 
+```{r, eval=T, include = T}
+# for log model
+ols_coll_diag(model_wf_full_log)
 
+# remove X4
+ols_vif_tol(lm(log(y) ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+# remove X1
+ols_vif_tol(lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+# remove X3
+ols_vif_tol(lm(log(y) ~ X1 + X2 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf))
+
+# remove X7
+ols_vif_tol(lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X8 + X9, data=table_wf))
+
+# remove X5
+ols_vif_tol(lm(log(y) ~ X1 + X2 + X3 + X4 + X6 + X7 + X8 + X9, data=table_wf))
+
+
+# build X4 eliminated log model
+model_wf_rm4_log <- lm(log(y) ~ X1 + X2 + X3 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+ols_regress(model_wf_rm4_log)
+# build X1 eliminated log model
+model_wf_rm1_log <- lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
+ols_regress(model_wf_rm1_log)
+
+library(huxtable)
+huxreg(model_wf_full, model_wf_full_log, model_wf_rm4_log, model_wf_rm1_log)
+
+```
 
 #### (d) (3) Variable selection
 
 ```{r, eval=T, include = T}
+#Lack of Fit F Test
+
+ols_pure_error_anova(lm(y~X1, data = table_wf))
+ols_pure_error_anova(lm(y~X4, data = table_wf))
 
 alias(lm(y ~ as.factor(X3) + as.factor(X4) + as.factor(X5) + as.factor(X6) + as.factor(X7), data=table_wf))
+
+alias(lm(y ~ as.factor(X1) + as.factor(X8) , data=table_wf))
+
+alias(lm(y ~ as.factor(X4) + as.factor(X9) , data=table_wf))
+
+alias(lm(y ~ as.factor(X3) + as.factor(X6) + as.factor(X7) + as.factor(X8) + as.factor(X9) , data=table_wf))
 
 ```
 
@@ -539,7 +570,7 @@ ols_step_backward_aic(model_wf_rm1_log)
 
 #### (d) (6) Best Subset Regression
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 # For full model #
 k <- ols_step_best_subset(model_wf_full_log)
 k
@@ -561,7 +592,7 @@ plot(k)
 
 - Additional Regression
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 
 # All Possible Regression for full model #
 k <- ols_step_all_possible(model_wf_full_log)
@@ -578,7 +609,7 @@ k <- ols_step_all_possible(model_wf_rm1_log)
 k
 plot(k)
 
-# Stepwise AIC Regression based on p values for full model#
+# Stepwise Regression based on p values for full model#
 k <- ols_step_both_p(model_wf_full_log)
 k
 plot(k)
@@ -588,7 +619,7 @@ k<- ols_step_both_aic(model_wf_full_log)
 k
 plot(k)
 
-# Stepwise AIC Regression based on p values for X4 eliminated model#
+# Stepwise Regression based on p values for X4 eliminated model#
 k <- ols_step_both_p(model_wf_rm4_log)
 k
 plot(k)
@@ -598,7 +629,7 @@ k<- ols_step_both_aic(model_wf_rm4_log)
 k
 plot(k)
 
-# Stepwise AIC Regression based on p values for X1 eliminated model#
+# Stepwise Regression based on p values for X1 eliminated model#
 k <- ols_step_both_p(model_wf_rm1_log)
 k
 plot(k)
@@ -691,21 +722,137 @@ ols_plot_comp_plus_resid(model_wf_137689_log)
 
 ```
 
+- Other Models
+
+```{r, eval=T, include = T}
+
+# build X1*X8 eliminated log model
+model_wf_18rm4_log <- lm(log(y) ~ X1*X8 + X3 + X6 + X7 + X9, data=table_wf)
+summary(model_wf_18rm4_log)
+
+# build X1*X8 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x1t8=X1*X8)
+model_wf_1time8_log <- lm(log(y) ~ x1t8 + X3 + X6 + X7+ X9 , data=table_wf_resi)
+summary(model_wf_1time8_log)
+
+# build X1*X4 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x1t4=X1*X4)
+model_wf_1time4_log <- lm(log(y) ~ x1t4 + X3 + X6 + X7+ X8+ X9, data=table_wf_resi)
+summary(model_wf_1time4_log)
+
+# build X1/X4 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x14=X1/X4)
+model_wf_1per4_log <- lm(log(y) ~ x14 + X3 + X6 + X7+ X8+ X9, data=table_wf_resi)
+summary(model_wf_1per4_log)
+
+# build X4*X3 eliminated log model
+model_wf_43rm1_log <- lm(log(y) ~ X9 + X4*X3 + X6 + X7 + X8 , data=table_wf)
+summary(model_wf_43rm1_log)
+
+# build X4*X9 eliminated log model
+model_wf_49rm1_log <- lm(log(y) ~ X3 + X4*X9 + X6 + X7 + X8 , data=table_wf)
+summary(model_wf_49rm1_log)
+
+# build X4*X9 eliminated log model
+model_wf_48rm1_log <- lm(log(y) ~ X3 + X4*X8 + X6 + X7 + X9 , data=table_wf)
+summary(model_wf_48rm1_log)
+
+# build X4*X9 eliminated log model
+model_wf_47rm1_log <- lm(log(y) ~ X3 + X4*X7 + X6 + X9 + X8 , data=table_wf)
+summary(model_wf_47rm1_log)
+
+# build X4/X9 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x4p9=X4/X9)
+model_wf_4per9_log <- lm(log(y) ~ X3 + x4p9 + X6 + X7 + X8 , data=table_wf_resi)
+summary(model_wf_4per9_log)
+
+# build X3/X4vX8*X9 eliminated log model
+model_wf_34v89_log <- lm(log(y) ~ X3*X4 + X8*X9 + X6 + X7, data=table_wf_resi)
+summary(model_wf_34v89_log)
+
+# build X3/X4vX8*X9 eliminated log model
+model_wf_34v89v67_log <- lm(log(y) ~ X3*X4 + X8*X9 + X6*X7, data=table_wf_resi)
+summary(model_wf_34v89v67_log)
+
+# build X8/X9vX4*X3 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
+model_wf_8per9v43_log <- lm(log(y) ~ x8p9 + X4*X3 + X6 + X7, data=table_wf_resi)
+summary(model_wf_8per9v43_log)
+
+# build X6/7vX8/X9vX4X3 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x4t3=X4*X3,x8p9=X8/X9,x6p7=X6/X7)
+model_wf_6p7v8p9v4t3_log <- lm(log(y) ~ x8p9 + x4t3 + x6p7, data=table_wf_resi)
+summary(model_wf_6p7v8p9v4t3_log)
+
+library(huxtable)
+huxreg(model_wf_8per9v43_log, model_wf_43rm1_log, model_wf_6p7v8p9v4t3_log, model_wf_34v89_log, model_wf_34v89v67_log)
+
+```
+
 
 #### Final models
 
 ```{r, eval=T, include = T}
 
-#Lack of Fit F Test
-ols_pure_error_anova(lm(y~X8, data = table_wf))
+# Check model 43rm1
+summary(model_wf_43rm1_log)
+Anova(model_wf_43rm1_log)
 
+# Collinearity Diagnostics #
+ols_coll_diag(model_wf_43rm1_log)
+
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_43rm1_log)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_43rm1_log) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_43rm1_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_43rm1_log)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_43rm1_log)
+
+##################################################
+# Check model 8per9v43
+summary(model_wf_8per9v43_log)
+Anova(model_wf_8per9v43_log)
+
+# Collinearity Diagnostics #
+ols_coll_diag(model_wf_8per9v43_log)
+
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_8per9v43_log)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_8per9v43_log) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_8per9v43_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_8per9v43_log)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_8per9v43_log)
+
+
+# Check PRESS Statistic
+ols_press(model_wf_full)
+ols_press(model_wf_full_log)
 ols_press(model_wf_437896_log)
 ols_press(model_wf_437_log)
 ols_press(model_wf_137689_log)
-
-# prediction power of 1
-1-((ols_press(model_wf_437896_log))/(var(table_wf$y)*(nrow(table_wf)-1)))
-
+ols_press(model_wf_43rm1_log)
+ols_press(model_wf_8per9v43_log)
+# prediction power
+ols_pred_rsq(model_wf_437896_log)
+ols_pred_rsq(model_wf_137689_log)
+ols_pred_rsq(model_wf_43rm1_log)
+ols_pred_rsq(model_wf_8per9v43_log)
 ```
 
 
@@ -975,5 +1122,5 @@ deviation <- table_wf$y-mean(table_wf$y)
 1-((MPV::PRESS(model_wf_437))/(var(table_wf$y)*(nrow(table_wf)-1)))
 # prediction power of backward
 1-((MPV::PRESS(model_wf_final))/(var(table_wf$y)*(nrow(table_wf)-1)))
-
+1-((ols_press(model_wf_437896_log))/(var(log(table_wf$y))*(nrow(table_wf)-1)))
 ```
