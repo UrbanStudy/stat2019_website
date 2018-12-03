@@ -293,33 +293,33 @@ Finally, the model with 6 predictors has higer predicotion R-square, higher sign
 (8) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
 
                          Model Summary                         
-|--------------|----------------|--------------------------------|----
-R              |        0.973   |   RMSE (Root Mean Square Error)|0.407
-R-Squared      |        0.947   |   Coef. Var                    |6.385
-Adj. R-Squared |        0.933   |   MSE (Mean Square Error)      |0.165
-Pred R-Squared |        0.908   |   MAE (Mean Absolute Error)    |0.273
-|--------------|----------------|--------------------------------|----
+|---------------|----------------|--------------------------------|----
+|R              |        0.973   |   RMSE (Root Mean Square Error)|0.407
+|R-Squared      |        0.947   |   Coef. Var                    |6.385
+|Adj. R-Squared |        0.933   |   MSE (Mean Square Error)      |0.165
+|Pred R-Squared |        0.908   |   MAE (Mean Absolute Error)    |0.273
+|-------- ------|----------------|--------------------------------|----
 
                                 ANOVA                                
 |-----------|----------------|---|---------------|--------|---------
-            |  Sum of Squares|DF |  Mean Square  |   F    |    Sig. 
+|           |  Sum of Squares|DF |  Mean Square  |   F    |    Sig. 
 |-----------|----------------|---|---------------|--------|---------
- Regression |   67.591       | 6 |       11.265  |  68.16 |  0.0000 
- Residual   |    3.801       |23 |        0.165  |                  
- Total      |   71.393       |29 |               |                  
+|Regression |   67.591       | 6 |       11.265  |  68.16 |  0.0000 
+|Residual   |    3.801       |23 |        0.165  |                  
+|Total      |   71.393       |29 |               |                  
 |-----------|----------------|---|---------------|------------------
  
                                    Parameter Estimates                                    
+
+|      model |    Beta |  Std. Error |  Std. Beta  |   t    |   Sig  |   lower |   upper 
 |------------|---------|-------------|-------------|--------|--------|---------|---------
-       model |    Beta |  Std. Error |  Std. Beta  |   t    |   Sig  |   lower |   upper 
-|------------|---------|-------------|-------------|--------|--------|---------|---------
- (Intercept) |   2.692 |       0.445 |             |  6.046 |  0.000 |   1.771 |   3.613 
-          X4 |   0.109 |       0.026 |      0.499  |  4.244 |  0.000 |   0.056 |   0.162 
-          X3 |   0.184 |       0.032 |      0.476  |  5.698 |  0.000 |   0.117 |   0.251 
-          X7 |   4.085 |       1.213 |      0.406  |  3.367 |  0.003 |   1.575 |   6.595 
-          X8 |   0.612 |       0.133 |      0.493  |  4.614 |  0.000 |   0.337 |   0.886 
-          X9 |  -0.448 |       0.108 |     -0.450  | -4.135 |  0.000 |  -0.672 |  -0.224 
-          X6 |  -0.368 |       0.146 |     -0.133  | -2.526 |  0.019 |  -0.669 |  -0.066 
+|(Intercept) |   2.692 |       0.445 |             |  6.046 |  0.000 |   1.771 |   3.613 
+|         X4 |   0.109 |       0.026 |      0.499  |  4.244 |  0.000 |   0.056 |   0.162 
+|         X3 |   0.184 |       0.032 |      0.476  |  5.698 |  0.000 |   0.117 |   0.251 
+|         X7 |   4.085 |       1.213 |      0.406  |  3.367 |  0.003 |   1.575 |   6.595 
+|         X8 |   0.612 |       0.133 |      0.493  |  4.614 |  0.000 |   0.337 |   0.886 
+|         X9 |  -0.448 |       0.108 |     -0.450  | -4.135 |  0.000 |  -0.672 |  -0.224 
+|         X6 |  -0.368 |       0.146 |     -0.133  | -2.526 |  0.019 |  -0.669 |  -0.066 
 
 
 ****
@@ -641,14 +641,22 @@ model_wf_436789_aic_log_inter <- stepAIC(model_wf_436789_log_inter)
 model_wf_437_log_inter <- lm(log(y) ~ (X3 + X4 + X7 )^2, data=table_wf)
 model_wf_437_aic_log_inter <- stepAIC(model_wf_437_log_inter)
 
+# Interaction regression for 489
+model_wf_489_log_inter <- lm(log(y) ~ (X4 + X8 + X9 )^2, data=table_wf)
+model_wf_489_aic_log_inter <- stepAIC(model_wf_489_log_inter)
+
 # Interaction regression by groups
 model_wf_3g_log_inter <- lm(log(y) ~ (X1 + X3 + X4 )^2 + (X2+ X5+X6 + X7)^2 + (X8 + X9)^2, data=table_wf)
 model_wf_3g_aic_log_inter <- stepAIC(model_wf_3g_log_inter)
 
+# Interaction regression by groups1
+model_wf_3g1_log_inter <- lm(log(y) ~ (X1 + X2 + X5 )^2 + (X3 +X6 + X7)^2 + (X4 +X8 + X9)^2, data=table_wf)
+model_wf_3g1_aic_log_inter <- stepAIC(model_wf_3g1_log_inter)
+
 # Comparison
 huxreg(model_wf_rm1_aic_log_inter, model_wf_rm2_aic_log_inter, model_wf_rm3_aic_log_inter, model_wf_rm4_aic_log_inter, model_wf_rm5_aic_log_inter, model_wf_rm6_aic_log_inter, model_wf_rm7_aic_log_inter, model_wf_rm8_aic_log_inter, model_wf_rm9_aic_log_inter, model_wf_aic_log_inter)
 
-huxreg(model_wf_136789_aic_log_inter,model_wf_436789_aic_log_inter, model_wf_437_log_inter, model_wf_3g_aic_log_inter)
+huxreg(model_wf_136789_aic_log_inter,model_wf_436789_aic_log_inter, model_wf_437_log_inter, model_wf_489_log_inter, model_wf_3g_aic_log_inter, model_wf_3g1_aic_log_inter)
 
 ```
 
