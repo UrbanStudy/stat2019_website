@@ -122,7 +122,6 @@ x9 : Time period during which rainfall exceeded ¼ inch/hour
 
 ```{r echo=FALSE, fig.height=8, fig.width=12}
 library(tidyverse)
-
 table_wf <- read_table2("WaterFlow.txt")
 library(GGally)
 ggpairs(data=table_wf[c(1:10)])
@@ -222,7 +221,7 @@ According to the variable names of X4, X1, and X3, they are geographic variables
 
 Actrually, I don't agree remove any predictor in this stage. Since removing any predictor can draw down the VIF significently. in this manner, the predictor weakest related with y, X6(0.0453) shoudle be first considered. 
 
-The textbook suggest that the general approaches for dealing with multicollinearity include collecting additional data, model respecification (redefine the regressors, variable elimination), estimation methods (Ridge Regression, Principal-Component Regression). "Variable elimination is often a highly effective technique. However, it may not provide a satisfactory solution if the regressors dropped from the model have significant explanatory power relative to the response y. That is, eliminating regressors to reduce multicollinearity may damage the predictive power of the model." (p.304)
+The textbook suggest that the general approaches for dealing with multicollinearity include collecting additional data, model respecification (redefine the regressors, variable elimination), estimation methods (Ridge Regression, Principal-Component Regression). "Variable elimination is often a highly effective technique. However, it may not provide a satisfactory solution if the regressors dropped from the model have significant explanatory power relative to the response y. That is, eliminating regressors to reduce multicollinearity may damage the predictive power of the model." (Montgomery et al., 2012. p.304)
 
 In fact, after elimination regression, the multicollinearity dissapeared in all the models. We should gather sufficient evidents before removing any predictor. I will disscuss it at the end.
 
@@ -270,74 +269,57 @@ Stepwise Both	    | AIC	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 Best Subset	      |	  /    | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 all possible      |	  /	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 
-|    Model  |	VIF |   F  |P-value(F)| MSR  | MSE |R_{adjusted}^2 | P-value(t)| Residuals Plots |
-|-----------|---- |------| ---------| -----| ----| ------------- | --------- |
-3-4-7       |	<10 |70.378|0.0000    |21.188|0.301| 0.878         | Max=0.054 | Problematic
-3-4-6-7-8-9 |	<10 |68.16 |0.0000	  |11.265|0.165| 0.933         | Max=0.019 | Good enough
+|    Model  |	VIF |   F  |P-value(F)| MSR  | MSE |$R_{adjusted}^2$|$R_{Predict}^2$|P-value(t)| Residuals Plots 
+|-----------|---- |------| ---------| -----| ----| -------------- | ------------- | -------- |---
+3-4-7       |	<10 |70.378|0.0000    |21.188|0.301| 0.878          | 0.854         |Max=0.054 | Good enough
+3-4-6-7-8-9 |	<10 |68.16 |0.0000	  |11.265|0.165| 0.933          | 0.908         |Max=0.019 | Good enough
 
 
-Both models do not have a problem of multicollinearity (VIF <10), and small P-values for F test. The model with 6 predictors has a slightly higher (about by 0.6%) adjusted R square compared to the model with only x3, x4 and x7.
+Both models do not have a problem of multicollinearity (VIF <10), and small P-values for F test. Compared to the model with only x3, x4 and x7, the model with 6 predictors has a slightly higher (about by 6%) adjusted R square and higher (about by 5%) prediction R-square, which means it shows stronger predictive capability.
 
 However, all the 6 predictors in a model are statistically significant at 2% significance level (the maximum p-values are 0.019, respectively). In the 3-variable model, X7 get a high p-value (0.054) which means not significant at 5% significance level. If we change the p-value as the parameter of forward selection, the same model will happened for 0.5<a<0.16. 
 
-It is reasonable the selection stopped at the third variable. If we adjusted the parameter to 0.05. the result will be same with the AIC method, the 6-predictor model.
-
-
 Further, violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
 
- 
- There is no significant pattern on the plot of studentized residuals versus predicted values from the model with only x1 and x2. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
+Both of Correlation between observed residuals and expected residuals under normality.The 6-predictor model got 0.9837263 while the 6-predictor model got 0.9856766.
 
-Finally, the model with 6 predictors is simpler that model with 4 predictors. Therefore, the best model will be the model with 6 predictors.
+There is no significant pattern on the plot of studentized residuals versus predicted values from the model with only one predictor. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
 
-# Part & Partial Correlations
-ols_test_correlation(model_wf_437896_log) # Correlation between observed residuals and expected residuals under normality.
-## [1] 0.9837263
-Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
-## -----------------------------------------------
-##        Test             Statistic       pvalue  
-## -----------------------------------------------
-## Shapiro-Wilk              0.9728         0.6175 
-## Kolmogorov-Smirnov        0.0997         0.8982 
-## Cramer-von Mises          4.8429         0.0000 
-## Anderson-Darling          0.2996         0.5612 
+Finally, the model with 6 predictors has higer predicotion R-square, higher significance level for coefficients. Therefore, the best model will be the model with 6 predictors.
+
 
 ****
 
 (8) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
 
-##                         Model Summary                         
-## -------------------------------------------------------------
-## R                       0.973       RMSE               0.407 
-## R-Squared               0.947       Coef. Var          6.385 
-## Adj. R-Squared          0.933       MSE                0.165 
-## Pred R-Squared          0.908       MAE                0.273 
-## -------------------------------------------------------------
-##  RMSE: Root Mean Square Error 
-##  MSE: Mean Square Error 
-##  MAE: Mean Absolute Error 
-## 
-##                                ANOVA                                
-## -------------------------------------------------------------------
-##                Sum of                                              
-##               Squares        DF    Mean Square      F         Sig. 
-## -------------------------------------------------------------------
-## Regression     67.591         6         11.265     68.16    0.0000 
-## Residual        3.801        23          0.165                     
-## Total          71.393        29                                    
-## -------------------------------------------------------------------
-## 
-##                                   Parameter Estimates                                    
-## ----------------------------------------------------------------------------------------
-##       model      Beta    Std. Error    Std. Beta      t        Sig      lower     upper 
-## ----------------------------------------------------------------------------------------
-## (Intercept)     2.692         0.445                  6.046    0.000     1.771     3.613 
-##          X4     0.109         0.026        0.499     4.244    0.000     0.056     0.162 
-##          X3     0.184         0.032        0.476     5.698    0.000     0.117     0.251 
-##          X7     4.085         1.213        0.406     3.367    0.003     1.575     6.595 
-##          X8     0.612         0.133        0.493     4.614    0.000     0.337     0.886 
-##          X9    -0.448         0.108       -0.450    -4.135    0.000    -0.672    -0.224 
-##          X6    -0.368         0.146       -0.133    -2.526    0.019    -0.669    -0.066 
+                         Model Summary                         
+|--------------|----------------|--------------------------------|----
+R              |        0.973   |   RMSE (Root Mean Square Error)|0.407
+R-Squared      |        0.947   |   Coef. Var                    |6.385
+Adj. R-Squared |        0.933   |   MSE (Mean Square Error)      |0.165
+Pred R-Squared |        0.908   |   MAE (Mean Absolute Error)    |0.273
+|--------------|----------------|--------------------------------|----
+
+                                ANOVA                                
+|-----------|----------------|---|---------------|--------|---------
+            |  Sum of Squares|DF |  Mean Square  |   F    |    Sig. 
+|-----------|----------------|---|---------------|--------|---------
+ Regression |   67.591       | 6 |       11.265  |  68.16 |  0.0000 
+ Residual   |    3.801       |23 |        0.165  |                  
+ Total      |   71.393       |29 |               |                  
+|-----------|----------------|---|---------------|------------------
+ 
+                                   Parameter Estimates                                    
+|------------|---------|-------------|-------------|--------|--------|---------|---------
+       model |    Beta |  Std. Error |  Std. Beta  |   t    |   Sig  |   lower |   upper 
+|------------|---------|-------------|-------------|--------|--------|---------|---------
+ (Intercept) |   2.692 |       0.445 |             |  6.046 |  0.000 |   1.771 |   3.613 
+          X4 |   0.109 |       0.026 |      0.499  |  4.244 |  0.000 |   0.056 |   0.162 
+          X3 |   0.184 |       0.032 |      0.476  |  5.698 |  0.000 |   0.117 |   0.251 
+          X7 |   4.085 |       1.213 |      0.406  |  3.367 |  0.003 |   1.575 |   6.595 
+          X8 |   0.612 |       0.133 |      0.493  |  4.614 |  0.000 |   0.337 |   0.886 
+          X9 |  -0.448 |       0.108 |     -0.450  | -4.135 |  0.000 |  -0.672 |  -0.224 
+          X6 |  -0.368 |       0.146 |     -0.133  | -2.526 |  0.019 |  -0.669 |  -0.066 
 
 
 ****
@@ -362,7 +344,9 @@ where the dependent variables can either be total storm flow volume (Qt) in mm, 
 
 $$ln(Dependent\ Variable)=β_0+β_1lnP+β_2lnQ+β_3lnFP+β_4CC+Interactions+\varepsilon$$
 
-The significance of the regression coefficients (being different from 0) in the models has been tested with a t-test procedure at α=0.10 using the GLM procedure of the SAS system for Windows (SAS Institute, Inc., 1989). A regression coefficient significantly different from 0 for the variable CC indicates that the treatment had a significant effect on the dependent variable. Normality of residuals has been tested using the Shapiro–Wilk test. Selection criteria for all events were the same as for the paired basins approach. However, the rainfall events following night-frost, which may caused localized surface runoff on ice as observed by Prevost et al. (1990), were omitted since these events are too rare to be well represented during the calibration and post-treatment periods. Hence, all events within three weeks following the end of the snowmelt period were not retained. The end of the snowmelt period was obtained from observations in a standard forest snow line at Montmorency Forest.
+The significance of the regression coefficients (being different from 0) in the models has been tested with a t-test procedure at α=0.10 using the GLM procedure of the SAS system for Windows (SAS Institute, Inc., 1989). A regression coefficient significantly different from 0 for the variable CC indicates that the treatment had a significant effect on the dependent variable. Normality of residuals has been tested using the Shapiro–Wilk test. Selection criteria for all events were the same as for the paired basins approach. However, the rainfall events following night-frost, which may caused localized surface runoff on ice as observed by Prevost et al. (1990), were omitted since these events are too rare to be well represented during the calibration and post-treatment periods. Hence, all events within three weeks following the end of the snowmelt period were not retained. The end of the snowmelt period was obtained from observations in a standard forest snow line at Montmorency Forest. (Guillemette et al., 2005)
+
+
 
 - Residual Diagnostics: 
 
@@ -445,9 +429,21 @@ Deleted Studentized Residual vs Fitted Values Plot
 Hadi Plot
 Potential Residual Plot
 
+[1]: Montgomery, D. C., Peck, E. A., & Vining, G. G. (2012). Introduction to linear regression analysis (Vol. 821). John Wiley & Sons.
+
+[2]: Guillemette, F., Plamondon, A. P., Prévost, M., & Lévesque, D. (2005). Rainfall generated stormflow response to clearcutting a boreal forest: peak flow comparison with 50 world-wide basin studies. Journal of hydrology, 302(1-4), 137-153.
+
+
 ### 
 
 #### (a) The matrix of scatterplots and the correlation matrix
+
+```{r , eval=F, include = T}
+library(tidyverse)
+table_wf <- read_table2("WaterFlow.txt")
+library(GGally)
+ggpairs(data=table_wf[c(1:10)])
+```
 
 ```{r, eval=T, include = F}
 # Load the package 
