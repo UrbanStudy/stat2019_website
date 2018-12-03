@@ -14,7 +14,9 @@ options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
-## {.tabset}
+# {.tabset}
+
+## 
 
 ### Question 1 (Show main steps of your work to get full points)
 
@@ -258,21 +260,21 @@ $$\hat y=2.692+0.184X_3+0.109X_4+-0.368X_6+4.085X_7+0.612X_8+-0.448X_9$$
 
 (7) If the final models in the previous 3 methods are different, compare their model adequacy and suggest one best model.
 
-|      Method     |	   By  |      	Keep       |	Remove
+|      Method     |	  By  |      	Keep       |	Remove
 |-----------------| ------ | ------------------| ----
-Stepwise Forward  |	P=0.15 | X3, X4, X7	       | X1,X2,X5,X6,X8,X9
-Stepwise Forward  |	AIC	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
+Stepwise Forward  |	P=0.15| X3, X4, X7	     | X1,X2,X5,X6,X8,X9
+Stepwise Forward  |	AIC   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 Stepwise Backward	| P=0.05 | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 Stepwise Backward	| AIC    | X3,X4,X6,X7,X8,X9 | X1,X2,X5
-Stepwise Both	    | P	     | X3, X4, X7	       | X1,X2,X5,X6,X8,X9
-Stepwise Both	    | AIC	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
-Best Subset	      |	  /    | X3,X4,X6,X7,X8,X9 | X1,X2,X5
-all possible      |	  /	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
+Stepwise Both	   | P	   | X3, X4, X7	     | X1,X2,X5,X6,X8,X9
+Stepwise Both	   | AIC	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
+Best Subset	      |	  /   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
+all possible      |	  /   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 
-|    Model  |	VIF |   F  |P-value(F)| MSR  | MSE |$R_{adjusted}^2$|$R_{Predict}^2$|P-value(t)| Residuals Plots 
+|    Model  | VIF |   F  |P-value(F)| MSR  | MSE |$R_{adjusted}^2$|$R_{Predict}^2$|P-value(t)| Residuals Plots 
 |-----------|---- |------| ---------| -----| ----| -------------- | ------------- | -------- |---
-3-4-7       |	<10 |70.378|0.0000    |21.188|0.301| 0.878          | 0.854         |Max=0.054 | Good enough
-3-4-6-7-8-9 |	<10 |68.16 |0.0000	  |11.265|0.165| 0.933          | 0.908         |Max=0.019 | Good enough
+3-4-7       | <10 |70.378|0.0000    |21.188|0.301| 0.878          | 0.854         |Max=0.054 | Good enough
+3-4-6-7-8-9 | <10 |68.16 |0.0000	   |11.265|0.165| 0.933          | 0.908         |Max=0.019 | Good enough
 
 
 Both models do not have a problem of multicollinearity (VIF <10), and small P-values for F test. Compared to the model with only x3, x4 and x7, the model with 6 predictors has a slightly higher (about by 6%) adjusted R square and higher (about by 5%) prediction R-square, which means it shows stronger predictive capability.
@@ -293,15 +295,16 @@ Finally, the model with 6 predictors has higer predicotion R-square, higher sign
 (8) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
 
                          Model Summary                         
-|---------------|----------------|--------------------------------|----
+
 |R              |        0.973   |   RMSE (Root Mean Square Error)|0.407
+|---------------|----------------|--------------------------------|----
 |R-Squared      |        0.947   |   Coef. Var                    |6.385
 |Adj. R-Squared |        0.933   |   MSE (Mean Square Error)      |0.165
 |Pred R-Squared |        0.908   |   MAE (Mean Absolute Error)    |0.273
 |-------- ------|----------------|--------------------------------|----
 
                                 ANOVA                                
-|-----------|----------------|---|---------------|--------|---------
+
 |           |  Sum of Squares|DF |  Mean Square  |   F    |    Sig. 
 |-----------|----------------|---|---------------|--------|---------
 |Regression |   67.591       | 6 |       11.265  |  68.16 |  0.0000 
@@ -434,7 +437,7 @@ Potential Residual Plot
 [2]: Guillemette, F., Plamondon, A. P., Prévost, M., & Lévesque, D. (2005). Rainfall generated stormflow response to clearcutting a boreal forest: peak flow comparison with 50 world-wide basin studies. Journal of hydrology, 302(1-4), 137-153.
 
 
-### 
+## 
 
 #### (a) The matrix of scatterplots and the correlation matrix
 
@@ -523,7 +526,7 @@ ols_test_normality(model_wf_full_log) # Test for detecting violation of normalit
 ```{r, eval=T, include = T}
 library(MASS)
 # for log model
-ols_coll_diag(model_wf_full_log)
+ols_vif_tol(model_wf_full_log)
 model_wf_aic_log <- stepAIC(model_wf_full_log)
 ols_vif_tol(model_wf_aic_log)
 
@@ -820,7 +823,7 @@ model_wf_437896_log <- lm(log(y) ~ X4 + X3 + X7 + X8 + X9 + X6, data=table_wf)
 ols_regress(model_wf_437896_log)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_437896_log)
+ols_vif_tol(model_wf_437896_log)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_437896_log)
@@ -847,7 +850,7 @@ model_wf_437_log <- lm(log(y) ~ X4 + X3 + X7, data=table_wf)
 ols_regress(model_wf_437_log)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_437_log)
+ols_vif_tol(model_wf_437_log)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_437_log)
@@ -874,7 +877,7 @@ model_wf_137689_log <- lm(log(y) ~ X1 + X3 + X7 + X6 + X8 + X9, data=table_wf)
 ols_regress(model_wf_137689_log)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_137689_log)
+ols_vif_tol(model_wf_137689_log)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_137689_log)
@@ -978,7 +981,7 @@ summary(model_wf_aic_log)
 Anova(model_wf_aic_log)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_aic_log)
+ols_vif_tol(model_wf_aic_log)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_aic_log)
@@ -1004,7 +1007,7 @@ summary(model_wf_aic_log_inter)
 Anova(model_wf_aic_log_inter)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_aic_log_inter)
+ols_vif_tol(model_wf_aic_log_inter)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_aic_log_inter)
@@ -1029,7 +1032,7 @@ summary(model_wf_aic_all_log)
 Anova(model_wf_aic_all_log)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_aic_all_log)
+ols_vif_tol(model_wf_aic_all_log)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_aic_all_log)
@@ -1054,7 +1057,7 @@ summary(model_wf_aic_all_log_inter)
 Anova(model_wf_aic_all_log_inter)
 
 # Collinearity Diagnostics #
-ols_coll_diag(model_wf_aic_all_log_inter)
+ols_vif_tol(model_wf_aic_all_log_inter)
 
 #Model Fit Assessment
 ols_plot_diagnostics(model_wf_aic_all_log_inter)
