@@ -294,28 +294,25 @@ Finally, the model with 6 predictors has higer predicotion R-square, higher sign
 
 (8) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
 
-                         Model Summary                         
-
-|R              |        0.973   |   RMSE (Root Mean Square Error)|0.407
+| ~ | Model Summary |                        
 |---------------|----------------|--------------------------------|----
+|R              |        0.973   |   RMSE (Root Mean Square Error)|0.407
 |R-Squared      |        0.947   |   Coef. Var                    |6.385
 |Adj. R-Squared |        0.933   |   MSE (Mean Square Error)      |0.165
 |Pred R-Squared |        0.908   |   MAE (Mean Absolute Error)    |0.273
-|-------- ------|----------------|--------------------------------|----
 
-                                ANOVA                                
 
-|           |  Sum of Squares|DF |  Mean Square  |   F    |    Sig. 
+|      ~    |      ANOVA     |
 |-----------|----------------|---|---------------|--------|---------
+|           |  Sum of Squares|DF |  Mean Square  |   F    |    Sig. 
 |Regression |   67.591       | 6 |       11.265  |  68.16 |  0.0000 
 |Residual   |    3.801       |23 |        0.165  |                  
 |Total      |   71.393       |29 |               |                  
-|-----------|----------------|---|---------------|------------------
- 
-                                   Parameter Estimates                                    
 
-|      model |    Beta |  Std. Error |  Std. Beta  |   t    |   Sig  |   lower |   upper 
+ 
+|      ~     |         | Parameter   | Estimates   |                                 
 |------------|---------|-------------|-------------|--------|--------|---------|---------
+|      model |    Beta |  Std. Error |  Std. Beta  |   t    |   Sig  |   lower |   upper 
 |(Intercept) |   2.692 |       0.445 |             |  6.046 |  0.000 |   1.771 |   3.613 
 |         X4 |   0.109 |       0.026 |      0.499  |  4.244 |  0.000 |   0.056 |   0.162 
 |         X3 |   0.184 |       0.032 |      0.476  |  5.698 |  0.000 |   0.117 |   0.251 
@@ -663,6 +660,138 @@ huxreg(model_wf_136789_aic_log_inter,model_wf_436789_aic_log_inter, model_wf_437
 
 ```
 
+
+- Other Models
+
+```{r, eval=T, include = T}
+
+# build X1*X8 eliminated log model
+model_wf_18rm4_log <- lm(log(y) ~ X1*X8 + X3 + X6 + X7 + X9, data=table_wf)
+
+# build X1*X8 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x1t8=X1*X8)
+model_wf_1time8_log <- lm(log(y) ~ x1t8 + X3 + X6 + X7+ X9 , data=table_wf_resi)
+
+# build X1*X4 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x1t4=X1*X4)
+model_wf_1time4_log <- lm(log(y) ~ x1t4 + X3 + X6 + X7+ X8+ X9, data=table_wf_resi)
+summary(model_wf_1time4_log)
+
+# build X1/X4 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x14=X1/X4)
+model_wf_1per4_log <- lm(log(y) ~ x14 + X3 + X6 + X7+ X8+ X9, data=table_wf_resi)
+
+# build X4*X3 eliminated log model
+model_wf_43rm1_log <- lm(log(y) ~ X9 + X4*X3 + X6 + X7 + X8 , data=table_wf)
+
+# build X4*X9 eliminated log model
+model_wf_49rm1_log <- lm(log(y) ~ X3 + X4*X9 + X6 + X7 + X8 , data=table_wf)
+
+# build X4*X9 eliminated log model
+model_wf_48rm1_log <- lm(log(y) ~ X3 + X4*X8 + X6 + X7 + X9 , data=table_wf)
+
+# build X4*X9 eliminated log model
+model_wf_47rm1_log <- lm(log(y) ~ X3 + X4*X7 + X6 + X9 + X8 , data=table_wf)
+
+# build X4/X9 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x4p9=X4/X9)
+model_wf_4per9_log <- lm(log(y) ~ X3 + x4p9 + X6 + X7 + X8 , data=table_wf_resi)
+
+# build X3/X4vX8*X9 eliminated log model
+model_wf_34v89_log <- lm(log(y) ~ X3*X4 + X8*X9 + X6 + X7, data=table_wf_resi)
+
+# build X3/X4vX8*X9 eliminated log model
+model_wf_34v89v67_log <- lm(log(y) ~ X3*X4 + X8*X9 + X6*X7, data=table_wf_resi)
+
+# build X8/X9vX4*X3 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
+model_wf_8per9v43_log <- lm(log(y) ~ x8p9 + X4*X3 + X6 + X7, data=table_wf_resi)
+
+# build X6/7vX8/X9vX4X3 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9,x6p7=X6/X7)
+model_wf_6p7v8p9v43_log <- lm(log(y) ~ x8p9 + X4*X3 + x6p7, data=table_wf_resi)
+
+# build X8/X9vX4*X3rmX7 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
+model_wf_8per9v43rm7_log <- lm(log(y) ~ x8p9 + X4*X3 + X6, data=table_wf_resi)
+
+# build X8/X9vX4*X3vX6/X7 eliminated log model
+table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
+model_wf_8per9v43rm7_log <- lm(log(y) ~ x8p9 + X4*X3 + X6, data=table_wf_resi)
+
+huxreg(model_wf_8per9v43rm7_log, model_wf_8per9v43_log, model_wf_43rm1_log, model_wf_6p7v8p9v43_log, model_wf_34v89_log, model_wf_34v89v67_log)
+
+# build all log model
+model_wf_all_log <- lm(log(y) ~ log(X1) + log(X2) + log(X3) + log(X4) + log(X5) + log(X6) + log(X7) + log(X8) + log(X9), data=table_wf)
+ols_vif_tol(model_wf_all_log)
+model_wf_aic_all_log <- stepAIC(model_wf_all_log)
+ols_vif_tol(model_wf_aic_all_log)
+
+# Interaction regression for all log  model
+model_wf_all_log_inter <- lm(log(y) ~ (log(X1) + log(X2) + log(X3) + log(X4) + log(X5) + log(X6) + log(X7) + log(X8) + log(X9))^2, data=table_wf)
+model_wf_aic_all_log_inter <- stepAIC(model_wf_all_log_inter)
+
+huxreg(model_wf_aic_log, model_wf_aic_all_log, model_wf_aic_log_inter, model_wf_aic_all_log_inter)
+
+```
+
+- Additional Regression
+
+```{r echo=TRUE}
+
+# All Possible Regression for full log model #
+k <- ols_step_all_possible(model_wf_full_log)
+# k
+plot(k)
+
+# All Possible Regression for all log model #
+k <- ols_step_all_possible(model_wf_all_log)
+# k
+plot(k)
+
+# All Possible Regression for X4 eliminated model #
+# k <- ols_step_all_possible(model_wf_rm4_log)
+# k
+plot(k)
+
+# All Possible Regression for X1 eliminated model #
+# k <- ols_step_all_possible(model_wf_rm1_log)
+# k
+plot(k)
+
+# Stepwise Regression based on p values for full model#
+k <- ols_step_both_p(model_wf_full_log)
+k
+plot(k)
+
+# Stepwise AIC Regression for full model#
+k<- ols_step_both_aic(model_wf_full_log)
+k
+plot(k)
+
+# Stepwise Regression based on p values for X4 eliminated model#
+# k <- ols_step_both_p(model_wf_rm4_log)
+# k
+# plot(k)
+
+# Stepwise AIC Regression for X4 eliminated model#
+# k<- ols_step_both_aic(model_wf_rm4_log)
+# k
+# plot(k)
+
+# Stepwise Regression based on p values for X1 eliminated model#
+# k <- ols_step_both_p(model_wf_rm1_log)
+# k
+# plot(k)
+
+# Stepwise AIC Regression for X1 eliminated model#
+# k<- ols_step_both_aic(model_wf_rm1_log)
+# k
+# plot(k)
+
+```
+
+
 ```{r, eval=F, include = T}
 
 #Lack of Fit F Test
@@ -764,57 +893,6 @@ plot(k)
 
 #### (d) (7) Models Comparison
 
-- Additional Regression
-
-```{r echo=TRUE}
-
-# All Possible Regression for full model #
-k <- ols_step_all_possible(model_wf_full_log)
-# k
-plot(k)
-
-# All Possible Regression for X4 eliminated model #
-# k <- ols_step_all_possible(model_wf_rm4_log)
-# k
-plot(k)
-
-# All Possible Regression for X1 eliminated model #
-# k <- ols_step_all_possible(model_wf_rm1_log)
-# k
-plot(k)
-
-# Stepwise Regression based on p values for full model#
-k <- ols_step_both_p(model_wf_full_log)
-k
-plot(k)
-
-# Stepwise AIC Regression for full model#
-k<- ols_step_both_aic(model_wf_full_log)
-k
-plot(k)
-
-# Stepwise Regression based on p values for X4 eliminated model#
-# k <- ols_step_both_p(model_wf_rm4_log)
-# k
-# plot(k)
-
-# Stepwise AIC Regression for X4 eliminated model#
-# k<- ols_step_both_aic(model_wf_rm4_log)
-# k
-# plot(k)
-
-# Stepwise Regression based on p values for X1 eliminated model#
-# k <- ols_step_both_p(model_wf_rm1_log)
-# k
-# plot(k)
-
-# Stepwise AIC Regression for X1 eliminated model#
-# k<- ols_step_both_aic(model_wf_rm1_log)
-# k
-# plot(k)
-
-```
-
 - Model 437896
 
 ```{r, eval=T, include = T}
@@ -893,80 +971,6 @@ ols_plot_added_variable(model_wf_137689_log)
 
 # Residual Plus Component Plot
 ols_plot_comp_plus_resid(model_wf_137689_log)
-
-```
-
-- Other Models
-
-```{r, eval=T, include = T}
-
-# build X1*X8 eliminated log model
-model_wf_18rm4_log <- lm(log(y) ~ X1*X8 + X3 + X6 + X7 + X9, data=table_wf)
-
-# build X1*X8 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x1t8=X1*X8)
-model_wf_1time8_log <- lm(log(y) ~ x1t8 + X3 + X6 + X7+ X9 , data=table_wf_resi)
-
-# build X1*X4 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x1t4=X1*X4)
-model_wf_1time4_log <- lm(log(y) ~ x1t4 + X3 + X6 + X7+ X8+ X9, data=table_wf_resi)
-summary(model_wf_1time4_log)
-
-# build X1/X4 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x14=X1/X4)
-model_wf_1per4_log <- lm(log(y) ~ x14 + X3 + X6 + X7+ X8+ X9, data=table_wf_resi)
-
-# build X4*X3 eliminated log model
-model_wf_43rm1_log <- lm(log(y) ~ X9 + X4*X3 + X6 + X7 + X8 , data=table_wf)
-
-# build X4*X9 eliminated log model
-model_wf_49rm1_log <- lm(log(y) ~ X3 + X4*X9 + X6 + X7 + X8 , data=table_wf)
-
-# build X4*X9 eliminated log model
-model_wf_48rm1_log <- lm(log(y) ~ X3 + X4*X8 + X6 + X7 + X9 , data=table_wf)
-
-# build X4*X9 eliminated log model
-model_wf_47rm1_log <- lm(log(y) ~ X3 + X4*X7 + X6 + X9 + X8 , data=table_wf)
-
-# build X4/X9 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x4p9=X4/X9)
-model_wf_4per9_log <- lm(log(y) ~ X3 + x4p9 + X6 + X7 + X8 , data=table_wf_resi)
-
-# build X3/X4vX8*X9 eliminated log model
-model_wf_34v89_log <- lm(log(y) ~ X3*X4 + X8*X9 + X6 + X7, data=table_wf_resi)
-
-# build X3/X4vX8*X9 eliminated log model
-model_wf_34v89v67_log <- lm(log(y) ~ X3*X4 + X8*X9 + X6*X7, data=table_wf_resi)
-
-# build X8/X9vX4*X3 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
-model_wf_8per9v43_log <- lm(log(y) ~ x8p9 + X4*X3 + X6 + X7, data=table_wf_resi)
-
-# build X6/7vX8/X9vX4X3 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9,x6p7=X6/X7)
-model_wf_6p7v8p9v43_log <- lm(log(y) ~ x8p9 + X4*X3 + x6p7, data=table_wf_resi)
-
-# build X8/X9vX4*X3rmX7 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
-model_wf_8per9v43rm7_log <- lm(log(y) ~ x8p9 + X4*X3 + X6, data=table_wf_resi)
-
-# build X8/X9vX4*X3vX6/X7 eliminated log model
-table_wf_resi <- table_wf%>% mutate(x8p9=X8/X9)
-model_wf_8per9v43rm7_log <- lm(log(y) ~ x8p9 + X4*X3 + X6, data=table_wf_resi)
-
-huxreg(model_wf_8per9v43rm7_log, model_wf_8per9v43_log, model_wf_43rm1_log, model_wf_6p7v8p9v43_log, model_wf_34v89_log, model_wf_34v89v67_log)
-
-# build all log model
-model_wf_all_log <- lm(log(y) ~ log(X1) + log(X2) + log(X3) + log(X4) + log(X5) + log(X6) + log(X7) + log(X8) + log(X9), data=table_wf)
-ols_vif_tol(model_wf_all_log)
-model_wf_aic_all_log <- stepAIC(model_wf_all_log)
-ols_vif_tol(model_wf_aic_all_log)
-
-# Interaction regression for all log  model
-model_wf_all_log_inter <- lm(log(y) ~ (log(X1) + log(X2) + log(X3) + log(X4) + log(X5) + log(X6) + log(X7) + log(X8) + log(X9))^2, data=table_wf)
-model_wf_aic_all_log_inter <- stepAIC(model_wf_all_log_inter)
-
-huxreg(model_wf_aic_log, model_wf_aic_all_log, model_wf_aic_log_inter, model_wf_aic_all_log_inter)
 
 ```
 
