@@ -25,17 +25,19 @@ $$\therefore \Gamma(\frac{2k+1}2)=\begin{cases}\frac{(2k)!}{4^{k}k!}\sqrt{\pi} &
 
 #### 2. 
 
-The probability that 10 visits longer than 8 minutes:
+Let $T\sim Gamma(\alpha,\beta)$, $T\sim Poisson(\lambda)$. The probability of 10 visits longer than 8 minutes:
 
-$$1-P(T>8)=P(X\le10-1)$$
+$$P(X\le10-1)=1-P(T>8)$$
 
-which following a Poisson process with $\lambda=\frac8{\frac23}=12$. 
+For T, observed 10 visits and average 1.5 visits per miniute mean $t=8,\ \alpha=10,\ \beta=1.5$. 
+
+$$1-P(T>8)=1-\frac{1}{\Gamma(10)1.5^{10}}8^{10-1}e^{-\frac{8}{1.5}}=0.2423922$$
+
+For X, no 10 visit in 8 minutes mean $x=9,\ \lambda=\frac{t}\beta=\frac8{\frac23}=12$. 
 
 $$P(X\le10-1)=\frac{12^9}{9!}e^{-12}=0.2423922$$
 
-or following a Gamma process with $\alpha=10,\beta=1.5$. 
 
-$$1-P(T>8)=1-\frac{1}{\Gamma(10)1.5^{10}}8^{10-1}e^{-\frac{8}{1.5}}=0.2423922$$
 
 ```{r, include=FALSE}
 ppois(9, 8/(2/3), lower.tail = TRUE, log.p = FALSE)
@@ -52,19 +54,19 @@ Therefore, the probability that 10 visits longer than 8 minutes is 24.24%.
 
 For $X\sim Gamma$, $f_X(\alpha,\beta)=\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta},x>0,\beta>0，\alpha>0$
 
-To find the maximized value of X, let $f_X(\alpha,\beta)'=\left(\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta}\right)'=0$
+When X got the maximized value, $f_X(\alpha,\beta)'=\left(\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta}\right)'=\frac{1}{\Gamma(a)\beta^{\alpha}}\left(x^{a-1}e^{-\frac{x}\beta}\right)'=0$
+
+Because $x>0,\beta>0,\alpha>0$,
 
 $$\implies (x^{a-1}e^{-\frac{x}\beta})'=(a-1)x^{a-2}e^{-\frac{x}\beta}+(-\frac{1}\beta)x^{a-1}e^{-\frac{x}\beta}=e^{-\frac{x}\beta}x^{a-2}(a-1-\frac{x}\beta)=0$$
 
-Because $x>0,\beta>0,\alpha>0$, then
-
-$$(a-1-\frac{x}\beta)=0\implies x=(\alpha-1)\beta$$
+$$(a-1-\frac{x}\beta)=0\implies x=(\alpha-1)\beta,\quad \alpha\ge1$$
 
 ****
 
 #### 4.
 
-For $X\sim Uniform(a, b),b>a μ=\frac{a+b}2,\sigma^2=\frac{(b-a)^2}{12}$, thus
+For $X\sim Uniform(a, b),\ b>a,\ μ=\frac{a+b}2,\sigma^2=\frac{(b-a)^2}{12}$, thus
 
 $$P(\mu−1.5\sigma<X<\mu+1.5\sigma)=P(X<(\mu+1.5\sigma)-P(X<(\mu-1.5\sigma)=\frac{\mu+1.5\sigma-a}{b-a}-\frac{\mu-1.5\sigma-a}{b-a}$$
 
@@ -90,13 +92,11 @@ sqrt(3)/2
 
 #### 5.
 
-Let x is the number of draws. When $x=1,3,5,7..$, the probability of achieving this goal is 0. When $x=2,4,6,8..$, the probability of achieving this goal is $\frac14$. 
+Let x is the number of draws. When $x=1,3,5,7..$, the probability of achieving this goal is 0. When $x=2,4,6,8..$, the probability of achieving this goal is $\frac14$. let $Y=\frac{X}2$. For $Y\sim Geometric(\frac14)$
 
-let $Y=\frac{X}2$. For $Y\sim Geometric(\frac14)$
+$$f_Y(y)=\frac14(1-\frac14)^{y-1}=\frac13(\frac34)^{y}=\frac13(\frac34)^{\frac{x}2}, x=2,4,6,..$$
 
-$$f_Y(y)=\frac14(1-\frac14)^{y-1}=\frac13(\frac34)^{y}=\frac13(\frac34)^{\frac{x}2}, x=2,4,6..$$
-
-$$f_X(x)=\begin{cases}\frac13(\frac34)^{\frac{x}2}& x=2,4,6..\\ 0 & x=1,3,5.. \end{cases}$$
+$$f_X(x)=\begin{cases}\frac13(\frac34)^{\frac{x}2}& x=2,4,6,..\\ 0 & x=1,3,5,.. \end{cases}$$
 
 Because Y is a Geometric function, the mean and variance are
 
@@ -110,7 +110,9 @@ $$Var[Y]=\frac{1-p}{p^2}=12=Var[\frac{X}2]=\frac{Var[X]}4\implies Var[X]=48$$
 
 Accoridng the Bayes’s Rule,
 
-$$P(Disease|Positive)=\frac{P(Positive|Disease)P(Disease)}{P(Positive|Disease)P(Disease)+P(Positive|Health)P(Health)}=\frac{0.005\times 0.99}{0.005\times0.99+0.995\times0.02}=0.1991952$$
+$$P(Disease|Positive)=\frac{P(Positive|Disease)P(Disease)}{P(Positive|Disease)P(Disease)+P(Positive|Health)P(Health)}$$
+
+$$=\frac{0.005\times 0.99}{0.005\times0.99+0.995\times0.02}=0.1991952$$
 
 ```{r, include=FALSE}
 (0.005*0.99)/(0.005*0.99+0.995*0.02)
@@ -120,7 +122,9 @@ The probability of the individual having disease with positive result is 19.92%.
 
 ****
 
-#### 7. if X is a random variable such that E(X)=3 and E(x2)=13,  determine a lower bound P( -2<x<8 )
+#### 7. 
+
+For $E(X)=3,\ E(x2)=13$,
 
 $$Var(X)=E(X^2)−[E(X)]^2=13-9=4$$
 
@@ -129,20 +133,20 @@ According to Chebyshev's Inequality: for constant k > 0, $P[|X−E(X)|\ge k]\le 
 For lower bound by flipping the inequalities:$P[|X−E(X)|<k]>1-\frac{Var(X)}{k^2}$
 
 $$\therefore P(|X-3|<k)=P(3−k<X<k+3)\ge1−\frac4{k^2}$$
-When k=5, 
+
+When k=5, there is a lower bound P( -2<x<8 )
+
 $$P(3−k<X<k+3)=P(−2<X<8)\ge 1− \frac4{25}=0.84$$
 
 ****
 
 #### 8.
 
-Let $a$ is the number of "head" in each toss, each result is $(a,6-a)$. then $S=\{(0,6),(1,5),(2,4),(33),(42),(5,1),(6,0)\}$.
-
-The probability of "even head" is $\frac12$.
+Let $a$ is the number of "head" in each toss, each result is $(a,6-a)$. then $S=\{(0,6),(1,5),(2,4),(33),(42),(5,1),(6,0)\}$. The probability of "even head" is $\frac18+\frac18+\frac18+\frac18=\frac12$.
 
 For $X\sim Negative\ Binomial(r=2,p=\frac12)$,
 
-$$f_X(x)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{1}\frac12^2\frac12^{x-2}=(x-1)2^{-x}, x \in r,r+1,r+2..$$
+$$f_X(x)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{1}\frac12^2\frac12^{x-2}=(x-1)2^{-x}, x \in 2,3,4..$$
 
 $$E[X]=\frac{r}p=4;\quad Var[X]=\frac{r(1-p)}{p^2}=4$$
 
@@ -154,11 +158,11 @@ For X is a probability function, let F(X) is the CDF of X,
 
 $$F(X)=\sum_{-\infty}^\infty f(x)=\sum_{a}^\infty cp(1-p)^{x-1}=c\left[\sum_{x=1}^\infty p(1-p)^{x-1}-\sum_{x=1}^{a-1}p(1-p)^{x-1}\right]=c\left[\sum_{x=1}^\infty p(1-p)^{x-1}-1+(1-p)^{a-1}\right]$$
 
-For CDF of Geometric function, $\lim_{x\to\infty}\sum_{x=1}^\infty p(1-p)^{x-1}=1, x=1,2,3,..$
+For CDF of Geometric function, $\sum_{x=1}^\infty p(1-p)^{x-1}=1, x=1,2,3,..$
 
-And for X is a probability function, $\lim_{x\to\infty}F(X)=1$
+And for X is a probability function, $F(X)=1$
 
-$$lim_{x\to\infty}F(X)=c\left[1-1+(1-p)^{a-1}\right]=c(1-p)^{a-1}=1\implies c=(1-p)^{1-a}$$
+$$F(X)=c\left[1-1+(1-p)^{a-1}\right]=c(1-p)^{a-1}=1\implies c=(1-p)^{1-a}$$
 
 $$\therefore f_X(x)=\begin{cases}p(1-p)^{(x+1-a)-1} & x+1-a=1,2,3..\\0 & otherwise\end{cases}$$
 Which still is a Geometric function.
@@ -173,378 +177,19 @@ $$Var(x+1-a)=Var(x)=\frac{1-p}{p^2}$$
 
 This is a Poisson pmf
 
-$$P(X=x)=p_x=\frac{\lambda^x}{x!}e^{-\lambda}, x=0,1,2.., \lambda>0$$
+$$P(X=x)=p_x=\frac{\mu^x}{x!}e^{-\mu}, x=0,1,2.., \mu>0$$
 
 For a discrete, non-negative, integer-valued random variable such that $P(X=x)=p_x, x=1,2,..$ If $X=x$ is the mode, then
 
-$$p_{x-1}\le p_x\implies\frac{p_x}{p_{x-1}}=\frac{\frac{\lambda^x}{x!}e^{-\lambda}}{\frac{\lambda^{x-1}}{(x-1)!}e^{-\lambda}}\ge1\implies x\le\lambda$$
+$$p_{x-1}\le p_x\implies\frac{p_x}{p_{x-1}}=\frac{\frac{\mu^x}{x!}e^{-\mu}}{\frac{\mu^{x-1}}{(x-1)!}e^{-\mu}}\ge1\implies x\le\mu$$
 
 
-$$p_{x+1}\le p_x\implies \frac{p_{x+1}}{p_x}=\frac{\frac{\lambda^{x+1}}{(x+1)!}e^{-\lambda}}{\frac{\lambda^x}{x!}e^{-\lambda}}\le1\implies x\ge\lambda-1$$
+$$p_{x+1}\le p_x\implies \frac{p_{x+1}}{p_x}=\frac{\frac{\mu^{x+1}}{(x+1)!}e^{-\mu}}{\frac{\mu^x}{x!}e^{-\mu}}\le1\implies x\ge\mu-1$$
 
-If $\lambda$ is a positive integer then, by virtue of $\lambda-1\le x\le \lambda$, the distribution is bimodal with the two modes located at $x=\lambda-1$ and $x=\lambda$. (D.S.Broca, 2005)
+If $\mu$ is a positive integer then, by virtue of $\mu-1\le x\le \mu$, the distribution is bimodal with the two modes located at $x=\mu-1$ and $x=\mu$. (D.S.Broca, 2005)
 
-Since $x=1$ is the unique mode, so $x=[\lambda]$ where $[\lambda]$ denotes the greatest integer that does not exceed $\lambda$. 
+Since $x=1$ is the unique mode, so $x=[\mu]$ where $[\mu]$ denotes the greatest integer that does not exceed $\mu$. 
 
 Therefore, when $\mu\in(1,2)$, $x=1$ is the unique mode.
-
-
-###
-
-#### N
-
-(a) normal family with either parameter $\mu$ or $\sigma$ known
-
-When $\mu$ is known, $f(x|\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}={h(x)}{c(\sigma^2)}e^{w_1(\sigma^2)t_1(x)}$
-
-$h(x)$ | $c(\sigma^2)$ | $w_1(\sigma^2)$ | $t_1(x)$
---- | --- | --- | ---
- $1$ | $\frac{1}{\sqrt{2\pi\sigma^2}}I_{(0,\infty)}(\sigma^2)$ | $-\frac1{2\sigma^2}$ | $(x-\mu)^2$
-<span></span> | <span></span> | <span></span> | <span></span>
-
-When $\sigma$ is known, $f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{x^2}{2\sigma^2}+\frac{x\mu}{\sigma^2}-\frac{\mu^2}{2\sigma^2}}=e^{-\frac{x^2}{2\sigma^2}}\frac{e^{-\frac{\mu^2}{2\sigma^2}}}{\sqrt{2\pi\sigma^2}}e^{\frac{x}{\sigma^2}\mu}$
-
-$h(x)$ | $c(\mu)$ | $w_1(\mu)$ | $t_1(x)$
------- | -------- | --------- | ------
- $e^{-\frac{x^2}{2\sigma^2}}$ | $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{\mu^2}{2\sigma^2}}$ | $\mu$ | $\frac{x}{\sigma^2}$
-
-(a) $n(\theta, \theta)$
-
-$f(x|\theta,\theta)=\frac{1}{\sqrt{2\pi\theta}}e^{-\frac1{2\theta}(x-\theta)^2}=\frac{1}{\sqrt{2\pi\theta}}e^{-\frac{x^2}{2\theta}+x-\frac{\theta}{2}}=e^x\frac{e^{-\frac{\theta}{2}}}{\sqrt{2\pi\theta}}e^{-\frac{x^2}{2\theta}}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)}$
-
-$h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$
------- | ------------- | -------------- | ------
- $e^xI_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{\theta}{2}}}{\sqrt{2\pi\theta}},\theta>0$ | $\frac1{2\theta}$ | $-x^2$
-
-Therefore, this function is an exponential family. The natural parameter is $\eta=\frac1{2\theta}$ and the natural parameter space is {$\eta:\eta>0$}. The $\theta$ parameter vector lies on a nonnegative real line.
-
-
-(b) $n(\theta, a\theta^2)$, a known
-
-$f(x|\theta,a\theta^2)=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac1{2a\theta^2}(x-\theta)^2}=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}+\frac{x}{a\theta}-\frac{1}{2a}}=\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}}e^{\frac{x}{a\theta}}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)}$
-
-$h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$
------- | ---- | ---- | ---- | ---- | -----
- $I_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}},-\infty<\theta<\infty,a>0$ | $\frac1{2a\theta^2}$ | $-x^2$ | $\frac1{a\theta}$ | $x$
-
-Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2)=(\frac1{2a\theta^2},\frac1{a\theta})$ with natural parameter space{$(\eta_1,\eta_2):\eta_1>0,-\infty<\eta_2<\infty$}. The $\theta$ parameter vector lies on a parabola.
-
-```{r, echo=FALSE, message=FALSE, fig.height=3}
-curve(2*(x)^2, -10, 10)
-```
-
-****
-
-#### GAMMA
-
-$$f(x|\alpha,\beta)=\frac1{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}, x \in (0, 1), \beta>0, \alpha>0$$
-
-$$B(\alpha,\beta)=\int_0^1x^{\alpha-1}(1-x)^{\beta-1}dx =\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}; x \in (0, 1), \beta>0, \alpha>0$$
-
-
-$$(3.3.18)\quad EX^n=\frac{1}{B(\alpha,\beta)}\int_0^1x^nx^{\alpha-1}(1-x)^{\beta-1}dx=\frac{B(a+n,\beta)}{B(\alpha,\beta)}=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)} $$ 
-
-(b) gamma family with either parameter $\alpha$ or $\beta$ known or both unknown
-
-When $\alpha$ is known, $f(x|\beta)=\frac{x^{\alpha-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{-\frac{x}{\beta}}={h(x)}{c(\beta)}e^{w_1(\beta)t_1(x)}$
-
-$h(x)$ | $c(\beta)$ | $w_1(\beta)$ | $t_1(x)$
------- | -------- | --------- | ------
- $\frac{x^{\alpha-1}}{\Gamma(\alpha)},x>0$ | $\frac{1}{\beta^{\alpha}}$ | $\frac1{\beta}$ | $-x$
-
-When $\beta$ is known, $f(x|\alpha)=e^{-\frac{x}{\beta}}\frac{1}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)}$
-
-$h(x)$ | $c(\alpha)$ | $w_1(\alpha)$ | $t_1(x)$
------- | -------- | --------- | ------
- $e^{-\frac{x}{\beta}}$ | $\frac{1}{\Gamma(\alpha)\beta^{\alpha}}$ | $\alpha-1$ | $\ln x$
-
-When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}-\frac{x}{\beta}}={h(x)}{c(\alpha,\beta)}e^{w_1(\beta)t_1(x)+w_2(\alpha)t_2(x)}$
-
-$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
------- | ---- | ---- | ---- | ---- | -----
- $I_{(0,\infty)}(x)$ | $\frac{1}{\Gamma(\alpha)\beta^{\alpha}}$ | $\alpha-1$ | $\ln x$ | $-\frac1\beta$ | $x$
-
-(c) gamma($\alpha, 1/\alpha$)
-
-$f(x|\alpha,\frac1{\alpha})=\frac{\alpha^{\alpha}}{x\Gamma(\alpha)}e^{\alpha\ln{x}-\alpha{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)+w_2(\alpha)t_2(x)}$
-
-$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\alpha,\beta)$ | $t_2(x)$
------- | ---- | ---- | ---- | ---- | -----
- $\frac1xI_{(0,\infty)}(x)$ | $\frac{\alpha^{\alpha}}{\Gamma(\alpha)}$ | $\alpha$ | $\ln x$ | $\alpha$ | $-x$
-
-Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2)=(\alpha,\alpha)$ with natural parameter space{$(\eta_1,\eta_2):\eta_1>0,\eta_2>0$}. The $\alpha$ parameter vector lies on a line.
-
-****
-
-(d) IG
-
-$$X\sim Gamma(a,b),\quad f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0, a>0, b>0$$
-
-$$Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y,\ y>0\quad \text{is monotone}$$
-
-$$\therefore f_Y(y)=f_X(\frac1y)|\frac{d\frac1y}{dx}|=\frac{y^{1-a}}{\Gamma (a)b^a}e^{-\frac1{by}}|-\frac1{y^2}|=\frac{y^{-a-1}}{\Gamma (a)b^a}e^{-\frac1{by}},\ y>0$$
-
-This is an Inverted gamma IG(a, b)
-
-For $W\sim Gamma(a-n,b)$
-
-(e) Maxwell
-
-$$X\sim Gamma(\frac32,\beta),\quad \therefore f_X(x)=\frac{x^{\frac32-1}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}=\frac{x^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta},\ \beta>0$$
-
-$$Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2,\ y>0\quad  \text{is monotone}$$
-
-Because $\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2$
-
-$$\therefore f_Y(y)=f_X(\beta y^2)|\frac{d\beta y^2}{dx}|=\frac{(\beta y^2)^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{\beta y^2}\beta}2\beta y=\frac{4y^2}{\sqrt\pi}e^{-y^2},\ y>0$$
-
-For $V\sim Expo(1)$
-
-For $Z\sim N(0,1)$, 
-
-(f)
-
-For $X\sim Gamma(\alpha,\beta)$, any positive constant $\nu$
-
-$$f(x|\alpha,\beta) = \frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}; x \in (0, \infty), \beta>0, \alpha>0,\quad \int_0^{\infty}f(x|\alpha,\beta)dx=1$$
-
-$$\therefore EX=\int_0^{\infty}\frac{xx^{a-1}} {\Gamma(a)\beta^{\alpha}}e^{-x/\beta}dx=\alpha\beta\int_0^{\infty}\frac{x^{(a+1)-1}}{\Gamma(a+1)\beta^{\alpha+1}}e^{-x/\beta}dx=\alpha\beta$$
-
-$$EX^{\nu}=\int_0^{\infty}\frac{x^{\nu}x^{a-1}}{\Gamma(a)\beta^{\alpha}}e^{-x/\beta}dx=\frac{\Gamma(a+\nu)\beta^{\nu}}{\Gamma(a)}\int_0^{\infty}\frac{x^{(a+\nu)-1}}{\Gamma(a+\nu)\beta^{\alpha+\nu}}e^{-x/\beta}dx=\frac{\beta^{\nu}\Gamma(\alpha+\nu)}{\Gamma(\alpha)},\nu\ge-\alpha$$
-
-
-#### Beta
-
-(c) beta family with either parameter $\alpha$ or $\beta$ known or both unknown
-
-When $\alpha$ is known, $f(x|\beta)=\frac{x^{\alpha-1}}{B(\alpha,\beta)}(1-x)^{\beta-1}=\frac{x^{\alpha-1}}{B(\alpha,\beta)}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\beta)}e^{w_1(\beta)t_1(x)}$
-
-$h(x)$ | $c(\beta)$ | $w_1(\beta)$ | $t_1(x)$
------- | -------- | --------- | ------
- $x^{\alpha-1}I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\beta-1$ | $\ln(1-x)$
-
-When $\beta$ is known, $f(x|\alpha)=\frac{(1-x)^{\beta-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)}$
-
-$h(x)$ | $c(\alpha)$ | $w_1(\alpha)$ | $t_1(x)$
------- | -------- | --------- | ------
- $(1-x)^{\beta-1}I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\alpha-1$ | $\ln x$
-
-When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}=\frac{1}{B(\alpha,\beta)}e^{(\alpha-1)\ln x}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\alpha,\beta)}e^{w_1(\alpha)t_1(x)+w_2(\beta)t_2(x)}$
-
-$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
------- | ---- | ---- | ---- | ---- | -----
- $I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\alpha-1$ | $\ln x$ | $\beta-1$ | $\ln(1-x)$
-
-****
-
-#### Poisson
-
-(d) Poisson family
-
-When $\lambda$ is known, $p(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(\lambda)}e^{w_1(\lambda)t_1(x)}$
-
-$h(x)$ | $c(\lambda)$ | $w_1(\lambda)$ | $t_1(x)$
------- | -------- | --------- | ------
-$\frac{1}{x!}I_{0,1,2..}(x)$ | $e^{-\lambda}$ | $\ln(\lambda)$ | $x$
-
-****
-
-(a) example
-
-**3.1** Let the number of chocolate chips in a certain type of cookie have a Poisson distribution. We want the probability that a randomly chosen cookie has at least two chocolate chips to be greater than .99. Find the smallest value of the mean of the distribution that ensures this probability.
-
-$$X\sim Poisson(\lambda) \implies P(X=x)=e^{-\lambda}\frac{\lambda^x}{x!}$$
-
-$$P(X\ge 2)\ge0.99 \implies1-P(X\le 1)\le1-0.01$$
-
-$$\therefore P(X\le 1)=P(X=1)+P(X=2)=e^{-\lambda}\frac{\lambda^0}{0!}+ e^{-\lambda}\frac{\lambda^1}{1!}=(1+\lambda)e^{-\lambda}\le0.01$$
-$$\implies e^{\lambda}\ge100\lambda+100$$
-
-```{R, collapse=TRUE, fig.height=3}
-# by resolving equation
-uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=10)$root
-
-# by bisection method
-# when lambda is between 6 and 7, a randomly chosen cookie has at least 2 chocolate chips on 0.01 probability.
-qpois(0.01, 6, lower.tail = TRUE, log.p = FALSE)
-curve(qpois(0.01, x, lower.tail = TRUE, log.p = FALSE), from=0,to=10); text(7,0, "7"); abline(v = 7, lty = 3)
-
-# by function of ppois
-uniroot(function(x)(ppois(1, x, lower.tail = TRUE, log.p = FALSE)-0.01), lower=0, upper=100)$root
-curve(ppois(1, x, lower.tail = TRUE, log.p = FALSE), from=4,to=10); abline(h = 0.01, lty = 2); text(6.64,0, "6.638351"); abline(v = 6.638351, lty = 3)
-```
-
-$$\therefore min(EX)=min(\lambda)=6.638351$$
-
-#### NB
-
-(e) negative binomial family with r known, 0<p<1
-
-When $p$ is known, $f(x|p)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{r-1}(\frac{p}{1-p})^r(1-p)^{x}=\binom{x-1}{r-1}(\frac{p}{1-p})^re^{\ln(1-p) x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}$
-
-$h(x)$ | $c(p)$ | $w_1(p)$ | $t_1(x)$
------- | -------- | --------- | ------
-$\binom{x-1}{r-1}I_{r,r+1..}(x)$ | $(\frac{p}{1-p})^r$ | $\ln(1-p)$ | $x$
-
-$$For\quad Y\sim Negative\ Binomial\ (r,p),\quad M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t<-log(1-p)$$
-
-According to the Theorem 2.3.15, $M_{aX+b}(t)=e^{bt}M_X(at)$
-$$M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r$$
- 
-According to the L’Hˆopital’s rule, for $\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0,\quad \lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}$
-
-$$\lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}$$
-
-$$\implies M_{pY}(t)=(\frac1{1-t})^r,\ r>0, 0<t<1$$
-
-For Gamma (r,1),
-
-$$M_X(t)=(\frac1{1-\beta t})^\alpha=(\frac1{1-t})^r,\ r>0, 0<t<1$$
-
-Therefore, the mgf of the random variable pY ($Y\sim NB(r,p), p\rightarrow0$) converges to that of Gamma (r,1).
-
-****
-#### EXPO
-
-(a) expo(β) and Weibull
-
-$$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
-
-$$Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma\quad \text{is monotone}$$
-
-$$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}=\frac{\gamma}\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}, x\ge0,\beta>0, \gamma>0$$
-
-This is a Weibull distribution.
-
-For $W\sim Gamma(\frac{n}\gamma+1,\beta)$, CDF
-
-
-(b) expo(β) and Rayleigh
-
-$$X\sim expo(\beta),\quad  f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
-
-$$Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2,\ y>0,\ \beta>0\quad \text{is monotone}$$
-
-$$f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0$$
-
-This is a Rayleigh distribution with $\beta=\sqrt2$.
-
-For $Z\sim N(0,1)$, 
-
-For $W\sim Gamma(2,2)$
-
-Or for $V\sim Expo(1)$
-
-(c) Gumbel
-
-$$X\sim expo(1),\quad \therefore f_X(x)=e^{-x}, x\ge0$$
-
-$$Let\ Y=g(X)= \alpha-\gamma\log X, X=g^{-1}(Y)=e^{\frac{\alpha-Y}{\gamma}}\quad\therefore g^{-1}(y)=e^{\frac{\alpha-y}{\gamma}}$$
-
-$$\therefore f_Y(y)=f_X(e^{\frac{\alpha-y}{\gamma}})|\frac{de^{\frac{\alpha-y}{\gamma}}}{dx}|=e^{-e^{\frac{\alpha-y}{\gamma}}}e^{\frac{\alpha-y}{\gamma}}|-\frac1{\gamma}|=\frac1{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}, \gamma>0$$
-
-This is a Gumbel distribution with $\alpha,\beta$.
-
-(d) $f(x|\theta) = C exp (-(x-\theta)^4)$ , C a normalizing constant
-
-$f(x|\theta)=Ce^{-(x-\theta)^4}=Ce^{-x^4}e^{-\theta^4}e^{4x^3\theta}e^{-6x^2\theta^2}e^{4x\theta^3}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)+w_2(\theta)t_2(x)+w_3(\theta)t_3(x)}$
-
-$h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$ | $w_3(\theta)$ | $t_3(x)$
------- | ---- | ---- | ---- | ---- | ----- | ---- | -----
- $Ce^{-x^4}I_{(-\infty,\infty)}(x)$ | $e^{-\theta^4},-\infty<\theta<\infty$ | $\theta$ | $4x^3$ | $\theta^2$ | $-6x^2$ | $\theta^3$ | $4x$
-
-Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2,\eta_3)=(\theta,\theta^2, \theta^3)$ with natural parameter space{$(\eta_1,\eta_2,\eta_3): -\infty<\eta_1<\infty,-\infty<\eta_2<\infty,-\infty<\eta_3>\infty$}. The $\theta$ parameter vector lies on a 3D line.
-
-```{r, echo=FALSE, message=FALSE, fig.height=3}
-library(plotly)
-x <- seq(-10,10, len = 18)
-plot_ly(mpg, x = ~x, y = ~x^2, z = ~x^3, width = 9) %>%
-  add_lines()
-```
-
-
-
-****
-
-
-#### Hyper Geometric
-
-**3.2** A manufacturer receives a lot of 100 parts from a vendor. The lot will be unacceptable if more than five of the parts are defective. The manufacturer is going to select randomly K parts from the lot for inspection and the lot will be accepted if no defective parts are found in the sample.
-
-(a) How large does K have to be to ensure that the probability that the manufacturer accepts an unacceptable lot is less than . 10?
-
-The probability of accepting the unacceptable lot is
-
-$$P(X=0|N=100,5<M<(100-K),0<K<(100-m))=\sum_{M=6}^{100-K}\frac{\binom{M}{0}\binom{100-M}{K}}{\binom{100}{K}}=\sum_{M=6}^{100-K}\frac{(100-M)!(100-K)!}{100!(100-M-K)!}$$
-
-For a given probability, When M get the minimum value, the K get the maximum value.
-
-$$Let\quad P(X=0|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K}}{\binom{100}{K}}<0.10$$
-
-$$\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}<0.10$$
-
-```{r, collapse=TRUE, fig.height=3}
-# by resolving equation
-uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
-# by bisection method
-## when K up to 32, the probability of no defective part is smaller than 0.1.
-dhyper(0, 6, 94, 32, log = FALSE)
-## when K down to 31, the defective might not be chose on 0.1 probability.
-qhyper(0.1, 6, 94, 31, lower.tail = TRUE, log.p = FALSE)
-# by function of phyper
-uniroot(function(k)(phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
-# draw the curve
-curve(phyper(0, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(32,0, "32"); abline(v = 32, lty = 3)
-```
-
- When the defective parts are 6, K must be at least 32
-
-****
-(b) Suppose the manufacturer decides to accept the lot if there is at most one defective in the sample. How large does K have to be to ensure that the probability that the manufacturer accepts an unacceptable lot is less than . 10?
-
-$$P(X=0 or 1|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K-0}}{\binom{100}{K}}+\frac{\binom{6}{1}\binom{100-6}{K-1}}{\binom{100}{K}}<0.10$$
-
-$$\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}<0.10$$
-
-```{r, collapse=TRUE, fig.height=3}
-# by resolving equation
-uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
-# by function of phyper
-uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=1, upper=100)$root
-# draw the curve
-curve(phyper(1, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(51,0, "51"); abline(v = 51, lty = 3)
-```
-
-When the defective parts are 6, K must be at least 51.
-
-****
-
-(c) Hyper, Binom, and Poisson
-
-Population of 10000 people take a sample of 1000, without replacement. In the population, 500 have blue eyes. Find the probability of getting exactly 45 people in the sample with blue eyes.
-
-$Hyper(N=10000, M=500, K=1000), P(X=45)=\frac{\binom{500}{45}\binom{9500}{955}}{\binom{10000}{1000}}=0.047136$
-
-```{r}
-dhyper(45, 500, 9500, 1000, log = FALSE)
-
-```
-
-
-$Binom(n=1000,p=0.05), P(X=45)=\binom{1000}{45}(0.05)^{45}(0.95)^{955}=0.046281$
-
-```{r}
-dbinom(45, 1000, 0.05, log = FALSE)
-
-```
-
-$Poisson(\mu=50), P(X=45)=\frac{{50}^{45}}{45!}e^{-50}=0.045826$
-
-```{r}
-dpois(45, 50, log = FALSE)
-```
-
-
-
 
 
