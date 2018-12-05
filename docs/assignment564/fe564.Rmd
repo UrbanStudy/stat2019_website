@@ -225,7 +225,7 @@ Before elimination regression, We can find removing x8 or x9 hurts the R-squared
 
 Turning back to the correlation coefficients, X5 have stronger correlation with ln(y) than X2 ($Cor(\ln(y),X_2)=0.658, Cor(\ln(y),X_5)=-0.723$). We look at the context, X1 (Area of watershed) is a variable of terrain, X5 (surface absorbency index) and X2 (Area impervious to water) which are varibles of surface properties, which have similar effects on initial flow (see the discussion at the end). Based on the context, X1 is more like a independent varibale than X2 and X5. 
 
-Finaliy, Among the four variables (X2, X5, X6, X7) of surface porperties related with initial flow, X2 and X7 have highest correlation, which means X7 may contain the most same information contained in X2. Therefore, if we have to remove one variable, X2 is the best option. We also can confirm it by the results of further transformation and interaction regression.
+Finaliy, Among the four variables (X2, X5, X6, X7) of surface porperties related with initial flow, X2 and X7 have highest correlation, which means X7 may contain the most same information contained in X2. Therefore, **if we have to remove one variable, X2 is the best option. I will proof removing X1 is not good in the part of discussion.**
 
 |   |         X1|         X2|         X3|         X4|         X5|         X6|        X7|         X8|         X9|       ln(y)
 |---| ---       | ---       | ---       | ---       | ---       | ---       | ---      | ---       | ---       | ---
@@ -355,7 +355,7 @@ Inspired by this theory, I divided the variables to 4 groups:
 |   (inches)  |which rainfall exceeded |x4: Longest stream flow in watershed(1000s of feet)| x6: estimated soil storage capacity (inches of water) |
 |             | ¼ inch/hour            |                                                   |x7: Infiltration rate of water into soil (inches/hour)  |  
 
-It is resonable that the best model should contains at least one variable in each group. In this way, **X8 and X9 are indispensable variables**. We have also know that Setpwise forward method could neglect this context and  is not recommended for this question. When we try to simplify a model, we should keep each catergory being not empty and evaluate one variable with others inside the group.
+It is resonable that the best model should contains at least one variable in each group. In this way, X8 and X9 are indispensable variables. We have also know that Setpwise forward method could neglect this context and  is not recommended for this question. When we try to simplify a model, **we should keep each catergory being not empty** and evaluate one variable with others inside the group.
 
 - Log and interaction
 
@@ -431,7 +431,7 @@ table_wf <- read_table2("WaterFlow.txt")
 
 ```
 
-```{r, eval=T, echo=TRUE, include = T}
+```{r, eval=T, echo=TRUE, include = T, fig.height=8, fig.width=12}
 ggpairs(data=table_wf[c(1:10)])
 
 ```
