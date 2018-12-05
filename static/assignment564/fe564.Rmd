@@ -348,7 +348,7 @@ where the dependent variables can either be total storm flow volume ($Q_t$) in m
 Inspired by this theory, I divided the variables to 4 groups:
 
 |      P      |    F    |    Q    
-|     ----    |  ----   | ------------- | -----------------
+|     ----    |  ----   | --------------- | -----------------
 |Precipitation|   Time  | Terrain |Surface
 |      x8     |     x9  |x1: Area of watershed ($mi^2$) |x2: Area impervious to water ($mi^2$)
 |   Rainfall  |Time period during      |x3: Average slope of watershed (percent)| x5: surface absorbency index
@@ -396,11 +396,11 @@ $$\hat{\ln(y)}=5.87592+0.68118\ln(X_1)+0.37527\ln(X_3)-0.33576\ln(X_6)+1.72493\l
 |-----------|----------------------|----------|-----------|-------|--------------------|-----------|---------
 |      model|Estimated coefficients|Partial SS|Std. Error |t test | p-value            |  0.417 %  | 99.583 %
 |(Intercept)|      5.87592         |     /    |   0.22021 | 26.684|$2\times10^{-16}$   | 5.2428046 |6.5090281
-|    log(X1)|      0.68118         |    5.37  |   0.02343 | 29.067|$2\times10^{-16}$   | 0.6137985 |0.7485522
-|    log(X3)|      0.37527         |    2.98  |   0.09489 | 3.955 |     0.00059        | 0.1024526 |0.6480888
-|    log(X6)|     -0.33576         |    1.05  |   0.08150 |-4.120 |     0.000389       |-0.5700799 |-0.1014438
-|    log(X8)|      1.72499         |    1.87  |   0.16768 | 10.288|$2.82\times10^{-10}$| 1.2429032 | 2.2070673
-|    log(X9)|     -1.45653         |    3.52  |   0.14975 |-9.727 |$8.42\times10^{-10}$|-1.8870607 |-1.0259933
+|    log(X1)|      0.68118         |    39    |   0.02343 | 29.067|$2\times10^{-16}$   | 0.6137985 |0.7485522
+|    log(X3)|      0.37527         |   0.722  |   0.09489 | 3.955 |     0.00059        | 0.1024526 |0.6480888
+|    log(X6)|     -0.33576         |   0.783  |   0.08150 |-4.120 |     0.000389       |-0.5700799 |-0.1014438
+|    log(X8)|      1.72499         |    4.88  |   0.16768 | 10.288|$2.82\times10^{-10}$| 1.2429032 | 2.2070673
+|    log(X9)|     -1.45653         |    4.37  |   0.14975 |-9.727 |$8.42\times10^{-10}$|-1.8870607 |-1.0259933
 
 
 **If we removed X1 in the question (3), we cannot get this one.**
@@ -659,6 +659,7 @@ plot(k)
 # build model 437896
 model_wf_437896_log <- lm(log(y) ~ X4 + X3 + X7 + X8 + X9 + X6, data=table_wf)
 ols_regress(model_wf_437896_log)
+Anova(model_wf_437896_log)
 confint(model_wf_437896_log, level = 1-(0.05/7)) # Bonferroni joint confidence interval #
 
 # Collinearity Diagnostics #
@@ -1031,32 +1032,6 @@ alias(lm(y ~ as.factor(X3) + as.factor(X6) + as.factor(X7) + as.factor(X8) + as.
 
 #### Final models
 
-- Check model mix1
-
-```{r, eval=T, include = T}
-
-summary(model_wf_mix1)
-Anova(model_wf_mix1)
-
-# Collinearity Diagnostics #
-ols_vif_tol(model_wf_mix1)
-
-#Model Fit Assessment
-ols_plot_diagnostics(model_wf_mix1)
-
-# Part & Partial Correlations
-ols_test_correlation(model_wf_mix1) # Correlation between observed residuals and expected residuals under normality.
-
-# Residual Normality Test
-ols_test_normality(model_wf_mix1) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
-
-# Variable Contributions
-ols_plot_added_variable(model_wf_mix1)
-
-# Residual Plus Component Plot
-ols_plot_comp_plus_resid(model_wf_mix1)
-```
-
 - Check model all log 13689
 
 ```{r, eval=T, include = T}
@@ -1083,6 +1058,32 @@ confint(model_wf_rm2457_all_log, level = 1-(0.05/6))
 # Residual Plus Component Plot
  ols_plot_comp_plus_resid(model_wf_rm2457_all_log)
 
+```
+
+- Check model mix1
+
+```{r, eval=T, include = T}
+
+summary(model_wf_mix1)
+Anova(model_wf_mix1)
+
+# Collinearity Diagnostics #
+ols_vif_tol(model_wf_mix1)
+
+#Model Fit Assessment
+ols_plot_diagnostics(model_wf_mix1)
+
+# Part & Partial Correlations
+ols_test_correlation(model_wf_mix1) # Correlation between observed residuals and expected residuals under normality.
+
+# Residual Normality Test
+ols_test_normality(model_wf_mix1) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+
+# Variable Contributions
+ols_plot_added_variable(model_wf_mix1)
+
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_wf_mix1)
 ```
 
 - Check model all log 134689
