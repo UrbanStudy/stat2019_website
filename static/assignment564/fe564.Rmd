@@ -14,11 +14,9 @@ options(width = 2000)
 options(repos="https://cran.rstudio.com")
 ```
 
-# {.tabset}
+## {.tabset}
 
-## 
-
-### Question 1 (Show main steps of your work to get full points)
+### Question 1
 
 The $(X'X)^{-1}$ for the $y=β_0+β_1 x_1+β_2 x_2+β_3 x_3+β_4 x_4+β_5 x_5+β_6 x_6+ε$ is given below.
 
@@ -45,44 +43,38 @@ sqrt(1.395*B[3,3])
 (1.395*B[3,5])/((sqrt(1.395*B[3,3]))*(sqrt(1.395*B[5,5])))
 ```
 
-(a) If MSE = 1.395 and n = 38 , compute the (Keep 4 or more decimal places, DO NOT round in the intermediate steps)
+(a) If MSE = 1.395 and n = 38 , compute the 
 
-(i)   se(β ̂_4)
+(i)
 
 $$se(\mathbf{\hat\beta_4})=\sqrt{MSE\times C_{55}}=\sqrt{1.395\times0.069}=0.3102499$$
 
-(ii)   Cov(β ̂_2,β ̂_4)
+(ii)
 
 $$Cov(\mathbf{\hat\beta_2,\hat\beta_4})=MSE\times C_{35}=1.395\times(-0.035)=-0.048825$$
 
-(iii)   Cor(β ̂_2,β ̂_4 )
+(iii)
 
 $$se(\mathbf{\hat\beta_2})=\sqrt{MSE\times C_{33}}=\sqrt{1.395\times0.067}=0.3057205$$
 
 $$Cor(\mathbf{\hat\beta_2,\hat\beta_4})=\frac{Cov(\mathbf{\hat\beta_2,\hat\beta_4})}{se(\mathbf{\hat\beta_2})se(\mathbf{\hat\beta_4})}=\frac{-0.048825}{0.3057205\times0.3102499}=-0.5147615$$
 
-(iv) Without computing anything, explain which estimator is the most consistent.
+(iv)
 
-$C_{66}=0.058$ has the smallest value. $\hatβ_5$ has the the least variance and the most consistent among the estimators.
+$C_{66}=0.058$ has the smallest value. $\hatβ_5$ has the the least variance and is the most consistent among the estimators.
 
-(v) Without computing anything , list the pair(s) of estimators that are positively correlated. Provide a reason.
+(v)
 
-According to the $(X'X)^{(-1)}$,
+According to the $(X'X)^{(-1)}$, $C_{13},\ C_{17},\ C_{24},\ C_{25},\ C_{67}$ are positive. 
 
-$C_{13},\ C_{17},\ C_{24},\ C_{25},\ C_{67}$ are positive. 
+Therefore, the positively correlated pairs of parameters are
 
-The positively correlated pairs of parameters are
-
-$\hatβ_0$ and $\hatβ_2$, 
-$\hatβ_0$ and $\hatβ_6$, 
-$\hatβ_1$ and $\hatβ_3$, 
-$\hatβ_1$ and $\hatβ_4$, 
-$\hatβ_5$ and $\hatβ_6$.
+$$\hatβ_0\ \&\ \hatβ_2,\quad \hatβ_0\ \&\ \hatβ_6,\quad \hatβ_1\ \&\ \hatβ_3,\quad \hatβ_1\ \&\ \hatβ_4,\quad \hatβ_5\ \&\ \hatβ_6$$
 
 
 (b) Consider the following hypothesis: $H_0:  β_1=2β_3,β_2=β_3,β_5=0$
 
-(i)  Report the T matrix, β vector and c vector along with their dimensions, and the rank of T matrix for testing the above hypothesis.
+(i)
 
 $$
 \mathbf{T}=\begin{bmatrix} 0 & 1 & 0 & -2 & 0 & 0& 0 \\ 0 & 0 & 1 & -1 & 0 & 0 & 0\\ 0 & 0 & 0 & 0 & 0 & 1 & 0 \end{bmatrix}_{3\times7} 
@@ -90,37 +82,28 @@ $$
 \mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0\end{bmatrix}_{3\times1} rank(T)=3
 $$
 
-(ii) Report the values of numerator and denominator degrees of freedom for the corresponding F test.
-For F test, the numerator is MSR while denominator is MSE, thus
+(ii)
 
-In this hypothesis,$y=β_0+2β_3x_1+β_3x_2+β_3x_3+β_4x_4+0x_5+β_6x_6+ε=β_0+β_3(2x_1+x_2+x_3)+β_4x_4+β_6x_6+ε$
+In this hypothesis, $y=β_0+2β_3x_1+β_3x_2+β_3x_3+β_4x_4+0x_5+β_6x_6+ε=β_0+β_3(2x_1+x_2+x_3)+β_4x_4+β_6x_6+ε$
+
+The full model has 6 parameters for predictors while reduced model has 3.
+
+$$F_0=\frac{\frac{SSE_{Reduced}-SSE_{Full}}{dfE_{Reduced}-dfE_{Full}}}{\frac{SSE_{Full}}{dfE_{Full}}}=\frac{\frac{SSE_{Reduced}-SSE_{Full}}{[n-(k+1-r)]-[n-(k+1)]}}{\frac{SSE_{Full}}{n-(k+1)}}=\frac{\frac{SSE_{Reduced}-SSE_{Full}}{[38-(6+1-3)]-[38-(6+1)]}}{\frac{SSE_{Full}}{38-(6+1)}}=\frac{\frac{SSE_{Reduced}-SSE_{Full}}{3}}{\frac{SSE_{Full}}{31}}$$
+
+In this conceptual form, the numerator degrees of freedom is $\nu_1=3$, denominator is $\nu_2=31$.
+
+After transformed to a colsed form, The numerator is 31, denominator is 3.
 
 
-The value of numerator is $r=df_{Reduced}-df_{Full}=n-(3+1)-[n-(6+1)]=3$
-
-The denominator degrees of freedom is $df_{Full}=n-(k+1)=38-(6+1)=31$
-
-(c) Show the following equation is an alternative form of the sum of squares of regreesion or model (SSR).
+(c)
 
 $$SSR=\sum_{i=1}^n(\hat y_i-\bar y)^2=\sum_{i=1}^n(\hat y_i^2-2\hat y_i\bar y+\bar y^2)=\sum_{i=1}^n\hat y_i^2-2\bar y\sum_{i=1}^n\hat y_i+\sum_{i=1}^n\bar y^2$$
 
 $$=\sum_{i=1}^n\hat y_i^2-2\bar yn\frac{\sum_{i=1}^n\hat y_i}n+n\bar y^2=\sum_{i=1}^n\hat y_i^2-2\bar yn\bar y+n\bar y^2=\sum_{i=1}^n\hat y_i^2-n\bar y^2$$
 
-### Question 2 (Use software to analyze the given data)
+### Question 2
 
-The data in the WaterFlow file are simulated data on peak rate of flow (in cfs) of water from six watersheds following storm episodes. The predictors are:
-
-x1 : Area of watershed (mi2) 
-x2 : Area impervious to water (mi2)  
-x3 : Average slope of watershed (percent)   
-x4 : Longest stream flow in watershed (1000s of feet)  
-x5 : surface absorbency index, (0= complete absorbency, 100=no absorbency)  
-x6 : estimated soil storage capacity (inches of water)   
-x7 : Infiltration rate of water into soil (inches/hour)  
-x8 : Rainfall (inches)   
-x9 : Time period during which rainfall exceeded ¼ inch/hour  
-
-(a) Create the matrix of scatterplots and compute the correlation matrix for all the variables. Copy and paste them here.
+(a) The matrix of scatterplots and correlation
 
 ```{r echo=FALSE, fig.height=8, fig.width=12}
 library(tidyverse)
@@ -132,9 +115,9 @@ ggpairs(data=table_wf[c(1:10)])
 
 ****
 
-(b) Based on scatterplots and correlation, explain which predictors are significantly related to (most likely to contribute to the variation in) the response variable.
+(b) Which predictors are significantly related to (most likely to contribute to the variation in) the response variable.
 
-Based on scatterplots and correlation, **X2(0.666),X7(0.668),X1(0.781),X4(0.866)** have medium to strong positive linear relationship to the response variable (Correlation coefficient is more than 0.6). **X5(-0.62)** have medium negative linear relationship to the response variable.
+Based on scatterplots and correlation, $Cor_{y,x_4}=0.866, Cor_{y,x_1}=0.781, Cor_{y,x_7}=0.668, Cor_{y,x_2}=0.666$ have medium to strong positive linear relationship to the response variable (Correlation coefficient is more than 0.6). $Cor_{y,x_5}=-0.62$ has medium negative linear relationship to the response variable.
 
 ****
 
@@ -144,17 +127,17 @@ $$\hat y=292.561-203.144X_1+ 1055.782X_2-49.24X_3+209.762X_4-10.197X_5-24.558X_6
 
 ****
 
-(i) Explain whether the overall model is significant at 5% significance level.
+(i) Significant
 
-The fitted model is statistically significant at 5% significance level ($p-value=9.744\times^{-06}$). But most of the coefficients are not significent. This model is not the best fitted model.
+The fitted overall model is statistically significant at 5% significance level ($p-value=9.744\times^{-06}$). 
+
+But most of the coefficients are not significent. This model is not the best fitted model.
 
 ****
 
-(ii) Explain whether assumptions of random errors and model are satisfied. If there is a violation of those, then suggest reasonable methods to correct them.
+(ii) The violation of random errors
 
-- Residual Diagnostics: Use plots to examine residuals to validate OLS assumptions
-
-There is some violation of assumptions about the errors: 
+- Residual Diagnostics: There is some violations. The model didn't satisfied the OLS assumptions of random errors.
 
 On the residual plot, there is a **funnel pattern**.
 
@@ -162,7 +145,7 @@ On the outlier and leverage plot, there are **two outliers**.
 
 On the qq plot, most of points follow approximately straight line but have some **positive skew**. 
 
-- Suggestion: Transform and other diagnostics.
+- Suggestion: Transform and more diagnostics.
 
 I suggest using **natural log of response** to make a variance-stabilizing transformations. 
 
@@ -170,42 +153,40 @@ Other diagnostics of heteroskedasticity, variable selection, measures of influen
 
 ****
 
-(iii) How much of the sum of squares is explained by rainfall, given that all the other regression coefficients are in the model?
+(iii) The partial sum of squares explained by rainfall.
 
 Accroding to the  F test, the partial sum of squares explained by rainfall is **2209825**, given that all the other regression coefficients are in the model.
 
 ****
 
-(iv) Explain whether there is a problem of multicollinearity.
+(iv) Multicollinearity
 
-- Collinearity diagnostics: 
-
-The model does have **serious problems of multicollinearity**. The VIF of variables **X4 (105.754708), X1 (101.859709), X3 (31.446394), X7(20.53505)** are larger than 10. 
+According to the result of VIF test (variance inflation factor), the model does have **serious problems of multicollinearity**. The VIF of variables **X4 (105.754708), X1 (101.859709), X3 (31.446394), X7(20.53505)** are larger than 10. 
 
 ****
 
-(v) Interpret the estimated coefficient of rainfall predictor of the full model using question context.
+(v) Interpret the estimated coefficient of rainfall predictor
 
-Coefficient of 511.713 suggests the peak rate of flow increases by **511.713** cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
+Coefficient of 511.713 in the full model suggests the peak rate of flow increases by **511.713** cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
 
 ****
 
-(d) Create a new variable using natural log of response. Then fit the full model using this new variable as response.
+(d) Log of response
 
-$$log(\hat y)=3.402256-0.013532X_1-1.023664X_2+0.177966X_3+0.108788X_4$$
+$$\ln(\hat y)=3.402256-0.013532X_1-1.023664X_2+0.177966X_3+0.108788X_4$$
 $$-0.009622X_5-0.389474X_6+4.233475X_7+0.63007X_8-0.462276X_9$$
 
-(1) Explain whether the overall model is significant at 5% significance level.
+(1) Significant
 
-The fitted model is statistically significant at 5% significance level ($p-value=7.513\times10^{-11}$). But most of the coefficients are not significent. This model is not the best fitted model.
+The overall fitted model is statistically significant at 5% significance level ($p-value=7.513\times10^{-11}$). 
+
+But most of the coefficients are not significent. This model is not the best fitted model.
 
 ****
 
-(2) Explain whether there is a problem of multicollinearity.
+(2) Multicollinearity.
 
-The model still has serious problems of multicollinearity. The variance-stabilizing transformations does not change the value of VIF.  
-
-It will be important to solve multicollinearity. However, X7 (20.53505), X1 (101.859709), and X4 (105.754708) have medium to strong positive linear relationship to the response variable. It is also dangerous to remove these variables. We should have more diagnostics and comparisons.
+The model still has serious problems of multicollinearity. The variance-stabilizing transformations does not change the value of VIF: X4 (105.754708), X1 (101.859709), X3 (31.446394), X7(20.53505).
 
 ****
 
@@ -217,58 +198,83 @@ If just considering the VIF, X4 (105.754708) or X1 (101.859709) with largest VIF
 
 - Correlation with y
 
-However, according to the correlation coefficients, both X4and X1 is strongly correlated with y ($Cor_{y,x_4}=0.866,Cor_{y,x_1}=0.781$) . 
-
-The textbook suggest that the general approaches for dealing with multicollinearity include collecting additional data, model respecification (redefine the regressors, variable elimination), estimation methods (Ridge Regression, Principal-Component Regression). "Variable elimination is often a highly effective technique. However, it may not provide a satisfactory solution if the regressors dropped from the model have significant explanatory power relative to the response y. That is, eliminating regressors to reduce multicollinearity may damage the predictive power of the model." (Montgomery et al., 2012. p.304) In this way, the third multicollinear X3(31.446394) with a weak relationship with y (0.205) should be removed, or even X6(0.0453).
+However, according to the correlation coefficients, X4, X1, and X7 have strongly correlation with y ($Cor_{y,x_4}=0.866, Cor_{y,x_1}=0.781, Cor_{y,x_7}=0.668$). The textbook suggest that the general approaches for dealing with multicollinearity include collecting additional data, model respecification (redefine the regressors, variable elimination), estimation methods (Ridge Regression, Principal-Component Regression). "Variable elimination is often a highly effective technique. However, it may not provide a satisfactory solution if the regressors dropped from the model have significant explanatory power relative to the response y. That is, eliminating regressors to reduce multicollinearity may damage the predictive power of the model." (Montgomery et al., 2012. p.304) In this way, the third multicollinear X3 (31.446394) with a weak relationship with y (0.205) should be considered.
 
 - Correlation with each other
 
-According to the variable names of X4, X1, and X3, they are geographic variables. Predictor X1 is the area of watershed while X4 is the longest stream flow in watershed, x3 is the average slope of watershed. For the given 6 watersheds, X1 and X4 are strongly related. A high correlation (0.921) is expected between these two variables. But X3 is not significently related with X1(-0.078) or X4(0.245). Removing X3 might lose some irreplacable infromation. I
+According to the variable names of X4, X1, and X3, they are geographic variables. Predictor X1 is the area of watershed while X4 is the longest stream flow in watershed, x3 is the average slope of watershed. For the given 6 watersheds, X1 and X4 are strongly related. A high correlation (0.921) is expected between these two variables. But X3 is not significently related with X1(-0.078) or X4 (0.245). Removing X3 might lose some irreplacable infromation. I
 
-Actrually, I don't agree remove any predictor in this stage. Removing any predictor can draw down the VIF significently. After elimination regression, the multicollinearity dissapeared in all the models. We should gather sufficient evidents before removing any predictor.
+- elimination test
+
+Actrually, I don't agree remove any predictor in this stage. Removing any predictor can draw down the VIF significently. After elimination regression, the multicollinearity dissapeared in all the models. We should take more diagnostics and comparisons, gather sufficient evidents before removing any predictor.
+
+|remove| Max.VIF | R-squared| Eliminated model          |New Max.VIF| New R-squared
+| ---- | ------- | -------- | ------------------------- | --------- | --- 
+  none | 106(X4) | 0.947    |/ ,/ ,X3,X4,/ ,X6,X7,X8,X9 |  X7=6.28  | 0.947
+   X1  | 8.70(X4)| 0.947    |/ ,/ ,X3,X4,/ ,X6,X7,X8,X9 |  X7=6.28  | 0.947
+   X2  | 67.4(X4)| 0.947    |/ ,/ ,X3,X4,/ ,X6,X7,X8,X9 |  X7=6.28  | 0.947
+   X3  | 8.87(X4)| 0.941    |X1,X2,/ ,X4,X5,/ ,/ ,X8,X9 |  X1=8.39  | 0.937
+   X4  | 8.38(X1)| 0.945    |X1,/ ,X3,/ ,/ ,X6,X7,X8,X9 |  X9=5.10  | 0.943
+   X5  | 58.4(X4)| 0.947    |/ ,/ ,X3,X4,/ ,X6,X7,X8,X9 |  X7=6.28  | 0.947
+   X6  | 54.8(X4)| 0.939    |X1,X2,/ ,X4,X5,/ ,/ ,X8,X9 |  X1=8.39  | 0.937
+   X7  | 42.0(X1)| 0.939    |X1,X2,/ ,X4,X5,/ ,/ ,X8,X9 |  X1=8.39  | 0.937
+   X8  | 103(X4) | 0.900    |X1,/ ,X3,/ ,/ ,X6,X7,/ ,/  |  X7=3.96  | 0.893
+   X9  | 100(X4) | 0.910    |X1,/ ,X3,/ ,/ ,X6,X7,X8,/  |  X7=3.97  | 0.906
+
+Before elimination, We can find removing x8 or x9 hurts the R-squared most, while removing x1, x2, or x5 affects lesat. After elimination, We can get 3 kinds of model:'346789'($R^2=0.947$);'124589'($R^2=0.937$);'1367(8)(9)'($R^2=0.943~0.906$). It is clear that X1 contain some useful infromation, X2 and X5 help least.
+
+Turning back to the correlation coefficients, X2 and X5 have medium correlation with y ($Cor_{y,x_2}=0.666, Cor_{y,x_5}=-0.62). It is not much different. We look at the context, X5 (surface absorbency index) and X2 (Area impervious to water) have similar effects on initial flow (see the discussion at the end).
+
+Finaliy, Among the four variables (X2, X5, X6, X7) of surface porperties related with initial flow, X2 and X7 have highest correlation, which means X7 may contain the most same information contained in x2. Therefore, if we have to remove one variable, X2 is the best option.
+
+|   |         X1|         X2|         X3|         X4|         X5|         X6|        X7|         X8|         X9|       y
+|---| ---       | ---       | ---       | ---       | ---       | ---       | ---      | ---       | ---       | ---
+ X2 | 0.80125933| 1.00000000|-0.07302375| 0.76056089|-0.48607440| 0.06598115|**0.8324480**| 0.10540203| 0.13331333| 0.66566120
+ X5 |-0.73673561|-0.48607440|-0.40289059|-0.77701188| 1.00000000|-0.27043338|-0.4814787|-0.04005129|-0.10502725|-0.62017585
 
 
 ****
 
-(4) Use the forward selection method to find the best model (use α=0.15) and report the final fitted model with estimated coefficients here.
+(4) The forward selection method (use α=0.15)
 
 Use Stepwise Forward Regression based on p values (use α=0.15)
 
-$$\hat y=2.872+0.168X_3+0.122X_4+3.106X_7$$
+$$\ln(\hat y)=2.872+0.168X_3+0.122X_4+3.106X_7$$
 
 Use Stepwise AIC Forwardd Regression
 
-$$\hat y=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
+$$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 ****
 
-(5) Use the backward elimination method to find the best model (use α=0.05) and report the final fitted model with estimated coefficients here.
+(5) The backward elimination method (use α=0.05)
 
 Stepwise Backward Regression based on p values (use α=0.05) and Stepwise AIC Backward Regression have same results.
 
-$$\hat y=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
+$$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 ****
 
-(6) Use best subsets method (6 models from each size) to find the best model for these data and report the final fitted model with estimated coefficients here.
+(6) Best subsets method
 
 Best subsets method gives a same model.
 
-$$\hat y=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
+$$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
-***
+****
 
-(7) If the final models in the previous 3 methods are different, compare their model adequacy and suggest one best model.
+(7) Compare and suggest one best model
 
 |      Method     |	  By  |      	Keep       |	Remove
-|-----------------| ------ | ------------------| ----
+| --------------- | ------ | ------------------| -----------------
 Stepwise Forward  |	P=0.15| X3, X4, X7	     | X1,X2,X5,X6,X8,X9
 Stepwise Forward  |	AIC   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 Stepwise Backward	| P=0.05 | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 Stepwise Backward	| AIC    | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 Stepwise Both	   | P	   | X3, X4, X7	     | X1,X2,X5,X6,X8,X9
 Stepwise Both	   | AIC	   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
-Best Subset	      |	  /   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
+Best Subset	      |	  p   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
+Best Subset	      |  AIC   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 all possible      |	  /   | X3,X4,X6,X7,X8,X9 | X1,X2,X5
 
 Both models solved the problem of multicollinearity (VIF <10), and small P-values for F test. They don't have serious violation of assumptions about the errors (There is no significant pattern on the plot of studentized residuals versus predicted values from the model with only one predictor. The partial regression plots do not show nonlinear patterns. The points follow approximately straight line on the qq plot). Both of Correlation between observed residuals and expected residuals under normality.The 6-predictor model got 0.9837263 P-value while the 6-predictor model got 0.9856766. 
@@ -303,15 +309,14 @@ Further, considering the context, X8 and X9 are variables of precipitation. The 
  
 | Parameter |Estimates             |                 
 |-----------|----------------------|----------|-----------|-------|-------------------|-----------|---------
-|      model|Estimated coefficients|Partial SS|Std. Error |t test | p-value           |   2.5 %   |   97.5 % 
-|(Intercept)|      2.69180         |     /    |     0.445 | 6.046 |$3.63\times10{-06}$| 1.77080533| 3.61278901
-|         X3|      0.18384         |    5.37  |     0.032 | 5.698 |$8.41\times10{-06}$| 0.11709482| 0.25059326
-|         X4|      0.10905         |    2.98  |     0.026 | 4.244 |     0.000306      | 0.05589763| 0.16220302
-|         X6|     -0.36752         |    1.05  |     0.146 |-2.526 |     0.018898      |-0.66855123| -0.06648201
-|         X7|      4.08497         |    1.87  |     1.213 | 3.367 |     0.002662      | 1.57533753| 6.59460252
-|         X8|      0.61161         |    3.52  |     0.133 | 4.614 |     0.000122      | 0.33738118| 0.88582991
-|         X9|     -0.44764         |    2.83  |     0.108 |-4.135 |     0.000402      |-0.67159465|-0.22368135
-
+|      model|Estimated coefficients|Partial SS|Std. Error |t test | p-value           |  0.357 %  | 99.643 %
+|(Intercept)|      2.69180         |     /    |     0.445 | 6.046 |$3.63\times10{-06}$| 1.37732232| 4.00627202
+|         X3|      0.18384         |    5.37  |     0.032 | 5.698 |$8.41\times10{-06}$| 0.08857700| 0.27911109
+|         X4|      0.10905         |    2.98  |     0.026 | 4.244 |     0.000306      | 0.03318876| 0.18491189
+|         X6|     -0.36752         |    1.05  |     0.146 |-2.526 |     0.018898      |-0.79716475| 0.06213151
+|         X7|      4.08497         |    1.87  |     1.213 | 3.367 |     0.002662      | 0.50312634| 7.66681371
+|         X8|      0.61161         |    3.52  |     0.133 | 4.614 |     0.000122      | 0.22022202| 1.00298907 
+|         X9|     -0.44764         |    2.83  |     0.108 |-4.135 |     0.000402      |-0.76727751|-0.12799849
 
 ****
 
@@ -327,105 +332,60 @@ The value of PRESS is **6.538275**. This model explains **90.8%** of variation i
 
 ****
 
-(e) Report the complete code along with output here.
+#### Discussion
 
-
- Singh (1972) used linear models with a logarithm transformation of the variables. We retained the following
-where the dependent variables can either be total storm flow volume (Qt) in mm, quick flow volume (Qf) in mm or peak flow (Qpk) in m3 sec−1 km−2. Independent variables were storm rainfall (P) in mm, initial flow (Qi) in mm h−1, rainfall frequency (Fp), the inverse of rainfall duration, in h−1 and a dummy variable (CC) representing the treatment effect on basin 7A. CC was 0 and 1 for the calibration (1967–1992) and treated (1994–1998) periods, respectively. β0 to β4 are regression coefficients of the independent variables. All interactions between the independent variables were also tested for significance at α=0.10.
-
-$$ln(Dependent\ Variable)=β_0+β_1lnP+β_2lnQ+β_3lnFP+β_4CC+Interactions+\varepsilon$$
-
-The significance of the regression coefficients (being different from 0) in the models has been tested with a t-test procedure at α=0.10 using the GLM procedure of the SAS system for Windows (SAS Institute, Inc., 1989). A regression coefficient significantly different from 0 for the variable CC indicates that the treatment had a significant effect on the dependent variable. Normality of residuals has been tested using the Shapiro–Wilk test. Selection criteria for all events were the same as for the paired basins approach. However, the rainfall events following night-frost, which may caused localized surface runoff on ice as observed by Prevost et al. (1990), were omitted since these events are too rare to be well represented during the calibration and post-treatment periods. Hence, all events within three weeks following the end of the snowmelt period were not retained. The end of the snowmelt period was obtained from observations in a standard forest snow line at Montmorency Forest. (Guillemette et al., 2005)
+- Comparison VIF before and after elimination regression for each variable.
 
 
 
-- Residual Diagnostics: 
+- Indepency and grouping
 
-Includes plots to examine residuals to validate OLS assumptions
+Linear regression is one of the Watershed Hydrological Model. Singh (1972) used linear models with a logarithm transformation of the variables. We retained the following
 
-There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+$$\ln(Dependent\ Variable)=β_0+β_1\ln P+β_2\ln Q+β_3\ln F_P+β_4CC+Interactions+\varepsilon$$
 
-- Variable selection: 
+where the dependent variables can either be total storm flow volume ($Q_t$) in mm, quick flow volume ($Q_f$) in mm or peak flow ($Q_{pk}$) in $m^3 sec^{−1} km^{−2}$. Independent variables were storm rainfall ($P$) in $mm$, initial flow ($Q_i$) in $mm h^{−1}$, rainfall frequency ($F_p$), the inverse of rainfall duration, in $h^{−1}$ and a dummy variable ($CC$) representing the treatment effect on basin. $CC$ was 0 and 1 for the calibration (1967–1992) and treated (1994–1998) periods, respectively. $β_0$ to $β_4$ are regression coefficients of the independent variables. All interactions between the independent variables were also tested for significance at $α=0.10$. (Guillemette et al., 2005)
 
-Differnt variable selection procedures such as all possible regression, best subset regression, stepwise regression, stepwise forward regression and stepwise backward regression
+Inspired by this theory, I divided the variables to 3 groups:
 
-- Heteroskedasticity: 
+|      P      |    F    |    Q    
+| ----------- | ------- | ------- | ----
+|Precipitation|   Time  | Terrain |Surface
+|      x8     |     x9  |x1: Area of watershed ($mi^2$) |x2: Area impervious to water ($mi^2$)
+|   Rainfall  |Time period during      |x3: Average slope of watershed (percent)| x5: surface absorbency index
+|   (inches)  |which rainfall exceeded |x4: Longest stream flow in watershed| x6: estimated soil storage capacity (inches of water) |
+|             | ¼ inch/hour            |(1000s of feet)|x7: Infiltration rate of water into soil (inches/hour)  |  
 
-Tests for heteroskedasticity include bartlett test, breusch pagan test, score test and f test
+It is resonable that the best should contain at least on variable in each group. In this way, **X8 and X9 are indispensable variables**. We have also know that Setpwise forward method could neglect this context and  is not recommended for this question.
 
-- Measures of influence: 
+- Log and interaction
 
-Use different plots to detect and identify influential observations
+|Transform| interact | Eliminate  |      	model        |number of perdictors|number of vairbales|R-squared
+| ------- | -------- | ---------- | ------------------ | ----               | ----              |----
+ log(all) |    no    |stepboth p  |log(X4)             |  1                 | 1                 | 0.910  
+  log(y)  |    no    |Backward AIC|X3,X4,X6,X7,X8,X9   |  6                 | 6                 | 0.947
+ log(all) |    no    |stepboth AIC|log(X1),log(X3),log(X5),log(X6),log(X8),log(X9)|   6   |  6  | 0.983   
+   Mixed  |   yes    |Backward AIC|X1:X3,X1:X4,log(X8),log(X9)|  7          | 5                 | 0.984   
+ log(all) |    no    |Backward AIC|log(X1),log(X3),log(X5),log(X6),log(X8),log(X9)|  6  | 6     | 0.986   
+  log(y)  |   yes    |Backward AIC|omitted             |15                  | 9                 | 0.994
+ log(all) |   yes    |Backward AIC| omitted            |  22                | 9                 | 0.998 
 
-
-- Collinearity diagnostics: 
-
-VIF, Tolerance and condition indices to detect collinearity and plots for assessing mode fit and contributions of variables
-
-
-x1 : Area of watershed (mi2)  
-x8 : Rainfall (inches)   
-
-x9 : Time period during which rainfall exceeded ¼ inch/hour  
-x4 : Longest stream flow in watershed (1000s of feet)  
-
-x3 : Average slope of watershed (percent)  
+It is obviously that the model of all-log with interaction is overfitting. Therefore, we should control the number of predictors. Since there are 6 predictors by elimination regression. A new model with higher R-squared and less than 7 predictors is better than the solusion in question (7). The best model should be
 
 
-x2 : Area impervious to water (mi2)  
-x5 : surface absorbency index, (0= complete absorbency, 100=no absorbency)  
-x7 : Infiltration rate of water into soil (inches/hour)  
-x6 : estimated soil storage capacity (inches of water)  
+$$\ln(\hat y)=0.57120+0.72550\ln(X_1)+0.41866\ln(X_3)+1.25873\ln(X_5)-0.26702\ln(X_6)+1.62253\ln(X_8)-1.37489\ln(X_9)$$
 
-Full model
 
-eliminated model
+Here I omitted the results of other combination.
 
-- Residual Diagnostics: 
-
-Includes plots to examine residuals to validate OLS assumptions
-
-There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
-
-Residual QQ Plot
-Residual Normality Test
-Residual vs Fitted Values Plot
-Residual Histogram
-
-- Variable selection: 
-
-Differnt variable selection procedures such as all possible regression, best subset regression, stepwise regression, stepwise forward regression and stepwise backward regression
-
-- Heteroskedasticity: 
-
-Tests for heteroskedasticity include bartlett test, breusch pagan test, score test and f test
-
-Bartlett Test
-Breusch Pagan Test
-Score Test
-F Test
-
-- Measures of influence: 
-
-Use different plots to detect and identify influential observations
-
-Cook’s D Bar Plot
-Cook’s D Chart
-DFBETAs Panel
-DFFITs Plot
-Studentized Residual Plot
-Standardized Residual Chart
-Studentized Residuals vs Leverage Plot
-Deleted Studentized Residual vs Fitted Values Plot
-Hadi Plot
-Potential Residual Plot
 
 [1]: Montgomery, D. C., Peck, E. A., & Vining, G. G. (2012). Introduction to linear regression analysis (Vol. 821). John Wiley & Sons.
 
 [2]: Guillemette, F., Plamondon, A. P., Prévost, M., & Lévesque, D. (2005). Rainfall generated stormflow response to clearcutting a boreal forest: peak flow comparison with 50 world-wide basin studies. Journal of hydrology, 302(1-4), 137-153.
 
 
-## 
+
+### Code and output
 
 #### (a) The matrix of scatterplots and the correlation matrix
 
@@ -493,6 +453,12 @@ ols_vif_tol(model_wf_full)
 
 ```{r, eval=T, include = T}
 # build full log model
+
+# table_wf_logy <- table_wf %>% mutate(logy=log(y))
+# table_wf_logy$y <- NULL
+# library(GGally)
+# ggpairs(data=table_wf_logy[c(1:10)])
+
 model_wf_full_log <- lm(log(y) ~ X1 + X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
 summary(model_wf_full_log)
 Anova(model_wf_full)
@@ -510,7 +476,7 @@ library(dplyr)
 
 #### (d) (2) Collinearity diagnostics
 
-```{r , eval=F, include = T}
+```{r , eval=T, echo=FALSE, include = T}
 library(MASS)
 # remove 1-9
 model_wf_rm1_log <- lm(log(y) ~ X2 + X3 + X4 + X5 + X6 + X7 + X8 + X9, data=table_wf)
@@ -660,7 +626,7 @@ plot(k)
 # build model 437896
 model_wf_437896_log <- lm(log(y) ~ X4 + X3 + X7 + X8 + X9 + X6, data=table_wf)
 ols_regress(model_wf_437896_log)
-confint(model_wf_437896_log, level=0.95/1) # Bonferroni joint confidence interval #
+confint(model_wf_437896_log, level = 1-(0.05/7)) # Bonferroni joint confidence interval #
 
 # Collinearity Diagnostics #
 ols_vif_tol(model_wf_437896_log)
@@ -709,33 +675,6 @@ ols_plot_comp_plus_resid(model_wf_437_log)
 
 ```
 
-- Model 137689
-
-```{r, eval=T, include = T}
-# build model 137689
-model_wf_137689_log <- lm(log(y) ~ X1 + X3 + X7 + X6 + X8 + X9, data=table_wf)
-ols_regress(model_wf_137689_log)
-
-# Collinearity Diagnostics #
-ols_vif_tol(model_wf_137689_log)
-
-#Model Fit Assessment
-ols_plot_diagnostics(model_wf_137689_log)
-
-# Part & Partial Correlations
-ols_test_correlation(model_wf_137689_log) # Correlation between observed residuals and expected residuals under normality.
-
-# Residual Normality Test
-ols_test_normality(model_wf_137689_log) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
-
-# Variable Contributions
-ols_plot_added_variable(model_wf_137689_log)
-
-# Residual Plus Component Plot
-ols_plot_comp_plus_resid(model_wf_137689_log)
-
-```
-
 
 ```{r, eval=T, include = T}
 # Check PRESS Statistic
@@ -743,14 +682,14 @@ ols_press(model_wf_full)
 ols_press(model_wf_full_log)
 ols_press(model_wf_437896_log)
 ols_press(model_wf_437_log)
-ols_press(model_wf_137689_log)
+# ols_press(model_wf_137689_log)
 
 # prediction power
 ols_pred_rsq(model_wf_full)
 ols_pred_rsq(model_wf_full_log)
 ols_pred_rsq(model_wf_437896_log)
 ols_pred_rsq(model_wf_437_log)
-ols_pred_rsq(model_wf_137689_log)
+# ols_pred_rsq(model_wf_137689_log)
 
 ```
 
@@ -862,11 +801,11 @@ model_wf_489_log_inter <- lm(log(y) ~ (X4 + X8 + X9 )^2, data=table_wf)
 model_wf_489_aic_log_inter <- stepAIC(model_wf_489_log_inter)
 
 # Interaction regression by groups
-model_wf_3g_log_inter <- lm(log(y) ~ (X1 + X3 + X4 )^2 + (X2+ X5+X6 + X7)^2 + (X8 + X9)^2, data=table_wf)
+model_wf_3g_log_inter <- lm(log(y) ~ (log(X4)  + log(X6))^2 + log(X8) + log(X9), data=table_wf)
 model_wf_3g_aic_log_inter <- stepAIC(model_wf_3g_log_inter)
 
 # Interaction regression by groups1
-model_wf_3g1_log_inter <- lm(log(y) ~ (X1 + X2 + X5 )^2 + (X3 +X6 + X7)^2 + (X4 +X8 + X9)^2, data=table_wf)
+model_wf_3g1_log_inter <- lm(log(y) ~ (log(X3) +log(X7))^2 + log(X8) + log(X9), data=table_wf)
 model_wf_3g1_aic_log_inter <- stepAIC(model_wf_3g1_log_inter)
 
 # Comparison
@@ -903,7 +842,7 @@ model_wf_mix1 <- lm(log(y) ~ (X1 + X3 + X4 )^2 + log(X2+ X5+X6 + X7) + log(X8) +
 model_wf_aic_mix1 <- stepAIC(model_wf_mix1)
 
 # Mixed regression 2
-model_wf_mix2 <- lm(log(y) ~ (X1 + X3 + X4 )^2 + log(X2)+log(X5)+log(X6)+log(X7) + log(X8) + log(X9), data=table_wf)
+model_wf_mix2 <- lm(log(y) ~ (log(X1) + log(X3) + log(X4) )^2 + (log(X2)+log(X5)+log(X6)+log(X7))^2 + log(X8) + log(X9), data=table_wf)
 model_wf_aic_mix2 <- stepAIC(model_wf_mix2)
 
 # Mixed regression 3
@@ -940,33 +879,33 @@ k <- ols_step_both_aic(model_wf_all_log)
 k
 # plot(k)
 
+# Stepwise Regression based on p values for full log model #
+# k <- ols_step_both_p(model_wf_full_log_inter)
+# k
+# plot(k)
+
+# Stepwise AIC Regression for all full model #
+# k <- ols_step_both_aic(model_wf_full_log_inter)
+# k
+# plot(k)
+
 # Stepwise Regression based on p values for all log model #
-k <- ols_step_both_p(model_wf_full_log_inter)
-k
+# k <- ols_step_both_p(model_wf_all_log_inter)
+# k
 # plot(k)
 
 # Stepwise AIC Regression for all log model #
-k <- ols_step_both_aic(model_wf_full_log_inter)
-k
+# k <- ols_step_both_aic(model_wf_all_log_inter)
+# k
 # plot(k)
 
 # Stepwise Regression based on p values for all log model #
-k <- ols_step_both_p(model_wf_all_log_inter)
-k
+# k <- ols_step_both_p(model_wf_mix2 )
+# k
 # plot(k)
 
-# Stepwise AIC Regression for all log model #
-k <- ols_step_both_aic(model_wf_all_log_inter)
-k
-# plot(k)
-
-# Stepwise Regression based on p values for all log model #
-k <- ols_step_both_p(model_wf_mix2 )
-k
-# plot(k)
-
-k <- ols_step_both_aic(model_wf_mix2)
-k
+# k <- ols_step_both_aic(model_wf_mix2)
+# k
 # plot(k)
 
 # Stepwise Regression based on p values for X4 eliminated model#
@@ -992,14 +931,14 @@ k
 
 ```{r, eval=F, include = T}
 # All Possible Regression for full log model #
-k <- ols_step_all_possible(model_wf_full_log)
+# k <- ols_step_all_possible(model_wf_full_log)
 # plot(k)
-head(arrange(k, desc(adjr)))
+# head(arrange(k, desc(adjr)))
 
 # All Possible Regression for all log model #
-k <- ols_step_all_possible(model_wf_all_log)
+# k <- ols_step_all_possible(model_wf_all_log)
 # plot(k)
- head(arrange(k, desc(adjr)))
+# head(arrange(k, desc(adjr)))
 
 # All Possible Regression for 3g log model #
 #!!!!!!!!!!!! k <- ols_step_all_possible(model_wf_3g_log_inter)
@@ -1069,56 +1008,56 @@ ols_plot_added_variable(model_wf_aic_all_log)
 ols_plot_comp_plus_resid(model_wf_aic_all_log)
 ```
 
-- Check model aic_log_inter
+- Check model aic_mix1
 
 ```{r, eval=T, include = T}
 
-summary(model_wf_aic_log_inter)
-Anova(model_wf_aic_log_inter)
+summary(model_wf_mix1)
+Anova(model_wf_mix1)
 
 # Collinearity Diagnostics #
-ols_vif_tol(model_wf_aic_log_inter)
+ols_vif_tol(model_wf_mix1)
 
 #Model Fit Assessment
-ols_plot_diagnostics(model_wf_aic_log_inter)
+ols_plot_diagnostics(model_wf_mix1)
 
 # Part & Partial Correlations
-ols_test_correlation(model_wf_aic_log_inter) # Correlation between observed residuals and expected residuals under normality.
+ols_test_correlation(model_wf_mix1) # Correlation between observed residuals and expected residuals under normality.
 
 # Residual Normality Test
-ols_test_normality(model_wf_aic_log_inter) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+ols_test_normality(model_wf_mix1) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
 
 # Variable Contributions
-ols_plot_added_variable(model_wf_aic_log_inter)
+ols_plot_added_variable(model_wf_mix1)
 
 # Residual Plus Component Plot
-ols_plot_comp_plus_resid(model_wf_aic_log_inter)
+ols_plot_comp_plus_resid(model_wf_mix1)
 ```
 
-- Check model mixed
+- Check model 3g
 
 ```{r, eval=T, include = T}
 
-summary(model_wf_aic_mix2 )
-Anova(model_wf_aic_mix2 )
+# summary(model_wf_3g_aic_log_inter)
+# Anova(model_wf_3g_aic_log_inter)
 
 # Collinearity Diagnostics #
-ols_vif_tol(model_wf_aic_mix2)
+# ols_vif_tol(model_wf_3g_aic_log_inter)
 
 #Model Fit Assessment
-ols_plot_diagnostics(model_wf_aic_mix2)
+# ols_plot_diagnostics(model_wf_3g_aic_log_inter)
 
 # Part & Partial Correlations
-ols_test_correlation(model_wf_aic_mix2) # Correlation between observed residuals and expected residuals under normality.
+# ols_test_correlation(model_wf_3g_aic_log_inter) # Correlation between observed residuals and expected residuals under normality.
 
 # Residual Normality Test
-ols_test_normality(model_wf_aic_mix2) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+# ols_test_normality(model_wf_3g_aic_log_inter) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
 
 # Variable Contributions
-ols_plot_added_variable(model_wf_aic_mix2)
+# ols_plot_added_variable(model_wf_3g_aic_log_inter)
 
 # Residual Plus Component Plot
-ols_plot_comp_plus_resid(model_wf_aic_mix2)
+# ols_plot_comp_plus_resid(model_wf_3g_aic_log_inter)
 ```
 
 - Check model all log interaction
@@ -1128,22 +1067,22 @@ summary(model_wf_aic_all_log_inter)
 Anova(model_wf_aic_all_log_inter)
 
 # Collinearity Diagnostics #
-ols_vif_tol(model_wf_aic_all_log_inter)
+# ols_vif_tol(model_wf_aic_all_log_inter)
 
 #Model Fit Assessment
-ols_plot_diagnostics(model_wf_aic_all_log_inter)
+# ols_plot_diagnostics(model_wf_aic_all_log_inter)
 
 # Part & Partial Correlations
-ols_test_correlation(model_wf_aic_all_log_inter) # Correlation between observed residuals and expected residuals under normality.
+# ols_test_correlation(model_wf_aic_all_log_inter) # Correlation between observed residuals and expected residuals under normality.
 
 # Residual Normality Test
-ols_test_normality(model_wf_aic_all_log_inter) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
+# ols_test_normality(model_wf_aic_all_log_inter) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality #
 
 # Variable Contributions
-ols_plot_added_variable(model_wf_aic_all_log_inter)
+# ols_plot_added_variable(model_wf_aic_all_log_inter)
 
 # Residual Plus Component Plot
-ols_plot_comp_plus_resid(model_wf_aic_all_log_inter)
+# ols_plot_comp_plus_resid(model_wf_aic_all_log_inter)
 
 ```
 
