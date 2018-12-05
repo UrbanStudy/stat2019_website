@@ -167,13 +167,13 @@ According to the result of VIF test (variance inflation factor), the model does 
 
 (v) Interpret the estimated coefficient of rainfall predictor
 
-Coefficient of 511.713 in the full model suggests the peak rate of flow increases by **511.713** cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
+Coefficient of 511.713 in the full model suggests the average peak rate of flow increases by **511.713** cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
 
 ****
 
 (d) Log of response
 
-$$\ln(\hat y)=3.402256-0.013532X_1-1.023664X_2+0.177966X_3+0.108788X_4$$
+$$\hat{\ln(y)}=3.402256-0.013532X_1-1.023664X_2+0.177966X_3+0.108788X_4$$
 $$-0.009622X_5-0.389474X_6+4.233475X_7+0.63007X_8-0.462276X_9$$
 
 (1) Significant
@@ -206,7 +206,7 @@ According to the variable names of X4, X1, and X3, they are geographic variables
 
 - elimination test
 
-Actrually, I don't agree remove any predictor in this stage. Removing any predictor can draw down the VIF significently. Before elimination, X4 contribute most of VIF. After elimination regression, the multicollinearity dissapeared in all the models. We should take more diagnostics and comparisons, gather sufficient evidents before removing any predictor.
+Actrually, I don't agree remove any predictor in this stage. Removing any predictor can draw down the VIF significently. Before elimination, X4 contribute most of VIF. **After elimination regression, the multicollinearity dissapeared in all the models**. We should take more diagnostics and comparisons, gather sufficient evidents before removing any predictor.
 
 |remove| Max.VIF | R-squared| Eliminated model          |New Max.VIF| New R-squared
 | ---- | ------- | -------- | ------------------------- | --------- | --- 
@@ -221,9 +221,9 @@ Actrually, I don't agree remove any predictor in this stage. Removing any predic
    X8  | 103(X4) | 0.900    |X1,/ ,X3,/ ,/ ,X6,X7,/ ,/  |  X7=3.96  | 0.893
    X9  | 100(X4) | 0.910    |X1,/ ,X3,/ ,/ ,X6,X7,X8,/  |  X7=3.97  | 0.906
 
-Before elimination, We can find removing x8 or x9 hurts the R-squared most, although they have low correlation with ln(y). Removing x1, x2, or x5 affects lesat. After elimination, We can get 3 kinds of model:'346789'($R^2=0.947$); '124589'($R^2=0.937$); '1367(8)(9)'($R^2=0.943~0.906$). X8 appeared in all the eliminated models unless we remove it manually. X2 and X5 apeared least than others. 
+Before elimination regression, We can find removing x8 or x9 hurts the R-squared most, although they have low correlation with ln(y). Removing x1, x2, or x5 affects lesat. After elimination, We can get 3 kinds of model:'346789'($R^2=0.947$); '124589'($R^2=0.937$); '1367(8)(9)'($R^2=0.943-0.906$). X8 appeared in all the eliminated models unless we remove it manually. X2 and X5 apeared least than others. 
 
-Turning back to the correlation coefficients, X5 have stronger correlation with ln(y) than X2 ($Cor(\ln(y),x_2)=0.658, Cor(\ln(y),x_5)=-0.723$). We look at the context, X1 (Area of watershed) is a variable of terrain, X5 (surface absorbency index) and X2 (Area impervious to water) which are varibles of surface properties, which have similar effects on initial flow (see the discussion at the end).
+Turning back to the correlation coefficients, X5 have stronger correlation with ln(y) than X2 ($Cor(\ln(y),X_2)=0.658, Cor(\ln(y),X_5)=-0.723$). We look at the context, X1 (Area of watershed) is a variable of terrain, X5 (surface absorbency index) and X2 (Area impervious to water) which are varibles of surface properties, which have similar effects on initial flow (see the discussion at the end).
 
 Finaliy, Among the four variables (X2, X5, X6, X7) of surface porperties related with initial flow, X2 and X7 have highest correlation, which means X7 may contain the most same information contained in X2. Therefore, if we have to remove one variable, X2 is the best option. We also can conform it by the results of further transformation and interaction regression.
 
@@ -239,11 +239,11 @@ Finaliy, Among the four variables (X2, X5, X6, X7) of surface porperties related
 
 Use Stepwise Forward Regression based on p values (use α=0.15)
 
-$$\ln(\hat y)=2.872+0.168X_3+0.122X_4+3.106X_7$$
+$$\hat{\ln(y)}=2.872+0.168X_3+0.122X_4+3.106X_7$$
 
 Use Stepwise AIC Forwardd Regression
 
-$$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
+$$\hat{\ln(y)}=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 ****
 
@@ -251,7 +251,7 @@ $$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 Stepwise Backward Regression based on p values (use α=0.05) and Stepwise AIC Backward Regression have same results.
 
-$$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
+$$\hat{\ln(y)}=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 ****
 
@@ -259,7 +259,7 @@ $$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 Best subsets method gives a same model.
 
-$$\ln(\hat y)=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
+$$\hat{\ln(y)}=2.692+0.184X_3+0.109X_4-0.368X_6+4.085X_7+0.612X_8-0.448X_9$$
 
 ****
 
@@ -308,7 +308,7 @@ Further, considering the context, X8 and X9 are variables of precipitation. The 
 
  
 | Parameter |Estimates             |                 
-|-----------|----------------------|----------|-----------|-------|---------------- ---|-----------|---------
+|-----------|----------------------|----------|-----------|-------|--------------------|-----------|---------
 |      model|Estimated coefficients|Partial SS|Std. Error |t test | p-value            |  0.357 %  | 99.643 %
 |(Intercept)|      2.69180         |     /    |     0.445 | 6.046 |$3.63\times10^{-06}$| 1.37732232| 4.00627202
 |         X3|      0.18384         |    5.37  |     0.032 | 5.698 |$8.41\times10^{-06}$| 0.08857700| 0.27911109
@@ -369,7 +369,7 @@ It is resonable that the best should contain at least on variable in each group.
 It is obviously that the model of all-log with interaction is overfitting. Therefore, we should control the number of predictors. Since there are 6 predictors by elimination regression. A new model with higher R-squared and less than 7 predictors is better than the solusion in question (7). The best model should be
 
 
-$$\ln(\hat y)=0.57120+0.72550\ln(X_1)+0.41866\ln(X_3)+1.25873\ln(X_5)-0.26702\ln(X_6)+1.62253\ln(X_8)-1.37489\ln(X_9)$$
+$$\hat{\ln(y)}=0.57120+0.72550\ln(X_1)+0.41866\ln(X_3)+1.25873\ln(X_5)-0.26702\ln(X_6)+1.62253\ln(X_8)-1.37489\ln(X_9)$$
 
 
 If we try other combination mixed log and interaction, the results is interesting. For example, single variable model (log(X4)) has higher R-squared than 3-4-7 model. A mixed combination of X1:X3,X1:X4,ln(X8),ln(X9) with 5 variables has higher R-squared than 3-4-6-7-8-9 model. Due to time constraints, I didn't tied all the possible combinations. It also might has a better answer if we use glm.
