@@ -1,0 +1,1289 @@
+---
+title: 'STAT561 HW'
+author: "Shen Qu"
+date: "Fall 2018"
+output: html_document
+---
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## HW1
+
+**1.13** If $P(A)=1/3$ and $P(B^c)=1/4$, can A and B be disjoint? Explain.  
+
+> According to properties of the probability function
+
+$$P(B)=1-P(B^c)=1-\frac14=\frac34$$
+
+> According to the Bonferroni's Inequality:
+
+$$P(A_1\cap ...\cap A_n)\ge\sum_{i=1}^\infty P(A_i)-(n-1)$$
+
+$$\implies\quad P(A\cap B)\ge P(A)+P(B)-(2-1)=\frac13+\frac34-1=\frac1{12}$$
+
+> According to properties of the probability function, $A\cap B\ne\emptyset$. Therefore, A and B don't satisfy the definition of pairwise disjoint.
+
+
+**1.19** If a multivariate function has continuous partial derivatives, the order in which the derivatives are calculated does not matter. Thus, for example, the function f(x, y) of two variables has equal third partials  
+
+$$\frac{\partial^3}{\partial x^2\partial y}f(x,y)=\frac{\partial^3}{\partial y\partial x^2}f(x,y)$$
+
+   (a) How many fourth partial derivatives does a function of three variables have? 
+    
+ > We can write the function as:
+ 
+$$\frac{\partial^4}{\partial V_1^{r_1}\partial V_2^{r_2}\partial V_3^{r_3}}f(x,y,z),\quad \sum _{i=1}^3r_i=4$$
+
+ > This question is an elementary combinatorics using the stars and bars method, which is also called putting n indistinguishable balls into r distinguishable bins.
+The number of possible derivatives is equal to the number of possible arrangements of putting the 4 index into the 3 bins, which is the arrangement of the index and the walls of the bins. 3 bins make 3-1=2 walls. Thus, we count all of the **unordered** arrangements of 4 tasks in 6 ways (2 walls and 4 index) **without replacement**. 
+We calculate the combination $\binom64$. The result is 15.
+
+```{r, include=FALSE}
+C <- function(n,r){choose(n,r)} # combination
+P <- function(n,r){choose(n,r) * factorial(r)} # permutation
+C(6,4)
+
+```
+
+   (b) Prove that a function of n variables has $\binom{n+r-1}{r})$ rth partial derivatives.  
+
+ > We can write the function as:
+
+$$\frac{\partial^{r}}{\partial V_1^{r_1}\partial V_2^{r_2}...\partial V_n^{r_i}}f(V_1,V_2,...V_n),\quad r=\sum_{i=1}^n r_i$$
+
+ > According the method in question (a),we count all of the unordered arrangements of r tasks in (n+r-1) ways (n-1 walls and r index) **without replacement**
+
+$$\binom {n+r-1}r$$
+
+ > This is also a multiset coefficient of cardinality r, with elements taken from a finite set of cardinality n, a notation that is meant to resemble that of binomial coefficients
+ 
+$$\bigg (\binom nr\bigg)=\binom {n+r-1}r=\frac{(n+r-1)!}{r!(n-1)!}=\frac{(n+r-1)...(n+2)(n+1)n}{r!}$$
+
+ > We also know
+ 
+$$\binom{n+r-1}{r-1}=\binom{n+r-1}{n}$$
+
+
+**1.20** My telephone rings 12 times each week, the calls being randomly distributed among the 7 days. What is the probability that I get at least one call each day?  
+
+<!--[Answer: .2285](https://jcnts.wordpress.com/2011/05/15/at-least-one-call-each-day/)(https://math.stackexchange.com/questions/2421875/what-is-the-probability-i-get-at-least-one-call-each-day-if-my-telephone-rings?rq=1)-->
+
+ > This question is about enumerating methods of counting to construct probability assignments on finite sample spaces. Each call is unique and randomly assigned to a day independently. There are a total of $7^{12}$ assignments.  
+   Firstly, We use $P_i,\ i=1,2,...7$ to represent the porbability of no call on i days. When no call on 1 day, the number of assignments of rest days includes 6 ordered choosing tasks in 12 ways with replacement. In this way, when no call on 6 day the number of assignments of rest days includes 1 ordered choosing tasks in 12 ways with replacement. The probabilities are:
+ 
+$$P_i=\frac{6^{12}}{7^{12}},\ \frac{5^{12}}{7^{12}},..\frac{1^{12}}{7^{12}},\ 0$$
+
+
+
+ > Secondly, we use $A_i,\ i=1,2,...7$ represent the combination of days. The probability of no call is:
+
+$$P(A_1\cup A_2\cup...A_7)=P(\cup_{i=1}^7A_i)=\sum_{i=1}^7P(A_i)-\sum_{i<j}P(A_i\cap A_j)+\sum_{i<j<k}P(A_i\cap A_j\cap A_k)-...+P(\cap_{i=1}^7A_i)$$
+
+$$=\binom71P_1-\binom72P_2+\binom73P_3-...-\binom76P_6+\binom77P_7$$
+
+ $$=\binom71\frac{6^{12}}{7^{12}}-\binom72\frac{5^{12}}{7^{12}}+\binom73\frac{4^{12}}{7^{12}}-\binom74\frac{3^{12}}{7^{12}}+\binom75\frac{2^{12}}{7^{12}}-\binom76\frac{1^{12}}{7^{12}}+0=\sum_{k=1}^{7}(-1)^{7-k}\binom{7}{k}(\frac{7-k}{7})^{12}$$
+
+ > The probability of at least one call each day is:
+
+ $$1-P(A_1\cup A_2\cup...A_7)=1-\sum_{k=1}^{7}(-1)^{7-k}\binom{7}{k}(\frac{7-k}{7})^{12}$$
+
+ > I complete the calculation in R: 
+
+```{r}
+1-(C(7,1)*6^12-C(7,2)*5^12+C(7,3)*4^12-C(7,4)*3^12+C(7,5)*2^12-C(7,6)*1^12)/(7^12)
+```
+
+ > I also try an incomprehensible way for me. Using the binomial distribution with parameters _size_ and _prob_, the density is:
+
+$$p(x) = \binom nxp^x (1-p)^{n-x},\ for\ x = 0, …, n$$
+
+ > Convert this formula by two methord in R, the results is close.
+
+```{r}
+# X1…n ∼Binomial(size,p)
+# Generate 1000000 occurrences of 12 calls, each with 7/12 probability
+# Finding density with simulation
+mean(rbinom(1000000,12,7/12)==7)
+# Calculating exact probability density
+dbinom(7, 12, 7/12)
+```
+
+
+**1.27** Verify the following identities for $n\ge2$.  
+
+(a) $\sum_{k=0}^n(-1)^k(_k^n)=0$  
+
+ > When n is odd, the formula is:
+
+$$\sum_{k=0}^n(-1)^k(_k^n)=\binom n0-\binom n1+\binom n2...-\binom n{n-2}+\binom n{n-1}-\binom nn$$
+
+$$=\binom n0-\binom nn+\Big[\binom n{n-1}-\binom n1\Big]+\Big[\binom n2-\binom n{n-2}\Big]...$$
+
+$$\because\quad \binom nk=\frac{n!}{k!(n-k)!}=\frac{n!}{(n-k)![n-(n-k)]!}=\binom n{n-k}$$
+
+ > All $\binom nk and \binom n{n-k}$ which are equal and have opposite signs. Thus, all pairs cancel and the sum is zero.  
+ 
+ > When n is even, in the same way, we know that: 
+
+$$\sum_{k=1}^{n-1}(-1)^k\binom{n-1}k=\Bigg[-\binom{n-1}1+\binom{n-1}2-\binom{n-1}3...-\binom{n-1}{n-3}+\binom {n-1}{n-2}\Bigg]-\binom{n-1}{n-1}=-\binom{n-1}{n-1}=-1$$
+
+$$\sum_{k=1}^{n-1}(-1)^k\binom{n-1}{k-1}=-\binom{n-1}0+\Bigg[\binom{n-1}1-\binom{n-1}2...-\binom{n-1}{n-4}+\binom {n-1}{n-3}-\binom{n-1}{n-2}\Bigg]=-\binom{n-1}{0}=-1$$
+
+
+ > When n is even, the formula is:
+
+$$\sum_{k=0}^n(-1)^k(_k^n)=\binom n0-\binom n1+\binom n2...+\binom n{n-2}-\binom n{n-1}+\binom nn$$
+
+$$=1+1-\binom n1+\binom n2...+\binom n{n-2}-\binom n{n-1}=2+\sum_{k=1}^{n-1}(-1)^k(_k^n)$$
+
+  > According to the Pascal's rule, a combinatorial identity about binomial coefficients
+ 
+ $$\binom nk=\binom {n-1}{k-1}+\binom {n-1}{k}$$
+
+$$\therefore\quad \sum_{k=0}^n(-1)^k(_k^n)=2+\sum_{k=1}^{n-1}(-1)^k\bigg[\binom {n-1}{k-1}+\binom {n-1}{k}\bigg]$$
+
+$$=2+\sum_{k=1}^{n-1}(-1)^k\binom {n-1}{k-1}+\sum_{k=1}^{n-1}(-1)^k\binom {n-1}{k}=2-1-1=0$$
+
+ > Therefore, for k>0, $\sum_{k=0}^n(-1)^k(_k^n)=0$
+
+(b) $\sum_{k=1}^nk\binom{k}n=n2^{n-1}$  
+
+$$\sum_{k=1}^nk(_k^n)=\binom n1+2\binom n2+3\binom n3...+(n-2)\binom n{n-2}+(n-1)\binom n{n-1}+n\binom nn$$
+
+$$\sum_{k=1}^nk(_k^n)=\sum_{k=1}^n\frac{kn!}{k!(n-k)!}=\sum_{k=1}^nn\frac{(n-1)!}{(k-1)!(n-1-k+1)}=n\sum_{k=1}^n\binom{n-1}{k-1}$$
+
+ > According to the Binomial theorem, set x=1, j=k-1, m=n-1
+
+$$\sum_{j=0}^m(_j^m)x^j=(1+x)^m \implies \sum_{k=1}^{n-1}\binom{n-1}{k-1}1^{k-1}=(1+1)^{n-1}=2^{n-1} $$
+
+$$\therefore\quad \sum_{k=1}^nk\binom{k}n=n2^{n-1}$$
+
+(c) $\sum_{k=1}^n(-1)^{k+1}k(_k^n)=0$  
+
+ > According question (a) $\sum_{j=0}^m(-1)^j\binom{m}j=0$, set j=k-1, m=n-1.
+
+$$\implies \sum_{k=1}^{n-1}(-1)^{k-1}\binom{n-1}{k-1}=0$$
+
+
+**1.38** Prove each of the following statements. ( Assume that any conditioning event has positive probability.)  
+
+(a) If P(B) = 1 , then P(A|B) = P(A) for any A.  
+
+ $$\because\quad P(B)=1,\quad \text{according Theorem 1.2.8}\quad P(B^c)=1-P(B)=0\quad \therefore A\cap B^c=\emptyset$$
+ 
+  $$\text{according Theorem 1.2.11}\quad P(A)=P(A\cap B)+P(A\cap B^c)=P(A\cap B)+P(\emptyset)=P(A\cap B)$$
+ 
+ > According to the definition of **conditional probability of A given B**
+
+$$\therefore\quad P(A|B)=\frac{P(A\cap B)}{P(B)}=\frac{P(A)}1=P(A)$$
+
+(b) If A $\subset$ B, then P(B|A) = 1 and P(A|B) = P(A)/P(B).  
+
+$$When A\subset B,\quad A\cap B=A,\quad P(A\cap B)=P(A)$$
+
+$$\therefore\quad P(B|A)=\frac{P(A\cap B)}{P(A)}=\frac{P(A)}{P(A)}=1$$
+
+(c) If A and B are mutually exclusive, then  
+
+ > According to the Axiom of Finite Additivity: If A and B are disjoint, then 
+
+$$P(A\cup B) = P(A) + P(B)$$
+
+$$And\quad A\subset A\cup B,\quad A\cap(A\cup B)=A$$
+
+$$\therefore\quad P(A|A\cup B)=\frac{P(A\cap(A\cup B))}{P(A\cup B)} =\frac{P(A)}{P(A) + P(B)}$$
+
+(d) $P(A\cap B\cap C) = P(A|B\cap C)P(B|C)P(C)$ .  
+
+ > According to the definition of **conditional probability of A given B**
+
+$$P(A|B)=\frac{P(A\cap B)}{P(B)},\quad then\quad P(A\cap B)=P(A|B)P(B)$$
+
+$$\therefore P(A\cap (B\cap C)) = P(A|(B\cap C))P(B\cap C)=P(A|B\cap C)\Big[P(B|C)P(C)\Big]$$
+
+$$= P(A|B\cap C)P(B|C)P(C)$$
+
+
+
+
+
+
+## HW2
+
+**1 .37**Some variations of Example 1.3.4.
+
+(a) In the warden's calculation it was assumed that if A were to be pardoned, then with equal probability the warden would tell A that either B or C would die. However, this need not be the case. The warden can assign probabilities Y and 1-Y to these events, as shown here:
+
+
+Prisoner pardoned | Warden tells A |
+|---|---|---
+A | B dies | with probability Y
+A | C dies | with probability 1-Y
+B | C dies | 
+C | B dies | 
+
+Calculate P(A|W) as a function of Y. For what values of Y is P(A|W) less than,equal to, or greater than 1/3?  
+
+ > A, B, C is a partitions of sample space. According the Bayes' rule
+ 
+$$P(A|W)=\frac{P(W|A)P(A)}{P(W|A)P(A)+P(W|B)P(B)+P(W|C)P(C)}=\frac{\gamma\frac13}{\gamma\frac13+0\frac13+\frac13}=\frac{\gamma}{\gamma+1}$$
+
+$$P(A|W)=\frac{\gamma}{\gamma+1}=\begin{cases}<\frac13&\gamma<\frac12\\=\frac13&\gamma=\frac12\\>\frac13&\gamma>\frac12\end{cases}$$
+
+(b) Suppose again that Y = 1/2. After the warden tells A that B will die, A thinks for a while and realizes that his original calculation was false. However, A then gets a bright idea. A asks the warden if he can swap fates with C. The warden, thinking that no information has been passed, agrees to this. Prove that A's reasoning is now correct and that his probability of survival has jumped to 2/3!
+
+$$P(C|W)=\frac{P(W|C)P(C)}{P(W|A)P(A)+P(W|B)P(B)+P(W|C)P(C)}=\frac{\frac13}{\frac12\frac13+0\frac13+\frac13}=\frac23$$
+
+ > Therefore, if A swap fates with C, his probability of survival is 2/3.
+
+**1 .39** A pair of events A and B cannot be simultaneously mutually exclusive and independent. Prove that if P(A) > 0 and P(B) > 0, then:
+
+(a) If A and B are mutually exclusive, they cannot be independent.
+
+ > When A and B are pairwise disjoint, $P(A\cap{B})=0$. 
+
+$$\because\quad P(A)>0,\ P(B)>0,\ P(A)P(B)>0\quad \therefore\quad P(A)P(B)\ne P(A\cap{B})$$
+
+ > Therefore, A and B does not satisfy the definition of **statistically independent**
+
+(b) If A and B are independent, they cannot be mutually exclusive.
+
+ > Acrroding the definition of statistically independent, When A and B are independent, $P(A\cap{B})=P(A)P(B)$. For P(A)>0 and P(B)>0, P(A)\cap P{B})>0, which means $A\cap B\ne\emptyset$. Therefore, A and B does not satisfy the definition of **paiwise disjoint**
+
+**1.47** Prove that the following functions are cdfs.
+
+ > According the Theorem 1.5.3 about **cumulative distribution function**, A cdf F(x) should satisfy 3 conditions:   
+a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$;  
+b. F is non-decreasing; and   
+c. F is right-continuous; that is, for every number x0, $\lim_{x\to\infty}F(x)=F(x_0)$
+
+(a) $\frac12+\frac1\pi\tan^{-1}(x), x\in-(\infty,\infty)$
+
+$$\lim_{x\to-\infty}F(x)=\lim_{x\to-\infty}[\frac12+\frac1\pi\tan^{-1}(x)]=\frac12+\frac1\pi(-\frac\pi2)=0$$
+
+$$\lim_{x\to\infty}F(x)=\frac12+\frac1\pi(\frac\pi2)=1$$
+
+ > This function satisfies the condition a. Differentiating F(x) gives
+
+$$F(x)'=\frac\partial{\partial{x}}[\frac12+\frac1\pi\tan^{-1}(x)]=\frac1{\pi(1+x^2)}>0$$
+
+ > showing that F(x) is increasing and right-continuous. F(x) is a continuous cdf.
+
+(b) $(1+e^{-x})^{-1} , x\in(-\infty,\infty)$
+
+$$\because\quad \lim_{x\to-\infty}e^x=0,\quad\lim_{x\to-\infty}e^{-x}=\infty,\quad \lim_{x\to-\infty}\frac1{1+e^{-x}}=0\quad \therefore\lim_{x\to-\infty}F(x)=0$$
+
+$$\text{in the same way, }\lim_{x\to\infty}F(x)=\lim_{x\to\infty}\frac1{1+e^{-x}}=\lim_{x\to\infty}\frac1{1+0}=1$$
+
+ > This function satisfies the condition a. Differentiating F(x) gives
+
+$$F(x)'=\frac\partial{\partial{x}}\frac1{1+e^{-x}}=\frac{e^{-x}}{(1+e^{-x})^2}>0$$
+
+ > showing that F(x) is increasing and right-continuous. F(x) is a continuous cdf.
+
+(c) $e^{-e^{-x}}, x\in(-\infty,\infty)$
+
+$$\because\quad \lim_{x\to-\infty}e^x=0,\quad\lim_{x\to-\infty}e^{-x}=\infty,\quad\lim_{x\to-\infty}e^{e^{-x}}=\infty,\quad \therefore\lim_{x\to-\infty}e^{-e^{-x}}=0$$
+
+$$\text{in the same way, }\lim_{x\to\infty}F(x)=\lim_{x\to\infty}e^{-e^{-x}}=e^0=1$$
+
+ > This function satisfies the condition a. Differentiating F(x) gives
+
+$$F(x)'=\frac\partial{\partial{x}}e^{-e^{-x}}=e^{-e^{-x}}\frac\partial{\partial{x}}(-e^{-x})=e^{-e^{-x}}(-e^{-x})\frac\partial{\partial{x}}(-x)=e^{-e^{-x}}e^{-x}>0$$
+
+ > showing that F(x) is increasing and right-continuous. F(x) is a continuous cdf.
+
+(d) $1-e^{-x}, x\in(0,\infty)$
+
+$$\because\quad \lim_{x\to-\infty}e^x=1,\quad\lim_{x\to-\infty}e^{-x}=1,\quad \therefore\lim_{x\to-\infty}(1-e^{-x})=0$$
+
+$$\text{in the same way, }\lim_{x\to\infty}F(x)=\lim_{x\to\infty}(1-e^{-x})=1-e^0=1$$
+
+ > This function satisfies the condition a. Differentiating F(x) gives
+
+$$F(x)'=\frac\partial{\partial{x}}(1-e^{-x})=-e^{-x}\frac\partial{\partial{x}}(-x)=e^{-x}>0$$
+
+ > showing that F(x) is increasing and right-continuous. F(x) is a continuous cdf.
+
+(e) the function defined in (1.5.6)  
+
+$$F_Y(y)=\begin{cases}\frac{1-\epsilon}{1+e^{-y}}，& y<0\\\epsilon+\frac{1-\epsilon}{1+e^{-y}}，& y\ge0\end{cases} $$
+
+ $$\lim_{y\to-\infty}F_Y(y)=\lim_{y\to-\infty}\frac{1-\epsilon}{1+e^{-y}}=0$$
+
+ $$\lim_{y\to\infty}F_Y(y)=\epsilon+\frac{1-\epsilon}{1+e^{-y}}=\epsilon+1-\epsilon=1$$
+
+ > The limit point is 0. 
+ 
+ $$\lim_{y\to0}F_Y(y)=\epsilon+\frac{1-\epsilon}{1+e^{-y}}=1=F(0)$$
+
+ > No jump occurs when F(y) approaches 0 from the right. And $0<\epsilon<1$. This function satisfies the condition a and c. Differentiating F(x) gives
+
+$$F(y)'=\frac\partial{\partial{y}}(\epsilon+\frac{1-\epsilon}{1+e^{-y}})=(1-\epsilon)\frac{1+e^{-y}+\frac\partial{\partial{y}}(e^{-y})}{(1+e^{-y})^2}=\frac{1-\epsilon}{(1+e^{-y})^2}>0$$
+
+ > showing that F(x) is increasing. F(x) is a continuous cdf.
+
+**1.54** For each of the following, determine the value of c that makes F(x) a pdf.
+
+ > According to the theorem 1.6.5, A function fx(x) is a pdf (or pmf ) of a random variable X if and only if  
+a. $fx(x)\ge 0$  for all x.  
+b. $\sum_xfx (x) = 1 (pmf)\ or \int_{-\infty}^{\infty}fx (x) dx=1\ (pdf)$
+
+(a) $f(x)=c\sin{x}, 0<x<\pi/2$
+
+
+
+$$\because 0<x<\pi/2,\ \sin{x}\in[0,1],\quad \therefore when\ c\ge0,\quad fx(x)\ge0$$
+
+ > THis is a continuous function. let c safisfy the equation. 
+ 
+$$\because \int_{0}^{\frac\pi2}sin(x)dx=1,\quad \therefore c=\frac11=1$$
+
+(b) $f(x)=ce^{-|x|}, -\infty< x < \infty$
+    
+$$\because -\infty<-|x|\le0,\ e^{-|x|}\in(0,1],\quad \therefore when\ c\ge0,\quad fx(x)\ge0$$
+
+ > THis is a continuous function. let c safisfy the equation. 
+
+$$\because \int_{-\infty}^{\infty}e^{-|x|}dx=\int_{-\infty}^{0}e^{x}dx+\int_{0}^{\infty}e^{-x}dx=2,\quad \therefore c=\frac12$$
+
+
+**1.55** An electronic device has lifetime denoted by T. The device has value V=5 if it fails before time t = 3; otherwise, it has value V = 2T. Find the cdf of V, if T has pdf
+
+$$f_T(t)=\frac1{1.5}e^{-\frac{t}{1.5}},\ t>0$$
+
+<!--$$\because -\infty<-\frac{t}{1.5}<0,\quad \therefore  \frac1{1.5}e^{-\frac{t}{1.5}}\in(0,\frac32)$$
+$$And\quad \int_{0}^{\infty}\frac1{1.5}e^{-\frac{t}{1.5}}dx=1$$-->
+
+ > According to the theorem 1.5.10 of **identically distributed**
+
+$$F_V(t)=P(V\in(-\infty, t] )=P(T\in(-\infty, t])=F_T(t)$$
+
+ > According to the definition 1.6.3 of **probability density function**  
+When 0<t<3, V=5, then
+
+$$P(V\le 5)=P(T<3)=\int_{0}^{3}f_T(t)dt=\int_{0}^{3}\frac1{1.5}e^{-\frac{t}{1.5}}dt=\int_{0}^{3}-e^{-\frac{t}{1.5}}d\frac {-t}{1.5}=-e^{-\frac{3}{1.5}}+e^{-\frac{0}{1.5}}=1-e^{-2}$$
+
+ > When $t\ge3,\ V\ge6$, then
+ 
+$$P(V\le v)=P(2T<v)=P(T<\frac{v}2)=\int_{0}^{\frac{v}2}f_T(v)dv=\int_{0}^{\frac{v}2}\frac1{1.5}e^{-\frac{v}{1.5}}dv=\int_{0}^{\frac{v}2}-e^{-\frac{v}{1.5}}d\frac {-v}{1.5}=-e^{-\frac{v}{3}}+e^{-\frac{0}{3}}=1-e^{-\frac{v}3}$$
+
+  > For t>0, $T\in(-\infty, 0]\ is\ \emptyset,\ F_V(t)=P(V\in(-\infty, 0] )=P(T\in(-\infty, 0] )=0$
+
+$$\therefore  F_V(v)=\begin{cases}1-e^{-2}&6\le v\\1-e^{-\frac{v}3}&0<v<6\\0&-\infty<v<0\end{cases}$$
+
+
+
+
+
+## HW3
+
+
+**1 .48**Prove the necessity part of Theorem 1.5.3.
+
+Theorem 1.5.3 The junction F{x) is a cdf if and only if the following three conditions hold:
+
+a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$;  
+b. F is non-decreasing; and   
+c. F is right-continuous; that is, for every number x0, $\lim_{x\to\infty}F(x)=F(x_0)$
+
+> Step 1: proof (c)
+
+let $C_1,C_2$,...be a sequance of events such that $C1\subset C_2\subset$... 
+
+let $A_1=C_1$ and for $n\ge2,\ A_n=C_n\setminus C_{n-1}$, then
+
+$$\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty C_i$$
+
+$$P[\lim_{n\to\infty}C_n]=P[\lim_{n\to\infty}\bigcup_{i=1}^nC_i]=P[\bigcup_{i=1}^{\infty}C_i]=P[\bigcup_{i=1}^{\infty}A_i]=\sum_{i=1}^{\infty}P(A_i)=\lim_{n\to\infty}\sum_{i=1}^nP(A_i)$$
+
+$$=\lim_{n\to\infty}\Big[P(A_1)+\sum_{i=2}^nP(A_i)\Big]=\lim_{n\to\infty}\Bigg[P(C_1)+\sum_{i=2}^n\Big[P(C_i)-P(C_i\cap C_{i-1})\Big]\Bigg]$$
+
+$$=\lim_{n\to\infty}\Bigg[P(C_1)+\sum_{i=2}^n\Big[P(C_i)-P(C_{i-1})\Big]\Bigg]=\lim_{n\to\infty}P(C_n)$$
+
+$$So\quad P(\lim_{n\to\infty}C_n)=\lim_{n\to\infty}P(C_n)$$
+
+Now let $B_1,B_2$,...be a sequance of events such that $B1\supset B_2\supset$... 
+
+$$Then\ B_1^c\subset B_2^c\subset...$$
+
+$$So\quad P(\lim_{n\to\infty}B_n^c)=\lim_{n\to\infty}P(B_n^c)$$
+
+$$left\quad P(\lim_{n\to\infty}B_n^c)=P\left(\lim_{n\to\infty}\bigcup_{i=1}^nB_i^c\right)=P\left(\bigcup_{i=1}^{\infty}B_i^c\right)=P\left({\bigcap_{i=1}^{\infty}B_i}^c\right)$$
+
+$$=1-P\left(\bigcap_{i=1}^{\infty}B_i\right)=1-P\left(\lim_{n\to\infty}\bigcap_{i=1}^nB_i\right)=1-P\left(\lim_{n\to\infty}B_n\right)\quad $$
+
+$$right\quad \lim_{n\to\infty}P(B_n^c)=\lim_{n\to\infty}(1-P(B_n))=1-\lim_{n\to\infty}P(B_n)$$
+
+$$So\quad \lim_{n\to\infty}P(B_n)=P(\lim_{n\to\infty}B_n)$$
+
+let $B_n=(-\infty,\ x+\frac1n]$, n=1,2,3,...
+Note: $B_i\supset B_2\supset$...
+
+$$\lim_{n\to\infty}B_n=(-\infty,\ x]$$
+
+$$P\left(\lim_{n\to\infty}B_n\right)=P\left((-\infty,\ x]\right)=F_X(x)$$
+
+$$left\quad \lim_{n\to\infty}P(B_n)=\lim_{n\to\infty}P\left((-\infty,\ x+\frac1n]\right)=\lim_{n\to\infty}F_X(x+\frac1n)$$
+
+$$\therefore \lim_{n\to\infty}F_X(x+\frac1n)=F_X(x)$$
+
+According to the uniform convergence theorem, we can proof condition c, a CDF is right-continuous.
+
+> Step2: Proof (b)
+
+let $x_i<x_j,\ C_i\in(-\infty,x_i), C_j\in(-\infty,x_j)$, hence $C_i\subset C_j$
+
+$$\therefore P(\lim_{n\to\infty}C_i)<P(\lim_{n\to\infty}C_j) \implies \lim_{n\to\infty}P(C_i)<\lim_{n\to\infty}P(C_j)\implies \lim_{n\to\infty}F(x_i)<\lim_{n\to\infty}F(x_j)$$
+
+Therefore, for any $x_i<x_j,\ \lim_{n\to\infty}F(x_i)<\lim_{n\to\infty}F(x_j)$. A CDF is non-decreasing.
+
+> Step3: Proof (a)
+
+$$\lim_{x\to\infty}F(x)=\lim_{x\to\infty}P((-\infty, x])=P(\lim_{x\to\infty}(-\infty, x])=P(-\infty, \infty)=1$$
+
+$$\lim_{x\to-\infty}F(x)=\lim_{x\to-\infty}P((-\infty, x])=P(\lim_{x\to-\infty}(-\infty, x])=P(\emptyset)=0$$
+
+**2.2** In each of the following find the pdf of Y.
+
+(a) $Y=X^2\quad and\quad f_X(x)=1, 0<x<1$
+
+$$F_Y(y)=P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)=P(X\le\sqrt y)-P(X\le-\sqrt y)$$
+
+$$\because f_X(x)=1, 0<x<1,\quad X\le 0\ is\ \emptyset\quad \therefore P(X\le-\sqrt y)=0,\quad F_X(x)=\int f_X(x)=\int1=x $$
+
+$$F_Y(y)=P(X\le\sqrt y)=F_X(\sqrt y)=\sqrt y,\ 0<\sqrt y<1$$
+
+$$f_Y(y)=\frac{dF_Y(y)}{dy}=\frac{d\sqrt y}{dy}=\frac1{2\sqrt y},\quad 0<y<1$$
+
+(b) $Y=-\log X$ and X has pdf
+
+$$f_X(x)=\frac{(n+m+1)!}{n!m!}x^n(1-x)^m,\quad 0<x<1,\quad
+n,m\ positive\ integers$$
+
+$Y=-\log X$ is a monotone decreasing function. We can use shortcut.
+
+$$\because Y=-\log X,\quad \therefore X=e^{-Y}$$
+
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\frac{(n+m+1)!}{n!m!}(e^{-y})^n(1-e^{-y})^m|\frac{d(e^{-y})}{dy}|=\frac{(n+m+1)!}{n!m!}e^{-ny-y}(1-e^{-y})^m,\ 0<y<\infty$$
+
+(c) $Y=e^X$ and X has pdf
+
+$$fx(x)=\frac1{\sigma^2}xe^{-(x/\sigma)^2/2},\quad 0<x<\infty,\quad\sigma^2\ a\ positive\ constant$$
+
+$Y=e^X$ is a monotone increasing function. We can use shortcut.
+
+$$\because Y=e^X,\quad \therefore X=\ln Y$$
+
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\frac1{\sigma^2}xe^\frac{-(\frac x\sigma)^2}2|\frac{d(\ln y)}{dy}|=\frac{\ln (y)}{\sigma^2y}e^\frac{-(\frac{\ln y}\sigma)^2}2,\quad 1<y<\infty$$
+
+**2.12** A random right triangle can be constructed in the following manner. Let X be a random angle whose distribution is uniform on $(0, \pi/2)$. For each X, construct a triangle as pictured below. Here, Y = height of the random triangle. For a fixed constant d, find the distribution of Y and EY.
+
+Because X is a continuous uniform distribution from 0 to $\pi/2$,
+
+$$f(x)=\frac1{\frac\pi2-0}=\frac2\pi,\quad F_X(x)=\frac{x-0}{\frac\pi2-0}=\frac{2x}\pi\quad 0<x<\pi/2$$
+
+$$\because Y=d\tan X,\quad \therefore X=\arctan\frac Yd\quad 0<y<\infty$$
+
+$Y=d\tan X$ is a monotone inecreasing function. We can use shortcut.
+
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|=\frac2\pi|\frac{d(\arctan\frac yd)}{dy}|=\frac2\pi\frac{d(\frac yd)}{[(\frac yd)^2+1]}=\frac{2}{\pi d[(\frac yd)^2+1]}\quad 0<y<\infty$$
+
+<!--Because Y is continuous,
+
+$$\because E[Y]=E[g(X)]=\int_{-\infty}^\infty g(x)f(x)dx\quad \therefore E[Y]=[d\tan X]=\int_0^\infty d\tan x\frac2\pi dx=\frac2d\pi\int_0^\infty\tan x dx=\infty$$-->
+
+Because $f_Y(y)$ is the Cauchy distribution restricted to (0,1),
+
+Therefore, the mean of Y is undefined.
+
+**2.17** A median of a distribution is a value m such that $P(X\le m)\ge\frac12\ and\ P(X\ge m)\ge\frac12$. (If X i s continuous, m satisfies $\int_{-\infty}^mf(x)dx=\int_m^\infty f(x)dx=\frac12$.) Find the median of the following distributions.
+
+(a) $f(x)=3x^2,\quad 0<X<1$  
+
+
+$$F_X(x)=\int{f(x)dx}=\int3x^2=x^3\quad 0<x<1$$
+
+let 0<m<1 satisfies
+
+$$P(X\le m)=\int_{0}^m{f(x)dx}=\left.m^3\right|_0^m=m^3-0=\frac12\quad \therefore m=(\frac12)^{\frac13}$$
+
+This value also satisfies another part:
+
+$$P(X\ge m)=\int_m^{1}{f(x)dx}=\left.m^3\right|_m^1=1-m^3=\frac12$$
+
+Therefore, $m=(\frac12)^{\frac13}$ saitisfies $P(X\le m)\ge\frac12\ and\ P(X\ge m)\ge\frac12$ and is the median of this distribution.
+
+(b) $f(x)=\frac1{\pi(1+x^2)},\quad-\infty<x<\infty$
+
+$$F_X(x)=\int{f(x)dx}=\int\frac1{\pi(1+x^2)}=\frac{\arctan x}{\pi},\quad -\infty<x<\infty$$
+
+let $-\infty<m<\infty$ satisfies
+
+$$P(X\le m)=\int_{-\infty}^m{f(x)dx}=\left.\frac{\arctan x}{\pi}\right|_{-\infty}^m=\frac{\arctan m-(-\pi/2)}{\pi}=\frac12\quad \therefore \arctan m=0,\quad m=0$$
+
+This value also satisfies another part:
+
+$$P(X\ge m)=\int_m^{\infty}{f(x)dx}=\left.\frac{\arctan x}{\pi}\right|_m^{\infty}=\frac{\pi/2-\arctan m}{\pi}=\frac12$$
+
+Therefore, $m=0$ saitisfies $P(X\le m)\ge\frac12\ and\ P(X\ge m)\ge\frac12$ and is the median of this distribution.
+
+
+
+
+## HW4
+
+
+**2.24** Compute E X and Var X for eaCh of the following probability distributions.
+
+(a) $f_X(x)=ax^{a-1}, 0<x<1, a>0$
+
+Because X is a continuous variable.
+
+$$EX=\int_0^1xax^{a-1}dx=\int_0^1ax^{a}dx=\frac{a}{a+1}x^{a+1}\bigg|_0^1=\frac{a}{a+1}-0=\frac{a}{a+1},\quad a>0$$
+
+$$EX^2=\int_0^1x^2ax^{a-1}dx=\int_0^1ax^{a+1}dx=\frac{a}{a+2}x^{a+2}\bigg|_0^1=\frac{a}{a+2}-0=\frac{a}{a+2},\quad a>0$$
+
+$$VarX=EX^2-(EX)^2=\frac{a}{a+2}-(\frac{a}{a+1})^2=\frac{a(a+1)^2-a^2(a+2)}{(a+2)(a+1)^2}=\frac{a}{(a+2)(a+1)^2},\quad a>0$$
+
+****
+
+(b) $fx(x)=\frac1n,\ x=1,2,..., n, n>0$ an integer
+
+Because X is a discrete variable.
+
+$$EX=\sum_1^nx\frac1n=\frac1n\frac{n(n+1)}2=\frac{n+1}2,\quad n>0$$
+
+$$EX^2=\sum_1^nx^2\frac1n=\frac1n\frac{n(n+1)(2n+1)}6=\frac{(n+1)(2n+1)}6,\quad n>0$$
+
+$$VarX=EX^2-(EX)^2=\frac{(n+1)(2n+1)}6-(\frac{n+1}2)^2=\frac{(n+1)(4n+2-3n-3)}{12}=\frac{n^2-1}{12},\quad n>0$$
+
+****
+
+(c) $fx(x)=\frac32(x-1)^2, 0<X<2$
+
+Because X is a continuous variable.
+
+$$EX=\int_0^2x\frac32(x-1)^2dx=\frac32\int_0^2(x^3-2x^2+x)dx=\frac32(\frac{x^4}4\bigg|_0^2-\frac{2x^3}3\bigg|_0^2+\frac{x^2}2\bigg|_0^2)=\frac32(4-\frac{16}3+2)=1$$
+
+$$EX^2=\int_0^2x^2\frac32(x-1)^2dx=\frac32\int_0^2(x^4-2x^3+x^2)dx=\frac32(\frac{x^5}5\bigg|_0^2-\frac{2x^4}4\bigg|_0^2+\frac{x^3}3\bigg|_0^2)=\frac32(\frac{32}5-8+\frac{8}3)=\frac85$$
+
+$$VarX=EX^2-(EX)^2=\frac85-1^2=\frac35$$
+
+****
+
+**2.28** Let $\mu_n$ denote the nth central moment of a random variable X. Two quantities of
+interest, in addition to the mean and variance, are
+
+$$\alpha_3=\frac{\mu_3}{(\mu_2)^{3/2}}\ and\ \alpha_4=\frac{\mu_4}{\mu_2^2}$$
+
+The value $\alpha_3$ is called the _skewness_ and $\alpha_4$ is called the _kurtosis_. The skewness measures
+the lack of symmetry in the pdf (see Exercise 2.26). The kurtosis, although harder to
+interpret, measures the peakedness or flatness of the pdf.
+
+(a) Show that if a pdf is symmetric about a point a, then $\alpha_3=0$.
+
+A symmetric pdf about a point a means $\mu=a$ and $f_X(a-x)=f_X(a+x)$
+
+$$\mu_3=E(X-\mu)^3=\int_{-\infty}^{\infty}(x-a)^3f(x)dx=\int_{-\infty}^{a}(x-a)^3f(x)dx+\int_{a}^{\infty}(x-a)^3f(x)dx$$
+
+Let u=x-a, x=u+a, then
+
+$$\mu_3=\int_{-\infty}^{a}u^3f(u+a)d(u+a)+\int_{a}^{\infty}u^3f(u+a)d(u+a)=\int_{-\infty}^{0}u^3f(u+a)d(u)+\int_{0}^{\infty}u^3f(u+a)d(u)$$
+
+$$=\int_{0}^{\infty}-u^3f(-u+a)d(u)+\int_{0}^{\infty}u^3f(u+a)d(u)=0$$
+
+****
+
+(b) Calculate $\alpha_3$ as for $f(x)=e^{-x},\ x\ge0$, a pdf that is skewed to the right.
+
+Let $u=x,\ dv=e^{-x}dx$, then $du=dx,\ v=-e^{-x}$
+
+$$\mu=E(X)=\int_{0}^{\infty}xe^{-x}dx=\int_{0}^{\infty}udv=uv\bigg|_0^{\infty}-\int_{0}^{\infty}vdu=-xe^{-x}\bigg|_0^{\infty}-\int_{0}^{\infty}-e^{-x}dx=0-e^{-x}\bigg|_0^{\infty}=0-0+1=1$$
+
+Let $u=x^2,\ dv=e^{-x}dx$, then $du=2dx,\ v=-e^{-x}$
+
+$$\mu_2=E(X-\mu)^2=EX^2-\mu^2=\int_{0}^{\infty}x^2e^{-x}dx-1=\int_{0}^{\infty}udv-1=uv\bigg|_0^{\infty}-\int_{0}^{\infty}vdu-1$$
+
+$$=-x^2e^{-x}\bigg|_0^{\infty}-\int_{0}^{\infty}-e^{-x}2dx-1=0-2e^{-x}\bigg|_0^{\infty}-1=0-0+2-1=1$$
+
+
+$$\mu_3=E(X-\mu)^3=\int_{0}^{\infty}(x-1)^3e^{-x}dx=\int_{0}^{\infty}(x^3-3x^2+3x-1)e^{-x}dx=\Gamma4-3\Gamma3+3\Gamma2-1=3!-3\times2!+3-1=2$$
+
+$$\therefore\quad \alpha_3=\frac{\mu_3}{(\mu_2)^{3/2}}=\frac21=2$$
+
+****
+
+(c) Calculate $\alpha_4$ for each of the following pdfs and comment on the peakedness of each.
+Ruppert (1987) uses influence functions (see Miscellanea 10.6.4) to explore further the meaning of kurtosis, and Groeneveld (1991) uses them to explore skewness; see also Balanda and MacGillivray (1988) for more on the interpretation of $\alpha_4$.
+
+$$f(x)=\frac1{\sqrt{2\pi}}e^{-x^2/2},-\infty<x<\infty$$
+
+This is the pdf of standard normal distribution, $\mu=E(X)=0,\ \mu_2=Var(X)=1,\ \mu_3=0,\ \mu_4=3$.
+
+$$E(X^m)=\begin{cases}0 &\text{if m is odd}\\\frac{m!}{2^{\frac m2}(\frac m2)!}&\text{if m is even}\end{cases}$$
+
+Proof
+
+$$EX^0=\int_{-\infty}^{\infty}x^0\frac1{\sqrt{2\pi}}e^{-x^2/2}dx=1$$
+
+This pdf is symmetric about x=0. when m is odd,
+
+$$\mu_m=E(X)=\int_{-\infty}^{\infty}x\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=\int_{0}^{\infty}x\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}+\int_{-\infty}^{0}x\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=\int_{0}^{\infty}x\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}-\int_{0}^{\infty}x\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=0$$
+
+When m is even, let $u=x^{m-1}, dv=\frac{x}{\sqrt{2\pi}}e^{\frac{-x^2}2}dx$, then $du=(m-1)x^{m-2}dx, v=-\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}$
+
+$$\mu_m=E(X-\mu)^m=EX^m=\int_{-\infty}^{\infty}x^{m-1}\frac{x}{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=uv-\int_{-\infty}^{\infty}vdu$$
+
+$$=-\frac{x^{m-1}}{\sqrt{2\pi}}e^{\frac{-x^2}2}\bigg|_{-\infty}^{\infty}-\int_{-\infty}^{\infty}(-\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2})(m-1)x^{m-2}dx=0+(m-1)\int_{-\infty}^{\infty}x^{m-2}\frac1{\sqrt{2\pi}}e^{\frac{-x^2}2}dx=(m-1)EX^{m-2}$$
+
+$$EX^m=(m-1)(m-3)...(5)(3)EX^0=\frac{m!}{\Pi_{i=1}^{\frac m2}2i}=\frac{m!}{2^{\frac m2}(\frac m2)!}$$
+
+$$\mu_4=E(X-\mu)^4=(4-1)EX^{4-2}=3(2-1)EX^0=3$$
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac31=3$$
+
+The standard measure of kurtosis, originating with Karl Pearson, is based on a scaled version of the fourth moment of the data or population.There are various interpretations of kurtosis. "...its only unambiguous interpretation is in terms of tail extremity; i.e., either existing outliers (for the sample kurtosis) or propensity to produce outliers (for the kurtosis of a probability distribution)." (Westfall, 2014) This number is related to the tails of the distribution, not its peak. higher kurtosis is the result of infrequent extreme deviations (or outliers), as opposed to frequent modestly sized deviations.
+The kurtosis of any univariate normal distribution is 3 called **mesokurtic**. Distributions with kurtosis less than 3 are said to be **platykurtic**. It means the distribution produces fewer and less extreme outliers than does the normal distribution rather than "flat-topped". Distributions with kurtosis greater than 3 are said to be **leptokurtic**.
+
+[Westfall, P. (2014). Kurtosis as Peakedness, 1905–2014. R.I.P. The American Statistician, 68(3), 191-195.]
+
+Therefore, in this question, the normal distribution with kurtosis equal 3 is mesokurtic.
+
+$$f(x)=\frac12,-1<x<1$$
+
+$$\mu=E(X)=\int_{-1}^{1}x\frac12dx=\frac14x^2\bigg|_{-1}^{1}=0$$
+
+$$\mu_2=(X-\mu)^2=EX^2=\int_{-1}^{1}x^2\frac12dx=\frac16x^3\bigg|_{-1}^{1}=\frac13$$
+
+$$\mu_4=E(X-\mu)^4=\int_{-\infty}^{\infty}x^4\frac12dx=\frac1{10}x^5\bigg|_{-1}^{1}=\frac15$$
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{\frac15}{\frac19}=\frac95$$
+
+In this question, the continuous uniform distribution with kurtosis less than 3 is platykurtic.
+
+
+$$f(x)=\frac12e^{-|x|},-\infty<x<\infty$$
+
+This pdf is symmetric about x=0. 
+
+$$\mu=E(X)=\int_{0}^{\infty}x\frac12e^{-x}dx+\int_{-\infty}^{0}x\frac12e^{-(-x)}dx=\int_{0}^{\infty}x\frac12e^{-x}dx+\int_{0}^{\infty}(-x)\frac12e^{-x}dx=0$$
+
+$$\mu_2=(X-\mu)^2=EX^2=\int_{0}^{\infty}x^2\frac12e^{-x}dx+\int_{-\infty}^{0}x^2\frac12e^{-(-x)}dx=2\int_{0}^{\infty}x^2\frac12e^{-x}dx$$
+
+Let $u=x^2, dv=\frac12e^{-x}dx$, then $du=2dx, v=-\frac12e^{-x}$
+
+$$=2(-x^2\frac12e^{-x})\bigg|_{0}^{\infty}-2\int_{0}^{\infty}-\frac12e^{-x}2dx=0-2e^{-x}\bigg|_{0}^{\infty}=2$$
+
+Let $u=x^4, dv=\frac12e^{-x}dx$, then $du=4!dx, v=-\frac12e^{-x}$
+
+$$\mu_4=E(X-\mu)^4=\int_{0}^{\infty}x^4\frac12e^{-x}dx+\int_{-\infty}^{0}x^4\frac12e^{-(-x)}dx=2\int_{0}^{\infty}x^4\frac12e^{-x}dx$$
+
+$$=2(-x^4\frac12e^{-x})\bigg|_{0}^{\infty}-2(\int_{0}^{\infty}\frac12e^{-x}4!dx)=0-4!e^{-x}\bigg|_{0}^{\infty}=24$$
+
+$$\alpha_4=\frac{\mu_4}{\mu_2^2}=\frac{24}{4}=6$$
+
+In this question, the exponential distribution with kurtosis greater than 3 is leptokurtic.
+
+****
+
+**2.33** In each of the following cases verify the expression given for the moment generating function, and in each case use the mgf to calculate EX and VarX.
+
+(a) $P(X=x)=\frac{e^{-\lambda}\ \lambda^x}{x!}, M_X(t)=e^{\lambda(e^t-1)}, x=0,1,...; \lambda>0$
+
+This is a descrete function.
+
+$$\text{According to the exponential function}\quad \sum_{x=0}^{\infty}\frac{k^x}{x!}=e^k$$
+
+$$M_X(t)=E(e^{tx})=\sum_{x=0}^{\infty}e^{tx}\frac{e^{-\lambda}\lambda^x}{x!}=e^{-\lambda}\sum_{x=0}^{\infty}\frac{(e^t\lambda)^x}{x!}=e^{-\lambda}e^{\lambda e^t}=e^{\lambda(e^t-1)}$$
+
+$$Check\quad M_X(0)=E(e^{0x})=e^{\lambda(e^0-1)}=1$$
+
+$$M_X'(t)=e^{\lambda(e^t-1)}\lambda e^t=\lambda e^{\lambda e^t+t-\lambda}$$
+
+$$E(X)=M_X'(0)=\lambda e^{\lambda e^0+0-\lambda}=\lambda$$
+
+$$M_X''(t)=\lambda e^{\lambda e^t+t-\lambda}(\lambda e^t+1)=\lambda^2 e^{\lambda e^t+2t-\lambda}+\lambda e^{\lambda e^t+t-\lambda}$$
+
+$$E(X^2)=M_X''(0)=\lambda^2 e^{\lambda e^0+0-\lambda}+\lambda e^{\lambda e^0+0-\lambda}=\lambda^2+\lambda$$
+
+$$Var(X)=E(X^2)-(EX)^2=\lambda^2+\lambda-\lambda^2=\lambda$$
+
+****
+
+(b) $P(X=x)=p(1-p)^x, M_X(t)=\frac{p}{1-(1-p)e^t}, x=0,1,...; 0<p<1$
+
+This is a descrete function.
+
+$$\text{According to the geomitric series}\quad \sum_{x=0}^{\infty}{r^x}=\frac1{1-r},\quad if\ |r|<1$$
+
+$$M_X(t)=E(e^{tx})=\sum_{x=0}^{\infty}e^{tx}p(1-p)^x=p\sum_{x=0}^{\infty}[e^{t}(1-p)]^x=\frac{p}{1-(1-p)e^{t}}=\frac{p}{1+(p-1)e^{t}},\quad |(1-p)e^{t}|<1\implies t<-log(1-p)$$
+
+$$Check\quad M_X(0)=E(e^{0x})=\frac{p}{1+(p-1)e^{0}}=1$$
+
+$$M_X'(t)=\frac{-p}{[1+(p-1)e^{t}]^2}(p-1)e^{t}=\frac{-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}$$
+
+$$E(X)=M_X'(0)=\frac{-p(p-1)e^{0}}{[1+(p-1)e^{0}]^2}=\frac{1-p}p$$
+
+$$M_X''(t)=\left(\frac{-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}\right)'=\left(\frac{p-p-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}\right)'=\left(\frac{p}{[1+(p-1)e^{t}]^2}-\frac{p}{1+(p-1)e^{t}}\right)'$$
+
+$$=\frac{-2p(p-1)e^{t}}{[1+(p-1)e^{t}]^3}-\frac{-p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}=\frac{p(p-1)e^{t}}{[1+(p-1)e^{t}]^2}-\frac{2p(p-1)e^{t}}{[1+(p-1)e^{t}]^3}$$
+
+$$E(X^2)=M_X''(0)=\frac{p(p-1)e^{0}}{[1+(p-1)e^{0}]^2}-\frac{2p(p-1)e^{0}}{[1+(p-1)e^{0}]^3}=\frac{p(p-1)}{p^2}-\frac{2(p-1)}{p^2}=\frac{p^2-3p+2}{p^2}$$
+
+$$Var(X)=E(X^2)-(EX)^2=\frac{p^2-3p+2}{p^2}-\frac{(1-p)^2}{p^2}=\frac{1-p}{p^2}$$
+
+****
+
+(c) $f_X(x)=\frac{e^{-(x-\mu)^2/(2\sigma^2)}}{\sqrt{2\pi}\sigma},\quad M_X(t)=e^{\mu t+\sigma^2t^2/2}, -\infty<x<\infty; -\infty<\mu<\infty, \sigma>0$
+
+This is a continuous function.
+
+$$M_X(t)=E(e^{tx})=\int_{-\infty}^{\infty}e^{tx}\frac{e^{-\frac{(x-\mu)^2}{2\sigma^2}}}{\sqrt{2\pi}\sigma}dx=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{tx-\frac{(x-\mu)^2}{2\sigma^2}}dx=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{\frac{-1}{2\sigma^2}[x^2-(2\mu+2\sigma^2t)x+\mu^2]}dx$$
+
+Transform the part of exponent
+
+$$\frac{-1}{2\sigma^2}[x^2-(2\mu+2\sigma^2t)x+\mu^2]=\frac{-1}{2\sigma^2}[(x-\mu-\sigma^2t)^2-(\mu+\sigma^2t)^2+\mu^2]$$
+
+$$=\frac{-1}{2\sigma^2}[(x-\mu-\sigma^2t)^2-2\mu\sigma^2t-\sigma^4t^2]=\frac{-1}{2\sigma^2}(x-\mu-\sigma^2t)^2+\mu t+\frac{\sigma^2t^2}2$$
+
+Let $y=x-\mu-\sigma^2t,\ dy=dx$,
+
+$$\text{According to the normal distribution}\quad \int _{-\infty \:}^{\infty \:}\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{x^2}{2\sigma^2}}dx=1$$
+
+$$M_X(t)=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{\infty}e^{\frac{-(x-\mu-\sigma^2t)^2}{2\sigma^2}}e^{\mu t+\frac{\sigma^2t^2}2}dx={e^{\mu t+\frac{\sigma^2t^2}2}}\int_{-\infty}^{\infty}\frac1{\sqrt{2\pi}\sigma}e^{\frac{-y^2}{2\sigma^2}}dy=e^{\mu t+\frac{\sigma^2t^2}2}$$
+
+$$Check\quad M_X(0)=E(e^{0x})=e^{\mu 0+\frac{\sigma^2{0}^2}2}=1$$
+
+$$M_X'(t)=e^{\mu t+\frac{\sigma^2t^2}2}(\mu+\sigma^2t)$$
+
+$$E(X)=M_X'(0)=e^{\mu 0+\frac{\sigma^2(0)^2}2}(\mu+\sigma^20)=\mu$$
+
+$$M_X''(t)=\left(e^{\mu t+\frac{\sigma^2t^2}2}\right)'(\mu+\sigma^2t)+e^{\mu t+\frac{\sigma^2t^2}2}(\mu+\sigma^2t)'=(\mu+\sigma^2t)^2e^{\mu t+\frac{\sigma^2t^2}2}+\sigma^2e^{\mu t+\frac{\sigma^2t^2}2}$$
+
+$$E(X^2)=M_X''(0)=(\mu+\sigma^20)^2e^{\mu 0+\frac{\sigma^2{0}^2}2}+\sigma^2e^{\mu 0+\frac{\sigma^2{0}^2}2}=\mu^2+\sigma^2$$
+
+$$Var(X)=E(X^2)-(EX)^2=\mu^2+\sigma^2-\mu^2=\sigma^2$$
+
+## HW5
+
+
+**3.2** A manufacturer receives a lot of 100 parts from a vendor. The lot will be unacceptable if more than five of the parts are defective. The manufacturer is going to select randomly K parts from the lot for inspection and the lot will be accepted if no defective parts are found in the sample.
+
+(a) How large does K have to be to ensure that the probability that the manufacturer accepts an unacceptable lot is less than . 10?
+
+The probability of accepting the unacceptable lot is
+
+$$P(X=0|N=100,5<M<(100-K),0<K<(100-m))=\sum_{M=6}^{100-K}\frac{\binom{M}{0}\binom{100-M}{K}}{\binom{100}{K}}=\sum_{M=6}^{100-K}\frac{(100-M)!(100-K)!}{100!(100-M-K)!}$$
+
+For a given probability, When M get the minimum value, the K get the maximum value.
+
+$$Let\quad P(X=0|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K}}{\binom{100}{K}}<0.10$$
+
+$$\implies \frac{(100-k)(99-k)(98-k)(97-k)(96-k)(95-k)}{100*99*98*97*96*95}<0.10$$
+
+```{r, collapse=TRUE, fig.height=3}
+# by resolving equation
+uniroot(function(k)(((100-k)*(99-k)*(98-k)*(97-k)*(96-k)*(95-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
+# by bisection method
+## when K up to 32, the probability of no defective part is smaller than 0.1.
+dhyper(0, 6, 94, 32, log = FALSE)
+## when K down to 31, the defective might not be chose on 0.1 probability.
+qhyper(0.1, 6, 94, 31, lower.tail = TRUE, log.p = FALSE)
+# by function of phyper
+uniroot(function(k)(phyper(0, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=0, upper=100)$root
+# draw the curve
+curve(phyper(0, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(32,0, "32"); abline(v = 32, lty = 3)
+```
+
+ When the defective parts are 6, K must be at least 32
+
+****
+(b) Suppose the manufacturer decides to accept the lot if there is at most one defective in the sample. How large does K have to be to ensure that the probability that the manufacturer accepts an unacceptable lot is less than . 10?
+
+$$P(X=0 or 1|N=100,M=6,K)=\frac{\binom{6}{0}\binom{100-6}{K-0}}{\binom{100}{K}}+\frac{\binom{6}{1}\binom{100-6}{K-1}}{\binom{100}{K}}<0.10$$
+
+$$\implies \frac{(95+5k)(100-k)(99-k)(98-k)(97-k)(96-k)}{100*99*98*97*96*95}<0.10$$
+
+```{r, collapse=TRUE, fig.height=3}
+# by resolving equation
+uniroot(function(k)(((95+5*k)*(100-k)*(99-k)*(98-k)*(97-k)*(96-k))/(100*99*98*97*96*95)-0.1), lower=0, upper=100)$root
+# by function of phyper
+uniroot(function(k)(phyper(1, 6, 94, k, lower.tail = TRUE, log.p = FALSE)-0.1), lower=1, upper=100)$root
+# draw the curve
+curve(phyper(1, 6, 94, x, lower.tail = TRUE, log.p = FALSE), 0, 100); text(0,0.1, "0.1"); abline(h = 0.1, lty = 2); text(51,0, "51"); abline(v = 51, lty = 3)
+```
+
+When the defective parts are 6, K must be at least 51.
+
+****
+**3.7** Let the number of chocolate chips in a certain type of cookie have a Poisson distribution. We want the probability that a randomly chosen cookie has at least two chocolate chips to be greater than .99. Find the smallest value of the mean of the distribution that ensures this probability.
+
+$$X\sim Poisson(\lambda) \implies P(X=x)=e^{-\lambda}\frac{\lambda^x}{x!}$$
+
+$$P(X\ge 2)\ge0.99 \implies1-P(X\le 1)\le1-0.01$$
+
+$$\therefore P(X\le 1)=P(X=1)+P(X=2)=e^{-\lambda}\frac{\lambda^0}{0!}+ e^{-\lambda}\frac{\lambda^1}{1!}=(1+\lambda)e^{-\lambda}\le0.01$$
+$$\implies e^{\lambda}\ge100\lambda+100$$
+
+```{R, collapse=TRUE, fig.height=3}
+# by resolving equation
+uniroot(function(x)(exp(x)-100*x-100), lower=0, upper=10)$root
+
+# by bisection method
+# when lambda is between 6 and 7, a randomly chosen cookie has at least 2 chocolate chips on 0.01 probability.
+qpois(0.01, 6, lower.tail = TRUE, log.p = FALSE)
+curve(qpois(0.01, x, lower.tail = TRUE, log.p = FALSE), from=0,to=10); text(7,0, "7"); abline(v = 7, lty = 3)
+
+# by function of ppois
+uniroot(function(x)(ppois(1, x, lower.tail = TRUE, log.p = FALSE)-0.01), lower=0, upper=100)$root
+curve(ppois(1, x, lower.tail = TRUE, log.p = FALSE), from=4,to=10); abline(h = 0.01, lty = 2); text(6.64,0, "6.638351"); abline(v = 6.638351, lty = 3)
+```
+
+$$\therefore min(EX)=min(\lambda)=6.638351$$
+
+****
+**3.13** A truncated discrete distribution is one in which a. particular class cannot be observed and is eliminated from the sample space. In particular, if X has range 0, 1, 2, . . . and the 0 class cannot be observed (as is usually the case), the O-truncated random variable $X_T$ has pmf
+
+$$P(X_T = x) = \frac{P(X=x)}{P(X>0)},\ x=1,2,..$$
+
+Find the pmf, mean, and variance of the O-truncated random varia.ble starting from
+
+$$E(X_T) =\sum_{x=1}^{\infty}xP(X_T=x)= \sum_{x=1}^{\infty}x\frac{P(X=x)}{P(X>0)}=\frac1{P(X>0)}\sum_{x=1}^{\infty}x{P(X=x)}=\frac{EX}{P(X>0)}$$
+$$E(X_T^2) =\sum_{x=1}^{\infty}x^2P(X_T=x)= \sum_{x=1}^{\infty}x^2\frac{P(X=x)}{P(X>0)}=\frac1{P(X>0)}\sum_{x=1}^{\infty}x^2{P(X=x)}=\frac{EX^2}{P(X>0)}$$
+
+$$VarX=E(X_T^2)-[E(X_T)]^2=\frac{EX^2}{P(X>0)}-\frac{(EX)^2}{P(X>0)^2}$$
+
+(a) $X\sim Poisson(\lambda)$
+
+In Poisson distribution, $x\in\{0,1,2..\}$,
+
+$$\therefore\quad P(X>0)=1-P(X=0)=1-\frac{e^{-\lambda}\lambda^0}{0!}=1-e^{-\lambda}$$
+
+$$\text{For Poisson distribution,}\quad P(X=x)=e^{-\lambda}\frac{\lambda^x}{x!},\ EX=\lambda,\ EX^2=\lambda^2+\lambda$$
+
+$$P(X_t=x)=e^{-\lambda}\frac{\lambda^x}{x!P(X>0)}=e^{-\lambda}\frac{\lambda^x}{x!(1-e^{-\lambda})},x\in\{1,2..\}$$
+
+$$E(X_T) =\frac{EX}{P(X>0)}=\frac{\lambda}{1-e^{-\lambda}},\quad E(X_T^2) =\frac{EX^2}{P(X>0)}=\frac{\lambda^2+\lambda}{1-e^{-\lambda}}$$
+
+$$VarX=E(X_T^2)-[E(X_T)]^2=\frac{\lambda^2+\lambda}{1-e^{-\lambda}}-\frac{\lambda^2}{(1-e^{-\lambda})^2}$$
+
+****
+(b) $X\sim negative binomial(r, p)$, as in (3.2.10)
+
+In negative binomial distribution, $x\in\{0,1,2..\}$,
+
+$$\therefore\quad P(X>0)=1-P(X=0)=1-\binom{0+r-1}{0}p^r(1-p)^0=1-p^r$$
+
+$$\text{For negative binomial distribution,}\quad P(X=x)=\binom{x+r-1}{x}p^r(1-p)^x,\ EX=\frac{rq}p,\ EX^2=\frac{rq+r^2q^2}{p^2}$$
+
+$$P(X_t=x)=\frac{\binom{x+r-1}{x}p^r(1-p)^x}{P(X>0)}=\frac{\binom{x+r-1}{x}p^r(1-p)^x}{1-p^r},x\in\{1,2..\}$$
+
+$$E(X_T) =\frac{EX}{P(X>0)}=\frac{r(1-p)}{p(1-p^r)},\quad E(X_T^2) =\frac{EX^2}{P(X>0)}=\frac{r(1-p)+r^2(1-p)^2}{p^2(1-p^r)}$$
+
+$$VarX=E(X_T^2)-[E(X_T)]^2=\frac{r(1-p)+r^2(1-p)^2}{p^2(1-p^r)}-\frac{r^2(1-p)^2}{p^2(1-p^r)^2}$$
+
+
+****
+**3.17** Establish a formula similar to (3.3.18) for the gamma distribution. If $X \sim gamma(\alpha, \beta)$, then for any positive constant $\nu$,
+<!--
+$$f(x|\alpha,\beta)=\frac1{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}, x \in (0, 1), \beta>0, \alpha>0$$
+
+$$B(\alpha,\beta)=\int_0^1x^{\alpha-1}(1-x)^{\beta-1}dx =\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}; x \in (0, 1), \beta>0, \alpha>0$$
+
+
+$$(3.3.18)\quad EX^n=\frac{1}{B(\alpha,\beta)}\int_0^1x^nx^{\alpha-1}(1-x)^{\beta-1}dx=\frac{B(a+n,\beta)}{B(\alpha,\beta)}=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)} $$ -->
+
+For $X\sim Gamma(\alpha,\beta)$
+$$f(x|\alpha,\beta) = \frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}; x \in (0, \infty), \beta>0, \alpha>0,\quad \int_0^{\infty}f(x|\alpha,\beta)dx=1$$
+
+$$\therefore EX=\int_0^{\infty}\frac{xx^{a-1}} {\Gamma(a)\beta^{\alpha}}e^{-x/\beta}dx=\alpha\beta\int_0^{\infty}\frac{x^{(a+1)-1}}{\Gamma(a+1)\beta^{\alpha+1}}e^{-x/\beta}dx=\alpha\beta$$
+
+$$EX^{\nu}=\int_0^{\infty}\frac{x^{\nu}x^{a-1}}{\Gamma(a)\beta^{\alpha}}e^{-x/\beta}dx=\frac{\Gamma(a+\nu)\beta^{\nu}}{\Gamma(a)}\int_0^{\infty}\frac{x^{(a+\nu)-1}}{\Gamma(a+\nu)\beta^{\alpha+\nu}}e^{-x/\beta}dx=\frac{\beta^{\nu}\Gamma(\alpha+\nu)}{\Gamma(\alpha)},\nu\ge-\alpha$$
+
+
+## HW6
+
+**3.18** There is an interesting relationship between negative binomial and gamma random variables, which may sometimes provide a useful approximation. Let Y be a negative binomial random variable with parameters r and p, where p is the success probability.
+Show that as $p\rightarrow0$, the mgf of the random variable pY converges to that of a gamma distribution with parameters r and 1.
+
+$$For\quad Y\sim Negative\ Binomial\ (r,p),\quad M_{Y}(t)=(\frac{p}{1-(1-p)e^t})^r, t<-log(1-p)$$
+
+According to the Theorem 2.3.15, $M_{aX+b}(t)=e^{bt}M_X(at)$
+$$M_{pY}(t)=(\frac{p}{1-(1-p)e^{pt}})^r$$
+ 
+According to the L’Hˆopital’s rule, for $\lim_{p\rightarrow0}{p}=\lim_{p\rightarrow0}{(1-(1-p)e^{pt})}=0,\quad \lim_{x\rightarrow c}\frac{f(x)}{g(x)}=\lim_{x\rightarrow c}\frac{f'(x)}{g'(x)}$
+
+$$\lim_{p\rightarrow0}\frac{p}{1-(1-p)e^{pt}}=\lim_{p\rightarrow0}\frac{1}{-(1-p)'e^{pt}-(1-p)te^{pt}}=\lim_{p\rightarrow0}\frac{1}{e^{pt}-(1-p)te^{pt}}=\frac1{1-t}$$
+
+$$\implies M_{pY}(t)=(\frac1{1-t})^r,\ r>0, 0<t<1$$
+
+For Gamma (r,1),
+
+$$M_X(t)=(\frac1{1-\beta t})^\alpha=(\frac1{1-t})^r,\ r>0, 0<t<1$$
+
+Therefore, the mgf of the random variable pY ($Y\sim NB(r,p), p\rightarrow0$) converges to that of Gamma (r,1).
+
+****
+**3.24** Many "named" distributions are special cases of the more common distributions already discussed. For each of the following named distributions derive the form of the pdf, verify that it is a pdf, and calculate the mean and variance.
+
+(a) If $X\sim$ exponential($\beta$), then $Y = X^{1/\gamma}$ has the Weibull($\gamma,\beta$) distribution, where $\gamma>0$ is a constant.
+
+$$X\sim expo(\beta),\quad \therefore f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
+
+$$Let\ Y=g(X)= X^{1/\gamma}, X=g^{-1}(Y)=Y^\gamma\quad\therefore g^{-1}(y)=y^\gamma\quad \text{is monotone}$$
+
+$$\therefore f_Y(y)=f_X(y^\gamma)|\frac{dy^\gamma}{dx}|=\frac1\beta e^{-\frac{y^\gamma}{\beta}}\gamma y^{\gamma-1}=\frac{\gamma}\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}, x\ge0,\beta>0, \gamma>0$$
+
+This is a Weibull distribution.\\
+
+For $W\sim Gamma(\frac{n}\gamma+1,\beta)$, CDF
+
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(\frac{n}\gamma+1)-1}}{\Gamma (\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}}e^{-\frac{w}\beta}dw=1,\ n=0,1,2,..$$
+
+$$EY^n=\int_0^{\infty}y^n\frac\gamma\beta y^{\gamma-1}e^{-\frac{y^\gamma}{\beta}}dy=\int_0^{\infty}\frac{y^n}{\beta} e^{-\frac{y^\gamma}{\beta}}dy^\gamma=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)\left[\int_0^{\infty}\frac{(y^{\gamma})^{(\frac{n}\gamma+1)-1}}{\Gamma(\frac{n}\gamma+1)\beta^{\frac{n}\gamma+1}} e^{-\frac{(y^\gamma)}{\beta}}d(y^\gamma)\right]=\beta^{\frac{n}\gamma}\Gamma(\frac{n}\gamma+1)$$
+
+$$\therefore EY=\beta^{\frac1\gamma}\Gamma(\frac1\gamma+1),\quad EY^2=\beta^{\frac2\gamma}\Gamma(\frac2\gamma+1),\quad VarY=\beta^{\frac2\gamma}[\Gamma(1+\frac2\gamma)-\Gamma^2(1+\frac1\gamma)],\beta>0, \gamma>0$$
+
+Or Let $u=\frac{y^\gamma}{\beta},y=(\beta u)^{\frac1\gamma}, dy=\frac{1}{\gamma}(\beta u)^{\frac1\gamma-1}du$ has same result.
+
+****
+(b) If $X\sim$ exponential($\beta$), then $Y =(2X/\beta)^{1/2}$ has the _Rayleigh_ _distribution_.
+
+$$X\sim expo(\beta),\quad  f_X(x)=\frac1\beta e^{-\frac{x}{\beta}}, x\ge0,\beta>0$$
+
+$$Let\ Y=g(X)= (\frac{2X}\beta)^{\frac12}, X=g^{-1}(Y)=\frac{\beta Y^2}2\quad\therefore g^{-1}(y)=\frac{\beta y^2}2,\ y>0,\ \beta>0\quad \text{is monotone}$$
+
+$$f_Y(y)=f_X(\frac{\beta y^2}2)|\frac{d\frac{\beta y^2}2}{dx}|=\frac1\beta e^{-\frac{\beta y^2}{2\beta}}\beta y=ye^{\frac{-y^2}2}, y\ge0$$
+
+This is a Rayleigh distribution with $\beta=\sqrt2$.
+
+For $Z\sim N(0,1)$, 
+$$EZ^2=\int_{-\infty}^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=1\quad \implies \int_0^{\infty}\frac{z^2}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac12$$
+$$ EY=\int_0^{\infty}yye^{\frac{-y^2}2}dy={\sqrt{2\pi}}\left[\int_0^{\infty}\frac{y^2}{\sqrt{2\pi}}e^{\frac{-y^2}2}dy\right]=\frac{\sqrt{2\pi}}{2}$$
+
+For $W\sim Gamma(2,2)$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{2-1}}{\Gamma (2)2^2}e^{-\frac{w}2}dw=1$$
+
+$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\left[\int_0^{\infty}\frac{(y^2)^{2-1}}{\Gamma (2)2^2}e^{\frac{-y^2}2}dy^2\right]=2,\quad VarY=2-\frac{\pi}2$$
+
+Or for $V\sim Expo(1)$
+
+$$EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1$$
+
+$$\therefore EY^2=\int_0^{\infty}y^2ye^{\frac{-y^2}2}dy=2\left[\int_0^{\infty}(\frac{y^2}2)e^{\frac{-y^2}2}d(\frac{y^2}2)\right]=2,\quad VarY=2-\frac{\pi}2$$
+
+Or let $u=y^2, v=-e^{\frac{-y^2}2}, du=2ydy, dv=ye^{\frac{-y^2}2}dy$ has same result.
+
+
+****
+(c) If $X\sim$ gamma(a, b), then $Y=1/X$ has the inverted gamma IG(a, b) distribution. (This distribution is useful in Bayesian estimation of variances; see Exercise 7.23.)
+
+
+$$X\sim Gamma(a,b),\quad f_X(x)=\frac{x^{a-1}}{\Gamma (a)b^a}e^{-\frac{x}b}, x\ge0, a>0, b>0$$
+
+$$Let\ Y=g(X)=\frac1X, X=g^{-1}(Y)=\frac1Y\quad\therefore g^{-1}(y)=\frac1y,\ y>0\quad \text{is monotone}$$
+
+$$\therefore f_Y(y)=f_X(\frac1y)|\frac{d\frac1y}{dx}|=\frac{y^{1-a}}{\Gamma (a)b^a}e^{-\frac1{by}}|-\frac1{y^2}|=\frac{y^{-a-1}}{\Gamma (a)b^a}e^{-\frac1{by}},\ y>0$$
+
+This is an Inverted gamma IG(a, b)
+
+For $W\sim Gamma(a-n,b)$
+$$\int_0^{\infty}f_W(w)dw=\int_0^{\infty}\frac{w^{(a-n)-1}}{\Gamma (a-n)b^{a-n}}e^{-\frac{w}b}dw=1, n=0,1,2,..\quad \text{and}\ \Gamma(a)=(a-1)\Gamma(a-1)$$
+
+$$\therefore EY=\int_0^{\infty}\frac{y(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)b}\left[\int_0^{\infty}\frac{(\frac1y)^{(a-1)-1}}{\Gamma (a-1)b^{a-1}}e^{-\frac1b\frac1y}d(\frac1y)\right]=\frac{1}{(a-1)b},\ a>1$$
+
+$$EY^2=\int_0^{\infty}\frac{y^2(\frac1y)^{a+1}}{\Gamma (a)b^a}e^{-\frac1b\frac1y}dy=\frac{1}{(a-1)(a-2)b^2}\left[\int_0^{\infty}\frac{(\frac1y)^{(a-2)-1}}{\Gamma (a-2)b^{a-2}}e^{-\frac1b\frac1y}d(\frac1y)\right]=\frac{1}{(a-1)(a-2)b^2},\ a>2$$
+
+$$VarY=\frac{1}{(a-1)(a-2)b^2}-\frac{1}{(a-1)^2b^2}=\frac{a-1-(a-2)}{(a-1)^2(a-2)b^2}=\frac{1}{(a-1)^2(a-2)b^2}, a>2$$
+
+****
+(d) If $X\sim gamma(3/2, \beta)$, then $Y =(X/\beta)^{1/2}$ has the Maxwell distribution.
+
+$$X\sim Gamma(\frac32,\beta),\quad \therefore f_X(x)=\frac{x^{\frac32-1}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta}=\frac{x^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{x}\beta},\ \beta>0$$
+
+$$Let\ Y=g(X)= (\frac{X}\beta)^{\frac12}, X=g^{-1}(Y)={\beta Y^2}\quad\therefore g^{-1}(y)=\beta y^2,\ y>0\quad  \text{is monotone}$$
+
+Because $\Gamma (\frac32)=\Gamma(\frac12+1)=\frac12\Gamma(\frac12)=\frac{\sqrt\pi}2$
+
+$$\therefore f_Y(y)=f_X(\beta y^2)|\frac{d\beta y^2}{dx}|=\frac{(\beta y^2)^{\frac12}}{\Gamma (\frac32)\beta^{\frac32}}e^{-\frac{\beta y^2}\beta}2\beta y=\frac{4y^2}{\sqrt\pi}e^{-y^2},\ y>0$$
+
+For $V\sim Expo(1)$
+
+$$EV=\int_0^{\infty}vf_V(v)dv=\int_0^{\infty}ve^{-v}dv=1$$
+$$EY=\int_0^{\infty}\frac{y4y^2}{\sqrt\pi}e^{-y^2}dy=\frac2{\sqrt\pi}\left[\int_0^{\infty}y^2e^{-y^2}dy^2\right]=\frac2{\sqrt\pi}$$
+
+For $Z\sim N(0,1)$, 
+$$EZ^4=\int_{-\infty}^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=3\quad \implies \int_0^{\infty}\frac{z^4}{\sqrt{2\pi}}e^{\frac{-z^2}2}dz=\frac32$$
+
+$$\therefore EY^2=\int_0^{\infty}\frac{y^24y^2}{\sqrt\pi}e^{-y^2}dy=\int_0^{\infty}\frac{(\sqrt2y)^4}{\sqrt{2\pi}}e^{-\frac{(\sqrt2y)}2^2}d(\sqrt2y)=\frac32$$
+
+$$VarY=\frac32-\frac4{\pi}$$
+
+****
+(e) If $X\sim$ exponential(1), then $Y =\alpha-\gamma \log X$ has the Gumbel($\alpha,\gamma$) distribution, where $-\infty<\alpha<\infty$ and $\gamma>0$. (The Gumbel distribution is also known as the extreme value distribution.)
+
+$$X\sim expo(1),\quad \therefore f_X(x)=e^{-x}, x\ge0$$
+
+$$Let\ Y=g(X)= \alpha-\gamma\log X, X=g^{-1}(Y)=e^{\frac{\alpha-Y}{\gamma}}\quad\therefore g^{-1}(y)=e^{\frac{\alpha-y}{\gamma}}$$
+
+$$\therefore f_Y(y)=f_X(e^{\frac{\alpha-y}{\gamma}})|\frac{de^{\frac{\alpha-y}{\gamma}}}{dx}|=e^{-e^{\frac{\alpha-y}{\gamma}}}e^{\frac{\alpha-y}{\gamma}}|-\frac1{\gamma}|=\frac1{\gamma}e^{\frac{\alpha-y}{\gamma}-e^{\frac{\alpha-y}{\gamma}}}, \gamma>0$$
+
+This is a Gumbel distribution with $\alpha,\beta$.
+
+Because $E(ax+b)=aE(x)+b$, let $I_1=E(\ln x)=\int_0^{\infty}\ln xe^{-x}dx,\ I_2=E(\ln x)^2=\int_0^{\infty}(\ln x)^2e^{-x}dx$, $I_1=0.5772157$ is Euler's constant.
+
+$$EY=E(\alpha+\gamma\ln x)=\alpha+\gamma E(\ln x)=\alpha+\gamma I_1$$
+
+$$\therefore EY^2=E(\alpha+\gamma\ln x)^2=\alpha^2+2\alpha\gamma I_1+\gamma^2 I_2$$
+
+$$VarY=EY^2-(EY)^2=\gamma^2 [I_2-I_1^2]=\frac{\pi^2\gamma^2}{6},\ \gamma>0$$
+
+****
+**3.39** Consider the Cauchy family defined in Section 3.3. This family can be extended to a location-scale family yielding pdfs of the form.
+
+$$f(x|\mu,\sigma)=\frac{1}{\sigma\pi\left(1+(\frac{x-\mu}{\sigma})^2\right)},\ -\infty<x<\infty$$
+
+The mean and variance do not exist for the Cauchy distribution. So the parameters $\mu$ and $\sigma^2$ are not the mean and variance. But they do have important meaning. Show that if X is a random variable with a Cauchy distribution with parameters $\mu$ and $\sigma^2$, then:
+
+(a) $\mu$ is the median of the distribution of X, that is, $P(X\ge\mu)=P(X\le\mu)=1/2$.
+
+According to Theorem 3.5.6, f(x) is pdf, $\mu,\sigma\in\mathbf{R}$, $\sigma>0$. X is a random variable with pdf ($1/\sigma)f((x-\mu)/\sigma$) when and only when Z is a random variable with pdf f(z) and $X=\sigma Z+\mu$
+
+$$\because P(X>x_{\alpha})=P(\sigma Z+\mu>\sigma z_{\alpha}+\mu)= P(Z>z_{\alpha})=\int_{z_{\alpha}}^{\infty}f(z)dz=\alpha $$
+
+$$\therefore P(X\ge\mu)=P(\sigma Z+\mu\ge\mu)=P(Z\ge0)=\int_0^{\infty}\frac{1}{\sigma\pi(1+z^2)}d(\sigma z+\mu)$$
+$$=\int_0^{\infty}\frac{1}{\pi(1+z^2)}dz=\frac{1}{\pi}\left.\tan^{-1}z\right|_0^{\infty}=\frac{1}{\pi}(\frac\pi2-0)=\frac{1}{2}$$
+
+In same way, $P(X\le\mu)=\frac12$. Therefore, $\mu$ is the median of the distribution of X.
+
+****
+(b) $\mu+\sigma$ and $\mu-\sigma$ are the quartiles of the distribution of X, that is, $P(X\ge\mu+\sigma)=P(X\le\mu-\sigma)=1/4$. (Hint: Prove this first for $\mu=0$ and $\sigma=1$ and then use Exercise 3.38.)
+
+let $X=\sigma Z+\mu$
+$$P(X\ge\mu+\sigma)=P(\sigma Z+\mu\ge\mu+\sigma)=P(Z\ge1)=\int_1^{\infty}\frac{1}{\sigma\pi(1+z^2)}d(\sigma z+\mu)$$
+
+$$\int_1^{\infty}\frac{1}{\pi(1+z^2)}dz=\frac{1}{\pi}\left.\tan^{-1}z\right|_1^{\infty}=\frac{1}{\pi}(\frac\pi2-\frac\pi4)=\frac{1}{4}$$
+
+In same way, $P(X\le\mu-\sigma)=\frac14$. Therefore, $\mu+\sigma$ and $\mu-\sigma$ are the quartiles of the distribution of X.
+
+
+
+
+## HW7
+
+
+**3.28** Show that each of the following families is an exponential family.
+
+`(a) normal family` with either parameter $\mu$ or $\sigma$ known
+
+When $\mu$ is known, $f(x|\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}={h(x)}{c(\sigma^2)}e^{w_1(\sigma^2)t_1(x)}$
+
+$h(x)$ | $c(\sigma^2)$ | $w_1(\sigma^2)$ | $t_1(x)$
+|--- | --- | --- | ---
+ $1$ | $\frac{1}{\sqrt{2\pi\sigma^2}}I_{(0,\infty)}(\sigma^2)$ | $-\frac1{2\sigma^2}$ | $(x-\mu)^2$
+<span></span> | <span></span> | <span></span> | <span></span>
+
+
+When $\sigma$ is known, $f(x|\mu)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac1{2\sigma^2}(x-\mu)^2}=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{x^2}{2\sigma^2}+\frac{x\mu}{\sigma^2}-\frac{\mu^2}{2\sigma^2}}=e^{-\frac{x^2}{2\sigma^2}}\frac{e^{-\frac{\mu^2}{2\sigma^2}}}{\sqrt{2\pi\sigma^2}}e^{\frac{x}{\sigma^2}\mu}$
+
+$h(x)$ | $c(\mu)$ | $w_1(\mu)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+ $e^{-\frac{x^2}{2\sigma^2}}$ | $\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{\mu^2}{2\sigma^2}}$ | $\mu$ | $\frac{x}{\sigma^2}$
+
+****
+`(b) gamma family` with either parameter $\alpha$ or $\beta$ known or both unknown
+
+When $\alpha$ is known, $f(x|\beta)=\frac{x^{\alpha-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{-\frac{x}{\beta}}={h(x)}{c(\beta)}e^{w_1(\beta)t_1(x)}$
+
+$h(x)$ | $c(\beta)$ | $w_1(\beta)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+ $\frac{x^{\alpha-1}}{\Gamma(\alpha)},x>0$ | $\frac{1}{\beta^{\alpha}}$ | $\frac1{\beta}$ | $-x$
+
+When $\beta$ is known, $f(x|\alpha)=e^{-\frac{x}{\beta}}\frac{1}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)}$
+
+$h(x)$ | $c(\alpha)$ | $w_1(\alpha)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+ $e^{-\frac{x}{\beta}},x>0$ | $\frac{1}{\Gamma(\alpha)\beta^{\alpha}}$ | $\alpha-1$ | $\ln x$
+
+When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}-\frac{x}{\beta}}={h(x)}{c(\alpha,\beta)}e^{w_1(\beta)t_1(x)+w_2(\alpha)t_2(x)}$
+
+$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
+|------ | ---- | ---- | ---- | ---- | -----
+ $I_{(0,\infty)}(x)$ | $\frac{1}{\Gamma(\alpha)\beta^{\alpha}}$ | $\alpha-1$ | $\ln x$ | $-\frac1\beta$ | $x$
+
+****
+`(c) beta family` with either parameter $\alpha$ or $\beta$ known or both unknown
+
+When $\alpha$ is known, $f(x|\beta)=\frac{x^{\alpha-1}}{B(\alpha,\beta)}(1-x)^{\beta-1}=\frac{x^{\alpha-1}}{B(\alpha,\beta)}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\beta)}e^{w_1(\beta)t_1(x)}$
+
+$h(x)$ | $c(\beta)$ | $w_1(\beta)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+ $x^{\alpha-1}I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\beta-1$ | $\ln(1-x)$
+
+When $\beta$ is known, $f(x|\alpha)=\frac{(1-x)^{\beta-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{(\alpha-1)\ln{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)}$
+
+$h(x)$ | $c(\alpha)$ | $w_1(\alpha)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+ $(1-x)^{\beta-1}I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\alpha-1$ | $\ln x$
+
+When $\alpha$ and $\beta$ are unknown, $f(x|\alpha,\beta)=\frac{1}{B(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1}=\frac{1}{B(\alpha,\beta)}e^{(\alpha-1)\ln x}e^{(\beta-1)\ln(1-x)}={h(x)}{c(\alpha,\beta)}e^{w_1(\alpha)t_1(x)+w_2(\beta)t_2(x)}$
+
+$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\beta)$ | $t_2(x)$
+|------ | ---- | ---- | ---- | ---- | -----
+ $I_{[0,1]}(x)$ | $\frac{1}{B(\alpha,\beta)}$ | $\alpha-1$ | $\ln x$ | $\beta-1$ | $\ln(1-x)$
+
+****
+`(d) Poisson family`
+
+When $\lambda$ is known, $f(x|\lambda)=\frac{\lambda^x}{x!}e^{-\lambda}=\frac{1}{x!}e^{-\lambda}e^{\ln(\lambda)x}={h(x)}{c(\lambda)}e^{w_1(\lambda)t_1(x)}$
+
+$h(x)$ | $c(\lambda)$ | $w_1(\lambda)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+$\frac{1}{x!}I_{0,1,2..}(x)$ | $e^{-\lambda}$ | $\ln(\lambda)$ | $x$
+
+****
+`(e) negative binomial family` with r known, 0<p<1
+
+When $p$ is known, $f(x|p)=\binom{x-1}{r-1}p^r(1-p)^{x-r}=\binom{x-1}{r-1}(\frac{p}{1-p})^r(1-p)^{x}=\binom{x-1}{r-1}(\frac{p}{1-p})^re^{\ln(1-p) x}={h(x)}{c(p)}e^{w_1(p)t_1(x)}$
+
+$h(x)$ | $c(p)$ | $w_1(p)$ | $t_1(x)$
+|------ | -------- | --------- | ------
+$\binom{x-1}{r-1}I_{r,r+1..}(x)$ | $(\frac{p}{1-p})^r$ | $\ln(1-p)$ | $x$
+
+
+**3.33** For each of the following families:
+
+(i) Verify that it is an exponential family.
+
+(ii) Describe the curve on which the $\theta$ parameter vector lies.
+
+(iii) Sketch a graph of the curved parameter space.
+
+`(a)` $n(\theta, \theta)$
+
+$f(x|\theta,\theta)=\frac{1}{\sqrt{2\pi\theta}}e^{-\frac1{2\theta}(x-\theta)^2}=\frac{1}{\sqrt{2\pi\theta}}e^{-\frac{x^2}{2\theta}+x-\frac{\theta}{2}}=e^x\frac{e^{-\frac{\theta}{2}}}{\sqrt{2\pi\theta}}e^{-\frac{x^2}{2\theta}}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)}$
+
+$h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$
+|------ | ------------- | -------------- | ------
+ $e^xI_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{\theta}{2}}}{\sqrt{2\pi\theta}},\theta>0$ | $\frac1{2\theta}$ | $-x^2$
+
+Therefore, this function is an exponential family. The natural parameter is $\eta=\frac1{2\theta}$ and the natural parameter space is {$\eta:\eta>0$}. The $\theta$ parameter vector lies on a nonnegative real line.
+
+```{r, echo=FALSE, message=FALSE, fig.height=3}
+curve(x^0-1, -10, 10)
+```
+
+****
+`(b)` $n(\theta, a\theta^2)$, a known
+
+$f(x|\theta,a\theta^2)=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac1{2a\theta^2}(x-\theta)^2}=\frac{1}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}+\frac{x}{a\theta}-\frac{1}{2a}}=\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}}e^{-\frac{x^2}{2a\theta^2}}e^{\frac{x}{a\theta}}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)}$
+
+$h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$
+|------ | ---- | ---- | ---- | ---- | -----
+ $I_{(-\infty,\infty)}(x)$ | $\frac{e^{-\frac{1}{2a}}}{\sqrt{2\pi{a}\theta^2}},-\infty<\theta<\infty,a>0$ | $\frac1{2a\theta^2}$ | $-x^2$ | $\frac1{a\theta}$ | $x$
+
+Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2)=(\frac1{2a\theta^2},\frac1{a\theta})$ with natural parameter space{$(\eta_1,\eta_2):\eta_1>0,-\infty<\eta_2<\infty$}. The $\theta$ parameter vector lies on a parabola.
+
+```{r, echo=FALSE, message=FALSE, fig.height=3}
+curve(2*(x)^2, -10, 10)
+```
+
+****
+`(c)` gamma($\alpha, 1/\alpha$)
+
+$f(x|\alpha,\frac1{\alpha})=\frac{\alpha^{\alpha}}{x\Gamma(\alpha)}e^{\alpha\ln{x}-\alpha{x}}={h(x)}{c(\alpha)}e^{w_1(\alpha)t_1(x)+w_2(\alpha)t_2(x)}$
+
+$h(x)$ | $c(\alpha,\beta)$ | $w_1(\alpha)$ | $t_1(x)$ | $w_2(\alpha,\beta)$ | $t_2(x)$
+|------ | ---- | ---- | ---- | ---- | -----
+ $\frac1xI_{(0,\infty)}(x)$ | $\frac{\alpha^{\alpha}}{\Gamma(\alpha)}$ | $\alpha$ | $\ln x$ | $\alpha$ | $-x$
+
+Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2)=(\alpha,\alpha)$ with natural parameter space{$(\eta_1,\eta_2):\eta_1>0,\eta_2>0$}. The $\alpha$ parameter vector lies on a line.
+
+```{r, echo=FALSE, message=FALSE, fig.height=3}
+curve(1*x, 0, 20)
+
+```
+
+
+****
+`(d)` $f(x|\theta) = C exp (-(x-\theta)^4)$ , C a normalizing constant
+
+$f(x|\theta)=Ce^{-(x-\theta)^4}=Ce^{-x^4}e^{-\theta^4}e^{4x^3\theta}e^{-6x^2\theta^2}e^{4x\theta^3}={h(x)}{c(\theta)}e^{w_1(\theta)t_1(x)+w_2(\theta)t_2(x)+w_3(\theta)t_3(x)}$
+
+$h(x)$ | $c(\theta)$ | $w_1(\theta)$ | $t_1(x)$ | $w_2(\theta)$ | $t_2(x)$ | $w_3(\theta)$ | $t_3(x)$
+|------ | ---- | ---- | ---- | ---- | ----- | ---- | -----
+ $Ce^{-x^4}I_{(-\infty,\infty)}(x)$ | $e^{-\theta^4},-\infty<\theta<\infty$ | $\theta$ | $4x^3$ | $\theta^2$ | $-6x^2$ | $\theta^3$ | $4x$
+
+Therefore, this function is an exponential family. The natural parameter is $(\eta_1,\eta_2,\eta_3)=(\theta,\theta^2, \theta^3)$ with natural parameter space{$(\eta_1,\eta_2,\eta_3): -\infty<\eta_1<\infty,0<\eta_2,-\infty<\eta_3>\infty$}. The $\theta$ parameter vector lies on a 3D line.
+
+```{r, echo=FALSE, message=FALSE, fig.height=3}
+library(plotly)
+x <- seq(-10,10, len = 18)
+plot_ly(mpg, x = ~x, y = ~x^2, z = ~x^3, width = 9) %>%
+  add_lines()
+```
+
+
+
+```{r, eval=FALSE, include=FALSE}
+library(plot_ly)
+library(reshape2)
+
+#pp <- function (n,r=4) {
+    x <- seq(-r*pi, r*pi, len=n)
+    df <- expand.grid(x=x, y=x)
+    df$r <- sqrt(df$x^2 + df$y^2)
+    df$z <- cos(df$r^2)*exp(-df$r/6)
+    df
+#}
+#data_xyz <- pp(100)
+#data_z <- acast(data_xyz, x~y, value.var = "z")
+#plot_ly(z = data_z,  type = "surface")
+
+#x <- seq(-pi, pi, len = 20)
+#y <- seq(-pi, pi, len = 20)
+#g <- expand.grid(x = x, y = y)
+#g$z <- sin(sqrt(g$x^2 + g$y^2))
+#wireframe(z ~ x * y, g, drape = TRUE,
+#aspect = c(3,1), colorkey = TRUE)
+
+```
+
+```{r, eval=FALSE, include=FALSE}
+library(plotly)
+
+count <- 3000
+
+x <- c()
+y <- c()
+z <- c()
+c <- c()
+
+for (i in 1:count) {
+  r <- i * (count - i)
+  x <- c(x, r * cos(i / 30))
+  y <- c(y, r * sin(i / 30))
+  z <- c(z, i)
+  c <- c(c, i)
+}
+
+data <- data.frame(x, y, z, c)
+
+plot_ly(data, x = ~x, y = ~y, z = ~z, type = 'scatter3d', mode = 'lines',
+        line = list(width = 4, color = ~c, colorscale = list(c(0,'#BA52ED'), c(1,'#FCB040'))))
+```
+
+****
+
+**3.38** Let Z be a random variable with pdf f(z). Define $z_{\alpha}$ to be a number that satisfies this relationship:
+$$\alpha= P ( Z > z_{\alpha}) =\int_{z_{\alpha}}^{\infty}f(z)dz.$$
+Show that if X is a random variable with pdf ($l/\sigma)f((x-\mu)/\sigma$) and $x_{\alpha}=\sigma z_{\alpha}+\mu$, then $P(X>x_{\alpha})=\alpha$. (Thus if a table of $z_{\alpha}$ values were available, then values of $x_{\alpha}$ could be easily computed for any member of the location-scale family.)
+
+According to Theorem 3.5.6, f(x) is pdf, $\mu,\sigma\in\mathbf{R}$, $\sigma>0$. when and only when Z is a random variable with pdf f(z) and $X=\sigma Z+\mu$, X is a random variable with pdf ($1/\sigma)f((x-\mu)/\sigma$) 
+
+Beacuse $x_{\alpha}=\sigma z_{\alpha}+\mu$,
+
+$$P(X>x_{\alpha})=\int_{x_a}^{\infty}\frac1\sigma f(\frac{x-\mu}{\sigma})dx=\int_{\sigma z_a+\mu}^{\infty}\frac1{\sigma}f(\frac{\sigma z+\mu-\mu}{\sigma}) d(\sigma z+\mu)=\int_{z_{\alpha}}^{\infty}f(z)dz$$
+
+$$=P(\sigma Z+\mu>\sigma z_{\alpha}+\mu)= P(Z>z_{\alpha})=\alpha $$

@@ -1,0 +1,1063 @@
+---
+title: "Mathematical Statistics I"
+subtitle: "STAT 561"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
+---
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## 1 Prabability Theory
+
+### 1.1 Set Theory 
+`2018.9.25`
+
+1. Definition 
+
+* An **experiment** is a process that leads to one of several possible outcomes.
+
+* The **sample space** (S) is the set of all possible outcomes of an experiment.
+
+* An **event** is a subset of S.
+
+ name | symbol | theorem | equation
+ :------: | :------: | :------: | :------:
+ subset | $\subset$ | Commutativity  | $A\cup B= B\cap A,A\cap B=B\cap A$
+ intersection | $\cap$  | Associativity  | $A\cup(B\cup C)=(A\cup B)\cup C$
+ union | $\cup$  | | $A\cap(B\cap C)=(A\cap B)\cap C$
+ Complement of A | $A^c$  | Distributive Laws  | $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$
+ empty set | $\emptyset$  |  | $A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$
+ | |  | DeMorgan's Laws  | $(A\cup B)^c=A^c\cap B^c$
+ | |  |   |  $(A\cap B)^c=A^c\cup B^c$
+
+### 1.2.1 Axiomatic Foundations 
+
+2. Borel field
+
+A and B are **disjoint** or **mutually exclusive**, if $A\cap B=\emptyset$
+
+Let B be a subset of all possible subset of S. Then B is a **Borel field** or a $\sigma$-algebra, if  
+ (1). $\emptyset\in B$  
+ (2). if $A\in B, then\ A^c\in B$  
+ (3). if $A_{1},A_{2},A_{3},...\in B, then\ \bigcup_{n=1}^{\infty}\in B$  
+
+3. Kolmogorov Axioms/of Probability
+
+let B be a **Borel field**. Then P is a **probability set function** if  
+   (1). $\forall A\in B,\ P(A)\ge0$  
+   (2). $P(S)=1$  
+   (3). If $A_{1},A_{2},A_{3}$,...are pairwise disjoint, then $\ P(\bigcup_{n=1}^{\infty}A_i)=\sum_{i=1}^{\infty}P(A_{i})$
+
+4. Example
+Roll a 6-sides die 
+$$S=\{1,2,3,4,5,6\}$$
+$$B=\{\emptyset ,S,\{1,2\},\{3,4,5,6\}\}$$  
+  is a well-defined *Borel field*  
+
+Define：
+ $P(A)=\begin{cases}1&if\ 2\in A \\o &otherwise\end{cases}$  
+This is a well-defined *probability function*  
+
+Define: 
+ $P(A)=\frac{element in A}{6}$  
+This is also a well-defined *probability function*
+
+### 1.2.2 The Calculus of Probabilities
+
+5. The properties of the probability function: Theorem 1.2.8
+
+  (1). $\forall A\in B,\ P(A^c)=1-P(A)$  
+  (2). $P(\emptyset)=0$  
+  (3). $P(A)\le1$
+
+Proof (1): 
+
+  $A\cap A^c=\emptyset$  
+  $A\cup A^c=S$  
+  $P(A\cup A^c)=P(A)+P(A^c)$  [by K-3]  
+  $P(S)=1$                    [by K-2]  
+
+Proof (2):  
+
+  $\emptyset\cap S=\emptyset$  
+  $\emptyset\cup S=S$  
+  $P(\emptyset\cup S)=P(\emptyset)+P(S)$; $P(\emptyset\cup S)=P(S)=1$
+
+6. Theorem 1.2.9 (c).
+
+  Let $A_{1}$ and $A_{2}$ the elements of B with $A_{1}\subset A_{2}$, then  
+   $P(A_{1})\le P(A_{2})$
+   
+Proof:
+
+  Let $A_{1}\subset A_{2}$ with $A_{2}=A_{1}\cup (A_{2}\cap A_{1}^c)$  
+   Also $A_{1}\cap(A_{2}\cap A_{1}^c)=\emptyset$  
+   So $P(A_{2})=P(A_{1})+P(A_{2}\cap A_{1}^c)$  
+   $P(A_{2}\cap A_{1}^c)\ge0$  
+   $\therefore\ P(A_{2})\ge P(A_{1})$
+
+`2018.09.27`
+
+1. Theorem 1.2.9 (a)
+
+ Define: $A\backslash B =A\cap B^c$
+
+ $P(A\cap B^c)=P(A)-P(A\cap B)$
+   
+Proof:
+
+  $A=(A\cap B)\cup(A\cap B^c)=A\cap(B\cup B^c)$ by distrib law (v.2011)  
+
+  $A=(A\cap B)\cup(A\cap B^c)$  
+   and $(A\cap B)\cap (A\cap B^c)=\emptyset$  
+   By K-3, $P(A)=P(A\cap B)+P(A\cap B^c)$  
+   $\therefore P(A)=P(A\cap B)+P(A\cap B^c)$  
+
+  $P(A\cup B)=P(A)+P(B)-P(A\cap B)$
+
+Proof:
+
+  $A\cup B=A\cup(B\cap A^c)$  
+   $=(A\cup B)\cap(A\cup A^c)=A\cup B$  
+   $P(A\cup B)=P(A)+ P(B\cap A^c)$  
+   $=P(A)+P(B)-P(B\cap A)$  
+
+2.3. Law of Total Probability
+
+Theorem 1.2.11 (a). 
+Define:
+
+  $C_{1},C_{2},C_{3},...$ form a partition of S if  
+   (1). $\bigcup_{i=1}^\infty C_i=S$ and  
+   (2). $C_{i}\cap C_{j}=\emptyset \quad \forall i\ne j$ (pairwise disjoint)
+
+  If $C_{1},C_{2},C_{3},...$ is a portition of S, then  
+   $P(A)=\sum_{i=1}^\infty P(A\cap C_{i})$ 
+
+Proof:
+
+  $A=A\cap S=A\cap(\bigcup_{i=1}^\infty C_{i})=\bigcup_{i=1}^\infty(A\cap C_{i})$
+   Since $A\cap C_i$ and $A\cap C_j$ are disjoint $\forall i\ne j$
+   $\therefore P(A)= \sum_{i=1}^\infty P(A\cap C_{i})$ [by Kolmogorov-3]
+
+
+4.5. Boole 's Inequality
+
+Theorem 1.2.11 (b)
+
+  Let $A_{1}, A_{2}$,...be events, then  
+   $P(\bigcup_{i=1}^\infty A_i)\le\sum_{i=1}^\infty P(A_{i})$
+
+Proof:
+
+  Let $A_{1}^*=A_1$  
+       $A_2^*=A_2\backslash A_1=A_2\cap A_1^c$  
+       $A_3^*=A_3\backslash (A_1\cup A_2)$  
+       $A_i^*=A_i\backslash (\bigcup_{j=1}^{i-1} A_j)$
+
+Note:     
+
+  $A_i^*$ and $A_k^*$ are disjiont for $i\ne k$  
+   and $\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty A_i^*$  
+   So $P(\bigcup_{i=1}^\infty A_i)=P(\bigcup_{i=1}^\infty A_i^*)$  
+   $=\sum_{i=1}^\infty P(A_i^*)$  
+   $\le\sum_{i=1}^\infty P(A_i)$   
+   since $A_i^*<A_i$  [By subset theorem]
+
+
+6.7. Bonferroni inequality
+Theorem 1.2.10
+
+Suppose we have n events $A_1, A_2,...A_n$  
+ with probabilities $P_i=P(A_i)$
+
+| $$P(A_1\cap ...\cap A_n)^c=1-P(A_1\cap ...\cap A_n)$$ |  
+| ---|---|
+| [By DeMorgan] | [By Comlement Theorem] |
+
+$$P(A_1^c\cup ...\cup A_n^c)\le\sum_{i=1}^n P(A_i^c)$$   [Boole]  
+   $$=\sum_{i=1}^\infty[1-P(A_i)]=n-\sum_{i=1}^\infty P(A_i)$$  
+   $$1-P(A_1\cap ...\cap A_n)\le n-\sum_{i=1}^\infty P(A_i)$$  
+   $$P(A_1\cap ...\cap A_n)\ge\sum_{i=1}^\infty P(A_i)-(n-1)$$  
+
+
+8. Example of usage:
+Question:If LHS is to the at least .95, then what must each $P(A_i)$ be to guarantee that? (v.2011)
+
+> Assume $P(A_i)=p \quad \forall i$, whtat must p be, in order to guarantee that $P(A_1\cap ...\cap A_n)\ge 0.95$
+
+Set $$\sum_{i=1}^np_i-(n-1)=0.95$$
+    $$np=0.95+n-1$$
+    $$p=1-\frac{0.05}n$$
+
+ Intepretation: If you do 10 simulations Confidence intervals, each at 99.5% Confidence, you will have joint confidence of at least 95%
+
+### 1.2.3 Counting Rules
+
+9. (1). Multiplication Rule 
+
+Theorem 1.2.14:
+
+If you have/perform a sequence of procedures, then the total number of outcomes is the product of the number of possible outcomes at each step  $N$
+
+-Example: Flip 3 coins in sequence $2\times2\times2=8$
+
+10. (2). Factorial Rule
+
+Theorem 1.2.16
+
+The number of ways of arranging or ordering n objects/items is $n!$  
+
+11. (3). Permutation Rule
+
+Start with n objects. The number of ways of selecting and ordering r of them is
+
+$$P_r^n=n(n-1)(n-2)...(n-r+1)=\frac{n!}{(n-r)!}$$
+
+12. (4). Combination Rule: 
+
+Theorem 1.2.17
+
+The number of ways of selecting r objects from n objects without regard to order, is "n choose r". 
+These numbers are also referred to as  **binomial coefficients** 
+
+   $$C_r^n=\binom nr=\frac{P_r^n}{r!}=\frac{n!}{r!(n-r)!}$$
+ 
+13. (5). Permutation of like objects Rule:  
+
+If there are n objects of K different types, then the number of ways that they can be oredered is
+
+$$\frac{n!}{n_1!n_2!...n_k!}$$  
+  > Where $n_i$ is the number of items of type i  
+    and $n_1+...+n_k=n$
+
+14. Example 
+
+How many differenct ways can the letters in "STATISTICS" be arranged?
+ $$\frac{10!}{3!3!1!2!1!}=\left(_{3 3 1 2 1}^{10}\right)=50400 $$
+
+Number of possible arrangements of size r from n objects
+
+
+| | Without replacement | With replacement
+| --- | --- | ---
+| Ordered | $\frac{n!}{(n-r)!}$ | $n^r$
+| Unordered | $\binom nr$ | $\binom{n+r-1}r$
+
+
+### 1.2.4 Enumerating Outcomes
+
+### 1.3 Conditional Probability  
+
+`2018.10.2`
+
+1. Conditional Probability
+Definition 1.3.2  
+
+ $P(A|B)=\frac{P(A\cap B)}{P(B)}$, provided P(B)>0
+
+2. Is this a vaild probability function?  
+
+ (1) $\forall A, is P(A|B)\ge0$ yes
+   (2) $P(S|B)=\frac{P(S\cap B)}{P(B)}=\frac{P(B)}{P(B)}=1$ yes
+   (3) Suppose $A_1\cap A_2=\emptyset$ 
+
+$$P(A_1\cup A_2|B)=\frac{P[(A_1\cup A_2)\cap B]}{P(B)}=\frac{P[(A_1\cap B)\cup (A_2\cap B)]}{P(B)}=\frac{P[(A_1\cap B)+P(A_2\cap B)]}{P(B)}=P(A_1|B)+P(A_2|B)$$
+
+3. statistically independent
+Definition 1.3.7
+
+The events A and B are independent, if $P(A\cap B)=P(A)P(B)$
+
+Note: Suppose P(B)>0 and that A and B are independent, then
+
+$$P(A|B)=\frac{P(A\cap B)}{P(B)}=\frac{P(A)P(B)}{P(B)}=P(A)$$
+
+4. Example Roll 2 dice
+
+$$S=\begin{Bmatrix}
+11 & 12 & \cdots & 16 \\ 
+21 & 22 & \cdots & 26 \\ 
+\vdots & \vdots & \vdots & \vdots \\
+61 & 62 & \cdots & 66 \end{Bmatrix}$$
+
+let A be the event that the 1st dice=6; B....=6. 
+
+$$P(A)=\frac6{36},\quad P(B)=\frac6{36},\quad P(A\cap B)=\frac1{36}$$
+
+Since $\frac1{36}=\frac16\frac16$, A adn B are independent.
+
+5. Example Draw 2 cards
+
+Draw 2 cards from a deck of 52 without replacement.   
+
+let A: 1st card is an ace; 
+    B: 2nd...
+
+$$P(A\cap B)=\frac{4\times 3}{52\times 51}=\frac1{13\times 17}\ne\frac1{13}\frac1{13}$$
+$$P(A)=\frac{4\times 51}{52\times 51}=\frac4{52}=\frac1{13}$$
+$$P(B)=\frac{4\times 3+48\times 4}{52\times 51}=\frac4{52}=\frac1{13}$$
+Therefore A and B are dependent
+
+6. (recall 1.2.2)
+
+According to the Law of Total Probability  
+Theorem 1.2.11 (a).  
+$$P(A)=\sum_{i=1}^\infty{P(C_i)}P(A|C_i)$$
+
+7. Bayes' Rule
+
+Theorem 1.3.5
+Select a particular index K where $P(C_k)\ne0$
+
+$$P(C_k|A)=\frac{P(C_k\cap A)}{P(A)}=\frac{P(C_k)P(A|C_k) }{\sum_{i=1}^\infty{P(C_i)}P(A|C_i)}$$
+
+8-11. Example
+
+If the person does not hase the substance, the test results will be negative 96% of the time.
+
+$$P(B^c|A^c)=0.96$$
+
+Question: Given that the test results are positive, what is the prabability that the person uses the substance?
+
+let A: person uses substances
+
+    B: test result is positive
+
+Assume: 1 in 20 persons use the substance P(A)=0.05
+
+If the person uses the substance, the test results will be positive 99% of the time. P(B|A)=0.99
+<picture>
+
+How does this use Bayes's Rule?
+
+$$P(B|A)=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|A^c)P(A^c)}=\frac{0.05\times 0.99}{0.05\times0.99+0.95\times0.04}=0.566 $$
+
+`2018.10.4`
+
+1.2. Two sons problem
+
+Assume P(M)=P(F)=0.5; Assume independent births
+
+You see a person with one of their children, a son. You know that they have 2 children. Find the probability that their other child is a son.
+
+Let A: 1st child is M; B: 2nd child is M, Find
+
+$$P(A\cap B|A\cup B)=\frac{P[(A\cup B)\cap(A\cup B)]}{P(A\cup B)}=\frac{P(A\cap B)}{P(A\cup B)}=\frac{\frac14}{\frac34}=\frac13$$
+
+3. Monty Hall problem
+
+You choose door #1. Monty Hall opens one of the 2 remaining doors to reveal a joke prize. He them gives you the chance to swith your choose. Should you?
+
+Swich $\implies P(w)=\frac23$
+
+
+### 1.4 Random variable  
+
+4. Random variable
+
+Definition 1.4.1
+
+ A random variable is a function from the sample space into the set of real numbers
+
+$$X:S\to \mathbb{R}$$
+
+ The range of the random variable X is the set of real numbers that X maps onto
+
+5.Example: Flip 2 coins
+
+S={HH, HT, TH, TT}
+
+let X be the # of heads
+
+X(HH)=2, X(HTH)=1, X(TH)=1, X(TT)=0. range of X is {0,1,2}
+
+
+6. Definitions
+
+Definition 1.5.7
+
+ If the range of X is countable (finite or countable infinite), then X is a **discrete random variable**.
+
+Definition 1.5.8
+
+ If the range of X is an interval, then X is a **continuous random variable**.
+
+Definition of induced **probability function**
+
+ let A be a subset of the range of X.
+
+$$P_x(A)=P[\{s\in S: X(s)\in A\}]$$
+
+7.Example: Roll 2 coins
+
+$$S=\begin{Bmatrix}
+11 & 12 & \cdots & 16 \\ 
+21 & 22 & \cdots & 26 \\ 
+\vdots & \vdots & \vdots & \vdots \\
+61 & 62 & \cdots & 66 \end{Bmatrix}$$
+
+Let X be the maximum of the 2 dice
+Find the probability that x=5
+
+$$P_x(\{5\})=P\big[\{15,25,35,45,51,52,53,54,55\}\big]=\frac9{36}=\frac14$$
+
+### 1.5 Distribution Functions
+
+8. pmf $ cdf
+
+definition 1.6.1
+> let $r_i\in range of X$, let $p_x(r_i)=Px(\{r_i\}),\ p_x$ is called a **probability mass function** (pmf)
+
+definition 1.5.1
+> let $F_X(x)=PX\big[(-\infty,x])\big]$, this is called the **cumulative distribution function** (cdf) of the random variable X.
+
+9.10. Example: Flip 3 coins
+
+let x= # heads
+
+Find the pmf ; cdf for x
+
+S={HHH, HTH, HHT, HTT, THH, THT, TTH, TTT}
+ ={3,   2,   2,   1,   2,   1,   1,   0}
+
+pmf:
+$$p_x(0)=\frac18\quad p_x(1)=\frac38\quad p_x(2)=\frac18\quad p_x(3)=\frac18\quad p_x(1.5)=0$$
+
+cdf
+ $$F(x)=P(X\le x)=0$$
+
+### 1.6 Density and Mass Functions 
+
+`2018.10.9`
+
+1. cdf conditions
+Theorem 1.5.3 
+
+A cdf F(x) should satisfy 3 conditions:  
+
+a. $\lim_{x\to-\infty}F(x)=0\ \& \lim_{x\to\infty}F(x)=1$;  
+b. F is non-decreasing; and   
+c. F is right-continuous, which means $\lim_{x\to\infty}f(x)=f(x)$
+
+2-6. proof condition c.
+
+ let $C_1,C_2$,...be a sequance of events such that $C1\subset C_2\subset$... 
+
+ let $A_1=C_1$ and for $n\ge2,\ A_n=C_n\setminus C_{n-1}$, then
+
+$$\bigcup_{i=1}^\infty A_i=\bigcup_{i=1}^\infty C_i$$
+
+$$P[\lim_{n\to\infty}C_n]=P[\lim_{n\to\infty}\bigcup_{i=1}^nC_i]=P[\bigcup_{i=1}^{\infty}C_i]=P[\bigcup_{i=1}^{\infty}A_i]=\sum_{i=1}^{\infty}P(A_i)=\lim_{n\to\infty}\sum_{i=1}^nP(A_i)$$
+
+$$=\lim_{n\to\infty}\Big[P(A_1)+\sum_{i=2}^nP(A_i)\Big]=\lim_{n\to\infty}\Bigg[P(C_1)+\sum_{i=2}^n\Big[P(C_i)-P(C_i\cap C_{i-1})\Big]\Bigg]$$
+
+$$=\lim_{n\to\infty}\Bigg[P(C_1)+\sum_{i=2}^n\Big[P(C_i)-P(C_{i-1})\Big]\Bigg]=\lim_{n\to\infty}P(C_n)$$
+
+$$So\quad P(\lim_{n\to\infty}C_n)=\lim_{n\to\infty}P(C_n)$$
+
+ Now let $B_1,B_2$,...be a sequance of events such that $B1\supset B_2\supset$... 
+
+$$Then\ B_1^c\subset B_2^c\subset...$$
+
+$$So\quad P(\lim_{n\to\infty}B_n^c)=\lim_{n\to\infty}P(B_n^c)$$
+
+$$left\quad P(\lim_{n\to\infty}B_n^c)=P\left(\lim_{n\to\infty}\bigcup_{i=1}^nB_i^c\right)=P\left(\bigcup_{i=1}^{\infty}B_i^c\right)=P\left({\bigcap_{i=1}^{\infty}B_i}^c\right)$$
+
+$$=1-P\left(\bigcap_{i=1}^{\infty}B_i\right)=1-P\left(\lim_{n\to\infty}\bigcap_{i=1}^nB_i\right)=1-P\left(\lim_{n\to\infty}B_n\right)\quad $$
+
+$$right\quad \lim_{n\to\infty}P(B_n^c)=\lim_{n\to\infty}(1-P(B_n))=1-\lim_{n\to\infty}P(B_n)$$
+
+$$So\quad \lim_{n\to\infty}P(B_n)=P(\lim_{n\to\infty}B_n)$$
+
+ let $B_n=(-\infty,\ x+\frac1n]$, n=1,2,3,...
+ Note: $B_i\supset B_2\supset$...
+
+$$\lim_{n\to\infty}B_n=(-\infty,\ x]$$
+
+$$P\left(\lim_{n\to\infty}B_n\right)=P\left((-\infty,\ x]\right)=F_X(x)$$
+
+$$left\quad \lim_{n\to\infty}P(B_n)=\lim_{n\to\infty}P\left((-\infty,\ x+\frac1n]\right)=\lim_{n\to\infty}F_X(x+\frac1n)$$
+
+$$\therefore \lim_{n\to\infty}F_X(x+\frac1n)=F_X(x)$$
+
+7. Probability Density Function
+
+Definition 1.6.3
+
+
+
+
+8. Example
+
+## 2 Transformation & Expectations
+
+### 2.1 Distribution of Functions of a Random Variable  
+
+`2018.10.11`
+
+1-3. Example
+
+$$F_X(x)=\begin{cases}0 &x\le-1\\ \frac12(x+1) &-1\le x\le1\\1 &x\ge1\end{cases}$$
+
+Let $Y=X^2$, find its cdf
+
+$$F_Y(y)=P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)=P(X\le\sqrt y)-P(X\le-\sqrt y)=F_X(\sqrt y)-F_X(-\sqrt y)$$
+
+$$(X\le\sqrt y)\cap (X\le-\sqrt y)$$
+
+ Note: remember that our F was continuous
+
+$$F_Y(y)=\begin{cases}0 &y<0\\ \frac12(\sqrt y+1)-\frac12(-\sqrt y+1) &0\le x\le1\\1 &x>1\end{cases}=\begin{cases}0 &y<0\\ \sqrt y &0\le x\le1\\1 &x>1\end{cases}$$
+
+Find the pdf for Y.
+
+Since $F_Y(y)$ was continuous, find 
+
+$$f_Y(y)=\frac{d}{dy}F_Y(y)=\begin{cases}\frac1{2\sqrt y} &0< y\le1\\0 &elsewhere\end{cases}$$
+
+4-7. Special cases
+
+Assume the cdf is  continuous. Let Y=g(X) be a tranformation of X
+
+Suppose g increase (monotone increasing)
+
+$$F_Y(y)=P(Y\le y)=P(g(X)\le y)=P(X\le g^{-1}(y))=F_X(g^{-1}(y))$$
+
+$$Now,\ f_Y(y)=\frac{d}{dy}F_Y(y)=\frac{d}{dy}F_X(g^{-1}(y))=f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)=f_X(x)\frac{dx}{dy}$$
+
+$$But\ y=g(x),\quad so x=g^{-1}(y)$$
+
+Suppose g decrease
+
+$$F_Y(y)=P(Y\le y)=P(g(X)\le y)=P(X\ge g^{-1}(y))=1-F_X(g^{-1}(y))$$
+
+works since F was continuous.
+
+$$f_Y(y)=\frac{d}{dy}F_Y(y)=\frac{d}{dy}(1-F_X(g^{-1}(y)))=-f_X(g^{-1}(y))\frac{d}{dy}g^{-1}(y)=-f_X(x)\frac{dx}{dy}$$
+
+ Summary: Case 1 g increase, Case 2 g decrease
+
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|$$
+
+8-9. Example
+
+let X be a continuous rv with pdf
+
+$$f_x(x)=\begin{cases}1 &0<x<1\\0 &elsewhere\end{cases}$$
+
+
+$$f_Y(y)=\begin{cases}\frac12e^{\frac{y}2} &0<y<\infty\\0 &elsewhere\end{cases}$$
+
+10-12. Example
+
+$$f_x(x)=\frac1{\sqrt{2\pi}}e^{-\frac{x^2}2}\quad -\infty<x<\infty$$
+
+Let $Y=X^2$, not monotone, so no shortcut
+
+$$F_Y(y)=P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)=P(X\le\sqrt y)-P(X\le-\sqrt y)$$
+
+ Unfortunately, there is no closed form for $F_X(x)$
+
+
+$$f_Y(y)=\frac{d}{dy}F_Y(y)=\frac{d}{dy}[F_X(\sqrt y)-F_X(-\sqrt y)]=f_x(\sqrt y)\frac1{2\sqrt y}-f_x(-\sqrt y)\frac{-1}{2\sqrt y}$$
+
+$$=\frac1{\sqrt{2\pi}}e^{-\frac{y}2}\frac1{2\sqrt y}+\frac1{\sqrt{2\pi}}e^{-\frac{y}2}\frac1{2\sqrt y}=\frac1{\sqrt{2\pi}}e^{-\frac{y}2}\frac1{\sqrt y}\quad for\ y>0,\ -\infty<x<\infty$$
+
+$$f_Y(y)=\begin{cases}\frac1{\sqrt{2\pi y}}e^{-\frac{y}2} &y>0\\0 &elsewhere\end{cases}$$
+
+`2018.10.16`
+
+1.2. Another transformation example
+
+Let X have cdf $F_X(x)$ and assume that F is continuous and monotone increasing. define Y=F(X). Find the pdf for Y
+
+$$f_Y(y)=f_X(x)|\frac{dx}{dy}|\quad and\quad \frac{dx}{dy}=\frac1{\frac{dy}{dx}}=\frac1{f_X(x)}$$
+
+$$So\quad f_Y(y)=f_X(x)\frac1{f_X(x)}=1\quad for\ 0\le y\le1$$
+
+
+### 2.2 Expected Values
+
+`2018.10.16`
+
+3.4. Expectation operator
+
+Definition:
+
+If X is discrete r.v. and g(X) is any function of X, then
+
+$$E(g(X))=\sum_{all\ x}g(x)p_x(x)$$
+
+(provided that $\sum_{all\ x}|g(x)|p_x(x)<\infty$)
+
+If X is continnuous r.v. and Y=g(X), then
+
+$$E(g(X))=\int_{-\infty}^{\infty}g(x)f_x(x)dx$$
+
+(provided that $\int_{-\infty}^{\infty}g(x)f_x(x)dx<\infty$)
+
+Special case:
+
+$$E(X)=\begin{cases}\sum_{all\ x}xp_x(x) &descrete\\\int_{-\infty}^{\infty}xf_x(x)dx &continuous\end{cases}$$
+
+$$E(X^n)=\begin{cases}\sum_{all\ x}x^np_X(x) &descrete\\\int_{-\infty}^{\infty}x^nf_x(x)dx &continuous\end{cases}$$
+
+Definition: E(X) is the mean of the random variable $\mu=E(X)$ (2011 version)
+
+Definition: E(X^n) is the n^th moment of the random variable X.
+
+$$Notation\quad\mu_n'=E(X^n),\quad (So\quad \mu_1'=E(X)=\mu)$$
+
+4. Example-Exponential_distribution
+
+$$Let\quad f_X(x)=\frac1\lambda e^{-\frac x\lambda},\ x>0 $$
+
+Find E(X)
+
+Exponential_pmf|Exponential_cdf
+|---|---
+![Exponential_distribution_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Exponential_distribution_pdf.png/320px-Exponential_distribution_pdf.png)|![Exponential_distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Exponential_distribution_cdf.png/320px-Exponential_distribution_cdf.png)
+
+$$\mu=\int_{-\infty}^{\infty}xf_X(x)dx=\int_{0}^{\infty}x\frac1\lambda e^{-\frac x\lambda}dx$$
+
+let $u=x,\ dv=\frac1\lambda e^{-\frac x\lambda}dx$, then $du=dx,\ v=-e^{-\frac x\lambda}$
+
+
+$$=\int_{0}^{\infty}udv=\left.uv\right|_0^\infty -\int_{0}^{\infty}vdu=-\left.x\frac1\lambda e^{-\frac x\lambda}\right|_0^\infty +\int_{0}^{\infty}e^{-\frac x\lambda}dx=\left.\frac{-x}{e^{\frac x\lambda}}\right|_0^\infty-\left.\lambda e^{\frac x\lambda}\right|_0^\infty=0-(0)-(0-\lambda)=\lambda$$
+
+use **[integration by parts]** and by **L'Hospital's rule** 
+
+8-10. Example-Binomial_distribution
+
+$$let\quad p_X(x)=\binom{n}xp^x(1-p)^{n-x},\ x=0,1,2,...n,\ 0<p<1$$
+
+Binomial_pmf|Binomial_cdf
+|---|---
+![Binomial_distribution_pmf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Binomial_distribution_pmf.svg/320px-Binomial_distribution_pmf.svg.png)|![Binomial_distribution_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Binomial_distribution_cdf.svg/320px-Binomial_distribution_cdf.svg.png)
+
+$$\text{By the Binomial Theorem}\quad \sum_{x=0}^n\binom{n}xp^x(1-p)^{n-x}=(p+(1-p))^n=1$$
+
+$$E(X)=\sum_{x=0}^n\binom{n}xp^x(1-p)^{n-x}=\sum_{x=1}^n\binom{n}xp^x(1-p)^{n-x}$$
+
+$$E(X)=np$$
+
+11.12. Example-Cauchy_distribution
+
+$$Let\quad f_X(x)=\frac1\pi\frac1{1+x^2},\quad -\infty<x<\infty$$
+
+ E(X) is undefined
+
+13. Properties of Expectation
+
+$$E(K)=K$$
+
+$$E(Kg(X))=KE(g(X))$$
+
+$$E(g(X)+h(X))=E(g(X))+E(h(X))$$
+
+ Note: Operators with properties (2)and(3) are called linear operator.
+
+14.15. Variance
+
+Definition: The Variance of a random variable is
+
+$$\sigma^2=V(X)=Var(X)=E[(x-\mu)^2]$$
+
+Alternate form:
+
+$$\sigma^2=E[x^2-2x\mu+\mu^2]=E[x^2]-2\mu E(x)+\mu^2]=E[x^2]-2\mu^2+\mu^2]=E[x^2]-\mu^2=E[x^2]-(E[X])^2$$
+
+`2018.10.18`
+
+1. Properties
+
+
+
+### 2.3 Moments and Moment Generating Functions
+
+
+
+3. Monment
+
+****
+
+Definition: $E(X^n)$ is the mean of the random variable
+
+****
+
+$\mu_n'=E(X^n),\quad note\quad \mu_1'=\mu$
+
+### 2.4 Diffenetiating Under an Integral Sign
+
+## 3 Families of Distributions
+
+
+Distribution | CDF | P(X=x),f(x) | μ | $\mathbf{EX^2}$ | Var | MGF,$M_X(t),E[e^{tx}]$ | M'(t) | M''(t)
+|---|---|---|---|---|---|---|---|---
+$Bern(p)$ | | $p^xq^{1-x},x\in\{1,0\}$ | $p$ | $p$ | $pq$ | $pe^t+q$
+$Binom(n,p)$ | $I_{1-p}(n-x,x+1)$ | $\binom{n}{x}p^x q^{n-x}; x \in \{0,1..n\}$ | $np$ | $\mu(\mu+q)$ | $\mu{q}$ | $(pe^t+q)^n$
+$Geom(p)$ | $1-q^x$ | $pq^{x-1},x\in 1,2,..$ | $\frac1p$ | $\frac{p+2q}{p^2}$ | $\frac{q}{p^2}$ | $\frac{pe^t}{1-qe^t},t<-\ln{q}$  
+$Geom2(p)$ | $1-q^{x+1}$ | $pq^x,x\in 0,1,..$ | $\frac{q}p$ | $\frac{q^2+q}{p^2}$ | $\frac{q}{p^2}$ | $\frac{p}{1-qe^t}, qe^t<1$ | $\frac{pqe^t}{(1-qe^t)^2}$ | $\frac{2pqe^t}{(1-qe^t)^3}-M'(t)$ 
+$NBin(r,p)$ | $x\in r,r+1..$ | $\binom{x-1}{r-1}p^rq^{x-r}$ | $\frac{r}p$ | $ $ | $\frac{rq}{p^2}$ | $(\frac{pe^t}{1-qe^t})^r$
+$NBin2(r,p)$ | $ $ | $\binom{x+r-1}{r-1}p^rq^x, x \in 0,1..$ | $\frac{rq}p$ | $ $ | $\frac{rq}{p^2}$ | $(\frac{p}{1-qe^t})^r, qe^t<1$
+$Hgeom(N,m,k)$ | $ $ | $\frac{\binom{m}{x}\binom{N-m}{k-x}}{\binom{N}{k}}$ | $\frac{km}{N}$ | $ $ | $\mu\frac{(N-m)(N-k)}{N(N-1)}$ 
+$Hgeom(w,b,k)$ | $ $ | $\frac{\binom{w}{x}\binom{b}{k-x}}{\binom{w+b}{k}}$ | $\frac{kw}{w+b}$ | $ $ | $\mu\frac{b(w+b-k)}{(w+b)(w+b-1)}$   
+$Pois(\mu)$ | $e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$ | $\frac{\mu^x}{x!}e^{-\mu},x \in 0,1..$ | $\mu$ | $\mu^2+\mu$ | $\mu$ | $e^{\mu(e^t-1)}$ | $\mu e^tM(t)$ | $\mu e^t(1+\mu e^t)M(t)$ 
+$Unif(n)$ |  | $\frac{1}n,x \in 1,2..n$ | $\frac{n+1}2$ | $\frac{(n+1)(2n+1)}{6}$ | $\frac{(n^2-1)}{12}$ |  $\frac{\sum_{i=1}^n{e^{ti}}}n$
+$Unif(a,b)$ | $\frac{x-a}{b-a}$ | $\frac{1}{b-a},x \in(a,b)$ | $\frac{a+b}{2}$ | $\frac{(b^2+ab+a^2)}{3}$| $\frac{(b-a)^2}{12}$ |  $\frac{e^{tb}-e^{ta}}{t(b-a)}$
+$N(\mu,\sigma^2)$ |  | $\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ | $\mu$ | $\mu^2+\sigma^2$ | $\sigma^2$ | $e^{\mu t +\frac{\sigma^2t^2}2}$ | $(\mu+\sigma^2t)M(t)$ | $[(\mu+\sigma^2t)^2+\sigma^2]M(t)$
+$N(0, 1)$ |  | $\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$ | $0$ | $1$ | $1$ | $e^{\frac{t^2}2}$ 
+$\mathcal{LN}(\mu,\sigma^2)$ | $x>0$ | $\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$ | $e^{\mu+\frac{\sigma^2}2}$ | $e^{2\mu+2\sigma^2}$ | $\theta^2(e^{\sigma^2}-1)$ | $\times$
+$Cauchy(\theta,\sigma^2)$ |  | $\frac{1}{\pi\sigma}\frac1{1+(\frac{x-\theta}{\sigma})^2}$ | $\theta{median}$ | $\theta\pm\sigma{quartiles}$ | $\times$ | $ $ 
+$DExpo(\mu,\sigma^2)$ | $-\infty<x<\infty$ | $\frac{1}{2\sigma} e^{-|\frac{x-\mu}{\sigma}|}$ | $\mu$ | $\mu^2+2\sigma^2$ | $2\sigma^2$ | $\frac{e^{\mu t}}{1-\sigma^2t^2}$ | $\frac{e^{\mu t}(\mu-\mu\sigma^2t^2+2\sigma^2t)}{(1-\sigma^2t^2)^2}$ 
+$Expo(\lambda)$ | $1-e^{-\lambda x}$ | $\lambda e^{-\lambda x}$ | $\frac{1}{\lambda}$ | $ $ | $\frac{1}{\lambda^2}$ | $\frac{\lambda}{\lambda - t}, t < \lambda$
+$Expo2(\beta)$ | $x \in (0,\infty)$ | $\frac1{\beta} e^{-\frac{x}\beta}$ | $\beta$ | $ $ | $\beta^2$ | $(1-\beta t)^{-1}$ | $\beta(1-\beta t)^{-2}$ | $2\beta^2(1-\beta t)^{-3}$
+$Gam(a, \lambda)$ | $x \in (0,\infty)$ | $\frac{\lambda^a}{\Gamma(a)}x^{a-1}e^{-\lambda x}$ | $\frac{a}{\lambda}$ | | $\frac{a}{\lambda^2}$ | $(\frac{\lambda}{\lambda - t})^a, t < \lambda$
+$Gam2(\alpha,\beta)$ | $ $ | $\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}$ | $\alpha\beta$  | $\alpha(\alpha+1)\beta^2$ | $\alpha\beta^2$ | $(1-\beta t)^{-a}, t <\frac1\beta$ | $\mu{M(t)}(1-\beta t)^{-1}$  | $E[X^2]{M(t)}(1-\beta t)^{-2}$
+$\Gamma(\alpha)=$ | $(\alpha-1)!$ | $\int_0^\infty t^{\alpha-1}e^{-t}dt$ | $\Gamma(\frac12)=\sqrt{\pi}$  | $\Gamma(1)=1$ | $\Gamma(\alpha+1)=\alpha\Gamma(\alpha)$  | $\Gamma(-\frac12)=-2\Gamma(\frac12)$ | $\Gamma(0)=\Gamma(-1)=\infty$ 
+$B(\alpha,\beta)=$ | $\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$ | $\int_0^1 t^{\alpha-1}(1-t)^{\beta-1}dt$ | $ $  | $ $
+$Beta(a, b)$ | $x\in(0,1)$ | $\frac{1}{B(a,b)}x^{a-1}(1-x)^{b-1}$ | $\frac{a}{a+b}$ | $\frac{a(a+1)}{(a+b)(a+b+1)}$  | $\frac{ab}{(a+b)^2(a+b+1)}$ | $V=\frac{\mu(1-\mu)}{(a+b+1)}$ | $ $ | $M^n(t)=\frac{\Gamma(a+n)\Gamma(a+b)}{\Gamma(a+b+n)\Gamma(a)}$ 
+$\chi_p^2$ | $x>0$ | $\frac{1}{2^{\frac{p}2}\Gamma(\frac{p}2)}x^{\frac{p}2-1}e^{-\frac{x}2}$ | $p$ | $2p+p^2$ | $2p$ | $(1-2t)^{-\frac{p}2}, t<\frac12$
+$t_n$ | $ $ | $\frac{\Gamma(\frac{n+1}2)}{\sqrt{n\pi} \Gamma(\frac{n}2)} (1+\frac{x^2}n)^{-\frac{n+1}2}$ | $0,n>1$ | $ $ | $\frac{n}{n-2},n>2$ | $\times$
+
+code | distribution
+|---|---
+dbinom(k,n,p) | PMF $P(X=k)$ for $X \sim \Bin(n,p)$
+pbinom(x,n,p) | CDF $P(X \leq x)$ for $X \sim \Bin(n,p)$
+qbinom(a,n,p) |   $a$th quantile for $X \sim \Bin(n,p)$
+rbinom(r,n,p) |  vector of $r$ i.i.d.~$\Bin(n,p)$ r.v.s
+dgeom(k,p) | PMF $P(X=k)$ for $X \sim \Geom(p)$
+dhyper(k,w,b,n) | PMF $P(X=k)$ for $X \sim \HGeom(w,b,n)$
+dnbinom(k,r,p) | PMF $P(X=k)$ for $X \sim \NBin(r,p)$
+dpois(k,r) | PMF $P(X=k)$ for $X \sim \Pois(r)$
+dbeta(x,a,b) | PDF $f(x)$ for $X \sim \Beta(a,b)$
+dchisq(x,n) | PDF $f(x)$ for $X \sim \chi^2_n$
+dexp(x,b) | PDF $f(x)$ for $X \sim \Expo(b)$
+dgamma(x,a,r) | PDF $f(x)$ for $X \sim \Gam(a,r)$
+dlnorm(x,m,s) | PDF $f(x)$ for $X \sim \mathcal{LN(m,s^2)$
+dnorm(x,m,s) | PDF $f(x)$ for $X \sim \N(m,s^2)$
+dt(x,n) | PDF $f(x)$ for $X \sim t_n$
+dunif(x,a,b) | PDF $f(x)$ for $X \sim \Unif(a,b)$
+
+
+`2018.10.18`
+
+`2018.10.23`
+
+1. Chebyshev's Inequality
+
+8. Jensen's Inequality
+
+### Discrete uniform distribution
+
+12. Definition
+
+X take on the values {1,2,..,n} with probabilites $\frac1N$ each.
+
+### Bernoulli distribution
+
+14. Definition
+
+### Binomial distribution
+
+15. Definition
+
+sequence of n independent trials; each trial results in one of 2 possible outcomes (0,1); the probability of a "1" is the same in each trial (p); X counts the number of 1's.
+
+### Geometric distribution
+
+`2018.10.25`
+
+1. Definition
+
+Run a sequence of independent trails, 2 possible outcoumes in each, constan success probability p.
+
+X= trial in which $1^{st}$ success occurs
+
+$p_X(x)=pq^{x-1}, x=1,2,3..$
+
+2. $M_X(t)$
+
+
+### Negative Binomial distribution
+
+4. Definition
+
+Run a sequance of Bernouli trials, X= trial in which the $r^{th}$ success occurs.
+
+6. $M_X(t)$
+
+### Hypergeometric
+
+8. Definition
+
+Take a random sample of K objects, without replacement, from a population of N objects. In the population, M items are of a particular type. X counts the number of items of that type in the sample.
+
+$p_X(x)=\frac{\binom{m}{x}\binom{N-m}{k-x}}{\binom{N}{k}}, \max(0,K-N+M)\le x\le\min(K,M)$
+
+`2018.11.1`
+
+1. Find E[X]
+
+Case 1: a=0
+
+$E[X]=K\frac{M}N$
+
+$V[X]=K\frac{M}N(1-\frac{M}N)\frac{N-K}{N-1}$
+
+5. Hypergeometric and Binomial
+
+If $N\rightarrow\infty$ and hold $\frac{M}N=p$ constant.
+
+### Poisson
+
+7. let f(x,h) be the probability of seeing exactly x occurrences of a particular type in a time interval of length h.
+
+`2018.11.6`
+
+5. pdf
+
+6. M_X(t)
+
+8. Binom and Poisson
+
+let $n\rightarrow\infty$,$p\rightarrow0$ (hold $np=\mu$ constant)
+
+10. Hypergeom and Binom and Poisson
+
+11. Numerical example
+
+Population of 10000 people take a sample of 1000, without replacement. In the population, 500 have blue eyes. Find the probability of getting exactly 45 people in the sample with blue eyes.
+
+$Hyper(N=10000, M=500, K=1000), P(X=45)=\frac{\binom{500}{45}\binom{9500}{955}}{\binom{10000}{1000}}=0.047136$
+
+```{r}
+dhyper(45, 500, 9500, 1000, log = FALSE)
+
+```
+
+
+$Binom(n=1000,p=0.05), P(X=45)=\binom{1000}{45}(0.05)^{45}(0.95)^{955}=0.046281$
+
+```{r}
+dbinom(45, 1000, 0.05, log = FALSE)
+
+```
+
+$Poisson(\mu=50), P(X=45)=\frac{50^{45}}{45!}e^{-50}=0.045826$
+
+```{r}
+dpois(45, 50, log = FALSE)
+```
+
+13. Poisson and Exponential
+
+Suppose we have a Poisson process, let T be the waiting time until the $r^th$ occurrences.
+
+Find P(T>t)=P(there were at most r-1 occurrences in (0,t))=$P(X\le r-1)$, where X has a Possion distribution with $\mu=\lambda t$. ($\lambda$ expected number occurrences per unit time)
+
+### Gamma distribution
+
+16. Definition: Gamma function
+
+$\Gamma(\alpha)=\int_0^\infty t^{\alpha-1}e^{-t}dt$
+
+`2018.11.8`
+
+1. pdf
+
+$f_T(\alpha,\beta)=\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-\frac{x}\beta},t>0,\beta>0$
+
+2. Gamma and Exponential
+
+$f_T(t)=\frac1{\Gamma(1)\beta^1}t^0e^{-\frac{t}\beta},t>0$
+
+$\mu=\beta=\frac1\lambda$
+
+$\sigma^2=\beta^2=\frac1{\lambda^2}$
+
+3. mgf
+
+
+$E[X^v]=\frac{\beta^v\Gamma(v+\alpha)}{\Gamma(\alpha)}$
+
+10. Gamma and Chi-squared
+
+$Gamma(\alpha=\frac{k}2,\beta=2)=\chi^2(k)$
+
+12. Normal density function
+
+16. Standard normal density
+
+`2018.11.13`
+
+
+1. Gamma and Standard Normal
+
+$X\sim N(0,1);\ X=Y^2;\ Y\sim Gamma(\frac12,2)\sim\chi^2(1)$
+
+3. Gamma and Poisson
+
+$T\sim Gamma(\alpha,\beta)$
+
+$P(T>t)=P(X\le\alpha-1)$, where $T\sim Gamma(\alpha,\beta)$, $X\sim Poisson(\lambda=\frac{t}\beta)$
+
+That is, T is measuring the waiting time for the $\alpha^{th}$ occurrence in a Poisson process.
+
+7. Example: Pizza
+
+Suppose a pizza place gets 1 order every 3 miniutes, following a Poisson process. Assume that the driver is engaged when the 5th order arrives. Find the probability that this happen in 10 minutes or less.
+
+Let T=waiting time for 5 orders, $T\sim Gamma(\alpha=5,\beta=3)$ (later is expected time between occurences)
+
+$$P(T\le10)=1-P(T>10)=1-P(X\le4)=1-0.7565=0.2435$$
+Where $X\sim Poisson(\lambda=\frac{t}\beta=\frac{10}3)$
+
+```{r}
+pgamma(10, 5, rate = 1/3, lower.tail = TRUE,log.p = FALSE)
+
+ppois(4, 10/3, lower.tail = TRUE, log.p = FALSE)
+
+```
+
+
+### Beta distribution
+
+10. pdf
+
+$B(\alpha,\beta)=\int_0^1 t^{\alpha-1}(1-t)^{\beta-1}dt$
+
+$f_X(x)=\frac{1}{B(a,b)}x^{a-1}(1-x)^{b-1}， x\in(0,1)$
+
+$B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$
+
+`2018.11.15`
+
+1. $E[x^n]$
+
+$E[x^n]=\int_0^1\frac{x^{n+x-1}}{B(\alpha,\beta)}(1_x)^{\beta-1}dx=\frac{B(n+\alpha,\beta)}{B(\alpha,\beta)}=\frac{\Gamma(a+n)\Gamma(a+b)}{\Gamma(a+b+n)\Gamma(a)}$
+
+$E[x]=\frac{\alpha}{\alpha+\beta}$
+
+$E[x^2]=\frac{a(a+1)}{(a+b)(a+b+1)}$
+
+$\sigma^2=E[x^2]-\mu^2=\frac{ab}{(a+b)^2(a+b+1)}$
+
+
+### Cauchy diftribution
+
+4. $\mu$ and $\sigma^2$ do not exist. $\theta$ is the median.
+
+### uniform distribution
+
+5. pdf
+
+$f_X(x)=\frac1{b-a}, a<x<b$
+
+$E[x]=\frac{a+b}{2}$
+
+$E[x^2]=\frac{b^2+ab+a^2}{3}$
+
+$\sigma^2=E[x^2]-\mu^2=\frac{(b-a)^2}{12}$
+
+$M_X(t)=\frac{e^{tb}-e^{ta}}{(b-a)t}$
+
+Note: $M_X(t)$ is undefined at t=o, but the limit as $t\rightarrow0$ is 1.
+
+### log-normal distribution
+
+8. log-normal and nroaml
+
+Let Y have a normal distribution $N(\mu,\sigma^2)$
+
+Let $X=e^Y$, $y=\ln x$, $\frac{dy}{dx}=\frac1x$
+
+$f_X(x)=g(y）|\frac{dy}{dx}|=\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}， x>0$
+
+$E[x]=e^{\mu+\frac{\sigma^2}2}$
+
+$E[x^2]=e^{2\mu+2\sigma^2}$
+
+$V[x]=E[x^2]-\mu^2=e^{2\mu+\sigma^2}(e^{\sigma^2}-1)$
+
+### double exponential (Laplace) distribution
+
+11. $f_X(x)=\frac{1}{2\sigma} e^{-|\frac{x-\mu}{\sigma}|}, -\infty<x<\infty$
+
+$M_X(t)=E[e^{tx}]=\int_{-\infty}^{\infty}e^{tx}\frac{1}{2\sigma} e^{-|\frac{x-\mu}{\sigma}|}dx$
+
+$=\frac{e^{\mu t}}{1-\sigma^2t^2}$
+
+$M'_X(t)=\frac{e^{\mu t}(\mu-\mu\sigma^2t^2+2\sigma^2t)}{(1-\sigma^2t^2)^2}$
+
+$E[x]=\mu$
+
+$E[x^2]=\mu^2+2\sigma^2$
+
+$V[x]=2\sigma^2$
+
+### Exponential family
+
+`2018.11.20`
+
+1. Definition:
+
+Let f(x) be a density funtion with parameters $\vec\theta=(\theta_1,\theta_2,..,\theta_a)$, then $f(x|\vec\theta)$ is an exponential family of densities if you can write
+
+$$f(x|\vec\theta)=h(x)c(\vec\theta)e^{\sum_{i=1}^kw_i(\vec\theta)t_i(x)}, -\infty<x<\infty$$
+
+If d=k, them the family is full.
+
+If d=k, them the family is curved.
+
+2. Example: Binom(n,p) with n known
+
+$$f(x|p),\ or\ f_p(x)=\binom{n}xp^x(1-p)^{n-x}, x=0,1,..n$$
+
+Let $$I(x)=\begin{cases}1 & if\ x=0,1..,n\\ 0 & otherwise \end{cases}$$
+
+$$f(x|p)=\binom{n}xI(x)(1-p)^ne^{x\ln{p}-x\ln(1-p)}, -\infty<x<\infty$$
+
+$h(x)$ | $c(\vec\theta)$ | $w_1(\vec\theta)$ | $t_1(x)$ | $w_2(\vec\theta)$ | $t_2(x)$
+|------ | --------------- | ----------------- | -------- | ----------------- | -----
+$\binom{n}xI(x)$ | $(1-p)^n$ |   $\ln{p}$    |    $x$   |     $\ln(1-p)$    | $x$
+
+$$f(x|p)=\binom{n}xI(x)(1-p)^ne^{x\ln(\frac{p}{1-p})}, -\infty<x<\infty$$
+
+$h(x)$ | $c(\vec\theta)$ | $w_1(\vec\theta)$ | $t_1(x)$ |     |    
+|------ | --------------- | ----------------- | -------- | --- | ---
+ $\binom{n}xI(x)$ | $(1-p)^n$ | $\ln(\frac{p}{1-p})$ | $x$ |    |  
+
+3.  Example: $N(\mu,\sigma^2)$
+
+5. Example: Unit(a,b)
+
+6. Theorem
+
+### Location-scale family
+
+7. Definition:
+
+9. Example: $Gamma(\alpha,\beta)$
+
+10. Example: $Cauchy(\theta)$
+
+11. Theorem
+
+Let f(x) be a pdf, let $\mu$,$\sigma>0$ be constants,
+
+$\exists$ a random variable Z with pdf f(z) and $X=\sigma Z+\mu$,
+
+Then, X is a random variable with pdf $g(x|\mu,\sigma)=\frac1\sigma f(\frac{x-\mu}{\sigma})$
+
+## 4 Multiple Random Variables
+
+

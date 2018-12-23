@@ -1,0 +1,1219 @@
+---
+title: 'STAT564 Lab'
+author: "Shen Qu"
+date: "Fall 2018"
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+---
+
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+
+# {.tabset .tabset-fade .tabset-pills}
+
+## Lab 0
+
+### EXAMPLE
+
+These data appeared in the Wall Street Journal. The advertisement were selected by an annual survey conducted by Video Board Tests, Inc., a New York ad-testing company, based on interviews with 20,000 adults who were asked to name the most outstanding TV commercial they had seen, noticed, and liked. The retained impressions were based on a survey of 4,000 adults, in which regular product users were asked to cite a commercial they had seen for that product category in the past week. There are 21 observations on three variables. 
+
+**Variables:**
+Firm The name of the firm
+Spend TV advertising budget, 1983 ($ millions)
+MilImp Millions of retained impressions per week
+
+These data is saved in text file (.txt) called **TVads** which will be imported to R as shown in th efollowing code. The path to the place the text file is saved must be changed accordingly. 
+```{r, echo=TRUE}
+TVads <- read.table("TVads.txt", header= TRUE) 
+head(TVads) # This will print only the first 6 rows of data file 
+TVads # This will print the complete data file in the Console Window 
+
+# The following plot function creates the scatterplot shown in Figure 1 below
+plot(TVads$Spend, TVads$MilImp, pch=16, xlab = "TV advertising budget, 1983 ($ millions) ", ylab = "Millions of retained impressions per week", main="Figure 1: Scatterplot of Millions of retained impressions per week 
+     and TV advertising budget", cex.main=0.9)
+```
+
+
+
+Simple linear regression analysis in R 
+```{r, echo=TRUE}
+model <- lm(MilImp ~ Spend, data = TVads) # The lm function is used to fit simple linear regression model
+model# This displays only the values of estimated regression coefficients
+```
+
+```{r, echo=TRUE}
+summary(model) # The summary function is used to get more information about the fitted regression model #
+```
+The output shows estimated regression coefficients, their standard errors (deviations), test statistics & p-value for testing significance. Also, there is R squared, degrees of freedom and F test statistic for testing significance of fitted model.
+You can use the abline function as shown below to plot the fitted regression model on the scatterplot.
+```{r, echo=TRUE}
+plot(TVads$Spend, TVads$MilImp, pch=16, xlab = "TV advertising budget, 1983 ($ millions) ", ylab = "Millions of retained impressions per week", main="Figure 2: Fitted rgeression model oevrlayed on the scatterplot of 
+     Millions of retained impressions per week and TV advertising budget", cex.main=0.9) # Create the scatterplot
+abline(model, col = "red", lwd= 3) # Draw the fitted line #
+```
+
+
+The 95% CI for parameter estimates can be obtained using the following function: 
+```{r, echo=TRUE}
+confint(model, level = 0.95)
+```
+
+The 95% confidence interval for slope of the regression line is (0.1599, 0.5664).
+If you want to get the predicted value of response for each value of predictor, then use the **predict** function as shown below.
+```{r, echo=TRUE}
+predict(model, TVads)
+```
+
+This same function can be used to get prediction interval for the each value of predictor as shown below. 
+
+```{r, echo=TRUE}
+predict(model, TVads, interval = "prediction", level = 0.95)
+```
+
+You may want to compute prediction values of response for a given set of new values of predictor. In that case, first, create a new data file with the new value of predictor. Then use the predictor function to predict response as shown below. Here, our new values of the Spend variable are 50 and 100.
+```{r, echo=TRUE}
+NewData <- data.frame(Spend = c(50, 100)) # Creates a new data frame with only new values of predictor variable
+predict(model, NewData, interval = "prediction", level = 0.95) # Use the new data frame in the Predictor function instead of old data set
+```
+
+The above output shows that there is $42.32 million of average retained impressions per week when TV advertisement budget is $ 50 million.
+To check the model diagnostics using residual plots, use the code below.
+```{r, echo=TRUE}
+plot(model) # This plots the diagnostic graphs for the fitted regression model. Fit enter key 4 times to see the plots shown below #
+```
+
+When you want to do multiple linear regression in R, you can add other predictors to the lm function each separated by a plus sign.
+
+### The Solution by tidyverse
+```{r, eval=FALSE}
+# install.packages("tidyverse")
+```
+
+To use R packages you have installed, include this line in your script or in the Console:
+
+```{r, echo=TRUE}
+library("tidyverse")
+# Note here the quotation marks are optional and
+# it is the same as
+library(tidyverse)
+```
+
+#### Import Data
+
+1. Download the data file [here](TVads.txt) .
+2. What format is the data file in?
+3. Import the data in the file into R as a data frame:
+
+```{r, echo=TRUE}
+my_df <- read_table2("TVads.txt")
+my_df
+```
+
+Of course, the step of import data into your statistic software vary a little by software and by the data format. 
+
+More information as of how to import data into R can be found at [Import Data]()
+
+#### Descriptive Statistics
+
+#### Visualization
+
+1. Visualize a single variable
+```{r, echo=TRUE}
+ggplot(my_df, aes(x=MilImp)) + geom_histogram()
+```
+
+```{r, echo=TRUE}
+ggplot(my_df, aes(x=Spend)) + geom_histogram()
+```
+
+2. Visualize a pair of numeric variables
+```{r, echo=TRUE}
+ggplot(my_df, aes(x=Spend, y=MilImp)) + geom_point()
+```
+
+#### Correlation
+
+```{r, echo=TRUE}
+cor(my_df$MilImp, my_df$Spend)
+```
+
+#### Regression
+In R, run linear regressions with `lm` (short for **l**inear **m**odel):
+
+```{r, echo=TRUE}
+lm(MilImp ~ Spend, data=my_df)
+```
+
+#### More detailed regression results
+
+1. Pass the results from `lm()` to `summary()` for more detailed information:
+```{r, echo=TRUE}
+lm(MilImp ~ Spend, data=my_df) %>%
+  summary
+```
+
+For better formatting of the results (pretty print), we can use the `texreg` package:
+```{r, echo=TRUE}
+## Install and load texreg package
+# install.packages("texreg")
+library(texreg)
+
+# Pretty print regression results on screen
+lm(MilImp ~ Spend, data=my_df) %>%
+  screenreg
+
+# Save regression results to a html file
+lm(MilImp ~ Spend, data=my_df) %>%
+  htmlreg(file="lm_MilImp-Spend.html")
+```
+
+#### Visualize regression results
+
+```{r, echo=TRUE}
+ggplot(my_df, aes(x=Spend, y=MilImp)) + geom_point() + geom_smooth(method = "lm", se = FALSE)
+```
+
+#### Diagnostic plots of regression
+
+We will use the `ggfortify` package to generate the diagnostic plots for regression
+```{r, echo=TRUE}
+## Install and load ggfortify package
+# install.packages("ggfortify")
+library(ggfortify)
+
+lm(MilImp ~ Spend, data=my_df) %>%
+  autoplot()
+
+# Since we need the regression results in many places, 
+# it would be easier to save it into a R variable
+MilImp_lm <- lm(MilImp ~ Spend, data=my_df)
+
+# Save the diagnostic plots as a png file
+ggsave("MilImp_lm_diag.png")
+
+```
+
+
+
+## lab 1
+
+A hospital is implementing a program to improve service quality and productivity. As part of this program the hospital management is attempting to measure and evaluate patient satisfaction. Table B.17 contains some of the data that have been collected on a random sample of 25 recently discharged patients.
+Variables:
+Satisfaction  - a subjective measure on an increasing scale
+Age – age of patient in years
+Severity – an index measuring the severity of the patient’s illness
+Surgical-Medical - an indicator of whether the patient is a surgical or medical patient (0 = surgical, 1 = medical)
+Anxiety - an index measuring the patient’s anxiety level
+The patient satisfaction is thought to be related to the patient age.
+
+
+
+https://rpubs.com/aaronsc32/regression-confidence-prediction-intervals
+
+```{r, eval=FALSE, include = T, collapse=TRUE, echo=TRUE}
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+# Import Data
+table_b17 <- read_xlsx("TableB.17.xlsx")
+
+# Observe the data frame
+head(table_b17)
+
+```
+
+### (a) Create a scatterplot of satisfaction and age variables. Copy and paste it here. 
+
+
+```{r, eval=FALSE, include = T, collapse=TRUE}
+# visualizng Satisfaction and Age
+table_b17 %>% ggplot(aes(Age,Satisfaction))+geom_point()+geom_smooth(method="lm", level=0.95)
+```
+
+(b) Describe the relationship between patient satisfaction and patient age based on the scatterplot.
+
+ > The plot shows a decreasing approximately linear pattern.
+
+(c) Fit a simple linear regression model to the data. Write the fitted regression model with estimated coefficients. Edit the following math equation to write your fitted model (replace y and x with appropriate variable names).
+
+```{r,eval=FALSE, include = FALSE, collapse=TRUE}
+# build the model
+model_satis_age <- lm(Satisfaction ~ Age, data=table_b17)
+model_satis_age
+```
+
+ > The model is $Satisfaction=130.221-1.249Age$
+
+(d) The coefficient of determination, denoted by R^2, (Multiple R-squared in R) provides the percentage of total variation in response variable explained by the fitted model. It can be any value from 0 to 100% and a higher value is better.
+What is the percentage of total variation in the patient satisfaction explained by the fitted model for these data?
+
+```{r,eval=FALSE, include = T, collapse=TRUE}
+model_satis_age %>% summary()
+```
+
+ > According to the analysis-of-variance table, Multiple R-squared is 0.7205. The fitted model for these data can explain 72.05% of total variation in the patient satisfaction. 
+ 
+(e) Report the standard error of estimated intercept.
+
+ > the standard error of estimated intercept is 7.7775.
+
+(f) Using the p-value reported along with regression coefficients in your software output, explain whether the true slope of the fitted model is significant at 5% significance level. Report the p-value as well.
+
+ > The table shows that p-value is less than 1.52e-08. The regression model is significant at 95% significance level.
+
+(g) Report a 95% confidence interval for the true intercept of the model. Based on confidence interval, explain whether the true intercept is different from zero.
+
+ > The equation for the 95% CI for the estimated β1 is defined as:
+
+$$\beta_1 \pm t_{\alpha / 2, n - 2} \left(\frac{\sqrt{MSE}}{\sqrt{\sum (x_i - \bar{x})^2}}\right)$$
+
+```{r, eval=FALSE, include = T, collapse=TRUE}
+model_satis_age %>% confint(level=0.95)
+```
+
+ > The fitted β0 is 130.2209. The 95% confidence interval for the intercept of the regression line is (114.131844, 146.3100181).  
+The confidence interval for β0 does not contain 0, it can be concluded the true intercept is different from zero.
+
+(h) Construct the analysis of variance (ANOVA) table using software and test for significance of regression model. Report the p-value.
+
+```{r, eval=FALSE, include = T, collapse=TRUE}
+anova(model_satis_age)
+```
+
+  > The table shows that p-value is less than 1.52e-08. The regression model is significant at 95% significance level.
+
+(i) Compute the point estimate of the mean patient satisfaction when the patient is 65 years old.
+
+> The confidence interval around the mean response, denoted $\mu_y$, when the predictor value is $x_k$ is defined as:
+
+$$\hat{y}_h \pm t_{\alpha / 2, n - 2} \sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$$
+
+ > Where $\hat{y}_h$ is the fitted response for predictor value $x_h$, $t_{\alpha/2,n-2}$ is the t-value with n−2 degrees of freedom, while $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_k - \bar{x})^2}{\sum(x_i - \bar{x}^2)} \right)}$ is the standard error of the fit.
+ 
+```{r, eval=FALSE, include = T, collapse=TRUE}
+model_satis_age %>% predict(newdata = data.frame(Age=65), interval = "confidence", level=0.95)
+```
+
+ > From the output, the fitted satisfaction is 49.03367 when the patient's age is 65 years old. 
+
+(j) Compute 95% confidence interval for the mean (average) patient satisfaction when the patient is 65 years old. (Confidence interval is for mean or average response) 
+ 
+ > According the result from (i), the confidence interval of (42.86397, 55.20336) signifies the range in which the true population parameter lies at a 95% level of confidence.
+ 
+(k) Compute the 95% prediction interval for the patient satisfaction when the patient is 65 years old. (Prediction interval is for a new value of response and not for mean response)
+
+```{r, eval=FALSE, include = T, collapse=TRUE}
+model_satis_age %>% predict(newdata = data.frame(Age=65), interval = "prediction", level=0.95)
+```
+
+ > the 95% prediction interval is (26.11012, 71.95721) for the patient satisfaction when the patient is 65 years old
+
+(l)  Compare the two intervals in the previous two questions and explain why they are same or different.
+
+ > The results show the prediction interval is wider than confidence interval due to the additional term in the standard error of prediction. Prediction and confidence intervals are similar in that they are both predicting a response, however, they differ in what is being represented and interpreted.The best predictor of a random variable (assuming the variable is normally distributed) is the mean $\mu$. The best predictor for an observation from a sample of x data points, x1,x2,⋯,xn and error $\epsilon$ is $\bar x$.
+The prediction interval depends on both the error from the fitted model and the error associated with future observations.
+
+(m) Use the estimated slope and its standard error from software output to test whether the true slope is different from -1 (negative 1). Provide all the steps of test.
+
+```{r, eval=FALSE, include = T, collapse=TRUE}
+t0= (-1.2490+1)/0.1471
+2*pt(q = t0, df = nrow(table_b17)-2 , lower.tail = TRUE) # Gives the P(T < t0) from the t distribution. Enter the value for df of the t distribution. Use FALSE instead of TRUE to compute P(T >t0). #
+```
+
+ > The result shows that the p_value is 0.1040118, which is bigger than 0.05. Therefore, we can reject the H1 and the ture slope might be same with -1.
+ 
+
+## lab 2
+
+```{r echo=TRUE, collapse=TRUE}
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+# Import Data
+table_plant <- read_table2("Plant.txt")
+# Observe the data frame
+head(table_plant)
+# visualizng Satisfaction and Age
+table_plant %>% ggplot(aes(SolarRadiation,PlantBiomass))+geom_point()+geom_smooth(method="lm", level=0.95)
+# build the model
+model_solar_mass <- lm(PlantBiomass ~ SolarRadiation, data=table_plant)
+model_solar_mass%>% summary()
+confint(model_solar_mass, level = 0.99)
+anova(model_solar_mass)
+model_solar_mass_origin <- lm(PlantBiomass ~ SolarRadiation+0, data=table_plant)
+model_solar_mass_origin%>% summary()
+anova(model_solar_mass_origin)
+```
+
+## lab 3
+
+```{r echo=TRUE, collapse=TRUE}
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+# Import Data
+table_wine <- read_csv("TableB11.csv")
+# Observe the data frame
+head(table_wine)
+summary(table_wine)
+# visualizng Satisfaction and Age
+plot(table_wine,pch=16)
+
+# matrix of correlation coefficients
+round(cor(table_wine),digits = 3)
+table_wine %>% corrr::correlate() %>% corrr::fashion()
+table_wine %>% corrr::correlate() %>% corrr::rplot()
+
+# build the model
+model_wine_quality <- lm(Quality ~ Clarity + Aroma + Body + Flavor + Oakiness + Region, data=table_wine)
+model_wine_quality%>% summary()
+anova(model_wine_quality)
+
+car::Anova(model_wine_quality, type="II")
+
+
+# two kinds of confident intervals
+confint(model_wine_quality, level = 0.95)
+
+confint(model_wine_quality, level = 1-(0.05/7))
+
+# Scheffe joint confidence interval
+B.hat_wine <- coefficients(model_wine_quality)
+B.StdErr_wine <- coef(summary(model_wine_quality))[,2]
+df1_wine <- length(B.hat_wine)
+df2_wine <- nrow(table_wine)-df1_wine
+F_wine <- qf(0.05,df1_wine,df2_wine)
+
+cbind((B.hat_wine-sqrt(2*F_wine)*B.StdErr_wine),(B.hat_wine+sqrt(2*F_wine)*B.StdErr_wine))
+
+# Prediction
+predict(model_wine_quality,data.frame(Clarity=0.9, Aroma=4.7, Body=6.1, Flavor=5.2, Oakiness=3, Region=2),interval = "confidence", level=0.99)
+
+predict(model_wine_quality,data.frame(Clarity=0.9, Aroma=4.7, Body=6.1, Flavor=5.2, Oakiness=3, Region=2),interval = "prediction", level=0.99)
+
+# Obtain the Design Matrix (X) for the regression model #
+# Include only the predictors in the model and no response #
+x_wine <- model.matrix(~ Clarity + Aroma + Body + Flavor + Oakiness + Region, data =
+table_wine)
+head(x_wine) # Display the design matrix #
+xpx.inv_wine <- solve(t(x_wine)%*%x_wine) # Computes Inverse of (X'X) matrix #
+
+1.395*xpx.inv_wine # cov(\beta)= MSE * (X'X)^-1 #
+vcov(model_wine_quality) # another way getting cov(\beta)
+
+
+
+# Check confidence and prediction interval of response #
+x0_wine <- c(1,0.9,4.7, 6.1, 5.2, 3, 2)
+predict_x0_wine <- t(x0_wine)%*%B.hat_wine
+predict.stderr_CI_wine <- sqrt(1.395*t(x0_wine)%*%xpx.inv_wine%*%x0_wine)
+predict.CI_wine <- c((predict_x0_wine - qt(0.995, 38-7)*predict.stderr_CI_wine), (predict_x0_wine + qt(0.995, 38-
+7)*predict.stderr_CI_wine))
+predict.CI_wine
+predict.stderr_PI_wine <- sqrt(1.395*(1+(t(x0_wine)%*%xpx.inv_wine%*%x0_wine)))
+predict.PI <- c((predict_x0_wine - qt(0.995, 38-7)*predict.stderr_PI_wine), (predict_x0_wine + qt(0.995, 38-
+7)*predict.stderr_PI_wine))
+predict.PI
+
+# Test significance of linear function of regression coefficients #
+# The linearHypothesis function defined in the car package can be used for this #
+
+T_b4_wine <- c(0,0,0,0,1,0,0) # Define T matrix for testing B4=0 versus B4 not= 0 #
+T_b4_wine <- c(rep(0,4),1,0,0) # Define T matrix for testing B4=0 versus B4 not= 0 #
+T_b4_wine
+car::linearHypothesis(model = model_wine_quality, hypothesis.matrix =T_b4_wine , rhs=0)
+## another way
+car::lht(model_wine_quality, "Flavor=0 ")
+
+# The rhs option specifies value on the right hand side of hypotheses #
+T_2b2_b3_wine <- c(0, 0, 2, -1, 0, 0, 0) # Define T matrix for testing 2B2=B3 versus 2B2 not= B3 #
+T_2b2_b3_wine
+car::linearHypothesis(model = model_wine_quality, hypothesis.matrix = T_2b2_b3_wine, rhs=0) 
+
+## another way
+car::lht(model_wine_quality, "2*Aroma=Body ")
+
+#Test T2=0 versus T2 not= 0 #
+# Define T matrix for testing the above hypotheses simultaneously #
+# Use rbind function to bind two rows, The rep function is used to create replications of the same value #
+T_b4.2b2_b3_wine <- rbind(c(rep(0,4), 1, 0, 0), c(0, 0, 2, -1, 0, 0, 0))
+T_b4.2b2_b3_wine
+car::linearHypothesis(model = model_wine_quality, hypothesis.matrix = T_b4.2b2_b3_wine, rhs=c(0,0)) # Test the above two hypotheses simultaneously #
+## another way
+car::lht(model_wine_quality, c("Flavor=0", "2*Aroma=Body"))
+
+# Check for multicollinearity #
+# Use the vif function defined in the car package #
+car::vif(mod = model_wine_quality)
+
+## another way
+#if (!require(olsrr))  install.packages("olsrr") & require(olsrr)
+library(olsrr)
+ols_vif_tol(model_wine_quality)
+
+# Fit reduced multiple linear regression model with only flavor and oakiness predictors #
+model_wine_flavor_oakiness <- lm(Quality ~ Flavor + Oakiness , data = table_wine)
+# The anova function gives Sequential (Type I) Sum of Squares of Regression #
+anova(model_wine_flavor_oakiness)
+# SS for Model (or Regression) = Total of Sum Sq values for Predictors #
+# df for Model (or Regression) = Total of Df values for Predictors #
+
+```
+
+
+
+
+## class Nov 13th
+
+
+```{r echo=TRUE, collapse=TRUE}
+
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+# Import Data
+table_b6 <- read_table2("TableB6.txt")
+# Observe the data frame
+head(table_b6)
+
+# build the model
+model_NbOCl3 <- lm(y ~. , data=table_b6)
+model_NbOCl3_1_2_4 <- lm(y ~ x1+x2+x4 , data=table_b6)
+model_NbOCl3_1_3_4 <- lm(y ~ x1+x3+x4 , data=table_b6)
+
+model_NbOCl3%>% summary()
+model_NbOCl3_1_2_4%>% summary()
+model_NbOCl3_1_3_4%>% summary()
+# visualizng Satisfaction and Age
+library(ggfortify)
+model_NbOCl3 %>% autoplot()
+
+anova(model_NbOCl3)
+anova(model_NbOCl3_1_2_4)
+anova(model_NbOCl3_1_3_4)
+anova(model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, model_NbOCl3)
+
+car::vif(model_NbOCl3)
+car::vif(model_NbOCl3_1_2_4)
+car::vif(model_NbOCl3_1_3_4)
+
+
+
+library(olsrr)
+ols_vif_tol(model_NbOCl3)
+ols_vif_tol(model_NbOCl3_1_2_4)
+ols_vif_tol(model_NbOCl3_1_3_4)
+
+texreg::screenreg(l=list(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4))
+huxtable::huxreg(model_NbOCl3, model_NbOCl3_1_2_4, model_NbOCl3_1_3_4, statistics = NULL)
+
+
+```
+
+
+## lab 4
+
+```{r, eval=T, include = F}
+# Load the package 
+library(readxl)
+library(tidyverse)
+library(broom)
+library(olsrr)
+library(car)
+# Import Data
+table_b4 <- read_table2("TableB4.txt")
+# Observe the data frame
+head(table_b4)
+summary(table_b4)
+```
+
+### 1. 
+
+(a) Create a matrix of scatterplots for all the variables in the data file.
+
+```{r, eval=T, include = T}
+# visualizng Satisfaction and Age
+plot(table_b4,pch=16)
+```
+
+(b) Compute the matrix of correlation coefficients all the variables in the data file.
+
+```{r, include = F}
+library(GGally)
+ggpairs(data=table_b4[c(1:10)])
+
+```
+
+
+```{r, eval=F, include = T}
+# matrix of correlation coefficients
+cor(table_b4)
+table_b4 %>% corrr::correlate() %>% corrr::fashion()
+table_b4 %>% corrr::correlate() %>% corrr::rplot()
+```
+
+(c) Based on scatterplots and correlation coefficients, explain and provide order of the predictors according to the significance of their relationship to the selling price of these houses. 
+
+x1, x2, x4, x3, x6, x5, x8, x7, and x9. The scatterplots of y versus x1, x3, and x4 show a medium to strong positive linear relationship and it is confirmed by the correlation coefficients (more than 0.6) in part (b). Predictor x8 has weak to medium negative linear relationship with y.
+
+### 2. 
+
+(a) Fit a multiple linear regression model relating selling price (y) to all nine predictors. Write the fitted regression model with estimated coefficients
+
+
+```{r, eval=T, include = T}
+# build the model
+model_b4_full <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9, data=table_b4)
+model_b4_full%>% summary()
+anova(model_b4_full)
+vcov(model_b4_full)
+```
+
+(b) Test the overall significance of the full model at 10% significance level. 
+
+The fitted model is statistically significant at 10% significance level (p value = 0.000 or 0.00185 or 0.0002)
+
+(c) Explain which predictor is least significant based on partial F test. 
+
+The predictor x6 which is number of rooms is the least significant predictor because p value for partial F test (or the t test) is 0.866 which is the highest p value and it is more than 10%.
+
+(d) Explain whether there is a problem of multicollinearity. The predictor x6 has the highest VIF which is 11.71 and it is the only VIF more than 10. Further, scatterplot of x6 versus x7 and correlation coefficient between x6 and x7 (which is 0.870) show a strong positive linear relationship between the two variables. 
+
+Predictor x6 is the number of rooms while x7 is the number of bedrooms in a house. A high correlation is expected between these two variables. 
+
+There is a problem of multicollinearity. 
+
+(e) Overall, explain which predictor you would eliminate first to simplify the model. 
+
+It will be important to solve multicollinearity first, and hence predictor x6 is the first to remove. However, according to the variable names of x6 and x7, predictor x6 may contain same information contains in x7. The bedrooms are rooms in a house. 
+
+Further, according to the correlation coefficients, x7 is less correlated with y than x6 is correlated. 
+
+It is better to remove x7 first and check whether the multicollinearity is solved. If it was not solved, then definitely, x6 has to be removed first.
+
+```{r, eval=T, include = T}
+vif(model_b4_full)
+ols_vif_tol(model_b4_full)
+
+alias(lm(y ~ as.factor(x2) + as.factor(x5) + as.factor(x6) + as.factor(x7) + as.factor(x9), data=table_b4))
+```
+
+(f) Check the adequacy of model assumptions and suggest any corrections if necessary. 
+
+Plot of standardized residuals versus predicted values does not show a specific pattern and hence the fitted linear model is good for the data. The residuals are symmetrically distributed about zero and hence the zero mean assumption of errors is not violated. The vertical deviations of residuals form zero are not significantly different at different values of predictions. Therefore, constant variance assumption is not violated. 
+
+The q-q plot does not show that data points deviated from the straight line much and assumption of normal distribution about errors is not violated. 
+
+Plot of studentized residuals versus observation number does not show positive or negative autocorrelation. Therefore, assumption of independence in errors is not violated.
+
+```{r, eval=F, include = T}
+plot(model_b4_full,pch=16,col="blue")
+
+avPlots(model_b4_full)
+
+ols_plot_added_variable(model_b4_full)
+
+yhat_b4_full <- model_b4_full$fit # Save predicted y to an object #
+t_b4_full <- rstudent(model_b4_full) # Save studentized residuals to an object #
+# Another way to check non-normality of studentized residuals #
+hist(t_b4_full)
+ols_plot_resid_hist(model_b4_full)
+
+qqnorm(t_b4_full, pch=15)
+ols_plot_resid_qq(model_b4_full)
+
+shapiro.test(t_b4_full) #If p-value is bigger, then no problem of non-normality #
+plot(yhat_b4_full,t_b4_full, pch=16) # Studentized residuals versus predicted y #
+plot(table_b4$x1,t_b4_full, pch=16) # Studentized residuals versus x1 predictor #
+plot(table_b4$x2,t_b4_full, pch=16) # Studentized residuals versus x2 predictor #
+plot(table_b4$x3,t_b4_full, pch=16) # Studentized residuals versus x3 predictor #
+plot(table_b4$x4,t_b4_full, pch=16) # Studentized residuals versus x4 predictor #
+plot(table_b4$x5,t_b4_full, pch=16) # Studentized residuals versus x5 predictor #
+plot(table_b4$x6,t_b4_full, pch=16) # Studentized residuals versus x6 predictor #
+plot(table_b4$x7,t_b4_full, pch=16) # Studentized residuals versus x7 predictor #
+plot(table_b4$x8,t_b4_full, pch=16) # Studentized residuals versus x8 predictor #
+plot(table_b4$x9,t_b4_full, pch=16) # Studentized residuals versus x9 predictor #
+
+table_b4 %>% mutate(student_residual=t_b4_full) %>% plot()
+
+ols_plot_diagnostics(model_b4_full)
+
+ols_plot_dfbetas(model_b4_full)
+```
+
+
+
+
+```{r, eval=T, include = T}
+library(MASS)
+bc <- boxcox(model_b4_full)
+#To plot log-likelihood versus lambda #
+lambda <- bc$x[which(bc$y==max(bc$y))]
+lambda
+
+# another package forecast for boxcox
+# library(forecast)
+# lambda <- BoxCox.lambda(model_b4_full)
+
+# BoxCox(model_b4_full, lambda="auto")
+# InvBoxCox(model_b4_full, lambda="auto", biasadj = FALSE, fvar = NULL)
+
+# < log Likelihood
+logLik(model_b4_full)
+model_b4_none <- update(model_b4_full, .~1)
+logLik(model_b4_none)
+## 'log Lik.' -21.61487 (df=1)
+# pseudo R2
+1 - logLik(model_b4_full)/logLik(model_b4_none)
+## 'log Lik.' 0.381052 (df=3)
+# Interpretation of coefficients
+# odds ratio
+odds <- exp(coef(model_b4_full))
+#prob >
+odds/(1 + odds)
+```
+
+3. 
+
+(a) Fit the multiple linear regression model again after removing least significant predictor. Check the significance of the remaining predictors and continue removing the least significant predictor at each stage and refit the model. Stop when all the predictors in the model are significant at 10% significance level. Write the final fitted regression model with estimated coefficients.
+
+```{r, eval=F, include = T}
+
+k <- ols_step_all_possible(model_b4_full)
+k %>%slice(511:n()) %>% arrange(desc("Adj. R-Square"))
+plot(k)
+
+ols_step_forward_p(model_b4_full)
+ols_step_backward_p(model_b4_full)
+
+k <- ols_step_both_p(model_b4_full, details = TRUE)
+k
+plot(k)
+
+```
+
+4. 
+(a) Use forward selection method to find the best model for these data (use $\alpha=0.25$) and report the final fitted model with estimated coefficients here.
+
+```{r, eval=F, include = T}
+# Forward Selection Regression #
+model_b4_none <- lm (y ~ 1, data = table_b4)
+step(model_b4_none, direction= "forward", scope=(~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9), k=2)
+
+ols_step_forward_aic(model_b4_full)
+
+# k=2 for AIC the default , k= log(n) is sometimes for BIC where n is the number of data #
+```
+
+(b) Use backward elimination method to find the best model for these data (use $\alpha=0.1$) and report the final fitted model with estimated coefficients here. Does the backward elimination method give the same model as forward selection method?
+
+```{r, eval=F, include = T}
+# Backward Elimination Regression #
+step(model_b4_full, direction = "backward")
+
+ols_step_backward_aic(model_b4_full)
+```
+
+(c) Use stepwise selection method to find the best model for these data (use to enter and stay or remove) and report the final fitted model with estimated coefficients here. Does the stepwise selection method give the same model as forward selection method and backward elimination method?
+
+```{r, eval=F, include = T}
+k<- ols_step_both_aic(model_b4_full)
+k
+plot(k)
+
+```
+
+(d) Use best subsets method to find the best model for these data and report the final fitted model with estimated coefficients here. Does this method give the same model as in the previous three methods?
+
+```{r, eval=F, include = T}
+# Subset method #
+library(leaps) # Load the package #
+model_b4_subset <- regsubsets(y ~ x1 + x2 + x3 +x4 + x5 + x6 + x7 + x8 + x9, data=table_b4, nbest=10 ) # nbest is the number of models from each size #
+summary(model_b4_subset) # Hard to read output from this #
+
+## plot adjusted R square for each model ##
+plot(model_b4_subset, scale='adjr2')
+## can use Cp, r2 or bic for scale ##
+plot(model_b4_subset, scale='bic')
+plot(model_b4_subset, scale='Cp')
+
+k <- ols_step_best_subset(model_b4_full)
+k
+plot(k)
+```
+
+(e) If the final models in the previous 4 methods are different, compare their model adequacy and suggest one best model.
+
+```{r, eval=F, include = T}
+# The following function in the SignifReg package can be used to change selection criterion easily to p value or others. Change options accordingly before running it #
+library(SignifReg)
+# SignifReg(scope, data, alpha = 0.05, direction = "forward", criterion = "p-value", correction = "FDR") #
+# Check it on your own later #
+```
+
+-If you had the two different models as above from the four methods, then your answer will be:
+
+Both models do not have a problem of multicollinearity (VIF <10), and violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+
+The model with 4 predictors has a slightly higher (about by 2%) adjusted R square compared to the model with only x1 and x2. Further, x5 and x7 predictors are not statistically significant at 10% significance level (p values are 0.11479 and 0.10356, respectively). There is no significant pattern on the plot of studentized residuals versus predicted values from the model with only x1 and x2. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
+
+Finally, the model with 2 predictors is simpler that model with 4 predictors. Therefore, the best model will be
+
+- If you had the same models from the above 4 methods, then your answer will be: 
+
+The model does not have a problem of multicollinearity (VIF <10), and violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). Both predictors are significant at 10% significance level and the model explains about 78.4% variation in the sale price of houses. The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough. 
+
+Therefore, the best model will be
+
+```{r, eval=T, include = T}
+# Final models #
+
+model_b4_1 <- lm(y ~ x1 + x2, data=table_b4)
+summary(model_b4_1)
+```
+
+(f) Provide complete ANOVA table for the best model. Provide partial sum of squares, estimated coefficients, standard errors, p-values, 90% Bonferroni joint confidence intervals for the coefficients of the best model. Provide in a tabular form clearly.
+
+```{r, eval=T, include = T}
+anova(model_b4_1)
+vif(model_b4_1)
+
+confint(model_b4_1, level=0.1/1) # Bonferroni joint confidence interval #
+
+plot(model_b4_1, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_b4_1)
+```
+
+
+```{r, eval=F, include = T}
+model_b4_backward <- lm(y ~ x1 + x2 + x5 + x7, data=table_b4)
+summary(model_b4_backward)
+anova(model_b4_backward)
+vif(model_b4_backward)
+
+confint(model_b4_backward, level=0.1/3) # Bonferroni joint confidence interval #
+plot(model_b4_backward, pch=16, col="blue")
+#Create Partial Regression plots #
+avPlots(model_b4_backward)
+```
+
+(f) Conduct a lack-of-fit test for the best model and report conclusion along with p-value here.
+
+There are no enough repeating values for at least one possible combination of predictors. Therefore, a lack of fit cannot be performed.
+
+```{r, eval=T, include = T}
+# Lack of Fit F Test
+ols_pure_error_anova(lm(y~x7, data = table_b4))
+
+MPV::PRESS(model_b4_full)
+ols_press(model_b4_full)
+```
+
+(g) Check the adequacy of model assumptions and suggest necessary corrections. 
+
+The model does not have a problem of multicollinearity (VIF <10). 
+
+There is no violation of assumptions about the errors (no pattern on residual plots and points follow approximately straight line on the qq plot). 
+
+The partial regression plots do not show nonlinear patterns and hence first-order terms are good enough.
+
+(h) Interpret each estimated regression coefficient using question context. 
+
+Intercept of 10.04 suggests the average sale price (in 1000s dollars) of a house with zero taxes and zero baths. This does not make sense because there cannot be a house without a bathroom.
+
+Coefficient of 5.595 suggests the average sale price of houses increases by $ 5.595 when the tax increases by 1000 and number of baths is a constant. 
+
+Coefficient of 1.935 suggests the average sale price of houses increases by $ 1.935 when the number of baths increases by 1 and tax is a constant.
+
+(i) According the question context, do the predictors in the best model make sense? Explain.
+
+(j) Compute and report the prediction power of the best model.
+
+72.93% About 72.93% of variation in predicting the sale price of houses in Erie, Pennsylvania.
+
+```{r, eval=F, include = T}
+deviation <- table_b4$y-mean(table_b4$y)
+
+# Predit_Power=1-(PRESS.stat/SST)
+1-((MPV::PRESS(model_b4_full))/(deviation%*%deviation)) # Compute SST by multiplying two vectors #
+# prediction power of full
+1-((MPV::PRESS(model_b4_full))/(var(table_b4$y)*(nrow(table_b4)-1)))
+# prediction power of 1
+1-((MPV::PRESS(model_b4_1))/(var(table_b4$y)*(nrow(table_b4)-1)))
+# prediction power of backward
+1-((MPV::PRESS(model_b4_backward))/(var(table_b4$y)*(nrow(table_b4)-1)))
+
+```
+
+## olsrr {.tabset .tabset-fade .tabset-pills}
+
+### Introduction
+
+1 Regression
+
+In the presence of interaction terms in the model, the predictors are scaled and centered before computing the standardized betas. ols_regress() will detect interaction terms automatically but in case you have created a new variable instead of using the inline function *, you can indicate the presence of interaction terms by setting iterm to TRUE.
+
+ols_regress(mpg ~ disp + hp + wt + qsec, data = mtcars)
+
+2 Residual vs Fitted Values Plot
+
+Plot to detect non-linearity, unequal error variances, and outliers.
+
+**ols_plot_resid_fit(model)**
+
+3 DFBETAs Panel
+
+DFBETAs measure the difference in each parameter estimate with and without the influential observation. dfbetas_panel creates plots to detect influential observations using DFBETAs.
+
+**ols_plot_dfbetas(model)**
+
+4 Residual Fit Spread Plot
+
+Plot to detect non-linearity, influential observations and outliers.
+
+ols_plot_resid_fit_spread(model)
+
+5 Breusch Pagan Test
+
+Breusch Pagan test is used to test for herteroskedasticity (non-constant error variance). It tests whether the variance of the errors from a regression is dependent on the values of the independent variables. It is a χ2 test.
+
+ols_test_breusch_pagan(model)
+
+6 Collinearity Diagnostics
+
+**ols_coll_diag(model)**
+
+7 Stepwise Regression
+
+Build regression model from a set of candidate predictor variables by entering and removing predictors based on p values, in a stepwise manner until there is no variable left to enter or remove any more.
+
+- Variable Selection
+
+model <- lm(y ~ ., data = surgical)
+**ols_step_both_p(model)**
+
+- Plot
+
+8 Stepwise AIC Backward Regression
+
+Build regression model from a set of candidate predictor variables by removing predictors based on Akaike Information Criteria, in a stepwise manner until there is no variable left to remove any more.
+
+- Variable Selection
+
+**k <- ols_step_backward_aic(model)**
+
+- Plot
+
+### Variable Selection Methods
+
+1 All Possible Regression
+
+**ols_step_all_possible(model)**
+
+plot(k)
+
+2 Best Subset Regression
+
+Select the subset of predictors that do the best at meeting some well-defined objective criterion, such as having the largest R2 value or the smallest MSE, Mallow’s Cp or AIC.
+
+**ols_step_best_subset(model)**
+
+plot(k)
+
+3 Stepwise Forward Regression
+
+- Variable Selection
+
+ols_step_forward_p(model)
+
+plot(k)
+
+- Detailed Output
+
+**ols_step_forward_p(model, details = TRUE)**
+
+4 Stepwise Backward Regression
+
+**ols_step_backward_p(model, details = TRUE)**
+
+5 Stepwise Regression
+
+**ols_step_both_p(model, details = TRUE)**
+
+6 Stepwise AIC Forward Regression
+
+**ols_step_forward_aic(model, details = TRUE)**
+
+7 Stepwise AIC Backward Regression
+
+**ols_step_backward_aic(model, details = TRUE)**
+
+8 Stepwise AIC Regression
+
+**ols_step_both_aic(model, details = TRUE)**
+
+
+
+### Residual Diagnostics
+
+The standard regression assumptions include the following about residuals/errors:
+- The error has a normal distribution (normality assumption).
+- The errors have mean zero.
+- The errors have same but unknown variance (homoscedasticity assumption).
+- The error are independent of each other (independent errors assumption)
+
+1 Residual QQ Plot
+
+**ols_plot_resid_qq(model)**
+
+2 Residual Normality Test
+
+Test for detecting violation of normality assumption.
+
+ols_test_normality(model)
+
+Correlation between observed residuals and expected residuals under normality.
+
+ols_test_correlation(model)
+
+3 Residual vs Fitted Values Plot
+
+Characteristics of a well behaved residual vs fitted plot:
+
+- The residuals spread randomly around the 0 line indicating that the relationship is linear.
+- The residuals form an approximate horizontal band around the 0 line indicating homogeneity of error variance.
+- No one residual is visibly away from the random pattern of the residuals indicating that there are no outliers.
+
+**ols_plot_resid_fit(model)**
+
+4 Residual Histogram
+
+Histogram of residuals for detecting violation of normality assumption.
+
+ols_plot_resid_hist(model)
+
+
+### Heteroskedasticity
+
+1 Bartlett Test
+
+- Use grouping variable
+
+ols_test_bartlett(hsb, read, group_var = female)
+
+- Using variables
+
+ols_test_bartlett(hsb, read, write)
+
+2 Breusch Pagan Test
+
+- Use fitted values of the model
+
+ols_test_breusch_pagan(model)
+
+- Use independent variables of the model
+
+ols_test_breusch_pagan(model, rhs = TRUE)
+
+- Use independent variables of the model and perform multiple tests
+
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE)
+
+- Bonferroni p value Adjustment
+
+**ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'bonferroni')**
+
+- Sidak p value Adjustment
+
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'sidak')
+
+- Holm’s p value Adjustment
+
+ols_test_breusch_pagan(model, rhs = TRUE, multiple = TRUE, p.adj = 'holm')
+
+3 Score Test
+
+- Use fitted values of the model
+
+ols_test_score(model)
+
+- Use independent variables of the model
+
+ols_test_score(model, rhs = TRUE)
+
+- Specify variables
+
+ols_test_score(model, vars = c('disp', 'hp'))
+
+4 F Test
+
+- Use fitted values of the model
+
+ols_test_f(model)
+
+- Use independent variables of the model
+
+ols_test_f(model, rhs = TRUE)
+
+- Specify variables
+
+ols_test_f(model, vars = c('disp', 'hp'))
+
+### Measures of Influence
+
+1 Cook’s D Bar Plot
+
+Steps to compute Cook’s distance:
+
+- delete observations one at a time.  
+- refit the regression model on remaining (n−1) observations.  
+- examine how much all of the fitted values change when the ith observation is deleted.
+
+A data point having a large cook’s d indicates that the data point strongly influences the fitted values
+
+ols_plot_cooksd_bar(model)
+
+2 Cook’s D Chart
+
+ols_plot_cooksd_chart(model)
+
+3 DFBETAs Panel
+
+DFBETA measures the difference in each parameter estimate with and without the influential point. There is a DFBETA for each data point i.e if there are n observations and k variables, there will be n∗k DFBETAs. In general, large values of DFBETAS indicate observations that are influential in estimating a given parameter. Belsley, Kuh, and Welsch recommend 2 as a general cutoff value to indicate influential observations and $\frac{2}{\sqrt{n}}$ as a size-adjusted cutoff.
+
+**ols_plot_dfbetas(model)**
+
+4 DFFITs Plot
+
+Steps to compute DFFITs:
+
+- delete observations one at a time.  
+- refit the regression model on remaining observations.  
+- examine how much all of the fitted values change when the ith observation is deleted.
+
+An observation is deemed influential if the absolute value of its DFFITS value is greater than:${2}*{\frac{\sqrt{(p + 1)}}{(n - p -1)}}$ where n is the number of observations and p is the number of predictors including intercept.
+
+ols_plot_dffits(model)
+
+5 Studentized Residual Plot
+
+Plot for detecting outliers. Studentized deleted residuals (or externally studentized residuals) is the deleted residual divided by its estimated standard deviation. Studentized residuals are going to be more effective for detecting outlying Y observations than standardized residuals. If an observation has an externally studentized residual that is larger than 3 (in absolute value) we can call it an outlier.
+
+**ols_plot_resid_stud(model)**
+
+6 Standardized Residual Chart
+
+Chart for detecting outliers. Standardized residual (internally studentized) is the residual divided by estimated standard deviation.
+
+ols_plot_resid_stand(model)
+
+7 Studentized Residuals vs Leverage Plot
+
+Graph for detecting influential observations.
+
+ols_plot_resid_lev(model)
+
+8 Deleted Studentized Residual vs Fitted Values Plot
+
+ols_plot_resid_stud_fit(model)
+
+9 Hadi Plot
+
+Hadi’s measure of influence based on the fact that influential observations can be present in either the response variable or in the predictors or both. The plot is used to detect influential observations based on Hadi’s measure.
+
+ols_plot_hadi(model)
+
+10 Potential Residual Plot
+
+Plot to aid in classifying unusual observations as high-leverage points, outliers, or a combination of both.
+
+ols_plot_resid_pot(model)
+
+### Collinearity, Model Fit & Variable Contribution
+
+1 Collinearity Diagnostics
+
+- VIF
+
+ols_vif_tol(model)
+
+- Tolerance
+
+Percent of variance in the predictor that cannot be accounted for by other predictors.
+
+- Condition Index
+
+Most multivariate statistical approaches involve decomposing a correlation matrix into linear combinations of variables. The linear combinations are chosen so that the first combination has the largest possible variance (subject to some restrictions we won’t discuss), the second combination has the next largest variance, subject to being uncorrelated with the first, the third has the largest possible variance, subject to being uncorrelated with the first and second, and so forth. The variance of each of these linear combinations is called an eigenvalue. Collinearity is spotted by finding 2 or more variables that have large proportions of variance (.50 or more) that correspond to large condition indices. A rule of thumb is to label as large those condition indices in the range of 30 or larger.
+
+ols_eigen_cindex(model)
+
+- Collinearity Diagnostics
+
+**ols_coll_diag(model)**
+
+2 Model Fit Assessment
+
+- Residual Fit Spread Plot
+
+ols_plot_resid_fit_spread(model)
+
+- Part & Partial Correlations
+
+Correlations: Relative importance of independent variables in determining Y. How much each variable uniquely contributes to R2 over and above that which can be accounted for by the other predictors.
+
+Zero Order: Pearson correlation coefficient between the dependent variable and the independent variables.
+
+Part: Unique contribution of independent variables. How much R2 will decrease if that variable is removed from the model?
+
+Partial: How much of the variance in Y, which is not estimated by the other independent variables in the model, is estimated by the specific variable?
+
+**ols_correlations(model)**
+
+- Observed vs Predicted Plot
+
+ols_plot_obs_fit(model)
+
+- Lack of Fit F Test
+
+**ols_pure_error_anova(model)**
+
+- Diagnostics Panel
+
+**ols_plot_diagnostics(model)**
+
+3 Variable Contributions
+
+- Residual vs Regressor Plots
+
+Graph to determine whether we should add a new predictor to the model already containing other predictors. The residuals from the model is regressed on the new predictor and if the plot shows non random pattern, you should consider adding the new predictor to the model.
+
+ols_plot_resid_regressor(model, drat)
+
+- Added Variable Plot
+
+Regress Y on all variables other than X and store the residuals (Y residuals).  
+Regress X on all the other variables included in the model (X residuals).  
+Construct a scatter plot of Y residuals and X residuals.
+
+ols_plot_added_variable(model)
+
+- Residual Plus Component Plot
+
+Regress Y on all variables including X and store the residuals (e).
+Multiply e with regression coefficient of X (eX).
+Construct scatter plot of eX and X
+
+ols_plot_comp_plus_resid(model)
