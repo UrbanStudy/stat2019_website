@@ -6,9 +6,20 @@ output: html_document
 
 ## {.tabset .tabset-fade .tabset-pills}
 
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
 ### Demonstration  {.tabset .tabset-fade .tabset-pills}
 
 https://www.symbolab.com/
+
+The ASA's Statement on p-Values: Context, Process, and Purpose
+
+http://dx.doi.org/10.1080/00031305.2016.1154108
 
 Normal_PDF|Normal_CDF|Chi^2_PDF|Chi^2_CDF
 ---|---|---|---
