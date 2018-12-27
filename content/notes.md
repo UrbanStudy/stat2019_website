@@ -7,12 +7,6 @@ output: html_document
 ## {.tabset .tabset-fade .tabset-pills}
 
 
-```{r setup, include=F}
-knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
-options(width = 2000)
-options(repos="https://cran.rstudio.com")
-```
-
 ### Demonstration  {.tabset .tabset-fade .tabset-pills}
 
 https://www.symbolab.com/
