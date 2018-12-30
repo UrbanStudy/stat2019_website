@@ -115,7 +115,7 @@ $$\bar x_{ij}=\frac1{n_{ij}}\sum_{k=1}^{n_{ij}}x_{ijk}$$
 
  - Sample Main Row and Column Effects $\widehatα_i=x_{i·}−\bar x_{··}$, $β_j =\bar x_{·j} −\bar x_{··}$
 
- - Sample Interaction Effects $\widehatγ_{ij} =x_{ij}−(\bar x_{··}+\widehatα_i+\widehatβ_j)$
+ - Sample Interaction Effects $\widehat{γ_{ij}}=x_{ij}−(\bar x_{··}+\widehatα_i+\widehatβ_j)$
 
 ## 2. Introduction to Probability
 
@@ -125,8 +125,495 @@ $$\bar x_{ij}=\frac1{n_{ij}}\sum_{k=1}^{n_{ij}}x_{ijk}$$
 
 Such subsets of the sample space (i.e., collections of individual outcomes) are called events. An event consisting of only one outcome is called a simple event. Events consisting of more than one outcome are called compound.
 
+### 2.3 Experiments with Equally Likely Outcomes
+
+#### 2.3.1 Definition and Interpretation of Probability
+
+#### 2.3.2 Counting Techniques
+
+#### 2.3.3 Probability Mass Functions and Simulations
+
+ - Probability of Each of N Equally Likely Outcomes
+ 
+If the sample space of an experiment consists of N outcomes that are equally
+likely to occur, then the probability of each outcome is 1/N.
+
+ - Assignment of Probabilities in the Case of N Equally Likely Outcomes
+
+$$P(E)=\frac{N(E)}N$$
+
+### 2.4 Axioms and Properties of Probabilities
+
+### 2.5 Conditional Probability
+
+#### 2.5.1 The Multiplication Rule and Tree Diagrams
+
+#### 2.5.2 Law of Total Probability and Bayes’ Theorem
+
+### 2.6 Independent Events
+
+#### 2.6.1 Applications to System Reliability
+
 ## 3. Random Variables and Their Distributions
+
+### 3.2 Describing a Probability Distribution
+
+#### 3.2.1 Random Variables, Revisited
+
+#### 3.2.2 The Cumulative Distribution Function
+
+#### 3.2.3 The Density Function of a Continuous Distribution Exercises
+
+### 3.3 Parameters of Probability Distributions
+
+#### 3.3.1 Expected Value
+
+#### 3.3.2 Variance and Standard Deviation
+#### 3.3.3 Population Percentiles
+
+### 3.4 Models for Discrete Random Variables
+
+#### 3.4.1 The Bernoulli and Binomial Distributions
+#### 3.4.2 The Hypergeometric Distribution
+#### 3.4.3 The Geometric and Negative Binomial Distributions
+#### 3.4.4 The Poisson Distribution
+
+### 3.5 Models for Continuous Random Variables
+#### 3.5.1 The Exponential Distribution 147
+#### 3.5.2 The Normal Distribution 150
+
 ## 4. Jointly Distributed Random Variables
+
+### 4.2 Describing Joint Probability Distributions
+#### 4.2.1 The Joint and Marginal PMF
+
+**Definition 4.2-1** The joint, or bivariate, probability mass function (PMF) of the jointly discrete random variables X and Y is defined as
+
+$$p(x,y)=P(X=x,Y=y)$$
+
+ - Obtaining the Marginal PMFs from the Joint PMF
+ 
+ $$p_X(x)=\sum_{y\in S_Y}p(x,y),\quad p_Y(y)=\sum_{x\in S_X}p(x,y)$$
+
+#### 4.2.2 The Joint and Marginal PDF
+
+**Definition 4.2-2** The joint or bivariate density function of the jointly continuous random variables X and Y is a nonnegative function f(x,y) with the property that the
+probability that (X,Y) will take a value in a region A of the x-y plane equals
+the volume under the surface defined by f(x,y) and above the region A.
+
+ - Volume Under the Entire Surface Defined by f(x,y) Is 1
+ 
+$$\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} f(x,y)dxdy=1$$
+
+ - Probability that (X,Y) Lies in the Region A
+
+$$P((X,Y)\in A)=\iint_A f(x,y)dxdy$$.
+
+ - Probability of (X,Y) Lying in a Rectangle 
+ 
+ $$P(a\le X\le b,\ c\le Y\le d)=\int_a^b\int_c^df(x, y)dydx$$
+
+ - Obtaining the Marginal PDFs from the Joint PDF
+ 
+$$f_X(x)=\int_{-\infty}^{\infty}f(x,y)dy,\quad f_Y(y)=\int_{-\infty}^{\infty}f(x,y)dx$$
+
+### 4.3 Conditional Distributions
+#### 4.3.1 Conditional Probability Mass Functions
+
+ - Definition of Conditional PMF of Y given X=x
+
+$$p_{Y|X=x}(y)=P(Y=y|X=x)=\frac{p(x,y)}{p_X(x)},\quad y\in S_Y$$
+
+ - Basic Properties of Conditional PMFs
+
+$$p_{Y|X=x}(y)\ge0, y\in S_Y, \quad \sum_yp_{Y|X=x}(y)=1$$
+
+ - Multiplication Rule for Joint Probabilities
+
+$$p(x,y)=p_{Y|X=x}(y)p_X(x)$$
+
+ - Law of Total Probability for Marginal PMFs
+
+$$p_Y(y)=\sum_{x\in S_X}p_{Y|X=x}(y)p_X(x)$$
+
+#### 4.3.2 Conditional Probability Density Functions
+
+ - Definition of the Conditional PDF of Y Given X=x
+ 
+ $$f_{Y|X=x}(y)=\frac{f(x,y)}{f_X(x)}$$
+ 
+ - Conditional Probabilities in Terms of the Conditional PDF
+ 
+ $$P(a<Y<b|X=x)=\int_a^bf_{Y|X=x}(y)dy$$
+
+ - Multiplication Rule for Joint PDFs
+
+$$f(x,y)=f_{Y|X=x}(y)f_X(x)$$
+
+ - Law of Total Probability for Marginal PDFs
+ 
+ $$f_Y(y)=\int_{-\infty}^{\infty} f_{Y|X=x}(y)f_X(x)dx$$
+
+#### 4.3.3 The Regression Function
+
+ - Regression Function for Jointly Discrete (X,Y)
+
+$$μ_{Y|X}(x) =\sum_{y\in S_Y}yp_{Y|X=x}(y),\ x\in S_X$$
+
+ - Regression Function for Jointly Continuous (X,Y)
+
+$$μ_{Y|X}(x) =\int_{-\infty}^{\infty}yf_{Y|X=x}(y),\ x\in S_X$$
+
+ - Law of Total Expectation
+
+$$E(Y)=E[E(Y|X)]$$
+
+ - Law of Total Expectation for Discrete Random Variables
+ 
+ $$E(Y) =\sum_{x\in S_X}E(Y|X=x)p_X(x)$$
+ 
+ - Law of Total Expectation for Continuous Random Variables
+
+ $$E(Y) =\int_{-\infty}^{\infty}E(Y|X=x)f_X(x)$$
+
+#### 4.3.4 Independence
+
+ - Definition of Independence of Two Random Variables
+ 
+ $$P(X\in A Y\in B)=P(X\in A)P(Y\in B)$$
+ 
+ - Condition for Independence of Two Discrete RandomVariables
+ 
+  $$p_{X,Y}(x,y) = p_X(x)p_Y(y)$$
+ 
+ - Condition for Independence of Two Continuous Random Variables
+ 
+ $$f_{X,Y}(x,y) = f_X(x)f_Y(y)$$
+
+ - Condition for Independence of Several Discrete Random Variables
+ 
+ $$p(x_1,x_2,..,x_n)=p_{X_1}(x_1)\cdots p_{X_n}(x_n)$$
+ 
+ - Condition for Independence of Several Continuous Random Variables
+
+ $$f(x_1,x_2,..,x_n)=f_{X_1}(x_1)\cdots f_{X_n}(x_n)$$
+
+### 4.4 Mean Value of Functions of Random Variables
+#### 4.4.1 The Basic Result
+
+ 1. Let (X,Y) be discrete with joint PMF p(x,y). The expected value of a function, h(X,Y), of (X,Y) is computed by
+
+ - Mean Value of a Function of Discrete Random Variables
+ 
+ $$E[h(X,Y)] =\sum_{x\in S_X}\sum_{y\in S_Y}h(x,y)p(x,y)$$
+
+ 2. Let (X,Y) be continuous with joint PDF f(x,y). The expected value of a
+function, h(X,Y), of (X,Y) is computed by
+
+ - Mean Value of a Function of Continuous Random Variables
+ 
+ $$E[h(X,Y)] =\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} h(x,y)f(x,y)dxdy$$
+
+ - Variance of a Function of Two Random Variables
+ 
+ $$σ^2_{h(X,Y)} = E[h^2(X, Y)] − [E[h(X,Y)]]^2$$
+
+#### 4.4.2 Expected Value of Sums
+
+**Proposition 4.4-2** Let $X_1,..,X_n$ be any n random variables (i.e., they may be discrete or continuous,
+independent or dependent), with marginal means $E(X_i) = μ_i$. Then
+
+ - Expected Value of a Linear Combination of Random Variables
+ 
+ $$E(a_1X_1 +..+ a_nX_n) = a_1μ_1 +..+ a_nμ_n$$
+
+**Corollary 4.4-1** If the random variables $X_1,..,X_n$ have common mean $μ$, that is, if $E(X_1)=..=E(X_n)=μ$, then
+
+ - Expected Value of the Average and the Total
+
+$$E(\bar X) = μ,\quad E(T) = nμ$$
+
+ - Expected Value of the Sample Proportion
+ 
+ $$E(\hat p) = p $$
+
+**Proposition 4.4-3** Suppose that N is an integer-valued random variable, and the random variables $X_i$ are independent from N and have common mean value $μ$. Then,
+
+ - Expected Value of a Sum of a Random Number of Random Variables
+ 
+ $$E\left(\sum_{i=1}^NXi\right)=E(N)μ$$
+
+#### 4.4.3 The Covariance and the Variance of Sums
+
+$$Var(X + Y) = E\{[X + Y − E(X + Y)]^2\}=Var(X)+Var(Y)+2E[(X−E(X))(Y−E(Y))]$$
+
+The quantity $E[(X−E(X))(Y−E(Y))]$ that appears in formula (4.4.5) is called
+the covariance of X and Y, and is denoted by $Cov(X,Y)$ or $σ_{X,Y}$:
+
+ - Definition of and Short-cut Formula for the Covariance
+ 
+ $$σ_{X,Y}=E[(X−μ_X)(Y−μ_Y)]=E(XY)−μ_Xμ_Y$$
+
+**Proposition 4.4-4**
+ 1. Let $σ^2_1,σ^2_2$ denote the variances of $X_1,X_2$, respectively. Then 
+  (a) If $X_1,X_2$ are independent (or just $Cov(X_1,X_2)=0$),
+     $$Var(X_1+X_2) = σ^2_1 + σ^2_2,\quad Var(X_1 − X_2) = σ^2_1 + σ^2_2$$
+     
+  (b) If X1,X2 are dependent,
+$$Var(X_1−X_2)=σ^2_1+σ^2_2−2Cov(X_1,X_2)$$
+
+$$Var(X_1+X_2)=σ^2_1+σ^2_2+2Cov(X_1,X_2)$$
+
+ 2. Let $σ^2_1 ,..,σ^2_m$ denote the variances of $X_1,..,X_m$, respectively, and $a_1,..,a_m$ be any constants. Then
+  (a) If $X_1,..,X_m$ are independent (or just Cov(X_i,X_j)=0, for all $i\neq j$),
+  
+$$Var(a_1X_1+..+a_mX_m) = a^2_1σ^2_1 +..+a^2_mσ^2_m$$
+
+ (b) If $X_1,..,X_m$ are dependent,
+ 
+$$Var(a_1X_1+..+a_mX_m) = a^2_1σ^2_1+..+a^2_mσ^2_m+\sum_i\sum_{j\neq i}a_ia_j\sigma_{ij}$$
+
+**Corollary 4.4-2** Let $X_1,..,X_n$ be iid (i.e., a simple random sample from an infinite population) with common variance $σ^2$. Then,
+
+ - Variance of the Average and the Sum
+ 
+ $$Var(X)=\frac{σ^2}n,\quad Var(T) = nσ^2$$
+ 
+ - Variance of the Sample Proportion
+
+$$Var(\hat p) =\frac{p(1−p)}n$$
+
+**Proposition 4.4-5** Properties of covariance
+
+ 1. $Cov(X,Y) = Cov(Y,X)$
+ 2. $Cov(X,X) = Var(X)$
+ 3. If X,Y are independent, then $Cov(X,Y)=0$.
+ 4. $Cov(aX+b, cY+d)=acCov(X,Y)$ for any real numbers a, b, c, and d.
+
+### 4.5 Quantifying Dependence
+
+#### 4.5.1 Positive and Negative Dependence
+
+If the variables are either positively or negatively dependent, their dependence is called monotone.
+
+#### 4.5.2 Pearson’s (or Linear) Correlation Coefficient
+
+**Definition 4.5-1** The Pearson’s (or linear) correlation coefficient of X and Y, denoted by
+$Corr(X,Y)$ or $ρ_{X,Y}$, is defined as
+
+$$ρ_{X,Y}=Corr(X,Y)=\frac{Cov(X,Y)}{σ_Xσ_Y}$$
+
+where $σ_X$, $σ_Y$ are the marginal standard deviations of X, Y, respectively
+
+**Proposition 4.5-1**
+
+ 1. If a and c are either both positive or both negative, then
+
+$$Corr(aX+b,cY+d)=ρ_{X,Y}$$
+
+If a and c are of opposite signs, then
+
+$$Corr(aX+b,cY+d)=-ρ_{X,Y}$$
+
+ 2. $−1\le ρ_{X,Y}\le1$, and
+  (a) if X, Y are independent then $ρ_{X,Y}=0$.
+  (b) $ρ_{X,Y}=1$ or −1 if and only if $Y=aX+b$ for some numbers a, b with $a\neq0$.
+
+Pearson’s Correlation as a Measure of Linear Dependence It should be emphasized
+that correlation measures only linear dependence. In particular, it is possible to have
+the strongest possible dependence, that is, knowing one amounts to knowing the
+other, but if the relation between X and Y is not linear, then the correlation will not
+equal 1. Let X have the uniform in (0,1) distribution, and $Y = X^2,\ ρ_{X,Y}=0.968$. $Y=X^4,\ ρ_{X,Y}=0.866$.
+
+**Definition 4.5-2** Two variables having zero correlation are called uncorrelated.
+
+Sample Versions of the Covariance and Correlation Coefficient If $(X_1,Y_1),..,(X_n,Y_n)$ is a sample from the bivariate distribution of (X,Y), the sample covariance, denoted by $\widehat {Cov}(X,Y)$ or $S_{X,Y}$, and sample correlation coefficient, denoted by
+$\widehat{Corr}(X,Y)$ or $r_{X,Y}$, are defined as
+
+ - Sample Versions of Covariance and Correlation Coefficient
+
+$$S_{X,Y}=\frac1{n−1}\sum^n_{i=1}(X_i−\bar X)(Y_i−\bar{Y})=\frac1{n−1}\left[ \sum^n_{i=1}X_iY_i-\frac1n(\sum^n_{i=1}X_i)(\sum^n_{i=1}Y_i)\right]$$
+$$r_{X,Y}=\frac{S_{X,Y}}{S_XS_Y}$$
+
+### 4.6 Models for Joint Distributions
+#### 4.6.1 Hierarchical Models
+
+The principle of hierarchical modeling uses the multiplication rules in order to specify the joint distribution of X and Y by first specifying the conditional distribution of Y given X=x, and then specifying the marginal distribution of X. Thus, a hierarchical model consists of
+$$Y|X = x\sim F_{Y|X=x}(y),\quad X\sim F_X(x)$$
+where the conditional distribution of Y given $X=x, F_{Y|X=x}(y)$, and the marginal distribution of $X,F_X(x)$, can depend on additional parameters.
+
+**Example 4.6-1** (p.200)
+
+$$Y|X=x\sim Bin(x,p),\quad X\sim Poisson(λ)$$
+which leads to a joint PMF of (X,Y), which, for $y\le x$, is:
+$$p(x,y)=p_{Y|X=x}(y)p_X(x)=\binom{x}{y}p^y(1−p)^{x−y}\frac{e^{−λ}λ^x}{x!}$$
+
+**Example 4.6-2** The bivariate normal distribution. X and Y are said to have a bivariate normal
+distribution if their joint distribution is specified according to the hierarchical model
+
+$$Y|X=x\sim N(β_0+β_1(x−μ_X), σ^2_ε),\quad X\sim N(μ_X, σ^2_X)$$
+
+$$f_{Y|X=x}(y)=\frac1{\sqrt{2πσ^2_ε}}e^{−\frac{(y−β_0−β_1(x−μ_X))^2}{2σ^2_ε}}$$
+
+$$f_X(x)=\frac1{\sqrt{2πσ^2_X}}e^{−\frac{(x−μ_X)^2}{2σ^2_X}}$$
+
+$$f_{X,Y}(x,y)=\frac1{2πσ_εσ_X}e^{−\frac{(y−β_0−β_1(x−μ_X))^2}{2σ^2_ε}−\frac{(x−μ_X)^2}{2σ^2_X}}$$
+
+#### 4.6.2 Regression Models
+
+In regression studies Y is called the response variable, and X is interchangeably referred to as the covariate, or the independent variable, or the predictor, or the explanatory variable.
+
+The Simple Linear Regression Model The simple linear regression model specifies that the regression function of Y on X is linear, that is,
+$$μ_{Y|X}(x)=α_1+β_1x$$
+and the conditional variance of Y given X=x, denoted by $σ^2_ε$ , is the same for all values x. The latter is known as the homoscedasticity assumption. In this model, $α_1$,$β_1$, and $σ^2_ε$ are unknown parameters. The regression function (4.6.4) is often written as 
+
+$$μ_{Y|X}(x)=β_0+β_1(x−μ_X)$$ 
+where $μ_X$ is the marginal mean value of X, and $β_0$ is related to $α_1$ through $β_0=α_1+β_1μ_X$. The straight line defined by the equation is called the regression line.
+
+**Proposition 4.6-1** The marginal expected value of Y is given by
+
+$$E(Y)=α_1+β_1μ_X,\quad E(Y)=β_0$$
+
+ - Mean Plus Error Form of the Simple Linear Regression Model
+ 
+ $$Y = α_1 + β_1X + ε,\quad Y = β_0 + β_1(X − μ_X) + ε$$
+
+**Proposition4.6-2** The intrinsic error variable, $ε$, has zero mean and is uncorrelated from the explanatory variable X:
+
+$$E(ε)=0 ,\quad Cov(ε,X)=0$$
+
+**Proposition 4.6-3** If the regression function of Y on X is linear (so (4.6.4) or, equivalently, (4.6.5) holds), then we have the following:
+ 1. The marginal variance of Y is
+
+$$σ^2_Y= σ^2_ε + β^2_1σ^2_X$$
+
+ 2. The slope $β_1$ is related to the covariance, $σ_{X,Y}$, and the correlation, $ρ_{X,Y}$, by
+
+$$β_1=\frac{σ_{X,Y}}{σ^2_X}=ρ_{X,Y}\frac{σ_Y}{σ_X}$$
+
+**REMARK 4.6-1** Sample version of the regression line.
+
+$$\widehat{β_1}=\frac{S_{X,Y}}{S^2_X},\quad \widehat{α_1}=\bar Y−\widehat{β_1}\bar X$$
+
+The normal regression model specifies that the conditional distribution of Y given X=x is normal,
+
+$$Y|X=x\sim N(μ_{Y|X}(x), σ^2_ε)$$
+where $μ_{Y|X}(x)$ is a given function of x, typically depending on unknown parameters.
+
+The normal simple linear regression model specifies, in addition, that the regression
+function $μ_{Y|X}(x)$ in (4.6.11) is linear, that is, that (4.6.5) or, equivalently, (4.6.4)
+holds. The normal simple linear regression model is also written as
+
+$$Y=α_1+β_1x+ε\quad\text{, with } ε\sim N(0,σ^2_ε)$$
+
+#### 4.6.3 The Bivariate Normal Distribution
+
+$$Y|X=x\sim N(β_0+β_1(x−μ_X), σ^2_ε)$$
+
+$$f_{X,Y}(x,y)=\frac1{2πσ_Xσ_Y\sqrt{1-ρ^2}}e^{\frac{-1}{1-ρ^2}[\frac{\tilde x^2}{2σ^2_X}−\frac{ρ\tilde x\tilde y}{σ_Xσ_Y}+\frac{\tilde y^2}{2σ^2_Y}]}$$
+
+The two variances and the covariance are typically arranged in a symmetric matrix, called the covariance matrix:
+
+$$\sum=\begin{pmatrix}σ^2_X &σ_{X,Y} \\σ_{X,Y} & σ^2_Y\end{pmatrix}$$
+
+**Proposition 4.6-4** Let (X,Y) have a bivariate normal distribution with parameters $μ_X, μ_Y, σ^2_X, σ^2_Y, σ_{X,Y}$. Then we have the following:
+
+ 1. The marginal distribution of Y is also normal.
+ 2. If X and Y are uncorrelated then they are independent.
+ 3. If X and Y are independent normal random variables, their joint distribution is bivariate normal with parameters $μ_X, μ_Y, σ^2_X, σ^2_Y$, and $σ_{X,Y}=0$.
+ 4. Any linear combination of X and Y has a normal distribution. In particular
+ 
+$$aX + bY\sim N(aμ_X+bμ_Y,a^2σ^2_X+b^2σ^2_Y+2abCov(X,Y))$$
+
+#### 4.6.4 The Multinomial Distribution
+
+When this basic experiment is repeated n times, one typically records $N_1,..,N_r$, where $N_j=$ the number of times outcome j occurred. If the r possible outcomes of the basic experiment have probabilities $p_1,..,p_r$, the joint distribution of the random variables $N_1,..,N_r$ is said to be multinomial with n trials and probabilities $p_1,..,p_r$.
+
+Note that, by their definition, $N_1,..,N_r$ and $p_1,..,p_r$ satisfy
+
+$$N_1+..+N_r = n,\quad p_1+..+p_r=1$$
+
+If $N_1,..,N_r$ have the $multinomial(n, p_1,..,p_r)$ distribution, then their joint PMF is
+
+$$P(N_1=x_1,..,N_r=x_r)=\frac{n!}{x_1!\cdots x_r!}p^{x_1}_1\cdots p^{x_r}_r$$
+
 ## 5. Some Approximation Results
+
+### 5.2 The LLN and the Consistency of Averages
+
+**Theorem 5.2-1** The Law of Large Numbers. Let $X_1,..,X_n$ be independent and identically distributed and let g be a function such that $−\infty<E[g(X_1)]<\infty$. Then, $\frac1n\sum_{i=1}^ng(X_i)$ converges inprobability to $E[g(X1)]$, that is, for any $ϵ>0$,
+$$P\left(\left|\frac1n\sum_{i=1}^ng(X_i) − E[g(X_1)]\right|>ϵ\right)\to0\ \text{as}\ n\to \infty$$
+
+**Lemma 5.2-1** Chebyshev’s inequality. Let the random variable Y have mean value $μ_Y$ and variance $σ^2_Y<\infty$. Then, for any $ϵ>0$,
+
+$$P(|Y − μ_Y|>ϵ)\le\frac{σ^2_Y}{ϵ^2}$$
+
+### 5.3 Convolutions
+
+#### 5.3.1 What They Are and How They Are Used
+
+**Example 5.3-1** Sum of independent Poisson random variables. If $X\sim Poisson(λ_1)$ and $Y\sim Poisson(λ_2)$ are independent random variables, show that
+$$X+Y\sim Poisson(λ_1+λ_2)$$
+
+**Example 5.3-2** Sum of independent binomial random variables. If $X\sim Bin(n_1,p)$ and $Y\sim Bin(n_2,p)$ are independent binomial random variables with common probability of success, show that
+
+$$X+Y\sim Bin(n_1+n_2,p)$$
+
+**Example 5.3-3** The sum of two uniforms. If $X_1$ and $X_2$ are independent random variables having the uniform in (0,1) distribution, find the distribution of $X_1 + X_2$.
+
+ - Convolution of the PDFs $f_1$ and $f_2$
+ 
+$$f_{X1+X2}(y)=\int_{-\infty}^{\infty}f_{X_2}(y − x_1)f_{X_1}(x_1)d_{x_1}$$
+
+#### 5.3.2 The Distribution of X in the Normal Case
+
+**Proposition 5.3-1** Let $X_1,X_2,..,X_n$ be independent and normally distributed random variables, $X_i\sim N(μ_i,σ^2_i)$, and let $Y=a_1X_1+..+a_nX_n$ be a linear combination of the $X_i$. Then $Y\sim N(μ_Y,σ^2_Y)$, where $μ_Y=a_1μ_1+\cdots+a_nμ_n, σ^2_Y=a^2_1σ^2_1+\cdots+a^2_nσ^2_n$
+
+**Corollary 5.3-1** Let $X_1,X_2,..,X_n$ be $iid N(μ,σ^2)$, and let X be the sample mean. Then $\bar X\sim N(μ_{\bar X}, σ^2_{\bar X})$, where $μ_{\bar X} =μ$, $σ^2_{\bar X}=\frac{σ^2}n$
+
+### 5.4 The Central Limit Theorem
+
+**Theorem 5.4-1** The Central Limit Theorem. Let $X_1,X_2,..,X_n$ be iid with mean $μ$ and a finite variance $σ^2$. Then for large enough n (n ≥ 30 for our purposes),
+
+ 1. X has approximately a normal distribution with mean $μ$ and variance $\frac{σ^2}n$,
+that is,
+
+$$\bar X\sim N(μ,\frac{σ^2}n)$$
+
+2. $T=X_1,X_2,..,X_n$ has approximately a normal distribution with mean $nμ$ and variance $nσ^2$, that is,
+
+$$T=X_1+X_2+..+X_n\sim N(nμ, nσ^2)$$
+
+#### 5.4.1 The DeMoivre-Laplace Theorem
+
+**Theorem 5.4-2** DeMoivre-Laplace. If $T\sim Bin(n,p)$ then, for large enough n,
+$$T\sim N(np, np(1 − p))$$
+
+ - Sample Size Requirement for Approximating Binomial Probabilities by Normal Probabilities
+ 
+$$np\ge5\ \text{and}\ n(1−p)\ge5$$
+
 ## 7.1 Introduction to Confidence Intervals
 
+#### 7.1.1 Construction of Confidence Intervals
+
+$$|\hatθ−θ|\le Z_{\fracα2}S_{\hat θ}$$
+gives an interval of plausible values for the true value of θ, with degree of
+plausibility, or confidence level, approximately 95%. Such an interval is called a confidence interval (CI). More generally, a (1 − α)100% error bound, can be written as a CI with confidence level (1 − α)100%, also called (1 − α) 100% CI:
+
+$$\hatθ−Z_{\fracα2}S_{\hat θ}\leθ\le \hatθ+Z_{\fracα2}S_{\hat θ}$$
+
+#### 7.1.2 Z Confidence Intervals
+
+Confidence intervals that use percentiles from the standard normal distribution, like
+that in relation (7.1.5), are called Z CIs, or Z intervals.
+
+Z intervals for the mean (so $θ=μ$) are used only if the population variance is
+known and either the population is normal or the sample size is at least 30. Z intervals will be primarily used for the proportion ($θ=p$).
+
+#### 7.1.3 The T Distribution and T Confidence Intervals
+
+When sampling from normal populations, an estimator!θ of some parameter θ often
+satisfies, for all sample sizes n,
+$$\frac{\hatθ− θ}{S_{\hatθ}} \sim T_{\nu} $$
+where $S_{\hatθ}$ is the estimated standard error of $\hatθ$ , and $T_{\nu}$ stands for the T distribution with $\nu$ degrees of freedom.
