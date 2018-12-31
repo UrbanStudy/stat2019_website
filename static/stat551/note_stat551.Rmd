@@ -129,10 +129,6 @@ Such subsets of the sample space (i.e., collections of individual outcomes) are 
 
 #### 2.3.1 Definition and Interpretation of Probability
 
-#### 2.3.2 Counting Techniques
-
-#### 2.3.3 Probability Mass Functions and Simulations
-
  - Probability of Each of N Equally Likely Outcomes
  
 If the sample space of an experiment consists of N outcomes that are equally
@@ -142,17 +138,143 @@ likely to occur, then the probability of each outcome is 1/N.
 
 $$P(E)=\frac{N(E)}N$$
 
+#### 2.3.2 Counting Techniques
+
+ - Fundamental Principle of Counting
+
+If a task can be completed in two stages, if stage 1 has n1 outcomes, and if stage 2 has $n_2$ outcomes, regardless of the outcome in stage 1, then the task has $n_1n_2$ outcomes.
+
+ - Generalized Fundamental Principle of Counting
+ 
+ If a task can be completed in k stages and stage i has $n_i$ outcomes, regardless of the outcomes of the previous stages, then the task has $n_1n_2\cdots n_k$ outcomes.
+
+**Definition 2.3-1** If the k stages of a task involve sampling one unit each, without replacement, from the same group of n units, then:
+ 1. If a distinction is made between the outcomes of the stages, we say the outcomes are ordered. Otherwise we say the outcomes are unordered.
+ 2. The ordered outcomes are called permutations of k units. The number of permutations of k units selected from a group of n units is denoted by $P_{k,n}$.
+ 3. The unordered outcomes are called combinations of k units. The number of combinations of k units selected from a group of n units is denoted by $\binom{n}{k}$
+
+ - Number of Permutations of k Units Selected from n
+ 
+$$P_{k,n}=n(n−1)\cdots(n−k+1)=\frac{n!}{(n−k)!}$$
+
+ - Number of Permutations of n Units Among Themselves
+
+$$P_{n,n}=n!$$
+
+ - Number of Combinations of k Units Selected from n
+
+$$\binom{n}k=\frac{P_{k,n}}{P_{k,k}}=\frac{n!}{k!(n−k)!}$$
+
+Because the numbers $\binom{n}{k}$, $k=1,..,n$, are used in the binomial theorem, they are referred to as the binomial coefficients.
+
+ - Number of Arrangements of n Units into r Groups of Sizes $n_1, n_2,..,n_r$
+
+$$\binom{n}{n_1,n_2,..,n_r}=\frac{n!}{n_1!n_2!\cdots n_r!}$$
+
+Because the numbers $\binom{n}{n_1,n_2,..,n_r}$, with $n_1+n_2+..+n_r=n$, are used in the
+multinomial theorem, they are referred to as the multinomial coefficients.
+
+#### 2.3.3 Probability Mass Functions and Simulations
+
+**Definition 2.3-2** The probability mass function (PMF) of an experiment that records the value of a discrete random variable X, or simply the PMF of X, is a list of the probabilities $p(x)$ for each value x of the sample space $S_X$ of X.
+
+This kind of sampling, which is random but not simple random, is called probability sampling, or sampling from a probability mass function. When the sample space is considered as the population from which we sample with replacement, it is called a sample space population.
+
 ### 2.4 Axioms and Properties of Probabilities
+
+**Definition 2.4-1** For an experiment with sample space S, probability is a function that assigns a number, denoted by $P(E)$, to any event E so that the following axioms hold:
+
+ - Axiom 1: $0\leP(E)\le1$
+ - Axiom 2: $P(S) = 1$
+ - Axiom 3: For any sequence of disjoint events $E_1,E_2,..$ the probability of
+their union equals the sum of their probabilities, that is,
+
+$$P\left(\bigcup_{i=1}^\infty E_i\right)=\sum_{i=1}^\infty P(E_i)$$
+
+**Proposition 2.4-1** The three axioms imply the following properties of probability:
+ 1. The empty set,$\emptyset$, satisfies $P(\emptyset)=0$.
+ 2. For any finite collection, $E_1,..,E_m$, of disjoint events $P(E_1\cup E_2\cup\cdots\cup E_m)=P(E_1)+P(E_2)+ ..+P(E_m)$.
+ 3. If $A\subseteq B$ then $P(A)\le P(B)$.
+ 4. $P(A^c)=1−P(A)$, where $A^c$ is the complement of A.
+
+**Proposition 2.4-2** The three axioms imply the following properties of probability:
+
+ 1. $P(A\cup B)=P(A)+P(B)-P(A\cap B)$
+ 2. $P(A\cup B\cup C)=P(A)+P(B)+P(C)-P(A\cap B)-P(A\cap C)-P(B\cap C)+P(A\cap B\cap C)$
 
 ### 2.5 Conditional Probability
 
+the conditional probability that B occurs given that A occurred and is denoted by $P(B|A)$.
+
+ - Basic Principle for Conditional Probabilities
+
+Given the information that an experiment with sample space $S$ resulted in the event $A$, conditional probabilities are calculated by
+
+  + replacing the sample space $S$ by $A$, and
+  + treating the outcomes of the new sample space $A$ as equally likely
+ 
+**Definition 2.5-1** The definition of conditional probability states that for any two events A, B with $P(A)>0$,
+
+$$P(B|A)=\frac{P(A\cap B)}{P(A)}$$
+
 #### 2.5.1 The Multiplication Rule and Tree Diagrams
+
+ - Multiplication Rule for Two Events
+ 
+ $$P(A\cap B)=P(A)P(B|A)$$
+
+ - Multiplication Rule for Three Events
+
+$$P(A\cap B\cap C)=P(A)P(B|A)P(C|A\cap B)$$
 
 #### 2.5.2 Law of Total Probability and Bayes’ Theorem
 
+ - Law of Total Probability
+
+$$P(B)=P(A_1)P(B|A_1)+..+P(A_k)P(B|A_k)$$
+
+**REMARK 2.5-1** The number of the events $A_i$ in the partition may also be (countably) infinite. Thus, if $A_i\cap A_j=\emptyset$, for all $i\neq j$, and $\bigcup_{i=1}^\infty A_i=S$, the Law of Total Probability states that
+
+$$P(B)=\sum_{i=1}^{\infty}P(A_i)P(B|A_i)$$
+
+holds for any event B.
+
+ - Bayes’ Theorem
+
+$$P(A_j|B)=\frac{P(A_j)P(B|A_j)}{\sum^k_{i=1}P(A_i)P(B|A_i)}$$
+
 ### 2.6 Independent Events
 
+**Definition 2.6-1** Events A and B are called independent if
+$$P(A\cap B) = P(A)P(B)$$
+
+If events A and B are not independent, then they are dependent.
+
+A similar argument implies that, if $P(B)>0$, Definition 2.6-1 is equivalent to $P(A|B) = P(A)$.
+
+**Proposition 2.6-1**
+ 1. If A and B are independent, then so are $A^c$ and $B$.
+ 2. The empty set, $\emptyset$, and the sample space, S, are independent from any other set.
+ 3. Disjoint events are not independent unless the probability of one of them is zero.
+
+It would appear that events $E_1,E_2,E_3$ are independent if $E_1$ is independent from
+$E_2$ and $E_3$, and $E_2$ is independent from $E_3$ or, in mathematical notation, if
+
+$$P(E_1\cap E_2) = P(E_1)P(E_2),\ P(E_1\cap E_3) = P(E_1)P(E_3),\ P(E_2\cap E_3) = P(E_2)P(E_3)$$
+
+However, this pairwise independence does not imply
+
+$$P(E_1\cap E_2\cap E_3)=P(E_1)P(E_2)P(E_3)$$
+
+**Definition 2.6-2** Independence of three events. The events $E_1,E_2,E_3$ are (mutually) independent
+if all three relations in (2.6.3) hold and (2.6.4) holds.
+
+$$P(E_{i1}\cap E_{i2}\cap\cdots E_{ik}) =P(E_{i1})P(E_{i2})\cdots P(E_{ik})$$
+
+
 #### 2.6.1 Applications to System Reliability
+
+A series system has no redundancy in the sense that it functions only if all its components function.Aparallel system has the maximum possible redundancy since it functions if at least one of its components functions. A k-out-of-n system functions if at least k of its n components functions.
 
 ## 3. Random Variables and Their Distributions
 
@@ -160,27 +282,375 @@ $$P(E)=\frac{N(E)}N$$
 
 #### 3.2.1 Random Variables, Revisited
 
+**Definition 3.2-1** A random variable is a function (or rule) that associates a number with each
+outcome of the sample space of a random experiment.
+
+**Definition 3.2-2** A discrete random variable is a random variable whose sample space has a finite
+or at most a countably infinite number of values.
+
+**Definition 3.2-3** A randomvariable X is called continuous if it can take any value within a finite
+or infinite interval of the real number line $(-\infty,\infty)$.
+
 #### 3.2.2 The Cumulative Distribution Function
 
+**Definition 3.2-4** The cumulative distribution function, or CDF, of a randomvariable X gives the
+probability of events of the form $[X\le x]$, for all numbers x.
+
+The CDF of a random variable X is typically denoted by a capital letter, most often F in this book. Thus, in mathematical notation, the CDF of X is defnined as
+
+$$F_X(x) = P(X\le x)$$
+
+**Proposition 3.2-1** The cumulative distribution function, F, of any (i.e., discrete or continuous) random
+variable X satisfies the following basic properties:
+
+ 1. It is non-decreasing: If $a\leb$ then $F(a)\le F(b)$.
+ 2. $F(-\infty)=0, F(\infty)=1$.
+ 3. If $a<b$ then $P(a<X\le b)=F(b)−F(a)$.
+
+**Proposition 3.2-2** Let $x_1<x_2<\cdots$denote the possible values of the discrete random variable X
+arranged in an increasing order. Then
+
+ 1. F is a step function with jumps occurring only at the values x of $S_X$, while the flat regions of F correspond to regions where X takes no values. The size of the jump at each x of $S_X$ equals $p(x)=P(X=x)$.
+ 2. The CDF can be obtained from the PMF through the formula
+ 
+$$F(x) =\sum_{x_i\le x}p(x_i)$$
+
+ 3. The PMF can be obtained from the CDF as $p(x_1)=F(x_1)$, and $p(x_i)=F(x_i)−F(x_i−1)$ for $i=2,3,\cdots$
+ 4. The probability of events of the form $[a<X\le b]$ is given in terms of the PMF as
+$P(a<X\le b)=\sum_{a<x_i\le b}p(x_i)$, and in terms of the CDF as $P(a<X\le b)=F(b)−F(a)$.
+
+In view of part (2) of Proposition 3.2-2, the CDF property $F(\infty) = 1$ (see property 2 of Proposition 3.2-1) can be restated as $\sum_{x_i\in S_X}p(x_i)=1$, (3.2.7)
+
+that is, the values of the PMF sum to 1. Of course, (3.2.7) can be independently justified in terms of Axiom 2.4.2 of probabilities.
+
 #### 3.2.3 The Density Function of a Continuous Distribution Exercises
+
+**Definition 3.2-5** Uniform in [0, 1] random variable. Select a number from [0, 1] so that any two subintervals of [0, 1] of equal length are equally likely to contain the selected number, and let X denote the selected number. Then we say that X has the uniform in [0, 1] distribution and denote this by writing $X\sim U(0,1)$.
+
+In addition to the CDF, the probability distribution of a continuous random variable can be described in terms of its probability density function.
+
+**Definition 3.2-6** The probability density function, or PDF, of a continuous random variable X is a nonnegative function fX (thus, fX(x) ≥ 0, for all x), with the property that $P(a<X<b)$ equals the area under it and above the interval [a, b]. Thus, $P(a<X<b)=$ area under $f_X$ between a and b.
+
+A positively skewed distribution is also called skewed to the right, and a negatively skewed distribution is also called skewed to the left.
+
+ - Probability of an Interval in Terms of the PDF
+
+$$P(a<X<b)=\int^b_af_X(x)dx$$
+
+ - Total Area Under the Curve of a PDF Must Equal 1
+ 
+ $$\int^{\infty}_{-\infty}f_X(x)dx$$
+
+**Proposition 3.2-3** If X is a continuous random variable, $P(a<X<b)=P(a\le X\le b)=F(b)−F(a)$.
+
+**REMARK 3.2-2** Proposition 3.2-3 is true only for the idealized version of a continuous random variable. As we have pointed out, in real life, all continuous variables are measured on a discrete scale. The PMF of the discretized random variable that is actually measured is readily approximated from the formula
+
+$$P(x−\Delta x\le X\le x+\Delta x)\approx 2f_X(x)\Delta x$$
+
+**Proposition 3.2-4** If X is a continuous random variable with PDF f and CDF F, then
+ (a) The CDF can be obtained from the PDF through the formula
+
+$$F(x)=\int^x_{-\infty}f(y)dy$$
+ (b) The PDF can be obtained from the CDF through the formula
+$$f(x)=F′(x)=\frac{d}{dx}F(x)$$
+
+**Example 3.2-5** A randomvariable X is said to have the uniform in [A,B] distribution, denoted by $X\sim U(A,B)$, if its PDF is
+
+$$f(x)=\begin{cases}0&\text{ if }x<A\\ \frac1{B-A}& \text{ if }A\le x\le B \\ 1&\text{ if }x>B\end{cases}$$
+
+$$F(x)=\int^x_A\frac1{B−A}dy=\frac{x−A}{B−A}$$
+
+$F(x)=0$ for $x<A$, $F(x)=F(B)=1$ for $x>B$.
 
 ### 3.3 Parameters of Probability Distributions
 
 #### 3.3.1 Expected Value
 
+ - General Definition of Expected Value
+ 
+$$E(X)=μ_X=\sum_{x \in S_X}xp(x)$$
+
+ - Definition of Expected Value for Continuous X
+
+$$E(X)=μ_X=\int_{-\infty}^{\infty}xf(x)dx$$
+
+$$\int_0^5\frac1{(x+1)\sqrt{x}}dx,\quad \int_1^{\infty}\frac1{x^2}dx,\quad \int_{-\infty}^{\infty}e^{-|x|}dx$$
+
+```{r eval=FALSE, include=T}
+f=function(x){1/((x+1)*sqrt(x))}
+
+integrate(f, lower=0,upper=5)
+
+f=function(x){1/x^2}
+
+integrate(f, lower=1, upper=Inf)
+
+f=function(x){exp(-abs(x))}
+
+integrate(f, lower=-Inf,upper=Inf)
+```
+
+**Proposition3.3-1**
+
+ 1. If X is discrete with sample space $S_X$ and $h(x)$ is a function on $S_X$, the mean value of $Y=h(X)$ can be computed using the PMF $p_X(x)$ of X as
+
+  - Mean Value of a Function of a Discrete Random Variable X
+$$E(h(X)) =\sum_{x \in S_X}h(x)p_X(x)$$
+
+ 2. If X is continuous and $h(x)$ is a function, the expected value of $Y = h(X)$ can
+be computed using the PDF $f_X(x)$ of X as
+
+  - Mean Value of a Function of a Continuous Random Variable X
+  
+$$E(h(X)) =\int_{-\infty}^{\infty}h(x)f(x)dx$$
+  
+ 3. If the function $h(x)$ is linear, that is, $h(x)=ax+b$, so $Y=aX+b$, then
+ 
+  - Mean Value of a Linear Function of a General Random Variable X
+
+$$E(h(X))=aE(X)+b$$
+
 #### 3.3.2 Variance and Standard Deviation
+
+ - General Definition of Variance of a Random Variable X
+
+$$σ^2_X=E[(X−μ_X)^2]$$
+
+ - Short-cut Formula for Variance of a Random Variable X
+
+$$σ^2_X=E(X^2)-[E(X)]^2$$
+
+$$=\sum_{x \in S_X}(x-\mu_X)^2p(x)=\sum_{x \in S_X}x^2p(x)-\mu_X^2$$
+
+$$=\int_{-\infty}^{\infty}(x-\mu_X)^2f_X(x)dx=\int_{-\infty}^{\infty}x^2f_X(x)dx-\mu_X^2$$
+
+ - Definition of Standard Deviation
+ 
+ $$σ_X=\sqrt{σ^2_X}$$
+
+**roposition3.3-2** If the variance of X is σ2Xand Y = a + bX, then
+
+ - Variance and Standard Deviation of a Linear Transformation
+
+$$σ^2_Y= b^2σ^2_X,\quad σ_Y = |b|σ_X$$
+
 #### 3.3.3 Population Percentiles
+
+**Definition 3.3-1** Let X be a continuous random variable with CDF F and α a number between 0 and 1. The 100(1−α)-th percentile (or quantile) of X is the number, denoted by $x_α$, with the property
+$$F(x_α)=P(X\le x_α)=1−α$$
+In particular:
+
+ 1. The 50th percentile, which corresponds to $α=0.5$ and is denoted by $x_{0.5}$, is called the median and is also denoted by $\tildeμ_X$. The defining property of $\tildeμ_X$ is $F(\tildeμ_X)=0.5$.
+ 2. The 25th percentile, which corresponds to $α=0.75$ and is denoted by $x_{0.75}$, is called the lower quartile and is also denoted by $Q_1$. The defining property of $Q_1$ is $F(Q_1)=0.25$.
+ 3. The 75th percentile, which corresponds to $α=0.25$ and is denoted by $x_{0.25}$, is called the upper quartile and is also denoted by $Q_3$. The defining property of $Q_3$ is $F(Q_3)=0.75$.
+
+**Definition 3.3-2** The interquartile range, abbreviated by IQR, is the distance between the 25th and 75th percentile: $IQR=Q_3−Q_1$.
 
 ### 3.4 Models for Discrete Random Variables
 
 #### 3.4.1 The Bernoulli and Binomial Distributions
+
+**The Bernoulli Distribution** A Bernoulli trial or experiment is one whose outcome can be classified as either a success or a failure. The Bernoulli random variable X takes the value 1 if the outcome is a success, and the value 0 if it is a failure.
+
+**The Binomial Distribution** Suppose n Bernoulli experiments, each having probability of success equal to p, are performed independently. Taken together, the n independent Bernoulli experiments constitute a binomial experiment. The binomial random variable Y is the total number of successes in the n Bernoulli trials.
+
+If $X_i$ denotes the Bernoulli random variable associated with the ith Bernoulli trial, that is,
+$$X_i =\begin{cases}1& \text{if ith experiment results in success}\\0& \text{otherwise} \end{cases} \text{for } i=1,..,n$$
+
+then the binomial random variable Y equals
+
+$$Y =\sum^n_{i=1}X_i$$
+
+ - PMF of the Binomial Distribution
+ 
+$$P(Y=y)=\binom{n}{y}p^y(1−p)^{n−y},\quad y=0,1,..,n$$
+
+ - Mean and Variance of the Binomial Distribution
+ 
+$$E(X) = np,\quad σ^2_X=np(1−p)$$
+
+For $n=1$ the binomial randomvariable is just a Bernoulli randomvariable, and the above formulas reduce to the mean and variance given in (3.4.1).
+
 #### 3.4.2 The Hypergeometric Distribution
+
+The hypergeometric model applies to situations where a simple random sample of size n is taken from a finite population of $N$ units of which $M_1$ are labeled 1 and the rest, which are $M_2=N−M_1$, are labeled 0. The number X of units labeled 1 in the sample is a hypergeometric random variable with parameters $M_1, M_2,and\ n$
+
+If $X_i$ is the Bernoulli random variable corresponding to the ith product item, the hypergeometric random variable X equals
+
+$$X=\sum^n_{i=1}X_i$$
+
+$$S_X = \{\max(0,n−M_2),..,\min(n, M_1)\}$$
+
+where $\max(a_1, a_2)$ and $\min(a_1, a_2)$ denote the larger and the smaller, respectively, of the two numbers $a_1$ and $a_2$.
+
+ - Probability Mass Function of the Hypergeometric Distribution
+
+$$P(X=x)=\frac{\binom{M_1}{x}\binom{M_2}{n-x}}{\binom{M_1+M_2}{n}}$$
+
+ - Mean and Variance of the Hypergeometric Distribution
+ 
+$$μ_X=n\frac{M_1}{N},\quad σ^2_X=n\frac{M_1}N(1−\frac{M_1}N)\frac{N−n}{N−1}$$
+
+**Binomial Approximation to Hypergeometric Probabilities**
+
+ - Rule of Thumb for Using the Binomial Approximation to Hypergeometric Probabilities
+
+$$\text{If }\frac{n}N\le0.05,\quad \text{then } P(X = x)\simeq P(Y = x)$$
+
 #### 3.4.3 The Geometric and Negative Binomial Distributions
+
+The Geometric Distribution A geometric experiment is one where independent Bernoulli trials, each with the same probability p of success, are performed until the occurrence of the first success. The geometric(p) randomvariable X is the total number of trials up to and including the first success in such a geometric experiment.
+
+ - PMF of the Geometric Distribution
+ 
+ $$P(X=x)=(1−p)^{x−1}p,\quad x=1,2,3,...$$
+
+$$F(x) =\sum_{y\le x}P(Y = y) = p\sum^x_{y=1}(1−p)^{y−1}=p\sum^{x−1}_{y=0}(1 − p)^y$$
+
+ - CDF of the Geometric Distribution 
+
+ $$F(x)=1−(1−p)^x,\quad x=1,2,3,..$$
+
+ - Mean and Variance of the Geometric Distribution
+
+$$E(X) =\frac1p,\quad σ^2=\frac{1−p}{p^2}$$
+
+The Negative Binomial Distribution A negative binomial experiment is one where independent Bernoulli trials, each with the same probability p of success, are performed until the occurrence of the rth success. The negative binomial(r, p) random variable Y is the total number of trials up to and including the rth success in such a
+negative binomial experiment.
+
+The sample space of the negative binomial(r, p) random variable Y is $S_Y=\{r,r+1,..\}$. For $r=1$, the negative binomial(r,p) experiment reduces to the geometric(p) experiment. In fact, if $X_1$ is the geometric(p) random variable that counts the number of trials until the first success, $X_2$ is the geometric(p) random
+variable that counts the additional number of trials until the second success, and so forth, the negative binomial(r, p) random variable Y can be expressed in terms of these geometric(p) randomvariables as
+
+$$Y=\sum^r_{i=1}X_i$$
+
+The PMF $P(Y=y),y=r,r+1,..$, of the negative binomial(r, p) random variable Y is
+
+ - PMF of the Negative Binomial Distribution
+
+$$P(Y=y)=\binom{y-1}{r-1}p^r(1−p)^{y−r}$$
+
+ - Mean and Variance of the Negative Binomial Distribution
+
+$$E(Y) =\frac{r}p,\quad σ^2_Y=r\frac{1 − p}p^2$$
+
 #### 3.4.4 The Poisson Distribution
 
+The Model and Its Applications A random variable X that takes values $0,1,2,..$ is said to be a Poisson random variable with parameter $λ$, denoted by $X\sim Poisson(λ)$, if its PMF is given by
+
+ - PMF of the Poisson Distribution
+
+$$P(X=x)=e^{−λ}\frac{λ^x}{x!},\quad x=0,1,2,..$$
+
+ - Mean and Variance of the Poisson Distribution
+ 
+ $$μ_X=λ, σ^2_X=λ$$
+
+One of the earliest uses of the Poisson distribution was in modeling the number of alpha particles emitted from a radioactive source during a given period of time. Today it has a tremendous range of applications in such diverse areas as insurance, tourism traffic engineering, demography, forestry, and astronomy. For example, the
+Poisson random variable X can be
+ 1. the number of fish caught by an angler in an afternoon,
+ 2. the number of new potholes in a stretch of I80 during the winter months,
+ 3. the number of disabled vehicles abandoned on I95 in a year,
+ 4. the number of earthquakes (or other natural disasters) in a region of the United States in a month,
+ 5. the number of wrongly dialed telephone numbers in a given city in an hour,
+ 6. the number of freak accidents, such as falls in the shower, in a given time period,
+ 7. the number of vehicles that pass a marker on a roadway in a given time period,
+ 8. the number of marriages, or the number of people who reach the age of 100,
+ 9. the distribution of trees in a forest, and
+ 10. the distribution of galaxies in a given region of the sky.
+
+As seen from these applications of the Poisson model, the random phenomena that the Poisson distribution models differ from those of the previously discussed distributions in that they are not outcomes of sampling experiments from a wellunderstood population. Consequently, the Poisson PMF is derived by arguments that are different from the ones used for deriving the PMFs of the previously discussed distributions (which use the counting techniques of Chapter 2 and the concept of independence). Instead, the Poisson PMF is derived as the limit of the binomial PMF (see Proposition 3.4-1 below) and can also be obtained as a consequence of certain postulates governing the random occurrence of events (see the following discussion about the Poisson process).
+
+Poisson Approximation to Binomial Probabilities The enormous range of applications
+of the Poisson random variable is, to a large extent, due to the following
+proposition stating that it can be used as an approximation to binomial random
+variables.
+
+**Proposition 3.4-1** A binomial experiment where the number of trials n is large $(n\ge100)$, the probability
+p of success in each trial is small $(p\le 0.01)$, and the product $np$ is not large $(np\le 20)$, can be modeled (to a good approximation) by a Poisson distribution with $λ=np$. In particular, if $Y\sim Bin(n, p)$, with $n\ge 100, p\le 0.01$, and $np\le 20$, then the approximation
+
+ - Poisson Approximation to Binomial Probabilities
+
+$$P(Y\ge k)\simeq P(X\ge k)$$
+
+holds for all $k=0,1,2,..,n$, where $X\sim Poisson(λ=np)$.
+
+The Poisson Process All examples of Poisson random variable pertain to the number of events occurring in a fixed time period (fish caught in an afternoon, potholes during the winter months, etc). Often, however, events are recorded at the time they occur as time unfolds. This requires that time itself become an integral part of the notation describing the data records. Letting time 0 denote the start of observations we set
+
+$$X(t)= \text{number of events occurring in the time interval } (0, t]$$
+
+**Definition 3.4-1** Viewed as a function of time, the number of occurrences $X(t),t\ge 0$, is called a Poisson process if the following postulates are satisfied.
+
+ 1. The probability of exactly one occurrence in a time period of length h is equal to $αh + o(h)$, for some $α>0$, where the quantity $o(h)$ satisfies $o(h)/h\rightarrow0$, as $h\rightarrow0$.
+ 2. The probability of more than one occurrence in a short time period of length h is equal to $o(h)$.
+ 3. For any set of nonoverlapping time intervals $A_i, i=1,..,n$, the events $E_i=[k_i\ \text{events occur in}\ A_i], i=1,..,n$, where the ki are any integers, are mutually independent.
+
+The parameter α in the first postulate specifies the rate of the occurrences or, synonymously, the average number of occurrences per unit of time. Thus, the first postulate states that the rate at which events occur is constant in time. The second postulate means that the events are rare, in the sense that it is highly unlikely that two will occur simultaneously. Finally, the third postulate specifies that in disjoint time intervals events occur independently. When these postulates hold we have the following proposition.
+
+**Proposition3.4-2** If $X(t), t\ge 0$, is a Poisson(α) process, then
+
+ 1. For each fixed $t_0$, the random variable $X(t_0)$, which counts the number of occurrences in $(0, t_0]$, has the Poisson distribution with parameter $λ = α\times t_0$. Thus,
+ 
+$$P(X(t_0)=k)=e^{−αt_0}\frac{(αt_0)^k}{k!},\quad k=0,1,2,..$$
+
+ 2. For any two positive numbers $t_1<t_2$ the random variable $X(t_2)−X(t_1)$, which counts the number of occurrences in $(t_1, t_2]$, has the Poisson distribution with parameter $λ=α(t_2−t_1)$. Thus, the PMF of $X(t_2)−X(t_1)$ is given by (3.4.22) with $t_0$ replaced by $(t_2−t_1)$.
+ 3. For any two positive numbers $t_1<t_2$ the random variable $X(t_2)−X(t_1)$ is independent from $X(s)$ for all $s\le t_1$.
+
+A noteworthy implication of part (2) of this proposition is that the zero time point of a Poisson process can be any arbitrary time point. In other words, one may start recording the events which happen after time t1, completely ignoring anything that happened up to that point, and still get a Poisson process with the same rate.
+
+The proof of Proposition 3.4-2 is based on the fact that Poisson probabilities are obtained as limits of binomial probabilities (Proposition 3.4-1). Indeed, if the postulates of Definition 3.4-1 are satisfied, then by dividing an interval into a large number of small subintervals of equal length, the total number of occurrences in that interval can be thought of as a binomial random variable made up of the sum of Bernoulli random variables, each of which corresponds to one of the small subintervals. Since by Proposition 3.4-1 the Poisson probability mass function is obtained as the limit of binomial probability mass functions, it can be argued that the total number of occurrences is a Poisson random variable. While making this argument rigorous is not beyond the scope of this book, such a proof adds little to the understanding of the Poisson process and thus will not be presented.
+
 ### 3.5 Models for Continuous Random Variables
-#### 3.5.1 The Exponential Distribution 147
+
+#### 3.5.1 The Exponential Distribution
+
+A random variable X is said to be an exponential, or to have the exponential distribution with parameter $λ$, denoted by $X\sim Exp(λ)$, if its PDF is
+
+$$f(x)=\begin{cases} λe^{−λx} &if\ x\ge 0\\0 &if\ x<0\end{cases}$$
+
+$$F(x)=\begin{cases}1- e^{−λx} &if\ x\ge 0\\0 &if\ x<0\end{cases}$$
+
+ - Mean, Variance, and Percentiles of the Exponential Distribution
+
+$$μ=\frac1λ,\quad σ^2=\frac1{λ^2},\quad x_α=−\frac{log(α)}λ$$
+
+
+ - Memoryless Property of a Random Variable
+
+$$P(X>s+t|X>s)=P(X>t)$$
+
+The Poisson-Exponential Connection For a Poisson process, let T1 be the time the first event occurs, and for $i=2,3,..$, let $T_i$ denote the time elapsed between the occurrence of the (i−1)-st and the ith event. For example, $T_1=3$ and $T_2=5$ means that the first occurrence of the Poisson process happened at time 3 and the second at time 8. The times $T_1,T_2,..$ are called interarrival times.
+
+**Proposition 3.5-1** If $X(s), s\ge 0$, is a Poisson process with rate α, the interarrival times have the exponential distribution with PDF $f(t)=αe^{−αt}, t>0$.
+
 #### 3.5.2 The Normal Distribution 150
+
+A random variable is said to have the standard normal distribution if its PDF and CDF, which are denoted (universally) by $\phi$ and $\Phi$, respectively, are
+
+$$\phi(z) =\frac1{\sqrt{2\pi}}e^{−z^2/2} ,\quad \Phi(z) =\int^z_\infty\phi(x)dx$$
+
+for $-\infty<z<\infty$. A standard normal random variable is denoted by Z. Note that the PDF $φ$ is symmetric about zero
+
+A randomvariable X is said to have the normal distribution, with parameters $μ$ and $σ$, denoted by $X\sim N(μ, σ^2)$, if its PDF and CDF are
+$$f(x)=\frac1σ\phi{(\frac{x − μ}σ)},\quad F(x)=\Phi{(\frac{x − μ}σ)}$$
+
+for $-\infty<z<\infty$. Thus,
+
+$$f(x) =\frac1{\sqrt{2\piσ^2}}e^{−\frac{(x − μ)^2}{2σ^2}}$$
+
+**Proposition 3.5-2** If $X\sim N(μ, σ^2)$ and a, b are any real numbers, then
+
+$$a+bX\sim N(a+bμ, b^2σ^2)$$
+
+The new element of this proposition is that a linear transformation of a normal random variable is also a normal random variable. That the mean value and variance of the transformed variable, $Y = a+bX$, are $a+bμ$ and $b^2σ^2$ follows from Propositions 3.3-1 and 3.3-2, respectively, so there is nothing new in these formulas.
+
+**Corollary 3.5-1** If $X\sim N(μ, σ^2)$, then
+ 1. $\frac{X−μ}σ\sim N(0,1)$, and
+ 2. $P(a\le X\le b)=\Phi(\frac{b−μ}σ)-\Phi(\frac{a−μ}σ)$
+
+**The Q-Q Plot** As already mentioned, most experiments resulting in the measurement of a continuous random variable provide little insight as to which probability model best describes the distribution of the measurements. Thus, several procedures have been devised to test the goodness-of-fit of a particular model to a random sample obtained from some population. Here we discuss a very simple graphical
+procedure, called the Q-Q plot, as it applies for checking the goodness-of-fit of the normal distribution.
+
+The basic idea of the Q-Q plot is to plot the sample percentiles, which are the ordered sample values, against with the corresponding percentiles of the assumed model distribution. Since sample percentiles estimate corresponding population percentiles, if the assumed model distribution is a good approximation to the true population distribution, the plotted points should fall approximately on a straight line of angle 45o that passes through the origin.
 
 ## 4. Jointly Distributed Random Variables
 
