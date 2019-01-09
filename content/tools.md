@@ -48,3 +48,17 @@ The following links contain some very useful resources to get started with R
 <img src="https://campus.datacamp.com/static/media/logo-full-color.018b48cc.svg" style="max-width:15%;min-width:40px;" >
 - 
 [DataCamp](https://www.datacamp.com/groups/usp654-data-analysis-2/) is an online service with dozens of self-paced, interactive courses on using R and Python for data analysis. Students in this course have free premium access to DataCamp courses, which are a good resource to learn R along with data analysis skills.
+
+R for Beginners. Emmanuel Paradis
+
+R tips. Paul E. Johnson
+
+Statistics with R. by Vincent Zoonekynd
+
+Introduction to Statistical Learning: with applications in R. Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani
+
+Advanced R. Hadley Whickam
+
+An Introduction to Statistical and Data Sciences via R. Chester Ismay and Albert Y. Kim
+
+R for Data Science. Garrett Grolemund Hadley Wickham

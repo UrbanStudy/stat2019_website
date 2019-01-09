@@ -98,11 +98,61 @@ as $n\to\infty$ is the standard normal distribution.
 
 ### 3.1 An Example
 
+a single-factor experiment with _a_ levels of the factor and _n_ replicates
+
 ### 3.2 The Analysis of Variance
+
+*a* treatments or different *levels* of a *single factor*.
+
+$$\text{mean model}\quad y_{ij}=\mu_{i}+\varepsilon_{ij} \begin{cases}i=1,2,…,a\\j=1,2,…,n\end{cases}$$
+
+where $y_{ij}$ is the ijth observation, $\mu_i$ is the mean of the ith factor level or treatment, and $\varepsilon_{ij}$ is a random error component. $E[y_{ij}]=\mu_i$
+
+$$\text{effects model}\quad y_{ij}=\mu+\tau_{i}+\varepsilon_{ij} \begin{cases}i=1,2,…,a\\j=1,2,…,n\end{cases}$$
+
+$\mu$ is a parameter common to all treatments called the overall mean, and $\tau_{i}$ is a parameter unique to the ith treatment called the ith treatment effect.
+
+yij ∼ N(𝜇 + 𝜏i, 𝜎
+2)
+$$y_{ij}\sim N(\mu+\tau_{i},\sigma^2) $$
+
+$$\begin{array}\ \text{linear statistical models} \\ \text{(one-way or single-factor analysis of variance (ANOVA) model)}\end{array} \begin{cases}
+\text{fixed effects model}\\ \\ \text{random effects model} \\ \text{(components of variancemodel)}\end{cases}$$
 
 ### 3.3 Analysis of the Fixed Effects Model
 
+$y_{i.}$ represents the total of the observations under the ith treatment. Let $\bar y_{i.}$ represent the average of the observations under the ith treatment. Similarly, let $y_{..}$ represent the grand total of all the observations and $y_{..}$ represent the grand average of all the observations.
+$$y_{i.} =\sum^n_{j=1}y_{ij}\quad \bar y_{i.} = \frac{y_{i.}}n\quad i=1,2,..,a$$
+$$y_{..}=\sum^a_{i=1}\sum^n_{j=1}y_{ij}\quad \bar y_{..}=\frac{y_{..}}N$$
+
+where $N=an$ is the total number of observations.
+
+$$H_0: \mu_1=\mu_2=..=\mu_a\qquad H_A: \mu_i\neq\mu_j\quad \text{for at least one pair (i, j)}$$
+
+$$\frac{\sum_{i=1}^a\mu_i}{a}=\mu\quad \sum_{i=1}^a\tau_i=0$$
+
+$$H_0: \tau_1=\tau_2=..=\tau_a=0\qquad H_A: \mu_i\neq\mu_j\quad \text{for at least one pair (i, j)}$$
+
 #### 3.3.1 Decomposition of the Total Sum of Squares
+
+$$SST = \sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{..})^2=\sum^a_{i=1}\sum^n_{j=1}[(\bar y_{i.}−\bar y_{..})+(y_{ij}−\bar y_{i.})]^2$$
+
+$$=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2+\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2+2\sum^a_{i=1}\sum^n_{j=1}(\bar y_{i.}−\bar y_{..})(y_{ij}−\bar y_{i.})$$
+
+$$\because \sum^n_{j=1}(y_{ij}−\bar y_{i.})=y_{i.}-n\bar y_{i.}=y_{i.}-n\frac{y_{i.}}n=0$$
+$$\therefore \sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{..})^2=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2+\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2$$
+
+$$SS_T = SS_{treatments} + SS_E$$
+
+$$SS_E=\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2=\sum^a_{i=1}\left[\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2\right]$$
+
+$$S_i^2=\frac{\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2}{n-1}\quad i=1,2,..,a$$
+
+|      |  SS | df  | MS  | E(SS) | E(MS) |
+| ---  | --- | --- | --- |  ---  |  ---  |
+|$SS_T$    |$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{..})^2$     |$N-1$|
+|$SS_{Trt}$|$n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2$           |$a-1$|$\frac{SS_{Trt}}{N-a}$|$(a-1)\sigma^2+n\sum^a_{i=1}\tau_i^2$|$\sigma^2+\frac{n}{a-1}\sum^a_{i=1}\tau_i^2$
+|$SS_E$    |$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2$     |$N-a$| $\frac{SS_E}{N-a}$   | $(N-a)\sigma^2$ | $\sigma^2$
 
 #### 3.3.2 Statistical Analysis
 
