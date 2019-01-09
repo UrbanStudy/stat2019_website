@@ -21,7 +21,7 @@ define $U=X+Y$ and $V=Y$
 $$f_{U,V}(u,v)=f_{X,Y}(u-v,v)=\frac{\theta^{u-v}e^{-\theta}}{(u-v)!}\frac{\lambda^ve^{-\lambda}}{v!},\quad v=0,1,2,..,u=v,v+1,v+2,..$$
 
 `2019.01.08`
-`p. ?`
+`p.12`
 
 **Theorem 4.3.2** if $X\sim Poisson(\theta)$ and $Y\sim Poisson(\lambda)$ and X and Y are indepedent, then $X+Y\sim Poisson(\theta+\lambda)$.
 
@@ -40,35 +40,73 @@ $$f_{U,V}(u,v)=f_{X,Y}(h_1(u,v),\ h_2(u,v))|J|,$$
 
 ### 4.4 Hierarchical Models and Mixture Distributions
 
-`p.1-3`
+`p.1`
 
-**Theorem 4.4.3 iterated Expectation** if X and Y are any two random variables, then
+$E[X]=\int_{-\infty}^{\infty}xf(x)dx$ is a real number.
 
-$$EX=E(E(X|Y)),$$
+$E[X|y]=\int_{-\infty}^{\infty}xf(x|y)dx$ is a function of y.
+
+$E[X|Y]=\int_{-\infty}^{\infty}xf(x|y)dx$ is a random variable, and is a function of the r.v Y.
+
+Definition: $V[X|Y]=E[(X-E[X|Y])^2|Y]$
+
+`p.2-3`
+
+**Theorem 4.4.3 Law of iterated Expectation** if X and Y are any two random variables, then
+
+$$EX=E(E(X|Y))$$
 
 provided that the expectation exist.
 
+Proof:
+
+$E(E(X|Y))=\int_{-\infty}^{\infty}E[X|y]g(y)dy=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}xf(x|y)dx\right]g(y)dy=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}x\frac{f(x,y)}{g(y)}dx\right]g(y)dy=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}{f(x,y)dy}\right]xdx=\int_{-\infty}^{\infty}f_X(x)xdx=E[X]$
+
 **Theorem 4.4.7 (Conditional variance identity)** For any two random varibles X and Y,
+
+`p.4-6`
 
 $$VarX=E(Var(X|Y))+Var(E(X|Y))$$
 
 provided that the expectation exist.
 
+Proof:
+
+$$V[X]=E[(X-\mu_x)^2]=E[(X-E[X|Y]+E[X|Y]-\mu_x)^2]=E[(X-E[X|Y])^2]+E[(E[X|Y]-\mu_x)^2]+2E[(X-E[X|Y])(E[X|Y]-\mu_x)]$$
+
+$2E[(x-E[X|y])(E[X|y]-\mu_x)]=2\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}(x-E[X|y])(E[X|y]-\mu_x)f(x,y)dxdy=2\int_{-\infty}^{\infty}(E[X|y]-\mu_x)\left\{\int_{-\infty}^{\infty}(x-E[X|y])f(x,y)dx\right\}dy=0$
+
+$\int_{-\infty}^{\infty}(x-E[X|y])f(x,y)dx=\int_{-\infty}^{\infty}xf(x,y)dx-E[X|y]\int_{-\infty}^{\infty}f(x,y)dx=\int_{-\infty}^{\infty}xf(x|y)g(y)dx-E[X|y]g(y)=g(y)E[X|y]-E[X|y]g(y)$
+
+(using law of iterated expcetations) $E[(X-E[X|Y])^2]=E[E(X-E[X|Y])^2|Y]=E(Var(X|Y))$ 
+
+Let $W=E[X|Y]$, then $E[w]=E(E[X|Y])=E[X]=\mu_x$, $E[(E[X|Y]-\mu_x)^2]=E[(W-E[w])^2]=V[W]=V[E(X|Y)]$
+
 ### 4.5 Covariance and Correlation
+
+`p.8`
 
 **Definition 4.5.1** The covariance of X and Y is the number defined by
 
-$$Cov(X,Y)=E((X-\mu_X)(Y-\mu_Y))$$
+$$Cov(X,Y)=E((X-\mu_X)(Y-\mu_Y))=\sigma_{XY}$$
 
-
+`p.10`
 
 **Definition 4.5.2** The correlation of X and Y is the number defined by 
 
 $$\rho_{XY}=\frac{\sigma_{XY}}{\sigma_X\sigma_Y};\quad Corr(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$$
 
+`p.9`
+Alternate formate:
+
+
 **Theorem 4.5.3** For any two random varibles X and Y,
 
 $$\sigma_{XY}=Cov(X,Y)=E[XY]-\mu_X\mu_Y$$
+
+$\sigma_{XY}=E[(X-\mu_X)(Y-\mu_Y)]=E[XY-Y\mu_X-X\mu_Y+\mu_X\mu_Y]=E[XY]-E[Y]\mu_X-E[X]\mu_Y+\mu_X\mu_Y=E[XY]-\mu_Y\mu_X-\mu_X\mu_Y+\mu_X\mu_Y=E[XY]-\mu_X\mu_Y$
+
+
 **Theorem 4.5.5** If X and Y are independent random variables, then $Cov(X,Y)=0$ and $\rho_{XY}=0$
 
 

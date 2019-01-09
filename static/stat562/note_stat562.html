@@ -322,7 +322,7 @@ $(document).ready(function () {
 <p><span class="math display">\[f_{X,Y}(x,y)=\frac{\theta^xe^{-\theta}}{x!}\frac{\lambda^ye^{-\lambda}}{y!},\quad x=0,1,2,..,y=0,1,2,..\]</span></p>
 <p>define <span class="math inline">\(U=X+Y\)</span> and <span class="math inline">\(V=Y\)</span></p>
 <p><span class="math display">\[f_{U,V}(u,v)=f_{X,Y}(u-v,v)=\frac{\theta^{u-v}e^{-\theta}}{(u-v)!}\frac{\lambda^ve^{-\lambda}}{v!},\quad v=0,1,2,..,u=v,v+1,v+2,..\]</span></p>
-<p><code>2019.01.08</code> <code>p. ?</code></p>
+<p><code>2019.01.08</code> <code>p.12</code></p>
 <p><strong>Theorem 4.3.2</strong> if <span class="math inline">\(X\sim Poisson(\theta)\)</span> and <span class="math inline">\(Y\sim Poisson(\lambda)\)</span> and X and Y are indepedent, then <span class="math inline">\(X+Y\sim Poisson(\theta+\lambda)\)</span>.</p>
 <p>If (X,Y) is a continuous random vector with joint pdf <span class="math inline">\(f_{X,Y}(x,y)\)</span>, then the joint pdf of (U, V) can be expressed in terms of <span class="math inline">\(f_{X,Y}(x,y)\)</span> in a manner analogous to (2.1.8). As before, <span class="math inline">\(A=\{(x,y):f_{X,Y}(x,y)&gt;0\}\)</span> and <span class="math inline">\(B=\{(u,v): u=g_1(x,y)\ \text{and}\ v=g_2(x,y)\ \text{for some}\ (x,y)\in A\}\)</span>. The joint pdf <span class="math inline">\(f_{U,V}(u,v)\)</span> will be positive on the set B. For the simplest version of this result we assume that the transformation <span class="math inline">\(u=g_1(x,y)\)</span> and <span class="math inline">\(v=g_2(x,y)\)</span> defines a one-to-one transformation of A onto B. The transformation is onto because of the definition of B. We are assuming that for each <span class="math inline">\((u,v)\in B\)</span> there is only one <span class="math inline">\((x,y)\in A\)</span> such that <span class="math inline">\((u,v)=(g_1(x,y),g_2(x,y))\)</span>. For such a one-to-one, onto transformation, we can solve the equations <span class="math inline">\(u=g_1(x,y)\)</span> and <span class="math inline">\(v=g_2(x,y)\)</span> for x and y in terms of u and v. We will denote this inverse transformation by <span class="math inline">\(x=h_1(u,v)\)</span> and <span class="math inline">\(y=h_2(u,v)\)</span>. The role played by a derivative in the univariate case is now played by a quantity called the Jacobian of the transformation. This function of (u,v), denoted by J, is the determinant of a matrix of partial derivatives. It is defined by</p>
 <p><span class="math display">\[J=\begin{vmatrix}\frac{\partial x}{\partial u} &amp; \frac{\partial x}{\partial v} \\ \frac{\partial y}{\partial u} &amp; \frac{\partial y}{\partial v} \end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial y}{\partial u}\frac{\partial x}{\partial v}\]</span> where</p>
@@ -332,22 +332,41 @@ $(document).ready(function () {
 </div>
 <div id="hierarchical-models-and-mixture-distributions" class="section level3">
 <h3>4.4 Hierarchical Models and Mixture Distributions</h3>
-<p><code>p.1-3</code></p>
-<p><strong>Theorem 4.4.3 iterated Expectation</strong> if X and Y are any two random variables, then</p>
-<p><span class="math display">\[EX=E(E(X|Y)),\]</span></p>
+<p><code>p.1</code></p>
+<p><span class="math inline">\(E[X]=\int_{-\infty}^{\infty}xf(x)dx\)</span> is a real number.</p>
+<p><span class="math inline">\(E[X|y]=\int_{-\infty}^{\infty}xf(x|y)dx\)</span> is a function of y.</p>
+<p><span class="math inline">\(E[X|Y]=\int_{-\infty}^{\infty}xf(x|y)dx\)</span> is a random variable, and is a function of the r.v Y.</p>
+<p>Definition: <span class="math inline">\(V[X|Y]=E[(X-E[X|Y])^2|Y]\)</span></p>
+<p><code>p.2-3</code></p>
+<p><strong>Theorem 4.4.3 Law of iterated Expectation</strong> if X and Y are any two random variables, then</p>
+<p><span class="math display">\[EX=E(E(X|Y))\]</span></p>
 <p>provided that the expectation exist.</p>
+<p>Proof:</p>
+<p><span class="math inline">\(E(E(X|Y))=\int_{-\infty}^{\infty}E[X|y]g(y)dy=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}xf(x|y)dx\right]g(y)dy=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}x\frac{f(x,y)}{g(y)}dx\right]g(y)dy=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}{f(x,y)dy}\right]xdx=\int_{-\infty}^{\infty}f_X(x)xdx=E[X]\)</span></p>
 <p><strong>Theorem 4.4.7 (Conditional variance identity)</strong> For any two random varibles X and Y,</p>
+<p><code>p.4-6</code></p>
 <p><span class="math display">\[VarX=E(Var(X|Y))+Var(E(X|Y))\]</span></p>
 <p>provided that the expectation exist.</p>
+<p>Proof:</p>
+<p><span class="math display">\[V[X]=E[(X-\mu_x)^2]=E[(X-E[X|Y]+E[X|Y]-\mu_x)^2]=E[(X-E[X|Y])^2]+E[(E[X|Y]-\mu_x)^2]+2E[(X-E[X|Y])(E[X|Y]-\mu_x)]\]</span></p>
+<p><span class="math inline">\(2E[(x-E[X|y])(E[X|y]-\mu_x)]=2\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}(x-E[X|y])(E[X|y]-\mu_x)f(x,y)dxdy=2\int_{-\infty}^{\infty}(E[X|y]-\mu_x)\left\{\int_{-\infty}^{\infty}(x-E[X|y])f(x,y)dx\right\}dy=0\)</span></p>
+<p><span class="math inline">\(\int_{-\infty}^{\infty}(x-E[X|y])f(x,y)dx=\int_{-\infty}^{\infty}xf(x,y)dx-E[X|y]\int_{-\infty}^{\infty}f(x,y)dx=\int_{-\infty}^{\infty}xf(x|y)g(y)dx-E[X|y]g(y)=g(y)E[X|y]-E[X|y]g(y)\)</span></p>
+<p>(using law of iterated expcetations) <span class="math inline">\(E[(X-E[X|Y])^2]=E[E(X-E[X|Y])^2|Y]=E(Var(X|Y))\)</span></p>
+<p>Let <span class="math inline">\(W=E[X|Y]\)</span>, then <span class="math inline">\(E[w]=E(E[X|Y])=E[X]=\mu_x\)</span>, <span class="math inline">\(E[(E[X|Y]-\mu_x)^2]=E[(W-E[w])^2]=V[W]=V[E(X|Y)]\)</span></p>
 </div>
 <div id="covariance-and-correlation" class="section level3">
 <h3>4.5 Covariance and Correlation</h3>
+<p><code>p.8</code></p>
 <p><strong>Definition 4.5.1</strong> The covariance of X and Y is the number defined by</p>
-<p><span class="math display">\[Cov(X,Y)=E((X-\mu_X)(Y-\mu_Y))\]</span></p>
+<p><span class="math display">\[Cov(X,Y)=E((X-\mu_X)(Y-\mu_Y))=\sigma_{XY}\]</span></p>
+<p><code>p.10</code></p>
 <p><strong>Definition 4.5.2</strong> The correlation of X and Y is the number defined by</p>
 <p><span class="math display">\[\rho_{XY}=\frac{\sigma_{XY}}{\sigma_X\sigma_Y};\quad Corr(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}\]</span></p>
+<p><code>p.9</code> Alternate formate:</p>
 <p><strong>Theorem 4.5.3</strong> For any two random varibles X and Y,</p>
-<p><span class="math display">\[\sigma_{XY}=Cov(X,Y)=E[XY]-\mu_X\mu_Y\]</span> <strong>Theorem 4.5.5</strong> If X and Y are independent random variables, then <span class="math inline">\(Cov(X,Y)=0\)</span> and <span class="math inline">\(\rho_{XY}=0\)</span></p>
+<p><span class="math display">\[\sigma_{XY}=Cov(X,Y)=E[XY]-\mu_X\mu_Y\]</span></p>
+<p><span class="math inline">\(\sigma_{XY}=E[(X-\mu_X)(Y-\mu_Y)]=E[XY-Y\mu_X-X\mu_Y+\mu_X\mu_Y]=E[XY]-E[Y]\mu_X-E[X]\mu_Y+\mu_X\mu_Y=E[XY]-\mu_Y\mu_X-\mu_X\mu_Y+\mu_X\mu_Y=E[XY]-\mu_X\mu_Y\)</span></p>
+<p><strong>Theorem 4.5.5</strong> If X and Y are independent random variables, then <span class="math inline">\(Cov(X,Y)=0\)</span> and <span class="math inline">\(\rho_{XY}=0\)</span></p>
 <p><strong>Theorem 4.5.6</strong> If X and Y are any two random variables and a and b are any two constants, then</p>
 <p><span class="math display">\[Var(aX+bY)=a^2VarX+b^2VarY+2abCov(X,Y)\]</span> If X and Y are indepent random variables, then</p>
 <p><span class="math display">\[Var(aX+bY)=a^2VarX+b^2VarY\]</span></p>
