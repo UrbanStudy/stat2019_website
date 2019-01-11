@@ -44,26 +44,67 @@ $$f_{U,V}(u,v)=f_{X,Y}(h_1(u,v),\ h_2(u,v))|J|,$$
 
 The "reproductive" property: adding independent r.v.s from a family of distribution produces a new r.v. from the same family.
 
+`2019.01.10`
+`p.1-5`
+
 **A continuous example**: Let X and Y have joint pdf $f(x,y)=\frac14e^{-\frac{x+y}2}$, $0<x<\infty,0<y<\infty$. Find the pdf for $u=\frac{X-Y}2$.
 
 Let $v=Y$ so that the system is invertible. $X=2u+v, Y=v$
 
 $$J=\begin{vmatrix}\frac{\partial x}{\partial u} & \frac{\partial x}{\partial v} \\ \frac{\partial y}{\partial u} & \frac{\partial y}{\partial v} \end{vmatrix}=\begin{vmatrix}2 & 1 \\ 0 & 1 \end{vmatrix}=2$$
 
+$$g(u,v)=f(x,y)|J|=\frac14e^{-\frac{x+y}2}2=\frac12e^{-\frac{2u+v+v}2}=\frac12e^{-(u+v)}$$
+
+$$0<x<\infty,0<y<\infty\implies0<2u+v<\infty,0<v<\infty\implies v>-2u$$
+
+$$g_U(u)=\left\{ \begin{array}\ \int_{-2u}^\infty\frac12e^{-(u+v)}dv=\frac12e^{-u}\int_{-2u}^\infty e^{-v}dv=\frac12e^{-u}\left[-e^{-v}\right]_{-2u}^\infty=\frac12e^{-u}\left[0+e^{2u}\right] & u<0 \\ \int_{0}^\infty\frac12e^{-(u+v)}dv=\frac12e^{-u}\int_{0}^\infty e^{-v}dv=\frac12e^{-u}\left[-e^{-v}\right]_{0}^\infty=\frac12e^{-u}\left[0+1\right] & u\ge0 \end{array} \right\}=\frac12e^{|u|}$$
+which is Double Exponential or Laplace Distribution
+
+`p.6-9`
+
 **Example 4.3.6 (Distribution of the ratio of normal variables)** Let X and Y be independent n(O, 1 ) random variables. Consider the transformation $U =\frac{X}Y$ (*and V=|Y| in textbook*) find the pdf of u
 
+Let $V=Y$, $Y=V$,$U=\frac XV$,$X=UV$
 
 $$J=\begin{vmatrix}v & u \\ 0 & 1 \end{vmatrix}=v$$
 
-$$g_U(u)=\frac1\pi\int_0^{\infty}e^{-s}\frac1{u^2+1}ds=\frac1\pi\frac1{u^2+1}$$
+$$g(u,v)=f(x,y)|J|=\frac1{\sqrt{2\pi}}e^{-\frac{x^2}2}\frac1{\sqrt{2\pi}}e^{-\frac{y^2}2}|V|=\frac1{2\pi}e^{-\frac{u^2v^2+v^2}2}|V|=\frac1{2\pi}e^{-\frac{(u^2+1)v^2}2}|V|$$
+
+$$-\infty<x<\infty,-\infty<y<\infty\implies-\infty<uv<\infty,-\infty<v<\infty$$
+Because the inegrated was an even function
+
+$$g_U(u)=\int_{-\infty}^{\infty}\frac1{2\pi}e^{-\frac{(u^2+1)v^2}2}|V|dv=2\int_{0}^{\infty}\frac1{2\pi}e^{-\frac{(u^2+1)v^2}2}vdv$$
+
+Let $s=\frac{(u^2+1)v^2}2$, $ds=(u^2+1)vdv$
+
+$$g_U(u)=\frac1\pi\int_0^{\infty}e^{-s}\frac1{u^2+1}ds=\frac1\pi\frac1{u^2+1}\left[-e^{-s}\right]_0^\infty=\frac1\pi\frac1{u^2+1},-\infty<u<\infty$$
 which is the Cauchy distribution.
 
 **Theorem 4.3.5** Let X and Y be independent random variables. Let g(x) be a function only of a; and h(y) be a function only of y. Then the random variables U=g(X)and V=h(Y) are independent.
 
+`p.10-13`
 
+**Example** $f(x,y)=x+y$, $0<x<1,0<y<1$, find $\rho_{XY}$
+
+$\rho_{XY}=-\frac1{11}$
+
+`p.14-17`
+
+*What does actually measure?*
+
+Suppose $E[Y|X]$ is a linear function of X, or suppose that $E[Y|X]=a+bx$, then
+
+$$E[Y]=E[E[Y|X]]=E[a+bX]=a+bE[X]$$
+
+Also,
+
+Alternately,
+
+$\rho_{XY}=b\frac{\sigma_X}{\sigma_Y}$
 
 ### 4.4 Hierarchical Models and Mixture Distributions
 
+`2019.01.08`
 `p.1`
 
 $E[X]=\int_{-\infty}^{\infty}xf(x)dx$ is a real number.
@@ -132,6 +173,7 @@ $\sigma_{XY}=E[(X-\mu_X)(Y-\mu_Y)]=E[XY-Y\mu_X-X\mu_Y+\mu_X\mu_Y]=E[XY]-E[Y]\mu_
 
 
 **Theorem 4.5.5** If X and Y are independent random variables, then $Cov(X,Y)=0$ and $\rho_{XY}=0$
+
 
 
 **Theorem 4.5.6** If X and Y are any two random variables and a and b are any two constants, then

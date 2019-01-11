@@ -407,6 +407,7 @@ $(document).ready(function () {
 </div>
 <div id="comparing-a-single-mean-to-a-specified-value" class="section level4">
 <h4>2.4.6 Comparing a Single Mean to a Specified Value</h4>
+<p>If the population is normal with known variance, or if the population is nonnormal but the sample size is large enough so that the central limit theorem applies, then the hypothesis may be tested using a direct application of the normal distribution.</p>
 </div>
 <div id="summary" class="section level4">
 <h4>2.4.7 Summary</h4>
@@ -444,7 +445,7 @@ $(document).ready(function () {
 </div>
 <div id="analysis-of-the-fixed-effects-model" class="section level3">
 <h3>3.3 Analysis of the Fixed Effects Model</h3>
-<p><span class="math inline">\(y_{i.}\)</span> represents the total of the observations under the ith treatment. Let <span class="math inline">\(\bar y_{i.}\)</span> represent the average of the observations under the ith treatment. Similarly, let <span class="math inline">\(y_{..}\)</span> represent the grand total of all the observations and <span class="math inline">\(y_{..}\)</span> represent the grand average of all the observations. <span class="math display">\[y_{i.} =\sum^n_{j=1}y_{ij}\quad \bar y_{i.} = \frac{y_{i.}}n\quad i=1,2,..,a\]</span> <span class="math display">\[y_{..}=\sum^a_{i=1}\sum^n_{j=1}y_{ij}\quad \bar y_{..}=\frac{y_{..}}N\]</span></p>
+<p><span class="math inline">\(y_{i.}\)</span> represents the total of the observations under the ith treatment. Let <span class="math inline">\(\bar y_{i.}\)</span> represent the average of the observations under the ith treatment. Similarly, let <span class="math inline">\(y_{..}\)</span> represent the grand total of all the observations and <span class="math inline">\(y_{..}\)</span> represent the grand average of all the observations. <span class="math display">\[y_{i.} =\sum^n_{j=1}y_{ij}\quad \bar y_{i.} = \frac{y_{i.}}n\quad i=1,2,..,a\]</span> <span class="math display">\[y_{..}=\sum^a_{i=1}\sum^n_{j=1}y_{ij}\quad \bar y_{..}=\frac{y_{..}}N=\frac{1}N\sum^a_{i=1}y_{i.}=\frac{1}a\sum^a_{i=1}\bar y_{i.}\]</span></p>
 <p>where <span class="math inline">\(N=an\)</span> is the total number of observations.</p>
 <p><span class="math display">\[H_0: \mu_1=\mu_2=..=\mu_a\qquad H_A: \mu_i\neq\mu_j\quad \text{for at least one pair (i, j)}\]</span></p>
 <p><span class="math display">\[\frac{\sum_{i=1}^a\mu_i}{a}=\mu\quad \sum_{i=1}^a\tau_i=0\]</span></p>
@@ -457,49 +458,59 @@ $(document).ready(function () {
 <p><span class="math display">\[SS_T = SS_{treatments} + SS_E\]</span></p>
 <p><span class="math display">\[SS_E=\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2=\sum^a_{i=1}\left[\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2\right]\]</span></p>
 <p><span class="math display">\[S_i^2=\frac{\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2}{n-1}\quad i=1,2,..,a\]</span></p>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
 </colgroup>
 <thead>
 <tr class="header">
+<th></th>
 <th></th>
 <th>SS</th>
 <th>df</th>
 <th>MS</th>
 <th>E(SS)</th>
 <th>E(MS)</th>
+<th>F test</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(SS_T\)</span></td>
-<td><span class="math inline">\(\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{..})^2\)</span></td>
-<td><span class="math inline">\(N-1\)</span></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
+<td>Treatment(Between or Model)</td>
 <td><span class="math inline">\(SS_{Trt}\)</span></td>
 <td><span class="math inline">\(n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2\)</span></td>
 <td><span class="math inline">\(a-1\)</span></td>
-<td><span class="math inline">\(\frac{SS_{Trt}}{N-a}\)</span></td>
+<td><span class="math inline">\(\frac{SS_{Trt}}{a-1}\)</span></td>
 <td><span class="math inline">\((a-1)\sigma^2+n\sum^a_{i=1}\tau_i^2\)</span></td>
 <td><span class="math inline">\(\sigma^2+\frac{n}{a-1}\sum^a_{i=1}\tau_i^2\)</span></td>
+<td><span class="math inline">\(\frac{MS_{Trt}}{MS_E}\)</span></td>
 </tr>
-<tr class="odd">
+<tr class="even">
+<td>Error(Within)</td>
 <td><span class="math inline">\(SS_E\)</span></td>
 <td><span class="math inline">\(\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2\)</span></td>
-<td><span class="math inline">\(N-a\)</span></td>
+<td><span class="math inline">\(N-a=a(n-1)\)</span></td>
 <td><span class="math inline">\(\frac{SS_E}{N-a}\)</span></td>
 <td><span class="math inline">\((N-a)\sigma^2\)</span></td>
 <td><span class="math inline">\(\sigma^2\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td><span class="math inline">\(SS_T\)</span></td>
+<td><span class="math inline">\(\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{..})^2\)</span></td>
+<td><span class="math inline">\(N-1=na-1\)</span></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
