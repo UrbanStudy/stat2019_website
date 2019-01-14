@@ -5,9 +5,6 @@ date: "Winter 2019"
 output: html_document
 ---
 
-# 
-
-## 
 
 ### Problem 1 (2.1)
 
@@ -21,6 +18,8 @@ $$\text{SE mean}=\frac{Std.Dev.}{\sqrt{n}}=\frac{3.12}{\sqrt9}=1.04$$
 
 $$Var(Y)=S^2=3.12^2=9.7344$$
 
+---
+
 ### Problem 2 (2.17/19)
 
 The viscosity of a liquid detergent is supposed to average 800 centistokes at 25∘C. A random sample of 16 batches of detergent is collected, and the average viscosity is 812. Suppose we know that the standard deviation of viscosity is σ = 25 centistokes.
@@ -31,6 +30,8 @@ The viscosity of a liquid detergent is supposed to average 800 centistokes at 25
  $$H_0: \mu=800\qquad H_A: \mu\neq800$$
  
  (b) Test these hypotheses using 𝛼 = 0.05. What are your conclusions?
+ 
+Assuming the population is normal, the sample size is less than 30 but the variance is known. The hypothesis may be tested using a direct application of the normal distribution.
  
  $$se(\hat\mu)=\frac{σ}{\sqrt{n}}=\frac{25}{\sqrt{16}}=6.25$$
  
@@ -57,43 +58,82 @@ $$\bar y-Z_{\frac{α}2}se(\mu)\le\mu\le\bar y+Z_{\frac{α}2}se(\mu)\implies 812-
 
 $$\implies 799.75\le\mu\le824.25$$
 
+---
+
 ### Problem 3
 
-The simple linear regression model: $y_i=β_0+β_1 x_i+ε$, $E(ε_i )=0$, $Var(ε_i )=0$, for $i=1,2,…,n$; $Cov(ε_i,ε_j)=0$ for $i≠j$, $x_i=\begin{cases}0& \text{for Male for }i=1,2,…,\frac{n}2\\1& \text{for Female for}\frac{n}2+1,\frac{n}2+2,..n\end{cases}$
+The simple linear regression model: $y_i=β_0+β_1 x_i+ε$, $E(ε_i)=0$, $Var(ε_i)=\sigma^2$, for $i=1,2,…,n$; $Cov(ε_i,ε_j)=0$ for $i≠j$, $x_i=\begin{cases}0& \text{for Male for }i=1,2,…,\frac{n}2\\1& \text{for Female for}\frac{n}2+1,\frac{n}2+2,..n\end{cases}$
 
-Use the least squares method to find the estimated value of β_1 and simplify your answer as much as possible. Show all the steps of your work.
+Use the least squares method to find the estimated value of $β_1$ and simplify your answer as much as possible. Show all the steps of your work.
 
-$S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\hat\varepsilon_i=\sum_{i=1}^n(y_i-\hat y)=\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)^2$
+For $ε_i\sim iid N(0, \sigma^2), i=1,2,…,n$, 
+
+$S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\varepsilon_i=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2$
 
 $$\left.\frac{\partial S}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
 $$\left.\frac{\partial S}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
 
-- Normal Equation
+- Normal Equations
 
-$$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i\implies \bar y= \hat\beta_0+\frac{\hat\beta_1}2$$
+$$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i$$
+$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
 
-$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2\implies\sum_{i=\frac{n}2+1}^ny_i=\frac{n}2(\hat\beta_0+\hat\beta_1)$$
+
+For a indicator variable $x_i$, 
+
+$\sum_{i=1}^nx_i=\sum_{i=1}^nx_i^2=\sum_{i=1}^{\frac{n}2}0+\sum_{i=\frac{n}2+1}^n1=\frac{n}2$,
+
+$\sum_{i=1}^nx_iy_i=\sum_{i=1}^{\frac{n}2}0u_i+\sum_{i=\frac{n}2+1}^n1y_i=\sum_{i=\frac{n}2+1}^ny_i$, and 
+
+$E[\bar y]=E[\frac{\sum_{i=1}^ny_i}n]=\mu$, $n\bar y=\sum_{i=1}^ny_i$, then the normal equations are
 
 
-$$\hat{\beta_1}=\frac{S_{xy}}{S_{xx}}=\frac{\sum_{i=1}^n(x_i-\bar x)y_i}{S_{xx}}=\sum_{i=1}^nc_iy_i=\frac4n\sum_{i=\frac{n}2+1}^ny_i-2\bar y$$
+$$\bar y= \hat\beta_0+\frac{\hat\beta_1}2$$
+$$\sum_{i=\frac{n}2+1}^ny_i=\frac{n}2(\hat\beta_0+\hat\beta_1)$$
+
+$$\hat{\beta_1}=\frac2n\sum_{i=\frac{n}2+1}^ny_i-(\bar y-\frac{\hat\beta_1}2)=\frac4n\sum_{i=\frac{n}2+1}^ny_i-2\bar y$$
 
 
 ### Problem 4 (2.30/32)
 
-Front housings for cell phones are manufactured in an injection molding process. The time the part is allowed to cool in the mold before removal is thought to influence the occurrence of a particularly troublesome cosmetic defect, flow lines, in the finished housing. After manufacturing, the housings are inspected visually and assigned a score between 1 and 10 based on their appearance, with 10 corresponding to a perfect part and 1 corresponding to a completely defective part.
-An experiment was conducted using two cool-down times, 10 and 20 seconds, and 20 housings were evaluated at each level of cool-down time. All 40 observations in this experiment were
-run in random order. The data are as follows.
+Front housings for cell phones are manufactured in an injection molding process. The time the part is allowed to cool in the mold before removal is thought to influence the occurrence of a particularly troublesome cosmetic defect, flow lines, in the finished housing. After manufacturing, the housings are inspected visually and assigned a score between 1 and 10 based on their appearance, with 10 corresponding to a perfect part and 1 corresponding to a completely defective part. An experiment was conducted using two cool-down times, 10 and 20 seconds, and 20 housings were evaluated at each level of cool-down time. All 40 observations in this experiment were run in random order. The data are as follows.
 
 ```{r include=FALSE}
 
 library(readxl)
 library(tidyverse)
-```
 
-```{r echo=TRUE}
 table_cellphone <- read_xlsx("Exercsie2_30.xlsx")
 
-t.test(table_cellphone$TenSeconds, table_cellphone$TwentySeconds, paired = F,var.equal=T, alternative="two.sided", mu = 0, conf.level= 0.95)
+```
+
+We use the paired t-test because the observations from the factor levels are “paired” on each experimental unit.
+
+```{r echo=FALSE}
+
+t.test(table_cellphone$TenSeconds, table_cellphone$TwentySeconds, paired = T,var.equal=T, alternative="two.sided", mu = 0, conf.level= 0.95)
+
+```
+
+
+There is enough evidence to conclude that the radial tires have better fuel economy, on average, than belted tires at 5% significance level (p-value = 0.01516).
+A 95% lower confidence bound of 0.0393 suggests that we can be 95% sure the mean of differences in gasoline consumption between radial and belted tires is at least 0.0393. With the addition of negative confidence bound, , the gasoline consumption is higher for radial tires than belted tires.
+
+
+ (a) Is there evidence to support the claim that the longer cool-down time results in fewer appearance defects? Use 𝛼 = 0.05.
+
+P-value is less than significance level (5%) and null hypothesis ($H_0$) is rejected. Therefore, we can conclude that the scores of housings with 10-second and 20-second cool-down times are significantly different at 5% significance level. With the addition of negative confidence bound, we can say that longer cool-down time has an effect on the socres of housings at 5% significance level on average.
+
+ (b) What is the P-value for the test conducted in part (a)?
+
+p-value = $2.154\times10^{-05}$
+
+ (c) Find a 95 percent confidence interval on the difference in means. Provide a practical interpretation of this interval.
+
+A 95% confidence bound of (-4.32887 -1.97113) suggests that we can be 95% sure the mean of differences in scores of housings between 10 seconds and 20 seconds of cool-down times is neigative. In other words, on average, the scores of housings is better for 20-seconds cool-down times than 10-seconds.
+
+
+```{r echo=FALSE}
 
 t.test(score~cool_down_time, data=gather(table_cellphone,key=cool_down_time,value=score), var.equal=T, alternative="two.sided", mu = 0, conf.level= 0.95)
 
@@ -109,8 +149,5 @@ P-value is less than significance level (5%) and null hypothesis ($H_0$) is reje
 p-value = $2.217\times10^{-06}$
 
  (c) Find a 95 percent confidence interval on the difference in means. Provide a practical interpretation of this interval.
-
-A 95% confidence bound of (-4.294935 -2.005065) suggests that we can be 95% sure the mean of differences in scores of housings between 10 seconds and 20 seconds of cool-down times is at least -3.15. In other words, on average, the scores of housings is better for 20-seconds cool-down times than 10-seconds.
-
 
 A 95% confidence interval for the difference in means is (-4.294935 -2.005065). That is, we can be 95% confidence that the difference in average scores of housings between 10 seconds and 20 seconds of cool-down times is between -4.294935 and -2.005065. This negative interval suggests that the average scores of housings is higher when cool-down time is 20 seconds than 10 seconds.
