@@ -537,6 +537,30 @@ $(document).ready(function () {
 </div>
 <div id="estimation-of-the-model-parameters" class="section level4">
 <h4>3.3.3 Estimation of the Model Parameters</h4>
+<ul>
+<li>Least Squares Method I</li>
+</ul>
+<p><span class="math inline">\(y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}\)</span>, for <span class="math inline">\(ε_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,n\)</span>, <span class="math inline">\(\sum_{i=1}^a\tau_i=0\)</span></p>
+<p><span class="math inline">\(SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i)^2\)</span></p>
+<p><span class="math display">\[\left.\frac{\partial SSE}{\partial\mu}\right|_{\hat\mu,\hat\tau_i}=2\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0\]</span> <span class="math display">\[\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0\]</span></p>
+<p><span class="math display">\[\hat\mu=\frac1{an}y_{..}-\frac1{a}\sum_{i=1}^a\hat\tau_i=\bar y_{..}\]</span> <span class="math display">\[\hat\tau_i=\frac1{a}y_{i.}-\hat\mu=\bar y_{i.}-\bar y_{..}\]</span></p>
+<ul>
+<li>Least Squares Method II</li>
+</ul>
+<p><span class="math inline">\(y_{ij}=\mu_{i}+\varepsilon_{ij}\)</span>, for <span class="math inline">\(ε_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,n\)</span>, <span class="math inline">\(\sum_{i=1}^a\mu_i=au\)</span></p>
+<p><span class="math display">\[\vec y=\mathbf{X}\vecβ+\vecε\]</span></p>
+<p><span class="math inline">\(\mathbf{X'X}=nI_{a\times a}\)</span>,<span class="math inline">\(\mathbf{(X'X)^{-1}}=\frac1nI_{a\times a}\)</span>,<span class="math inline">\(\mathbf{X'}\vec{Y}=\vec{y_i}\)</span></p>
+<p><span class="math display">\[\vecβ=\mathbf{(X'X)^{-1}X}\vec{Y}=\vec{\hat{y_i}}=\vec{\hat{\mu_i}}\implies \hat\mu_i=\bar y_{i.};\ \hat\mu=\bar y_{..};\ \hat\tau_i=\bar y_{i.}-\bar y_{..}\]</span></p>
+<ul>
+<li>Confidence Interval for parameters</li>
+</ul>
+<p><span class="math inline">\(y_{ij}\sim NID(\mu+\tau_i,\sigma^2)\)</span>, <span class="math inline">\(\bar y_{i.}\sim NID(\mu+\tau_i,\frac{\sigma^2}n)\)</span>, <span class="math inline">\(\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}\sim N(0,1)\)</span></p>
+<p><span class="math inline">\(\frac{SS_E}{\sigma^2}\sim \chi^2_{df_E}\)</span>, and <span class="math inline">\(\bar y_{i.}\)</span> and <span class="math inline">\(\frac{SS_E}{\sigma^2}\)</span> are independent.</p>
+<p><span class="math display">\[\frac{\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}}{\sqrt{\frac{SS_E}{\sigma^2(N-a)}}}=\frac{y_{i.}-\mu_i}{\sqrt{\frac{SS_E}{n(df_E)}}}=\frac{y_{i.}-\mu_i}{\sqrt{\frac{MS_E}n}}\sim t_{df_E=N-a}\]</span></p>
+<p><span class="math inline">\(100(1-\alpha)\)</span>% confidence interval for ith treatment mean (<span class="math inline">\(\mu_i\)</span>) is <span class="math inline">\(\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}\)</span></p>
+<p><span class="math inline">\(\bar y_{i.}-\bar y_{j.}\sim N(\mu_i-\mu_j,\frac{2\sigma^2}n)\)</span>, <span class="math inline">\(\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\frac{2\sigma}{\sqrt{n}}}\sim N(0,1)\)</span></p>
+<p>if <span class="math inline">\(\hat\sigma^2=MS_E\)</span>, <span class="math inline">\(\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\sqrt{\frac{2MS_E}n}}\sim t_{df_E}\)</span></p>
+<p><span class="math inline">\(100(1-\alpha)\)</span>% confidence interval for the difference in ith and jth treatment means (<span class="math inline">\(\mu_i-\mu_j\)</span>) is <span class="math inline">\(\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}\)</span></p>
 </div>
 <div id="unbalanced-data" class="section level4">
 <h4>3.3.4 Unbalanced Data</h4>
