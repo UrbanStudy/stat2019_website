@@ -64,6 +64,9 @@ which is Double Exponential or Laplace Distribution
 
 **Example 4.3.6 (Distribution of the ratio of normal variables)** Let X and Y be independent n(O, 1 ) random variables. Consider the transformation $U =\frac{X}Y$ (*and V=|Y| in textbook*) find the pdf of u
 
+$$\left.\begin{array}\mathcal{A_0}=\{(x,y):y=0\}\\ \mathcal{A_1}=\{(x,y):y>0\} \\ \mathcal{A_2}=\{(x,y):y<0\} \\ \end{array}\right\}\to\mathcal{B}=\{(u,v):v>0\}$$
+
+
 Let $V=Y$, $Y=V$,$U=\frac XV$,$X=UV$
 
 $$J=\begin{vmatrix}v & u \\ 0 & 1 \end{vmatrix}=v$$
@@ -81,6 +84,27 @@ $$g_U(u)=\frac1\pi\int_0^{\infty}e^{-s}\frac1{u^2+1}ds=\frac1\pi\frac1{u^2+1}\le
 which is the Cauchy distribution.
 
 **Theorem 4.3.5** Let X and Y be independent random variables. Let g(x) be a function only of a; and h(y) be a function only of y. Then the random variables U=g(X)and V=h(Y) are independent.
+
+Proof
+
+We will prove the theorem assuming U and V are continuous random variables. For any $u\in R,v\in R$,define
+
+$$\begin{array}\mathcal{A_u}=\{x:g(x)\le u\}\\ \mathcal{B_v}=\{y:h(y)>v\}\end{array}$$
+
+Then the joint cdf of (U,V) is
+
+$$F_{U,V}(u,v)\begin{array}{l} =P(U\le u,V\le v) &  \text{definition of cdf} \\
+= P(X\in A_u, Y\in B_v) & \text{definition of U and V} \\
+= P(X\in A_u)P(Y\in B_v) & \text{Theorem 4.2.10} \end{array}$$
+
+The joint pdf of (U,V) is
+fj2 - fu, v{u, v) = 8u8v Fu,v {u, v)
+= (:UP(X E Au)) (:VP(Y E Bv)) ,
+(by (4.1 .4))
+where, as the notation indicates, the first factor is a function only of u and the second
+factor is a function only of v. Hence, by Lemma 4.2.7, U and V are independent.
+
+
 
 `p.10-13`
 
@@ -101,6 +125,9 @@ Also,
 Alternately,
 
 $\rho_{XY}=b\frac{\sigma_X}{\sigma_Y}$
+
+
+
 
 ### 4.4 Hierarchical Models and Mixture Distributions
 
@@ -171,8 +198,12 @@ $$\sigma_{XY}=Cov(X,Y)=E[XY]-\mu_X\mu_Y$$
 
 $\sigma_{XY}=E[(X-\mu_X)(Y-\mu_Y)]=E[XY-Y\mu_X-X\mu_Y+\mu_X\mu_Y]=E[XY]-E[Y]\mu_X-E[X]\mu_Y+\mu_X\mu_Y=E[XY]-\mu_Y\mu_X-\mu_X\mu_Y+\mu_X\mu_Y=E[XY]-\mu_X\mu_Y$
 
+$$\begin{array}{l} Cov(aX,bY)=abCov(X,Y) \\
+Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)  \\
+Cov(X,c)=0 \end{array}$$
 
-**Theorem 4.5.5** If X and Y are independent random variables, then $Cov(X,Y)=0$ and $\rho_{XY}=0$
+
+**Theorem 4.5.5** If X and Y are independent (uncorrelated) random variables, then $Cov(X,Y)=0$ and $\rho_{XY}=0$
 
 
 
@@ -206,6 +237,27 @@ $$E(g_1(X_1)\cdots g_n(X_n))=(E(g_1(X_1))\cdots(E(g_n(X_n))$$
 
 $$M_Z(t)=(M_X(t))^n$$
 
+**Theorem 4.6. 11 (Generalization of Lemma 4.2.1)** Let $X_1,.., X_n$ be random vectors. Then $X_1,.., X_n$ are mutually independent random vectors if and only if there exist functions $g_i(X_i),i=1,..,n$, such that the joint pdf or pmf of ($X_1,..,X_n$) can be written as
+
+$$f(xI , . . . , xn) = Yl (Xl )· · · · ·Yn(xn)$$
+
+**Theorem 4.6.12 (Generalization of Theorem 4.3.5)** Let $X_1,.., X_n$ be independent random vectors. Let $g_i(X_i)$ be a function only of $X_i,i=1,..,n$. Then the random variables $U_i=g_i(X_i),i=1,..,n$, are **mutually independent**.
+
+**Example 4.6.13 (Multivariate change of variables)**
+
+**Theorem 4.7.3 (Cauchy-Schwarz Inequality)** For any two random variables X and Y,
+
+$$|EXY|\le E|XY|\le(E|X|^2)^{\frac12}(E|X|^2)^{\frac12}$$
+
+**Example 4.7.4 (Covariance inequality)** If X and Y have means $\mu_X,\mu_Y$ and variances $\sigma_X^2,\sigma_Y^2$ , respectively, we can apply the Cauchy-Schwarz Inequality to
+get 
+
+$$E|(X-\mu_X)(Y-\mu_Y)|\le\{E(X-\mu_X)^2\}^{\frac12}\{E(Y-\mu_Y)^2\}^{\frac12}$$
+
+Squaring both sides and using statistical notation, we have $(Cov(X, y))^2\le \sigma_X^2\sigma_Y^2$
+
+Recalling the definition of the correlation coefficient,$\rho$, we have proved that $-1\le \rho^2\le1$1. Furthermore, the condition for equality in Lemma 4.7.1 still carries over, and equality is attained here only if $(X-\mu_X)=c(Y-\mu_Y)$, for some constant c. That is, the correlation is $\pm1$ **if and only if X and Y are linearly related**.
+
 ## 5. Properties of a Random Sample
 
 ### 5.2 Sums of Random Variables from a Random Sample
@@ -218,7 +270,7 @@ $$\bar X=\frac{X_1+..+X_n}{n}=\frac1n\sum_{i=1}^nX_i$$
 
 **Definition 5.2.3** The sample variance is the statistic defined by
 
-$$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2$$
+$$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n(X_i^2-n\bar X^2)$$
 The sample standard deviation is the statistic defined by $S=\sqrt{S^2}$
 
 **Theorem 5.2.4** $\sum_{i=1}^n(X_i-a)^2$ is minimized when $a=\bar x$
@@ -234,6 +286,10 @@ $$Var\left(\sum_{i=1}^ng(X_i) \right)=nVar(g(X_1))$$
 $$E\bar X=\mu$$
 $$Var\bar X=\frac{\sigma^2}n$$
 $$ES^2=\sigma^2$$
+
+**Theorem 5.2.9 Convolution formula** If X and Y are independent continuous random variables with pdfs $f_X(x)$ and $f_Y(y)$, then the pdf of $Z=X+Y$ is
+$$f_Z(z) =\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$$
+
 
 ### 5.3 Sampling from the Normal Distribution
 
