@@ -396,43 +396,47 @@ $(document).ready(function () {
 <div id="problem-4-2.3032" class="section level3">
 <h3>Problem 4 (2.30/32)</h3>
 <p>Front housings for cell phones are manufactured in an injection molding process. The time the part is allowed to cool in the mold before removal is thought to influence the occurrence of a particularly troublesome cosmetic defect, flow lines, in the finished housing. After manufacturing, the housings are inspected visually and assigned a score between 1 and 10 based on their appearance, with 10 corresponding to a perfect part and 1 corresponding to a completely defective part. An experiment was conducted using two cool-down times, 10 and 20 seconds, and 20 housings were evaluated at each level of cool-down time. All 40 observations in this experiment were run in random order. The data are as follows.</p>
-<p>We use the paired t-test because the observations from the factor levels are “paired” on each experimental unit.</p>
-<pre><code>## 
-##  Paired t-test
-## 
-## data:  table_cellphone$TenSeconds and table_cellphone$TwentySeconds
-## t = -5.5927, df = 19, p-value = 1.077e-05
-## alternative hypothesis: true difference in means is less than 0
-## 95 percent confidence interval:
-##       -Inf -2.176087
-## sample estimates:
-## mean of the differences 
-##                   -3.15</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Is there evidence to support the claim that the longer cool-down time results in fewer appearance defects? Use 𝛼 = 0.05.</li>
 </ol>
-<p>P-value is less than significance level (5%) and null hypothesis (<span class="math inline">\(H_0\)</span>) is rejected. Therefore, we can conclude that the scores of housings with 10-second and 20-second cool-down times are significantly different at 5% significance level. With the addition of negative confidence bound, we can say that longer cool-down time has an effect on the socres of housings at 5% significance level on average.</p>
+<p>We use the paired t-test because the observations from the factor levels are “paired” on each experimental unit.</p>
+<p>In order to test the claim that the longer cool-down time results in fewer appearance defects on average, the hypotheses are <span class="math inline">\(H_0:\mu_{20-10}\le0;\quad H_1:\mu_{20-10}&gt;0\)</span>.</p>
+<pre class="r"><code>t.test(table_cellphone$TwentySeconds, table_cellphone$TenSeconds, paired = T,var.equal=T, alternative=&quot;greater&quot;, mu = 0, conf.level= 0.95)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  table_cellphone$TwentySeconds and table_cellphone$TenSeconds
+## t = 5.5927, df = 19, p-value = 1.077e-05
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  2.176087      Inf
+## sample estimates:
+## mean of the differences 
+##                    3.15</code></pre>
+<p>P-value is less than significance level (5%) and null hypothesis (<span class="math inline">\(H_0\)</span>) is rejected. Therefore, we can be 95% sure the housings with 20 seconds of cool-down times have a higher means of scores than 10 seconds at least 2.176087.</p>
+<hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>What is the P-value for the test conducted in part (a)?</li>
 </ol>
 <p>p-value = <span class="math inline">\(1.077\times10^{-05}\)</span></p>
+<hr />
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Find a 95 percent confidence interval on the difference in means. Provide a practical interpretation of this interval.</li>
 </ol>
-<p>A 95% confidence bound of (-Inf -2.176087) suggests that we can be 95% sure the mean of differences in scores of housings between 10 seconds and 20 seconds of cool-down times is at least -2.176087. In other words, on average, the scores of housings is better for 20-seconds cool-down times than 10-seconds.</p>
-<pre class="r"><code># Just for reference
-t.test(score~cool_down_time, data=gather(table_cellphone,key=cool_down_time,value=score), var.equal=T, alternative=&quot;two.sided&quot;, mu = 0, conf.level= 0.95)</code></pre>
+<p>In order to test the 95 percent confidence interval on the difference in means, the hypotheses are <span class="math inline">\(H_0:\mu_{20-10}=0;\quad H_1:\mu_{20-10}\neq0\)</span>.</p>
+<pre class="r"><code>t.test(score~cool_down_time, data=gather(table_cellphone,key=cool_down_time,value=score), paired = T,var.equal=T, alternative=&quot;two.sided&quot;, mu = 0, conf.level= 0.95)</code></pre>
 <pre><code>## 
-##  Two Sample t-test
+##  Paired t-test
 ## 
 ## data:  score by cool_down_time
-## t = -5.5696, df = 38, p-value = 2.217e-06
+## t = -5.5927, df = 19, p-value = 2.154e-05
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -4.294935 -2.005065
+##  -4.32887 -1.97113
 ## sample estimates:
-##    mean in group TenSeconds mean in group TwentySeconds 
-##                        3.35                        6.50</code></pre>
+## mean of the differences 
+##                   -3.15</code></pre>
+<p>P-value is less than significance level (5%) and null hypothesis (<span class="math inline">\(H_0\)</span>) is rejected. A 95% negative confidence bound of (-4.32887 -1.97113) excluding 0 suggests that the difference in average scores of housing with 10 seconds and 20 seconds of cool-down times is between -4.32887 and -1.97113. In other words, we can conclude that the scores of housings with 10-second and 20-second cool-down times are significantly different at 5% significance level.</p>
 </div>
 
 
