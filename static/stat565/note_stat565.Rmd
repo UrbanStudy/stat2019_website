@@ -159,11 +159,10 @@ $$S_i^2=\frac{\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2}{n-1}\quad i=1,2,..,a$$
 |Error(Within)|$SS_E$    |$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2$     |$N-a=a(n-1)$| $\frac{SS_E}{N-a}$   
 Total|$SS_T$    |$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{..})^2=\sum^a_{i=1}\sum^n_{j=1}y_{ij}^2-\frac{y_{..}^2}N$     |$N-1=na-1$|
 
-| E(SS) | E(MS) 
-|  ---  |  ---  
-|$(a-1)\sigma^2+n\sum^a_{i=1}\tau_i^2$|$\sigma^2+\frac{n}{a-1}\sum^a_{i=1}\tau_i^2$
-|$(N-a)\sigma^2$ | $\sigma^2$
-
+|     | E(SS) | E(MS) |
+| --- |  ---  |  ---  |
+|Treatment|$(a-1)\sigma^2+n\sum^a_{i=1}\tau_i^2$|$\sigma^2+\frac{n}{a-1}\sum^a_{i=1}\tau_i^2$|
+|Erro     |$(N-a)\sigma^2$ | $\sigma^2$|
 
 #### 3.3.2 Statistical Analysis
 
@@ -219,7 +218,40 @@ if $\hat\sigma^2=MS_E$, $\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\sqrt{\fra
 
 $100(1-\alpha)$% confidence interval for the difference in ith and jth treatment means ($\mu_i-\mu_j$) is $\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$
 
+| $\hat\mu$   | $\hat\mu_i$ | $\hat\tau_i$ |
+|      ---    |    ---      |     ---      |
+|$\bar y_{..}$|$\bar y_{i.}$| $\bar y_{i.}-\bar y_{..}$
+
+|$y_{ij}$|$\bar y_{i.}$|$\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}$|$\frac{SS_E}{\sigma^2}$| $\frac{y_{i.}-\mu_i}{\sqrt{\frac{MS_E}n}}$
+|   ---  |      ---    |    ---      |     ---      | ---
+|$N(\mu+\tau_i,\sigma^2)$|$N(\mu+\tau_i,\frac{\sigma^2}n)$|$N(0,1)$| $\chi^2_{df_E}$  |  $t_{df_E=N-a}$  |
+
+
+|$\bar y_{i.}-\bar y_{j.}$|$\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\frac{2\sigma}{\sqrt{n}}}$|$\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\sqrt{\frac{2MS_E}n}}$
+|   ---  |    ---      |     ---      
+|$N(\mu_i-\mu_j,\frac{2\sigma^2}n)$|$N(0,1)$|  $t_{df_E}$  |
+
 #### 3.3.4 Unbalanced Data
+
+|      |      |  SS | df  | MS  |F test|P-value
+| ---  | ---  | --- | --- | --- |  --- |
+|Treatment(Between or Model)|$SS_{Trt}$|$\sum^a_{i=1}\sum^{n_i}_{i=1}(\bar y_{i.}−\bar y_{..})^2=\sum^a_{i=1}\frac{y_{i.}^2}{n_i}-\frac{y_{..}^2}N$|$a-1$|$\frac{SS_{Trt}}{a-1}$|$\frac{MS_{Trt}}{MS_E}$|$P(F>F_0)$|
+|Error(Within)|$SS_E$    |$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2$     |$N-a=\sum_{i=1}^a(n_i-1)$| $\frac{SS_E}{N-a}$   
+Total|$SS_T$    |$\sum^a_{i=1}\sum^{n_i}_{j=1}(y_{ij}−\bar y_{..})^2=\sum^a_{i=1}\sum^n_{j=1}y_{ij}^2-\frac{y_{..}^2}N$     |$N-1=\sum_{i=1}^an_i-1$|
+
+|    | E(SS) | E(MS) |
+| ---|  ---  |  ---  |
+|Treatment|$(a-1)\sigma^2+n\sum^a_{i=1}n_i\tau_i^2$|$\sigma^2+\frac{n}{a-1}\sum^a_{i=1}n_i\tau_i^2$|
+|Erro|$(N-a)\sigma^2$ | $\sigma^2$|
+
+|        CI   | balanced | unbalanced |
+|    ---      |    ---   |     ---    |
+|$\mu_i$      |$\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}$|$\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}$
+|$\mu_i-\mu_j$|$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$|$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}$
+
+
+
+
 
 ### 3.4 Model Adequacy Checking (verification)
 

@@ -507,21 +507,25 @@ $(document).ready(function () {
 </table>
 <table>
 <colgroup>
-<col width="50%"></col>
-<col width="50%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
 </colgroup>
 <thead>
 <tr class="header">
+<th></th>
 <th>E(SS)</th>
 <th>E(MS)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>Treatment</td>
 <td><span class="math inline">\((a-1)\sigma^2+n\sum^a_{i=1}\tau_i^2\)</span></td>
 <td><span class="math inline">\(\sigma^2+\frac{n}{a-1}\sum^a_{i=1}\tau_i^2\)</span></td>
 </tr>
 <tr class="even">
+<td>Erro</td>
 <td><span class="math inline">\((N-a)\sigma^2\)</span></td>
 <td><span class="math inline">\(\sigma^2\)</span></td>
 </tr>
@@ -561,9 +565,171 @@ $(document).ready(function () {
 <p><span class="math inline">\(\bar y_{i.}-\bar y_{j.}\sim N(\mu_i-\mu_j,\frac{2\sigma^2}n)\)</span>, <span class="math inline">\(\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\frac{2\sigma}{\sqrt{n}}}\sim N(0,1)\)</span></p>
 <p>if <span class="math inline">\(\hat\sigma^2=MS_E\)</span>, <span class="math inline">\(\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\sqrt{\frac{2MS_E}n}}\sim t_{df_E}\)</span></p>
 <p><span class="math inline">\(100(1-\alpha)\)</span>% confidence interval for the difference in ith and jth treatment means (<span class="math inline">\(\mu_i-\mu_j\)</span>) is <span class="math inline">\(\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}\)</span></p>
+<table>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\hat\mu\)</span></th>
+<th><span class="math inline">\(\hat\mu_i\)</span></th>
+<th><span class="math inline">\(\hat\tau_i\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\bar y_{..}\)</span></td>
+<td><span class="math inline">\(\bar y_{i.}\)</span></td>
+<td><span class="math inline">\(\bar y_{i.}-\bar y_{..}\)</span></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(y_{ij}\)</span></th>
+<th><span class="math inline">\(\bar y_{i.}\)</span></th>
+<th><span class="math inline">\(\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}\)</span></th>
+<th><span class="math inline">\(\frac{SS_E}{\sigma^2}\)</span></th>
+<th><span class="math inline">\(\frac{y_{i.}-\mu_i}{\sqrt{\frac{MS_E}n}}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(N(\mu+\tau_i,\sigma^2)\)</span></td>
+<td><span class="math inline">\(N(\mu+\tau_i,\frac{\sigma^2}n)\)</span></td>
+<td><span class="math inline">\(N(0,1)\)</span></td>
+<td><span class="math inline">\(\chi^2_{df_E}\)</span></td>
+<td><span class="math inline">\(t_{df_E=N-a}\)</span></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="33%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(\bar y_{i.}-\bar y_{j.}\)</span></th>
+<th><span class="math inline">\(\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\frac{2\sigma}{\sqrt{n}}}\)</span></th>
+<th><span class="math inline">\(\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\sqrt{\frac{2MS_E}n}}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(N(\mu_i-\mu_j,\frac{2\sigma^2}n)\)</span></td>
+<td><span class="math inline">\(N(0,1)\)</span></td>
+<td><span class="math inline">\(t_{df_E}\)</span></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="unbalanced-data" class="section level4">
 <h4>3.3.4 Unbalanced Data</h4>
+<table style="width:100%;">
+<colgroup>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+<th>SS</th>
+<th>df</th>
+<th>MS</th>
+<th>F test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Treatment(Between or Model)</td>
+<td><span class="math inline">\(SS_{Trt}\)</span></td>
+<td><span class="math inline">\(\sum^a_{i=1}\sum^{n_i}_{i=1}(\bar y_{i.}−\bar y_{..})^2=\sum^a_{i=1}\frac{y_{i.}^2}{n_i}-\frac{y_{..}^2}N\)</span></td>
+<td><span class="math inline">\(a-1\)</span></td>
+<td><span class="math inline">\(\frac{SS_{Trt}}{a-1}\)</span></td>
+<td><span class="math inline">\(\frac{MS_{Trt}}{MS_E}\)</span></td>
+</tr>
+<tr class="even">
+<td>Error(Within)</td>
+<td><span class="math inline">\(SS_E\)</span></td>
+<td><span class="math inline">\(\sum^a_{i=1}\sum^n_{j=1}(y_{ij}−\bar y_{i.})^2\)</span></td>
+<td><span class="math inline">\(N-a=\sum_{i=1}^a(n_i-1)\)</span></td>
+<td><span class="math inline">\(\frac{SS_E}{N-a}\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td><span class="math inline">\(SS_T\)</span></td>
+<td><span class="math inline">\(\sum^a_{i=1}\sum^{n_i}_{j=1}(y_{ij}−\bar y_{..})^2=\sum^a_{i=1}\sum^n_{j=1}y_{ij}^2-\frac{y_{..}^2}N\)</span></td>
+<td><span class="math inline">\(N-1=\sum_{i=1}^an_i-1\)</span></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="33%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>E(SS)</th>
+<th>E(MS)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Treatment</td>
+<td><span class="math inline">\((a-1)\sigma^2+n\sum^a_{i=1}n_i\tau_i^2\)</span></td>
+<td><span class="math inline">\(\sigma^2+\frac{n}{a-1}\sum^a_{i=1}n_i\tau_i^2\)</span></td>
+</tr>
+<tr class="even">
+<td>Erro</td>
+<td><span class="math inline">\((N-a)\sigma^2\)</span></td>
+<td><span class="math inline">\(\sigma^2\)</span></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="33%"></col>
+<col width="33%"></col>
+<col width="33%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>CI</th>
+<th>balanced</th>
+<th>unbalanced</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\mu_i\)</span></td>
+<td><span class="math inline">\(\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}\)</span></td>
+<td><span class="math inline">\(\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\mu_i-\mu_j\)</span></td>
+<td><span class="math inline">\(\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}\)</span></td>
+<td><span class="math inline">\(\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}\)</span></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="model-adequacy-checking-verification" class="section level3">
