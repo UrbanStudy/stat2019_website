@@ -47,6 +47,44 @@ The "reproductive" property: adding independent r.v.s from a family of distribut
 `2019.01.10`
 `p.1-5`
 
+```{r}
+
+plot(function(x){-2*x}, from=-5, to=2, axes=FALSE, asp=1)
+axis(1, pos=0, xlab="x");abline(v =-2, lty = 2)
+axis(2, pos=0, ylab="y");abline(h =6, lty = 2)
+polygon(x=c(-5,0,10,10,-5), y=c(10,0,0,10,10), density=10, angle=45)
+
+plot(function(x){x}, from=-0.5, to=1.5, axes=FALSE, asp=1)
+axis(1, pos=0, xlab="x");abline(v =0.6, lty = 2)
+axis(2, pos=0, ylab="y");abline(h =0.8, lty = 2)
+polygon(x=c(0,1,0), y=c(0,1,1), density=10, angle=45)
+
+
+# polygon(x=c(-1:1, rev(-1:1 )), y=c(rep(0, 2), rep(4,6)), density=10, angle=45)
+
+# x1 <- min(which(dens$x >= q75))  
+# x2 <- max(which(dens$x <  q95))
+# with(dens, polygon(x=c(x[c(x1,x1:x2,x2)]), y= c(0, y[x1:x2], 0), col="gray"))
+
+
+
+# dd <- with(dens,data.frame(x,y))
+
+library(ggplot2)
+
+# qplot(x,y,data=dd,geom="line")+  geom_ribbon(data=subset(dd,x>q75 & x<q95),aes(ymax=y),ymin=0,fill="red",colour=NA,alpha=0.5)
+
+# qplot(x=-5:5,y, fun=function(x){-2*x}, stat="function", geom="line", xlab="x", ylab="y")
+
+ggplot(data.frame(x=c(-5, 1)), aes(x=x)) + stat_function(fun=function(x){-2*x}, geom="line",linetype="dashed") + xlab("x") + ylab("y")+
+  geom_vline(xintercept = 0)+geom_hline(yintercept = 0)+
+  coord_fixed(ratio = 1, xlim =c(-5, 2),ylim =c(-1, 8))+
+  scale_x_continuous(breaks = c(-5,-4,-2,-1,0,1)) +
+ scale_y_continuous(breaks = c(-1, 0, 1, 2, 4, 6, 8, 10))
+
+```
+
+
 **A continuous example**: Let X and Y have joint pdf $f(x,y)=\frac14e^{-\frac{x+y}2}$, $0<x<\infty,0<y<\infty$. Find the pdf for $u=\frac{X-Y}2$.
 
 Let $v=Y$ so that the system is invertible. $X=2u+v, Y=v$
