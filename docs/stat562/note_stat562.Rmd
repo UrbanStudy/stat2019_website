@@ -47,7 +47,7 @@ The "reproductive" property: adding independent r.v.s from a family of distribut
 `2019.01.10`
 `p.1-5`
 
-```{r}
+```{r echo=FALSE}
 
 plot(function(x){-2*x}, from=-5, to=2, axes=FALSE, asp=1,ylab="y")
 axis(1, pos=0, xlab="x");abline(v =-2, lty = 2)
@@ -275,9 +275,9 @@ $$E(g_1(X_1)\cdots g_n(X_n))=(E(g_1(X_1))\cdots(E(g_n(X_n))$$
 
 $$M_Z(t)=(M_X(t))^n$$
 
-**Theorem 4.6. 11 (Generalization of Lemma 4.2.1)** Let $X_1,.., X_n$ be random vectors. Then $X_1,.., X_n$ are mutually independent random vectors if and only if there exist functions $g_i(X_i),i=1,..,n$, such that the joint pdf or pmf of ($X_1,..,X_n$) can be written as
+**Theorem 4.6.11 (Generalization of Lemma 4.2.1)** Let $X_1,.., X_n$ be random vectors. Then $X_1,.., X_n$ are mutually independent random vectors if and only if there exist functions $g_i(X_i),i=1,..,n$, such that the joint pdf or pmf of ($X_1,..,X_n$) can be written as
 
-$$f(xI , . . . , xn) = Yl (Xl )· · · · ·Yn(xn)$$
+$$f(x_1,..,x_n) =g_1(x_1)\cdots g_n(x_n)$$
 
 **Theorem 4.6.12 (Generalization of Theorem 4.3.5)** Let $X_1,.., X_n$ be independent random vectors. Let $g_i(X_i)$ be a function only of $X_i,i=1,..,n$. Then the random variables $U_i=g_i(X_i),i=1,..,n$, are **mutually independent**.
 
@@ -325,8 +325,47 @@ $$E\bar X=\mu$$
 $$Var\bar X=\frac{\sigma^2}n$$
 $$ES^2=\sigma^2$$
 
+**Example 5.2.8 (Distribution of the mean)** Let $X_1,..,X_n$ be a random sample from a $n(\mu,\sigma^2)$ population. Then the mgf of the sample mean is
+
+$$M_{\bar X}(t)=\left[e^{\mu\frac{t}n+\frac{\sigma^2{(\frac{t}n)}^2}2}\right]^n=e^{\mu t+\frac{(\frac{\sigma^2}{n})t^2}2}$$
+
+Thus, $\bar X$ has a $n(\mu,\sigma^2)$ distribution.
+
+Another simple example is given by a $gamma(α,β)$ random sample (4.6.8). Here, we can also easily derive the distribution of  the sample mean. The mgf of the sample mean is
+
+$$M_{\bar X}(t)=\left[\left(\frac1{1-\beta(\frac{t}n)}\right)^{a}\right]^n=\left(\frac1{1-\beta(\frac{t}n)}\right)^{na}$$
+
+which we recognize as the mgf of a $gamma(nα,β/n)$, the distribution of $\bar X$.
+
+If Theorem 5.2.7 is not applicable, because either the resulting mgf of $\bar X$ is unrecognizable or the population mgf does not exist, then the transformation method of Section 4.3 and 4.6 might be used to find the pdf of $Y=(X_1+..+X_n)$ and $\bar X$. In such cases, the following convolution formula is useful.
+
 **Theorem 5.2.9 Convolution formula** If X and Y are independent continuous random variables with pdfs $f_X(x)$ and $f_Y(y)$, then the pdf of $Z=X+Y$ is
 $$f_Z(z) =\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$$
+
+**Example 5.2.10 (Sum of Cauchy random variables)** As an example of a situation where the mgf technique fails, consider sampling from a Cauchy distribution. We will eventually derive the distribution of $\bar Z$, the mean of $Z_1,..,Z_n$ iid $Cauchy(0,1)$ observations. We start, however, with the distribution of the sum of two independent Cauchy random variables and apply formula (5.2.3).
+Let U and V be independent Cauchy random variables, $U\sim Cauchy(0,\sigma)$ and $V\sim Cauchy(0,\tau)$; that is,
+
+$$f_U(u)=\frac1{\pi\sigma}\frac1{1+(\frac{u}\sigma)^2},\quad f_V(v)=\frac1{\pi\tau}\frac1{1+(\frac{v}\tau)^2},\quad\begin{array}\ -\infty<u<\infty\\-\infty<v<\infty\end{array}$$
+
+Based on formula (5.2.3), the pdf of $Z=U+V$ is given by
+
+$$f_Z(z)=\int_{-\infty}^{\infty}\frac1{\pi\sigma}\frac1{1+(\frac{w}\sigma)^2}\frac1{\pi\tau}\frac1{1+(\frac{z-w}\tau)^2}dw,\quad -\infty<z<\infty$$
+
+This integral is somewhat involved but can be solved by a partial fraction decomposition and some careful anti differentiation (see Exercise 5.7) . The result is
+
+$$f_Z(z)=\frac1{\pi(\sigma+\tau)}\frac1{1+(\frac{z}{\sigma+\tau})^2},\quad -\infty<z<\infty$$
+
+Thus, the sum of two independent Cauchy random variables is again a Cauchy, with the scale parameters adding. It therefore follows that if $Z_1,..,Z_n$ iid $Cauchy(0,1)$ random variables, then $\sum Z_i$ is $Cauchy(0,n)$ and also $\bar Z$ is $Cauchy(0,1)$. The sample mean has the same distribution as the individual observations. (See Example A.0.5 in Appendix A for a computer algebra version of this calculation.)
+
+Suppose $X_1,..,X_n$ is a random sample from $(\frac1\sigma)f(\frac{x-\mu}{\sigma})$, a member of a location-scale family. Then the distribution of $\bar X$ has a simple relationship to the distribution of $\bar Z$, the sample mean from a random sample from the standard pdf $f(z)$. To see the nature of this relationship, note that from Theorem 3.5.6 there exist random variables $Z_1,..,Z_n$ such that $Xi=\sigma Z_i+\mu$ and the pdf of each $\bar Z_i$ is $f(z)$. Furthermore, we see that $Z_1,..,Z_n$ are mutually independent. Thus $Z_1,..,Z_n$ is a random sample from $f(z)$. The sample means $\bar X$ and $\bar Z$ are related by
+
+$$\bar X=\frac1n\sum_{i=1}^nX_i=\frac1n\sum_{i=1}^n(\sigma Z_i+\mu)=\frac1n(\sigma \sum_{i=1}^nZ_i+n\mu)=\sigma\bar Z+\mu$$
+
+Thus, again applying Theorem 3.5.6, we find that if $g(z)$ is the pdf of $\bar Z$, then $(\frac1\sigma)g(\frac{x-\mu}{\sigma})$ is the pdf of $\bar X$. It may be easier to work first with $Z_1,..,Z_n$
+and $f(z)$ to find the pdf $g(z)$ of $\bar Z$. If this is done, the parameters $\mu$, and $\sigma$ do not have
+to be dealt with, which may make the computations less messy. Then we immediately know that the pdf of $\bar X$ is $(\frac1\sigma)g(\frac{x-\mu}{\sigma})$.
+
+In Example 5.2. 10, we found that if $Z_1,..,Z_n$ is a random sample from a $Cauchy(0,1)$ distribution, then Z also has a $Cauchy(0,1)$ distribution. Now we can conclude that if $X_1,..,X_n$ is a random sample from a $Cauchy(\mu,\sigma)$ distribution, then $\bar X$ also has a $Cauchy(\mu,\sigma)$ distribution. It is important to note that the dispersion in the distribution of $\bar X$, as measured by $\sigma$, is the same, regardless of the sample size $n$. This is in sharp contrast to the more common situation in Theorem 5.2.6 (the population has finite variance) , where $Var\bar X=\frac{\sigma^2}n$ decreases as the sample size increases.
 
 
 ### 5.3 Sampling from the Normal Distribution
