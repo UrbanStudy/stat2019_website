@@ -154,7 +154,7 @@ It is ture that the distance from the origin is independent of the orientation -
 
 $\frac1{1+(\frac{w}\sigma)^2} \frac1{1+(\frac{z-w}{\tau})^2}=\frac{Aw}{1+(\frac{w}\sigma)^2}+\frac{B}{1+(\frac{w}\sigma)^2}-\frac{Cw}{1+(\frac{z-w}{\tau})^2}-\frac{D}{1+(\frac{z-w}{\tau})^2}$, where A, B, C, and D may depend on z but not on w.
 
-
+$$f_Z(z)=\int_{-\infty}^{\infty}\frac1{\pi\sigma}\frac1{1+(\frac{w}\sigma)^2}\frac1{\pi\tau}\frac1{1+(\frac{z-w}\tau)^2}dw=\frac1{\pi^2\sigma\tau}\int_{-\infty}^{\infty}\frac1{1+(\frac{w}\sigma)^2} \frac1{1+(\frac{z-w}{\tau})^2}=\frac1{\pi^2\sigma\tau}\int_{-\infty}^{\infty}\left(\frac{Aw}{1+(\frac{w}\sigma)^2}+\frac{B}{1+(\frac{w}\sigma)^2}-\frac{Cw}{1+(\frac{z-w}{\tau})^2}-\frac{D}{1+(\frac{z-w}{\tau})^2}\right)$$
 
 
 
@@ -164,6 +164,8 @@ $\int\frac{t}{1+t^2}dt=\frac12\log(1+t^2)+$ constant and $\int\frac{1}{1+t^2}dt=
 (Note that the integration in part (b) is quite delicate. Since the mean of a Cauchy does not exist, the integrals $\int_{-\infty}^{\infty}\frac{Aw}{1+(\frac{w}\sigma)^2}dw$ and $\int_{-\infty}^{\infty}\frac{Cw}{1+(\frac{z-w}{\tau})^2}dw$ dw do not exist.
 However, the integral of the difference does exist, which is all that is needed.)
 
+
+
 ---
 
 **5.10** Let $X_1,..,X_n$ be a random sample from a $n(\mu,\sigma^2)$ population.
@@ -172,20 +174,47 @@ However, the integral of the difference does exist, which is all that is needed.
 
 $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$
 
+For $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$ and $Var\chi^2_{n-1}=2(n-1)$, then
+
+$$Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{\sigma^4}{n-1}$$
 
 ---
 
 **5.13** Let $X_1,..,X_n$ be iid $n(\mu,\sigma^2)$. Find a function of $S^2$, the sample variance, say $g(S^2)$, that satisfies $Eg(S^2)=\sigma$. (Hint:Try $g(S^2)=c\sqrt{S^2}$, where c is a constant.)
 
+when $X_1,..,X_n$ be iid $n(\mu,\sigma^2)$, $(n-1)S^2/\sigma^2\sim\chi^2_{n-1}$. According to the definition of chi-squred distribution with degree of freedom (n-1), let $u=(n-1)S^2/\sigma^2$
+
+$$f_U(u)=\int_0^{\infty}\frac1{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}u^{\frac{n-1}2-1}e^{-\frac{u}2}du$$
+
+Let $V=\sqrt U$, then $U=V^2, du=2dv$, then
+
+$$f_V(v)=\int_0^{\infty}\frac1{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}u^{\frac{n-1}2-1}e^{-\frac{u}2}du$$
+
+Let $g(S^2)=c\sqrt{S^2}$, where c is a constant. then
+
+$$Eg(S^2)=E[c\sqrt{S^2}]=\frac{c\sigma}{\sqrt{n-1}}E\left[\sqrt{\frac{S^2(n-1)}{\sigma^2}}\right]=\frac{c\sigma}{\sqrt{n-1}}\int_0^{\infty}\frac{v^{\frac12}}{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}v^{\frac{n-1}2-1}e^{-\frac{v}2}dv$$
+
+$$=\frac{c\sigma}{\sqrt{n-1}}\cdot\frac{\Gamma(\frac{n}2)2^{\frac{n}2}}{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}\cdot\int_0^{\infty}\frac1{\Gamma(\frac{n}2)2^{\frac{n}2}}v^{\frac{n}2-1}e^{-\frac{v}2}dv=\frac{c\sigma}{\sqrt{n-1}}\cdot\frac{\Gamma(\frac{n}2)2^{\frac{1}2}}{\Gamma(\frac{n-1}2)}=\sigma$$
+ 
+$$\therefore c=\sqrt{\frac{n-1}{2}}\cdot\frac{\Gamma(\frac{n-1}2)}{\Gamma(\frac{n}2)}$$
+ 
 ---
 
 **5.15** Establish the following recursion relations for means and variances. Let $\bar{X_n}$, and $S_n^2$ be the mean and variance, respectively, of $X_1,..,X_n$. Then suppose another observation, $X_{n+1}$ , becomes available. Show that
 
  (a). $\bar X_{n+1}=\frac{X_{n+1}-n\bar X_n}{n+1}$
 
+$$\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}$$
 
- (b). $nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-X_n)$
- 
+ (b). $nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2$
+
+For $S^2=\frac1{n-1}\sum_{i=1}^n(X_i^2-n\bar X^2)$ and the equation in (a),
+
+$$nS^2_{n+1}=\frac{n}{n+1-1}\left({\sum_{i=1}^{n+1}X_{i}^2}-(n+1)\bar X_{n+1}^2\right)=\left({\sum_{i=1}^{n}X_{i}}+X_{n+1}^2\right)-(n+1)\left(\frac{n\bar X_{n}+X_{n+1}}{n+1}\right)^2$$
+
+$$=\left(\sum_{i=1}^{n}X_{i}-n\bar X_n^2\right)+n\bar X_n^2+X_{n+1}^2-\frac{(n\bar X_{n}+X_{n+1})^2}{n+1}=(n-1)S_n^2+\frac{(n^2\bar X_n^2+n\bar X_n^2)+(nX_{n+1}^2+X_{n+1}^2)-(n^2\bar X_{n}^2+2n\bar X_{n}X_{n+1}+X_{n+1}^2)}{n+1}$$
+$$=(n-1)S_n^2+\frac{n\bar X_n^2+nX_{n+1}^2-2n\bar X_{n}X_{n+1}}{n+1}=(n-1)S_n^2+\frac{n}{n+1}(X_{n+1}-\bar X_n)^2$$
+
 
 ## HW3
 

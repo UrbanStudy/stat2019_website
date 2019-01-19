@@ -392,17 +392,32 @@ $(document).ready(function () {
 <p><strong>5.7</strong> In Example 5.2. 10, a partial fraction decomposition is needed to derive the distribution of the sum of two independent Cauchy random variables. This exercise provides the details that are skipped in that example.</p>
 <p>(a). Find the constants A, B, C, and D that satisfy</p>
 <p><span class="math inline">\(\frac1{1+(\frac{w}\sigma)^2} \frac1{1+(\frac{z-w}{\tau})^2}=\frac{Aw}{1+(\frac{w}\sigma)^2}+\frac{B}{1+(\frac{w}\sigma)^2}-\frac{Cw}{1+(\frac{z-w}{\tau})^2}-\frac{D}{1+(\frac{z-w}{\tau})^2}\)</span>, where A, B, C, and D may depend on z but not on w.</p>
+<p><span class="math display">\[f_Z(z)=\int_{-\infty}^{\infty}\frac1{\pi\sigma}\frac1{1+(\frac{w}\sigma)^2}\frac1{\pi\tau}\frac1{1+(\frac{z-w}\tau)^2}dw=\frac1{\pi^2\sigma\tau}\int_{-\infty}^{\infty}\frac1{1+(\frac{w}\sigma)^2} \frac1{1+(\frac{z-w}{\tau})^2}=\frac1{\pi^2\sigma\tau}\int_{-\infty}^{\infty}\left(\frac{Aw}{1+(\frac{w}\sigma)^2}+\frac{B}{1+(\frac{w}\sigma)^2}-\frac{Cw}{1+(\frac{z-w}{\tau})^2}-\frac{D}{1+(\frac{z-w}{\tau})^2}\right)\]</span></p>
 <p>(b). Using the facts that evaluate (5.2.4) and hence verify (5.2.5). <span class="math inline">\(\int\frac{t}{1+t^2}dt=\frac12\log(1+t^2)+\)</span> constant and <span class="math inline">\(\int\frac{1}{1+t^2}dt=\arctan(t)+\)</span> constant (Note that the integration in part (b) is quite delicate. Since the mean of a Cauchy does not exist, the integrals <span class="math inline">\(\int_{-\infty}^{\infty}\frac{Aw}{1+(\frac{w}\sigma)^2}dw\)</span> and <span class="math inline">\(\int_{-\infty}^{\infty}\frac{Cw}{1+(\frac{z-w}{\tau})^2}dw\)</span> dw do not exist. However, the integral of the difference does exist, which is all that is needed.)</p>
 <hr />
 <p><strong>5.10</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from a <span class="math inline">\(n(\mu,\sigma^2)\)</span> population.</p>
 <p>(c). Calculate <span class="math inline">\(VarS^2\)</span> a completely different (and easier) way: Use the fact that <span class="math inline">\((n-1)S^2/\sigma^2\sim\chi^2_{n-1}\)</span></p>
 <p><span class="math inline">\(\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}\)</span></p>
+<p>For <span class="math inline">\(\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}\)</span> and <span class="math inline">\(Var\chi^2_{n-1}=2(n-1)\)</span>, then</p>
+<p><span class="math display">\[Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{\sigma^4}{n-1}\]</span></p>
 <hr />
 <p><strong>5.13</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be iid <span class="math inline">\(n(\mu,\sigma^2)\)</span>. Find a function of <span class="math inline">\(S^2\)</span>, the sample variance, say <span class="math inline">\(g(S^2)\)</span>, that satisfies <span class="math inline">\(Eg(S^2)=\sigma\)</span>. (Hint:Try <span class="math inline">\(g(S^2)=c\sqrt{S^2}\)</span>, where c is a constant.)</p>
+<p>when <span class="math inline">\(X_1,..,X_n\)</span> be iid <span class="math inline">\(n(\mu,\sigma^2)\)</span>, <span class="math inline">\((n-1)S^2/\sigma^2\sim\chi^2_{n-1}\)</span>. According to the definition of chi-squred distribution with degree of freedom (n-1), let <span class="math inline">\(u=(n-1)S^2/\sigma^2\)</span></p>
+<p><span class="math display">\[f_U(u)=\int_0^{\infty}\frac1{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}u^{\frac{n-1}2-1}e^{-\frac{u}2}du\]</span></p>
+<p>Let <span class="math inline">\(V=\sqrt U\)</span>, then <span class="math inline">\(U=V^2, du=2dv\)</span>, then</p>
+<p><span class="math display">\[f_V(v)=\int_0^{\infty}\frac1{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}u^{\frac{n-1}2-1}e^{-\frac{u}2}du\]</span></p>
+<p>Let <span class="math inline">\(g(S^2)=c\sqrt{S^2}\)</span>, where c is a constant. then</p>
+<p><span class="math display">\[Eg(S^2)=E[c\sqrt{S^2}]=\frac{c\sigma}{\sqrt{n-1}}E\left[\sqrt{\frac{S^2(n-1)}{\sigma^2}}\right]=\frac{c\sigma}{\sqrt{n-1}}\int_0^{\infty}\frac{v^{\frac12}}{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}v^{\frac{n-1}2-1}e^{-\frac{v}2}dv\]</span></p>
+<p><span class="math display">\[=\frac{c\sigma}{\sqrt{n-1}}\cdot\frac{\Gamma(\frac{n}2)2^{\frac{n}2}}{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}\cdot\int_0^{\infty}\frac1{\Gamma(\frac{n}2)2^{\frac{n}2}}v^{\frac{n}2-1}e^{-\frac{v}2}dv=\frac{c\sigma}{\sqrt{n-1}}\cdot\frac{\Gamma(\frac{n}2)2^{\frac{1}2}}{\Gamma(\frac{n-1}2)}=\sigma\]</span></p>
+<p><span class="math display">\[\therefore c=\sqrt{\frac{n-1}{2}}\cdot\frac{\Gamma(\frac{n-1}2)}{\Gamma(\frac{n}2)}\]</span></p>
 <hr />
 <p><strong>5.15</strong> Establish the following recursion relations for means and variances. Let <span class="math inline">\(\bar{X_n}\)</span>, and <span class="math inline">\(S_n^2\)</span> be the mean and variance, respectively, of <span class="math inline">\(X_1,..,X_n\)</span>. Then suppose another observation, <span class="math inline">\(X_{n+1}\)</span> , becomes available. Show that</p>
 <p>(a). <span class="math inline">\(\bar X_{n+1}=\frac{X_{n+1}-n\bar X_n}{n+1}\)</span></p>
-<p>(b). <span class="math inline">\(nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-X_n)\)</span></p>
+<p><span class="math display">\[\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}\]</span></p>
+<p>(b). <span class="math inline">\(nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2\)</span></p>
+<p>For <span class="math inline">\(S^2=\frac1{n-1}\sum_{i=1}^n(X_i^2-n\bar X^2)\)</span> and the equation in (a),</p>
+<p><span class="math display">\[nS^2_{n+1}=\frac{n}{n+1-1}\left({\sum_{i=1}^{n+1}X_{i}^2}-(n+1)\bar X_{n+1}^2\right)=\left({\sum_{i=1}^{n}X_{i}}+X_{n+1}^2\right)-(n+1)\left(\frac{n\bar X_{n}+X_{n+1}}{n+1}\right)^2\]</span></p>
+<p><span class="math display">\[=\left(\sum_{i=1}^{n}X_{i}-n\bar X_n^2\right)+n\bar X_n^2+X_{n+1}^2-\frac{(n\bar X_{n}+X_{n+1})^2}{n+1}=(n-1)S_n^2+\frac{(n^2\bar X_n^2+n\bar X_n^2)+(nX_{n+1}^2+X_{n+1}^2)-(n^2\bar X_{n}^2+2n\bar X_{n}X_{n+1}+X_{n+1}^2)}{n+1}\]</span> <span class="math display">\[=(n-1)S_n^2+\frac{n\bar X_n^2+nX_{n+1}^2-2n\bar X_{n}X_{n+1}}{n+1}=(n-1)S_n^2+\frac{n}{n+1}(X_{n+1}-\bar X_n)^2\]</span></p>
 </div>
 <div id="hw3" class="section level2">
 <h2>HW3</h2>
