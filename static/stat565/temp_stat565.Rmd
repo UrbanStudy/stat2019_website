@@ -6,7 +6,7 @@ output: html_document
 ---
 
 
-### Problem 1 ()
+### Problem 1 
 
 In a greenhouse experiment, 5 types of light were used: natural, white, green, blue, and yellow. Eight tobacco plants, each 10 mm tall, were subjected to each type of light with the following means and variances of stem growths (in mm).
 
@@ -19,23 +19,62 @@ A partial ANOVA table was found to be
 
 |Source of Variance|Sum of Squares (SS)|Degrees of Freedom (df)|Mean Squares (MS)|F test statistic $F_0$|
 | ---  | ---  | --- | --- | --- |
-|Treatment(Between or Model)| | |$a-1$| |
-|Error(Within)|    | | |   
-|Total|   |      | |
+|Treatment(Between or Model)|9.95904|4 | | |
+|Error(Within)              |1.950  |35| |   
+|Total                      |       |39|
 
-  (a) Complete the ANOVA table assuming the one-way fixed effects ANOVA model. Show main steps of your work. Keep 3 decimal places in $SS_Trt$
+  (a) Complete the ANOVA table assuming the one-way fixed effects ANOVA model. Show main steps of your work. Keep 3 decimal places in $SS_{Trt}$
 
+For $a=5,n=8$, $SS_T=N-1=5\times8-1=39$, $SS_{Trt}=5-1=4$, $SS_E=N-a=35$
+
+$$\bar y_{..}=\frac{1}a\sum^a_{i=1}\bar y_{i.}=\frac{1}5(4.09+4.30+3.55+3.01+3.19)=3.628$$
+
+$$SS_{Trt}=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2=9.95904$$
+
+$$MS_{Trt}=\frac{SS_{Trt}}{a-1}=\frac{9.95904}4=2.48976$$
+$$MS_{E}=\frac{SS_{E}}{N-a}=\frac{1.950}{35}=0.05571429$$
+
+$$F_{0}=\frac{MS_{Trt}}{MS_{E}}=\frac{2.48976}{0.05571429}=44.688$$
+
+```{r}
+bar_y_all <- (4.09+4.30+3.55+3.01+3.19)/5
+bar_y_all
+ss_trt <- 8*((4.09-bar_y_all)^2+(4.30-bar_y_all)^2+(3.55-bar_y_all)^2+(3.01-bar_y_all)^2+(3.19-bar_y_all)^2)
+ss_trt
+(ss_trt/4)/(1.950/35)
+```
  --- 
 
   (b) Compute the standard error of the difference of two observed treatment means. (that is, compute $e(\bar y _{i.}-\bar y_{j.})$) Show main steps of your work.
 
+$$e(\bar y _{i.}-\bar y_{j.})=\sqrt{\frac{2MSE}n}=\sqrt{\frac{2\times0.05571429}8}=0.1180194$$
+
+```{r}
+
+sqrt(2*1.950/{8*35})
+
+```
  ---
 
 ### Problem 2 (3.37/45)
 
 Exercise 3.37. Assume n_i is the number of observations (replications) for the $i^th$ treatment in the one-way ANVOA. Show main steps of work.
 
-3Σ.45 Show that the variance of the linear combination $\sum^{a}_{i=1}c_iy_{i.}$ is $σ^2\sum^{a}_{i=1}n_ic_i^2$
+Show that the variance of the linear combination $\sum^{a}_{i=1}c_iy_{i.}$ is $σ^2\sum^{a}_{i=1}n_ic_i^2$
+
+This is an unbalanced CRD. For $c_i$ is contrast constants,
+
+$$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{j=1}y_{ij})\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{i=1}(\mu_i+ε_{ij}))\right]=\sum^{a}_{i=1}\left[c_i^2Var(n_i\mu_i+\sum^{n_i}_{j=1}ε_{ij})\right]$$
+
+By the assumption for linear combination, $\mu_i$ is a constant. $Var(n_i\mu_i)=0$ and $Var(ε_{ij})=\sigma^2$, then the fomula equals
+
+$$=\sum^{a}_{i=1}\left[c_i^2(0+\sum^{n_i}_{j=1}Var(ε_{ij}))\right]=\sum^{a}_{i=1}\left[c_i^2n_i\sigma^2\right]=σ^2\sum^{a}_{i=1}n_ic_i^2$$
+
+$Var(\mu_i+ε_{ij})=Var(\mu_i)+Var(ε_{ij})$
+
+
+By the assumption of contrast constants, $\sum^{a}_{i=1}c_i=0$
+
 
 
 ---
@@ -83,7 +122,7 @@ library(tidyverse)
   (d) Which brand would you select for use? If the manufacturer will replace without charge any battery that fails in less than 85 weeks, what percentage would the company expect to replace?
   
 ```{r echo=T}
-table_battery <- read_xlsx("Exercsie3_26.xlsx")
+table_battery <- read_xlsx("Exercise3_26.xlsx")
 t.test(table_cellphone$TwentySeconds, table_cellphone$TenSeconds, paired = T,var.equal=T, alternative="greater", mu = 0, conf.level= 0.95)
 
 ```
@@ -102,8 +141,8 @@ The response time in milliseconds was determined for three different types of ci
 automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
 
 ```{r echo=T}
-table_circuit <- read_xlsx("Exercsie3_22.xlsx")
-t.test(table_cellphone$TwentySeconds, table_cellphone$TenSeconds, paired = T,var.equal=T, alternative="greater", mu = 0, conf.level= 0.95)
+table_circuit <- read_xlsx("Exercise3_22.xlsx")
+t.test(table_circuit$TwentySeconds, table_cellphone$TenSeconds, paired = T,var.equal=T, alternative="greater", mu = 0, conf.level= 0.95)
 
 ```
 
