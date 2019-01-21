@@ -1,137 +1,94 @@
 ---
-title: 'STAT565 HW'
+title: 'STAT565 HW1'
 author: "Draft"
 date: "Winter 2019"
 output: html_document
 ---
 
 
-### Problem 1 (2.1)
+### Problem 1 ()
 
-Compute the values of the missing quantities.
+In a greenhouse experiment, 5 types of light were used: natural, white, green, blue, and yellow. Eight tobacco plants, each 10 mm tall, were subjected to each type of light with the following means and variances of stem growths (in mm).
 
-|Variable| N | Mean| SE Mean|Std. Dev.|Variance|Minimum| Maximum
-|  ----  |---| ----|  ----  |   ----  |  ----  |  ---- | ----
-|Y       | 9 |19.96|   ?    |3.12     |       ?|  15.94| 27.16
+|  Color | Natural | White | Yellow | Blue | Green |
+|   ---- |    ---  |  ---  |  ----  | ---- | ----  |
+|  Mean  | 4.09    |4.30   |3.55    |3.01  |3.19   |
+|Variance| 0.027   |0.083  |0.066   |0.030 |0.073  |
 
-$$\text{SE mean}=\frac{Std.Dev.}{\sqrt{n}}=\frac{3.12}{\sqrt9}=1.04$$
+A partial ANOVA table was found to be
 
-$$Var(Y)=S^2=3.12^2=9.7344$$
+|Source of Variance|Sum of Squares (SS)|Degrees of Freedom (df)|Mean Squares (MS)|F test statistic $F_0$|
+| ---  | ---  | --- | --- | --- |
+|Treatment(Between or Model)| | |$a-1$| |
+|Error(Within)|    | | |   
+|Total|   |      | |
 
----
+  (a) Complete the ANOVA table assuming the one-way fixed effects ANOVA model. Show main steps of your work. Keep 3 decimal places in $SS_Trt$
 
-### Problem 2 (2.17/19)
+ --- 
 
-The viscosity of a liquid detergent is supposed to average 800 centistokes at 25∘C. A random sample of 16 batches of detergent is collected, and the average viscosity is 812. Suppose we know that the standard deviation of viscosity is σ = 25 centistokes.
+  (b) Compute the standard error of the difference of two observed treatment means. (that is, compute $e(\bar y _{i.}-\bar y_{j.})$) Show main steps of your work.
 
- (a) State the hypotheses that should be tested.
- Let $\mu=800, \bar y=812, n=16, σ=25$
- 
- $$H_0: \mu=800\qquad H_A: \mu\neq800$$
- 
- (b) Test these hypotheses using 𝛼 = 0.05. What are your conclusions?
- 
-Assuming the population is normal, the sample size is less than 30 but the variance is known. The hypothesis may be tested using a direct application of the normal distribution.
- 
- $$se(\hat\mu)=\frac{σ}{\sqrt{n}}=\frac{25}{\sqrt{16}}=6.25$$
- 
- $$Z_0=\frac{\bar y-\mu}{se(\hat\mu)}=\frac{812-800}{6.25}=1.92 $$
- 
- Since $Z_{\frac{α}2} =Z_{0.025}=1.96$, do not reject.
- 
- (c) What is the P-value for the test?
- 
- The P-value is below:
- 
-```{r}
+ ---
 
-2*(1-pnorm(812, mean = 800, sd = 25/4, lower.tail = TRUE, log.p = FALSE))
+### Problem 2 (3.37/45)
 
-2*pnorm(-1.92)
+Exercise 3.37. Assume n_i is the number of observations (replications) for the $i^th$ treatment in the one-way ANVOA. Show main steps of work.
 
-```
+3Σ.45 Show that the variance of the linear combination $\sum^{a}_{i=1}c_iy_{i.}$ is $σ^2\sum^{a}_{i=1}n_ic_i^2$
 
- 
- (d) Find a 95 percent confidence interval on the mean.
-
-$$\bar y-Z_{\frac{α}2}se(\mu)\le\mu\le\bar y+Z_{\frac{α}2}se(\mu)\implies 812-1.96\times6.25\le\mu\le812+1.96\times6.25$$
-
-$$\implies 799.75\le\mu\le824.25$$
 
 ---
 
 ### Problem 3
 
-The simple linear regression model: $y_i=β_0+β_1 x_i+ε$, $E(ε_i)=0$, $Var(ε_i)=\sigma^2$, for $i=1,2,…,n$; $Cov(ε_i,ε_j)=0$ for $i≠j$, $x_i=\begin{cases}0& \text{for Male for }i=1,2,…,\frac{n}2\\1& \text{for Female for}\frac{n}2+1,\frac{n}2+2,..n\end{cases}$
+Let  y_ij=μ+τ_i+ε_ij,   ε_ij  ~ iid N(0,σ^2 )  ,for i=1,2,…,a ; for j=1,2,…,n ; ∑_(i=1)^aτ_i =0
+y (i.)=1/n ∑_(i = 1)^ny_ij    ,y_(i.)   ~ iid N(μ+τ_i  ,   σ^2/n)
 
-Use the least squares method to find the estimated value of $β_1$ and simplify your answer as much as possible. Show all the steps of your work.
+$y_i=β_0+β_1 x_i+ε$, $E(ε_i)=0$, $Var(ε_i)=\sigma^2$, for $i=1,2,…,n$; $Cov(ε_i,ε_j)=0$ for $i≠j$, $x_i=\begin{cases}0& \text{for Male for }i=1,2,…,\frac{n}2\\1& \text{for Female for}\frac{n}2+1,\frac{n}2+2,..n\end{cases}$
+  (a) Using ONLY the above given information and properties of expected value of a function of random variables, derive (DO NOT use any other distribution properties)
 
-For $ε_i\sim iid N(0, \sigma^2), i=1,2,…,n$, 
+E(y_ij-y (i.)  )=
+Var(y_ij-y (i.)  )=
 
-$S(\hat\beta_0,\hat\beta_1)=\sum_{i=1}^n\varepsilon_i=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2$
+  (b) Using your answers in part (a) and shortcut formula for variance ( Var(X)=E(X^2 )-E(X)^2), find 
+E[(y_ij-y (i.) )^2 ]=
 
-$$\left.\frac{\partial S}{\partial\beta_0}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-1)=0$$
-$$\left.\frac{\partial S}{\partial\beta_1}\right|_{\hat\beta_0,\hat\beta_1}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i)(-x_i)=0$$
+  (c) Let a=3 treatments in the above model and the following linear functions of μ_i=μ+τ_i are tested.
+μ_1=μ_2   ,   (μ_1+μ_2)/2=μ_3
+    (i) Prove that each of these is a contrast.
+    (ii) Write Sum of Squares for each contrast (SS_c) in terms of y (1.)  ,y (2.)  ,y (3.) .
+    (iii) Add the two SS_c you found in part (ii) and simplify (expand and bring similar terms together).
 
-- Normal Equations
-
-$$\sum_{i=1}^ny_i=n\hat\beta_0+\hat\beta_1\sum_{i=1}^nx_i$$
-$$\sum_{i=1}^nx_iy_i=\hat\beta_0\sum_{i=1}^nx_i+\hat\beta_1\sum_{i=1}^nx_i^2$$
-
-
-For a indicator variable $x_i$, 
-
-$\sum_{i=1}^nx_i=\sum_{i=1}^nx_i^2=\sum_{i=1}^{\frac{n}2}0+\sum_{i=\frac{n}2+1}^n1=\frac{n}2$,
-
-$\sum_{i=1}^nx_iy_i=\sum_{i=1}^{\frac{n}2}0u_i+\sum_{i=\frac{n}2+1}^n1y_i=\sum_{i=\frac{n}2+1}^ny_i$, and 
-
-$E[\bar y]=E[\frac{\sum_{i=1}^ny_i}n]=\mu$, $n\bar y=\sum_{i=1}^ny_i$, then the normal equations are
+Then expand and simplify the SS_Trt given below to prove that it is equivalent to the sum of two SS_c you found earlier.
+SS_Trt=n∑_(i=1)^3(y (i.)- y (..)  )^2 
 
 
-$$\bar y= \hat\beta_0+\frac{\hat\beta_1}2$$
-$$\sum_{i=\frac{n}2+1}^ny_i=\frac{n}2(\hat\beta_0+\hat\beta_1)$$
+### Problem 4 (3.26/30)
 
-$$\hat{\beta_1}=\frac2n\sum_{i=\frac{n}2+1}^ny_i-(\bar y-\frac{\hat\beta_1}2)=\frac4n\sum_{i=\frac{n}2+1}^ny_i-2\bar y$$
+Use software to do all the computations, and attach code and output at the end of the question.
+If your answers rely on graphs, please include them along with the answer appropriately
+Report p-value along with your conclusions
+Data are given in Exercise3_26 Excel file .
 
-
-### Problem 4 (2.30/32)
-
-Front housings for cell phones are manufactured in an injection molding process. The time the part is allowed to cool in the mold before removal is thought to influence the occurrence of a particularly troublesome cosmetic defect, flow lines, in the finished housing. After manufacturing, the housings are inspected visually and assigned a score between 1 and 10 based on their appearance, with 10 corresponding to a perfect part and 1 corresponding to a completely defective part. An experiment was conducted using two cool-down times, 10 and 20 seconds, and 20 housings were evaluated at each level of cool-down time. All 40 observations in this experiment were run in random order. The data are as follows.
+Three brands of batteries are under study. It is suspected that the lives (in weeks) of the three brands are different. Five randomly selected batteries of each brand are tested with the following results:
 
 ```{r include=FALSE}
-
 library(readxl)
 library(tidyverse)
-
-table_cellphone <- read_xlsx("Exercsie2_30.xlsx")
-
 ```
- (a) Is there evidence to support the claim that the longer cool-down time results in fewer appearance defects? Use 𝛼 = 0.05.
-
-We use the paired t-test because the observations from the factor levels are “paired” on each experimental unit.
-
-In order to test the claim that the longer cool-down time results in fewer appearance defects on average, the hypotheses are $H_0:\mu_{20-10}\le0;\quad H_1:\mu_{20-10}>0$.
-
+  (a) Are the lives of these brands of batteries different?
+  (b) Analyze the residuals from this experiment.
+  (c) Construct a 95 percent confidence interval estimate on the mean life of battery brand 2. Construct a 99 percent confidence interval estimate on the mean difference between the lives of battery brands 2 and 3.
+  (d) Which brand would you select for use? If the manufacturer will replace without charge any battery that fails in less than 85 weeks, what percentage would the company expect to replace?
+  
 ```{r echo=T}
-
+table_battery <- read_xlsx("Exercsie3_26.xlsx")
 t.test(table_cellphone$TwentySeconds, table_cellphone$TenSeconds, paired = T,var.equal=T, alternative="greater", mu = 0, conf.level= 0.95)
 
 ```
 
 
-P-value is less than significance level (5%) and null hypothesis ($H_0$) is rejected. Therefore, we can be 95% sure the housings with 20 seconds of cool-down times have a higher means of scores than 10 seconds at least 2.176087.
-
----
-
- (b) What is the P-value for the test conducted in part (a)?
-
-p-value = $1.077\times10^{-05}$
-
----
-
- (c) Find a 95 percent confidence interval on the difference in means. Provide a practical interpretation of this interval.
- 
-In order to test the 95 percent confidence interval on the difference in means, the hypotheses are $H_0:\mu_{20-10}=0;\quad H_1:\mu_{20-10}\neq0$.
 
 ```{r echo=T}
 
@@ -139,4 +96,36 @@ t.test(score~cool_down_time, data=gather(table_cellphone,key=cool_down_time,valu
 
 ```
 
-P-value is less than significance level (5%) and the 95%  confidence bound is negative (-4.32887 -1.97113). Therefore, the null hypothesis ($H_0$) is rejected. We can be 95% confidence that the difference in average scores of housing with 10 seconds and 20 seconds of cool-down times is between -4.32887 and -1.97113. In other words, we can conclude that the scores of housings with 10-second and 20-second cool-down times are significantly different at 5% significance level.
+### Problem 5 (3.22/26)
+
+The response time in milliseconds was determined for three different types of circuits that could be used in an
+automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
+
+```{r echo=T}
+table_circuit <- read_xlsx("Exercsie3_22.xlsx")
+t.test(table_cellphone$TwentySeconds, table_cellphone$TenSeconds, paired = T,var.equal=T, alternative="greater", mu = 0, conf.level= 0.95)
+
+```
+
+  (a) Test the hypothesis that the three circuit types have the same response time. Use 𝛼 = 0.01.
+  (b) Use Tukey’s test to compare pairs of treatment means. Use 𝛼 = 0.01.
+  (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the
+response time of circuit type 2 to be different from the other two.
+  (e) If you were the design engineer and you wished to minimize the response time, which circuit type would you select?
+  (f) Analyze the residuals from this experiment. Are the basic analysis of variance assumptions satisfied?
+
+### Problem 6: (3.41/9 and 3.49/57)
+
+  (3.41/9) Refer to Problem 5. If we wish to detect a maximum difference in mean response times of 10 milliseconds with a probability of at least 0.90, what sample size should be used? How would you obtain a preliminary estimate of $σ^2$?
+
+
+ ---
+ 
+  (3.49/57) Consider the data shown in Problem 5.
+
+  (a) Write out the least squares normal equations for this problem and solve them for 𝜇̂ and 𝜏̂i, using the usual constraint (3i=1 𝜏i = 0). Estimate 𝜏1− 𝜏2.
+  (b) Solve the equations in (a) using the constraint ̂ 𝜏3 = 0. Are the estimators ̂ 𝜏i and 𝜇̂ the same as you found in (a)? Why? Now estimate 𝜏1 − 𝜏2 and compare your answer with that for (a). What statement can you make about estimating contrasts in the 𝜏i?
+  (c) Estimate 𝜇 + 𝜏1, 2𝜏1 − 𝜏2 − 𝜏3, and 𝜇 + 𝜏1 + 𝜏2 using the two solutions to the normal equations. Compare the results obtained in each case.
+  
+  
+  

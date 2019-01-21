@@ -1197,6 +1197,14 @@ $$f_1(x_1)=\int_{x_1}^1f(x_1,x_2)dx_2=\int_{x_1}^18x_1x_2dx_2=8x_1\left.\frac{x_
 
 $$f_2(x_2)=\int_0^{x_2}8x_1x_2dx_1=8x_2\left.\frac{x_1^2}2\right|_{x_1=0}^{x_2}=4x_2^3,\ 0<x_2<1$$
 
+```{r}
+plot(function(x){x}, from=-0.5, to=1.5, axes=FALSE, asp=1,xlab="x1",ylab="x2")
+axis(1, pos=0, xlab="x1");abline(v =0.6, lty = 2)
+axis(2, pos=0, ylab="x2");abline(h =0.8, lty = 2)
+polygon(x=c(0,1,0), y=c(0,1,1), density=10, angle=45)
+```
+
+
 `p. 9`
 
 Let $g(x_1,..,x_n)$ be a new random variable
@@ -1207,7 +1215,7 @@ $$E[g(\vec X)]=\begin{cases}\sum\cdots\sum_{all\vec x} g(\vec x)p(\vec x) \\ \id
 
 $$Eg(X,Y)=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} g(x, y)f(x, y) dx dy$$.
 
-`p. 10-11`
+`2018.11.27``p. 10-11`
 
 In our example, find $E[X_1+X_2]$
 
@@ -1221,9 +1229,24 @@ Method 2
 
 $$E[X_1+X_2]=E[X_1]+E[X_2]=\int_0^1x_1(4x_1-4x_1^3)dx_1+\int_0^1x_24x_2^3dx_2=\frac8{15}+\frac45=\frac43$$
 
+`2019.01.15``p.1`
+
+The joint probability dist ribu tion of (X, Y) can be completely described with the **joint cdf (cumulative distr ib ution function)** rather than with the joint pmf or jointpdf. The joint cdf is the function $F(x, y)$ defined by
+$$F(x,y) = P(X\le x, Y\le y)$$
+for all $(x,y)\in\mathcal{R}$. The joint cdf is usually not very handy to use for a discrete random vector. But for a continuous bivariate random vector we have the important relationship , as in the univariate case,
+
+$$F(x,y) =\int_{-\infty}^{y}\int_{-\infty}^{x}f(s,t)dsdt$$
+
+From the bivariate Fundamental Theore m of Calcu lus, this implies that
+
+$$\frac{\partial^2F(x,y)}{\partial x\partial y}=f(x,y)$$
+
+at continuity points of $f(x, y)$. This relationship is useful in sit uations where an expression
+for $F(x,y)$ can be found. The mixed partial derivative can be computed to find the joint pdf.
+
 ### 4.2 Conditional Distributions and Independence
 
-`p. 12`
+`2018.11.27``p. 12`
 
 $$f(x_2|x_1)=\frac{f(x_1,x_2)}{f_1(x_1)};\quad p(x_2|x_1)=\frac{p(x_1,x_2)}{p_1(x_1)}$$
 
@@ -1252,7 +1275,7 @@ For any y such that $f_Y(y)>0$, the conditional pdf of X given that $Y=y$ is the
 
 $$f(x|y)=\frac{f(x,y)}{f_Y(y)}$$
 
-`p. 13`
+`2018.11.27``p. 13`
 
 Let $g(x_2)$ be a function of $X_2$
 
@@ -1262,7 +1285,7 @@ If g(Y) is a function of Y, then the conditional expected value of g(Y) given th
 
 $$E(g(Y)|x)=\sum_yg(y)f(y|x)\quad \text{and}\quad E(g(Y)|x)=\int_{-\infty}^{\infty}g(y)f(y|x)dy$$
 
-`p. 14-16`
+`2018.11.27``p. 14-16`
 
 Example: $f(x_1,x_2)=\frac12e^{-(x_1+x_2)}$, $x_2>0,x_2>-2x_1$, find $f(x_2|x_1)$
 
@@ -1276,6 +1299,13 @@ $$f(x_2|x_1)=\frac{f(x_1,x_2)}{f_1(x_1)}=\frac{\frac12e^{-(x_1+x_2)}}{\frac12e^{
 `p. 1-2`
 
 New example: $f(x,y)=10xy^4$, $0<x<1, 0<y<1$, find $f(y|x)$
+
+```{r}
+plot(function(x){x}, from=-0.5, to=1.5, axes=FALSE, asp=1,xlab="x1",ylab="x2")
+axis(1, pos=0, xlab="x1")
+axis(2, pos=0, ylab="x2")
+polygon(x=c(0,1,1,0), y=c(0,0,1,1), density=10, angle=45)
+```
 
 Check
 
@@ -1292,6 +1322,12 @@ The variance of the probability distribution described by $f(y|x)$ is called the
 
 $$Var(y|x)=E(Y^2|x)-(E(Y|x))^2$$
 
+`2019.1.8`
+`p. 1-2`
+
+$$V[X|Y]=E[(X-E[X|Y])^2|Y]$$
+
+`2018.11.29`
 `p. 3`
 
 **Definition 4.2.5** Let (X,Y) be a bivariate random vector with joint pdf or pmf f(x,y) and marginal pdfs or pmfs $f_X(x)$ and $f_Y(y)$. Then X and Y are called **independent random variable** if, for every $x\in\mathbf{R}$ and $y\in\mathbf{R}$,
@@ -1303,7 +1339,7 @@ $$f(x,y) = f_X(x)f_Y(y)$$
 
 $$f(x,y)=g(x)h(y)$$
 
-`p. 4-6`
+`2018.11.29``p. 4-6`
 
 Proof: $\Rightarrow$ trivial, based on difinition
 
@@ -1321,7 +1357,7 @@ $$\therefore f(x,y)=g(x)h(y)=kg(x)\frac1kh(y)=f_X(x)f_Y(y)$$
 
 So X and Y are independent.
 
-`p. 7`
+`2018.11.29``p. 7`
 
 Example:
 
@@ -1352,7 +1388,7 @@ $E(g(X)h(Y))=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}g(x)h(y)f(x,y)dxdy=\i
 
 In perticular, if X andY are independet, then $E[XY]=E[X]E[Y]$
 
-`p.11`
+`2019.01.08``p.11`
 
 **Theorem 4.2.12** Let X and Y be independent random variables with moment generating functions $M_X(t)$ and $M_Y(t)$. Then the moment generating function of the random variable $Z=X+Y$ is given by
 
@@ -1361,6 +1397,8 @@ $$M_Z(t)=M_X(t)M_Y(t)$$
 Proof:
 
 $M_W(t)=E[e^{tW}]=E[e^{t(X+Y)}]=E[e^{tX}+e^{tY}]=E[e^{tX}]+E[e^{tY}]=M_X(t)M_Y(t)$
+
+
 
 **Theorem 4.2.14** Let $X\sim n(\mu,\sigma^2)$ and $Y\sim n(\gamma,\tau^2)$ be independent normal random variables, Then the random variable $Z=X+Y$ has a $n(\mu+\gamma,\sigma^2+\tau^2)$ distribution.
 
