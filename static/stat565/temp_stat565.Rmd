@@ -45,9 +45,9 @@ ss_trt
 ```
  --- 
 
-  (b) Compute the standard error of the difference of two observed treatment means. (that is, compute $e(\bar y _{i.}-\bar y_{j.})$) Show main steps of your work.
+  (b) Compute the standard error of the difference of two observed treatment means. (that is, compute $se(\bar y _{i.}-\bar y_{j.})$) Show main steps of your work.
 
-$$e(\bar y _{i.}-\bar y_{j.})=\sqrt{\frac{2MSE}n}=\sqrt{\frac{2\times0.05571429}8}=0.1180194$$
+$$se(\bar y _{i.}-\bar y_{j.})=\sqrt{\frac{2MSE}n}=\sqrt{\frac{2\times0.05571429}8}=0.1180194$$
 
 ```{r}
 
@@ -75,32 +75,34 @@ $Var(\mu_i+ε_{ij})=Var(\mu_i)+Var(ε_{ij})$
 
 By the assumption of contrast constants, $\sum^{a}_{i=1}c_i=0$
 
-
-
 ---
 
 ### Problem 3
 
-Let  y_ij=μ+τ_i+ε_ij,   ε_ij  ~ iid N(0,σ^2 )  ,for i=1,2,…,a ; for j=1,2,…,n ; ∑_(i=1)^aτ_i =0
-y (i.)=1/n ∑_(i = 1)^ny_ij    ,y_(i.)   ~ iid N(μ+τ_i  ,   σ^2/n)
+Let $y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}, ε_ij\sim iid\ N(0,σ^2)$,for $i=1,2,…,a;\ j=1,2,…,n$;$\sum_{i=1}^a\tau_i=0$
 
-$y_i=β_0+β_1 x_i+ε$, $E(ε_i)=0$, $Var(ε_i)=\sigma^2$, for $i=1,2,…,n$; $Cov(ε_i,ε_j)=0$ for $i≠j$, $x_i=\begin{cases}0& \text{for Male for }i=1,2,…,\frac{n}2\\1& \text{for Female for}\frac{n}2+1,\frac{n}2+2,..n\end{cases}$
+$\bar y_{i.}=\frac1n \sum_{i=1}^ny_{ij}$, $\bar y_{i.}\sim iid\ N(\mu+\tau_i,\frac{\sigma^2}n)$
+
   (a) Using ONLY the above given information and properties of expected value of a function of random variables, derive (DO NOT use any other distribution properties)
 
-E(y_ij-y (i.)  )=
-Var(y_ij-y (i.)  )=
+$E(y_{ij}-\bar y_{i.}=$
+$Var(y_{ij}-\bar y_{i.}=$
 
-  (b) Using your answers in part (a) and shortcut formula for variance ( Var(X)=E(X^2 )-E(X)^2), find 
-E[(y_ij-y (i.) )^2 ]=
+  (b) Using your answers in part (a) and shortcut formula for variance ($Var(X)=E(X^2)-E(X)^2)$, find 
+$E[(y_{ij}-y_{i.})^2]=$
 
-  (c) Let a=3 treatments in the above model and the following linear functions of μ_i=μ+τ_i are tested.
-μ_1=μ_2   ,   (μ_1+μ_2)/2=μ_3
-    (i) Prove that each of these is a contrast.
-    (ii) Write Sum of Squares for each contrast (SS_c) in terms of y (1.)  ,y (2.)  ,y (3.) .
-    (iii) Add the two SS_c you found in part (ii) and simplify (expand and bring similar terms together).
+  (c) Let a=3 treatments in the above model and the following linear functions of $\mu_i=\mu+\tao_i$ are tested.
+$\mu_1=\mu_2$, $\frac{\mu_1+\mu_2}{2}=\mu_3$.
 
-Then expand and simplify the SS_Trt given below to prove that it is equivalent to the sum of two SS_c you found earlier.
-SS_Trt=n∑_(i=1)^3(y (i.)- y (..)  )^2 
+  (i) Prove that each of these is a contrast and they are orthogonal contrasts.
+    
+  (ii) Write Sum of Squares for each contrast $SS_c$ in terms of $y_{1.},y_{2.},y_{3.}$.
+    
+  (iii) Add the two $SS_c$ you found in part (ii) and simplify (expand and bring similar terms together).
+
+Then expand and simplify the $SS_{Trt}$ given below to prove that it is equivalent to the sum of two $SS_c$ you found earlier.
+
+$$SS_{Trt}=n\sum_{i=1}^3(\bar y_{i.}-\bar y_{..})^2 $$
 
 
 ### Problem 4 (3.26/30)
@@ -167,8 +169,7 @@ leveneTest(Life ~ Brand, data = table_battery,center = "mean")
 
 ### Problem 5 (3.22/26)
 
-The response time in milliseconds was determined for three different types of circuits that could be used in an
-automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
+The response time in milliseconds was determined for three different types of circuits that could be used in an automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
 
   (a) Test the hypothesis that the three circuit types have the same response time. Use 𝛼 = 0.01.
   
@@ -183,9 +184,11 @@ GKgamma(xtabs(~Respone + Type,data=table_circuit,subset=!is.na(Type), drop.unuse
 ```
   
   (b) Use Tukey’s test to compare pairs of treatment means. Use 𝛼 = 0.01.
-  (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the
-response time of circuit type 2 to be different from the other two.
+  
+  (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the response time of circuit type 2 to be different from the other two.
+
   (e) If you were the design engineer and you wished to minimize the response time, which circuit type would you select?
+  
   (f) Analyze the residuals from this experiment. Are the basic analysis of variance assumptions satisfied?
 
 ### Problem 6: (3.41/9 and 3.49/57)
@@ -197,9 +200,11 @@ response time of circuit type 2 to be different from the other two.
  
   (3.49/57) Consider the data shown in Problem 5.
 
-  (a) Write out the least squares normal equations for this problem and solve them for 𝜇̂ and 𝜏̂i, using the usual constraint (3i=1 𝜏i = 0). Estimate 𝜏1− 𝜏2.
-  (b) Solve the equations in (a) using the constraint ̂ 𝜏3 = 0. Are the estimators ̂ 𝜏i and 𝜇̂ the same as you found in (a)? Why? Now estimate 𝜏1 − 𝜏2 and compare your answer with that for (a). What statement can you make about estimating contrasts in the 𝜏i?
-  (c) Estimate 𝜇 + 𝜏1, 2𝜏1 − 𝜏2 − 𝜏3, and 𝜇 + 𝜏1 + 𝜏2 using the two solutions to the normal equations. Compare the results obtained in each case.
+  (a) Write out the least squares normal equations for this problem and solve them for $\hat\mu$ and $\hat\tau_i$, using the usual constraint ($\sum^3_{i=1} \hat\tau_i=0$). Estimate $\tau_1-\tau_2$
+  
+  (b) Solve the equations in (a) using the constraint $\hat\tau_3=0$. Are the estimator $\hat\tau_i$ and $\hat\mu$ the same as you found in (a)? Why? Now estimate $\tau_1-\tau_2$ and compare your answer with that for (a). What statement can you make about estimating contrasts in the $\tau_i$
+  
+  (c) Estimate $\mu+\tau_1$, $2\tau_1-\tau_2-\tau_3$, $\mu+\tau_1+\tau_2$ and using the two solutions to the normal equations. Compare the results obtained in each case.
   
   
   
