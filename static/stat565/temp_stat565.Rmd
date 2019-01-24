@@ -123,15 +123,16 @@ library(car)
 library(vcd)
 library(vcdExtra)
 library(multcompView)
+library(agricolae)
 ```
   (a) Are the lives of these brands of batteries different?
   
 ```{r echo=T, collapse=TRUE}
 table_battery <- read_xlsx("Exercise3_26.xlsx")
-modle_battery <- lm(Life~Brand, data=table_battery)
+model_battery <- lm(Life~Brand, data=table_battery)
 
-anova(modle_battery)
-summary(modle_battery)
+anova(model_battery)
+summary(model_battery)
 
 summary(aov(Life ~ Brand, data = table_battery))
 
@@ -141,14 +142,14 @@ summary(aov(Life ~ Brand, data = table_battery))
 
 ```{r echo=T}
 
-plot(modle_battery)
+plot(model_battery)
 
 ```
   
   (c) Construct a 95 percent confidence interval estimate on the mean life of battery brand 2. Construct a 99 percent confidence interval estimate on the mean difference between the lives of battery brands 2 and 3.
   
 ```{r echo=T}
-confint(modle_battery, level = 0.95)
+confint(model_battery, level = 0.95)
 ``` 
   
   (d) Which brand would you select for use? If the manufacturer will replace without charge any battery that fails in less than 85 weeks, what percentage would the company expect to replace?
@@ -176,19 +177,22 @@ The response time in milliseconds was determined for three different types of ci
 ```{r echo=T, collapse=TRUE}
 table_circuit <- read_xlsx("Exercise3_22.xlsx")
 
-modle_circuit <- lm(Respone~Type, data=table_circuit)
-anova(modle_circuit)
-summary(modle_circuit)
+model_circuit <- lm(Respone~Type, data=table_circuit)
+anova(model_circuit)
+summary(model_circuit)
 
 GKgamma(xtabs(~Respone + Type,data=table_circuit,subset=!is.na(Type), drop.unused.levels=T))
  
 # What is the effect of the treatment on the value ?
-aov(modle_circuit)
+aov(model_circuit)
 # Tukey test to study each pair of treatment :
-TukeyHSD(aov(modle_circuit), conf.level=0.99)
+TukeyHSD(aov(model_circuit), ordered = TRUE,conf.level=0.99)
+
+HSD.test(model_circuit,"Type", group=TRUE,console=TRUE)
 # Tuckey test representation :
-plot(TukeyHSD(aov(modle_circuit), conf.level=0.99), las=1 , col="brown" )
-plot(modle_circuit)
+plot(TukeyHSD(aov(model_circuit), conf.level=0.99), las=1 , col="brown" )
+
+plot(model_circuit)
 ```
   
   (b) Use Tukey’s test to compare pairs of treatment means. Use 𝛼 = 0.01.
