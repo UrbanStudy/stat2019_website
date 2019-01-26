@@ -25,31 +25,31 @@ A partial ANOVA table was found to be
 
   (a) Complete the ANOVA table assuming the one-way fixed effects ANOVA model. Show main steps of your work. Keep 3 decimal places in $SS_{Trt}$
 
-For $a=5,n=8$, $SS_T=N-1=5\times8-1=39$, $SS_{Trt}=5-1=4$, $SS_E=N-a=35$
+For $a=5,n=8$, $df_T=N-1=5\times8-1=39$, $df_{Trt}=5-1=4$, $df_E=N-a=35$
 
-$$\bar y_{..}=\frac{1}a\sum^a_{i=1}\bar y_{i.}=\frac{1}5(4.09+4.30+3.55+3.01+3.19)=3.628$$
+$\bar y_{..}=\frac{1}a\sum^a_{i=1}\bar y_{i.}=\frac{1}5(4.09+4.30+3.55+3.01+3.19)=3.628$
 
-$$SS_{Trt}=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2=9.95904$$
+$SS_{Trt}=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2=9.95904$; $SS_{T}=SS_{Trt}+SS_{E}=11.90904$;
 
-$$MS_{Trt}=\frac{SS_{Trt}}{a-1}=\frac{9.95904}4=2.48976$$
-$$MS_{E}=\frac{SS_{E}}{N-a}=\frac{1.950}{35}=0.05571429$$
+$MS_{Trt}=\frac{SS_{Trt}}{a-1}=\frac{9.95904}4=2.48976$; $MS_{E}=\frac{SS_{E}}{N-a}=\frac{1.950}{35}=0.05571429$;
 
-$$F_{0}=\frac{MS_{Trt}}{MS_{E}}=\frac{2.48976}{0.05571429}=44.688$$
+$F_{0}=\frac{MS_{Trt}}{MS_{E}}=\frac{2.48976}{0.05571429}=44.688$
 
-```{r, collapse=TRUE}
+```{r eval=FALSE, collapse=TRUE, include=FALSE}
 bar_y_all <- (4.09+4.30+3.55+3.01+3.19)/5
 bar_y_all
 ss_trt <- 8*((4.09-bar_y_all)^2+(4.30-bar_y_all)^2+(3.55-bar_y_all)^2+(3.01-bar_y_all)^2+(3.19-bar_y_all)^2)
 ss_trt
 (ss_trt/4)/(1.950/35)
 ```
+
  --- 
 
   (b) Compute the standard error of the difference of two observed treatment means. (that is, compute $se(\bar y _{i.}-\bar y_{j.})$) Show main steps of your work.
 
 $$se(\bar y _{i.}-\bar y_{j.})=\sqrt{\frac{2MSE}n}=\sqrt{\frac{2\times0.05571429}8}=0.1180194$$
 
-```{r, collapse=TRUE}
+```{r eval=FALSE, collapse=TRUE, include=FALSE}
 
 sqrt(2*1.950/{8*35})
 
@@ -59,16 +59,11 @@ sqrt(2*1.950/{8*35})
 ### Problem 2 (3.37/45)
 
 Exercise 3.37. Assume n_i is the number of observations (replications) for the $i^th$ treatment in the one-way ANVOA. Show main steps of work.
-
 Show that the variance of the linear combination $\sum^{a}_{i=1}c_iy_{i.}$ is $σ^2\sum^{a}_{i=1}n_ic_i^2$
 
-This is an unbalanced CRD. For $c_i$ is contrast constants,
+By the assumption for linear combination,$c_i$ is contrast constants. This is an unbalanced CRD, $\mu_i$ is not random. For $ε_{ij}\sim iid\ N(0,σ^2)$ and are uncorrelated, $Var(ε_{ij})=\sigma^2$. Thus,
 
-$$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{j=1}y_{ij})\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{i=1}(\mu_i+ε_{ij}))\right]=\sum^{a}_{i=1}\left[c_i^2Var(n_i\mu_i+\sum^{n_i}_{j=1}ε_{ij})\right]$$
-
-By the assumption for linear combination, $\mu_i$ is a constant. $Var(n_i\mu_i)=0$ and $Var(ε_{ij})=\sigma^2$, then the fomula equals
-
-$$=\sum^{a}_{i=1}\left[c_i^2(0+\sum^{n_i}_{j=1}Var(ε_{ij}))\right]=\sum^{a}_{i=1}\left[c_i^2n_i\sigma^2\right]=σ^2\sum^{a}_{i=1}n_ic_i^2$$
+$$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{j=1}y_{ij})\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{i=1}(\mu_i+ε_{ij}))\right]=\sum^{a}_{i=1}\left[c_i^2\sum^{n_i}_{j=1}Var(ε_{ij})\right]=\sum^{a}_{i=1}\left[c_i^2n_i\sigma^2\right]=σ^2\sum^{a}_{i=1}n_ic_i^2$$
 
  ---
 
@@ -78,24 +73,21 @@ Let $y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}, ε_{ij}\sim iid\ N(0,σ^2)$,for $i=1,
 
   (a) Using ONLY the above given information and properties of expected value of a function of random variables, derive (DO NOT use any other distribution properties)
 
-$$E(y_{ij}-\bar y_{i.})=E[\mu+\tau_{i}+\varepsilon_{ij}-\frac1n \sum_{j=1}^n(\mu+\tau_{i}+\varepsilon_{ij})]$$
-
 For a fixed effects model, $\mu$ is a constant and $\tau_i$ is a constant of the $i^{th}$ treatment, then
 
-$$=E[\mu+\tau_{i}-\mu-\tau_{i}+\varepsilon_{ij}-\frac1n \sum_{j=1}^n{\varepsilon_{ij}}]=E[\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}]$$
+$y_{ij}-\bar y_{i.}=\mu+\tau_{i}+\varepsilon_{ij}-\frac1n \sum_{j=1}^n(\mu+\tau_{i}+\varepsilon_{ij})=\mu+\tau_{i}+\varepsilon_{ij}-\mu-\tau_{i}-\frac1n \sum_{j=1}^n\varepsilon_{ij}=\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}$
 
-For $ε_{ij}\sim iid\ N(0,σ^2)$, $E[\varepsilon_{ij}]=0$, then
+For $ε_{ij}\sim iid\ N(0,σ^2)$, $E[\varepsilon_{ij}]=0$
 
-$$E(y_{ij}-\bar y_{i.})=E[\varepsilon_{ij}]-\frac1n \sum_{j=1}^n{E[\varepsilon_{ij}]}=0$$
+$$E(y_{ij}-\bar y_{i.})=E[\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}]=E[\varepsilon_{ij}]-\frac1n \sum_{j=1}^nE[\varepsilon_{ij}]=0$$
 
-$$Var(y_{ij}-\bar y_{i.})=Var[\mu+\tau_{i}+\varepsilon_{ij}-\frac1n \sum_{j=1}^n{(\mu+\tau_{i}+\varepsilon_{ij})}]=Var[\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}]$$
-$$=Var[\varepsilon_{ij}]+\frac1{n^2}\sum_{j=1}^nVar[\varepsilon_{ij}]-2Cov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]=Var[\varepsilon_{ij}]+\frac{Var[\varepsilon_{ij}]}n-2Cov[\varepsilon_{ij},(\varepsilon_{i1}+..+\varepsilon_{ij}..+\varepsilon_{in})]$$
-
-$$Cov[\varepsilon_{ij},(\varepsilon_{i1}+..+\varepsilon_{ij}..+\varepsilon_{in})]=Cov[\varepsilon_{ij},\varepsilon_{i1}]+..+Cov[\varepsilon_{ij},\varepsilon_{ij}]..+Cov[\varepsilon_{ij},\varepsilon_{in}]$$
+$Var(y_{ij}-\bar y_{i.})=Var[\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}]=Var[\varepsilon_{ij}]+\frac1{n^2}\sum_{j=1}^nVar[\varepsilon_{ij}]-\frac2nCov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]$
 
 For $ε_{ij}\sim iid\ N(0,σ^2)$, $Var[\varepsilon_{ij}]=Cov[\varepsilon_{ij},\varepsilon_{ij}]=\sigma^2$, $Cov[\varepsilon_{ij},\varepsilon_{ik}]=0,k=1,2,..n$ then
 
-$$Var(y_{ij}-\bar y_{i.})=\sigma^2+\frac{\sigma^2}n-2\sigma^2=\frac{1-n}n\sigma^2$$
+$-\frac2nCov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]=-\frac2nCov[\varepsilon_{ij},(\varepsilon_{i1}+..+\varepsilon_{ij}..+\varepsilon_{in})]=-\frac2n(Cov[\varepsilon_{ij},\varepsilon_{i1}]+..+Cov[\varepsilon_{ij},\varepsilon_{ij}]..+Cov[\varepsilon_{ij},\varepsilon_{in}])=-\frac2n\sigma^2$
+
+$$Var(y_{ij}-\bar y_{i.})=\sigma^2+\frac{\sigma^2}n-\frac2n\sigma^2=\frac{n-1}n\sigma^2$$
  
  ---
 
@@ -104,7 +96,7 @@ $E[(y_{ij}-\bar y_{i.})^2]=$
 
 For $Var[y_{ij}-\bar y_{i.}]=E[(y_{ij}-\bar y_{i.})^2]-E[y_{ij}-\bar y_{i.}]^2$, then
 
-$$E[(y_{ij}-\bar y_{i.})^2]=Var[y_{ij}-\bar y_{i.}]+E[y_{ij}-\bar y_{i.}]^2=\frac{1-n}n\sigma^2$$
+$$E[(y_{ij}-\bar y_{i.})^2]=Var[y_{ij}-\bar y_{i.}]+E[y_{ij}-\bar y_{i.}]^2=\frac{n-1}n\sigma^2$$
 
  ---
 
@@ -124,9 +116,9 @@ Therefore, they are orthogonal contrasts.
 
   (ii) Write Sum of Squares for each contrast $SS_c$ in terms of $y_{1.},y_{2.},y_{3.}$.
     
-$$SS_c=\frac{C^2}{\frac1n\sum_{i=1}^ac_i^2}=\frac{(\sum_{i=1}^ac_i\bar y_{i.})^2}{\frac1n\sum_{i=1}^ac_i^2}=\begin{cases}\frac{(\bar y_{1.}-\bar y_{2.})^2}{\frac{1+1}n}
+$$SS_c=\frac{C^2}{\frac1n\sum_{i=1}^ac_i^2}=\frac{(\sum_{i=1}^ac_i\bar y_{i.})^2}{\frac1n\sum_{i=1}^ac_i^2}=\begin{cases}\frac{(\bar y_{1.}-\bar y_{2.})^2}{\frac{1+1}n}=\frac{n(\bar y_{1.}-\bar y_{2.})^2}{2}
 &for\ \mu_1=\mu_2\\
-\frac{(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{\frac{1+1+4}n}
+\frac{(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{\frac{1+1+4}n}=\frac{n(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{6}
 &for\ \frac{\mu_1+\mu_2}{2}=\mu_3
 \end{cases}$$
     
@@ -134,17 +126,14 @@ $$SS_c=\frac{C^2}{\frac1n\sum_{i=1}^ac_i^2}=\frac{(\sum_{i=1}^ac_i\bar y_{i.})^2
     
   (iii) Add the two $SS_c$ you found in part (ii) and simplify (expand and bring similar terms together).
 
-$$SS_c=\frac{n(\bar y_{1.}-\bar y_{2.})^2}{2}+\frac{n(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{6}=\frac{n}6(4\bar y_{1.}^2+4\bar y_{2.}^2+4\bar y_{3.}^2-4\bar y_{1.}\bar y_{2.}-4\bar y_{2.}\bar y_{3.}-4\bar y_{1.}\bar y_{3.})$$
+$SS_c=\frac{n(\bar y_{1.}-\bar y_{2.})^2}{2}+\frac{n(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{6}=\frac{n}6(4\bar y_{1.}^2+4\bar y_{2.}^2+4\bar y_{3.}^2-4\bar y_{1.}\bar y_{2.}-4\bar y_{2.}\bar y_{3.}-4\bar y_{1.}\bar y_{3.})$
 
 Then expand and simplify the $SS_{Trt}$ given below to prove that it is equivalent to the sum of two $SS_c$ you found earlier.
 
-$$SS_{Trt}=n\sum_{i=1}^3(\bar y_{i.}-\bar y_{..})^2=\frac{n}9\sum_{i=1}^3(3\bar y_{i.}-\bar y_{1.}-\bar y_{2.}-\bar y_{3.})^2=\frac{n}9[(2\bar y_{1.}-\bar y_{2.}-\bar y_{3.})^2+(2\bar y_{2.}-\bar y_{1.}-\bar y_{3.})^2+(2\bar y_{3.}-\bar y_{1.}-\bar y_{2.})^2]$$
-$$=\frac{n}9[6\bar y_{1.}^2+6\bar y_{2.}^2+6\bar y_{3.}^2-6\bar y_{1.}\bar y_{2.}-6\bar y_{2.}\bar y_{3.}-6\bar y_{1.}\bar y_{3.}]$$
-
-
+$SS_{Trt}=n\sum_{i=1}^3(\bar y_{i.}-\bar y_{..})^2=\frac{n}9\sum_{i=1}^3(3\bar y_{i.}-\bar y_{1.}-\bar y_{2.}-\bar y_{3.})^2=\frac{n}9[(2\bar y_{1.}-\bar y_{2.}-\bar y_{3.})^2+(2\bar y_{2.}-\bar y_{1.}-\bar y_{3.})^2+(2\bar y_{3.}-\bar y_{1.}-\bar y_{2.})^2]$
+$=\frac{n}9[6\bar y_{1.}^2+6\bar y_{2.}^2+6\bar y_{3.}^2-6\bar y_{1.}\bar y_{2.}-6\bar y_{2.}\bar y_{3.}-6\bar y_{1.}\bar y_{3.}]$
 
 $$\therefore SS_c=SS_{Trt}=\frac{2n}3(\bar y_{1.}^2+\bar y_{2.}^2+\bar y_{3.}^2-\bar y_{1.}\bar y_{2.}-\bar y_{2.}\bar y_{3.}-\bar y_{1.}\bar y_{3.})$$
-
 
 ### Problem 4 (3.26/30)
 
@@ -167,97 +156,167 @@ library(vcdExtra)
 library(multcompView)
 library(agricolae)
 library(asbio)
+library(pwr)
 ```
 
   (a) Are the lives of these brands of batteries different?
   
+The relevant overall hypotheses are $H_0: \mu_1=\mu_2=\mu_3, H_1:$ at lesat two of $\mu_i$ are different.
+
+The ANOVA result shows that p-value of F-test ($6.141\times10^{-6}$) is small enough to reject $H_0$. We can conclude there is a significant differce in treatment means or these brands have an effect on the life of battery on 0.05 significent level.
+
 ```{r echo=T, collapse=TRUE}
 table_battery <- read_xlsx("Exercise3_26.xlsx")
 model_battery <- aov(Life~Brand, data=table_battery)
-anova(model_battery)
 summary(model_battery)
-ols_regress(Life~Brand, table_battery)
 ```
-  
+
+ ---
+ 
   (b) Analyze the residuals from this experiment.
+
+ - The QQ plot of residuals doesn't show any problem of normality of residuals.
+ - The residuals versus fitted values shows the variance at each treatment is constant.
+ - The residuals versus observation number shows the residuals are independent with each other.
+ - The Levene's or Bartlett's test also show a constant variance.
 
 ```{r echo=T}
 ols_plot_diagnostics(lm(Life~Brand, data=table_battery))
-ols_test_normality(lm(Life~Brand, data=table_battery))
-
+bartlett.test(Life~Brand, data=table_battery)
 ```
   
+ ---
+ 
   (c) Construct a 95 percent confidence interval estimate on the mean life of battery brand 2. Construct a 99 percent confidence interval estimate on the mean difference between the lives of battery brands 2 and 3.
+
+The 95% confidence interval on the mean life of battery brand 2 is:
+
+$$\bar y_{i.}\pm t_{\frac{\alpha}2,N-a}\sqrt\frac{MS_E}n=79.4\pm t_{\frac{0.05}2,18-3}\sqrt\frac{15.6}5$$
   
-```{r echo=T}
-confint(model_battery, level = 0.95)
+The 99% confidence interval on the mean difference between the lives of battery brands 2 and 3 is:
 
-(LSD.test(model_battery, trt="Brand"))
+$$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2,N-a}\sqrt\frac{2MS_E}n=79.4-100.4\pm t_{\frac{0.05}2,18-3}\sqrt\frac{2*15.6}5$$
 
-pairw.anova(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
-lsdCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-bonfCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-scheffeCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-dunnettCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, control = "Brand2")
-scheffe.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c("Brand2", "Brand3"), conf.level = 0.99, MSE = NULL, df.err = NULL)
+Therefore, $75.551\le\mu_2\le83.249$, $-28.631\le\mu_2-\mu3\le-13.369$
+  
+```{r echo=T,collapse=TRUE}
+(LSD.test(model_battery, trt="Brand",alpha = 0.05))
+pairw.anova(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 bonf.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c("Brand2", "Brand3"), conf.level = 0.99, MSE = NULL, df.err = NULL, comps = 1)
-
-
 ``` 
-  
+
+ ---
+ 
   (d) Which brand would you select for use? If the manufacturer will replace without charge any battery that fails in less than 85 weeks, what percentage would the company expect to replace?
 
+Chose brand 3 for longest life. Mean life of this brand in 100.4 weeks, and the variance of life is estimated by 15.60 (MSE). Assuming normality, then the probability of failure before 85 weeks is:
 
-```{r echo=T, collapse=TRUE}
+$$Φ\left(\frac{85-100.4}{\sqrt{15.60}}\right)=Φ(-0.390)=0.00005$$
 
-power.anova.test(groups = 3, n =5,between.var = 598.07, within.var = 15.6, sig.level = 0.05, power = NULL)
-
-power.anova.test(groups = 2, n =5,between.var = 100.4, within.var = 15.6, sig.level = 0.05, power = NULL)
-
-```
+That is, about 5 out of 100,000 batteries will fail before 85 week.
 
 ### Problem 5 (3.22/26)
 
 The response time in milliseconds was determined for three different types of circuits that could be used in an automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
 
   (a) Test the hypothesis that the three circuit types have the same response time. Use 𝛼 = 0.01.
+  
+The relevant overall hypotheses are $H_0: \mu_1=\mu_2=\mu_3, H_1:$ at lesat two of $\mu_i$ are different.
 
+The ANOVA result shows that p-value of F-test ($0.000402$) is small enough to reject $H_0$. We can conclude there is a significant differce in treatment means or these circuits types have an effect on the response time on 0.01 significent level.
 
 ```{r echo=T, collapse=TRUE}
 table_circuit <- read_xlsx("Exercise3_22.xlsx")
 model_circuit <- aov(Respone~Type, data=table_circuit)
-anova(model_circuit)
+summary(model_circuit)
 ```
-  
+
+ ---
+ 
   (b) Use Tukey’s test to compare pairs of treatment means. Use 𝛼 = 0.01.
 
+the results indicate that the mean of treatment 2 differs from the means of both treatments 1 and3, and that the means for treatments 1 and 3 are the same on 0.01 significent level.
+
 ```{r echo=T, collapse=TRUE}
-# Tukey test to study each pair of treatment :
 TukeyHSD(aov(model_circuit), ordered = TRUE,conf.level=0.99)
-
 pairw.anova(table_circuit$Respone,as.factor(table_circuit$Type), conf.level = 0.99, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
-tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-
-HSD.test(model_circuit,"Type", group=TRUE,console=TRUE)
-
 ```
-  
+
+ ---
+ 
   (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the response time of circuit type 2 to be different from the other two.
 
 $$\begin{cases}H_0:\mu_1-2\mu_2+\mu_3=0\\H_1:\mu_1-2\mu_2+\mu_3\neq0\end{cases}$$
-$$C_1:y_1-2y_2+y_3=54-2(111)+42=-126$$
+$$C_1=y_{1.}-2y_{2.}+y_{3.}=54-2(111)+42=-126$$
+$$C=\sum_{i=1}^ac_i\bar y_{i.}=\bar y_{1.}-2\bar y_{2.}+\bar y_{3.}=10.8-2(22.2)+8.4=-25.2$$
+
+$$SS_{C_1}=\frac{(-126)^2}{5*6}=529.2;\quad F_{C_1}=\frac{529.2}{16.9}=31.31$$
+
+$$F_{1,12}=\frac{SS_C}{MS_E}=\frac{C^2}{\frac{MS_E}n\sum_{i=1}^ac_i^2}=\frac{-25.2^2}{\frac{16.9}56}=31.31$$
+
+The P-value of F-test ($0.0001169669$) is small enough to reject $H_0$, We can conclude treatment means of type 2 has a significant differce between treatment means of type 1 and type 3 on 0.01 significent level.
+
+```{r, collapse=TRUE}
+HSD.test(model_circuit,"Type", group=TRUE,console=TRUE)
+
+(25.2^2*5)/(16.9*6)
+1-pf(31.31, 1, 12, lower.tail = TRUE, log.p = FALSE)
+```
+
+ ---
+
   (e) If you were the design engineer and you wished to minimize the response time, which circuit type would you select?
-  
+
+Type 1 and type 3 have lower response time and have not significant different on response time. The engineer could choose either one.
+
+ ---
+ 
   (f) Analyze the residuals from this experiment. Are the basic analysis of variance assumptions satisfied?
+
+ - The QQ plot of residuals doesn't show any problem of normality of residuals.
+ - The residuals versus fitted values shows the variance at each treatment is constant.
+ - The residuals versus observation number shows the residuals are independent with each other.
+ - The Levene's or Bartlett's test also show a constant variance.
+
+```{r echo=T}
+ols_plot_diagnostics(lm(Respone~Type, data=table_circuit))
+bartlett.test(Respone~Type, data=table_circuit)
+```
+  
 
 ### Problem 6: (3.41/9 and 3.49/57)
 
   (3.41/9) Refer to Problem 5. If we wish to detect a maximum difference in mean response times of 10 milliseconds with a probability of at least 0.90, what sample size should be used? How would you obtain a preliminary estimate of $σ^2$?
 
+For $a=3, D=10, the preliminary estimate \hat\sigma^2=MS_E=16.9$.
+
+$$Φ^2=\frac{nD^2}{2aσ^2}=\frac{n(10)^2}{2(3)(16.9)}=0.986n$$
+Letting $α=0.05, P(accept) = 0.1 ,\nu_1=a−1=2$
+
+When $n\ge6,N\ge18$, The power is larger than 0.90.
+
+
+Notice that we have used an estimate of the variance obtained from the present experiment. This indicates that we probably didn’t use a large enough sample (n=5 ) to satisfy the criteria specified in this problem. However, the sample size was adequate to detect differences in one of the circuit types.
+
+When we have no prior estimate of variability, sometimes we will generate sample sizes for a range of possible variances to see what effect this has on the size of the experiment. Often a knowledgeable expert will be able to bound the variability in the response, by statements such as “the standard deviation is going to be at least…” or “the standard deviation shouldn’t be larger than…”.
+
+https://www.statmethods.net/stats/power.html
+
+
+```{r echo=T, collapse=TRUE}
+(LSD.test(model_circuit, trt="Type",alpha = 0.05))
+
+power.anova.test(groups = 3, n =NULL,between.var =var(c(10.8,22.2,8.4)), within.var = 16.9, sig.level = 0.05, power = 0.9)
+
+# pwr  type = c("two.sample", "one.sample", "paired"),alternative = c("two.sided", "less", "greater"))
+pwr.t.test(n = , d =10, sig.level =0.05, power =0.9, type ="one.sample", alternative =c("two.sided", "less", "greater"))
+# biotools
+# samplesize(x, fun, sizes = NULL, lcl = NULL, ucl = NULL,nboot = 200, conf.level = 0.95, nrep = 500, graph = TRUE, ...)
+
+```
 
  ---
- 
+
   (3.49/57) Consider the data shown in Problem 5.
 
   (a) Write out the least squares normal equations for this problem and solve them for $\hat\mu$ and $\hat\tau_i$, using the usual constraint ($\sum^3_{i=1} \hat\tau_i=0$). Estimate $\tau_1-\tau_2$
@@ -273,12 +332,30 @@ For $\sum^3_{i=1} \hat\tau_i=0$, $\hat\mu=13.80,\hat\tau_1=-3.00,\hat\tau_2=8.40
 
 $\hat\tau_1-\hat\tau_2=-3.00-8.40=-11.40$
 
+ ---
+
   (b) Solve the equations in (a) using the constraint $\hat\tau_3=0$. Are the estimator $\hat\tau_i$ and $\hat\mu$ the same as you found in (a)? Why? Now estimate $\tau_1-\tau_2$ and compare your answer with that for (a). What statement can you make about estimating contrasts in the $\tau_i$
+
+Imposing the constraint,$\hatτ_3=0$ we get the following solution to the normal equations: $\hat\mu=8.40$, $\hatτ_1=2.40$, $\hatτ_2=13.8$, and $\hatτ_3=0$. These estimators are not the same as in part (a). However, $\hatτ_1-\hatτ_2=2.40-13.8=-11.40$, is the same as in part (a). The contrasts are estimable.
+
+ ---
+  (c) Estimate $\mu+\tau_1$, $2\tau_1-\tau_2-\tau_3$, and $\mu+\tau_1+\tau_2$ using the two solutions to the normal equations. Compare the results obtained in each case.
   
-  (c) Estimate $\mu+\tau_1$, $2\tau_1-\tau_2-\tau_3$, $\mu+\tau_1+\tau_2$ and using the two solutions to the normal equations. Compare the results obtained in each case.
-  
+|     Contrast          |Estimated from Part (a)|Estimated from Part (b)|
+|          ----         |           ---         |            ---        |
+|$\mu+\tau_1$           | 10.80   |10.80  |
+|$2\tau_1-\tau_2-\tau_3$| -9.00   |-9.00  |
+|$\mu+\tau_1+\tau_2$    | 19.20   |24.60  |
   
 ```{r, eval=FALSE, echo=T}
+
+lsdCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
+bonfCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
+tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
+scheffeCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
+dunnettCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, control = "Brand2")
+scheffe.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c("Brand2", "Brand3"), conf.level = 0.99, MSE = NULL, df.err = NULL)
+
 
 ggplot(table_battery, aes(x = Brand, y = Life)) + geom_boxplot()
 
