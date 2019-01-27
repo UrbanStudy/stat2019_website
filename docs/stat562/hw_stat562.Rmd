@@ -104,7 +104,7 @@ $$P(X-4\le x|Y\ge5)=P(X\le x-4|X+1\ge5)=1-P(X\ge x+4|X\ge4)$$
 
 According to the 'memoryless' property of Exponential distribution,
 
-$$=1-P(X\ge x|X\ge4)=1-P(X\ge x)=P(X\le x)=e^{-x},\quad x\ge4$$
+$$=1-P(X\ge x|X\ge4)=1-P(X\ge x)=P(X\le x)=1-e^{-x},\quad x\ge4$$
 
   ---
 
@@ -208,7 +208,7 @@ D=\frac{r}\tau=\frac{\sigma}{\sigma+\tau}
 \end{cases}$$
 
 
----
+ ---
 
 **5.10** Let $X_1,..,X_n$ be a random sample from a $n(\mu,\sigma^2)$ population.
 
@@ -218,7 +218,7 @@ For $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$ and $Var\chi^2_{n-1}=2(n-1)$, th
 
 $$Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{2\sigma^4}{n-1}$$
 
----
+ ---
 
 **5.13** Let $X_1,..,X_n$ be iid $n(\mu,\sigma^2)$. Find a function of $S^2$, the sample variance, say $g(S^2)$, that satisfies $Eg(S^2)=\sigma$. (Hint:Try $g(S^2)=c\sqrt{S^2}$, where c is a constant.)
 
@@ -234,7 +234,7 @@ $$=\frac{c\sigma}{\sqrt{n-1}}\cdot\frac{\Gamma(\frac{n}2)2^{\frac{n}2}}{\Gamma(\
  
 $$\therefore c=\sqrt{\frac{n-1}{2}}\cdot\frac{\Gamma(\frac{n-1}2)}{\Gamma(\frac{n}2)}$$
  
----
+ ---
 
 **5.15** Establish the following recursion relations for means and variances. Let $\bar{X_n}$, and $S_n^2$ be the mean and variance, respectively, of $X_1,..,X_n$. Then suppose another observation, $X_{n+1}$ , becomes available. Show that
 
@@ -254,25 +254,89 @@ $$=(n-1)S_n^2+\frac{n\bar X_n^2+nX_{n+1}^2-2n\bar X_{n}X_{n+1}}{n+1}=(n-1)S_n^2+
 
 ## HW3
 
-**5.22** Let X and Y be lid nCO, 1) random variables, and define Z = min(X, Y ) . Prove that Z2 '" XI
+**5.22** Let X and Y be $iid\ n(0,1)$ random variables, and define $Z=\min(X,Y)$. Prove that $Z^2\sim\chi_1^2$
+
+ -Method I
+
+Calculating the cdf of $Z^2$,
+
+$$F_{Z^2}(z)=P([\min(X,Y)]^2\le z)=P(−\sqrt z\le\min(X,Y)\le\sqrt z)=P(\min(X,Y)\le\sqrt z)-P(\min(X,Y)\le-\sqrt z)$$
+
+$$=[1−P(\min(X,Y)>\sqrt z)]−[1−P(\min(X,Y)>−\sqrt z)]=P(\min(X,Y)>−\sqrt z)−P(\min(X,Y)>\sqrt z)$$
+
+For X and Y are independent,
+
+$$=P(X>−\sqrt z)P(Y>−\sqrt z)−P(X>\sqrt z)P(Y>\sqrt z)$$
+
+For X and Y are identically distributed, $P(X>a)=P(Y>a)=1−F_X(a)=F_X(-a)$,
+
+$$=[1−F_X(−\sqrt z)]^2−[1−F_X(\sqrt z)]^2 = 1−2F_X(−\sqrt z),$$
+
+Differentiating and substituting gives
+
+$$f_{Z^2}(z)=\frac{d}{dz}F_{Z^2}(z)=f_{X}(−\sqrt z)\frac{1}{\sqrt z}=\frac{1}{\sqrt{2\pi}}z^{-\frac12}e^{-\frac{z}2}$$
+
+Therefore, $Z^2\sim\chi^2_1$ 
+
+ -Method II
+
+$$P(Z^2\le z)=P([\min(X,Y)]^2\le z)=P(−\sqrt z\le\min(X,Y)\le\sqrt z)=P(-\sqrt z\le X\le\sqrt z,X\le Y)+P(-\sqrt z\le Y\le\sqrt z,Y\le X)$$
+
+X and Y are independent, and $P(Y\le X)=P(X\le Y)=\frac12$
+
+$$=P(-\sqrt z\le X\le\sqrt z|X\le Y)P(X\le Y)+P(-\sqrt z\le Y\le\sqrt z|Y\le X)P(Y\le X)=\frac12P(-\sqrt z\le X\le\sqrt z)+\frac12P(-\sqrt z\le Y\le\sqrt z)$$
+
+For X and Y are identically distributed,
+
+$$P(Z^2\le z)=P(-\sqrt z\le X\le\sqrt z)$$
+
+$$f_{Z^2}(z)=\frac{d}{dz}P(-\sqrt z\le X\le\sqrt z)=\frac{1}{\sqrt{2\pi}}\left(z^{-\frac12}\frac12e^{-\frac{z}2}+z^{-\frac12}\frac12e^{-\frac{z}2}\right)=\frac{1}{\sqrt{2\pi}}z^{-\frac12}e^{-\frac{z}2}$$
+
+Therefore, $Z^2\sim\chi^2_1$ 
 
  ---
 
-**5.24** Let Xl , . . . , Xn be a random sample from a population with pdf
-fx(x) = {􀄋jO if 0 < x < ()
-otherwise.
-Let X(1) < . . . < X(n) be the order statistics. Show that X(l)j X(n) a.nd X(n) are
-independent random variables.
+**5.24** Let $X1,..,X_n$ be a random sample from a population with pdf $f_X(x)=\begin{cases}\frac1{\theta}&0<x<1\\0&\text{otherwise}\end{cases}$
+otherwise. Let $X_{(1)}<..<X_{(n)}$ be the order statistics. Show that $X_{(1)}/X_{(n)}$ and $X_{(n)}$ are independent random variables.
+
+For $f_X(x)=\frac1{\theta}$, $F_X(x)=\frac{x}{\theta},0<x<\theta$. Let $Y=X_{(n)},Z=X_{(1)}$
+
+From **Theorem 5.4.6**, 
+
+$$f_{X_{(i)},X_{(j)}}(u,v)=\frac{n!}{(i-1)!(j-1-i)!(n-j)!}f_X(u)f_X(v)[F_X(u)]^{i-1}[F_X(v)-F_X(u)]^{j-1-i}[1-F_X(v)]^{n-j}$$
+$$f_{X_{(1)},..,X_{(n)}}(x_1,..,x_n)=\begin{cases}n!f_X(x_1)\cdot...\cdot f_X(x_n) &-\infty<x_1<..<x_n<\infty\\0&\text{otherwise}\end{cases}$$
+
+$$f_{Z,Y}(z,y)=\frac{n!}{(1-1)!(n-1-1)!(n-n)!}\frac1{\theta}\frac1{\theta}[\frac{z}{\theta}]^{1-1}[\frac{y}{\theta}-\frac{z}{\theta}]^{n-1-1}[1-\frac{y}{\theta}]^{n-n}=\frac{n(n-1)}{\theta^n}(y-z)^{n-2},0<z<y<\theta$$
+
+Now let $W=\frac{Z}{Y},Q=Y$. Then $Y=Q,Z=WQ$, and $|J| = q$. Therefore
+
+$$f_{W,QQ}(w,q)=\frac{n(n-1)}{\theta^n}(q-wq)^{n-2}q=\frac{n(n-1)}{\theta^n}(1-w)^{n-2}q^{n-1},0<w<1,0<q<\theta$$
+
+The joint pdf factors into functions of $w$ and $q$, and, hence, $W$ and $Q$ are independent.
 
  ---
 
-**5.25** As a generalization of the previous exercise, let Xl , . . . , Xn be iid with pdf 
+**5.25** As a generalization of the previous exercise, let $X1,..,X_n$ be iid with pdf $f_X(x)=\begin{cases}\frac{a}{\theta^a}x^{a-1}&0<x<1\\0&\text{otherwise}\end{cases}$. Let $X_{(1)}<..<X_{(n)}$ be the order statistics. Show that $X_{(1)}/X_{(2)}, X_{(2)}/X_{(3)},..,$X_{(n-1)}/X_{(n)}$ $ and $X_{(n)}$ are mutually independent random variables. Find the distribution of each of them.
 
-fx (x) = { a a - I:x if 0 < X < ()
-otherwise.
+The joint pdf of $X_{(1)}<..<X_{(n)}$ is
 
-Let X(l) < . . . < X(n) be the order statistics. Show that X(lJlX(2J> X(2J1X(3), 
-X(n-lJl X(n), and X(n) are mutually independent random variables. Find the distribution of each of them.
+$$f(u_1,..,u_n)=\frac{n!a^n}{\theta^{an}}u_1^{a-1}\cdots u_n^{a-1}, 0<u_1<..<u_n<\theta$$
+
+Make the one-to-one transformation to $Y_{1}=\frac{X_{(1)}}{X_{(2)}},..,Y_{n−1}=\frac{X_{(n−1)}}{X_{(n)}},Y_n=X_{(n)}$.
+The Jacobian is $J = y_2y_3^2\cdots y_n^{n-1}$. So the joint pdf of $Y_1,..,Y_n$ is
+
+$$f(y_1,..,y_n)=\frac{n!a^n}{\theta^{an}}(y_1\cdots y_n)^{a-1}(y_2\cdots y_n)^{a-1}\cdots y_n^{a-1}(y_2y_3^2\cdots y_n^{n-1})$$
+
+$$=\frac{n!a^n}{\theta^{an}}y_1^{a-1}y_2^{2a-1}\cdots y_n^{na-1}, 0<u_i<1,i=1,..,n-1,0<y_n<\theta$$
+
+We see that $f(y_1,..,y_n)$ factors so $Y_1,..,Y_n$ are mutually independent. To get the pdf of $Y_1$, integrate out the other variables and obtain that $f_{Y_1}(y=a$. Thus $f_{Y_1}(y_1)=ay^{a−1}_1,0<y_1<1$. 
+Similarly, for $i=2,..,n−1$, we obtain $f_{Y_i}(y_i)=iay_i^{ia−1},0<y_i<1$. 
+
+From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$
+
+Therefore, the pdf of $Y_n$ is $f_{Y_n}(y_n)=\frac{na}{\theta^{an}}y_n^{na-1}, 0<y_n<\theta$. It can be checked that the product of these marginal pdfs is the joint pdf given above.
+
+
 
 ## HW4
 
