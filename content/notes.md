@@ -19,7 +19,9 @@ stplanr
 
 https://www.rdocumentation.org/packages/stplanr
 
+A visual indtroduction to probability and statistics
 
+https://seeing-theory.brown.edu
 
 
 Normal_PDF|Normal_CDF|Chi^2_PDF|Chi^2_CDF
