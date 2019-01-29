@@ -83,7 +83,7 @@ $$E(y_{ij}-\bar y_{i.})=E[\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}]
 
 $Var(y_{ij}-\bar y_{i.})=Var[\varepsilon_{ij}-\frac1n \sum_{j=1}^n\varepsilon_{ij}]=Var[\varepsilon_{ij}]+\frac1{n^2}\sum_{j=1}^nVar[\varepsilon_{ij}]-\frac2nCov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]$
 
-For $ε_{ij}\sim iid\ N(0,σ^2)$, $Var[\varepsilon_{ij}]=Cov[\varepsilon_{ij},\varepsilon_{ij}]=\sigma^2$, $Cov[\varepsilon_{ij},\varepsilon_{ik}]=0,k=1,2,..n$ then
+For $ε_{ij}\sim iid\ N(0,σ^2)$, $Var[\varepsilon_{ij}]=Cov[\varepsilon_{ij},\varepsilon_{ij}]=\sigma^2$, $Cov[\varepsilon_{ij},\varepsilon_{ik}]=0,k\neq j$ then
 
 $-\frac2nCov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]=-\frac2nCov[\varepsilon_{ij},(\varepsilon_{i1}+..+\varepsilon_{ij}..+\varepsilon_{in})]=-\frac2n(Cov[\varepsilon_{ij},\varepsilon_{i1}]+..+Cov[\varepsilon_{ij},\varepsilon_{ij}]..+Cov[\varepsilon_{ij},\varepsilon_{in}])=-\frac2n\sigma^2$
 
@@ -91,8 +91,7 @@ $$Var(y_{ij}-\bar y_{i.})=\sigma^2+\frac{\sigma^2}n-\frac2n\sigma^2=\frac{n-1}n\
  
  ---
 
-  (b) Using your answers in part (a) and shortcut formula for variance ($Var(X)=E(X^2)-E(X)^2$), find 
-$E[(y_{ij}-\bar y_{i.})^2]=$
+  (b) Using your answers in part (a) and shortcut formula for variance ($Var(X)=E(X^2)-E(X)^2$), find $E[(y_{ij}-\bar y_{i.})^2]$
 
 For $Var[y_{ij}-\bar y_{i.}]=E[(y_{ij}-\bar y_{i.})^2]-E[y_{ij}-\bar y_{i.}]^2$, then
 
@@ -102,9 +101,9 @@ $$E[(y_{ij}-\bar y_{i.})^2]=Var[y_{ij}-\bar y_{i.}]+E[y_{ij}-\bar y_{i.}]^2=\fra
 
   (c) Let $a=3$ treatments in the above model and the following linear functions of $\mu_i=\mu+\tau_i$ are tested. $\mu_1=\mu_2$, $\frac{\mu_1+\mu_2}{2}=\mu_3$.
 
-   (i) Prove that each of these is a contrast and they are orthogonal contrasts.
+  (i) Prove that each of these is a contrast and they are orthogonal contrasts.
 
-For $a=3,\mu_1=\mu_2$, $c_1=1,c_2=-1,c_3=0$. For $\frac{\mu_1+\mu_2}2=\mu_3$, $d_1=1,d_2=1,d_3=-2$
+For $a=3,\mu_1=\mu_2$, let $c_1=1,c_2=-1,c_3=0$. For $\frac{\mu_1+\mu_2}2=\mu_3$, let $d_1=1,d_2=1,d_3=-2$
 
 $$\sum_{i=1}^3c_i=1-1+0=0;\quad\sum_{i=1}^3d_i=1+1-2=0$$
 
@@ -180,7 +179,7 @@ summary(model_battery)
  - The residuals versus observation number shows the residuals are independent with each other.
  - The Levene's or Bartlett's test also show a constant variance.
 
-```{r echo=T}
+```{r echo=T,collapse=TRUE}
 ols_plot_diagnostics(lm(Life~Brand, data=table_battery))
 bartlett.test(Life~Brand, data=table_battery)
 ```
@@ -191,7 +190,7 @@ bartlett.test(Life~Brand, data=table_battery)
 
 The 95% confidence interval on the mean life of battery brand 2 is:
 
-$$\bar y_{i.}\pm t_{\frac{\alpha}2,N-a}\sqrt\frac{MS_E}n=79.4\pm t_{\frac{0.05}2,18-3}\sqrt\frac{15.6}5$$
+$$\bar y_{i.}\pm t_{\frac{\alpha}2,N-a}\sqrt\frac{MS_E}n=-21\pm t_{\frac{0.01}2,18-3}\sqrt\frac{15.6}5$$
   
 The 99% confidence interval on the mean difference between the lives of battery brands 2 and 3 is:
 
@@ -235,7 +234,9 @@ summary(model_circuit)
  
   (b) Use Tukey’s test to compare pairs of treatment means. Use 𝛼 = 0.01.
 
-the results indicate that the mean of treatment 2 differs from the means of both treatments 1 and3, and that the means for treatments 1 and 3 are the same on 0.01 significent level.
+Let $H_{(1-2)0}:\mu_1-\mu_2=0,H_{(1-2)1}:\mu_1-\mu_2\neq0$; $H_{(1-3)0}:\mu_1-\mu_3=0,H_{(1-3)1}:\mu_1-\mu_3\neq0$;$H_{(2-3)0}:\mu_2-\mu_3=0,H_{(2-3)1}:\mu_2-\mu_3\neq0$;
+
+The P-values of F-test are $P_{(1-2)}=0.0.002366, P_{(1-3)}=0.636704, P_{(2-3)}=0.000504$. We can reject $H_{(1-2)0}$ and $H_{(2-3)0}$, but fail to reject $H_{(1-3)0}$. We can conclude treatment means of type 1 and type 2, treatment means of type 2 and type 3 has a significant differce on 0.01 significent level. There is not significant differce between type 1 and type 3 on 0.01 significent level.
 
 ```{r echo=T, collapse=TRUE}
 TukeyHSD(aov(model_circuit), ordered = TRUE,conf.level=0.99)
@@ -246,28 +247,42 @@ pairw.anova(table_circuit$Respone,as.factor(table_circuit$Type), conf.level = 0.
  
   (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the response time of circuit type 2 to be different from the other two.
 
-$$\begin{cases}H_0:\mu_1-2\mu_2+\mu_3=0\\H_1:\mu_1-2\mu_2+\mu_3\neq0\end{cases}$$
-$$C_1=y_{1.}-2y_{2.}+y_{3.}=54-2(111)+42=-126$$
+$$\begin{cases}\mu_1-2\mu_2+\mu_3=0\\\mu_1-\mu_3=0\end{cases}$$
+
+For $\sum_{i=1}^3c_id_i=1*1+(-2)*0+1*(-1)=0$, they are orthogonal contrasts.
+
 $$C=\sum_{i=1}^ac_i\bar y_{i.}=\bar y_{1.}-2\bar y_{2.}+\bar y_{3.}=10.8-2(22.2)+8.4=-25.2$$
 
-$$SS_{C_1}=\frac{(-126)^2}{5*6}=529.2;\quad F_{C_1}=\frac{529.2}{16.9}=31.31$$
+$$H_{C0}:\mu_1-2\mu_2+\mu_3=0\quad H_{C1}:\mu_1-2\mu_2+\mu_3\neq0$$
 
-$$F_{1,12}=\frac{SS_C}{MS_E}=\frac{C^2}{\frac{MS_E}n\sum_{i=1}^ac_i^2}=\frac{-25.2^2}{\frac{16.9}56}=31.31$$
+$$F_{1,12}=\frac{SS_C}{MS_E}=\frac{C^2}{\frac{MS_E}n\sum_{i=1}^ac_i^2}=\frac{(-25.2)^2}{\frac{16.9}56}=31.31$$
 
-The P-value of F-test ($0.0001169669$) is small enough to reject $H_0$, We can conclude treatment means of type 2 has a significant differce between treatment means of type 1 and type 3 on 0.01 significent level.
+For the first contrast, the P-value of F-test ($0.0001169669$) is small enough to reject $H_{C0}$, We can conclude treatment means of type 2 has a significant differce with treatment means of type 1 and type 3 on 0.01 significent level.
+
+$$D=\sum_{i=1}^ac_i\bar y_{i.}=\bar y_{1.}-\bar y_{3.}=10.8-8.4=2.4$$
+
+$$H_{D0}:\mu_1-\mu_3=0\quad H_{D1}:\mu_1-\mu_3\neq0$$
+
+$$F_{1,12}=\frac{SS_C}{MS_E}=\frac{C^2}{\frac{MS_E}n\sum_{i=1}^ac_i^2}=\frac{2.4^2}{\frac{16.9}52}=0.852071$$
+
+For the second contrast, the P-value of F-test ($0.374155$) is large and fail to reject $H_{D0}$, We can conclude there is not a significant differce between treatment means of type 1 and type 3 on 0.01 significent level.
 
 ```{r, collapse=TRUE}
 HSD.test(model_circuit,"Type", group=TRUE,console=TRUE)
 
 (25.2^2*5)/(16.9*6)
+(2.4^2*5)/(16.9*2)
+
+qf(0.95, 1, 12, lower.tail = TRUE, log.p = FALSE)
 1-pf(31.31, 1, 12, lower.tail = TRUE, log.p = FALSE)
+1-pf(0.852071, 1, 12, lower.tail = TRUE, log.p = FALSE)
 ```
 
  ---
 
   (e) If you were the design engineer and you wished to minimize the response time, which circuit type would you select?
 
-Type 1 and type 3 have lower response time and have not significant different on response time. The engineer could choose either one.
+Type 1 and type 3 have lower response time ($\mu_1=10.8,\mu_3=8.4$). We had proved the mean of response time for type 1 and type 3 have not significant different on response time on 0.01 significant level. The engineer could choose either one.
 
  ---
  
@@ -278,7 +293,7 @@ Type 1 and type 3 have lower response time and have not significant different on
  - The residuals versus observation number shows the residuals are independent with each other.
  - The Levene's or Bartlett's test also show a constant variance.
 
-```{r echo=T}
+```{r  echo=T, collapse=TRUE}
 ols_plot_diagnostics(lm(Respone~Type, data=table_circuit))
 bartlett.test(Respone~Type, data=table_circuit)
 ```
@@ -288,30 +303,23 @@ bartlett.test(Respone~Type, data=table_circuit)
 
   (3.41/9) Refer to Problem 5. If we wish to detect a maximum difference in mean response times of 10 milliseconds with a probability of at least 0.90, what sample size should be used? How would you obtain a preliminary estimate of $σ^2$?
 
-For $a=3, D=10, the preliminary estimate \hat\sigma^2=MS_E=16.9$.
+For $a=3, D=10$, the preliminary estimate $\hat\sigma^2=MS_E=16.9$.
 
 $$Φ^2=\frac{nD^2}{2aσ^2}=\frac{n(10)^2}{2(3)(16.9)}=0.986n$$
 Letting $α=0.05, P(accept) = 0.1 ,\nu_1=a−1=2$
 
-When $n\ge6,N\ge18$, The power is larger than 0.90.
+The results show that when $n=5$, the power is 0.86476, when $n=6$, the power is 0.9345867. Thus, the sample size should be $N\ge18$.
 
 
 Notice that we have used an estimate of the variance obtained from the present experiment. This indicates that we probably didn’t use a large enough sample (n=5 ) to satisfy the criteria specified in this problem. However, the sample size was adequate to detect differences in one of the circuit types.
 
 When we have no prior estimate of variability, sometimes we will generate sample sizes for a range of possible variances to see what effect this has on the size of the experiment. Often a knowledgeable expert will be able to bound the variability in the response, by statements such as “the standard deviation is going to be at least…” or “the standard deviation shouldn’t be larger than…”.
 
-https://www.statmethods.net/stats/power.html
-
-
 ```{r echo=T, collapse=TRUE}
-(LSD.test(model_circuit, trt="Type",alpha = 0.05))
 
-power.anova.test(groups = 3, n =NULL,between.var =var(c(10.8,22.2,8.4)), within.var = 16.9, sig.level = 0.05, power = 0.9)
-
-# pwr  type = c("two.sample", "one.sample", "paired"),alternative = c("two.sided", "less", "greater"))
-pwr.t.test(n = , d =10/sqrt(16.9), sig.level =0.05, power =0.9, type ="one.sample", alternative =c("two.sided", "less", "greater"))
-# biotools
-# samplesize(x, fun, sizes = NULL, lcl = NULL, ucl = NULL,nboot = 200, conf.level = 0.95, nrep = 500, graph = TRUE, ...)
+library(pwr2)
+pwr.1way(k=3, n=5, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
+pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
 
 ```
 
@@ -321,22 +329,21 @@ pwr.t.test(n = , d =10/sqrt(16.9), sig.level =0.05, power =0.9, type ="one.sampl
 
   (a) Write out the least squares normal equations for this problem and solve them for $\hat\mu$ and $\hat\tau_i$, using the usual constraint ($\sum^3_{i=1} \hat\tau_i=0$). Estimate $\tau_1-\tau_2$
 
-$$\begin{matrix}
-15\hat\mu&+5\hat\tau_1&+5\hat\tau_2&+5\hat\tau_3&=207\\
-5\hat\mu&+5\hat\tau_1& & &=54\\
-5\hat\mu& &+5\hat\tau_2& &=111\\
-15\hat\mu& & &+5\hat\tau_3&=42
-\end{matrix}$$
+For $\sum^3_{i=1} \hat\tau_i=0$,
 
-For $\sum^3_{i=1} \hat\tau_i=0$, $\hat\mu=13.80,\hat\tau_1=-3.00,\hat\tau_2=8.40,\hat\tau_3=-5.40$
-
-$\hat\tau_1-\hat\tau_2=-3.00-8.40=-11.40$
+$$\begin{cases}\hat\tau_1+\hat\tau_2+\hat\tau_3=0\\\hat\mu+\hat\tau_1=10.8\\\hat\mu+\hat\tau_2=22.2\\\hat\mu+\hat\tau_3=8.4\end{cases}\implies
+\begin{cases}\hat\mu=13.80\\\hat\tau_1=-3.00\\\hat\tau_2=8.40\\\hat\tau_3=-5.40\end{cases}\implies
+\hat\tau_1-\hat\tau_2=-11.40$$
 
  ---
 
   (b) Solve the equations in (a) using the constraint $\hat\tau_3=0$. Are the estimator $\hat\tau_i$ and $\hat\mu$ the same as you found in (a)? Why? Now estimate $\tau_1-\tau_2$ and compare your answer with that for (a). What statement can you make about estimating contrasts in the $\tau_i$
 
-Imposing the constraint,$\hatτ_3=0$ we get the following solution to the normal equations: $\hat\mu=8.40$, $\hatτ_1=2.40$, $\hatτ_2=13.8$, and $\hatτ_3=0$. These estimators are not the same as in part (a). However, $\hatτ_1-\hatτ_2=2.40-13.8=-11.40$, is the same as in part (a). The contrasts are estimable.
+$$\begin{cases}\hat\tau_3=0\\\hat\mu+\hat\tau_1=10.8\\\hat\mu+\hat\tau_2=22.2\\\hat\mu+\hat\tau_3=8.4\end{cases}\implies
+\begin{cases}\hat\mu=8.40\\\hat\tau_1=2.40\\\hat\tau_2=13.8\\\hat\tau_3=0\end{cases}\implies
+\hat\tau_1-\hat\tau_2=-11.40$$
+
+The result shows the value of $\hatτ_1-\hatτ_2$ is irrelevant with the value of $\hatτ_3$. The contrasts are estimable.
 
  ---
   (c) Estimate $\mu+\tau_1$, $2\tau_1-\tau_2-\tau_3$, and $\mu+\tau_1+\tau_2$ using the two solutions to the normal equations. Compare the results obtained in each case.
@@ -346,6 +353,10 @@ Imposing the constraint,$\hatτ_3=0$ we get the following solution to the normal
 |$\mu+\tau_1$           | 10.80   |10.80  |
 |$2\tau_1-\tau_2-\tau_3$| -9.00   |-9.00  |
 |$\mu+\tau_1+\tau_2$    | 19.20   |24.60  |
+
+The result shows that $\tau_1$ is independent with $\tau_3$, $\tau_1$ is independent with $\tau_2$ and $\tau_3$, while $\tau_1$ and $\tau_2$ is dependent with $\tau_3$.
+
+
   
 ```{r, eval=FALSE, echo=T}
 
@@ -355,6 +366,21 @@ tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MS
 scheffeCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
 dunnettCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, control = "Brand2")
 scheffe.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c("Brand2", "Brand3"), conf.level = 0.99, MSE = NULL, df.err = NULL)
+
+https://www.statmethods.net/stats/power.html
+
+(LSD.test(model_circuit, trt="Type",alpha = 0.05))
+
+power.anova.test(groups = 3, n =NULL,between.var =var(c(10.8,22.2,8.4))/2, within.var = 16.9, sig.level = 0.05, power = 0.9)
+
+power.anova.test(groups = 3, n =NULL,between.var =var(table_circuit$Respone)/2, within.var = 16.9, sig.level = 0.05, power = 0.9)
+
+power.anova.test(groups = 3, n =NULL,between.var =(var(table_circuit$Respone)-16.9)/2, within.var = 16.9, sig.level = 0.05, power = 0.9)
+
+# pwr  type = c("two.sample", "one.sample", "paired"),alternative = c("two.sided", "less", "greater"))
+pwr.t.test(n =5, d =10, sig.level =0.05, power =, type ="one.sample", alternative ="two.sided")
+# biotools
+# samplesize(x, fun, sizes = NULL, lcl = NULL, ucl = NULL,nboot = 200, conf.level = 0.95, nrep = 500, graph = TRUE, ...)
 
 
 ggplot(table_battery, aes(x = Brand, y = Life)) + geom_boxplot()
