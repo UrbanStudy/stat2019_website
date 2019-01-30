@@ -18,13 +18,13 @@ When no changes in the demand for transit, the value of usage moves along the MD
 $$\frac{\Delta Q/Q}{\Delta P/P}=E\implies\Delta P/P=\frac{\Delta Q/Q}{E}=\frac{0.15}{0.3}=50\%$$
 $$TR=50\%P(1+15\%)Q=57.5\%PQ$$
 
-50% decrease in fares could achive the increase transit usage by 15%. The new revenue will be 57.5% of previously revenue.
+50% decrease in fares could achive the increase transit usage by 15%. The new revenue will be 57.5% of previous revenue.
 
  ---
  
  b. Would you expect the long-run price elasticity of demand to be larger or smaller? Explain why?
 
-Demand tends to be more elastic in the long rung rather than in the short run, because when prices change consumers often need more time to respond and change their shopping habits such as househould or firms' location, vehicle ownership, further change travel behaviors. (Mankiw, 2004).
+I expect the long-run price elasticity of demand to be larger. Demand tends to be more elastic in the long rung rather than in the short run, because when prices change consumers often need more time to respond and change their shopping habits such as househould or firms' location, vehicle ownership, further change travel behaviors. (Mankiw, 2004).
 
  ---
  
@@ -58,6 +58,9 @@ If these analyses are correct, privatization, possibly in combination with somew
 
 
 
+ * Reference
+
+_Mankiw (2004) “Principals of Macroeconomics”,South-WesternCollegePub,UK_
 
  ---
  
@@ -75,27 +78,12 @@ Let $P^*=MC$, then $10-0.0001Q^*=0.5\implies Q^*=95000$ riders.
 
 There will be 95000 riders and same service will be provided.
 
-The subsidies/profits is $TR-TC=(10Q^*-0.0001Q^{*2})–(120000+0.5Q^*)=47500-167500=-\$120000$
+The profits is $TR-TC=(10Q^*-0.0001Q^{*2})–(120000+0.5Q^*)=47500-167500=-\$120000$
 
-Or $TR-TC=(P^*-P^*)Q^*-120000=-\$120000$
+Or $TR-VC-FC=P^*Q^*-P^*Q^*-120000=-\$120000$
 
 The consumer surplus is $CS= \frac12(10-P)Q^*=\frac12\times(10-0.5)\times95000=\$451250$
 
-```{r}
-curve(10-0.0001*x, 0, 100000,col = "red",xlab ="Q", ylab ="P");text(20000,9, "MD")
-curve(10-0.0002*x, add = TRUE, col = "violet");text(20000,7, "MR")
-abline(h = 0.5, lty = 2);abline(h = 2, lty = 4)
-abline(v =95000, lty=2);text(95000,0.8, "(95000,0.5)")
-abline(v =47500, lty=2);text(47500,6, "(47500,5.25)");text(47500,0.8, "(47500,0.5)")
-abline(v =80000, lty=4);text(80000,2.5, "(80000,2)")
-polygon(x=c(47500,95000,47500), y=c(0.5,0.5,5.25), density=10, angle=45,lty =3);text(60000,2, "DWL")
-abline(v =31558, lty=4);text(35000,7.5, "(31558,6.8442)")
-polygon(x=c(0,31558,31558,0), y=c(0.5,0.5,6.8442,10), density=6, angle=-45,lty =3);text(15000,4, "Totoal Benefit=$250000")
-
-uniroot(function(x)(-0.00005*x^2+9.5*x-250000), lower=0, upper=100000)$root
-
-
-```
 
  ---
  
@@ -153,8 +141,33 @@ For $Q\le95000$, so $Q=31558,P=6.8442$. Once the price is lower than $6.8442, th
 
 The reults prove that the train is worth to be bulit because total social benifit are larger than total cost.
 
- * Reference
 
-_Mankiw (2004) “Principals of Macroeconomics”,South-WesternCollegePub,UK_
+|P(\$)|Rider|Fixed Cost|Variable Cost|Total Cost||Revenue|subsidies/profit   ||Consumer Surplus|Producer Surplus|Total surplus        | DWL=$TS-TS^*$           |
+|---  | --- | ---      |---          | ---      || ---   | ---               ||---             | ---            | ---                 |---                      |
+|$P$  |$Q$  |$FC$      |$VC=P^*Q$    |$TC=FC+VC$||$TR=PQ$|$TR-TC=(P-P^*)Q-FC$||$\frac12(10-P)Q$|$(P-P^*)Q$      |$\frac12(10+P-2P^*)Q$|$\frac12\Delta P\Delta Q$|
+|0.50 |95000|120000    |47500        |167500    ||47500  | -120000           ||451250          | 0              |451250               |0                        |
+|2.00 |80000|120000    |40000        |160000    ||160000 | 0                 ||320000          | 120000         |440000               |-11250                   |
+|5.25 |47500|120000    |23750        |143750    ||249375 | 105625            ||112812.5        | 225625         |338437.5             |-112812.5                |
+|5.25 |47500|250000    |23750        |273750    ||249375 | -24375            ||112812.5        | 225625         |338437.5             |-112812.5                |
+|6.84 |31558|250000    |15779        |265779    ||215986 | -49792.57         ||49792.56        | 200207.4       |250000               |-201250                  |
+15778.56
+```{r echo=FALSE}
+curve(10-0.0001*x, 0, 100000,col = "red",xlab ="Q", ylab ="P");text(20000,9, "MD")
+curve(10-0.0002*x, add = TRUE, col = "violet");text(20000,7, "MR")
+abline(h = 0.5, lty = 2);abline(h = 2, lty = 4)
+abline(v =95000, lty=2);text(95000,0.8, "(95000,0.5)")
+abline(v =47500, lty=2);text(47500,6, "(47500,5.25)");text(47500,0.8, "(47500,0.5)")
+abline(v =80000, lty=4);text(80000,2.5, "(80000,2)")
+polygon(x=c(47500,95000,47500), y=c(0.5,0.5,5.25), density=10, angle=45,lty =3);text(60000,2, "DWL")
+abline(v =31558, lty=4);text(35000,7.5, "(31558,6.8442)")
+polygon(x=c(0,31558,31558,0), y=c(0.5,0.5,6.8442,10), density=6, angle=-45,lty =3);text(15000,4, "Totoal Benefit=$250000")
+
+uniroot(function(x)(-0.00005*x^2+9.5*x-250000), lower=0, upper=100000)$root
+
+
+```
+
+
+
 
  
