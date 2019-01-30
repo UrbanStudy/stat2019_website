@@ -82,14 +82,18 @@ Or $TR-TC=(P^*-P^*)Q^*-120000=-\$120000$
 The consumer surplus is $CS= \frac12(10-P)Q^*=\frac12\times(10-0.5)\times95000=\$451250$
 
 ```{r}
-curve(10-0.0001*x, 0, 100000,col = "red",xlab ="Q", ylab ="P");text(30000,8, "MD")
-curve(10-0.0002*x, add = TRUE, col = "violet");text(30000,5, "MR")
-curve(9.5*x-0.0005*x^2, add = TRUE, col = "violet")
+curve(10-0.0001*x, 0, 100000,col = "red",xlab ="Q", ylab ="P");text(20000,9, "MD")
+curve(10-0.0002*x, add = TRUE, col = "violet");text(20000,7, "MR")
 abline(h = 0.5, lty = 2);abline(h = 2, lty = 4)
 abline(v =95000, lty=2);text(95000,0.8, "(95000,0.5)")
 abline(v =47500, lty=2);text(47500,6, "(47500,5.25)");text(47500,0.8, "(47500,0.5)")
 abline(v =80000, lty=4);text(80000,2.5, "(80000,2)")
 polygon(x=c(47500,95000,47500), y=c(0.5,0.5,5.25), density=10, angle=45,lty =3);text(60000,2, "DWL")
+abline(v =31558, lty=4);text(35000,7.5, "(31558,6.8442)")
+polygon(x=c(0,31558,31558,0), y=c(0.5,0.5,6.8442,10), density=6, angle=-45,lty =3);text(15000,4, "Totoal Benefit=$250000")
+
+uniroot(function(x)(-0.00005*x^2+9.5*x-250000), lower=0, upper=100000)$root
+
 
 ```
 
@@ -119,7 +123,7 @@ The price is $P_m=10–0.0001Q=10–4.75=\$5.25$
 
 The maximum profit is $TR-TC=(10-0.0001Q_m)Q_m-(120000+P^*Q_m)=(10-4.75)\times47500–120000-0.5\times47500=\$105625$
 
-Or $TR-TC=(P_m-P^*)Q_m-120000=(5.25-0.5)\times47500–120000=-\$105625$
+Or $TR-VC-FC=(P_m-P^*)Q_m-120000=(5.25-0.5)\times47500–120000=-\$105625$
 
 The deadweight loss is $DWL=\frac12\Delta P\Delta Q=\frac12(0.5-5.25)(95000-47500)=-\$112812.5$
 
@@ -127,19 +131,27 @@ The deadweight loss is $DWL=\frac12\Delta P\Delta Q=\frac12(0.5-5.25)(95000-4750
  
  d. Could the monopolist make a profit if fixed costs are $250,000 per day?  Does this mean that it would be a mistake to build the train based on economic benefits and costs for this level of fixed cost? Explain why you think it would or would not be from an economic efficiency perspective and include appropriate calculations.
 
-Let $FC=\$250000$, the maximum profit is $TR-TC=(P_m-P^*)Q_m-250000=-\$24375$.
+Let $FC=\$250000$, the monopolist's maximum profit is $TR-VC-FC=(P_m-P^*)Q_m-250000=-\$24375$.
 
 The monopolist won't make a profit. To examine the efficiency, we should compare total cost with total revenue and consumer surplus. 
+
+ - Method I
 
 For $P=10-0.0001Q$, $CS=\frac12(10-P)Q=\frac12[10-(10-0.0001Q)]Q=0.00005Q^2$
 
 $$CS+TR–TC=0.00005Q^2+(10Q-0.0001Q^2)–(250000+0.5Q)=-0.00005Q^2+9.5Q–250000$$
 
-Take the derivative with respect to $Q$ and suppose the result $9.5-2\times0.00005Q=0$. When $Q=95000$, the maximum profit is $-0.00005\times95000^2+9.5\times95000–250000=\$201250$
+Take the derivative with respect to $Q$ and suppose the result $9.5-2\times0.00005Q=0$. When $Q=95000$, the total maximum benefit is $-0.00005\times95000^2+9.5\times95000–250000=\$201250$
 
-Or $CS+PS=\frac12(10-5.25)47500+(5.25-0.5)47500=338437.5$
+Or $CS+TR-VC-FC=451250+(0.5-0.5)95000-250000=\$201250$
 
-The reult shows that the train is worth to be bulit because total revenue and consumer surplus are larger than total cost.
+ - Method II
+
+Let $CS+TR-VC-FC=0$, $Q_{1,2}=\frac{-b\pm \sqrt{b^2-4ac}}{2a}=\frac{9.5\pm\sqrt{40.25}}{0.0001}$, $Q_1=31558,Q_2=158442$.
+
+For $Q\le95000$, so $Q=31558,P=6.8442$. Once the price is lower than $6.8442, the riders are more than 31558, the total benefit will be positive.
+
+The reults prove that the train is worth to be bulit because total social benifit are larger than total cost.
 
  * Reference
 
