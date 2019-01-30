@@ -71,56 +71,73 @@ If these analyses are correct, privatization, possibly in combination with somew
 
  a. What number of riders will use the system if the price is set equal to marginal cost(This is essentially equivalent to assuming that a benevolent social planner sets the price so that maximum efficiency is reached)? How much service will be provided (Q*)? What are the subsidies or profits at this level of cost and price? What is the consumer surplus?
 
-Let $P=MC$, then $10-0.0001Q=0.5\implies Q=95000$ riders.
+Let $P^*=MC$, then $10-0.0001Q^*=0.5\implies Q^*=95000$ riders.
 
 There will be 95000 riders and same service will be provided.
 
-The subsidies/profits is $TR-TC=(10Q-0.0001Q^2)–(120000+0.5Q)=47500-167500=-\$120000$
+The subsidies/profits is $TR-TC=(10Q^*-0.0001Q^{*2})–(120000+0.5Q^*)=47500-167500=-\$120000$
 
-The consumer surplus is $CS= 0.5\times 9.5\times95000=\$451250$
+Or $TR-TC=(P^*-P^*)Q^*-120000=-\$120000$
+
+The consumer surplus is $CS= \frac12(10-P)Q^*=\frac12\times(10-0.5)\times95000=\$451250$
+
+```{r}
+curve(10-0.0001*x, 0, 100000,col = "red",xlab ="Q", ylab ="P");text(30000,8, "MD")
+curve(10-0.0002*x, add = TRUE, col = "violet");text(30000,5, "MR")
+curve(9.5*x-0.0005*x^2, add = TRUE, col = "violet")
+abline(h = 0.5, lty = 2);abline(h = 2, lty = 4)
+abline(v =95000, lty=2);text(95000,0.8, "(95000,0.5)")
+abline(v =47500, lty=2);text(47500,6, "(47500,5.25)");text(47500,0.8, "(47500,0.5)")
+abline(v =80000, lty=4);text(80000,2.5, "(80000,2)")
+polygon(x=c(47500,95000,47500), y=c(0.5,0.5,5.25), density=10, angle=45,lty =3);text(60000,2, "DWL")
+
+```
 
  ---
  
  b. If the price is raised to $2.00, how many people will use the train, and what happens to total revenue? What subsidy is required? Calculate any efficiency loss or gain associated with this change. Compare the change in subsidy with the change in consumer surplus.
 
-When $P=\$2.00$, there will be $Q=\frac{10 - 2}{0.0001}=80000$ riders.
+When $P=\$2.00$, there will be $Q=\frac{10-2}{0.0001}=80000$ riders.
 
 The total revenue is $TR= 10Q–0.0001Q^2=800000–640000=\$160000$.
 
 The subsidies/profits is $TR-TC=(10Q-0.0001Q^2)–(120000+0.5Q)=160000–160000=\$0$
 
 The efficiency loss or gain:
-The deadweight loss is $DWL = 0.5\Delta P\Delta Q=0.5(2.0-1.5)(95000-80000)=\$11250$
+The deadweight loss is $DWL=\frac12\Delta P\Delta Q=\frac12(2.0-0.5)(95000-80000)=\$11250$
 
-The change in subsidies are $120000-0=\$120000$, which is less than the change in consumer surplus $\Delta{CS}=451250-0.5\times 2\times80000=451250-320000=\$131250$
+The change in subsidies are $\Delta(TR-TC)=0-(-120000)=\$120000$, which is less than the change in consumer surplus $\Delta{CS}=451250-\frac12\times (10-2)\times80000=451250-320000=\$131250$
 
+The result shows that the change of consumer surplus is greater than the change of subsidies.
  ---
  
  c. Suppose that a monopolist is allowed to run the system and set price. What quantity ($Q_m$) and price ($P_m$) will be set and what profits or losses will be generated if the monopolist wants to maximize profits? Calculate any efficiency loss associated with this level of service.
 
-When $MR=MC$, the monopolist maximizes profits.
-
-$10–0.0002Q_m=0.5\implies Q_m=47500$ riders, then
+When $MR=MC$, the monopolist maximizes profits. $10–0.0002Q_m=0.5\implies Q_m=47500$ riders, then
 
 The price is $P_m=10–0.0001Q=10–4.75=\$5.25$
 
-The maximum profit is $TR-TC=9.5\times47500-0.0001\times47500^2–120000=\$105625$
+The maximum profit is $TR-TC=(10-0.0001Q_m)Q_m-(120000+P^*Q_m)=(10-4.75)\times47500–120000-0.5\times47500=\$105625$
 
-The deadweight loss is $DWL=0.5\Delta P\Delta Q=0.5(5.25-0.5)(95000-47500)=\$112812.5$
+Or $TR-TC=(P_m-P^*)Q_m-120000=(5.25-0.5)\times47500–120000=-\$105625$
+
+The deadweight loss is $DWL=\frac12\Delta P\Delta Q=\frac12(0.5-5.25)(95000-47500)=-\$112812.5$
 
  ---
  
  d. Could the monopolist make a profit if fixed costs are $250,000 per day?  Does this mean that it would be a mistake to build the train based on economic benefits and costs for this level of fixed cost? Explain why you think it would or would not be from an economic efficiency perspective and include appropriate calculations.
 
-Let $FC=\$250000$, the maximum profit is $TR-TC=(10Q-0.0001Q^2)–(250000+0.5Q)=-\$24375$.
+Let $FC=\$250000$, the maximum profit is $TR-TC=(P_m-P^*)Q_m-250000=-\$24375$.
 
 The monopolist won't make a profit. To examine the efficiency, we should compare total cost with total revenue and consumer surplus. 
 
-For $P=10-0.0001Q$, $CS=0.5(10-P)Q=0.5[10-(10-0.0001Q)]Q=0.00005Q^2$
+For $P=10-0.0001Q$, $CS=\frac12(10-P)Q=\frac12[10-(10-0.0001Q)]Q=0.00005Q^2$
 
-$$CS+TR–TC=0.00005Q^2+(10Q-0.0001Q^2)–(250000+0.5Q)=9.5Q-0.00005Q^2–250000$$
+$$CS+TR–TC=0.00005Q^2+(10Q-0.0001Q^2)–(250000+0.5Q)=-0.00005Q^2+9.5Q–250000$$
 
-Take the derivative with respect to $Q$ and suppose the result $9.5-0.00005Q=0$. When $Q=95000$, the maximum profit is $9.5\times95000-0.00005\times95000^2–250000=\$652500$
+Take the derivative with respect to $Q$ and suppose the result $9.5-2\times0.00005Q=0$. When $Q=95000$, the maximum profit is $-0.00005\times95000^2+9.5\times95000–250000=\$201250$
+
+Or $CS+PS=\frac12(10-5.25)47500+(5.25-0.5)47500=338437.5$
 
 The reult shows that the train is worth to be bulit because total revenue and consumer surplus are larger than total cost.
 
