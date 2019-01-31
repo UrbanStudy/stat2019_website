@@ -256,7 +256,7 @@ $$=(n-1)S_n^2+\frac{n\bar X_n^2+nX_{n+1}^2-2n\bar X_{n}X_{n+1}}{n+1}=(n-1)S_n^2+
 
 **5.22** Let X and Y be $iid\ n(0,1)$ random variables, and define $Z=\min(X,Y)$. Prove that $Z^2\sim\chi_1^2$
 
- -Method I
+ - Method I
 
 Calculating the cdf of $Z^2$,
 
@@ -278,7 +278,7 @@ $$f_{Z^2}(z)=\frac{d}{dz}F_{Z^2}(z)=f_{X}(−\sqrt z)\frac{1}{\sqrt z}=\frac{1}{
 
 Therefore, $Z^2\sim\chi^2_1$ 
 
- -Method II
+ - Method II
 
 $$P(Z^2\le z)=P([\min(X,Y)]^2\le z)=P(−\sqrt z\le\min(X,Y)\le\sqrt z)=P(-\sqrt z\le X\le\sqrt z,X\le Y)+P(-\sqrt z\le Y\le\sqrt z,Y\le X)$$
 
@@ -308,33 +308,57 @@ $$f_{X_{(1)},..,X_{(n)}}(x_1,..,x_n)=\begin{cases}n!f_X(x_1)\cdot...\cdot f_X(x_
 
 $$f_{Z,Y}(z,y)=\frac{n!}{(1-1)!(n-1-1)!(n-n)!}\frac1{\theta}\frac1{\theta}[\frac{z}{\theta}]^{1-1}[\frac{y}{\theta}-\frac{z}{\theta}]^{n-1-1}[1-\frac{y}{\theta}]^{n-n}=\frac{n(n-1)}{\theta^n}(y-z)^{n-2},0<z<y<\theta$$
 
-Now let $W=\frac{Z}{Y},Q=Y$. Then $Y=Q,Z=WQ$, and $|J| = q$. Therefore
+Now let $W=\frac{Z}{Y}=\frac{X_{(1)}}{X_{(n)}},Q=Y=X_{(n)}$. Then $Y=Q,Z=WQ$. Therefore,
 
-$$f_{W,QQ}(w,q)=\frac{n(n-1)}{\theta^n}(q-wq)^{n-2}q=\frac{n(n-1)}{\theta^n}(1-w)^{n-2}q^{n-1},0<w<1,0<q<\theta$$
+$$J=\begin{vmatrix}\frac{\partial y}{\partial w} & \frac{\partial y}{\partial q} \\ \frac{\partial z}{\partial w} & \frac{\partial z}{\partial q} \end{vmatrix}=\begin{vmatrix}\ 0 & 1 \\ q & w \end{vmatrix}=q$$
 
-The joint pdf factors into functions of $w$ and $q$, and, hence, $W$ and $Q$ are independent.
+$$f_{W,Q}(w,q)=\frac{n(n-1)}{\theta^n}(q-wq)^{n-2}|q|=\frac{n(n-1)}{\theta^n}(1-w)^{n-2}q^{n-1},0<w<1,0<q<\theta$$
+
+The joint pdf factors into functions of $w$ and $q$, and, hence, $W=\frac{X_{(1)}}{X_{(n)}}$ and $Q=X_{(n)}$ are independent.
 
  ---
 
-**5.25** As a generalization of the previous exercise, let $X1,..,X_n$ be iid with pdf $f_X(x)=\begin{cases}\frac{a}{\theta^a}x^{a-1}&0<x<1\\0&\text{otherwise}\end{cases}$. Let $X_{(1)}<..<X_{(n)}$ be the order statistics. Show that $X_{(1)}/X_{(2)}, X_{(2)}/X_{(3)},..,$X_{(n-1)}/X_{(n)}$ $ and $X_{(n)}$ are mutually independent random variables. Find the distribution of each of them.
+**5.25** As a generalization of the previous exercise, let $X_1,..,X_n$ be iid with pdf $f_X(x)=\begin{cases}\frac{a}{\theta^a}x^{a-1}&0<x<1\\0&\text{otherwise}\end{cases}$. Let $X_{(1)}<..<X_{(n)}$ be the order statistics. Show that $X_{(1)}/X_{(2)}, X_{(2)}/X_{(3)},..,X_{(n-1)}/X_{(n)}$ and $X_{(n)}$ are mutually independent random variables. Find the distribution of each of them.
 
 The joint pdf of $X_{(1)}<..<X_{(n)}$ is
 
 $$f(u_1,..,u_n)=\frac{n!a^n}{\theta^{an}}u_1^{a-1}\cdots u_n^{a-1}, 0<u_1<..<u_n<\theta$$
 
 Make the one-to-one transformation to $Y_{1}=\frac{X_{(1)}}{X_{(2)}},..,Y_{n−1}=\frac{X_{(n−1)}}{X_{(n)}},Y_n=X_{(n)}$.
-The Jacobian is $J = y_2y_3^2\cdots y_n^{n-1}$. So the joint pdf of $Y_1,..,Y_n$ is
+
+
+$$J=\begin{vmatrix}\frac{\partial x_1}{\partial y_1} &\frac{\partial x_1}{\partial y_2}&\cdots& \frac{\partial x_1}{\partial y_n} \\
+\frac{\partial x_2}{\partial y_1} &\frac{\partial x_2}{\partial y_2}&\cdots& \frac{\partial x_2}{\partial y_n}\\
+\vdots &\vdots&\ddots& \vdots\\
+\frac{\partial x_n}{\partial y_1} &\frac{\partial x_n}{\partial y_2}&\cdots& \frac{\partial x_n}{\partial y_n}\\
+\end{vmatrix}=\begin{vmatrix}
+y_2y_3..y_n &y_1y_3..y_n&\cdots& y_1y_2..y_{(n-1)} \\
+0 &y_3y_4..y_n&\cdots& y_2y_3..y_{(n-1)}\\
+
+\vdots &\vdots&\ddots& \vdots\\
+0 &0&\cdots& 1\\
+\end{vmatrix}=y_2y_3^2\cdots y_n^{n-1}$$
+
+
+So the joint pdf of $Y_1,..,Y_n$ is
 
 $$f(y_1,..,y_n)=\frac{n!a^n}{\theta^{an}}(y_1\cdots y_n)^{a-1}(y_2\cdots y_n)^{a-1}\cdots y_n^{a-1}(y_2y_3^2\cdots y_n^{n-1})$$
 
-$$=\frac{n!a^n}{\theta^{an}}y_1^{a-1}y_2^{2a-1}\cdots y_n^{na-1}, 0<u_i<1,i=1,..,n-1,0<y_n<\theta$$
+$$=\frac{n!a^n}{\theta^{an}}y_1^{a-1}y_2^{2a-1}\cdots y_n^{na-1}, 0<y_i<1,i=1,..,n-1,0<y_n<\theta$$
 
-We see that $f(y_1,..,y_n)$ factors so $Y_1,..,Y_n$ are mutually independent. To get the pdf of $Y_1$, integrate out the other variables and obtain that $f_{Y_1}(y=a$. Thus $f_{Y_1}(y_1)=ay^{a−1}_1,0<y_1<1$. 
-Similarly, for $i=2,..,n−1$, we obtain $f_{Y_i}(y_i)=iay_i^{ia−1},0<y_i<1$. 
+For $f(y_1,..,y_n)$ can be factored to $Y_1,..,Y_n$, $\frac{X_{(1)}}{X_{(2)}},\quad \frac{X_{(2)}}{X_{(3)}},..,\frac{X_{(n-1)}}{X_{(n)}}$ are mutually independent. 
 
-From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$
+When $i=1$, let $f_{Y_1}(y_1)=\int_0^1cy_1^{a-1}dy_1=c\int_0^1y_1^{a-1}dy_1=\frac{c}a[y_1^a]_0^1=1$. Then $c=a$. Therefore,
 
-Therefore, the pdf of $Y_n$ is $f_{Y_n}(y_n)=\frac{na}{\theta^{an}}y_n^{na-1}, 0<y_n<\theta$. It can be checked that the product of these marginal pdfs is the joint pdf given above.
+$$f_{Y_1}(y_1)=\int_0^1\cdots\int_0^1f(y_1,..,y_n)dy_2dy_3\cdots dy_n=ay^{a−1}_1,0<y_1<1$$
+
+Similarly, for $f_{Y_2}(y_2)=ay^{2a−1}_2$, $f_{Y_i}(y_i)=iay_i^{ia−1},0<y_i<1,i=1,2,..,n−1$. 
+
+From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$, the pdf of $Y_n$ is
+
+$$f_{Y_n}(y_n)=\frac{n!}{(n-1)!(n-n)!}f_X(x)[F_X(x)]^{n-1}[1-F_X(x)]^{n-n}=nf_X(x)[F_X(x)]^{n-1}$$
+$$=n\frac{a}{\theta^{a}}y_n^{a-1}\left[\frac1a\frac{a}{\theta^{a}}y_n^{a}\right]^{n-1}=\frac{an}{\theta^{a+an-a}}y_n^{a-1+an-a}=\frac{an}{\theta^{an}}y_n^{an-1}, 0<y_n<\theta$$
+
 
 
 
