@@ -710,14 +710,14 @@ pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
 <li>Write out the least squares normal equations for this problem and solve them for <span class="math inline">\(\hat\mu\)</span> and <span class="math inline">\(\hat\tau_i\)</span>, using the usual constraint (<span class="math inline">\(\sum^3_{i=1} \hat\tau_i=0\)</span>). Estimate <span class="math inline">\(\tau_1-\tau_2\)</span></li>
 </ol>
 <p>For <span class="math inline">\(\sum^3_{i=1} \hat\tau_i=0\)</span>,</p>
-<p><span class="math display">\[\begin{cases}\hat\tau_1+\hat\tau_2+\hat\tau_3=0\\\hat\mu+\hat\tau_1=10.8\\\hat\mu+\hat\tau_2=22.2\\\hat\mu+\hat\tau_3=8.4\end{cases}\implies
+<p><span class="math display">\[\begin{cases}\hat\tau_1+\hat\tau_2+\hat\tau_3=0\\\hat\mu+\hat\tau_1=\bar y_{1.}=10.8\\\hat\mu+\hat\tau_2=\bar y_{2.}=22.2\\\hat\mu+\hat\tau_3=\bar y_{3.}=8.4\end{cases}\implies
 \begin{cases}\hat\mu=13.80\\\hat\tau_1=-3.00\\\hat\tau_2=8.40\\\hat\tau_3=-5.40\end{cases}\implies
 \hat\tau_1-\hat\tau_2=-11.40\]</span></p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Solve the equations in (a) using the constraint <span class="math inline">\(\hat\tau_3=0\)</span>. Are the estimator <span class="math inline">\(\hat\tau_i\)</span> and <span class="math inline">\(\hat\mu\)</span> the same as you found in (a)? Why? Now estimate <span class="math inline">\(\tau_1-\tau_2\)</span> and compare your answer with that for (a). What statement can you make about estimating contrasts in the <span class="math inline">\(\tau_i\)</span></li>
 </ol>
-<p><span class="math display">\[\begin{cases}\hat\tau_3=0\\\hat\mu+\hat\tau_1=10.8\\\hat\mu+\hat\tau_2=22.2\\\hat\mu+\hat\tau_3=8.4\end{cases}\implies
+<p><span class="math display">\[\begin{cases}\hat\tau_3=0\\\hat\mu+\hat\tau_1=\bar y_{1.}=10.8\\\hat\mu+\hat\tau_2=\bar y_{2.}=22.2\\\hat\mu+\hat\tau_3=\bar y_{3.}=8.4\end{cases}\implies
 \begin{cases}\hat\mu=8.40\\\hat\tau_1=2.40\\\hat\tau_2=13.8\\\hat\tau_3=0\end{cases}\implies
 \hat\tau_1-\hat\tau_2=-11.40\]</span></p>
 <p>The result shows the value of <span class="math inline">\(\hatτ_1-\hatτ_2\)</span> is irrelevant with the value of <span class="math inline">\(\hatτ_3\)</span>. The contrasts are estimable.</p>
@@ -752,38 +752,6 @@ pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
 </tbody>
 </table>
 <p>The result shows that <span class="math inline">\(\tau_1\)</span> is independent with <span class="math inline">\(\tau_3\)</span>, <span class="math inline">\(\tau_1\)</span> is independent with <span class="math inline">\(\tau_2\)</span> and <span class="math inline">\(\tau_3\)</span>, while <span class="math inline">\(\tau_1\)</span> and <span class="math inline">\(\tau_2\)</span> is dependent with <span class="math inline">\(\tau_3\)</span>.</p>
-<pre class="r"><code>lsdCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-bonfCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-scheffeCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-dunnettCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, control = &quot;Brand2&quot;)
-scheffe.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c(&quot;Brand2&quot;, &quot;Brand3&quot;), conf.level = 0.99, MSE = NULL, df.err = NULL)
-
-https://www.statmethods.net/stats/power.html
-
-(LSD.test(model_circuit, trt=&quot;Type&quot;,alpha = 0.05))
-
-power.anova.test(groups = 3, n =NULL,between.var =var(c(10.8,22.2,8.4)), within.var = 16.9, sig.level = 0.01, power = 0.9)
-
-power.anova.test(groups = 3, n =NULL,between.var =var(table_circuit$Respone)/2within.var = 16.9, sig.level = 0.05,1power = 0.9)
-
-power.anova.test(groups = 3, n =NULL,between.var =(var(table_circuit$Respone)-16.9)/2within.var = 16.9, sig.level = 0.05,1power = 0.9)
-
-# pwr  type = c(&quot;two.sample&quot;, &quot;one.sample&quot;, &quot;paired&quot;),alternative = c(&quot;two.sided&quot;, &quot;less&quot;, &quot;greater&quot;))
-pwr.t.test(n =5,d =10, sig.level =0.05,1power =, 0.9type =&quot;one.sample&quot;, alternative =&quot;two.sided&quot;)
-# biotools
-# samplesize(x, fun, sizes = NULL, lcl = NULL, ucl = NULL,nboot = 200, conf.level = 0.95, nrep = 500, graph = TRUE, ...)
-
-
-ggplot(table_battery, aes(x = Brand, y = Life)) + geom_boxplot()
-
-prop.table(xtabs(~Life+Brand,data=table_battery,subset=!is.na(Brand), drop.unused.levels=T), 2)
-
-chisq.test(xtabs(~Brand+Life,data=table_battery,subset=!is.na(Life)))
-
-GKgamma(xtabs(~Respone + Type,data=table_circuit,subset=!is.na(Type), drop.unused.levels=T))
-#running Leven's Equality of Variance
-leveneTest(Life ~ Brand, data = table_battery,center = &quot;mean&quot;)</code></pre>
 </div>
 
 
