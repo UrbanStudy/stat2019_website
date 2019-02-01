@@ -156,6 +156,7 @@ library(multcompView)
 library(agricolae)
 library(asbio)
 library(pwr)
+library(car)
 ```
 
   (a) Are the lives of these brands of batteries different?
@@ -296,13 +297,14 @@ Type 1 and type 3 have lower response time ($\mu_1=10.8,\mu_3=8.4$). We had prov
  - The QQ plot of residuals shows some  violaion of normality of residuals. The respnse variable may need to be transformed.
  - The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
  - There are some outlier and leverage data points. 
- - The Bartlett’s test is sensitive to departures from normality.
+ - Compared with the Bartlett’s test , the Levene test is less sensitive to departures from normality. The result shows variances across samples may be equal. 
  
  Therefore, we should check the outlier points and try to do some transfermation. 
 
 ```{r  echo=T, collapse=TRUE}
 ols_plot_diagnostics(lm(Respone~Type, data=table_circuit))
 bartlett.test(Respone~Type, data=table_circuit)
+leveneTest(model_circuit)
 ```
   
 

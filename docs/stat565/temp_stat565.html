@@ -657,7 +657,7 @@ qf(0.95, 1, 12, lower.tail = TRUE, log.p = FALSE)
 <li>The QQ plot of residuals shows some violaion of normality of residuals. The respnse variable may need to be transformed.</li>
 <li>The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.</li>
 <li>There are some outlier and leverage data points.</li>
-<li>The Bartlett’s test is sensitive to departures from normality.</li>
+<li>Compared with the Bartlett’s test , the Levene test is less sensitive to departures from normality. The result shows variances across samples may be equal.</li>
 </ul>
 <p>Therefore, we should check the outlier points and try to do some transfermation.</p>
 <pre class="r"><code>ols_plot_diagnostics(lm(Respone~Type, data=table_circuit))</code></pre>
@@ -667,7 +667,14 @@ qf(0.95, 1, 12, lower.tail = TRUE, log.p = FALSE)
 ##  Bartlett test of homogeneity of variances
 ## 
 ## data:  Respone by Type
-## Bartlett's K-squared = 1.1345, df = 2, p-value = 0.5671</code></pre>
+## Bartlett's K-squared = 1.1345, df = 2, p-value = 0.5671
+leveneTest(model_circuit)
+## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+## factor.
+## Levene's Test for Homogeneity of Variance (center = median)
+##       Df F value Pr(&gt;F)
+## group  2  0.1831  0.835
+##       12</code></pre>
 </div>
 <div id="problem-6-3.419-and-3.4957" class="section level3">
 <h3>Problem 6: (3.41/9 and 3.49/57)</h3>
