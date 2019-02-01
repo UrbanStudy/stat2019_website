@@ -174,10 +174,12 @@ summary(model_battery)
  
   (b) Analyze the residuals from this experiment.
 
- - The QQ plot of residuals doesn't show any problem of normality of residuals.
- - The residuals versus fitted values shows the variance at each treatment is constant.
+ - The histogram shows a normality of of residuals.
+ - The QQ plot of residuals doesn't show obvious problem of normality of residuals.
+ - The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
+ - There is not outlier and leverage data points. 
  - The residuals versus observation number shows the residuals are independent with each other.
- - The Levene's or Bartlett's test also show a constant variance.
+ - The Bartlett’s test shows variances across samples is equal. 
 
 ```{r echo=T,collapse=TRUE}
 ols_plot_diagnostics(lm(Life~Brand, data=table_battery))
@@ -247,6 +249,8 @@ pairw.anova(table_circuit$Respone,as.factor(table_circuit$Type), conf.level = 0.
  
   (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the response time of circuit type 2 to be different from the other two.
 
+Construct a set of contrasts $\sum_{i=1}^3c_i=1-2+1=0,\sum_{i=1}^3d_i=1+0-1=0$
+
 $$\begin{cases}\mu_1-2\mu_2+\mu_3=0\\\mu_1-\mu_3=0\end{cases}$$
 
 For $\sum_{i=1}^3c_id_i=1*1+(-2)*0+1*(-1)=0$, they are orthogonal contrasts.
@@ -288,10 +292,13 @@ Type 1 and type 3 have lower response time ($\mu_1=10.8,\mu_3=8.4$). We had prov
  
   (f) Analyze the residuals from this experiment. Are the basic analysis of variance assumptions satisfied?
 
- - The QQ plot of residuals doesn't show any problem of normality of residuals.
- - The residuals versus fitted values shows the variance at each treatment is constant.
- - The residuals versus observation number shows the residuals are independent with each other.
- - The Levene's or Bartlett's test also show a constant variance.
+ - The histogram doesn't show a quite normality of of residuals.
+ - The QQ plot of residuals shows some  violaion of normality of residuals. The respnse variable may need to be transformed.
+ - The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
+ - There are some outlier and leverage data points. 
+ - The Bartlett’s test is sensitive to departures from normality.
+ 
+ Therefore, we should check the outlier points and try to do some transfermation. 
 
 ```{r  echo=T, collapse=TRUE}
 ols_plot_diagnostics(lm(Respone~Type, data=table_circuit))
@@ -306,14 +313,10 @@ bartlett.test(Respone~Type, data=table_circuit)
 For $a=3, D=10$, the preliminary estimate $\hat\sigma^2=MS_E=16.9$.
 
 $$Φ^2=\frac{nD^2}{2aσ^2}=\frac{n(10)^2}{2(3)(16.9)}=0.986n$$
-Letting $α=0.05, P(accept) = 0.1 ,\nu_1=a−1=2$
 
-The results show that when $n=5$, the power is 0.86476, when $n=6$, the power is 0.9345867. Thus, the sample size should be $N\ge18$.
+Let $α=0.05$, accept probability $P=0.1,\nu_1=a−1=2$
 
-
-Notice that we have used an estimate of the variance obtained from the present experiment. This indicates that we probably didn’t use a large enough sample (n=5 ) to satisfy the criteria specified in this problem. However, the sample size was adequate to detect differences in one of the circuit types.
-
-When we have no prior estimate of variability, sometimes we will generate sample sizes for a range of possible variances to see what effect this has on the size of the experiment. Often a knowledgeable expert will be able to bound the variability in the response, by statements such as “the standard deviation is going to be at least…” or “the standard deviation shouldn’t be larger than…”.
+The results show that when $n=5$, the power is 0.86476, when $n=6$, the power is 0.9345867. Thus, the sample size should be $n\ge6, N\ge18$.
 
 ```{r echo=T, collapse=TRUE}
 
