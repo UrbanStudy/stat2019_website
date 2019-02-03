@@ -1,6 +1,6 @@
 ---
-title: 'STAT565 HW1'
-author: "Shen Qu"
+title: 'STAT565 Practise'
+author: ""
 date: "Winter 2019"
 output: html_document
 ---
@@ -107,9 +107,16 @@ $MS_{Trt}=\frac{SS_{Trt}}{a-1}=\frac{1}4=$; $MS_{E}=\frac{SS_{E}}{N-a}=\frac{1}{
 
 ### Problem 4,5,6,7
 
-Let $y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}, ε_{ij}\sim iid\ N(0,σ^2)$,for $i=1,2,…,a;\ j=1,2,…,n$;$\sum_{i=1}^a\tau_i=0$, $\bar y_{i.}=\frac1n \sum_{j=1}^ny_{ij}$, $\bar y_{i.}\sim iid\ N(\mu+\tau_i,\frac{\sigma^2}n)$
+Note: For the given model in each of the following four problems, be able to derive the normal equations from the least squares parameter estimation method. Using ONLY the above given information and properties of expected value of a function of random variables, compute (DO NOT use any other distribution properties)
 
-  (a) Using ONLY the above given information and properties of expected value of a function of random variables, derive (DO NOT use any other distribution properties)
+|$y_{ij}$|$i$|$j$|$ε_{ij}$|$\tau_i$|$\beta_j$|$\bar y_{i.}$|$\bar y_{.j}$|$\bar y_{..}$|
+|   ---  |---|---|   ---  | ---    | ---         | ---         |
+|$\mu+\tau_{i}+ε_{ij}|$1,2,…,a$|$1,2,…,n$|\sim iid\ N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$| |$\frac1n\sum_{j=1}^ny_{ij}$||$\frac1{an}\sum_{i=1}^a\sum_{j=1}^ny_{ij}$|
+|$\mu+\tau_{i}+ε_{ij}|$1,2,…,a$|$1,2,…,n$|\sim iid\ N(0,σ^2)$|$\sim iid\ N(0,σ_{\tau}^2)$| |$\frac1n\sum_{j=1}^ny_{ij}$||$\frac1{an}\sum_{i=1}^a\sum_{j=1}^ny_{ij}$|
+|$\mu+\tau_{i}+\beta_j+ε_{ij}|$1,2,…,a$|$1,2,…,b$|\sim iid\ N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|$\sum_{j=1}^b\beta_j=0$|$\frac1b\sum_{j=1}^by_{ij}$|$\frac1a\sum_{i=1}^ay_{ij}$|$\frac1{ab}\sum_{i=1}^a\sum_{j=1}^by_{ij}$|
+|$\mu+\tau_{i}+\beta_j+ε_{ij}|$1,2,…,a$|$1,2,…,b$|\sim iid\ N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|$\sim iid\ N(0,σ_{\beta}^2)$|$\frac1b\sum_{j=1}^by_{ij}$|$\frac1a\sum_{i=1}^ay_{ij}$|$\frac1{ab}\sum_{i=1}^a\sum_{j=1}^by_{ij}$|
+
+
 
 For a fixed effects model, $\mu$ is a constant and $\tau_i$ is a constant of the $i^{th}$ treatment, then
 
@@ -128,47 +135,3 @@ $-\frac2nCov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]=-\frac2nCov[\varepsi
 $$Var(y_{ij}-\bar y_{i.})=\sigma^2+\frac{\sigma^2}n-\frac2n\sigma^2=\frac{n-1}n\sigma^2$$
  
  ---
-
-  (b) Using your answers in part (a) and shortcut formula for variance ($Var(X)=E(X^2)-E(X)^2$), find $E[(y_{ij}-\bar y_{i.})^2]$
-
-For $Var[y_{ij}-\bar y_{i.}]=E[(y_{ij}-\bar y_{i.})^2]-E[y_{ij}-\bar y_{i.}]^2$, then
-
-$$E[(y_{ij}-\bar y_{i.})^2]=Var[y_{ij}-\bar y_{i.}]+E[y_{ij}-\bar y_{i.}]^2=\frac{n-1}n\sigma^2$$
-
- ---
-
-  (c) Let $a=3$ treatments in the above model and the following linear functions of $\mu_i=\mu+\tau_i$ are tested. $\mu_1=\mu_2$, $\frac{\mu_1+\mu_2}{2}=\mu_3$.
-
-   (i) Prove that each of these is a contrast and they are orthogonal contrasts.
-
-For $a=3,\mu_1=\mu_2$, let $c_1=1,c_2=-1,c_3=0$. For $\frac{\mu_1+\mu_2}2=\mu_3$, let $d_1=1,d_2=1,d_3=-2$
-
-$$\sum_{i=1}^3c_i=1-1+0=0;\quad\sum_{i=1}^3d_i=1+1-2=0$$
-
-$$\sum_{i=1}^3c_id_i=1*1+(-1)*1+(-2)*0=0$$
-
-Therefore, they are orthogonal contrasts.
-
- ---
-
-   (ii) Write Sum of Squares for each contrast $SS_c$ in terms of $y_{1.},y_{2.},y_{3.}$.
-    
-$$SS_c=\frac{C^2}{\frac1n\sum_{i=1}^ac_i^2}=\frac{(\sum_{i=1}^ac_i\bar y_{i.})^2}{\frac1n\sum_{i=1}^ac_i^2}=\begin{cases}\frac{(\bar y_{1.}-\bar y_{2.})^2}{\frac{1+1}n}=\frac{n(\bar y_{1.}-\bar y_{2.})^2}{2}
-&for\ \mu_1=\mu_2\\
-\frac{(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{\frac{1+1+4}n}=\frac{n(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{6}
-&for\ \frac{\mu_1+\mu_2}{2}=\mu_3
-\end{cases}$$
-    
-  ---
-    
-   (iii) Add the two $SS_c$ you found in part (ii) and simplify (expand and bring similar terms together).
-
-$SS_c=\frac{n(\bar y_{1.}-\bar y_{2.})^2}{2}+\frac{n(\bar y_{1.}+\bar y_{2.}-2\bar y_{3.})^2}{6}=\frac{n}6(4\bar y_{1.}^2+4\bar y_{2.}^2+4\bar y_{3.}^2-4\bar y_{1.}\bar y_{2.}-4\bar y_{2.}\bar y_{3.}-4\bar y_{1.}\bar y_{3.})$
-
-Then expand and simplify the $SS_{Trt}$ given below to prove that it is equivalent to the sum of two $SS_c$ you found earlier.
-
-$SS_{Trt}=n\sum_{i=1}^3(\bar y_{i.}-\bar y_{..})^2=\frac{n}9\sum_{i=1}^3(3\bar y_{i.}-\bar y_{1.}-\bar y_{2.}-\bar y_{3.})^2=\frac{n}9[(2\bar y_{1.}-\bar y_{2.}-\bar y_{3.})^2+(2\bar y_{2.}-\bar y_{1.}-\bar y_{3.})^2+(2\bar y_{3.}-\bar y_{1.}-\bar y_{2.})^2]$
-$=\frac{n}9[6\bar y_{1.}^2+6\bar y_{2.}^2+6\bar y_{3.}^2-6\bar y_{1.}\bar y_{2.}-6\bar y_{2.}\bar y_{3.}-6\bar y_{1.}\bar y_{3.}]$
-
-$$\therefore SS_c=SS_{Trt}=\frac{2n}3(\bar y_{1.}^2+\bar y_{2.}^2+\bar y_{3.}^2-\bar y_{1.}\bar y_{2.}-\bar y_{2.}\bar y_{3.}-\bar y_{1.}\bar y_{3.})$$
-
