@@ -8,66 +8,104 @@ output: html_document
 
 ### Problem 1 
 
-In a greenhouse experiment, 5 types of light were used: natural, white, green, blue, and yellow. Eight tobacco plants, each 10 mm tall, were subjected to each type of light with the following means and variances of stem growths (in mm).
-
-|  Color | Natural | White | Yellow | Blue | Green |
-|   ---- |    ---  |  ---  |  ----  | ---- | ----  |
-|  Mean  | 4.09    |4.30   |3.55    |3.01  |3.19   |
-|Variance| 0.027   |0.083  |0.066   |0.030 |0.073  |
-
 A partial ANOVA table was found to be
 
-|Source of Variance|Sum of Squares(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test statistic|
+|Source|DF|SS|MS|F|
 | ---  | ---  | --- | --- | --- |
-|Treatment(Between or Model)|9.95904 |4 |2.48976|44.688|
-|Error(Within)              |1.950   |35|0.05571429|   
-|Total                      |11.90904      |39|
+|Factor|4 |987.71 |246.9275|33.09488|
+|Error |25|186.53 |7.4612|   
+|Total |29|1174.24|
 
-  (a) Complete the ANOVA table assuming the one-way fixed effects ANOVA model. Show main steps of your work. Keep 3 decimal places in $SS_{Trt}$
+(1) Complete the ANOVA table.
 
-For $a=5,n=8$, $df_T=N-1=5\times8-1=39$, $df_{Trt}=5-1=4$, $df_E=N-a=35$
+$df_{Trt}=29-25=4$,$a=5,n=6$
 
-$\bar y_{..}=\frac{1}a\sum^a_{i=1}\bar y_{i.}=\frac{1}5(4.09+4.30+3.55+3.01+3.19)=3.628$
+1174.24-186.53=987.71
 
-$SS_{Trt}=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2=9.95904$; $SS_{T}=SS_{Trt}+SS_{E}=11.90904$;
+(987.71/4)/(186.53/25)
 
-$MS_{Trt}=\frac{SS_{Trt}}{a-1}=\frac{9.95904}4=2.48976$; $MS_{E}=\frac{SS_{E}}{N-a}=\frac{1.950}{35}=0.05571429$;
+(2) If it was a balanced design, what was number of levels for the factor in this study?
+(3) If it was a balanced design, what was the number of observations for each factor level in this study?
+(4) Write the overall hypotheses for this test.
+(5) Write the name of probability distribution along with its parameter value(s) used to test the above overall hypotheses.
 
-$F_{0}=\frac{MS_{Trt}}{MS_{E}}=\frac{2.48976}{0.05571429}=44.688$
+$F_{0}=\frac{MS_{Trt}}{MS_{E}}=\frac{1}{1}=$
 
-```{r eval=FALSE, collapse=TRUE, include=FALSE}
-bar_y_all <- (4.09+4.30+3.55+3.01+3.19)/5
-bar_y_all
-ss_trt <- 8*((4.09-bar_y_all)^2+(4.30-bar_y_all)^2+(3.55-bar_y_all)^2+(3.01-bar_y_all)^2+(3.19-bar_y_all)^2)
-ss_trt
-(ss_trt/4)/(1.950/35)
-```
+(6) Compute the standard error of the difference of two observed treatment means. (that is, compute $se(\bar y _{i.}-\bar y_{j.}))$).
 
- --- 
+$$se(\bar y _{i.}-\bar y_{j.})=\sqrt{\frac{2MSE}n}=\sqrt{\frac{2\times0.01}8}=$$
 
-  (b) Compute the standard error of the difference of two observed treatment means. (that is, compute $se(\bar y _{i.}-\bar y_{j.})$) Show main steps of your work.
+(7) If you were to compute 95% confidence interval for the difference of two true treatment means, provide the name and its parameter value(s) of the probability distribution.
 
-$$se(\bar y _{i.}-\bar y_{j.})=\sqrt{\frac{2MSE}n}=\sqrt{\frac{2\times0.05571429}8}=0.1180194$$
+### Problem 2 
 
-```{r eval=FALSE, collapse=TRUE, include=FALSE}
+A nutrition specialist is measuring the amount of patty acid present in blood when four different diets are used. Initially, forty subjects (uniform with respect to the fatty acid) were obtained and 10 were randomly assigned to each diet. After 3 week period, the fatty acid in their blood was measured. The following table gives numerical summaries for each diet group.
 
-sqrt(2*1.950/{8*35})
+| Diet| A  |  B  | C  | D  |
+| ----| ---| --- |--- |--- |
+| Mean|21.3|28.6 |25.7|20.4|
 
-```
+|Source of Variance|Sum of Squares(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test|
+| --- | ---  | --- | --- | --- |
+|Diet |44.3|3 |||
+|Error|11.91|36|0.3308|   
+|Total|     |39|
+
+ (1) Complete the ANOVA table. (keep maximum of 4 decimal places)
+ 
+$\bar y_{..}=\frac{1}a\sum^a_{i=1}\bar y_{i.}=\frac{1}4(21.3+28.6+25.7+20.4=96)=24$
+
+$SS_{Trt}=n\sum^a_{i=1}(\bar y_{i.}−\bar y_{..})^2=$; $SS_{T}=SS_{Trt}+SS_{E}=$;
+
+$MS_{Trt}=\frac{SS_{Trt}}{a-1}=\frac{1}4=$; $MS_{E}=\frac{SS_{E}}{N-a}=\frac{1}{1}=1$;
+
+(21.3-24)^2+(28.6-24)^2+(25.7-24)^2+(20.4-24)^2=44.3
+44.3+11.91
+
+ (2) If the diet effect was fixed, then
+  (a) Write the overall hypotheses for this test.
+  (b) Write the name of probability distribution along with its parameter value(s) used to test the above overall hypotheses.
+  (c) Compute the estimated variance of observed average fatty acid amount for each diet. (that is, compute ($\widehat{Var(\bar y_{i.})}$̂).
+  (d) If you were to compute 95% confidence interval for the true mean of each treatment, provide the name and its parameter value(s) of the probability distribution.
+  (e) Write a contrast to test the average fatty acid for diets A, B is same as average fatty acid for diets C, D.
+  (f) Write the probability distribution along with its parameter(s) used to test the above contrast.
+  (g) Write a contrast that is orthogonal to the above contrast.
+  (h) Compute the SS for each of the above contrasts. (Final answer is a number).
+ (3) If the diet effect was random, then
+  (a) Write the overall hypotheses for this test.
+  (b) Write the name of probability distribution along with its parameter value(s) used to test the above overall hypotheses.
+  (c) Compute the estimated variance of observed average fatty acid amount for each diet. (that is, compute $\widehat{Var(\bar y_{i.})}$̂).
+
  ---
 
-### Problem 2 (3.37/45)
+### Problem 3 The partial ANOVA table given below was obtained from a balanced RCBD.
 
-Exercise 3.37. Assume n_i is the number of observations (replications) for the $i^th$ treatment in the one-way ANVOA. Show main steps of work.
-Show that the variance of the linear combination $\sum^{a}_{i=1}c_iy_{i.}$ is $σ^2\sum^{a}_{i=1}n_ic_i^2$
+|Source of Variance|Sum of Squares(SS)|Degrees of Freedom(df)|Mean Squares(MS)|F test|
+| --- | ---  | --- | --- | --- |
+|Trt   | 150 | 4|37.5|3.75|
+|Block | 200 | 5|40  |4|
+|Error | 200 |20|10  |   
+|Total | 550 |29|
 
-By the assumption for linear combination,$c_i$ is contrast constants. This is an unbalanced CRD, $\mu_i$ is not random. For $ε_{ij}\sim iid\ N(0,σ^2)$ and are uncorrelated, $Var(ε_{ij})=\sigma^2$. Thus,
-
-$$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{j=1}y_{ij})\right]=\sum^{a}_{i=1}\left[c_i^2Var(\sum^{n_i}_{i=1}(\mu_i+ε_{ij}))\right]=\sum^{a}_{i=1}\left[c_i^2\sum^{n_i}_{j=1}Var(ε_{ij})\right]=\sum^{a}_{i=1}\left[c_i^2n_i\sigma^2\right]=σ^2\sum^{a}_{i=1}n_ic_i^2$$
-
+ (1) Complete the ANOVA table.
+ (2) What was the number of blocks in this study? 6
+ (3) What was the total number of observations in this study? 30
+ (4) If treatment and block effects were fixed,
+  (a) compute the estimated error variance. $\hat\sigma^2=MSE=10$, 2MSE/n
+  (b) write the overall hypotheses about treatments for this study. H0: $\mu_1=\mu_2=\mu_3=\mu_4=\mu_5$, or $\tau_1=\tau_2=\tau_3=\tau4=\tau5$
+  (c) write the name of probability distribution along with its parameter value(s) used to test the above hypothesis. $\frac{SS_{Trt}}{SS_E}\sim F_{4,20}$
+  (d) write the overall hypothesis about blocks for this study. H0: $\beta_1=\beta_2=\beta_3=\beta_4=\beta_5=\beta_6$
+  (e) write the name of probability distribution along with its parameter value(s) used to test the above hypothesis. $\frac{SS_{Blk}}{SS_E}\sim F_{5,20}$
+ (5) If treatment effect was fixed and block effect was random,
+  (a) compute the estimated variance for blocks.
+  (b) write the overall hypothesis about treatments for this study.
+  (c) write the name of probability distribution along with its parameter value(s) used to test the above hypothesis.
+  (d) write the overall hypothesis about blocks for this study.
+  (e) write the name of probability distribution along with its parameter value(s) used to test the above hypothesis.
+  
  ---
 
-### Problem 3
+### Problem 4,5,6,7
 
 Let $y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}, ε_{ij}\sim iid\ N(0,σ^2)$,for $i=1,2,…,a;\ j=1,2,…,n$;$\sum_{i=1}^a\tau_i=0$, $\bar y_{i.}=\frac1n \sum_{j=1}^ny_{ij}$, $\bar y_{i.}\sim iid\ N(\mu+\tau_i,\frac{\sigma^2}n)$
 
@@ -133,270 +171,4 @@ $SS_{Trt}=n\sum_{i=1}^3(\bar y_{i.}-\bar y_{..})^2=\frac{n}9\sum_{i=1}^3(3\bar y
 $=\frac{n}9[6\bar y_{1.}^2+6\bar y_{2.}^2+6\bar y_{3.}^2-6\bar y_{1.}\bar y_{2.}-6\bar y_{2.}\bar y_{3.}-6\bar y_{1.}\bar y_{3.}]$
 
 $$\therefore SS_c=SS_{Trt}=\frac{2n}3(\bar y_{1.}^2+\bar y_{2.}^2+\bar y_{3.}^2-\bar y_{1.}\bar y_{2.}-\bar y_{2.}\bar y_{3.}-\bar y_{1.}\bar y_{3.})$$
-
-### Problem 4 (3.26/30)
-
-Use software to do all the computations, and attach code and output at the end of the question.
-If your answers rely on graphs, please include them along with the answer appropriately
-Report p-value along with your conclusions
-Data are given in Exercise3_26 Excel file .
-
-Three brands of batteries are under study. It is suspected that the lives (in weeks) of the three brands are different. Five randomly selected batteries of each brand are tested with the following results:
-
-```{r include=FALSE}
-library(readxl)
-library(tidyverse)
-require(ggplot2)
-library(car)
-library(olsrr)
-
-library(vcd)
-library(vcdExtra)
-library(multcompView)
-library(agricolae)
-library(asbio)
-library(pwr)
-library(car)
-```
-
-  (a) Are the lives of these brands of batteries different?
-  
-The relevant overall hypotheses are $H_0: \mu_1=\mu_2=\mu_3, H_1:$ at lesat two of $\mu_i$ are different.
-
-The ANOVA result shows that p-value of F-test ($6.141\times10^{-6}$) is small enough to reject $H_0$. We can conclude there is a significant differce in treatment means or these brands have an effect on the life of battery on 0.05 significent level.
-
-```{r echo=T, collapse=TRUE}
-table_battery <- read_xlsx("Exercise3_26.xlsx")
-model_battery <- aov(Life~Brand, data=table_battery)
-summary(model_battery)
-```
-
- ---
- 
-  (b) Analyze the residuals from this experiment.
-
- - The histogram shows a normality of of residuals.
- - The QQ plot of residuals doesn't show obvious problem of normality of residuals.
- - The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
- - There is not outlier and leverage data points. 
- - The residuals versus observation number shows the residuals are independent with each other.
- - The Bartlett’s test shows variances across samples is equal. 
-
-```{r echo=T,collapse=TRUE}
-ols_plot_diagnostics(lm(Life~Brand, data=table_battery))
-bartlett.test(Life~Brand, data=table_battery)
-```
-  
- ---
- 
-  (c) Construct a 95 percent confidence interval estimate on the mean life of battery brand 2. Construct a 99 percent confidence interval estimate on the mean difference between the lives of battery brands 2 and 3.
-
-The 95% confidence interval on the mean life of battery brand 2 is:
-
-$$\bar y_{i.}\pm t_{\frac{\alpha}2,N-a}\sqrt\frac{MS_E}n=79.4\pm t_{\frac{0.05}2,18-3}\sqrt\frac{15.6}5$$
-  
-The 99% confidence interval on the mean difference between the lives of battery brands 2 and 3 is:
-
-$$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2,N-a}\sqrt\frac{2MS_E}n=79.4-100.4\pm t_{\frac{0.01}2,18-3}\sqrt\frac{2*15.6}5$$
-
-Therefore, $75.551\le\mu_2\le83.249$, $-28.631\le\mu_2-\mu_3\le-13.369$
-  
-```{r echo=T,collapse=TRUE}
-(LSD.test(model_battery, trt="Brand",alpha = 0.05))
-pairw.anova(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
-bonf.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c("Brand2", "Brand3"), conf.level = 0.99, MSE = NULL, df.err = NULL, comps = 1)
-``` 
-
- ---
- 
-  (d) Which brand would you select for use? If the manufacturer will replace without charge any battery that fails in less than 85 weeks, what percentage would the company expect to replace?
-
-Chose brand 3 for longest life. Mean life of this brand in 100.4 weeks, and the variance of life is estimated by 15.60 (MSE). Assuming normality, then the probability of failure before 85 weeks is:
-
-$$Φ\left(\frac{85-100.4}{\sqrt{15.60}}\right)=Φ(-0.390)=0.00005$$
-
-That is, about 5 out of 100,000 batteries will fail before 85 week.
-
-### Problem 5 (3.22/26)
-
-The response time in milliseconds was determined for three different types of circuits that could be used in an automatic valve shutoff mechanism. The results from a completely randomized experiment are shown in the following table:
-
-  (a) Test the hypothesis that the three circuit types have the same response time. Use 𝛼 = 0.01.
-  
-The relevant overall hypotheses are $H_0: \mu_1=\mu_2=\mu_3, H_1:$ at lesat two of $\mu_i$ are different.
-
-The ANOVA result shows that p-value of F-test ($0.000402$) is small enough to reject $H_0$. We can conclude there is a significant differce in treatment means or these circuits types have an effect on the response time on 0.01 significent level.
-
-```{r echo=T, collapse=TRUE}
-table_circuit <- read_xlsx("Exercise3_22.xlsx")
-model_circuit <- aov(Respone~Type, data=table_circuit)
-summary(model_circuit)
-```
-
- ---
- 
-  (b) Use Tukey’s test to compare pairs of treatment means. Use 𝛼 = 0.01.
-
-Let $H_{(1-2)0}:\mu_1-\mu_2=0,H_{(1-2)1}:\mu_1-\mu_2\neq0$; $H_{(1-3)0}:\mu_1-\mu_3=0,H_{(1-3)1}:\mu_1-\mu_3\neq0$;$H_{(2-3)0}:\mu_2-\mu_3=0,H_{(2-3)1}:\mu_2-\mu_3\neq0$;
-
-The P-values of F-test are $P_{(1-2)}=0.0.002366, P_{(1-3)}=0.636704, P_{(2-3)}=0.000504$. We can reject $H_{(1-2)0}$ and $H_{(2-3)0}$, but fail to reject $H_{(1-3)0}$. We can conclude treatment means of type 1 and type 2, treatment means of type 2 and type 3 has a significant differce on 0.01 significent level. There is not significant differce between type 1 and type 3 on 0.01 significent level.
-
-```{r echo=T, collapse=TRUE}
-TukeyHSD(aov(model_circuit), ordered = TRUE,conf.level=0.99)
-pairw.anova(table_circuit$Respone,as.factor(table_circuit$Type), conf.level = 0.99, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
-```
-
- ---
- 
-  (d) Construct a set of orthogonal contrasts, assuming that at the outset of the experiment you suspected the response time of circuit type 2 to be different from the other two.
-
-Construct a set of contrasts $\sum_{i=1}^3c_i=1-2+1=0,\sum_{i=1}^3d_i=1+0-1=0$
-
-$$\begin{cases}\mu_1-2\mu_2+\mu_3=0\\\mu_1-\mu_3=0\end{cases}$$
-
-For $\sum_{i=1}^3c_id_i=1*1+(-2)*0+1*(-1)=0$, they are orthogonal contrasts.
-
-$$C=\sum_{i=1}^ac_i\bar y_{i.}=\bar y_{1.}-2\bar y_{2.}+\bar y_{3.}=10.8-2(22.2)+8.4=-25.2$$
-
-$$H_{C0}:\mu_1-2\mu_2+\mu_3=0\quad H_{C1}:\mu_1-2\mu_2+\mu_3\neq0$$
-
-$$F_{1,12}=\frac{SS_C}{MS_E}=\frac{C^2}{\frac{MS_E}n\sum_{i=1}^ac_i^2}=\frac{(-25.2)^2}{\frac{16.9}56}=31.31$$
-
-For the first contrast, the P-value of F-test ($0.0001169669$) is small enough to reject $H_{C0}$, We can conclude treatment means of type 2 has a significant difference with treatment means of type 1 and type 3 on 0.01 significent level.
-
-$$D=\sum_{i=1}^ac_i\bar y_{i.}=\bar y_{1.}-\bar y_{3.}=10.8-8.4=2.4$$
-
-$$H_{D0}:\mu_1-\mu_3=0\quad H_{D1}:\mu_1-\mu_3\neq0$$
-
-$$F_{1,12}=\frac{SS_C}{MS_E}=\frac{C^2}{\frac{MS_E}n\sum_{i=1}^ac_i^2}=\frac{2.4^2}{\frac{16.9}52}=0.852071$$
-
-For the second contrast, the P-value of F-test ($0.374155$) is large and fail to reject $H_{D0}$, We can conclude there is not a significant differce between treatment means of type 1 and type 3 on 0.01 significent level.
-
-```{r, collapse=TRUE}
-HSD.test(model_circuit,"Type", group=TRUE,console=TRUE)
-
-(25.2^2*5)/(16.9*6)
-(2.4^2*5)/(16.9*2)
-
-qf(0.95, 1, 12, lower.tail = TRUE, log.p = FALSE)
-1-pf(31.31, 1, 12, lower.tail = TRUE, log.p = FALSE)
-1-pf(0.852071, 1, 12, lower.tail = TRUE, log.p = FALSE)
-```
-
- ---
-
-  (e) If you were the design engineer and you wished to minimize the response time, which circuit type would you select?
-
-Type 1 and type 3 have lower response time ($\mu_1=10.8,\mu_3=8.4$). We had proved the mean of response time for type 1 and type 3 have not significant different on response time on 0.01 significant level. The engineer could choose either one.
-
- ---
- 
-  (f) Analyze the residuals from this experiment. Are the basic analysis of variance assumptions satisfied?
-
- - The histogram doesn't show a quite normality of of residuals.
- - The QQ plot of residuals shows some  violaion of normality of residuals. The respnse variable may need to be transformed.
- - The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
- - There are some outlier and leverage data points. 
- - Compared with the Bartlett’s test , the Levene test is less sensitive to departures from normality. The result shows variances across samples may be equal. 
- 
- Therefore, we should check the outlier points and try to do some transformation. 
-
-```{r  echo=T, collapse=TRUE}
-ols_plot_diagnostics(lm(Respone~Type, data=table_circuit))
-bartlett.test(Respone~Type, data=table_circuit)
-leveneTest(model_circuit)
-```
-  
-
-### Problem 6: (3.41/9 and 3.49/57)
-
-  (3.41/9) Refer to Problem 5. If we wish to detect a maximum difference in mean response times of 10 milliseconds with a probability of at least 0.90, what sample size should be used? How would you obtain a preliminary estimate of $σ^2$?
-
-For $a=3, D=10$, the preliminary estimate $\hat\sigma^2=MS_E=16.9$.
-
-$$Φ^2=\frac{nD^2}{2aσ^2}=\frac{n(10)^2}{2(3)(16.9)}=0.986n$$
-
-Let $α=0.05$, accept probability $P=0.1,\nu_1=a−1=2$
-
-The results show that when $n=5$, the power is 0.86476, when $n=6$, the power is 0.9345867. Thus, the sample size should be $n\ge6, N\ge18$.
-
-```{r echo=T, collapse=TRUE}
-
-library(pwr2)
-pwr.1way(k=3, n=5, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
-pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
-
-```
-
- ---
-
-  (3.49/57) Consider the data shown in Problem 5.
-
-  (a) Write out the least squares normal equations for this problem and solve them for $\hat\mu$ and $\hat\tau_i$, using the usual constraint ($\sum^3_{i=1} \hat\tau_i=0$). Estimate $\tau_1-\tau_2$
-
-For $\sum^3_{i=1} \hat\tau_i=0$,
-
-$$\begin{cases}\hat\tau_1+\hat\tau_2+\hat\tau_3=0\\\hat\mu+\hat\tau_1=\bar y_{1.}=10.8\\\hat\mu+\hat\tau_2=\bar y_{2.}=22.2\\\hat\mu+\hat\tau_3=\bar y_{3.}=8.4\end{cases}\implies
-\begin{cases}\hat\mu=13.80\\\hat\tau_1=-3.00\\\hat\tau_2=8.40\\\hat\tau_3=-5.40\end{cases}\implies
-\hat\tau_1-\hat\tau_2=-11.40$$
-
- ---
-
-  (b) Solve the equations in (a) using the constraint $\hat\tau_3=0$. Are the estimator $\hat\tau_i$ and $\hat\mu$ the same as you found in (a)? Why? Now estimate $\tau_1-\tau_2$ and compare your answer with that for (a). What statement can you make about estimating contrasts in the $\tau_i$
-
-$$\begin{cases}\hat\tau_3=0\\\hat\mu+\hat\tau_1=\bar y_{1.}=10.8\\\hat\mu+\hat\tau_2=\bar y_{2.}=22.2\\\hat\mu+\hat\tau_3=\bar y_{3.}=8.4\end{cases}\implies
-\begin{cases}\hat\mu=8.40\\\hat\tau_1=2.40\\\hat\tau_2=13.8\\\hat\tau_3=0\end{cases}\implies
-\hat\tau_1-\hat\tau_2=-11.40$$
-
-The result shows the value of $\hatτ_1-\hatτ_2$ is irrelevant with the value of $\hatτ_3$. The contrasts are estimable.
-
- ---
-  (c) Estimate $\mu+\tau_1$, $2\tau_1-\tau_2-\tau_3$, and $\mu+\tau_1+\tau_2$ using the two solutions to the normal equations. Compare the results obtained in each case.
-  
-|     Contrast          |Estimated from Part (a)|Estimated from Part (b)|
-|          ----         |           ---         |            ---        |
-|$\mu+\tau_1$           | 10.80   |10.80  |
-|$2\tau_1-\tau_2-\tau_3$| -9.00   |-9.00  |
-|$\mu+\tau_1+\tau_2$    | 19.20   |24.60  |
-
-The result shows that $\tau_1$ is independent with $\tau_3$, $\tau_1$ is independent with $\tau_2$ and $\tau_3$, while $\tau_1$ and $\tau_2$ is dependent with $\tau_3$.
-
-
-  
-```{r eval=FALSE, include=FALSE}
-
-lsdCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-bonfCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-scheffeCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
-dunnettCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, control = "Brand2")
-scheffe.cont(table_battery$Life,as.factor(table_battery$Brand), lvl = c("Brand2", "Brand3"), conf.level = 0.99, MSE = NULL, df.err = NULL)
-
-https://www.statmethods.net/stats/power.html
-
-(LSD.test(model_circuit, trt="Type",alpha = 0.05))
-
-power.anova.test(groups = 3, n =NULL,between.var =var(c(10.8,22.2,8.4)), within.var = 16.9, sig.level = 0.01, power = 0.9)
-
-power.anova.test(groups = 3, n =NULL,between.var =var(table_circuit$Respone)/2within.var = 16.9, sig.level = 0.05,1power = 0.9)
-
-power.anova.test(groups = 3, n =NULL,between.var =(var(table_circuit$Respone)-16.9)/2within.var = 16.9, sig.level = 0.05,1power = 0.9)
-
-# pwr  type = c("two.sample", "one.sample", "paired"),alternative = c("two.sided", "less", "greater"))
-pwr.t.test(n =5,d =10, sig.level =0.05,1power =, 0.9type ="one.sample", alternative ="two.sided")
-# biotools
-# samplesize(x, fun, sizes = NULL, lcl = NULL, ucl = NULL,nboot = 200, conf.level = 0.95, nrep = 500, graph = TRUE, ...)
-
-
-ggplot(table_battery, aes(x = Brand, y = Life)) + geom_boxplot()
-
-prop.table(xtabs(~Life+Brand,data=table_battery,subset=!is.na(Brand), drop.unused.levels=T), 2)
-
-chisq.test(xtabs(~Brand+Life,data=table_battery,subset=!is.na(Life)))
-
-GKgamma(xtabs(~Respone + Type,data=table_circuit,subset=!is.na(Type), drop.unused.levels=T))
-#running Leven's Equality of Variance
-leveneTest(Life ~ Brand, data = table_battery,center = "mean")
-
-```
 
