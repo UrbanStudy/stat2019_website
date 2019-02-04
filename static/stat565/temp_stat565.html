@@ -442,12 +442,12 @@ $(document).ready(function () {
 <li>If the diet effect was fixed, then</li>
 </ol>
 <ol style="list-style-type: lower-alpha">
-<li><p>Write the overall hypotheses for this test. H0: <span class="math inline">\(\mu_A=\mu_B=\mu_C=\mu_D\)</span>, or <span class="math inline">\(\tau_A=\tau_B=\tau_C=\tau_D\)</span> H1: at least two of <span class="math inline">\(\mu_i\)</span> are different.</p></li>
+<li><p>Write the overall hypotheses for this test. H0: <span class="math inline">\(\mu_A=\mu_B=\mu_C=\mu_D\)</span>, or <span class="math inline">\(\tau_A=\tau_B=\tau_C=\tau_D=0\)</span> H1: at least two of <span class="math inline">\(\mu_i\)</span> are different or at least one <span class="math inline">\(\tau_i=0\)</span>.</p></li>
 <li><p>Write the name of probability distribution along with its parameter value(s) used to test the above overall hypotheses. <span class="math inline">\(F_{(df_{Trt}=3,df_E=36)}=\frac{MS_{Trt}}{MS_{E}}\)</span></p></li>
-<li><p>Compute the estimated variance of observed average fatty acid amount for each diet. <span class="math inline">\(\widehat{Var(\bar y_{i.})}=\frac{MS_{Trt}}n=147.6667/10=14.76667\)</span></p></li>
+<li><p>Compute the estimated variance of observed average fatty acid amount for each diet. <span class="math inline">\(\widehat{Var(\bar y_{i.})}=\frac{MS_{E}}n=0.3308/10=0.0331\)</span></p></li>
 <li><p>If you were to compute 95% confidence interval for the true mean of each treatment, provide the name and its parameter value(s) of the probability distribution. <span class="math inline">\(T_{\frac{0.05}2,df_E=36)}\)</span></p></li>
 <li><p>Write a contrast to test the average fatty acid for diets A, B is same as average fatty acid for diets C, D. <span class="math inline">\(\mu_A+\mu_B-\mu_C-\mu_D=0\)</span></p></li>
-<li><p>Write the probability distribution along with its parameter(s) used to test the above contrast. <span class="math inline">\(F_{(df_{C}=1,df_E=36)}=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}\)</span></p></li>
+<li><p>Write the probability distribution along with its parameter(s) used to test the above contrast. <span class="math inline">\(F_{(df_{C}=1,df_E=36)}=\frac{(\sum_{i=1}^ac_i\bar y_{i.})^2}{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}\)</span></p></li>
 <li><p>Write a contrast that is orthogonal to the above contrast. <span class="math inline">\(\mu_A-\mu_B+\mu_C-\mu_D=0\)</span></p></li>
 <li><p>Compute the SS for each of the above contrasts. (Final answer is a number). <span class="math display">\[SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}=\frac{(21.3+28.6-25.7-20.4)^2}{\frac{1}{10}4}=36.1\]</span> <span class="math display">\[SS_D=\frac{(\sum_{i=1}^ad_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ad_i^2}==\frac{(21.3-28.6+25.7-20.4)^2}{\frac{1}{10}4}=10\]</span></p></li>
 </ol>
@@ -457,7 +457,7 @@ $(document).ready(function () {
 <ol style="list-style-type: lower-alpha">
 <li><p>Write the overall hypotheses for this test. H0: <span class="math inline">\(\sigma_{\tau}^2=0\)</span>, <span class="math inline">\(E[MS_{Trt}]=\sigma^2\)</span> H1: <span class="math inline">\(\sigma_{\tau}^2&gt;0\)</span>.</p></li>
 <li><p>Write the name of probability distribution along with its parameter value(s) used to test the above overall hypotheses. <span class="math inline">\(F_{(df_{Trt}=3,df_E=36)}=\frac{MS_{Trt}}{MS_{E}}\)</span></p></li>
-<li><p>Compute the estimated variance of observed average fatty acid amount for each diet. <span class="math inline">\(\widehat{Var(\bar y_{i.})}=\frac{MS_{Trt}}n=147.6667/10=14.76667\)</span></p></li>
+<li><p>Compute the estimated variance of observed average fatty acid amount for each diet. <span class="math inline">\(\widehat{Var(\bar y_{i.})}=\sigma_{\tau}^2+\frac{\sigma^2}{n}=\frac{MS_{Trt}-MS_E}n+\frac{MS_{E}}n=\frac{MS_{Trt}}n=147.6667/10=14.76667\)</span></p></li>
 </ol>
 <hr />
 </div>
@@ -673,7 +673,7 @@ E[\beta_j-\frac1b \sum_{j=1}^b\beta_j+ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}]^2=&am
 <td><span class="math inline">\(\mu+\tau_i\)</span></td>
 <td><span class="math inline">\(\mu+\beta_j\)</span></td>
 <td><span class="math inline">\(\sigma^2+\frac{n}{a-1}\sum_{i=1}^a\tau_i^2\)</span></td>
-<td><span class="math inline">\(\sigma^2+\frac{a}{b-1}\sum_{j=1}^b\beta_j^2\)</span></td>
+<td></td>
 <td><span class="math inline">\(\sigma^2\)</span></td>
 </tr>
 <tr class="even">
@@ -697,6 +697,16 @@ E[\beta_j-\frac1b \sum_{j=1}^b\beta_j+ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}]^2=&am
 <td></td>
 </tr>
 <tr class="even">
+<td>E[r.]</td>
+<td><span class="math inline">\(\mu\)</span></td>
+<td><span class="math inline">\(\mu\)</span></td>
+<td><span class="math inline">\(\mu+\tau_i\)</span></td>
+<td></td>
+<td><span class="math inline">\(\sigma^2+\frac{b}{a-1}\sum_{i=1}^a\tau_i^2\)</span></td>
+<td><span class="math inline">\(\sigma^2+\frac{a}{b-1}\sum_{j=1}^b\beta_j^2\)</span></td>
+<td></td>
+</tr>
+<tr class="odd">
 <td>V[r.]</td>
 <td><span class="math inline">\(\sigma^2+\sigma_\tau^2\)</span></td>
 <td><span class="math inline">\(\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}\)</span></td>
@@ -706,7 +716,7 @@ E[\beta_j-\frac1b \sum_{j=1}^b\beta_j+ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}]^2=&am
 <td></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>E[^2]</td>
 <td><span class="math inline">\(\mu^2+\sigma^2+\sigma_\tau^2\)</span></td>
 <td><span class="math inline">\(\mu^2+\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}\)</span></td>
