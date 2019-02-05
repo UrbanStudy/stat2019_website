@@ -179,7 +179,7 @@ For a random Block effects RCBD, $\mu$and $\tau_i$ are constants, $E[\beta_j]=0$
 |FT-CRD |$\mu+\tau_{i}+ε_{ij}-\frac{\sum_{j=1}^n(\mu+\tau_{i}+ε_{ij})}n$|$=\mu+\tau_{i}+ε_{ij}-\mu-\tau_{i}-\frac{\sum_{j=1}^nε_{ij}}n$|$=$|$ε_{ij}-\frac{\sum_{j=1}^nε_{ij}}n$
 |RT-CRD | | | | |
 |FB-RCBD|$\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b$|$=\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-0-\frac{ \sum_{j=1}^bε_{ij}}b$|$=\beta_j+$|$ε_{ij}-\frac{\sum_{j=1}^nε_{ij}}b$
-|RB-RCBD| |$\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-\frac{\sum_{j=1}^b\beta_j}b -\frac{\sum_{j=1}^bε_{ij}}b$|$=\beta_j-\frac{ \sum_{j=1}^b\beta_j}b+$|$ε_{ij}-\frac{\sum_{j=1}^bε_{ij}}n$
+|RB-RCBD| |$\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-\frac{\sum_{j=1}^b\beta_j}b -\frac{\sum_{j=1}^bε_{ij}}b$|$=\beta_j-\frac{ \sum_{j=1}^b\beta_j}b+$|$ε_{ij}-\frac{\sum_{j=1}^bε_{ij}}b$
 
 |$\bar y_{i.}-\bar y_{..}$||||
 | ---                |   ---  |---|---|
@@ -343,17 +343,33 @@ $$Var[\bar y_{i.}-\bar y_{..}]=\begin{cases}\sigma^2+\frac{\sigma^2}n-\frac2n\si
 
  ---
 
+|$E[(y_{ij}-\bar y_{i.})^2]$|$=Var[y_{ij}-\bar y_{i.}]$|$+E[y_{ij}-\bar y_{i.}]^2$|$=$|
+| ---   |   ---               |---|---|
+|FT-CRD |$\frac{n-1}n\sigma^2$| $+0=$ |$\frac{n-1}n\sigma^2$|
+|RT-CRD |$\frac{n-1}n\sigma^2$| $+0=$ |$\frac{n-1}n\sigma^2$|
+|FB-RCBD|$\sigma_{\beta}^2+\frac{(b-1)\sigma^2}b$  |$+\beta_{j}=$|$\sigma_{\beta}^2+\frac{(b-1)\sigma^2}b+\beta_{j}$|
+|RB-RCBD|$\frac{(\sigma_{\beta}^2+\sigma^2)(b-1)}b$|$+\beta_{j}=$|$\frac{(\sigma_{\beta}^2+\sigma^2)(b-1)}b+\beta_{j}$|
 
-$$E[(y_{ij}-\bar y_{i.})^2]=\begin{cases}E[ε_{ij}^2+\frac1{n^2}(\sum_{j=1}^nε_{ij})^2-\frac2nε_{ij}\sum_{j=1}^nε_{ij}]=\frac{n-1}n\sigma^2&\text{FT-CRD;FB-RCBD}\\
-E[\tau_{i}-\frac1n \sum_{j=1}^n\tau_{i}+ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}]^2=&\text{RT-CRD}\\
-E[\beta_j-\frac1b \sum_{j=1}^b\beta_j+ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}]^2=&\text{RB-RCBD}
-\end{cases}$$
+|$E[(\bar y_{i.}-\bar y_{..})^2]$|$=Var[\bar y_{i.}-\bar y_{..}]$|$+E[\bar y_{i.}-\bar y_{..}]^2$|$=$|
+| ---   |   ---               |---|---|
+|FT-CRD |$\frac{(n+1)\sigma_{\tau}^2}{n}-\frac{\sigma^2}{an}$| $+\tau_i=$ |$\frac{(n+1)\sigma_{\tau}^2}{n}-\frac{\sigma^2}{an}+\tau_i$|
+|RT-CRD |$\frac{(n\sigma_{\tau}^2+\sigma^2)(n-1)}{an}$| $+\tau_i=$ |$\frac{(n\sigma_{\tau}^2+\sigma^2)(n-1)}{an}+\tau_i$|
+|FB-RCBD|$\frac{(b+1)\sigma_{\tau}^2}{b}-\frac{\sigma^2}{ab}$|$+\tau_i=$|$\frac{(b+1)\sigma_{\tau}^2}{b}-\frac{\sigma^2}{ab}+\tau_i$|
+|RB-RCBD|$\frac{(b+1)\sigma_{\tau}^2}{b}-\frac{\sigma^2}{ab}$|$+\tau_i=$|$\frac{(b+1)\sigma_{\tau}^2}{b}-\frac{\sigma^2}{ab}+\tau_i$|
 
+|$E[(y_{ij}-\bar y_{.j})^2]$|$=Var[y_{ij}-\bar y_{.j}]$|$+E[y_{ij}-\bar y_{.j}]^2$|$=$|
+| ---   |   ---               |---|---|
+|FB-RCBD|$\sigma_{\tau}^2+\frac{(a-1)\sigma^2}a$|$+\tau_i=$|$\sigma_{\tau}^2+\frac{(a-1)\sigma^2}a+\tau_i$|
+|RB-RCBD|$\sigma_{\tau}^2+\frac{(a-1)\sigma^2}a$|$+\tau_i=$|$\sigma_{\tau}^2+\frac{(a-1)\sigma^2}a+\tau_i$|
 
-$$E[(y_{ij}-\bar y_{i.})^2]=Var[y_{ij}-\bar y_{i.}]+E[y_{ij}-\bar y_{i.}]^2=\frac{n-1}n\sigma^2$$
-$$E[(\bar y_{i.}-\bar y_{..})^2]=Var[\bar y_{i.}-\bar y_{..}]+E[\bar y_{i.}-\bar y_{..}]^2=$$
-$$E[(\bar y_{.j}-\bar y_{..})^2]=Var[\bar y_{.j}-\bar y_{..}]+E[\bar y_{.j}-\bar y_{..}]^2=$$
-$$E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]+E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2=$$
+|$E[(\bar y_{.j}-\bar y_{..})^2]$|$=Var[\bar y_{.j}-\bar y_{..}]$|$+E[\bar y_{.j}-\bar y_{..}]^2$|$=$|
+| ---   |   ---               |---|---|
+|FB-RCBD|$\frac{(a+1)\sigma_{\beta}^2}{a}-\frac{\sigma^2}{ab}$|$+\beta_{j}=$|$\frac{(a+1)\sigma_{\beta}^2}{a}-\frac{\sigma^2}{ab}+\beta_{j}$|
+|RB-RCBD|$\frac{(a+1)\sigma_{\beta}^2}{a}-\frac{\sigma^2}{ab}$|$+\beta_{j}=$|$\frac{(a+1)\sigma_{\beta}^2}{a}-\frac{\sigma^2}{ab}+\beta_{j}$|
+
+|$E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]$|$=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]$|$+E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2$|$=$|
+| ---   |   ---               |---|---|
+|FB-RCBD|$\frac{(ab-a-b-3)\sigma^2}{ab}$|$+0=$|$\frac{(ab-a-b-3)\sigma^2}{ab}$|
 
 
 
