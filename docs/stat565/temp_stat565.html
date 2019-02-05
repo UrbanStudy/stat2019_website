@@ -577,7 +577,7 @@ $(document).ready(function () {
 <td>.</td>
 <td><span class="math inline">\(\frac{\sum_{j=1}^ny_{ij}}n\)</span></td>
 <td>.</td>
-<td><span class="math inline">\(\frac1{an}\sum_{i=1}^a\sum_{j=1}^ny_{ij}\)</span></td>
+<td><span class="math inline">\(\frac{\sum_{i=1}^a\sum_{j=1}^ny_{ij}}{an}\)</span></td>
 </tr>
 <tr class="even">
 <td>r-CRD</td>
@@ -589,7 +589,7 @@ $(document).ready(function () {
 <td>.</td>
 <td><span class="math inline">\(\frac{\sum_{j=1}^ny_{ij}}n\)</span></td>
 <td>.</td>
-<td><span class="math inline">\(\frac1{an}\sum_{i=1}^a\sum_{j=1}^ny_{ij}\)</span></td>
+<td><span class="math inline">\(\frac{\sum_{i=1}^a\sum_{j=1}^ny_{ij}}{an}\)</span></td>
 </tr>
 <tr class="odd">
 <td>f-RCBD</td>
@@ -622,6 +622,54 @@ $(document).ready(function () {
 <p>For a random treatment effects CRD, <span class="math inline">\(\mu\)</span> is a constant, <span class="math inline">\(E[\tau_i]=0\)</span>, <span class="math inline">\(Var[\tau_i]=\sigma_{\tau}^2\)</span>;</p>
 <p>For a fxed Block effects RCBD, <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\tau_i\)</span> are constants, <span class="math inline">\(\beta_j\)</span> is a constant of the <span class="math inline">\(j^{th}\)</span> block;</p>
 <p>For a random Block effects RCBD, <span class="math inline">\(\mu\)</span>and <span class="math inline">\(\tau_i\)</span> are constants, <span class="math inline">\(E[\beta_j]=0\)</span>, <span class="math inline">\(Var[\beta_j]=\sigma_{\beta}^2\)</span>;</p>
+<table>
+<colgroup>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+<col width="20%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th><span class="math inline">\(y_{ij}-\bar y_{i.}\)</span></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>FT-CRD</td>
+<td><span class="math inline">\(\mu+\tau_{i}+ε_{ij}-\frac1n \sum_{j=1}^n(\mu+\tau_{i}+ε_{ij})\)</span></td>
+<td><span class="math inline">\(=\mu+\tau_{i}+ε_{ij}-\mu-\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}\)</span></td>
+<td><span class="math inline">\(=\)</span></td>
+<td><span class="math inline">\(ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}\)</span></td>
+</tr>
+<tr class="even">
+<td>RT-CRD</td>
+<td></td>
+<td><span class="math inline">\(\mu+\tau_{i}+ε_{ij}-\mu-\frac1n \sum_{j=1}^n\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}\)</span></td>
+<td><span class="math inline">\(=\tau_{i}-\frac1n \sum_{j=1}^n\tau_{i}+\)</span></td>
+<td><span class="math inline">\(ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}\)</span></td>
+</tr>
+<tr class="odd">
+<td>FB-RCBD</td>
+<td><span class="math inline">\(\mu+\tau_{i}+\beta_j+ε_{ij}-\frac1b \sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})\)</span></td>
+<td><span class="math inline">\(\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-0-\frac1b \sum_{j=1}^bε_{ij}\)</span></td>
+<td><span class="math inline">\(=\beta_j+\)</span></td>
+<td><span class="math inline">\(ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}\)</span></td>
+</tr>
+<tr class="even">
+<td>FB-RCBD</td>
+<td></td>
+<td><span class="math inline">\(\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-\frac1b \sum_{j=1}^b\beta_j-\frac1b \sum_{j=1}^bε_{ij}\)</span></td>
+<td><span class="math inline">\(=\beta_j-\frac1b \sum_{j=1}^b\beta_j+\)</span></td>
+<td><span class="math inline">\(ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}\)</span></td>
+</tr>
+</tbody>
+</table>
 <p><span class="math display">\[y_{ij}-\bar y_{i.}=\left\{\begin{array}{lr}\mu+\tau_{i}+ε_{ij}-\frac1n \sum_{j=1}^n(\mu+\tau_{i}+ε_{ij})&amp;=\begin{cases}\mu+\tau_{i}+ε_{ij}-\mu-\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}&amp;=&amp;ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}&amp;\text{FT-CRD}\\
 \mu+\tau_{i}+ε_{ij}-\mu-\frac1n \sum_{j=1}^n\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}&amp;=\tau_{i}-\frac1n \sum_{j=1}^n\tau_{i}+&amp;ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}&amp;\text{RT-CRD}\end{cases}\\
 \mu+\tau_{i}+\beta_j+ε_{ij}-\frac1b \sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})&amp;=\begin{cases}\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-\beta_j-\frac1b \sum_{j=1}^bε_{ij}&amp;=&amp;ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}&amp;\text{FB-RCBD}\\

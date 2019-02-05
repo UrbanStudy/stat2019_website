@@ -159,8 +159,8 @@ Note: For the given model in each of the following four problems, be able to der
 
 |      |$y_{ij}$|$i$|$j$|$ε_{ij}$|$\tau_i$|$\beta_j$|$\bar y_{i.}$|$\bar y_{.j}$|$\bar y_{..}$|
 | ---  |   ---  |---|---|   ---  | ---    | ---     | ---         | ---         | ---         |
-|f-CRD |$\mu+\tau_{i}+ε_{ij}$|$1,..,a$|$1,..,n$|$N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|.|$\frac{\sum_{j=1}^ny_{ij}}n$|.|$\frac1{an}\sum_{i=1}^a\sum_{j=1}^ny_{ij}$|
-|r-CRD |$\mu+\tau_{i}+ε_{ij}$|$1,..,a$|$1,..,n$|$N(0,σ^2)$|$N(0,σ_{\tau}^2)$|.|$\frac{\sum_{j=1}^ny_{ij}}n$|.|$\frac1{an}\sum_{i=1}^a\sum_{j=1}^ny_{ij}$|
+|f-CRD |$\mu+\tau_{i}+ε_{ij}$|$1,..,a$|$1,..,n$|$N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|.|$\frac{\sum_{j=1}^ny_{ij}}n$|.|$\frac{\sum_{i=1}^a\sum_{j=1}^ny_{ij}}{an}$|
+|r-CRD |$\mu+\tau_{i}+ε_{ij}$|$1,..,a$|$1,..,n$|$N(0,σ^2)$|$N(0,σ_{\tau}^2)$|.|$\frac{\sum_{j=1}^ny_{ij}}n$|.|$\frac{\sum_{i=1}^a\sum_{j=1}^ny_{ij}}{an}$|
 |f-RCBD|$\mu+\tau_{i}+\beta_j+ε_{ij}$|$1,..,a$|$1,..,b$|$N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|$\sum_{j=1}^b\beta_j=0$|$\frac{\sum_{j=1}^by_{ij}}b$|$\frac{\sum_{i=1}^ay_{ij}}a$|$\frac{\sum_{i=1}^a\sum_{j=1}^by_{ij}}{ab}$|
 |r-RCBD|$\mu+\tau_{i}+\beta_j+ε_{ij}$|$1,..,a$|$1,..,b$|$N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|$N(0,σ_{\beta}^2)$|$\frac{\sum_{j=1}^by_{ij}}b$|$\frac{\sum_{i=1}^ay_{ij}}a$|$\frac{\sum_{i=1}^a\sum_{j=1}^by_{ij}}{ab}$|
 
@@ -173,6 +173,15 @@ For a random treatment effects CRD, $\mu$ is a constant, $E[\tau_i]=0$, $Var[\ta
 For a fxed Block effects RCBD, $\mu$ and $\tau_i$ are constants, $\beta_j$ is a constant of the $j^{th}$ block; 
 
 For a random Block effects RCBD, $\mu$and $\tau_i$ are constants, $E[\beta_j]=0$, $Var[\beta_j]=\sigma_{\beta}^2$; 
+
+|$y_{ij}-\bar y_{i.}$|||||
+| ---                |   ---  |---|---|   ---  |
+|FT-CRD |$\mu+\tau_{i}+ε_{ij}-\frac1n \sum_{j=1}^n(\mu+\tau_{i}+ε_{ij})$|$=\mu+\tau_{i}+ε_{ij}-\mu-\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}$|$=$|$ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}$
+|RT-CRD | |$\mu+\tau_{i}+ε_{ij}-\mu-\frac1n \sum_{j=1}^n\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}$|$=\tau_{i}-\frac1n \sum_{j=1}^n\tau_{i}+$|$ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}$
+|FB-RCBD|$\mu+\tau_{i}+\beta_j+ε_{ij}-\frac1b \sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})$|$\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-0-\frac1b \sum_{j=1}^bε_{ij}$|$=\beta_j+$|$ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}$
+|FB-RCBD| |$\mu+\tau_{i}+\beta_j+ε_{ij}-\mu-\tau_{i}-\frac1b \sum_{j=1}^b\beta_j-\frac1b \sum_{j=1}^bε_{ij}$|$=\beta_j-\frac1b \sum_{j=1}^b\beta_j+$|$ε_{ij}-\frac1b \sum_{j=1}^bε_{ij}$
+
+
 
 $$y_{ij}-\bar y_{i.}=\left\{\begin{array}{lr}\mu+\tau_{i}+ε_{ij}-\frac1n \sum_{j=1}^n(\mu+\tau_{i}+ε_{ij})&=\begin{cases}\mu+\tau_{i}+ε_{ij}-\mu-\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}&=&ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}&\text{FT-CRD}\\
 \mu+\tau_{i}+ε_{ij}-\mu-\frac1n \sum_{j=1}^n\tau_{i}-\frac1n \sum_{j=1}^nε_{ij}&=\tau_{i}-\frac1n \sum_{j=1}^n\tau_{i}+&ε_{ij}-\frac1n \sum_{j=1}^nε_{ij}&\text{RT-CRD}\end{cases}\\
