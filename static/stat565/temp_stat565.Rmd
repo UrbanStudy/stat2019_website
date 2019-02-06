@@ -12,7 +12,7 @@ A partial ANOVA table was found to be
 
 |Source|DF|SS|MS|F|
 | ---  | ---  | --- | --- | --- |
-|Factor|4 |987.71 |246.9275|33.09488|
+|Factor|4 |987.71 |246.9275|33.0945|
 |Error |25|186.53 |7.4612|   
 |Total |29|1174.24|
 
@@ -153,6 +153,37 @@ $MS_{E}=\frac{SS_{E}}{N-a}=\frac{11.91}{36}=0.3308333$;
   
  ---
 
+
+ 
+|     |$y_{ij}$  |$\bar y_{..}$|$\bar y_{i.}$|$\bar y_{.j}$|$MS_{Trt}$|$MS_{Blk}$|$MS_{E}$|
+| --- |   ---    |  ---        |  ---        |   ---       | ---      | ---      | ---    |
+|E[f.]  |  $\mu$   |  $\mu$      |$\mu+\tau_i$ |$\mu+\beta_j$|$\sigma^2+\frac{n}{a-1}\sum_{i=1}^a\tau_i^2$||$\sigma^2$|
+|V[f.]  |$\sigma^2$|$\frac{\sigma^2}{na}$|$\frac{\sigma^2}{n}$|
+|E[f.^2]|$\mu^2+\sigma^2$|$\mu^2+\frac{\sigma^2}{na}$|$\mu_i^2+\frac{\sigma^2}{n}$|
+|E[r.]|  $\mu$   |  $\mu$      |$\mu+\tau_i$ |             |$\sigma^2+\frac{b}{a-1}\sum_{i=1}^a\tau_i^2$|$\sigma^2+\frac{a}{b-1}\sum_{j=1}^b\beta_j^2$|
+|V[r.]|$\sigma^2+\sigma_\tau^2$|$\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$|$\frac{\sigma^2}{n}+\sigma_\tau^2$|
+|E[r.^2]|$\mu^2+\sigma^2+\sigma_\tau^2$|$\mu^2+\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$|$\mu_i^2+\frac{\sigma^2}{n}+\sigma_\tau^2$|
+
+|$\hat\mu_i$|$\hat\tau_i$|$\hat\beta_j$|$\hat y_{ij}$|$ε_{ij}$|$\hat\sigma^2$|$\hat\sigma_{Trt}^2$|$\hat\sigma_{Blk}^2$|$\widehat{Var(\bar y_{i.})}$|$\hat{X}$
+|    ---    | ---        |     ---     |   ---        |  ---  |  ---   |   ---       | ---      | ---      |
+|$\bar y_{..}$|$\bar y_{i.}-\bar y_{..}$|$\bar y_{.j}-\bar y_{..}$|$\bar y_{i.}+\bar y_{.j}-\bar y_{..}$|$\bar y_{ij}-\bar y_{..}$|$MSE$|$\frac{MS_{Trt}-MS_{E}}{n}$|$\frac{MS_{Blk}-MS_{E}}{a}$|$\frac{MS_{Trt}}{n}$|$\frac{ay'_{i.}+by'_{.j}-y_{..}'}{(a-1)(b-1)}$
+
+
+ - Least Squares Method
+
+$y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}$, for $ε_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,n$, $\sum_{i=1}^a\tau_i=0$
+
+$SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i)^2$, $\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i-\beta_j)^2$,
+
+$\left.\frac{\partial SSE}{\partial\mu}\right|_{\hat\mu,\hat\tau_i}=2\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0$,$y_{..}=an\hat\mu+n\sum_{i=1}^a\hat\tau_i$
+$\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\mu,\hat\tau_i}=2\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0$,$y_{i.}=n\hat\mu+n\hat\tau_i$
+
+$\left.\frac{\partial SSE}{\partial\mu}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$,$y_{..}=ab\hat\mu+b\sum_{i=1}^a\hat\tau_i+a\sum_{j=1}^b\hat\beta_j$
+$\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{j=1}^b(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$,$y_{i.}=b\hat\mu+b\hat\tau_i+\sum_{j=1}^b\hat\beta_j$
+$\left.\frac{\partial SSE}{\partial\beta_j}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{i=1}^a(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$,$y_{.j}=a\hat\mu+\sum_{i=1}^a\hat\tau_i+a\hat\beta_j$
+
+ ---
+
 ### Problem 4,5,6,7
 
 Note: For the given model in each of the following four problems, be able to derive the normal equations from the least squares parameter estimation method. Using ONLY the above given information and properties of expected value of a function of random variables, compute (DO NOT use any other distribution properties). $ε_{ij}$,$\tau_i$,$\beta_j$ are independent.
@@ -165,14 +196,28 @@ Note: For the given model in each of the following four problems, be able to der
 |r-RCBD|$\mu+\tau_{i}+\beta_j+ε_{ij}$|$1,..,a$|$1,..,b$|$N(0,σ^2)$|$\sum_{i=1}^a\tau_i=0$|$N(0,σ_{\beta}^2)$|$\frac{\sum_{j=1}^by_{ij}}b$|$\frac{\sum_{i=1}^ay_{ij}}a$|$\frac{\sum_{i=1}^a\sum_{j=1}^by_{ij}}{ab}$|
 
  ---
- 
-For a fixed treatment effect CRD, $\mu$ is a constant, $\tau_i$ is a constant of the $i^{th}$ treatment; 
 
-For a random treatment effects CRD, $\mu$ is a constant, $E[\tau_i]=0$, $Var[\tau_i]=\sigma_{\tau}^2$; 
+|$E[(y_{ij}-\bar y_{i.})^2]$|$=Var[y_{ij}-\bar y_{i.}]$|$+E[y_{ij}-\bar y_{i.}]^2$|$=$|
+| ---   |   ---               |---|---|
+|FT-CRD |$\frac{n-1}n\sigma^2$| $0$ |$\frac{n-1}n\sigma^2$|
+|RT-CRD |$\frac{n-1}n\sigma^2$| $0$ |$\frac{n-1}n\sigma^2$|
+|FB-RCBD|$\frac{(b-1)\sigma^2}b$|$\beta_{j}^2$|$\frac{(b-1)\sigma^2}b+\beta_{j}^2$|
+|RB-RCBD|$\frac{(b-1)(\sigma_{\beta}^2+\sigma^2)}b$|$0$|$\frac{(b-1)(\sigma_{\beta}^2+\sigma^2)}b$|
+|$E[(\bar y_{i.}-\bar y_{..})^2]$|$=Var[\bar y_{i.}-\bar y_{..}]$|$+E[\bar y_{i.}-\bar y_{..}]^2$|$=$|
+|FT-CRD |$\frac{(n+1)\sigma^2}{n}$| $\tau_i^2$ |$\frac{(a-1)\sigma^2}{an}+\tau_i^2$|
+|RT-CRD |$\frac{(n\sigma_{\tau}^2+\sigma^2)(a-1)}{an}$| $0$ |$\frac{(a-1)(n\sigma_{\tau}^2+\sigma^2)}{an}$|
+|FB-RCBD|$\frac{(a-1)\sigma^2}{ab}$|$\tau_i^2$|$\frac{(a-1)\sigma^2}{ab}+\tau_i^2$|
+|RB-RCBD|$\frac{(a-1)\sigma^2}{ab}$|$\tau_i^2$|$\frac{(a-1)\sigma^2}{ab}+\tau_i^2$|
+|$E[(y_{ij}-\bar y_{.j})^2]$|$=Var[y_{ij}-\bar y_{.j}]$|$+E[y_{ij}-\bar y_{.j}]^2$|$=$|
+|FB-RCBD|$\frac{(a-1)\sigma^2}a$|$\tau_i^2$|$\frac{(a-1)\sigma^2}a+\tau_i^2$|
+|RB-RCBD|$\frac{(a-1)\sigma^2}a$|$\tau_i^2$|$\frac{(a-1)\sigma^2}a+\tau_i^2$|
+|$E[(\bar y_{.j}-\bar y_{..})^2]$|$=Var[\bar y_{.j}-\bar y_{..}]$|$+E[\bar y_{.j}-\bar y_{..}]^2$|$=$|
+|FB-RCBD|$\frac{(b-1)\sigma^2}{ab}+\beta_{j}^2$|$\beta_{j}^2$|$\frac{(b-1)\sigma^2}{ab}+\beta_{j}^2$|
+|RB-RCBD|$\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$|$0$|$\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$|
+|$E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]$|$=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]$|$+E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2$|$=$|
+|FB;RB-RCBD|$\frac{(ab-a-b-1)\sigma^2}{ab}$|$0$|$\frac{(a-1)(b-1)\sigma^2}{ab}$|
 
-For a fxed Block effects RCBD, $\mu$ and $\tau_i$ are constants, $\beta_j$ is a constant of the $j^{th}$ block; 
-
-For a random Block effects RCBD, $\mu$and $\tau_i$ are constants, $E[\beta_j]=0$, $Var[\beta_j]=\sigma_{\beta}^2$; 
+ ---
 
 |$y_{ij}-\bar y_{i.}$|||||
 | ---                |   ---  |---|---|   ---  |
@@ -204,8 +249,6 @@ For a random Block effects RCBD, $\mu$and $\tau_i$ are constants, $E[\beta_j]=0$
 
  ---
 
-For $ε_{ij}\sim iid\ N(0,σ^2)$, $E[ε_{ij}]=0$
-
 |       |$E[y_{ij}-\bar y_{i.}]$|$=$|$E[\bar y_{i.}-\bar y_{..}]$|$=$|
 |  ---  | ---                   |---|  ---                       |---|
 |FT-CRD |$E[ε_{ij}]-\frac1{n}\sum_{j=1}^nE[ε_{ij}]$|$0$|$E[\tau_{i}]+\frac1{n}\sum_{j=1}^nE[ε_{ij}]-\frac1{an}\sum_{i=1}^a\sum_{j=1}^nE[ε_{ij}]$|$\tau_{i}$
@@ -221,6 +264,25 @@ For $ε_{ij}\sim iid\ N(0,σ^2)$, $E[ε_{ij}]=0$
 FB-RCBD,$E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=E[ε_{ij}]-\frac1{a}\sum_{i=1}^aE[ε_{ij}]-\frac1{b}\sum_{j=1}^bE[ε_{ij}]+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bE[ε_{ij}]=0$
 
  ---
+
+
+
+|        |$ε_{ij}$|$\sum_{i=1}^aε_{ij}$|$\sum_{j=1}^bε_{ij}$|$\sum_{i=1}^a\sum_{j=1}^bε_{ij}$|
+|   ---  |   ---  |           ---      |       ---          |      ---                       |
+|$ε_{ij}$|$\sigma^2$|$\sigma^2$|$\sigma^2$|$\sigma^2$|
+|$\sum_{i=1}^aε_{ij}$||$\sigma^2$|$\sigma^2$|$a\sigma^2$|
+|$\sum_{j=1}^bε_{ij}$|||$\sigma^2$|$b\sigma^2$|
+|$\sum_{i=1}^a\sum_{j=1}^bε_{ij}$||||$\sigma^2$|
+
+
+$Cov[ε_{ij},ε_{ij}]=Cov[\sum_{i1}^aε_{ij},\sum_{j=1}^bε_{ij}]=\sigma^2$,$Cov[\tau_{i},\tau_{i}]=σ_{\tau}^2$,$Cov[\beta_{j},\beta_{j}]=σ_{\beta}^2$
+
+$Cov[ε_{ij},\tau_{i}]=Cov[ε_{ij},\beta_{j}]=Cov[\tau_{i},\beta_{j}]=Cov[ε_{ij},ε_{ik}]=0,k\neq j$
+
+$Cov[ε_{ij},\sum_{j=1}^nε_{ij}]=Cov[ε_{ij},(ε_{i1}+..+ε_{ij}..+ε_{in})]=Cov[ε_{ij},ε_{i1}]+..+Cov[ε_{ij},ε_{ij}]..+Cov[ε_{ij},ε_{in}]=\sigma^2$
+
+$Cov[\sum_{j=1}^nε_{ij},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]=Cov[(ε_{i1}+ε_{i2}..+ε_{in}),(ε_{i1}+ε_{i2}..+ε_{in})]=Cov[ε_{i1},ε_{i1}]+Cov[ε_{i2},ε_{i2}]..+Cov[ε_{in},ε_{in}]=n\sigma^2$
+
 
 $Var[y_{ij}-\bar y_{i.}]=$
 
@@ -258,7 +320,7 @@ RT-CRD
 $Var[\tau_{i}-\frac{\sum_{i=1}^a\tau_{i}}{a}+\frac{\sum_{j=1}^nε_{ij}}n-\frac{\sum_{i=1}^a\sum_{j=1}^nε_{ij}}{an}]=$
 $Var[\tau_{i}]+\frac{\sum_{i=1}^aVar[\tau_{i}]}{a^2}+\frac{\sum_{j=1}^nVar[ε_{ij}]}{n^2}+\frac{\sum_{i=1}^a\sum_{j=1}^nVar[ε_{ij}]}{a^2n^2}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\tau_{i}]}a+\frac{2Cov[\tau_{i},\sum_{j=1}^nε_{ij}]}n-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{an}-\frac{2Cov[\sum_{i=1}^a\tau_{i},\sum_{j=1}^nε_{ij}]}{an}$
 $+\frac{2Cov[\sum_{i=1}^a\tau_{i},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{a^2n}-\frac{2Cov[\sum_{j=1}^nε_{ij},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{an^2}$
-$=\sigma_{\tau}^2+\frac{\sigma_{\tau}^2}{a}-\frac{2\sigma_{\tau}^2}{a}+\frac{\sigma^2}{n}+\frac{\sigma^2}{an}-\frac{2\sigma^2}{an}=\frac{(n\sigma_{\tau}^2+\sigma^2)(n-1)}{an}$
+$=\sigma_{\tau}^2+\frac{\sigma_{\tau}^2}{a}-\frac{2\sigma_{\tau}^2}{a}+\frac{\sigma^2}{n}+\frac{\sigma^2}{an}-\frac{2\sigma^2}{an}=\frac{(n\sigma_{\tau}^2+\sigma^2)(a-1)}{an}$
 
 FB-RCBD;RB-RCBD
 
@@ -303,64 +365,3 @@ $Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}
 $-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}$
 $=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}$
 
- ---
-
-For $ε_{ij}\sim iid\ N(0,σ^2)$, $Var[ε_{ij}]=Cov[ε_{ij},ε_{ij}]=\sigma^2$, $Cov[ε_{ij},ε_{ik}]=0,k\neq j$
-
-For $\tau_{i}\sim iid\ N(0,σ_{\tau}^2)$, $Var[\tau_{i}]=Cov[\tau_{i},\tau_{i}]=σ_{\tau}^2$
-
-For $\beta_{j}\sim iid\ N(0,σ_{\beta}^2)$, $Var[\beta_{j}]=Cov[\beta_{j},\beta_{j}]=σ_{\beta}^2$
-
-For $ε_{ij},\tau_{i},\beta_{j}$ are independent, $Cov[ε_{ij},\tau_{i}]=Cov[ε_{ij},\beta_{j}]=Cov[\tau_{i},\beta_{j}]=0$
-
-$Cov[ε_{ij},\sum_{j=1}^nε_{ij}]=Cov[ε_{ij},(ε_{i1}+..+ε_{ij}..+ε_{in})]=Cov[ε_{ij},ε_{i1}]+..+Cov[ε_{ij},ε_{ij}]..+Cov[ε_{ij},ε_{in}]=\sigma^2$
-
-$Cov[\sum_{j=1}^nε_{ij},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]=Cov[(ε_{i1}+ε_{i2}..+ε_{in}),(ε_{i1}+ε_{i2}..+ε_{in})]=Cov[ε_{i1},ε_{i1}]+Cov[ε_{i2},ε_{i2}]..+Cov[ε_{in},ε_{in}]=n\sigma^2$
-
- ---
-
-|$E[(y_{ij}-\bar y_{i.})^2]$|$=Var[y_{ij}-\bar y_{i.}]$|$+E[y_{ij}-\bar y_{i.}]^2$|$=$|
-| ---   |   ---               |---|---|
-|FT-CRD |$\frac{n-1}n\sigma^2$| $0$ |$\frac{n-1}n\sigma^2$|
-|RT-CRD |$\frac{n-1}n\sigma^2$| $0$ |$\frac{n-1}n\sigma^2$|
-|FB-RCBD|$\frac{(b-1)\sigma^2}b$|$\beta_{j}^2$|$\frac{(b-1)\sigma^2}b+\beta_{j}^2$|
-|RB-RCBD|$\frac{(b-1)(\sigma_{\beta}^2+\sigma^2)}b$|$0$|$\frac{(b-1)(\sigma_{\beta}^2+\sigma^2)}b$|
-
-|$E[(\bar y_{i.}-\bar y_{..})^2]$|$=Var[\bar y_{i.}-\bar y_{..}]$|$+E[\bar y_{i.}-\bar y_{..}]^2$|$=$|
-| ---   |   ---               |---|---|
-|FT-CRD |$\frac{(n+1)\sigma_{\tau}^2}{n}-\frac{\sigma^2}{an}$| $\tau_i^2$ |$\frac{(a-1)\sigma^2}{an}+\tau_i^2$|
-|RT-CRD |$\frac{(n\sigma_{\tau}^2+\sigma^2)(n-1)}{an}$| $0$ |$\frac{(n-1)(n\sigma_{\tau}^2+\sigma^2)}{an}$|
-|FB-RCBD|$\frac{(a-1)\sigma^2}{ab}$|$\tau_i^2$|$\frac{(a-1)\sigma^2}{ab}+\tau_i^2$|
-|RB-RCBD|$\frac{(a-1)\sigma^2}{ab}$|$\tau_i^2$|$\frac{(a-1)\sigma^2}{ab}+\tau_i^2$|
-
-|$E[(y_{ij}-\bar y_{.j})^2]$|$=Var[y_{ij}-\bar y_{.j}]$|$+E[y_{ij}-\bar y_{.j}]^2$|$=$|
-| ---   |   ---               |---|---|
-|FB-RCBD|$\frac{(a-1)\sigma^2}a$|$\tau_i?$|$\frac{(a-1)\sigma^2}a+\tau_i^2$|
-|RB-RCBD|$\frac{(a-1)\sigma^2}a$|$\tau_i?$|$\frac{(a-1)\sigma^2}a+\tau_i^2$|
-
-|$E[(\bar y_{.j}-\bar y_{..})^2]$|$=Var[\bar y_{.j}-\bar y_{..}]$|$+E[\bar y_{.j}-\bar y_{..}]^2$|$=$|
-| ---   |   ---               |---|---|
-|FB-RCBD|$\frac{(b-1)\sigma^2}{ab}+\beta_{j}^2$|$\beta_{j}^2$|$\frac{(b-1)\sigma^2}{ab}+\beta_{j}^2$|
-|RB-RCBD|$\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$|$0$|$\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$|
-
-|$E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]$|$=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]$|$+E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2$|$=$|
-| ---   |   ---               |---|---|
-|FB-RCBD|$\frac{(ab-a-b-1)\sigma^2}{ab}$|$0$|$\frac{(a-1)(b-1)\sigma^2}{ab}$|
-
-
-
- ---
-
- 
-|     |$y_{ij}$  |$\bar y_{..}$|$\bar y_{i.}$|$\bar y_{.j}$|$MS_{Trt}$|$MS_{Blk}$|$MS_{E}$|
-| --- |   ---    |  ---        |  ---        |   ---       | ---      | ---      | ---    |
-|E[f.]  |  $\mu$   |  $\mu$      |$\mu+\tau_i$ |$\mu+\beta_j$|$\sigma^2+\frac{n}{a-1}\sum_{i=1}^a\tau_i^2$||$\sigma^2$|
-|V[f.]  |$\sigma^2$|$\frac{\sigma^2}{na}$|$\frac{\sigma^2}{n}$|
-|E[f.^2]|$\mu^2+\sigma^2$|$\mu^2+\frac{\sigma^2}{na}$|$\mu_i^2+\frac{\sigma^2}{n}$|
-|E[r.]|  $\mu$   |  $\mu$      |$\mu+\tau_i$ |             |$\sigma^2+\frac{b}{a-1}\sum_{i=1}^a\tau_i^2$|$\sigma^2+\frac{a}{b-1}\sum_{j=1}^b\beta_j^2$|
-|V[r.]|$\sigma^2+\sigma_\tau^2$|$\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$|$\frac{\sigma^2}{n}+\sigma_\tau^2$|
-|E[r.^2]|$\mu^2+\sigma^2+\sigma_\tau^2$|$\mu^2+\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$|$\mu_i^2+\frac{\sigma^2}{n}+\sigma_\tau^2$|
-
-|$\hat\mu_i$|$\hat\tau_i$|$\hat\beta_j$|$\hat y_{ij}$|$ε_{ij}$|$\hat\sigma^2$|$\hat\sigma_{Trt}^2$|$\hat\sigma_{Blk}^2$|$\widehat{Var(\bar y_{i.})}$|$\hat{X}$
-|    ---    | ---        |     ---     |   ---        |  ---  |  ---   |   ---       | ---      | ---      |
-|$\bar y_{..}$|$\bar y_{i.}-\bar y_{..}$|$\bar y_{.j}-\bar y_{..}$|$\bar y_{i.}+\bar y_{.j}-\bar y_{..}$|$\bar y_{ij}-\bar y_{..}$|$MSE$|$\frac{MS_{Trt}-MS_{E}}{n}$|$\frac{MS_{Blk}-MS_{E}}{a}$|$\frac{MS_{Trt}}{n}$|$\frac{ay'_{i.}+by'_{.j}-y_{..}'}{(a-1)(b-1)}$
