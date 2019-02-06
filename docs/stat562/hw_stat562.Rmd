@@ -367,67 +367,77 @@ $$\therefore f_{Y_1..Y_n}(y_1,..,y_n)=\begin{cases}iay_i^{ia−1}&0<y_i<1,i=1,2,
 
 **5.35** Stirling's Formula (derived in Exercise 1.28), which gives an approximation for factorials, can be easily derived using the CLT.
 
- (a). Argue that, if $X_i\sim exponential(1),i=1,2,..$, all independent, then for every x, 
- 
-$P\left(\frac{\bar X_n-1}{\frac1{\sqrt n}}\le x\right)\rightarrow P(Z\le x)$ where Z is a standard normal random variable.
+ (a). Argue that, if $X_i\sim exponential(1),i=1,2,..$, all independent, then for every x, $P\left(\frac{\bar X_n-1}{\frac1{\sqrt n}}\le x\right)\rightarrow P(Z\le x)$ where Z is a standard normal random variable.
 
-$X_i\sim exponential(1), μ_X=1,VarX=1$. From the CLT, $\bar X_n$ is approximately $n(1, 1/n)$. So
+For $X_i\sim exponential(1), μ_X=\frac1\lambda=1,\sigma=VarX=\frac1{\lambda^2}=1$. 
 
-$$\frac{\bar X_n−1}{\frac1{\sqrt{n}}}\to Z\sim n(0,1)\quad P(\frac{\bar X_n−1}{\frac1{\sqrt{n}}}\le x)\to P(Z\le x)$$
+From the Central Limit Theorem, $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}=\frac{\bar X_n−1}{\frac1{\sqrt{n}}}$  $\underrightarrow{\mathcal{D}}$ $Z\sim n(0,1)$. Then, for any x
+
+$$P(\frac{\bar X_n−1}{\frac1{\sqrt{n}}}\le x)\to P(Z\le x)$$
+
  ---
  
  (b). Show that differentiating both sides of the approximation in part (a) suggests
 $\frac{\sqrt n}{\Gamma(n)}(x\sqrt n+n)^{n-1} e^{-(x\sqrt n+n)}\approx \frac1{\sqrt{2\pi}}e^{-\frac{x^2}2}$ and that x = 0 gives Stirling's Formula.
 
+From **Example 5.2.8 Distribution of the mean** $\bar X\sim gamma(n\alpha,\beta/n)$. Let $W=\sum_{i=1}^nX_i\sim gamma(n,1)$,
+
+$$\frac{d}{dx}P(\frac{\bar X_n−1}{\frac1{\sqrt{n}}}\le x)=\frac{d}{dx}(\sum_{i=1}^nX_i\le x\sqrt{n}+n)=\frac{d}{dx} F_W(x\sqrt{n}+n)=f_W(x\sqrt{n}+n)\sqrt{n}=\frac{\sqrt{n}}{\Gamma(n)}(x\sqrt{n}+n)^{n-1}e^{-(x\sqrt{n}+n)}$$
+ 
  $$\frac{d}{dx}P(Z\le x)=\frac{d}{dx}F_Z(x)= f_Z(x)=\frac1{\sqrt{2\pi}}e^{−\frac{x^2}2}$$
- 
- Let $W=\sum_{i=1}^nX_i\sim gamma(n,1)$,
- 
- $$\frac{d}{dx}P(\frac{\bar X_n−1}{\frac1{\sqrt{n}}}\le x)=\frac{d}{dx}(\sum_{i=1}^nX_i\le x\sqrt{n}+n)=\frac{d}{dx} F_W(x\sqrt{n}+n)=f_W(x\sqrt{n}+n)\sqrt{n}=\frac1{\Gamma(n)}(x\sqrt{n}+n)^{n-1}e^{-(x\sqrt{n}+n)}\sqrt{n}$$
 
 Therefore, as $x\to\infty $,
 
-$$\frac1{\Gamma(n)}(x\sqrt{n}+n)^{n-1}e^{-(x\sqrt{n}+n)}\sqrt{n}\approx \frac1{\sqrt{2\pi}}e^{−\frac{x^2}2}$$
+$$\frac{\sqrt{n}}{\Gamma(n)}(x\sqrt{n}+n)^{n-1}e^{-(x\sqrt{n}+n)}\approx \frac1{\sqrt{2\pi}}e^{−\frac{x^2}2}$$
 
-Substituting $x=0$ yields 
+When $x=0$,
 
-$$n!\approx n^{n+\frac12}e^{−n}\sqrt{2\pi}$$
+$$\frac{\sqrt{n}}{(n-1)!}(n)^{n-1}e^{-n}\approx \frac1{\sqrt{2\pi}}\implies\sqrt{2\pi}n^{n+1/2}e^{-n}\approx n(n-1)!\implies n!\approx n^{n+\frac12}e^{−n}\sqrt{2\pi}$$
 
  ---
 
 **5.39** This exercise, and the two following, will look at some o f the mathematical details of convergence.
 
-$$\underrightarrow{p}\quad \lim_{\substack{x\to\infty\\y\to\infty}}()$$
-
  (a). Prove Theorem 5.5.4. (Hint: Since h is continuous, given $\varepsilon>0$ we can find a $\delta>0$ such that $|h(x_n)-h(x)|<\varepsilon$: whenever $|X_n-X|<\delta$. Translate this into probabilitystatements. )
+
+**Theorem 5.5.4** Suppose that $X_1, X2,..$ converges in probability to a random variable X and that h is a continuous function. Then $h(X_1),h(X2),..$ $\underrightarrow{\mathcal{P}}$ $h(X)$.
 
 Since h is continuous, given $\varepsilon>0$, there exits $\delta$ such that $|h(x_n)-h(x)|<\varepsilon$ for $|X_n-X|<\delta$.
 
-Since $X_1,..,X_n$ converges in probability to the random variable X, then $\lim_{n\to\infty}P(|X_n-X|<\delta)=1$. Thus $\lim_{n\to\infty}P(|h(x_n)-h(x)|<\varepsilon)=1$
+From **Definition 5.5.1** A sequence of random variables, $X_1,X_2,..$, $\underrightarrow{\mathcal{P}}$ $X$ if, for every $\varepsilon>0$, $\begin{cases}\lim_{n\to\infty}P(|X_n-X|\ge\varepsilon)=0\\\lim_{n\to\infty}P(|X_n-X|<\varepsilon)=1\end{cases}$
 
+Since $X_1,..,X_n$ $\underrightarrow{\mathcal{P}}$ $X$, then $\lim_{n\to\infty}P(|X_n-X|<\delta)=1$. Thus $\lim_{n\to\infty}P(|h(x_n)-h(x)|<\varepsilon)=1$
 
  (b). In Example 5.5.8, find a subsequence of the $X_i$S that converges almost surely, that is, that converges pointwise.
- 
-Define the subsequence $X_j(s)=s+I_{[a,b]}(s)$ such that in $I_{[a,b]}$, a is always 0, i.e, the subsequence $X_1,X_2,X_4,X_7,..$ For this subsequence
+
+$X_1(s)=s+I_{[0,1]}(s)=$
+
+$X_2(s)=s+I_{[0,\frac12]}(s),\ X_3(s)=s+I_{[\frac12,1]}(s)$
+
+$X_4(s)=s+I_{[0,\frac13]}(s),\ X_5(s)=s+I_{[\frac13,\frac23]}(s),\ X_6(s)=s+I_{[\frac23,1]}(s)$
+
+$X_7(s)=s+I_{[0,\frac14]}(s),\ X_8(s)=s+I_{[\frac14,\frac12]}(s),\ X_9(s)=s+I_{[\frac12,\frac34]}(s),\ X_10(s)=s+I_{[\frac34,1]}(s)$
+
+Define the subsequence $X_j(s)=s+I_{[a,b]}(s)$ such that in $I_{[a,b]}$, $a$ is always start from 0, the subsequence $X_1,X_2,X_4,X_7,..$ For this subsequence
  
  $$X_j(s)=\begin{cases}s&s>0\\s+1& s=0\end{cases}$$
  
  ---
 
-**5.41** Prove Theorem 5.5.13; that is, show that
+**5.41** Prove **Theorem 5.5.13** The sequence of random variables, $X_1,X_2,..$, converges in probability to a constant $\mu$ if and only if the sequence also converges in distribution to $\mu$.
 
 $$\forall\varepsilon>0, P(|X_n-\mu|>\varepsilon)\to0\iff P(X_n\le x)\to\begin{cases}0&x<\mu\\1&x\ge\mu\end{cases}$$
 
  (a). Set $\varepsilon=|x-\mu|$ and show that if $x>\mu$, then $P(X_n\le x)\ge P(|X_n-\mu|\le\varepsilon)$, while if $x<\mu$, then $P(X_n\le x)\le P(|X_n-\mu|\ge\varepsilon)$. Deduce the $\implies$ implication.
 
-Let $\varepsilon=|x-\mu|$
+Let $\varepsilon=|x-\mu|$, $P(|X_n-\mu|>\varepsilon)=$
 
-$$P(|X_n-\mu|>\varepsilon)=\begin{cases}P(|X_n-\mu|>x-\mu)=P(X_n-\mu<-(x-\mu))+P(X_n-\mu>x-\mu)\ge P(X_n-\mu>x-\mu)=P(X_n>x)=1-P(X_n\le x)&x-\mu\ge0\\
-P(|X_n-\mu|>\mu-x)=P(X_n-\mu<x-\mu)+P(X_n-\mu>\mu-x)\ge P(X_n-\mu<x-\mu)=P(X_n\le x)&x-\mu<0
+$$\begin{cases}P(|X_n-\mu|>x-\mu)=P(X_n-\mu<-(x-\mu))+P(X_n-\mu>x-\mu)\ge P(X_n-\mu>x-\mu)=P(X_n>x)=1-P(X_n\le x)&x\ge\mu\\
+P(|X_n-\mu|>\mu-x)=P(X_n-\mu<x-\mu)+P(X_n-\mu>\mu-x)\ge P(X_n-\mu<x-\mu)=P(X_n\le x)&x<\mu
 \end{cases}$$
 
-$$\therefore \lim_{n\to\infty}P(|X_n-\mu|>\varepsilon)=0\ge\begin{cases}\lim_{n\to\infty}(1-P(X_n\le x))\implies\lim_{n\to\infty}P(X_n\le x)\ge1& \text{when } x-\mu\ge0\\
-\lim_{n\to\infty}P(X_n\le x)& \text{when }x-\mu<0\end{cases}$$
+$$\therefore \lim_{n\to\infty}P(|X_n-\mu|>\varepsilon)=0\ge\begin{cases}\lim_{n\to\infty}(1-P(X_n\le x))\implies\lim_{n\to\infty}P(X_n\le x)\ge1& \text{when } x\ge\mu\\
+\lim_{n\to\infty}P(X_n\le x)& \text{when }x<\mu\end{cases}$$
 
 
  (b). Use the fact that $\{x: X-\mu>\varepsilon\}=\{x:x-\mu<-\varepsilon\}\cup\{x:x-\mu >\varepsilon\}$ to deduce the $\Leftarrow$ implication.(See Billingsley 1995, Section 25, for a detailed treatment of the above results.)
