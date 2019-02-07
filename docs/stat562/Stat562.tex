@@ -5,7 +5,7 @@
 \usepackage[landscape]{geometry}
 \usepackage{hyperref}
 \usepackage{amsmath, amssymb, amsthm}
-\usepackage{bbm}
+%\usepackage{bbm}
 
 
 
@@ -131,28 +131,74 @@
 \setlength{\columnsep}{2pt}
 
 
-	\subsubsection{Borel field}
-Borel field($\sigma$-algebra) B be a subset of all possible subset of S.\\
-1. $\emptyset\in B$  
-2. if $A\in B, then\ A^c\in B$  \\
-3. if $A_{1},A_{2},A_{3},...\in B, then\ \bigcup_{n=1}^{\infty}\in B$ 
+$U\sim Geom(p=\frac12),u=1,2..$ the number of trials needed to get the first head.
 
-	\subsubsection{Kolmogorov: probability distribution of X}
-Borel field B, P is a probability set function if \\
-1. $\forall A\in B,\ P(A)\ge0$;  
-2. $P(S)=1$;  \\
-3. $A_{1},A_{2}$,..pairwise disjoint, $\ P(\bigcup_{n=1}^{\infty}A_i)=\sum_{i=1}^{\infty}P(A_{i})$; 
+$V\sim N Bin(p=\frac12,r=2),v=2,3..$ the number of trials needed to get two heads in repeated tosses of a fair coin.
 
-\begin{tabular}{l|ll}
- & W Replacement & W/o Replacement \\ \hline
-Ordered & $ n^k=6^2=36$ & $\frac{n!}{(n-k)!}=\frac{6!}{(6-2)!}=\frac{720}{24}$ \\
-unorder & $\binom{n+k-1}{k}\binom{6+2-1}{2}=21$ & $\binom{n}{k}=\binom{6}{2}=15$
+the distribution of (U,V) is $\{(u,v):u=1,2,..;v=u+1,u+2,..\}$ is not a cross-product set. U and V are not independent.
+
+\subsection{Conditional expectations and variances}
+
+$f(x_2|x_1)=\frac{f(x_1,x_2)}{f_1(x_1)}$;$p(x_2|x_1)=\frac{p(x_1,x_2)}{p_1(x_1)}$
+
+4.2.1 $f(y|x)=P(Y=y|X=x)=\frac{f(x,y)}{f_X(x)}$
+
+4.2.3 $E(g(x_2)|x_1)=\sum_{all\ x_2}g(x_2)p(x_2|x_1)$,$E(g(x_2)|x_1)=\int_{all\ x_2}g(x_2)f(x_2|x_1)dx_2$
+
+4.2.4 $Var(y|x)=E(Y^2|x)-(E(Y|x))^2$, $V[X|Y]=E[(X-E[X|Y])^2|Y]$
+
+4.2.7 $f(x,y)=g(x)h(y)\iff$ indep
+
+4.2.10 $E(g(X)h(Y))=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}g(x)h(y)f(x,y)dxdy=\int_{-\infty}^{\infty}h(y)f_Y(y)\left[\int_{-\infty}^{\infty}g(x)f_X(x)dx\right]dy=E[g(x)]E[h(y)]=(Eg(X))(Eh(Y))$
+
+$F_{XY}(x,y)=P(X\le x,Y\le y)$
+
+\subsection{Covariance and Correlation}
+
+
+
+\subsection{Transformation of pairs of r.v.s}
+
+$f_{Y_1,Y_2}(y_1,y_2)=\sum_{i=1}^kf_{X_1,X_2}(h_1(y_1,y_2), h_2(y_1,y_2))|J_i|$
+
+$J_{1,2}=\begin{vmatrix}\frac{\partial h_1}{\partial y_1} & \frac{\partial h_2}{\partial y_2} \\ \frac{\partial h_1}{\partial y_1} & \frac{\partial h_2}{\partial y_2} \end{vmatrix}=\frac{\partial h_1}{\partial y_1}\frac{\partial h_2}{\partial y_2}-\frac{\partial h_2}{\partial y_1}\frac{\partial h_1}{\partial y_2}$
+
+\subsection{Properties of $\bar X$ and $S^2$}
+$\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}$
+
+$nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2$
+
+when $X_1,..,X_n$ be iid $n(\mu,\sigma^2)$, $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$,$Var\chi^2_{n-1}=2(n-1)$
+
+$Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{2\sigma^4}{n-1}$
+
+
+\subsection{Connection between $N,\chi^2,t,F$}
+
+\begin{tabular}{l|lll}
+W  Normal& $\bar X\sim N(\mu,\frac{\sigma^2}n)$ & $\bar X,S^2$ indep & $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$\\
+W/o Normal & $E[\bar X]=\mu$ & $V[\bar X]=\frac{\sigma^2}n)$ & $E[S^2]=\sigma^2$\\\hline
 \end{tabular}
 
-$P(\emptyset) =0$;
-$\forall A, P(A)= 1-P(A')$;
-$A,B \in \mathcal{S}, P(A \cup B) = P(A) + P(B) - P(A\cap B)	$;
-$A,B,C \in \mathcal{S}, P(A \cup B \cup C) = P(A) + P(B) + P(C) - P(A\cap B) - P(A\cap C) - P(B \cap C) + P(A \cap B \cap C)$
+ 5.2.8 Distribution of the mean: $\bar X\sim gamma(n\alpha,\beta/n)$
+5.2.9 Convolution formula $Z=X+Y$ $f_Z(z) =\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$
+
+5.3.2 $Z\sim n(0,1)$,$Z^2\sim \chi^2_1$, $X_1..X_n$ indep $X_i\sim \chi^2_{p_i}$,$X_1=..=X_n\sim \chi^2_{p_1+..p_n}$
+
+$\chi^2_{p}\sim gamma(p/2,2)$
+
+5.3.4 T
+
+5.3.5  $X_1..X_n$,$Y_1..Y_m$ indep. $X_i\sim n(\mu_X,\sigma_X^2)$，$Y_j\sim n(\mu_Y,\sigma_Y^2)$,$\frac{S_X^2}{\sigma_X^2}\sim \chi^2$F: $\frac{S_X^2/\sigma_X^2}{S_Y^2/\sigma_Y^2}$
+
+\subsection{Order statistics}
+
+5.4.6 $f_{X_{(i)},X_{(j)}}(u,v)=\frac{n!}{(i-1)!(j-1-i)!(n-j)!}f_X(u)f_X(v)[F_X(u)]^{i-1}[F_X(v)-F_X(u)]^{j-1-i}[1-F_X(v)]^{n-j}$
+
+$f_{X_{(1)},..,X_{(n)}}(x_1,..,x_n)=\begin{cases}n!f_X(x_1)\cdot...\cdot f_X(x_n) &-\infty<x_1<..<x_n<\infty\\0&\text{otherwise}\end{cases}$
+
+
+
 
 Conditional/Baye's: $P(A|B) = \frac{P(A\cap B)}{P(B)}=\frac{P(B|A)P(A)}{P(B)}$;disjoint
 $P(B) = P(B|A_1)P(A_1) +..P(B|A_k)P(A_k)=\sum_{i=1}^{k} P(B|A_i)P(A_i)$ \\
@@ -163,7 +209,7 @@ $E(XY)=E(X)E(Y)$        & $F_{X,Y}(x,y)=F_X(x)F_Y(y)$ \\
 $V(X\pm Y) =VX+VY$   & $f_{X,Y}(s,t)=f_X(s)f_Y(t)$
 \end{tabular}
 
-\subsection{pdf/pmf}
+  \subsubsection{pdf/pmf}
 CDF: $F(x) = P(X \leq x) = \sum_{y: y \leq x} p(y)= \int_{-\infty}^{x} f(y) dy$ \\
 	\textbf{probabilities}: $a \leq b$:\\
 PMF: $p(x)= P(X=x) = P(\forall w \in \mathcal{W}: X(w)=x)$ \\
@@ -210,22 +256,9 @@ $\frac32(x-1)^2$ & $\int_0^2x\frac32(x-1)^2dx$ & $\int_0^2x^2\frac32(x-1)^2dx$ &
  & $\frac32(\frac{x^4}4|_0^2..)$ & $\frac32(\frac{x^5}5|_0^2..)$ & $\frac35$
 \end{tabular}
 
-	\subsubsection{median/mode}
-
-$F(m) \ge 0.5$ and $P(X \ge m) \geq 0.5$. For $X$ continuous, m satisfies $\int_{-\infty}^mf(x)dx=\int_m^\infty f(x)dx=\frac12$ is half the area under the density curve; For a symmetric curve, this is the point of symmetry.
-$\tilde x = ( \frac{n+1}{2} )^{\text{nth}}$ {\scriptsize observation}; X is mode when $f(x)'=0$.
-
-$f(x)=3x^2, 0<X<1$  
-$F_X(x)=\int{f(x)dx}=\int3x^2=x^3\quad 0<x<1$
-$P(X\le m)=\int_{0}^m{f(x)dx}=\left.m^3\right|_0^m=m^3-0=\frac12\quad \therefore m=(\frac12)^{\frac13}$
-This value also satisfies another part $P(X\ge m)$
-
-$f(x)=\frac1{\pi(1+x^2)},-\infty<x<\infty$
-$F_X(x)=\int{f(x)dx}=\int\frac1{\pi(1+x^2)}=\frac{\arctan x}{\pi},\quad -\infty<x<\infty$
-$P(X\le m)=\int_{-\infty}^m{f(x)dx}=\left.\frac{\arctan x}{\pi}\right|_{-\infty}^m=\frac{\arctan m+\frac{\pi}2}{\pi}=\frac12$ \\ $\therefore \arctan m=0, m=0$ also satisfies another part $P(X\ge m)$
 
 
-\subsubsection{transform}
+  \subsubsection{transform}
 \begin{tabular}{ l|l }
 $g(x)\uparrow$   & $F_Y(y)=F_X(g^{-1}(y))$ \\
 $g(x)\downarrow$ & $F_Y(y)=1-F_X(g^{-1}(y))$ 
@@ -264,7 +297,7 @@ $M_X''(t)=E(x^2e^{tx})$ & $M_X''(0)=E(X^2)$ \\
 $M_X^n(t)=E(x^ne^{tx})$ & $M_X^n(0)=E(X^n)$
 \end{tabular}
 
-\subsubsection{Series}
+  \subsubsection{Series}
 
 \begin{tabular}{ l|l }
 Finite                                    & Binomial \\
@@ -291,31 +324,7 @@ $\Gamma(-1/2)=-2\Gamma(1/2)$ & $\int_0^\infty x^{t-1}e^{-x}dx = \Gamma(t)$
 \end{tabular}
 
 
-\subsubsection{Inequalities/Approximation}
-\textbf{Chebyshev}: 
-None negative function X; Positive constant r
-
-\begin{tabular}{ l|l }
-$P[g(X)\ge r] \le \frac{E[g(x)]}{r}$ & $P(|X - \mu| \ge t\sigma) \le \frac{1}{t^2}$ \\
-$P(|X - \mu| \ge t) \le \frac{\sigma^2}{t^2}$ & $P(|X - \mu| < t\sigma) \ge 1-\frac{1}{t^2}$ \\
-\hline
-Euler's     & $\sum_{n=0}^{\infty}\frac{1}{n} \approx \log n + 0.577$ \\
-Stirling's  & $n! \approx \sqrt{2\pi n}\left(\frac{n}{e}\right)^n$
-\end{tabular}
-
-
-\textbf{Jensen}  for $g$ convex on (a,b); reverse if $g$ is concave
-\begin{tabular}{ l|l|l }
-convex & $f(x)''\ge 0$ & $E[g(X)] \ge g(E[X])$ \\
-$x^a$  & $a(a-1)x^{a-2}$ & $=,(a=0);=\mu,(a=1)$ \\
-$x^2$  & 2 & $E[X^2] \ge (E[X])^2, (a>1)$\\
-$x^{-1}$  & $2x^{-3}$ & $E[x^{-1}] \ge (E[x])^{-1}, (a<0)$ \\
-$-\sqrt x$ & $\frac14{x^{-\frac{3}{2}}}$ & $E[\sqrt X] \le \sqrt{E[X]},(0<a<1)$ \\
-$e^{x}$  & $e^{x}$ & $E[e^{x}] \ge e^{E[x]}$ \\
-$-\ln x$ & $x^{-2}$ & $E[\ln X] \le \ln{E[X]}$  \\
-\end{tabular}
-
-\subsubsection{Integrals+c}
+  \subsubsection{Integrals+c}
 
 \begin{tabular}{ l|l|l }
 $\int{k}dx=kx$ & $\int_a^b{c}dx=c(b-a)$   & $|\int_a^b{f(x)}dx|\le \int_a^b|{f(x)}|dx$ \\
@@ -344,7 +353,7 @@ $=\left.xlnx\right|_3^5-\int_3^5dx=\left.(xlnx-x)\right|_3^5=5ln5-3ln3-2 $
 $\int_a^b{f(x)}dx=F(b)-F(a)=-\int_b^a{f(x)}dx=\int_a^c{f(x)}dx+\int_c^b{f(x)}dx$;
 $\frac{d}{dx}\int_{v(x)}^{u(x)}{f(t)}dt=u'(x)f[u(x)]-v'(x)f[v(x)]$ 
 
-\subsubsection{Derivatives}
+  \subsubsection{Derivatives}
 \begin{tabular}{ l|l|l }
 $(cf)'=cf'(x)$               & $(fg)'=f'g+fg'$                      & $(f\pm g)'=f'(x)\pm g'(x)$ \\
 $\frac{dx}{dx}=1$            & $(\frac{f}g)'=\frac{(f'g-fg')}{g^2}$ & $(f(g(x)))'=f'(g(x))g'(x)$ \\
