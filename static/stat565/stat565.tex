@@ -157,6 +157,8 @@ $SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}=SS_{Trt}$
 
 $C=\sum_{i=1}^ac_i\mu_i$;$\sum_{i=1}^ac_i=0$;orthogonal $\sum_{i=1}^ac_id_i=0$
 
+$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sigma^2\sum^{a}_{i=1}n_ic_i^2$
+
 \subsubsection{CI}
 \begin{tabular}{l|l|l}
         CI   & balanced & unbalanced \\
@@ -165,7 +167,27 @@ $\mu_i-\mu_j$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n
 \end{tabular}
 
 
-\subsubsection{expected value}
+\subsubsection{covariance}
+
+$Cov(y_{ij},y_{kl})=\begin{cases}0,i\neq k; \sigma_{\tau}^2,i=k,j\neq l ; \sigma^2+\sigma_{\tau}^2,i=k,j=l\end{cases}$
+
+\begin{tabular}{l|l|l|l|l}
+&$ε_{ij}$&$\sum_{i=1}^aε_{ij}$&$\sum_{j=1}^bε_{ij}$&$\sum_{i=1}^a\sum_{j=1}^bε_{ij}$\\
+$ε_{ij}$&$\sigma^2$&$\sigma^2$&$\sigma^2$&$\sigma^2$\\
+$\sum_{i=1}^aε_{ij}$&&$a\sigma^2$&$\sigma^2$&$a\sigma^2$\\
+$\sum_{j=1}^bε_{ij}$&&&$b\sigma^2$&$b\sigma^2$\\
+$\sum_{i=1}^a\sum_{j=1}^bε_{ij}$&&&&$ab\sigma^2$
+\end{tabular}
+
+$Cov[ε_{ij},ε_{ij}]=Cov[\sum_{i1}^aε_{ij},\sum_{j=1}^bε_{ij}]=\sigma^2$,$Cov[\tau_{i},\tau_{i}]=σ_{\tau}^2$,$Cov[\beta_{j},\beta_{j}]=σ_{\beta}^2$
+
+$Cov[ε_{ij},\tau_{i}]=Cov[ε_{ij},\beta_{j}]=Cov[\tau_{i},\beta_{j}]=Cov[ε_{ij},ε_{ik}]=0,k\neq j$
+
+$Cov[ε_{ij},\sum_{j=1}^nε_{ij}]=Cov[ε_{ij},(ε_{i1}+..+ε_{ij}..+ε_{in})]=Cov[ε_{ij},ε_{i1}]+..+Cov[ε_{ij},ε_{ij}]..+Cov[ε_{ij},ε_{in}]=\sigma^2$
+
+$Cov[\sum_{j=1}^nε_{ij},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]=Cov[(ε_{i1}+ε_{i2}..+ε_{in}),(ε_{i1}+ε_{i2}..+ε_{in})]=Cov[ε_{i1},ε_{i1}]+Cov[ε_{i2},ε_{i2}]..+Cov[ε_{in},ε_{in}]=n\sigma^2$
+
+\subsubsection{expectation and variance}
 
 \begin{tabular}{l|l|l}
      &E[f.]&E[r.]\\
@@ -198,9 +220,6 @@ f.&$MSE$&$\frac{MS_{Trt}-MS_{E}}{n}$&                           &$\frac{MS_{E}}{
 r.&$MSE$&$\frac{MS_{Trt}-MS_{E}}{n}$&$\frac{MS_{Blk}-MS_{E}}{a}$&$\frac{MS_{Trt}}{n}$&$\frac{ay'_{i.}+by'_{.j}-y_{..}'}{(a-1)(b-1)}$\\
 \end{tabular}
 
-\subsubsection{covariance}
-
-$Cov(y_{ij},y_{kl})=\begin{cases}0,i\neq k; \sigma_{\tau}^2,i=k,j\neq l ; \sigma^2+\sigma_{\tau}^2,i=k,j=l\end{cases}$
 
 \begin{tabular}{l|l|l|l|l|l}
 FT- &CRD & E & Var[]\\
@@ -226,7 +245,91 @@ $\bar y_{.j}-\bar y_{..}$ & $\beta_j-\frac{\sum_{j=1}^b\beta_j}{b}+\frac{\sum_{i
 
 $y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{j=1}^b\varepsilon_{ij}}b+\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab},E[]=0, Var=\frac{(a-1)(b-1)\sigma^2}{ab}$
 
-$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sigma^2\sum^{a}_{i=1}n_ic_i^2$
+
 
 \end{multicols}
+
+$Var[y_{ij}-\bar y_{i.}]=$
+
+FT-CRD;RT-CRD
+
+$Var[ε_{ij}-\frac{\sum_{j=1}^nε_{ij}}n]=$,
+$Var[ε_{ij}]+\frac{\sum_{j=1}^nVar[ε_{ij}]}{n^2}-\frac{2Cov[ε_{ij},\sum_{j=1}^nε_{ij}]}n$,
+$=\sigma^2+\frac{\sigma^2}n-\frac2n\sigma^2=\frac{n-1}n\sigma^2$
+
+FB-RCBD
+
+$Var[\beta_{j}+ε_{ij}-\frac{\sum_{j=1}^bε_{ij}}b]=$,
+$Var[\beta_{j}]+Var[ε_{ij}]+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}-2Cov[\beta_{j},ε_{ij}]-\frac{2Cov[\beta_{j},\sum_{j=1}^bε_{ij}]}b-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}b$,
+$=0+\sigma^2+\frac{\sigma^2}b-0-0-\frac{2\sigma^2}b=\frac{(b-1)\sigma^2}b$
+
+RB-RCBD
+
+$Var[\beta_{j}-\frac{\sum_{j=1}^b\beta_{j}}b+ε_{ij}-\frac{\sum_{j=1}^bε_{ij}}b]=$
+$Var[\beta_{j}]+\frac{\sum_{j=1}^bVar[\beta_{j}]}{b^2}+Var[ε_{ij}]+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}-\frac{2Cov[\beta_{j},\sum_{j=1}^b\beta_{j}]}b+2Cov[\beta_{j},ε_{ij}]-\frac{2Cov[\beta_{j},\sum_{j=1}^bε_{ij}]}b-\frac{2Cov[\sum_{j=1}^b\beta_{j},ε_{ij}]}b$
+$+\frac{2Cov[\sum_{j=1}^b\beta_{j},\sum_{j=1}^bε_{ij}]}{b^2}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}b$
+$=\sigma_{\beta}^2+\frac{\sigma_{\beta}^2}{b}-\frac{2\sigma_{\beta}^2}{b}+\sigma^2+\frac{\sigma^2}b-\frac{2\sigma^2}b=\frac{(\sigma_{\beta}^2+\sigma^2)(b-1)}b$
+
+ ---
+
+$Var[\bar y_{i.}-\bar y_{..}]=$
+
+FT-CRD
+
+$Var[\tau_{i}+\frac{\sum_{j=1}^nε_{ij}}n-\frac{\sum_{i=1}^a\sum_{j=1}^nε_{ij}}{an}]=$
+$Var[\tau_{i}]+\frac{\sum_{j=1}^nVar[ε_{ij}]}{n^2}+\frac{\sum_{i=1}^a\sum_{j=1}^nVar[ε_{ij}]}{a^2n^2}+\frac{2Cov[\tau_{i},\sum_{j=1}^nε_{ij}]}{n}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{an}-\frac{2Cov[\sum_{j=1}^nε_{ij},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{an^2}$,
+$=0+\frac{\sigma^2}{n}+\frac{\sigma^2}{an}-\frac{2\sigma^2}{an}=\frac{(a-1)\sigma^2}{an}$
+
+RT-CRD
+
+$Var[\tau_{i}-\frac{\sum_{i=1}^a\tau_{i}}{a}+\frac{\sum_{j=1}^nε_{ij}}n-\frac{\sum_{i=1}^a\sum_{j=1}^nε_{ij}}{an}]=$
+$Var[\tau_{i}]+\frac{\sum_{i=1}^aVar[\tau_{i}]}{a^2}+\frac{\sum_{j=1}^nVar[ε_{ij}]}{n^2}+\frac{\sum_{i=1}^a\sum_{j=1}^nVar[ε_{ij}]}{a^2n^2}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\tau_{i}]}a+\frac{2Cov[\tau_{i},\sum_{j=1}^nε_{ij}]}n-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{an}-\frac{2Cov[\sum_{i=1}^a\tau_{i},\sum_{j=1}^nε_{ij}]}{an}$
+$+\frac{2Cov[\sum_{i=1}^a\tau_{i},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{a^2n}-\frac{2Cov[\sum_{j=1}^nε_{ij},\sum_{i=1}^a\sum_{j=1}^nε_{ij}]}{an^2}$
+$=\sigma_{\tau}^2+\frac{\sigma_{\tau}^2}{a}-\frac{2\sigma_{\tau}^2}{a}+\frac{\sigma^2}{n}+\frac{\sigma^2}{an}-\frac{2\sigma^2}{an}=\frac{(n\sigma_{\tau}^2+\sigma^2)(a-1)}{an}$
+
+FB-RCBD;RB-RCBD
+
+$Var[\tau_{i}+\frac{\sum_{j=1}^bε_{ij}}b-\frac{\sum_{i=1}^a\sum_{j=1}^bε_{ij}}{ab}]=$
+$Var[\tau_{i}]+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}+\frac{2Cov[\tau_{i},\sum_{j=1}^bε_{ij}]}{b}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}$
+$=0+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(a-1)\sigma^2}{ab}$
+
+ ---
+
+$Var[y_{ij}-\bar y_{.j}]=$
+
+FB-RCBD; RB-RCBD
+
+$Var[\tau_{i}+ε_{ij}-\frac{\sum_{i=1}^aε_{ij}}a]=$
+$Var[\tau_{i}]+Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}-\frac{2Cov[\tau_{i},ε_{ij}]}a-\frac{2Cov[\tau_{i},\sum_{i=1}^aε_{ij}]}a-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}a$
+$=0+\sigma^2+\frac{\sigma^2}a-\frac{2\sigma^2}a=\frac{(a-1)\sigma^2}a$
+
+ ---
+
+$Var[\bar y_{.j}-\bar y_{..}]=$
+
+FB-RCBD
+
+$Var[\beta_{j}+\frac{\sum_{i=1}^aε_{ij}}a-\frac{\sum_{i=1}^a\sum_{j=1}^bε_{ij}}{ab}]=$
+$Var[\beta_{j}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}+\frac{2Cov[\beta_{j},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[\beta_{j},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}$
+$=0+\frac{\sigma^2}{a}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(b-1)\sigma^2}{ab}$
+
+RB-RCBD
+
+$Var[\beta_{j}-\frac{\sum_{j=1}^b\beta_{j}}{b}+\frac{\sum_{i=1}^aε_{ij}}a-\frac{\sum_{i=1}^a\sum_{j=1}^bε_{ij}}{ab}]=$,
+$Var[\beta_{j}]+\frac{\sum_{j=1}^bVar[\beta_{j}]}{b^2}+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[\beta_{j},\sum_{j=1}^b\beta_{j}]}b+\frac{2Cov[\beta_{j},\sum_{i=1}^aε_{ij}]}a-\frac{2Cov[\beta_{j},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}-\frac{2Cov[\sum_{j=1}^b\beta_{j},\sum_{i=1}^aε_{ij}]}{ab}$
+$+\frac{2Cov[\sum_{j=1}^b\beta_{j},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}$
+$=\sigma_{\beta}^2+\frac{\sigma_{\beta}^2}{b}-\frac{2\sigma_{\beta}^2}{b}+\frac{\sigma^2}{a}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(a\sigma_{\beta}^2+\sigma^2)(b-1)}{ab}$
+
+ ---
+
+$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=$
+FB-RCBD
+
+$Var[ε_{ij}-\frac1a\sum_{i=1}^aε_{ij}-\frac1b\sum_{j=1}^bε_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bε_{ij}]=$
+$Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}{b}+\frac{2Cov[ε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{j=1}^bε_{ij}]}{ab}$
+$-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}$
+$=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}$
+
+
+
 \end{document}
