@@ -81,7 +81,7 @@ $y_{..}=an\hat\mu+n\sum_{i=1}^a\hat\tau_i$
 $\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\mu,\hat\tau_i}=2\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0$
 $y_{i.}=n\hat\mu+n\hat\tau_i$
 
-RCBD: $SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i-\beta_j)^2$
+RCBD: $SSE=\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\mu-\tau_i-\beta_j)^2$
 
 $\left.\frac{\partial SSE}{\partial\mu}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$    
 $\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{j=1}^b(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$  
@@ -112,7 +112,7 @@ $SS_E$    &$\sum^a_{i=1}\sum^n_{j=1}(y_{ij} - \bar y_{i.})^2$     &$a(n-1)$& $\f
 $SS_T$    &$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}-\bar y_{..})^2$&$an-1$\\
 \hline
 $SS_{Trt}$&$b\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&$a-1$&$\frac{SS_{Trt}}{a-1}$&$\frac{MS_{Trt}}{MS_E}$\\
-$SS_{Blk}$&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&$b-1$&$\frac{SS_{Trt}}{b-1}$&$\frac{MS_{Blk}}{MS_E}$\\
+$SS_{Blk}$&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&$b-1$&$\frac{SS_{Blk}}{b-1}$&$\frac{MS_{Blk}}{MS_E}$\\
 $SS_E$    &$SS_T-SS_{Trt}-SS_{Blk}$ &$(a-1)(b-1)$& $\frac{SS_E}{df_E}$&\\
 $SS_T$    &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&$ab-1$\\
 \hline
@@ -142,7 +142,7 @@ df       & $E$ & $Trt$ & $Blk$ & $1$
 \end{tabular}
 
 \begin{tabular}{l|l|l|l}
-F & $\frac{MS_{Trt}}{MS_{E}}$&$\frac{(MS_{Blk}}{MS_{E}}$&$\frac{\sum_{i=1}^ac_i\bar y_{i.})^2}{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$\\
+F & $\frac{MS_{Trt}}{MS_{E}}$&$\frac{(MS_{Blk}}{MS_{E}}$&$\frac{(\sum_{i=1}^ac_i\bar y_{i.})^2}{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$\\
 df& $(Trt,E)$&$(Blk,E)$&$(C=1,E)$\\
 \end{tabular}
 
@@ -151,20 +151,17 @@ df& $(Trt,E)$&$(Blk,E)$&$(C=1,E)$\\
 
 \subsubsection{contrast}
 
-$\Gamma=\sum_{i=1}^ac_i\mu_i$,$C=\sum_{i=1}^ac_i\bar y_i$,$E(C)=\Gamma$;$\sum_{i=1}^ac_i=0$;orthogonal $\sum_{i=1}^ac_id_i=0$
+$\Gamma=\sum_{i=1}^ac_i\mu_i$,$C=\sum_{i=1}^ac_i\bar y_i$;$\sum_{i=1}^ac_i=0$;Orthogonal $\sum_{i=1}^ac_id_i=0$
 
-$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sigma^2\sum^{a}_{i=1}n_ic_i^2$
-
-$SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}=SS_{Trt}$
+$SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}$,$\sum SS_C=SS_{Trt}$
 
 \subsubsection{CI}
 \begin{tabular}{l|l|l}
         CI   & balanced & unbalanced \\
 $\mu_i$      &$\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}$&$\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}$\\
 $\mu_i-\mu_j$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}$\\
-$\Gamma$&$\sum_{i=1}^ac_i\bar y_i\pm t_{\frac{\alpha}2}sqrt{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$&\\
+$\Gamma$&$\sum_{i=1}^ac_i\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$&\\
 \end{tabular}
-
 
 
 \subsubsection{expectation and variance}
@@ -174,11 +171,11 @@ $y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})$,$\mu=\frac{\sum_{i=1}^a\mu_i}{a
 
 $\bar y_{..}=\frac{1}N\left[y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})\right]=\frac{1}a\sum^a_{i=1}\left[\bar y_{i.}=\frac{1}n(y_{i.}=\sum^n_{j=1}y_{ij})\right]$
 
-\begin{tabular}{l|l|l|l|l}
-     &$y_{ij}$  &$\bar y_{..}$&$\bar y_{i.}$&$\bar y_{.j}$\\
-     &          &$\frac{\sum^a_{i=1}\sum^n_{j=1}y_{ij}}N$ & $\frac{\sum^n_{j=1}y_{ij}}n$ & $\frac{\sum^a_{i=1}y_{ij}}a$\\
-E[f.]  &  $\mu$   &  $\mu$      & $\mu+\tau_i$ &$\mu+\beta_j$\\
-V[f.]  &$\sigma^2$&$\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}$&$\frac{\sigma^2}{a}$\\\hline
+\begin{tabular}{l|l|l|l|l|l}
+     &$y_{ij}$  &$\bar y_{..}$&$\bar y_{i.}$&$\bar y_{.j}$& $C$\\
+     &          &$\frac{\sum^a_{i=1}\sum^n_{j=1}y_{ij}}N$ & $\frac{\sum^n_{j=1}y_{ij}}n$ & $\frac{\sum^a_{i=1}y_{ij}}a$ & $\sum^{a}_{i=1}c_i\bar y_{i.}$\\
+E[f.]  &  $\mu+\tau_i+\beta_j$   &  $\mu$      & $\mu+\tau_i$ &$\mu+\beta_j$ & $\sum^{a}_{i=1}c_i\mu_{i}$\\
+V[f.]  &$\sigma^2$&$\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}$&$\frac{\sigma^2}{a}$ & $\frac{\sigma^2}n\sum^{a}_{i=1}c_i^2$\\\hline
 E[r.]  &  $\mu$   &  $\mu$      &$\mu$ & $\mu$  \\
 V[r.]  &$\sigma^2+\sigma_\tau^2$&$\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}+\sigma_\tau^2$&$\frac{\sigma^2}{a}+\sigma_\beta^2$\\
 \hline
