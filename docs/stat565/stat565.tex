@@ -9,7 +9,7 @@
 % if using A4 paper. (This probably isn't strictly necessary.)
 % If using another size paper, use default 1cm margins.
 \ifthenelse{\lengthtest { \paperwidth = 8.5in}}
-	{ \geometry{top=.1in,left=.1in,right=.1in,bottom=.1in} }
+	{ \geometry{top=.2in,left=.1in,right=.1in,bottom=.2in} }
 
 % Turn off header and footer
 \pagestyle{empty}
@@ -21,12 +21,12 @@
                                 {0.5ex plus .2ex}%x
                                 {\normalfont\normalsize\bfseries}}
 \renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
-                                {-0.3explus -.2ex minus -.1ex}%
-                                {0.1ex plus .1ex}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
                                 {\normalfont\small\bfseries}}
 \renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
-                                {-0.2ex plus -.1ex minus -.1ex}%
-                                {0.1ex plus .1ex}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
                                 {\normalfont\small\bfseries}}
 \makeatother
 
@@ -68,14 +68,11 @@
 $y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,n$, $\sum_{i=1}^a\tau_i=0$
 Random effects: $\tau_{i}\sim iid N(0,\sigma_\tau^2)$,$\tau_{i}$ and $\varepsilon_{ij}$ indep
 
-$y_{ij}=\mu+\tau_{i}+\beta_j+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,b$
+$y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,b$
 
 Fixed effects: $\sum_{i=1}^a\tau_i=0, \sum_{j=1}^b\beta_j=0$
 Random effects: $\beta_{j}\sim iid N(0,\sigma_\beta^2)$
 
-$y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})$,$\mu=\frac{\sum_{i=1}^a\mu_i}{a}$
-
-$\bar y_{..}=\frac{1}N\left[y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})\right]=\frac{1}a\sum^a_{i=1}\left[\bar y_{i.}=\frac{1}n(y_{i.}=\sum^n_{j=1}y_{ij})\right]$
 
 \subsubsection{least square and normal equation}
 CRD:$SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i)^2$  
@@ -121,6 +118,14 @@ $SS_T$    &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&$ab-1$\\
 \hline
 \end{tabular}
 
+[f.]$SS_{Trt}=\frac1n\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
+
+[r.]$SS_{Trt}=\frac1b\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
+$SS_{Blk}=\frac1a\sum^b_{j=1}y_{.j}^2-\frac{y_{..}^2}N$ 
+$SSE=\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2$
+
+$SS_T=\sum^a_{i=1}\sum^b_{j=1}y_{ij}^2-\frac{y_{..}^2}N$, $S^2_i=\frac{\sum_{j=1}^n(y_{ij}-\bar y_{i.})^2}{n-1}$
+
 \subsubsection{distribution}
 \begin{tabular}{l|l|l|l|l|l}
   &$y_{ij}$ & $\bar y_{i.}$ & $\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}$&$\bar y_{i.}-\bar y_{j.}$& $\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\frac{2\sigma}{\sqrt{n}}}$\\
@@ -131,9 +136,9 @@ N &$(\mu+\tau_i,\sigma^2)$ & $(\mu+\tau_i,\frac{\sigma^2}n)$ & $(0,1)$&$(\mu_i-\
 $t_{df_E}$&$\frac{\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}}{\sqrt{\frac{SS_E}{\sigma^2(N-a)}}}=\frac{y_{i.}-\mu_i}{\sqrt{\frac{SS_E}{n(df_E)}}}=\frac{y_{i.}-\mu_i}{\sqrt{\frac{MS_E}n}}$ & $\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\sqrt{\frac{2MS_E}n}}$&$\frac{C}{\sqrt{\widehat{Var(C)}}}$\\\hline
 \end{tabular}
 
-\begin{tabular}{l|l|l|l}
-$\chi^2$ & $\frac{SS_E}{\sigma^2}$ &$\frac{SS_{Trt}}{\sigma^2}$ &$\frac{SS_{Blk}}{\sigma^2}$\\
-df       & $E$ & $Trt$ & $Blk$
+\begin{tabular}{l|l|l|l|l}
+$\chi^2$ & $\frac{SS_E}{\sigma^2}$ &$\frac{SS_{Trt}}{\sigma^2}$ &$\frac{SS_{Blk}}{\sigma^2}$ &$SS_{C}$\\
+df       & $E$ & $Trt$ & $Blk$ & $1$
 \end{tabular}
 
 \begin{tabular}{l|l|l|l}
@@ -141,47 +146,41 @@ F & $\frac{MS_{Trt}}{MS_{E}}$&$\frac{(MS_{Blk}}{MS_{E}}$&$\frac{\sum_{i=1}^ac_i\
 df& $(Trt,E)$&$(Blk,E)$&$(C=1,E)$\\
 \end{tabular}
 
-$SS_{Trt}=\frac1n\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
 
-$SS_{Trt}=\frac1b\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
 
-$SS_{Blk}=\frac1a\sum^b_{j=1}y_{.j}^2-\frac{y_{..}^2}N$ 
-
-$SSE=\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2$
-
-$SS_T=\sum^a_{i=1}\sum^b_{j=1}y_{ij}^2-\frac{y_{..}^2}N$
-
-$SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}=SS_{Trt}$
 
 \subsubsection{contrast}
 
-$C=\sum_{i=1}^ac_i\mu_i$;$\sum_{i=1}^ac_i=0$;orthogonal $\sum_{i=1}^ac_id_i=0$
+$\Gamma=\sum_{i=1}^ac_i\mu_i$,$C=\sum_{i=1}^ac_i\bar y_i$,$E(C)=\Gamma$;$\sum_{i=1}^ac_i=0$;orthogonal $\sum_{i=1}^ac_id_i=0$
+
+$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sigma^2\sum^{a}_{i=1}n_ic_i^2$
+
+$SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}=SS_{Trt}$
 
 \subsubsection{CI}
 \begin{tabular}{l|l|l}
         CI   & balanced & unbalanced \\
-$\mu_i$      &$\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}$&$\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}$\\
-$\mu_i-\mu_j$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}$
+$\mu_i$      &$\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}$&$\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}$\\
+$\mu_i-\mu_j$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}$\\
+$\Gamma$&$\sum_{i=1}^ac_i\bar y_i\pm t_{\frac{\alpha}2}sqrt{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$&\\
 \end{tabular}
 
 
-\subsubsection{expected value}
 
-\begin{tabular}{l|l|l}
-     &E[f.]&E[r.]\\
-$MS_{Trt}$ & $\sigma^2+\frac{n}{a-1}\sum_{i=1}^a\tau_i^2$&$\sigma^2+n\tau_i^2$\\
-$MS_{Trt}$ & $\sigma^2+\frac{b}{a-1}\sum_{i=1}^a\tau_i^2$&\\
-$MS_{Blk}$ &$\sigma^2+\frac{a}{b-1}\sum_{j=1}^b\beta_j^2$&$\sigma^2+a\beta_j^2$\\
-$MS_{E}$   &$\sigma^2$&$\sigma^2$\\
-\hline
-\end{tabular}
+\subsubsection{expectation and variance}
+
+
+$y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})$,$\mu=\frac{\sum_{i=1}^a\mu_i}{a}$
+
+$\bar y_{..}=\frac{1}N\left[y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})\right]=\frac{1}a\sum^a_{i=1}\left[\bar y_{i.}=\frac{1}n(y_{i.}=\sum^n_{j=1}y_{ij})\right]$
 
 \begin{tabular}{l|l|l|l|l}
      &$y_{ij}$  &$\bar y_{..}$&$\bar y_{i.}$&$\bar y_{.j}$\\
-E[f.]  &  $\mu$   &  $\mu$      &$\mu+\tau_i$ &$\mu+\beta_j$\\
-V[f.]  &$\sigma^2$&$\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}$\\\hline
-E[r.]  &  $\mu$   &  $\mu$      &$\mu+\tau_i$ &             \\
-V[r.]  &$\sigma^2+\sigma_\tau^2$&$\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}+\sigma_\tau^2$&\\
+     &          &$\frac{\sum^a_{i=1}\sum^n_{j=1}y_{ij}}N$ & $\frac{\sum^n_{j=1}y_{ij}}n$ & $\frac(\sum^a_{i=1}y_{ij})a$\\
+E[f.]  &  $\mu$   &  $\mu$      & $\mu+\tau_i$ &$\mu+\beta_j$\\
+V[f.]  &$\sigma^2$&$\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}$&$\frac{\sigma^2}{a}$\\\hline
+E[r.]  &  $\mu$   &  $\mu$      &$\mu$ & $\mu$  \\
+V[r.]  &$\sigma^2+\sigma_\tau^2$&$\frac{\sigma_\tau^2}{a}+\frac{\sigma^2}{na}$&$\frac{\sigma^2}{n}+\sigma_\tau^2$&$\frac{\sigma^2}{a}+\sigma_\beta^2$\\
 \hline
 \end{tabular}
 
@@ -192,15 +191,21 @@ $\frac1{an}y_{..}-\frac1{a}\sum_{i=1}^a\hat\tau_i$& & $\frac1{a}y_{i.}-\hat\mu$\
 \hline
 \end{tabular}
 
+\begin{tabular}{l|l|l}
+     &E[f.]&E[r.]\\
+$MS_{Trt}$ & $\sigma^2+\frac{n}{a-1}\sum_{i=1}^a\tau_i^2$&$\sigma^2+n\tau_i^2$\\
+$MS_{Trt}$ & $\sigma^2+\frac{b}{a-1}\sum_{i=1}^a\tau_i^2$&\\
+$MS_{Blk}$ &$\sigma^2+\frac{a}{b-1}\sum_{j=1}^b\beta_j^2$&$\sigma^2+a\beta_j^2$\\
+$MS_{E}$   &$\sigma^2$&$\sigma^2$\\
+\hline
+\end{tabular}
+
 \begin{tabular}{l|l|l|l|l|l}
 &$\hat\sigma^2$&$\hat\sigma_{Trt}^2$&$\hat\sigma_{Blk}^2$&$\widehat{Var(\bar y_{i.})}$&$\hat{X}$\\
-f.&$MSE$&$\frac{MS_{Trt}-MS_{E}}{n}$&                           &$\frac{MS_{E}}{n}$&\\
+f.&$MSE$& & &$\frac{MS_{E}}{n}$&\\
 r.&$MSE$&$\frac{MS_{Trt}-MS_{E}}{n}$&$\frac{MS_{Blk}-MS_{E}}{a}$&$\frac{MS_{Trt}}{n}$&$\frac{ay'_{i.}+by'_{.j}-y_{..}'}{(a-1)(b-1)}$\\
 \end{tabular}
 
-\subsubsection{covariance}
-
-$Cov(y_{ij},y_{kl})=\begin{cases}0,i\neq k; \sigma_{\tau}^2,i=k,j\neq l ; \sigma^2+\sigma_{\tau}^2,i=k,j=l\end{cases}$
 
 \begin{tabular}{l|l|l|l|l|l}
 FT- &CRD & E & Var[]\\
@@ -224,9 +229,114 @@ $y_{ij}-\bar y_{.j}$ & $\tau_{i}+\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_
 $\bar y_{.j}-\bar y_{..}$ & $\beta_j-\frac{\sum_{j=1}^b\beta_j}{b}+\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}$ & $0$ & $\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$\\
 \end{tabular}
 
-$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{j=1}^b\varepsilon_{ij}}b+\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab},E[]=0, Var=\frac{(a-1)(b-1)\sigma^2}{ab}$
+$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{j=1}^b\varepsilon_{ij}}b+\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}$
 
-$Var\left[\sum^{a}_{i=1}c_iy_{i.}\right]=\sigma^2\sum^{a}_{i=1}n_ic_i^2$
+$E[]=0, Var=\frac{(a-1)(b-1)\sigma^2}{ab}$
+
+
+\subsubsection{covariance}
+
+R-CRD: $Cov(y_{ij},y_{kl})=\begin{cases}0,i\neq k; \sigma_{\tau}^2,i=k,j\neq l ; \sigma^2+\sigma_{\tau}^2,i=k,j=l\end{cases}$
+
+\begin{tabular}{l|l|l|l|l}
+&$\varepsilon_{ij}$&$\sum_{i=1}^a\varepsilon_{ij}$&$\sum_{j=1}^b\varepsilon_{ij}$&$\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}$\\
+$\varepsilon_{ij}$&$\sigma^2$&$\sigma^2$&$\sigma^2$&$\sigma^2$\\
+$\sum_{i=1}^a\varepsilon_{ij}$&&$a\sigma^2$&$\sigma^2$&$a\sigma^2$\\
+$\sum_{j=1}^b\varepsilon_{ij}$&&&$b\sigma^2$&$b\sigma^2$\\
+$\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}$&&&&$ab\sigma^2$
+\end{tabular}
 
 \end{multicols}
+
+$Cov[\varepsilon_{ij},\varepsilon_{ij}]=Cov[\sum_{i1}^a\varepsilon_{ij},\sum_{j=1}^b\varepsilon_{ij}]=\sigma^2$,$Cov[\tau_{i},\tau_{i}]=σ_{\tau}^2$,$Cov[\beta_{j},\beta_{j}]=σ_{\beta}^2$
+
+$Cov[\varepsilon_{ij},\tau_{i}]=Cov[\varepsilon_{ij},\beta_{j}]=Cov[\tau_{i},\beta_{j}]=Cov[\varepsilon_{ij},\varepsilon_{ik}]=0,k\neq j$
+
+$Cov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]=Cov[\varepsilon_{ij},(\varepsilon_{i1}+..+\varepsilon_{ij}..+\varepsilon_{in})]=Cov[\varepsilon_{ij},\varepsilon_{i1}]+..+Cov[\varepsilon_{ij},\varepsilon_{ij}]..+Cov[\varepsilon_{ij},\varepsilon_{in}]=\sigma^2$
+
+$Cov[\sum_{j=1}^n\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}]=Cov[(\varepsilon_{i1}+\varepsilon_{i2}..+\varepsilon_{in}),(\varepsilon_{i1}+\varepsilon_{i2}..+\varepsilon_{in})]=Cov[\varepsilon_{i1},\varepsilon_{i1}]+Cov[\varepsilon_{i2},\varepsilon_{i2}]..+Cov[\varepsilon_{in},\varepsilon_{in}]=n\sigma^2$
+
+$Var[y_{ij}-\bar y_{i.}]=$
+
+FT-CRD;RT-CRD
+
+$Var[\varepsilon_{ij}-\frac{\sum_{j=1}^n\varepsilon_{ij}}n]=$,
+$Var[\varepsilon_{ij}]+\frac{\sum_{j=1}^nVar[\varepsilon_{ij}]}{n^2}-\frac{2Cov[\varepsilon_{ij},\sum_{j=1}^n\varepsilon_{ij}]}n$,
+$=\sigma^2+\frac{\sigma^2}n-\frac2n\sigma^2=\frac{n-1}n\sigma^2$
+
+FB-RCBD
+
+$Var[\beta_{j}+\varepsilon_{ij}-\frac{\sum_{j=1}^b\varepsilon_{ij}}b]=$,
+$Var[\beta_{j}]+Var[\varepsilon_{ij}]+\frac{\sum_{j=1}^bVar[\varepsilon_{ij}]}{b^2}-2Cov[\beta_{j},\varepsilon_{ij}]-\frac{2Cov[\beta_{j},\sum_{j=1}^b\varepsilon_{ij}]}b-\frac{2Cov[\varepsilon_{ij},\sum_{j=1}^b\varepsilon_{ij}]}b$,
+$=0+\sigma^2+\frac{\sigma^2}b-0-0-\frac{2\sigma^2}b=\frac{(b-1)\sigma^2}b$
+
+RB-RCBD
+
+$Var[\beta_{j}-\frac{\sum_{j=1}^b\beta_{j}}b+\varepsilon_{ij}-\frac{\sum_{j=1}^b\varepsilon_{ij}}b]=$
+$Var[\beta_{j}]+\frac{\sum_{j=1}^bVar[\beta_{j}]}{b^2}+Var[\varepsilon_{ij}]+\frac{\sum_{j=1}^bVar[\varepsilon_{ij}]}{b^2}-\frac{2Cov[\beta_{j},\sum_{j=1}^b\beta_{j}]}b+2Cov[\beta_{j},\varepsilon_{ij}]-\frac{2Cov[\beta_{j},\sum_{j=1}^b\varepsilon_{ij}]}b-\frac{2Cov[\sum_{j=1}^b\beta_{j},\varepsilon_{ij}]}b$
+$+\frac{2Cov[\sum_{j=1}^b\beta_{j},\sum_{j=1}^b\varepsilon_{ij}]}{b^2}-\frac{2Cov[\varepsilon_{ij},\sum_{j=1}^b\varepsilon_{ij}]}b$
+$=\sigma_{\beta}^2+\frac{\sigma_{\beta}^2}{b}-\frac{2\sigma_{\beta}^2}{b}+\sigma^2+\frac{\sigma^2}b-\frac{2\sigma^2}b=\frac{(\sigma_{\beta}^2+\sigma^2)(b-1)}b$
+
+ ---
+
+$Var[\bar y_{i.}-\bar y_{..}]=$
+
+FT-CRD
+
+$Var[\tau_{i}+\frac{\sum_{j=1}^n\varepsilon_{ij}}n-\frac{\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}}{an}]=$
+$Var[\tau_{i}]+\frac{\sum_{j=1}^nVar[\varepsilon_{ij}]}{n^2}+\frac{\sum_{i=1}^a\sum_{j=1}^nVar[\varepsilon_{ij}]}{a^2n^2}+\frac{2Cov[\tau_{i},\sum_{j=1}^n\varepsilon_{ij}]}{n}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}]}{an}-\frac{2Cov[\sum_{j=1}^n\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}]}{an^2}$,
+$=0+\frac{\sigma^2}{n}+\frac{\sigma^2}{an}-\frac{2\sigma^2}{an}=\frac{(a-1)\sigma^2}{an}$
+
+RT-CRD
+
+$Var[\tau_{i}-\frac{\sum_{i=1}^a\tau_{i}}{a}+\frac{\sum_{j=1}^n\varepsilon_{ij}}n-\frac{\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}}{an}]=$
+$Var[\tau_{i}]+\frac{\sum_{i=1}^aVar[\tau_{i}]}{a^2}+\frac{\sum_{j=1}^nVar[\varepsilon_{ij}]}{n^2}+\frac{\sum_{i=1}^a\sum_{j=1}^nVar[\varepsilon_{ij}]}{a^2n^2}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\tau_{i}]}a+\frac{2Cov[\tau_{i},\sum_{j=1}^n\varepsilon_{ij}]}n-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}]}{an}-\frac{2Cov[\sum_{i=1}^a\tau_{i},\sum_{j=1}^n\varepsilon_{ij}]}{an}$
+$+\frac{2Cov[\sum_{i=1}^a\tau_{i},\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}]}{a^2n}-\frac{2Cov[\sum_{j=1}^n\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}]}{an^2}$
+$=\sigma_{\tau}^2+\frac{\sigma_{\tau}^2}{a}-\frac{2\sigma_{\tau}^2}{a}+\frac{\sigma^2}{n}+\frac{\sigma^2}{an}-\frac{2\sigma^2}{an}=\frac{(n\sigma_{\tau}^2+\sigma^2)(a-1)}{an}$
+
+FB-RCBD;RB-RCBD
+
+$Var[\tau_{i}+\frac{\sum_{j=1}^b\varepsilon_{ij}}b-\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}]=$
+$Var[\tau_{i}]+\frac{\sum_{j=1}^bVar[\varepsilon_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[\varepsilon_{ij}]}{a^2b^2}+\frac{2Cov[\tau_{i},\sum_{j=1}^b\varepsilon_{ij}]}{b}-\frac{2Cov[\tau_{i},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab}-\frac{2Cov[\sum_{j=1}^b\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab^2}$
+$=0+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(a-1)\sigma^2}{ab}$
+
+ ---
+
+$Var[y_{ij}-\bar y_{.j}]=$
+
+FB-RCBD; RB-RCBD
+
+$Var[\tau_{i}+\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_{ij}}a]=$
+$Var[\tau_{i}]+Var[\varepsilon_{ij}]+\frac{\sum_{i=1}^aVar[\varepsilon_{ij}]}{a^2}-\frac{2Cov[\tau_{i},\varepsilon_{ij}]}a-\frac{2Cov[\tau_{i},\sum_{i=1}^a\varepsilon_{ij}]}a-\frac{2Cov[\varepsilon_{ij},\sum_{i=1}^a\varepsilon_{ij}]}a$
+$=0+\sigma^2+\frac{\sigma^2}a-\frac{2\sigma^2}a=\frac{(a-1)\sigma^2}a$
+
+ ---
+
+$Var[\bar y_{.j}-\bar y_{..}]=$
+
+FB-RCBD
+
+$Var[\beta_{j}+\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}]=$
+$Var[\beta_{j}]+\frac{\sum_{i=1}^aVar[\varepsilon_{ij}]}{a^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[\varepsilon_{ij}]}{a^2b^2}+\frac{2Cov[\beta_{j},\sum_{i=1}^a\varepsilon_{ij}]}{a}-\frac{2Cov[\beta_{j},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab}-\frac{2Cov[\sum_{i=1}^a\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{a^2b}$
+$=0+\frac{\sigma^2}{a}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(b-1)\sigma^2}{ab}$
+
+RB-RCBD
+
+$Var[\beta_{j}-\frac{\sum_{j=1}^b\beta_{j}}{b}+\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}]=$,
+$Var[\beta_{j}]+\frac{\sum_{j=1}^bVar[\beta_{j}]}{b^2}+\frac{\sum_{i=1}^aVar[\varepsilon_{ij}]}{a^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[\varepsilon_{ij}]}{a^2b^2}-\frac{2Cov[\beta_{j},\sum_{j=1}^b\beta_{j}]}b+\frac{2Cov[\beta_{j},\sum_{i=1}^a\varepsilon_{ij}]}a-\frac{2Cov[\beta_{j},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab}-\frac{2Cov[\sum_{j=1}^b\beta_{j},\sum_{i=1}^a\varepsilon_{ij}]}{ab}$
+$+\frac{2Cov[\sum_{j=1}^b\beta_{j},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab^2}-\frac{2Cov[\sum_{i=1}^a\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{a^2b}$
+$=\sigma_{\beta}^2+\frac{\sigma_{\beta}^2}{b}-\frac{2\sigma_{\beta}^2}{b}+\frac{\sigma^2}{a}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(a\sigma_{\beta}^2+\sigma^2)(b-1)}{ab}$
+
+ ---
+
+$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=$
+FB-RCBD
+
+$Var[\varepsilon_{ij}-\frac1a\sum_{i=1}^a\varepsilon_{ij}-\frac1b\sum_{j=1}^b\varepsilon_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]=$
+$Var[\varepsilon_{ij}]+\frac{\sum_{i=1}^aVar[\varepsilon_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[\varepsilon_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[\varepsilon_{ij}]}{a^2b^2}-\frac{2Cov[\varepsilon_{ij},\sum_{i=1}^a\varepsilon_{ij}]}{a}-\frac{2Cov[\varepsilon_{ij},\sum_{j=1}^b\varepsilon_{ij}]}{b}+\frac{2Cov[\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^a\varepsilon_{ij},\sum_{j=1}^b\varepsilon_{ij}]}{ab}$
+$-\frac{2Cov[\sum_{i=1}^a\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^b\varepsilon_{ij},\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}]}{ab^2}$
+$=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}$
+
+
+
 \end{document}
