@@ -23,6 +23,9 @@ A visual indtroduction to probability and statistics
 
 https://seeing-theory.brown.edu
 
+Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format
+
+https://ieeexplore-ieee-org.proxy.lib.pdx.edu/document/5755180
 
 Normal_PDF|Normal_CDF|Chi^2_PDF|Chi^2_CDF
 ---|---|---|---

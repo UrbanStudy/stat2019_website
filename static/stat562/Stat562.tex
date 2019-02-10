@@ -132,17 +132,42 @@
 
 
 
+\subsubsection{4.1 Joint and Marginal}
 
-\subsection{2 Transformation of pairs of r.v.s}
-
-Given 2 random variables and their joint function, and given a function of them, find its distribution.
-
-
-$f_{Y_1,Y_2}(y_1,y_2)=\sum_{i=1}^kf_{X_1,X_2}(h_1(y_1,y_2), h_2(y_1,y_2))|J_i|$
-
-$J_{1,2}=\begin{vmatrix}\frac{\partial h_1}{\partial y_1} & \frac{\partial h_2}{\partial y_2} \\ \frac{\partial h_1}{\partial y_1} & \frac{\partial h_2}{\partial y_2} \end{vmatrix}=\frac{\partial h_1}{\partial y_1}\frac{\partial h_2}{\partial y_2}-\frac{\partial h_2}{\partial y_1}\frac{\partial h_1}{\partial y_2}$
+$f_X(x)=\sum_{y\in\mathbf{R}}f_{X,Y}(x,y)\ \text{and}\ f_Y(y)=\sum_{x\in\mathbf{R}}f_{X,Y}(x,y)$
+$f_X(x)=\int_{-\infty}^{\infty}f(x,y)dy, -\infty<x<\infty\quad f_Y(y)=\int_{-\infty}^{\infty}f(x,y)dx, -\infty<x<\infty$
 
 
+$E[g(\vec X)]=\begin{cases}\sum\cdots\sum_{all\vec x} g(\vec x)p(\vec x) \\ \idotsint_{\mathbf{R^n}}g(\vec x)f(\vec x)d\vec x\end{cases}$
+
+$Eg(X,Y)=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} g(x,y)f(x,y)dxdy$
+
+$F(x,y) = P(X\le x, Y\le y)$
+
+$F(x,y) =\int_{-\infty}^{y}\int_{-\infty}^{x}f(s,t)dsdt$
+
+\subsubsection{4.2 conditional and independent}
+
+$f(x_2|x_1)=\frac{f(x_1,x_2)}{f_1(x_1)}$;$p(x_2|x_1)=\frac{p(x_1,x_2)}{p_1(x_1)}$
+
+4.2.1 $f(y|x)=P(Y=y|X=x)=\frac{f(x,y)}{f_X(x)}$
+
+
+\textbf{Independence}: 
+
+\begin{tabular}{l|l|l|l}
+4.2.7   & $f(x,y)=g(x)h(y)$ & & $F_{X,Y}(x,y)=F_X(x)F_Y(y)$\\
+4.2.10a & $P(X\le x,Y\le y)=P(X\le x)P(Y\le y)$ & 4.2.10b & $E(XY)=E(X)E(Y)$\\
+4.2.12 & $M_Z(t)=M_X(t)M_Y(t)$ & 4.6.7 & $M_Z(t)=(M_X(t))^n$ \\
+4.3.5 & $X,Y$ indep r.v. $g(X)$,$h(Y)$ indep & 4.5.6 & $V(X\pm Y) =VX+VY$ 
+\end{tabular}
+
+
+4.2.10 $E(g(X)h(Y))=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}g(x)h(y)f(x,y)dxdy=\int_{-\infty}^{\infty}h(y)f_Y(y)\left[\int_{-\infty}^{\infty}g(x)f_X(x)dx\right]dy=E[g(x)]E[h(y)]=(Eg(X))(Eh(Y))$
+
+Use 4.2.12 proof 4.3.2 $M_W(t)=M_X(t)M_Y(t)=e^{\mu_1(e^t-1)}e^{\mu_2(e^t-1)}=e^{(\mu_1+\mu_2)(e^t-1)}$
+
+4.6.6 $X_1,.., X_n$ indep, $E(g_1(X_1)\cdots g_n(X_n))=(E(g_1(X_1))\cdots(E(g_n(X_n))$
 
 $U\sim Geom(p=\frac12),u=1,2..$ the number of trials needed to get the first head.
 
@@ -150,94 +175,248 @@ $V\sim N Bin(p=\frac12,r=2),v=2,3..$ the number of trials needed to get two head
 
 the distribution of (U,V) is $\{(u,v):u=1,2,..;v=u+1,u+2,..\}$ is not a cross-product set. U and V are not independent.
 
+\begin{tabular}{l|l|l}
+4.2.14 & $X\sim n(\mu,\sigma^2)$ & $Y\sim n(\gamma,\tau^2)$\\
+$X,Y$ indep &$Z=X+Y$ & $Z\sim n(\mu+\gamma,\sigma^2+\tau^2)$
+\end{tabular}
 
-\subsection{3 Covariance and Correlation}
+\subsubsection{4.3 Transform}
 
+\begin{tabular}{l|l|l}
+4.3.2 & $X\sim Poisson(\theta)$ & $Y\sim Poisson(\lambda)$\\
+$X,Y$ indep &$Z=X+Y$ & $Z\sim Poisson(\theta+\lambda)$
+\end{tabular}
 
-Given a joint pdf, find the covariance, correlation, conditional expectation,conditional variance.
+\begin{tabular}{l|l|l}
+4.3.3 & $X\sim Beta(\alpha,\beta)$ & $Y\sim Beta(\alpha+\beta,\gamma)$\\
+$X,Y$ indep &$U=XY$ & $f_U(u)\sim n(\alpha,\beta+\gamma)$
+\end{tabular}
 
-\subsection{Conditional expectations and variances}
+\begin{tabular}{l|l|l}
+4.3.4 & $X\sim n(0,1)$ & $Y\sim n(0,1)$\\
+$X,Y$ indep &$X-Y\sim n(0,2)$ & $X-Y\sim n(0,2)$
+\end{tabular}
 
-$f(x_2|x_1)=\frac{f(x_1,x_2)}{f_1(x_1)}$;$p(x_2|x_1)=\frac{p(x_1,x_2)}{p_1(x_1)}$
+4.3.2 $f_{Y_1,Y_2}(y_1,y_2)=\sum_{i=1}^kf_{X_1,X_2}(h_1(y_1,y_2), h_2(y_1,y_2))|J|$
 
-4.2.1 $f(y|x)=P(Y=y|X=x)=\frac{f(x,y)}{f_X(x)}$
+4.3.5 $f_{U,V}(u,v)=\sum_{i=1}^kf_{X,Y}(h_{1i}(u,v),\ h_{2i}(u,v))|J_i|$
+
+$J_{1,2}=\begin{vmatrix}\frac{\partial h_1}{\partial y_1} & \frac{\partial h_2}{\partial y_2} \\ \frac{\partial h_1}{\partial y_1} & \frac{\partial h_2}{\partial y_2} \end{vmatrix}=\frac{\partial h_1}{\partial y_1}\frac{\partial h_2}{\partial y_2}-\frac{\partial h_2}{\partial y_1}\frac{\partial h_1}{\partial y_2}$
+
+\begin{tabular}{l|l|l}
+4.3.6 & $X\sim n(0,1)$ & $Y\sim n(0,1)$\\
+$X,Y$ indep & $U=X/Y$ & $U\sim cauchy(0,1)$
+\end{tabular}
+
+\subsubsection{4.4 Mixture Distributions}
+
 
 4.2.3 $E(g(x_2)|x_1)=\sum_{all\ x_2}g(x_2)p(x_2|x_1)$,$E(g(x_2)|x_1)=\int_{all\ x_2}g(x_2)f(x_2|x_1)dx_2$
 
-4.2.4 $Var(y|x)=E(Y^2|x)-(E(Y|x))^2$, $V[X|Y]=E[(X-E[X|Y])^2|Y]$
+\textbf{Expectations}
 
-4.2.7 $f(x,y)=g(x)h(y)\iff$ indep
+$E(aX+b) = aE(X) + b$ 
 
-4.2.10 $E(g(X)h(Y))=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}g(x)h(y)f(x,y)dxdy=\int_{-\infty}^{\infty}h(y)f_Y(y)\left[\int_{-\infty}^{\infty}g(x)f_X(x)dx\right]dy=E[g(x)]E[h(y)]=(Eg(X))(Eh(Y))$
+$E(X)=\int_{-\infty}^{0}F_X(t)dt+\int_{0}^{\infty}F_X(t)dt$
 
-$F_{XY}(x,y)=P(X\le x,Y\le y)$
+$E[g(x)]=\mu=\sum_{x\in D}h(x)p(x)=\int_{-\infty}^{\infty}g(x)f(x)dx$ 
+
+$E[(X-\mu)^n]=\mu_n=\sum{(x-\mu)^n}p(x)=\int{(x-\mu)^n}f(x)dx$
+
+4.4.3 $EX=E[E(X|Y)]$
+
+\textbf{Variances}
+
+$V[X|Y]=E[(X-E[X|Y])^2|Y]$
+
+$V[aX+b]=a^2\sigma^2$
+$\sigma_{ax+b} =|a|\sigma_{x}$
+
+$V[X]=\sigma_{x}^2=E(X^2)-[E(X)]^2$
+
+4.2.4 $V[y|x]=E[Y^2|x]-(E[Y|x])^2$
+
+4.4.7 $V[X]=E[V(X|Y)]+V[E(X|Y)]$
+
+$V(X\pm Y) =VX+VY\pm 2Cov(X,Y)$
+
+\begin{tabular}{ l|l }
+\end{tabular}
+
+\subsubsection{4.5 Covariance and Correlation}
+
+$Cov(x,y)=E(XY)-E(X)E(Y)$
+
+4.5.1/3 $Cov(X,Y)=E[(X-\mu_X)(Y-\mu_Y)]=E[XY]-\mu_X\mu_Y=\sigma_{XY}$
+
+4.5.2 $\rho_{XY}=\frac{\sigma_{XY}}{\sigma_X\sigma_Y}$ $Corr(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$
+
+$Cov(aX,bY)=abCov(X,Y)$
+
+$Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)$
+
+$Cov(X,c)=0$
+
+4.5.6 $Var(aX+bY)=a^2VarX+b^2VarY+2abCov(X,Y)$
+
+4.5.7 $E[Y|X]=a+bx$, $E[Y]=E[E[Y|X]]=E[a+bX]=a+bE[X]$ by 4.4.3, $E[XE[Y|X]]=E[X(a+bX)]=aE[X]+bE[X^2]$, $E[XE[Y|X]]=\int_{-\infty}^{\infty}xE[Y|x]f_X(x)dx$ by 2.2.1, $=\int_{-\infty}^{\infty}x\left[\int_{-\infty}^{\infty}yf_Y(y|x)dy\right]f_X(x)dx$ by 4.2.3,$=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}xyf(x,y)dydx=E[XY]$ by 4.1.10, $\sigma_{XY}=E[XY]-\mu_X\mu_Y=a\mu_X+bE[X^2]-\mu_X\mu_Y=a\mu_X+b(\sigma_X^2+\mu_X^2)-\mu_X(a+b\mu_X)=b\sigma_X^2$
+
+$\rho_{XY}=\frac{\sigma_{XY}}{\sigma_{X}\sigma_{Y}}=\frac{b\sigma_X^2}{\sigma_{X}\sigma_{Y}}=b\frac{\sigma_X}{\sigma_Y}$
+
+4.5.10 bivarialte normal pdf with $\mu_X,\mu_Y,\sigma_X^2,\sigma_Y^2, \rho$
+
+$f_X(x)\sim n(\mu_X,\sigma^2_X)$ $f_Y(y)\sim n(\mu_Y,\sigma^2_Y)$
+
+$f_{Y|X}(y|x) \sim n(\mu_Y+\rho\frac{\sigma_Y}{\sigma_X})(x−\mu_X),\sigma_Y^2(1-\rho^2)$
+
+$aX+bY\sim n(a\mu_X+b\mu_Y,a^2\mu_X^2+b^2\mu_Y^2+2ab\rho\sigma_X\sigma_Y$
+
+\begin{tabular}{l|l|l}
+4.6.8 & $X_1,.., X_n$  & $X_i\sim gamma(\alpha,\beta)$\\
+indep & $Z=X_1+..+X_n$ & $Z\sim gamma(\alpha_1+..+\alpha_n,\beta)$
+\end{tabular}
 
 
-\subsection{Properties of $\bar X$ and $S^2$}
 
-5.2
+\subsection{5.2 Sum of r.s.}
 
-$\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}$
+5.2.2 $\bar X=\frac{X_1+..+X_n}{n}=\frac1n\sum_{i=1}^nX_i$
 
-$nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2$
+5.2.3 $S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n(X_i^2-n\bar X^2)$
 
-when $X_1,..,X_n$ be iid $n(\mu,\sigma^2)$, $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$,$Var\chi^2_{n-1}=2(n-1)$
+5.2.5 $E\left(\sum_{i=1}^ng(X_i) \right)=nE(g(X_1))$ $Var\left(\sum_{i=1}^ng(X_i) \right)=nVar(g(X_1))$
 
-$Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{2\sigma^4}{n-1}$
+5.2.6 $E\bar X=\mu$, $Var\bar X=\frac{\sigma^2}n$, $ES^2=\sigma^2$
+
+5.2.7 $M_{\bar X}(t)=[M_X(\frac{t}n)]^n$
+
+\begin{tabular}{l|l|l}
+5.2.8 & $X_1,.., X_n\sim N(\mu,\sigma^2)$ & $\bar X\sim N(\mu,\sigma^2/n)$\\
+indep & $X_1,.., X_n\sim gamma(\alpha,\beta)$ & $\bar X\sim gamma(n\alpha,\beta/n)$
+\end{tabular}
+
+5.2.9 Convolution formula $Z=X+Y$ $f_Z(z) =\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$
+
+\begin{tabular}{l|l|l|l}
+5.2.10 & $X\sim cauchy(0,\sigma)$ & $Y\sim cauchy(0,\tau)$ & $X_1,.., X_n\sim cauchy(0,\sigma)$\\
+indep & $Z=X/Y$ & $g_Z(z)\sim cauchy(0,\sigma+\tau)$ & $bar X\sim cauchy(0,\sigma),\sum_{1}^{n} X\sim cauchy(0,n\sigma)$
+\end{tabular}
 
 
-\subsection{1 Connection between $N,\chi^2,t,F$}
+\subsection{5.3 Sampling from N}
 
-5.3
+$X_1..X_n\sim iid N(\mu,\sigma^2)$. 
 
-$X_1..X_n\sim iid N(\mu,\sigma^2)$. Given some function of these, find the distribution.
+\textbf{Properties of $\bar X$ and $S^2$}
 
+5.3.1 when $X_1,..,X_n$ be iid $n(\mu,\sigma^2)$
 \begin{tabular}{l|lll}
 W  Normal& $\bar X\sim N(\mu,\frac{\sigma^2}n)$ & $\bar X,S^2$ indep & $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$\\
 W/o Normal & $E[\bar X]=\mu$ & $V[\bar X]=\frac{\sigma^2}n)$ & $E[S^2]=\sigma^2$\\\hline
 \end{tabular}
 
- 5.2.8 Distribution of the mean: $\bar X\sim gamma(n\alpha,\beta/n)$
-5.2.9 Convolution formula $Z=X+Y$ $f_Z(z) =\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$
+$f_{\chi^2}(x)=\frac{x^{\frac{p}2-1}}{\Gamma \frac{p}2 2^{\frac{p}2}}e^{-\frac{x}2}, x>0$
 
-5.3.2 $Z\sim n(0,1)$,$Z^2\sim \chi^2_1$, $X_1..X_n$ indep $X_i\sim \chi^2_{p_i}$,$X_1=..=X_n\sim \chi^2_{p_1+..p_n}$
+\begin{tabular}{ l|l|l }
+5.3.2a & $Z\sim n(0,1)$ & $Z^2\sim \chi^2_1$ \\ \hline
+5.3.2b & $X_1..X_n$     & $X_i\sim \chi^2_{p_i}$\\
+indep  & $Z=X_1+..+X_n$ & $Z\sim \chi^2_{p_1+..p_n}$
+\end{tabular}
 
-$\chi^2_{p}\sim gamma(p/2,2)$
+For $\chi^2_{p}\sim gamma(\frac{p}2,2)$ see 4.6.8
 
-5.3.4 T
+5.3.1 proof $\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}$
 
-5.3.5  $X_1..X_n$,$Y_1..Y_m$ indep. $X_i\sim n(\mu_X,\sigma_X^2)$，$Y_j\sim n(\mu_Y,\sigma_Y^2)$,$\frac{S_X^2}{\sigma_X^2}\sim \chi^2$F: $\frac{S_X^2/\sigma_X^2}{S_Y^2/\sigma_Y^2}$
+$nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2$
+
+,$Var\chi^2_{n-1}=2(n-1)$
+
+$Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{2\sigma^4}{n-1}$
+
+\textbf{Connection between $N,\chi^2,t,F$}
+
+5.3.4 $X_1,..X_n\sim n(\mu,\sigma^2)$, $\frac{\bar X-\mu}{{\sigma}/\sqrt{n}}\sim t_{n-1}$
+
+$f_{T}(x)=\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}\left (1+\frac{x^2}{p}\right)^{-\frac{p+1}2},-\infty<x<\infty$
+
+$t_1=Cauchy(0,1)$
+
+5.3.5  $X_1..X_n$,$Y_1..Y_m$ indep. $X_i\sim n(\mu_X,\sigma_X^2)$，$Y_j\sim n(\mu_Y,\sigma_Y^2)$,$\frac{S_X^2}{\sigma_X^2}\sim \chi^2$
+
+$\frac{S_X^2/\sigma_X^2}{S_Y^2/\sigma_Y^2} \sim F$
 
 
-\subsection{4 Order statistics}
+5.3.6 $f_{F}(x)=\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}{x^{\frac{p}2-1}\over{(1+\frac{p}qx)^{\frac{p+q}2}}}, x>0$
 
-Find the distribution of X(k) or find the joint distribution of $X_{(j)},X_{(k)}$
+5.3.8 
 
-1-29p9
+a. $X\sim F_(p,q)$ $\frac{1}X \sim F_(q,p)$
 
-5.4.4 $f_{K}(x)=\frac{n!}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}f(x)$
+b. $X\sim T_(q)$ $X^2 \sim F_(1,q)$
 
-1-31p4-8
+c. $X\sim F_(p,q)$ $\frac{\frac{p}{q}X}{1+\frac{p}{q}X} \sim Beta(\frac{p}2,\frac{q}2)$
 
-5.4.5 uniform order pdf
 
-1-31p2-3
+\subsection{5.4 Order statistics}
+
+5.4.4 $f_{K}(x)=\frac{n!}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}f(x)$ 1-29p9
 
 5.4.6 $f_{X_{(i)},X_{(j)}}(u,v)=\frac{n!}{(i-1)!(j-1-i)!(n-j)!}f_X(u)f_X(v)[F_X(u)]^{i-1}[F_X(v)-F_X(u)]^{j-1-i}[1-F_X(v)]^{n-j}$
 
 $f_{X_{(1)},..,X_{(n)}}(x_1,..,x_n)=\begin{cases}n!f_X(x_1)\cdot...\cdot f_X(x_n) &-\infty<x_1<..<x_n<\infty\\0&\text{otherwise}\end{cases}$
 
-joint pmf
+\subsection{1 from N to T to Chi to F}
+Given some function of these, find the distribution.
 
 
-Conditional/Baye's: $P(A|B) = \frac{P(A\cap B)}{P(B)}=\frac{P(B|A)P(A)}{P(B)}$;disjoint
-$P(B) = P(B|A_1)P(A_1) +..P(B|A_k)P(A_k)=\sum_{i=1}^{k} P(B|A_i)P(A_i)$ \\
-\textbf{Independence}: 
-\begin{tabular}{l|l}
-$P(A\cap B) = P(A)P(B)$ & $P(X\le x,Y\le y)=P(X\le x)P(Y\le y)$ \\
-$E(XY)=E(X)E(Y)$        & $F_{X,Y}(x,y)=F_X(x)F_Y(y)$ \\
-$V(X\pm Y) =VX+VY$   & $f_{X,Y}(s,t)=f_X(s)f_Y(t)$
+\subsection{2 Transformation of pairs of r.v.s}
+
+Given 2 random variables and their joint function, and given a function of them, find its distribution.
+
+1-10p1
+
+\begin{tabular}{ l|l }
+$f(x,y)$ & $0<x<\infty,0<y<\infty$ \\
+$\frac14e^{-\frac{x+y}2}$ & $u=\frac{X-Y}2$
 \end{tabular}
+
+1. $V=Y \to X=2u+v, Y=v$
+
+2. $J=\begin{vmatrix}\frac{\partial x}{\partial u} & \frac{\partial x}{\partial v} \\ \frac{\partial y}{\partial u} & \frac{\partial y}{\partial v} \end{vmatrix}=\begin{vmatrix}2 & 1 \\ 0 & 1 \end{vmatrix}=2$
+
+3. $g(u,v)=f(x,y)|J|=\frac14e^{-\frac{x+y}2}2=\frac12e^{-\frac{2u+v+v}2}=\frac12e^{-(u+v)}$
+
+4. $0<x<\infty,0<y<\infty\implies0<2u+v<\infty,0<v<\infty\implies v>-2u$
+
+5.
+\begin{tabular}{ l|l|l }
+$g_U(u)=$ & $\int_{-2u}^\infty\frac12e^{-(u+v)}dv=\frac12e^{-u}\int_{-2u}^\infty e^{-v}dv=\frac12e^{-u}\left[-e^{-v}\right]_{-2u}^\infty=\frac12e^{-u}\left[0+e^{2u}\right]$ & $u<0$ \\
+$=\frac12e^{|u|}$ & $\int_{0}^\infty\frac12e^{-(u+v)}dv=\frac12e^{-u}\int_{0}^\infty e^{-v}dv=\frac12e^{-u}\left[-e^{-v}\right]_{0}^\infty=\frac12e^{-u}\left[0+1\right]$ & $u\ge0$
+\end{tabular}
+
+Distribution: Double Exponential(Laplace)
+
+
+\subsection{3 }
+
+Given a joint pdf, find the covariance, correlation, conditional expectation,conditional variance.
+
+1-10p10-13 4.5.4/8/8
+
+
+
+
+
+\subsection{4 Order statistics}
+
+* Find the distribution of X(k) or find the joint distribution of $X_{(j)},X_{(k)}$
+
+ joint pmf 1-31p2-3
+
+5.4.5 uniform order pdf 1-31p4-8
+
+
+
 
   \subsubsection{pdf/pmf}
 CDF: $F(x) = P(X \leq x) = \sum_{y: y \leq x} p(y)= \int_{-\infty}^{x} f(y) dy$ \\
@@ -258,34 +437,17 @@ $ P(a \leq X \leq b) = F(b) - F(a) $
 	\subsubsection{CDF}
 Condition:$f(x)\ge 0 \forall x$
 pmf $\sum_xf_X(x)=1, pdf \int_{-\infty}^{\infty}f(x)dx=1$
-\begin{tabular}{ l|l|l }
-$c\sin{x}\ge 0, 0<x<\pi/2$  &  $\int_{0}^{\frac\pi2}c\sin{x}dx=1$ & $c=1$ \\
-$ce^{-|x|}\ge 0, -\infty<x<\infty$ & $c\int_{-\infty}^{0}e^{x}dx+c\int_{0}^{\infty}e^{-x}dx=1$ & $c=\frac12$
-\end{tabular}
 
 
-	\subsubsection{mean/variance}
-
-$E[g(x)]=\mu=\sum_{x\in D}h(x)p(x)=\int_{-\infty}^{\infty}g(x)f(x)dx$ 
-$E[(X-\mu)^n]=\mu_n=\sum{(x-\mu)^n}p(x)=\int{(x-\mu)^n}f(x)dx$
+\subsubsection{mgf}
+$E(e^{tx})=\int e^{tx}f(x)dx=\sum e^{tx}f(x)$; $M_{aX+b}(t)=e^{tb}M_{aX}(t)$
 
 \begin{tabular}{ l|l }
-$E(aX+b) = aE(X) + b$           & $E(X)=\int_{-\infty}^{0}F_X(t)dt+\int_{0}^{\infty}F_X(t)dt$ \\
-$V(aX+b) = a^2\sigma^2$         & $V(X\pm Y) =VX+VY\pm 2Cov(X,Y)$ \\
-$\sigma_{ax+b} = |a| \cdot \sigma_{x}$ & $Cov(x,y)=E(XY)-E(X)E(Y)$
+$M_X(t)=E(e^{tx})$   & $M_X(0)=1$ \\
+$M_X'(t)=E(xe^{tx})$  & $M_X'(0)=E(X)$  \\ 
+$M_X''(t)=E(x^2e^{tx})$ & $M_X''(0)=E(X^2)$ \\
+$M_X^n(t)=E(x^ne^{tx})$ & $M_X^n(0)=E(X^n)$
 \end{tabular}
-$V(X)=\sigma_{x}^2= E(X^2) - [E(X)]^2$
-
-\begin{tabular}{ l|l|l|l }
-$f_X(x)$ & $EX$ & $EX^2$ & $V(X)$ \\
-$\frac1n$ & $\sum_1^nx\frac1n$ & $\sum_1^nx^2\frac1n$ &  \\
- & $\frac1n\frac{n(n+1)}2$ & $\frac1n\frac{n(n+1)(2n+1)}6$ & $\frac{n^2-1}{12}$ \\ \hline
-$ax^{a-1}$ & $\int_0^1xax^{a-1}dx$ & $\int_0^1x^2ax^{a-1}dx$ & $\frac{a}{a+2}-(\frac{a}{a+1})^2$ \\
- & $\frac{a}{a+1}x^{a+1}|_0^1$ & $\frac{a}{a+2}x^{a+2}|_0^1$ & $\frac{a}{(a+2)(a+1)^2}$ \\ \hline
-$\frac32(x-1)^2$ & $\int_0^2x\frac32(x-1)^2dx$ & $\int_0^2x^2\frac32(x-1)^2dx$ & $\frac85-1^2$ \\
- & $\frac32(\frac{x^4}4|_0^2..)$ & $\frac32(\frac{x^5}5|_0^2..)$ & $\frac35$
-\end{tabular}
-
 
 
   \subsubsection{transform}
@@ -297,35 +459,9 @@ $g(x)\downarrow$ & $F_Y(y)=1-F_X(g^{-1}(y))$
 	\textbf{not monotone}
 $\because X\le 0\ is\ \emptyset \therefore P(X\le-\sqrt y)=0$\\
 $F_Y(y)=P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)=P(X\le\sqrt y)-P(X\le-\sqrt y)=F_X(\sqrt y)=\sqrt y,\ 0<\sqrt y<1$
-\begin{tabular}{ l|l|l|l|l }
-Y     & $X$       & $f_X(x)$ & $F_Y(y)$ & $f_Y(y)=\frac{dF_Y(y)}{dy}$ \\
-$X^2$ & $\sqrt Y$ & $\frac{e^{-x^2/2}}{\sqrt{2\pi}}$ & $F_X(\sqrt y)-F_X(-\sqrt y)$ & $\frac{e^{-y/2}}{2\sqrt{2\pi y}},y>0$ 
-\end{tabular}
 
 	\textbf{monotone}:$f_Y(y)=f_X(g^{-1}(y))|\frac{d(g^{-1}(y))}{dy}|$
-\begin{tabular}{ l|l|l|l }
-  & Y         & $X$               & $f_X(x)$ \\
-1 & $-\log X$ & $e^{-Y}$          & $x^n(1-x)^m,0<x<1$ \\
-2 & $e^X$     & $\ln Y$           & $\frac1{\sigma^2}xe^{-(x/\sigma)^2/2}, 0<x<\infty$ \\
-3 & $-2lnX$   & $e^{-Y/2}$        & $1, 0<x<1$ \\
-4 & $X^2$     & $\sqrt Y$         & $1, 0<x<1$ \\
-5 & $d\tan X$ & $\arctan\frac Yd$ & $\frac1{b-a}=\frac2\pi$ 
-\end{tabular}
 
-1 $(e^{-y})^n(1-e^{-y})^m|\frac{d(e^{-y})}{dy}|=e^{-(n+1)y}(1-e^{-y})^m,\ 0<y<\infty$ \\
-2 $\frac{1}{\sigma^2}{\ln y}e^{-({\ln y}/\sigma)^2/2}|\frac{d(\ln y)}{dy}|=\frac{\ln(y)}{\sigma^2y}e^-(\ln(y)/\sigma)^2/2, 1<y<\infty$ \\
-3 $1|\frac{de^{-Y/2}}{dy}|=\frac{1}{2}e^{-Y/2},0<y<\infty$ \\
-4 $1|\frac{d\sqrt y}{dy}|=\frac{1}{2\sqrt y},0<y<1$ \\
-5 $\frac2\pi|\frac{d(\arctan\frac yd)}{dy}|=\frac2\pi\frac{d(\frac yd)}{[(\frac yd)^2+1]}=\frac{2}{\pi d[(\frac yd)^2+1]} 0<y<\infty$
-\subsubsection{find mean/variance by mgf}
-$E(e^{tx})=\int e^{tx}f(x)dx=\sum e^{tx}f(x)$; $M_{aX+b}(t)=e^{tb}M_{aX}(t)$
-
-\begin{tabular}{ l|l }
-$M_X(t)=E(e^{tx})$   & $M_X(0)=1$ \\
-$M_X'(t)=E(xe^{tx})$  & $M_X'(0)=E(X)$  \\ 
-$M_X''(t)=E(x^2e^{tx})$ & $M_X''(0)=E(X^2)$ \\
-$M_X^n(t)=E(x^ne^{tx})$ & $M_X^n(0)=E(X^n)$
-\end{tabular}
 
   \subsubsection{Series}
 

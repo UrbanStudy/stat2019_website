@@ -48,10 +48,17 @@ The "reproductive" property: adding independent r.v.s from a family of distribut
 
 **Example 4.3.3 (Distribution of the product of beta variables)** Let $X\sim Beta(α,β)$ and $Y\sim Beta(α+β,\gamma)$ be independent random variables. The joint pdf of $(X,Y)$ is
 
-`2019.01.10`
-`p.1-5`
+$X\sim Beta(\alpha,\beta)$, $Y\sim Beta(\alpha+\beta,\gamma)$
+$X,Y$ indep, $U=XY$, $f_U(u)\sim n(\alpha,\beta+\gamma)$
 
-**~ 4.3.4 (Sum and difference of normal variables)**: Let X and Y have joint pdf $f(x,y)=\frac14e^{-\frac{x+y}2}$, $0<x<\infty,0<y<\infty$. Find the pdf for $u=\frac{X-Y}2$.
+**Example 4.3.4 (Sum and difference of normal variables)**: 
+
+$X\sim n(0,1)$, $Y\sim n(0,1)$
+$X,Y$ indep, $X-Y\sim n(0,2)$, $X-Y\sim n(0,2)$
+
+**Example** `2019.01.10` `p.1-5`
+
+Let X and Y have joint pdf $f(x,y)=\frac14e^{-\frac{x+y}2}$, $0<x<\infty,0<y<\infty$. Find the pdf for $u=\frac{X-Y}2$.
 
 Let $v=Y$ so that the system is invertible. $X=2u+v, Y=v$
 
@@ -93,7 +100,7 @@ which is Double Exponential or Laplace Distribution
 
 `2019.01.15``p.11-14`
 
-**Theorem 4.3.5** Let X and Y be independent random variables. Let g(x) be a function only of a; and h(y) be a function only of y. Then the random variables U=g(X)and V=h(Y) are independent.
+**Theorem 4.3.5** Let X and Y be independent random variables. Let $g(x)$ be a function only of a; and $h(y)$ be a function only of y. Then the random variables $U=g(X)$ and $V=h(Y)$ are independent.
 
 Proof
 
@@ -114,10 +121,11 @@ $$F_{UV}(u,v)=\frac{\partial^2}{\partial{u}\partial{v}}F_{UV}(u,v)=\left(\frac{d
 where, as the notation indicates, the first factor is a function only of u and the second
 factor is a function only of v. Hence, by Lemma 4.2.7, U and V are independent.
 
+$$f_{U,V}(u,v)=\sum_{i=1}^kf_{X,Y}(h_{1i}(u,v),\ h_{2i}(u,v))|J_i|$$
 
 `2019.01.10``p.6-9`
 
-**Example 4.3.6 (Distribution of the ratio of normal variables)** Let X and Y be independent $n(O,1)$ random variables. Consider the transformation $U =\frac{X}Y$ (*and V=|Y| in textbook*) find the pdf of u
+**Example 4.3.6 (Distribution of the ratio of normal variables)** Let X and Y be independent $n(0,1)$ random variables. Consider the transformation $U =\frac{X}Y$ (*and V=|Y| in textbook*) find the pdf of u
 
 $$\left.\begin{array}\mathcal{A_0}=\{(x,y):y=0\}\\ \mathcal{A_1}=\{(x,y):y>0\} \\ \mathcal{A_2}=\{(x,y):y<0\} \\ \end{array}\right\}\to\mathcal{B}=\{(u,v):v>0\}$$
 
@@ -305,7 +313,13 @@ So $|\rho_{XY}|=1$ iff $Y-\mu_Y=c(X-\mu_X)$, $Y=cX-\mu_Y-c\mu_X)$
 Therefore, the correlation equals $\pm1$ iff Y is a perfect linear function of X.
 
 
-**Definition 4.5.10** bivariate normal pdf
+**Definition 4.5.10** bivariate normal pdf with $\mu_X,\mu_Y,\sigma_X^2,\sigma_Y^2, \rho$
+
+$f_X(x)\sim n(\mu_X,\sigma^2_X)$ $f_Y(y)\sim n(\mu_Y,\sigma^2_Y)$
+
+$f_{Y|X}(y|x) \sim n(\mu_Y+\rho\frac{\sigma_Y}{\sigma_X})(x−\mu_X),\sigma_Y^2(1-\rho^2)$
+
+$aX+bY\sim n(a\mu_X+b\mu_Y,a^2\mu_X^2+b^2\mu_Y^2+2ab\rho\sigma_X\sigma_Y$
 
 ### 4.6 Multivariate Distributions
 
@@ -416,6 +430,11 @@ $$E\bar X=\mu$$
 $$Var\bar X=\frac{\sigma^2}n$$
 $$ES^2=\sigma^2$$
 
+**Theorem 5.2.7** 
+
+$$M_{\bar X}(t)=[M_X(\frac{t}n)]^n$$
+
+
 **Example 5.2.8 (Distribution of the mean)** Let $X_1,..,X_n$ be a random sample from a $n(\mu,\sigma^2)$ population. Then the mgf of the sample mean is
 
 $$M_{\bar X}(t)=\left[e^{\mu\frac{t}n+\frac{\sigma^2{(\frac{t}n)}^2}2}\right]^n=e^{\mu t+\frac{(\frac{\sigma^2}{n})t^2}2}$$
@@ -463,14 +482,41 @@ In Example 5.2. 10, we found that if $Z_1,..,Z_n$ is a random sample from a $Cau
 
 #### 5.3.1 Properties of the Sample Mean and Variance
 
-**Theorem 5.3.1**
+**Theorem 5.3.1** 
+
+
+$$ f_{\chi^2}(x)=\frac{x^{\frac{p}2-1}}{\Gamma \frac{p}2 2^{\frac{p}2}}e^{-\frac{x}2}, x>0$$
+
+**Lemma 5.3.2**
+
+
+**Lemma 5.3.3**
+`2019.01.24``p.1`
+
+$U=\sum_{i=1}^na_ix_i, V=\sum_{j=1}^nb_jx_j$
+
+a. $Cov(U,V)=\sum_{i=1}^n\sum_{j=1}^na_ib_jCov(x_i,x_j)=0$
+
+b.
 
 #### 5.3.2 The Derived Distributions: Student's t and Snedecor's F
 
-**Definition 5.3.4**
+**Definition 5.3.4** T
 
+$$f_{T}(x)=\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}\left (1+\frac{x^2}{p}\right)^{-\frac{p+1}2},-\infty<x<\infty$$
+
+**Definition 5.3.6**
+
+$$f_{F}(x)=\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}{x^{\frac{p}2-1}\over{(1+\frac{p}qx)^{\frac{p+q}2}}}, x>0$$
 
 **Theorem 5.3.8**
+
+a. $X\sim F_(p,q)$ $\frav{1}X \sim F_(q,p)$
+
+b. $X\sim T_(q)$ $X^2 \sim F_(1,q)$
+
+c. $X\sim F_(p,q)$ $\frac{\frac{p}{q}X}{1+\frac{p}{q}X} \sim Beta(\frac{p}2,\frac{q}2)$
+
 
 ### 5.4 Order Statistics
 
