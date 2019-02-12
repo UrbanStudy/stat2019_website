@@ -23,9 +23,6 @@ A visual indtroduction to probability and statistics
 
 https://seeing-theory.brown.edu
 
-Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format
-
-https://ieeexplore-ieee-org.proxy.lib.pdx.edu/document/5755180
 
 Normal_PDF|Normal_CDF|Chi^2_PDF|Chi^2_CDF
 ---|---|---|---
@@ -59,6 +56,8 @@ Exponential_pmf|Exponential_cdf|Binomial_pmf|Binomial_cdf
 1. [Eighty Univariate Distributions and Their Relationships Displayed in a Matrix Format](https://ieeexplore-ieee-org.proxy.lib.pdx.edu/abstract/document/5755180)
 
 [Probability Theory and Mathematical Statistics](https://onlinecourses.science.psu.edu/stat414/node/109/)
+
+1. www.probabilitycourse.com
 
 ### Glossary of Statistical Terms
 
