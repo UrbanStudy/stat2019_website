@@ -452,25 +452,53 @@ $$\therefore \lim_{n\to\infty}P(|X_n-\mu|>\varepsilon)=0\ge\begin{cases}\lim_{n\
  
 ## HW5
 
-**6.6** Let Xl , . . . , Xn be a random sample from a gamma(o, t3) population. Find a two dimensional sufficient statistic for (0 . t3) .
+**6.6** <span style="color:grey">Let $X_1,..,X_n$ be a random sample from a $Gamma(\alpha,\beta)$ population. Find a two dimensional sufficient statistic for $(\alpha,\beta)$.</span>
+
+According to theorem 6.2.6 (Factorization Theorem) Let $f(\mathbf{x}|\alpha,\beta)$ denote the joint pdf of the sample $X_1,..,X_n$. The pdf of Gamma distribution is $\frac{x^{\alpha-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{-\frac{x}{\beta}},x\in[0,+\infty),\alpha,\beta>0$, then
+
+$$f(\mathbf{x}|\alpha,\beta)=\prod_{i=1}^nf(x_i)=\prod_{i=1}^n\frac{x_i^{\alpha-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{-\frac{x_i}{\beta}}=\frac{1}{\Gamma(\alpha)^n\beta^{n\alpha}}\cdot(\prod_{i=1}^nx_i)^{\alpha}\cdot e^{-\frac{1}{\beta}\sum\limits_{i=1}^nx_i}\cdot \prod_{i=1}^nx_i^{-1}$$
+
+Therefore, $T(\prod_{i=1}^nx_i,\sum\limits_{i=1}^nx_i)$ is a sufficient statistic for $(\alpha,\beta)$
 
  ---
 
-**6.9** For each of the following distributions let Xl , . . . , Xn be a random sample. Find a minimal sufficient statistic for e.
+**6.9** For each of the following distributions let $X_1,..,X_n$ be a random sample. Find a minimal sufficient statistic for $\theta$.
 
- (a). j(xIO) -00 < x < 00, -00 < 0 < 00  (normal)
- (b). j(xIB) = e-(x-6) , B < x < 00, -00 < 0 < 00  (location exponential)
- (c). j (xIO) =-00 < x < 00, -00 < e < 00 (logistic)
- (d). j (xI O)1f[1+(x-6)2] ,-00 < X < 00, -00 < B < 00 (Cauchy)
- (e). j(xIO)'2I e- lx-81 ,-00 < x < 00, -00 < B < 00 (double exponential)
+  (a). $f(x|\theta)=\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{(x-\theta)^2}2} ,-\infty<x<\infty,-\infty<\theta<\infty$ (normal)
+  
+$$\frac{f(x|\theta)}{f(y|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\frac{1}{(\sqrt{2\pi})^n}\mathrm{e}^{-\frac{\sum_{i=1}^n(x_i-\theta)^2}2}}{\frac{1}{(\sqrt{2\pi})^2}\mathrm{e}^{-\frac{\sum_{i=1}^n(y_i-\theta)^2}2}}=\mathrm{e}^{-\frac{\sum_{i=1}^n(x_i-\theta)^2}2+\frac{\sum_{i=1}^n(y_i-\theta)^2}2}=\mathrm{e}^{\frac12(\sum_{i=1}^ny_i^2-\sum_{i=1}^nx_i^2)+\theta(\sum_{i=1}^ny_i-\sum_{i=1}^nx_i)}$$
+ 
+Therefore, $\sum_{i=1}^ny_i-\sum_{i=1}^nx_i=0$ that is $T(\bar x)=T(\bar y)\iff T(\bar X)$ is a minimal sufficient statistic for $\theta$
+ 
+  (b). $f(x|\theta)=\mathrm{e}^{-(x-\theta)} ,\theta<x<\infty,-\infty<\theta<\infty$ (location exponential)
+ 
+  (c). $f(x|\theta)=\frac{\mathrm{e}^{-(x-\theta)}}{(1+\mathrm{e}^{-(x-\theta)})^2} ,-\infty<x<\infty,-\infty<\theta<\infty$ (logistic)
+ 
+  (d). $f(x|\theta)=\frac{1}{\pi[1+\mathrm{e}^{-(x-\theta)^2}]} ,-\infty<x<\infty,-\infty<\theta<\infty$ (Cauchy)
+ 
+  (e). $f(x|\theta)=\frac12\mathrm{e}^{-|x-\theta|} ,-\infty<x<\infty,-\infty<\theta<\infty$ (double exponential)
+ 
  
  ---
  
 **6.10** Show that the minimal sufficient statistic for the uniform(O, 0 + 1 ) , found in Example 6.2.15, is not complete.
 
+To prove $T(\mathbf{X})=(X_{(1)},X_{(n)})$ is not complete, we want to find $g[T(\mathbf{X})]$ such that $Eg[T(\mathbf{X})]=0$ for all $\theta$, but $g[T(\mathbf{X})]\not\equiv 0 $. A natural candidate is $R=X_{(n)}−X_{(1)}$, the range of X, because by Example 6.2.17 its distribution does not depend on $\theta$. From Example 6.2.17, $R\sim beta(n−1,2)$. Thus $ER=(n−1)/(n+1)$ does not depend on $\theta$, and $E(R−ER)=0$ for all $\theta$. Thus
+$g[X(n),X(1)]=X(n)−X(1)−(n−1)/(n+1)=R−ER$ is a nonzero function whose expected value is always 0. So, $(X_{(1)},X_{(n)})$ is not complete. This problem can be generalized to show that if a function of a sufficient statistic is ancillary, then the sufficient statistic is not complete, because the expectation of that function does not depend on $\theta$. That provides the opportunity to construct an unbiased, nonzero estimator of zero.
+
+
  ---
 
 **6.13** Suppose Xl and X2 are iid observations from the pdf j(xla) =, x > o, a >O. Show that (log XI )/(log X2) is an ancillary statistic.
+
+Let $Y_1 = \lnX_1$ and $Y_2 =\lnX_2$. Then $Y_1$ and $Y_2$ are iid and, by Theorem 2.1.5, the pdf of each is
+
+We see that the family of distributions of Yi is a scale family with scale parameter $\frac1{\alpha}$. Thus,
+by Theorem 3.5.6, we can write $Y_i=\frac1{\alpha}Z_i$, where Z_1 and Z_2 are a random sample from $f(z|1)$.
+Then
+
+
+Because the distribution of $\frac{Z_1}{Z_2}$ does not depend on $\alpha$, $\frac{\ln X_1}{\ln X_2}$ is an ancillary statistic.
 
 ## HW6
 
