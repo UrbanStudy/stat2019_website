@@ -468,11 +468,9 @@ Let $α=0.05$, accept probability $P=0.1,\nu_1=a−1=2$
 The results show that when $n=5$, the power is 0.86476, when $n=6$, the power is 0.9345867. Thus, the sample size should be $n\ge6, N\ge18$.
 
 ```{r echo=T, collapse=TRUE}
-
 library(pwr2)
 pwr.1way(k=3, n=5, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
 pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
-
 ```
 
  ---
@@ -511,7 +509,6 @@ The result shows that $\tau_1$ is independent with $\tau_3$, $\tau_1$ is indepen
 
   
 ```{r eval=FALSE, include=FALSE}
-
 lsdCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
 bonfCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
 tukeyCI(table_battery$Life,as.factor(table_battery$Brand), conf.level = 0.99, MSE = NULL, df.err = NULL)
@@ -544,9 +541,7 @@ chisq.test(xtabs(~Brand+Life,data=table_battery,subset=!is.na(Life)))
 GKgamma(xtabs(~Respone + Type,data=table_circuit,subset=!is.na(Type), drop.unused.levels=T))
 #running Leven's Equality of Variance
 leveneTest(Life ~ Brand, data = table_battery,center = "mean")
-
 ```
-
 
 
 
@@ -585,7 +580,9 @@ model_mail <- aov(Response~Design+Region, data=table_mail)
 summary(model_mail)
 ```
 
+
 (a) Analyze the data from this experiment.
+
 
 (b) Use the Fisher LSD method to make comparisons among the three designs to determine specifically which designs differ in the mean response rate.
 
@@ -612,25 +609,22 @@ ols_plot_diagnostics(lm(Response~Design+Region, data=table_mail))
 ### Problem 3
 
 $y_{ijkl}=μ+τ_i+α_{j(l)}+β_k+δ_l+ε_{ijkl}$ for $i,j,k =1,…,p$ ; $l=1,…,n$; $ε_{ijkl}\sim iid N(0,σ^2 )$
-
 Derive the parameter estimates from the least squares method using the constrains
-
-$$\sum_i\hat\tau_i=0;\ \sum_j\hat\alpha_{j(l)}=0;\ \sum_l\hat\alpha_{j(l)}=0;\ \sum_k\hat\beta_k=0;\ \sum_l\hat\delta_l=0$$
+$\sum_i\hat\tau_i=0;\ \sum_j\hat\alpha_{j(l)}=0;\ \sum_l\hat\alpha_{j(l)}=0;\ \sum_k\hat\beta_k=0;\ \sum_l\hat\delta_l=0$
 
 $$SSE=\sum_i^p\sum_j^p\sum_k^p\sum_l^n(y_{ijkl}-μ-τ_i-α_{j(l)}-β_k-δ_l)^2$$
 
 Derive
 
-$$\left.\frac{\partial SSE}{\partial μ}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_j^p\sum_k^p\sum_l^n(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$$
+$\left.\frac{\partial SSE}{\partial μ}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_j^p\sum_k^p\sum_l^n(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$
 
-$$\left.\frac{\partial SSE}{\partial τ_i}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_j^p\sum_k^p\sum_l^n(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$$
+$\left.\frac{\partial SSE}{\partial τ_i}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_j^p\sum_k^p\sum_l^n(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$
 
-$$\left.\frac{\partial SSE}{\partial α_{j(l)}}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_k^p(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$$
+$\left.\frac{\partial SSE}{\partial α_{j(l)}}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_k^p(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$
 
-$$\left.\frac{\partial SSE}{\partial β_k}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_j^p\sum_l^n(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$$
+$\left.\frac{\partial SSE}{\partial β_k}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_j^p\sum_l^n(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$
 
-$$\left.\frac{\partial SSE}{\partial δ_l}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_j^p\sum_k^p(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$$
-
+$\left.\frac{\partial SSE}{\partial δ_l}\right|_{\hatμ,\hatτ_i,\hatα_{j(l)},\hatβ_k,\hatδ_l}=-2\sum_i^p\sum_j^p\sum_k^p(y_{ijkl}-\hatμ-\hatτ_i-\hatα_{j(l)}-\hatβ_k-\hatδ_l)(-1)=0$
 
 $$\left\{\begin{array}{l} 
 y_{....}=np^2\hatμ+np\sum_i^p\hatτ_i+p^2\sum_j^p\sum_l^n\hatα_{j(l)}+np\sum_k^p\hatβ_k+p^2\sum_l^n\hatδ_l\\
