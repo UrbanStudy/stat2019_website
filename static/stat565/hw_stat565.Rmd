@@ -557,9 +557,15 @@ Three different washing solutions are being compared to study their effectivenes
 and only three trials can be run on any day. Because days could represent a potential source of variability, the experimenter decides to use a randomized block design. Observations
 are taken for four days, and the data are shown here. Analyze the data from this experiment (use $\alpha = 0.05$) and draw conclusions.
 
-```{r echo=T, collapse=TRUE}
+```{r include=FALSE}
 table_wash <- read_xlsx("Exercise4_4.xlsx")
-head(table_wash)
+glimpse(table_wash)
+table_wash %>% ggplot(aes(Solution,Response))+geom_line(aes(Solution,Response,lty=as.factor(Days)))+theme(legend.position = c(0.9, 0.85))
+```
+
+```{r echo=T, collapse=TRUE}
+
+
 model_wash <- aov(Response~Solution+Days, data=table_wash)
 summary(model_wash)
 ```
@@ -574,16 +580,19 @@ summary(model_wash)
 A consumer products company relies on direct mail marketing pieces as a major component of its advertising campaigns. The company has three different designs for a new brochure and wants to evaluate their effectiveness, as there are substantial differences in costs between the three designs.
 The company decides to test the three designs by mailing 5000 samples of each to potential customers in four different regions of the country. Since there are known regional differences in the customer base, regions are considered as blocks. The number of responses to each mailing is as follows.
 
-```{r echo=T, collapse=TRUE}
+```{r include=FALSE}
 table_mail <- read_xlsx("Exercise4_8.xlsx")
-head(table_mail)
-model_mail <- aov(Response~Design+Region, data=table_mail)
-summary(model_mail)
+glimpse(table_mail)
+table_mail %>% ggplot(aes(Design,Response))+geom_line(aes(Design,Response,lty=as.factor(Region)))+theme(legend.position = c(0.9, 0.85))
 ```
 
 
 (a) Analyze the data from this experiment.
 
+```{r echo=T, collapse=TRUE}
+model_mail <- aov(Response~Design+Region, data=table_mail)
+summary(model_mail)
+```
 
  ---
 

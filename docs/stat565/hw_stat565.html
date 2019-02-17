@@ -901,17 +901,8 @@ pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
 <div id="problem-1-4.9-29" class="section level3">
 <h3>Problem 1 (4.9-29)</h3>
 <p>Three different washing solutions are being compared to study their effectiveness in retarding bacteria growth in 5-gallon milk containers. The analysis is done in a laboratory, and only three trials can be run on any day. Because days could represent a potential source of variability, the experimenter decides to use a randomized block design. Observations are taken for four days, and the data are shown here. Analyze the data from this experiment (use <span class="math inline">\(\alpha = 0.05\)</span>) and draw conclusions.</p>
-<pre class="r"><code>table_wash &lt;- read_xlsx(&quot;Exercise4_4.xlsx&quot;)
-head(table_wash)
-## # A tibble: 6 x 3
-##    Days Solution Response
-##   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1     1        1       13
-## 2     1        2       16
-## 3     1        3        5
-## 4     2        1       22
-## 5     2        2       24
-## 6     2        3        4
+<pre class="r"><code>
+
 model_wash &lt;- aov(Response~Solution+Days, data=table_wash)
 summary(model_wash)
 ##             Df Sum Sq Mean Sq F value Pr(&gt;F)  
@@ -926,26 +917,15 @@ summary(model_wash)
 <div id="problem-2-4.13" class="section level3">
 <h3>Problem 2 (4.13)</h3>
 <p>A consumer products company relies on direct mail marketing pieces as a major component of its advertising campaigns. The company has three different designs for a new brochure and wants to evaluate their effectiveness, as there are substantial differences in costs between the three designs. The company decides to test the three designs by mailing 5000 samples of each to potential customers in four different regions of the country. Since there are known regional differences in the customer base, regions are considered as blocks. The number of responses to each mailing is as follows.</p>
-<pre class="r"><code>table_mail &lt;- read_xlsx(&quot;Exercise4_8.xlsx&quot;)
-head(table_mail)
-## # A tibble: 6 x 3
-##   Region Design Response
-##   &lt;chr&gt;   &lt;dbl&gt;    &lt;dbl&gt;
-## 1 NE          1      250
-## 2 NE          2      400
-## 3 NE          3      275
-## 4 NW          1      350
-## 5 NW          2      525
-## 6 NW          3      340
-model_mail &lt;- aov(Response~Design+Region, data=table_mail)
+<ol style="list-style-type: lower-alpha">
+<li>Analyze the data from this experiment.</li>
+</ol>
+<pre class="r"><code>model_mail &lt;- aov(Response~Design+Region, data=table_mail)
 summary(model_mail)
 ##             Df Sum Sq Mean Sq F value Pr(&gt;F)
 ## Design       1    595     595   0.044  0.841
 ## Region       3  49036   16345   1.197  0.378
 ## Residuals    7  95589   13656</code></pre>
-<ol style="list-style-type: lower-alpha">
-<li>Analyze the data from this experiment.</li>
-</ol>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Use the Fisher LSD method to make comparisons among the three designs to determine specifically which designs differ in the mean response rate.</li>
