@@ -907,18 +907,18 @@ pwr.1way(k=3, n=6, alpha=0.05, f=NULL, delta=10, sigma=sqrt(16.9))
 ## $ Days     &lt;fct&gt; 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4
 ## $ Solution &lt;fct&gt; 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3
 ## $ Response &lt;dbl&gt; 13, 16, 5, 22, 24, 4, 18, 17, 1, 39, 44, 22</code></pre>
-<pre class="r"><code>model_wash &lt;- lm(Response~Solution+Days, data=table_wash)
-summary(aov(Response~Solution+Days, data=table_wash))</code></pre>
+<pre class="r"><code>model_wash &lt;- aov(Response~Solution+Days, data=table_wash)
+summary(model_wash)</code></pre>
 <pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## Solution     2  703.5   351.8   40.72 0.000323 ***
 ## Days         3 1106.9   369.0   42.71 0.000192 ***
 ## Residuals    6   51.8     8.6                     
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-<pre class="r"><code>summary(model_wash)</code></pre>
+<pre class="r"><code>summary.lm(model_wash)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = Response ~ Solution + Days, data = table_wash)
+## aov(formula = Response ~ Solution + Days, data = table_wash)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
@@ -938,8 +938,81 @@ summary(aov(Response~Solution+Days, data=table_wash))</code></pre>
 ## Residual standard error: 2.939 on 6 degrees of freedom
 ## Multiple R-squared:  0.9722, Adjusted R-squared:  0.949 
 ## F-statistic: 41.91 on 5 and 6 DF,  p-value: 0.0001371</code></pre>
-<pre class="r"><code># (LSD.test(model_wash, trt=&quot;Solution&quot;,alpha = 0.05))
-pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = &quot;lsd&quot;, MSE = NULL, df.err = NULL, control = NULL)</code></pre>
+<pre class="r"><code>(LSD.test(model_wash, trt=&quot;Solution&quot;,alpha = 0.05,p.adj=&quot;bonferroni&quot;))</code></pre>
+<pre><code>## $statistics
+##    MSerror Df  Mean       CV  t.value      MSD
+##   8.638889  6 18.75 15.67573 3.287455 6.832408
+## 
+## $parameters
+##         test  p.ajusted   name.t ntr alpha
+##   Fisher-LSD bonferroni Solution   3  0.05
+## 
+## $means
+##   Response       std r      LCL      UCL Min Max   Q25  Q50   Q75
+## 1    23.00 11.284207 4 19.40402 26.59598  13  39 16.75 20.0 26.25
+## 2    25.25 12.996794 4 21.65402 28.84598  16  44 16.75 20.5 29.00
+## 3     8.00  9.486833 4  4.40402 11.59598   1  22  3.25  4.5  9.25
+## 
+## $comparison
+## NULL
+## 
+## $groups
+##   Response groups
+## 2    25.25      a
+## 1    23.00      a
+## 3     8.00      b
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;group&quot;</code></pre>
+<pre class="r"><code>(LSD.test(aov(Response~Days+Solution, data=table_wash), trt=&quot;Days&quot;,alpha = 0.05,p.adj=&quot;bonferroni&quot;))</code></pre>
+<pre><code>## $statistics
+##    MSerror Df  Mean       CV  t.value      MSD
+##   8.638889  6 18.75 15.67573 3.862991 9.270581
+## 
+## $parameters
+##         test  p.ajusted name.t ntr alpha
+##   Fisher-LSD bonferroni   Days   4  0.05
+## 
+## $means
+##   Response       std r       LCL      UCL Min Max  Q25 Q50  Q75
+## 1 11.33333  5.686241 3  7.181053 15.48561   5  16  9.0  13 14.5
+## 2 16.66667 11.015141 3 12.514387 20.81895   4  24 13.0  22 23.0
+## 3 12.00000  9.539392 3  7.847720 16.15228   1  18  9.0  17 17.5
+## 4 35.00000 11.532563 3 30.847720 39.15228  22  44 30.5  39 41.5
+## 
+## $comparison
+## NULL
+## 
+## $groups
+##   Response groups
+## 4 35.00000      a
+## 2 16.66667      b
+## 3 12.00000      b
+## 1 11.33333      b
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;group&quot;</code></pre>
+<pre class="r"><code>TukeyHSD(model_wash,conf.level = 0.95)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = Response ~ Solution + Days, data = table_wash)
+## 
+## $Solution
+##       diff        lwr        upr     p adj
+## 2-1   2.25  -4.126879   8.626879 0.5577862
+## 3-1 -15.00 -21.376879  -8.623121 0.0008758
+## 3-2 -17.25 -23.626879 -10.873121 0.0004067
+## 
+## $Days
+##           diff        lwr       upr     p adj
+## 2-1  5.3333333  -2.974240 13.640906 0.2193500
+## 3-1  0.6666667  -7.640906  8.974240 0.9917442
+## 4-1 23.6666667  15.359094 31.974240 0.0002622
+## 3-2 -4.6666667 -12.974240  3.640906 0.3037891
+## 4-2 18.3333333  10.025760 26.640906 0.0010843
+## 4-3 23.0000000  14.692427 31.307573 0.0003081</code></pre>
+<pre class="r"><code>pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = &quot;lsd&quot;, MSE = NULL, df.err = NULL, control = NULL)</code></pre>
 <pre><code>## 
 ## 95% LSD confidence intervals 
 ## 
@@ -955,24 +1028,7 @@ pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method =
 ## mu1-mu2 -2.25 -24.65139 20.15139   FTR H0     0.957777
 ## mu1-mu3    15  -7.40139 37.40139   FTR H0     0.202758
 ## mu2-mu3 17.25  -5.15139 39.65139   FTR H0     0.134327</code></pre>
-<pre class="r"><code>pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = &quot;lsd&quot;, MSE = NULL, df.err = 6, control = NULL)</code></pre>
-<pre><code>## 
-## 95% LSD confidence intervals 
-## 
-##              LSD  Diff     Lower    Upper Decision Adj. p-value
-## mu1-mu2 19.63256 -2.25 -21.88256 17.38256   FTR H0      0.78857
-## mu1-mu3 19.63256    15  -4.63256 34.63256   FTR H0      0.11075
-## mu2-mu3 19.63256 17.25  -2.38256 36.88256   FTR H0      0.07511</code></pre>
-<pre class="r"><code>pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = &quot;tukey&quot;, MSE = NULL, df.err = 6, control = NULL)</code></pre>
-<pre><code>## 
-## 95% Tukey-Kramer confidence intervals 
-## 
-##          Diff   Lower  Upper Decision Adj. p-value
-## mu1-mu2 -2.25 -26.868 22.368   FTR H0     0.957876
-## mu1-mu3    15  -9.618 39.618   FTR H0     0.227276
-## mu2-mu3 17.25  -7.368 41.868   FTR H0      0.15954</code></pre>
-<pre class="r"><code># (LSD.test(aov(Response~Days+Solution, data=table_wash), trt=&quot;Days&quot;,alpha = 0.05))
-pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = &quot;lsd&quot;, MSE = NULL, df.err = NULL, control = NULL)</code></pre>
+<pre class="r"><code>pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = &quot;lsd&quot;, MSE = NULL, df.err = NULL, control = NULL)</code></pre>
 <pre><code>## 
 ## 95% LSD confidence intervals 
 ## 
@@ -994,28 +1050,6 @@ pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = &qu
 ## mu1-mu4 -23.66667 -49.07334     1.74   FTR H0     0.068128
 ## mu2-mu4 -18.33333    -43.74  7.07334   FTR H0     0.174505
 ## mu3-mu4       -23 -48.40667  2.40667   FTR H0     0.076716</code></pre>
-<pre class="r"><code>pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = &quot;lsd&quot;, MSE = NULL, df.err = 6, control = NULL)</code></pre>
-<pre><code>## 
-## 95% LSD confidence intervals 
-## 
-##             LSD      Diff     Lower    Upper  Decision Adj. p-value
-## mu1-mu2 19.4132  -5.33333 -24.74653 14.07986    FTR H0      0.52646
-## mu1-mu3 19.4132  -0.66667 -20.07986 18.74653    FTR H0      0.93577
-## mu2-mu3 19.4132   4.66667 -14.74653 24.07986    FTR H0      0.57785
-## mu1-mu4 19.4132 -23.66667 -43.07986 -4.25347 Reject H0      0.02454
-## mu2-mu4 19.4132 -18.33333 -37.74653  1.07986    FTR H0       0.0602
-## mu3-mu4 19.4132       -23  -42.4132  -3.5868 Reject H0      0.02737</code></pre>
-<pre class="r"><code>pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = &quot;tukey&quot;, MSE = NULL, df.err = 6, control = NULL)</code></pre>
-<pre><code>## 
-## 95% Tukey-Kramer confidence intervals 
-## 
-##              Diff     Lower    Upper Decision Adj. p-value
-## mu1-mu2  -5.33333  -32.7977 22.13103   FTR H0     0.903901
-## mu1-mu3  -0.66667 -28.13103  26.7977   FTR H0     0.999762
-## mu2-mu3   4.66667  -22.7977 32.13103   FTR H0     0.932069
-## mu1-mu4 -23.66667 -51.13103   3.7977   FTR H0     0.087799
-## mu2-mu4 -18.33333  -45.7977  9.13103   FTR H0     0.197346
-## mu3-mu4       -23 -50.46436  4.46436   FTR H0     0.097097</code></pre>
 <hr />
 <p>4.29 Consider the randomized complete block design in Problem 4.9. Assume that the days are random. Estimate the block variance component.</p>
 <pre class="r"><code>summary(aov(Response~Solution+Error(Days), data=table_wash))
