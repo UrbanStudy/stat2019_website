@@ -64,27 +64,35 @@
 %\end{center}
 
 \section{565 mid-term}
-\subsection{model}
+\subsection{CRD}
+\subsubsection{model}
 $y_{ij}=\mu+\tau_{i}+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,n$, $\sum_{i=1}^a\tau_i=0$
 Random effects: $\tau_{i}\sim iid N(0,\sigma_\tau^2)$,$\tau_{i}$ and $\varepsilon_{ij}$ indep
 
-$y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,b$
-
-Fixed effects: $\sum_{i=1}^a\tau_i=0, \sum_{j=1}^b\beta_j=0$
-Random effects: $\beta_{j}\sim iid N(0,\sigma_\beta^2)$
-
-Graeco-Latin square: $y_{ijkl}=\mu+\theta_i+\tau_j+\omega_k+\psi_l+\varepsilon_{ijkl}$;$i,j,k,l=1,2,..,p$
-
-BIBD: $y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$;$i=1,2,…,a,j=1,2,…,b$;$N=kb=ra,\lambda=\frac{r(k-1)}{a-1}$
-
 \subsubsection{least square and normal equation}
-CRD:$SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i)^2$  
+$SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i)^2$  
 $\left.\frac{\partial SSE}{\partial\mu}\right|_{\hat\mu,\hat\tau_i}=2\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0$
 $y_{..}=an\hat\mu+n\sum_{i=1}^a\hat\tau_i$  
 $\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\mu,\hat\tau_i}=2\sum_{j=1}^n(y_{ij}-\hat\mu-\hat\tau_i)(-1)=0$
 $y_{i.}=n\hat\mu+n\hat\tau_i$
 
-RCBD: $SSE=\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\mu-\tau_i-\beta_j)^2$
+\subsubsection{ANOVA}
+\begin{tabular}{l|l|l|l|l|}
+    & SS   &      df     & MS  & F    \\
+$SS_{Trt}$&$n\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&$a-1$&$\frac{SS_{Trt}}{a-1}$&$\frac{MS_{Trt}}{MS_E}$\\
+$SS_E$    &$\sum^a_{i=1}\sum^n_{j=1}(y_{ij} - \bar y_{i.})^2$     &$a(n-1)$& $\frac{SS_E}{N-a}$  \\
+$SS_T$    &$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}-\bar y_{..})^2$&$an-1$\\ \hline
+\end{tabular}
+
+[f.]$SS_{Trt}=\frac1n\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
+
+\subsection{RCBD}
+$y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,2,…,a,j=1,2,…,b$
+
+Fixed effects: $\sum_{i=1}^a\tau_i=0, \sum_{j=1}^b\beta_j=0$
+Random effects: $\beta_{j}\sim iid N(0,\sigma_\beta^2)$
+\subsubsection{least square and normal equation}
+$SSE=\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\mu-\tau_i-\beta_j)^2$
 
 $\left.\frac{\partial SSE}{\partial\mu}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{i=1}^a\sum_{j=1}^b(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$    
 $\left.\frac{\partial SSE}{\partial\tau_i}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j}=2\sum_{j=1}^b(y_{ij}-\hat\mu-\hat\tau_i-\hat\beta_j)(-1)=0$  
@@ -96,34 +104,12 @@ $y_{i.}=b\hat\mu+b\hat\tau_i+\sum_{j=1}^b\hat\beta_j$
 
 $y_{.j}=a\hat\mu+\sum_{i=1}^a\hat\tau_i+a\hat\beta_j$
 
-\subsection{hypothesis test}
-\begin{tabular}{ l|l|l }
-model  &H0&H1\\
-FT-CRD & $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ are different\\
-RT-CRD & $\sigma_{\tau}^2=0$& $\sigma_{\tau}^2>0$\\
-FB-RCBD& $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ are different\\
- -Block& $\beta_1=\beta_2=..=\beta_j=0$& at least one of $\beta_j\neq 0$\\
-RB-RCBD& $\sigma_{\beta}^2=0$& $\sigma_{\beta}^2>0$\\
-Contrast& $\Gamma=\sum_{i=1}^ac_i\mu_i=0$&$\Gamma=\sum_{i=1}^ac_i\mu_i\neq0$\\
-LSD    & $\mu_1=\mu_2=..=\mu_p$& at least two of $\mu_p$ are different\\
-BIBD   & $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ are different\\
-\end{tabular}
-
-\subsubsection{ANOVA}
 \begin{tabular}{l|l|l|l|l|}
-    & SS   &      df     & MS  & F    \\
-$SS_{Trt}$&$n\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&$a-1$&$\frac{SS_{Trt}}{a-1}$&$\frac{MS_{Trt}}{MS_E}$\\
-$SS_E$    &$\sum^a_{i=1}\sum^n_{j=1}(y_{ij} - \bar y_{i.})^2$     &$a(n-1)$& $\frac{SS_E}{N-a}$  \\
-$SS_T$    &$\sum^a_{i=1}\sum^n_{j=1}(y_{ij}-\bar y_{..})^2$&$an-1$\\
-\hline
 $SS_{Trt}$&$b\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&$a-1$&$\frac{SS_{Trt}}{a-1}$&$\frac{MS_{Trt}}{MS_E}$\\
 $SS_{Blk}$&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&$b-1$&$\frac{SS_{Blk}}{b-1}$&$\frac{MS_{Blk}}{MS_E}$\\
 $SS_E$    &$SS_T-SS_{Trt}-SS_{Blk}$ &$(a-1)(b-1)$& $\frac{SS_E}{df_E}$&\\
-$SS_T$    &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&$ab-1$\\
-\hline
+$SS_T$    &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&$ab-1$\\ \hline
 \end{tabular}
-
-[f.]$SS_{Trt}=\frac1n\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
 
 [r.]$SS_{Trt}=\frac1b\sum^a_{i=1}y_{i.}^2-\frac{y_{..}^2}N$
 $SS_{Blk}=\frac1a\sum^b_{j=1}y_{.j}^2-\frac{y_{..}^2}N$ 
@@ -131,9 +117,12 @@ $SSE=\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2$
 
 $SS_T=\sum^a_{i=1}\sum^b_{j=1}y_{ij}^2-\frac{y_{..}^2}N$, $S^2_i=\frac{\sum_{j=1}^n(y_{ij}-\bar y_{i.})^2}{n-1}$
 
+\subsection{Latin squre}
+Graeco-Latin square: $y_{ijkl}=\mu+\theta_i+\tau_j+\omega_k+\psi_l+\varepsilon_{ijkl}$;$i,j,k,l=1,2,..,p$
+
 \begin{tabular}{l|l|l|}
 LSD& SS   &      df\\
-$SS_{Trt1}$&$p\sum^p_{i=1}(\bar y_{i..}-\bar y_{...})^2$&$p-1$\\
+$SS_{Trt}$&$p\sum^p_{i=1}(\bar y_{i..}-\bar y_{...})^2$&$p-1$\\
 $SS_{Row}$&$p\sum^p_{j=1}(\bar y_{.j.}-\bar y_{...})^2$&$p-1$\\
 $SS_{Col}$&$p\sum^p_{k=1}(\bar y_{..k}-\bar y_{...})^2$&$p-1$\\
 $SS_E$    &$SS_T-SS_{.}$ &$(p-1)(p-2)$\\
@@ -160,6 +149,9 @@ $SS_E$    &$SS_T-SS_{.}$ &$(p-1)(p-3)$\\
 $SS_T$    &$\sum^p_{i=1}\sum^p_{j=1}(y_{ijkl}-\bar y_{..})^2$&$p^2-1$\\ \hline
 \end{tabular}
 
+\subsection{BIBD}
+BIBD: $y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$;$i=1,2,…,a,j=1,2,…,b$;$N=kb=ra,\lambda=\frac{r(k-1)}{a-1}$
+
 \begin{tabular}{l|l|l|}
 BIBD  & SS   &      df\\
 $SS_{Trt}$&$\frac{k}{\lambda a}\sum^a_{i=1}Q_i^2=\frac{k}{\lambda a}\sum^a_{i=1}(y_{i.}-\sum^b_{j=1}n_{ij}\bar y_{.j})^2$&$a-1$\\
@@ -169,7 +161,22 @@ $SS_T$    &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&$N-1$\\
 \hline
 \end{tabular}
 
-\subsubsection{distribution}
+\subsection{hypothesis test}
+\begin{tabular}{ l|l|l }
+model  &H0&H1\\
+FT-CRD & $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ diff\\
+RT-CRD & $\sigma_{\tau}^2=0$& $\sigma_{\tau}^2>0$\\
+FB-RCBD& $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ diff\\
+ -Block& $\beta_1=\beta_2=..=\beta_j=0$& at least one of $\beta_j\neq 0$\\
+RB-RCBD& $\sigma_{\beta}^2=0$& $\sigma_{\beta}^2>0$\\
+Contrast& $\Gamma=\sum_{i=1}^ac_i\mu_i=0$&$\Gamma=\sum_{i=1}^ac_i\mu_i\neq0$\\
+LSD    & $\mu_1=\mu_2=..=\mu_p$& at least two of $\mu_p$ diff\\
+BIBD   & $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ diff\\
+\end{tabular}
+
+
+
+\subsection{distribution}
 \begin{tabular}{l|l|l|l|l|l}
   &$y_{ij}$ & $\bar y_{i.}$ & $\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}$&$\bar y_{i.}-\bar y_{j.}$& $\frac{\bar y_{i.}-\bar y_{j.}-(\mu_i-\mu_j)}{\frac{2\sigma}{\sqrt{n}}}$\\
 N &$(\mu+\tau_i,\sigma^2)$ & $(\mu+\tau_i,\frac{\sigma^2}n)$ & $(0,1)$&$(\mu_i-\mu_j,\frac{2\sigma^2}n)$ & $(0,1)$\\\hline
@@ -181,7 +188,7 @@ $t_{df_E}$&$\frac{\frac{y_{i.}-\mu_i}{\frac{\sigma}{\sqrt{n}}}}{\sqrt{\frac{SS_E
 
 \begin{tabular}{l|l|l|l|l}
 $\chi^2$ & $\frac{SS_E}{\sigma^2}$ &$\frac{SS_{Trt}}{\sigma^2}$ &$\frac{SS_{Blk}}{\sigma^2}$ &$SS_{C}$\\
-df       & $E$ & $Trt$ & $Blk$ & $1$
+df       & $E$ & $Trt$ & $Blk$ & $1$\\\hline
 \end{tabular}
 
 \begin{tabular}{l|l|l|l}
@@ -189,10 +196,7 @@ F & $\frac{MS_{Trt}}{MS_{E}}$&$\frac{(MS_{Blk}}{MS_{E}}$&$\frac{(\sum_{i=1}^ac_i
 df& $(Trt,E)$&$(Blk,E)$&$(C=1,E)$\\
 \end{tabular}
 
-
-
-
-\subsubsection{contrast}
+\subsection{contrast}
 
 $\Gamma=\sum_{i=1}^ac_i\mu_i$,$C=\sum_{i=1}^ac_i\bar y_i$;$\sum_{i=1}^ac_i=0$;Orthogonal $\sum_{i=1}^ac_id_i=0$
 
@@ -203,11 +207,11 @@ $SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}$,$\sum_1^{a
         CI   & balanced & unbalanced \\
 $\mu_i$      &$\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}$&$\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}$\\
 $\mu_i-\mu_j$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$&$\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}$\\
-$\Gamma$&$\sum_{i=1}^ac_i\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$&\\
+$\Gamma$&$\sum_{i=1}^ac_i\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$&\\ \hline
 \end{tabular}
 
 
-\subsubsection{expectation and variance}
+\subsection{Expectation and Variance}
 
 
 $y_{..}=\sum^a_{i=1}(y_{i.}=\sum^n_{j=1}y_{ij})$,$\mu=\frac{\sum_{i=1}^a\mu_i}{a}$
@@ -251,7 +255,7 @@ $\bar y_{i.}-\bar y_{..}$ & $\tau_{i}+\frac{\sum_{j=1}^n\varepsilon_{ij}}n-\frac
 \hline
 RT- &CRD & E & Var[]\\
 $y_{ij}-\bar y_{i.}$ & $\varepsilon_{ij}-\frac{\sum_{j=1}^n\varepsilon_{ij}}n$ & $0$ & $\frac{n-1}n\sigma^2$\\
-$\bar y_{i.}-\bar y_{..}$ & $\tau_{i}-\frac{\sum_{i=1}^a\tau_{i}}{a}+\frac{\sum_{j=1}^n\varepsilon_{ij}}n-\frac{\sum_{i=1}^a\sum_{j=1}^n\varepsilon_{ij}}{an}$ & $0$ & $\frac{(a-1)(n\sigma_{\tau}^2+\sigma^2)}{an}$\\
+$\bar y_{i.}-\bar y_{..}$ & $\tau_{i}-\frac{\sum\limits_{i=1}^a\tau_{i}}{a}+\frac{\sum\limits_{j=1}^n\varepsilon_{ij}}n-\frac{\sum\limits_{i=1}^a\sum\limits_{j=1}^n\varepsilon_{ij}}{an}$ & $0$ & $\frac{(a-1)(n\sigma_{\tau}^2+\sigma^2)}{an}$\\
 \hline
 F- &RCBD & E & Var[]\\
 $y_{ij}-\bar y_{i.}$ & $\beta_{j}+\varepsilon_{ij}-\frac{\sum_{j=1}^b\varepsilon_{ij}}b$ & $\beta_j$ & $\frac{(b-1)\sigma^2}b$\\
@@ -263,7 +267,7 @@ R- &RCBD & E & Var[]\\
 $y_{ij}-\bar y_{i.}$ & $\beta_{j}-\frac{\sum_{j=1}^b\beta_{j}}b+\varepsilon_{ij}-\frac{\sum_{j=1}^b\varepsilon_{ij}}b$ & $0$ & $\frac{(b-1)(\sigma_{\beta}^2+\sigma^2)}b$\\
 $\bar y_{i.}-\bar y_{..}$ & $\tau_{i}+\frac{\sum_{j=1}^b\varepsilon_{ij}}b-\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}$ & $\tau_i$ & $\frac{(a-1)\sigma^2}{ab}$\\
 $y_{ij}-\bar y_{.j}$ & $\tau_{i}+\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_{ij}}a$ & $\tau_i$ & $\frac{(a-1)\sigma^2}a$\\
-$\bar y_{.j}-\bar y_{..}$ & $\beta_j-\frac{\sum_{j=1}^b\beta_j}{b}+\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}$ & $0$ & $\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$\\
+$\bar y_{.j}-\bar y_{..}$ & $\beta_j-\frac{\sum\limits_{j=1}^b\beta_j}{b}+\frac{\sum\limits_{i=1}^a\varepsilon_{ij}}a-\frac{\sum\limits_{i=1}^a\sum\limits_{j=1}^b\varepsilon_{ij}}{ab}$ & $0$ & $\frac{(b-1)(a\sigma_{\beta}^2+\sigma^2)}{ab}$\\
 \end{tabular}
 
 $y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\varepsilon_{ij}-\frac{\sum_{i=1}^a\varepsilon_{ij}}a-\frac{\sum_{j=1}^b\varepsilon_{ij}}b+\frac{\sum_{i=1}^a\sum_{j=1}^b\varepsilon_{ij}}{ab}$
