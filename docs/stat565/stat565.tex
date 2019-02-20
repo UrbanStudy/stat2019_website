@@ -73,6 +73,9 @@ $y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid 
 Fixed effects: $\sum_{i=1}^a\tau_i=0, \sum_{j=1}^b\beta_j=0$
 Random effects: $\beta_{j}\sim iid N(0,\sigma_\beta^2)$
 
+Graeco-Latin square: $y_{ijkl}=\mu+\theta_i+\tau_j+\omega_k+\psi_l+\varepsilon_{ijkl}$;$i,j,k,l=1,2,..,p$
+
+BIBD: $y_{ij}=(\mu+\tau_{i}+\beta_j)+\varepsilon_{ij}$;$i=1,2,…,a,j=1,2,…,b$;$N=kb=ra,\lambda=\frac{r(k-1)}{a-1}$
 
 \subsubsection{least square and normal equation}
 CRD:$SSE=\sum_{i=1}^a\sum_{j=1}^n(y_{ij}-\mu-\tau_i)^2$  
@@ -96,12 +99,14 @@ $y_{.j}=a\hat\mu+\sum_{i=1}^a\hat\tau_i+a\hat\beta_j$
 \subsection{hypothesis test}
 \begin{tabular}{ l|l|l }
 model  &H0&H1\\
-FT-CRD & $\mu_1=\mu_2=..=\mu_i$& at least two of $\mu_i$ are different\\
+FT-CRD & $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ are different\\
 RT-CRD & $\sigma_{\tau}^2=0$& $\sigma_{\tau}^2>0$\\
-FB-RCBD& $\mu_1=\mu_2=..=\mu_i$& at least two of $\mu_i$ are different\\
+FB-RCBD& $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ are different\\
  -Block& $\beta_1=\beta_2=..=\beta_j=0$& at least one of $\beta_j\neq 0$\\
 RB-RCBD& $\sigma_{\beta}^2=0$& $\sigma_{\beta}^2>0$\\
-Contrast& $\Gamma=\sum_{i=1}^ac_i\mu_i=0$&$\Gamma=\sum_{i=1}^ac_i\mu_i\neq0$
+Contrast& $\Gamma=\sum_{i=1}^ac_i\mu_i=0$&$\Gamma=\sum_{i=1}^ac_i\mu_i\neq0$\\
+LSD    & $\mu_1=\mu_2=..=\mu_p$& at least two of $\mu_p$ are different\\
+BIBD   & $\mu_1=\mu_2=..=\mu_a$& at least two of $\mu_a$ are different\\
 \end{tabular}
 
 \subsubsection{ANOVA}
@@ -125,6 +130,44 @@ $SS_{Blk}=\frac1a\sum^b_{j=1}y_{.j}^2-\frac{y_{..}^2}N$
 $SSE=\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2$
 
 $SS_T=\sum^a_{i=1}\sum^b_{j=1}y_{ij}^2-\frac{y_{..}^2}N$, $S^2_i=\frac{\sum_{j=1}^n(y_{ij}-\bar y_{i.})^2}{n-1}$
+
+\begin{tabular}{l|l|l|}
+LSD& SS   &      df\\
+$SS_{Trt1}$&$p\sum^p_{i=1}(\bar y_{i..}-\bar y_{...})^2$&$p-1$\\
+$SS_{Row}$&$p\sum^p_{j=1}(\bar y_{.j.}-\bar y_{...})^2$&$p-1$\\
+$SS_{Col}$&$p\sum^p_{k=1}(\bar y_{..k}-\bar y_{...})^2$&$p-1$\\
+$SS_E$    &$SS_T-SS_{.}$ &$(p-1)(p-2)$\\
+$SS_T$    &$\sum^p_{i=1}\sum^p_{j=1}\sum^p_{k=1}(y_{ijk}-\bar y_{..})^2$&$p^2-1$\\ \hline
+\end{tabular}
+
+\begin{tabular}{l|l|l|l|}
+df  & Case1 & Case2 & Case3 \\
+$SS_{Trt}$&$p-1$&$p-1$&$p-1$\\
+$SS_{Row}$&$p-1$&$n(p-1)$&$n(p-1)$\\
+$SS_{Col}$&$p-1$&$p-1$&$n(p-1)$\\
+$SS_{Rep}$&$n-1$&$n-1$&$n-1$\\
+$SS_E$    &$(p-1)(np+n-3)$&$(p-1)(np-2)$&$(p-1)(np-n-1)$\\
+$SS_T$    & $np^2-1$ & $np^2-1$ & $np^2-1$\\ \hline
+\end{tabular}
+
+\begin{tabular}{l|l|l|}
+Graeco-LSD& SS   &      df\\
+$SS_{Trt1}$&$b\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&$p-1$\\
+$SS_{Trt2}$&$b\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&$p-1$\\
+$SS_{Row}$&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&$p-1$\\
+$SS_{Col}$&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&$p-1$\\
+$SS_E$    &$SS_T-SS_{.}$ &$(p-1)(p-3)$\\
+$SS_T$    &$\sum^p_{i=1}\sum^p_{j=1}(y_{ijkl}-\bar y_{..})^2$&$p^2-1$\\ \hline
+\end{tabular}
+
+\begin{tabular}{l|l|l|}
+BIBD  & SS   &      df\\
+$SS_{Trt}$&$\frac{k}{\lambda a}\sum^a_{i=1}Q_i^2=\frac{k}{\lambda a}\sum^a_{i=1}(y_{i.}-\sum^b_{j=1}n_{ij}\bar y_{.j})^2$&$a-1$\\
+$SS_{Blk}$&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&$b-1$\\
+$SS_E$    &$SS_T-SS_{Trt(adj)}-SS_{Blk}$ &$N-a-b+1)$\\
+$SS_T$    &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&$N-1$\\
+\hline
+\end{tabular}
 
 \subsubsection{distribution}
 \begin{tabular}{l|l|l|l|l|l}
