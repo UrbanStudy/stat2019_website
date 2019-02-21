@@ -458,7 +458,7 @@ According to theorem 6.2.6 (Factorization Theorem) Let $f(\mathbf{x}|\alpha,\bet
 
 $$f(\mathbf{x}|\alpha,\beta)=\prod_{i=1}^nf(x_i)=\prod_{i=1}^n\frac{x_i^{\alpha-1}}{\Gamma(\alpha)\beta^{\alpha}}e^{-\frac{x_i}{\beta}}=\frac{1}{\Gamma(\alpha)^n\beta^{n\alpha}}\cdot(\prod_{i=1}^nx_i)^{\alpha}\cdot e^{-\frac{1}{\beta}\sum\limits_{i=1}^nx_i}\cdot \prod_{i=1}^nx_i^{-1}$$
 
-Therefore, $T(\prod_{i=1}^nx_i,\sum_{i=1}^nx_i)$ is a sufficient statistic for $(\alpha,\beta)$
+$\prod_{i=1}^nx_i^{-1}$ is free of $(\alpha,\beta)$. Therefore, $T(\prod_{i=1}^nx_i,\sum_{i=1}^nx_i)$ is a sufficient statistic for $(\alpha,\beta)$
 
  ---
 
@@ -466,7 +466,7 @@ Therefore, $T(\prod_{i=1}^nx_i,\sum_{i=1}^nx_i)$ is a sufficient statistic for $
 
   (a). $f(x|\theta)=\frac{1}{\sqrt{2\pi}}\mathrm{e}^{-\frac{(x-\theta)^2}2} ,-\infty<x<\infty,-\infty<\theta<\infty$ (normal)
   
-$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\frac{1}{(\sqrt{2\pi})^n}\mathrm{e}^{-\frac{\sum_{i=1}^n(x_i-\theta)^2}2}}{\frac{1}{(\sqrt{2\pi})^2}\mathrm{e}^{-\frac{\sum_{i=1}^n(y_i-\theta)^2}2}}=\mathrm{e}^{-\frac{\sum_{i=1}^n(x_i-\theta)^2}2+\frac{\sum_{i=1}^n(y_i-\theta)^2}2}=\mathrm{e}^{\frac12(\sum_{i=1}^ny_i^2-\sum_{i=1}^nx_i^2)+\theta(\sum_{i=1}^ny_i-\sum_{i=1}^nx_i)}$$
+$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\frac{1}{(\sqrt{2\pi})^n}\mathrm{e}^{-\frac{\sum_{i=1}^n(x_i-\theta)^2}2}}{\frac{1}{(\sqrt{2\pi})^2}\mathrm{e}^{-\frac{\sum_{i=1}^n(y_i-\theta)^2}2}}=\mathrm{e}^{-\frac{\sum_{i=1}^n(x_i-\theta)^2}2+\frac{\sum_{i=1}^n(y_i-\theta)^2}2}=\mathrm{e}^{\frac12(\sum_{i=1}^ny_i^2-\sum_{i=1}^nx_i^2)-\theta(\sum_{i=1}^ny_i-\sum_{i=1}^nx_i)}$$
 
 According to theorem 6.2.13, if and only if $\sum_{i=1}^ny_i-\sum_{i=1}^nx_i=0$, the ratio $\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}$ for every two sample points x and y is constant as a function of $\theta$. Therefore, $T(\bar x)=T(\bar y)$ is a minimal sufficient statistic.
 
@@ -500,11 +500,11 @@ If and only if the order statistics for x are the same as the order statistics f
  
 $$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{2^n{\prod_{i=1}^n\mathrm{e}^{|y_i-\theta|}}}{2^n{\prod_{i=1}^n\mathrm{e}^{|x_i-\theta|}}}=\mathrm{e}^{\sum_{i=1}^n|y_i-\theta|-\sum_{i=1}^n|x_i-\theta|}$$
 
-Let $a(\theta)=$ the number of elements in $\mathcal{A}(\theta)$ and $b(\theta)=$ the number of elements in $\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}$. Set $\mathcal{A}(\theta)=\{i:xi\le\theta\},\mathcal{B}(\theta)=\{i:yi\le\theta\}$, then 
+Let $a(\theta)=$ the number of elements in $\mathcal{A}(\theta)$ and $b(\theta)=$ the number of elements in $\mathcal{B}(\theta)$. Set $\mathcal{A}(\theta)=\{i:x_i\le\theta\},\mathcal{B}(\theta)=\{i:y_i\le\theta\}$, then 
 
 $$\sum_{i=1}^n|y_i-\theta|-\sum_{i=1}^n|x_i-\theta|=\sum\limits_{i\in\mathcal{B}(\theta)}^n(\theta-y_i)+\sum\limits_{i\in\mathcal{B}(\theta)^C}^n(y_i-\theta)-\sum\limits_{i\in\mathcal{A}(\theta)}^n(\theta-x_i)-\sum\limits_{i\in\mathcal{A}(\theta)^C}^n(x_i-\theta)$$
 
-$$\theta b(\theta)-\theta [n-b(\theta)]-\theta a(\theta)+\theta [n-a(\theta)]-\sum\limits_{i\in\mathcal{B}(\theta)}^ny_i+\sum\limits_{i\in\mathcal{B}(\theta)^C}^ny_i+\sum\limits_{i\in\mathcal{A}(\theta)}^nx_i-\sum\limits_{i\in\mathcal{A}(\theta)^C}^nx_i$$
+$$=\theta b(\theta)-\theta [n-b(\theta)]-\theta a(\theta)+\theta [n-a(\theta)]-\sum\limits_{i\in\mathcal{B}(\theta)}^ny_i+\sum\limits_{i\in\mathcal{B}(\theta)^C}^ny_i+\sum\limits_{i\in\mathcal{A}(\theta)}^nx_i-\sum\limits_{i\in\mathcal{A}(\theta)^C}^nx_i$$
 
 $$=2\theta b(\theta)-2\theta a(\theta)-\sum\limits_{i\in\mathcal{B}(\theta)}^ny_i+\sum\limits_{i\in\mathcal{B}(\theta)^C}^ny_i+\sum\limits_{i\in\mathcal{A}(\theta)}^nx_i-\sum\limits_{i\in\mathcal{A}(\theta)^C}^nx_i$$
 
@@ -520,21 +520,25 @@ When $X_{(1)}=\min_iX_i$ and $X_{(n)}=\max_iX_i$, we have that $T(\mathbf{X})=(X
 
 According to example 6.2.17 (Uniform ancillary statistic), the range statistic, $R=X_{(n)}−X_{(1)}$, is an ancillary statistic which does not depend on $\theta$.
 
-The pdf of R is $h(r|\theta)=n(n-1)r^{n-2}(1-r),0<r<1$. $h(r|\theta)\sim Beta(n-1,2)$. $E[R]=(n−1)/(n+1)$. Thus $R−E[R]=X_{(n)}−X_{(1)}−(n−1)/(n+1)\not\equiv0$, $E[R−ER]=0$.
+The pdf of R is $h(r|\theta)=n(n-1)r^{n-2}(1-r),0<r<1$.  
 
-For $T(\mathbf{X})=(X_{(1)},X_{(n)})$, $g[T(\mathbf{X})]\not\equiv0$ and $Eg[T(\mathbf{X})]=Eg[X_{(n)},X_{(1)}]=0$ for all $\theta$.
+$h(r|\theta)\sim Beta(n-1,2)$.  $E[R]=(n−1)/(n+1)$ does not depend on $\theta$.
+
+Let $g[T(\mathbf{X})]=R−E[R]=X_{(n)}−X_{(1)}−(n−1)/(n+1)\not\equiv0$
+
+$Eg[T(\mathbf{X})]=E[R−ER]=E[R]−E[ER]=0$ for all $\theta$.
 
 Therefore, $T(\mathbf{X})=(X_{(1)},X_{(n)})$ is not complete. An ancillary statistic is not a complete sufficient statistic.
 
  ---
 
-**6.13** Suppose $X_1$ and $X_2$ are iid observations from the pdf $f(x|\alpha)=\alpha x^{\alpha-1}\mathrm{e}^{-{x^\alpha}}, x>o,\alpha>O$. Show that $(\log X_1)/(\log X_2)$ is an ancillary statistic.
+**6.13** Suppose $X_1$ and $X_2$ are iid observations from the pdf $f(x|\alpha)=\alpha x^{\alpha-1}\mathrm{e}^{-{x^\alpha}}, x>0o,\alpha>0$. Show that $(\log X_1)/(\log X_2)$ is an ancillary statistic.
 
-Let $Y_1=\ln X_1, Y_2 =\ln X_2$. Then $Y_1$ and $Y_2$ are iid, $X_1=\mathrm{e}^{-y_1},X_2=\mathrm{e}^{-y_2}$. From theorem 2.1.5, when $f(x|\alpha)$ is continuous and monotone, $f_Y(y)=f_X(x)|\frac{dx}{dy}|$, then
+Let $Y_1=\ln X_1, Y_2 =\ln X_2$. Then $Y_1$ and $Y_2$ are iid, $X_1=\mathrm{e}^{y_1},X_2=\mathrm{e}^{y_2}$. From theorem 2.1.5, when $f(x|\alpha)$ is continuous and monotone, $f_Y(y)=f_X(x)|\frac{dx}{dy}|$, then
 
 $$f(y|\alpha)=f(x|\alpha)|\frac{dx}{dy}|=\alpha {(\mathrm{e}^{y})}^{\alpha-1}\mathrm{e}^{-(\mathrm{e}^{y})^\alpha}|\mathrm{e}^{y}|=\alpha \mathrm{e}^{\alpha y}\mathrm{e}^{-\mathrm{e}^{\alpha y}}$$
 
-The distributions of $Y_1,Y_2$ belong a scale family with scale parameter $\frac1{\alpha}$. From theorem 3.5.6, Y is a random variable with pdf $\frac1{1/\alpha}f(\frac{y-\mu}{1/\alpha})$ if and only if there exist the $Y_1=\frac1{\alpha}Z_1,Y_2=\frac1{\alpha}Z_2$, where $Z_1$ and $Z_2$ are a random sample from $f(z|1)$. then
+The distributions of $Y_1,Y_2$ belong a scale family with scale parameter $\frac1{\alpha}$. From theorem 3.5.6, $Y$ is a random variable with pdf $\frac1{1/\alpha}f(\frac{y-\mu}{1/\alpha})$ if and only if there exist the $Y_1=\frac1{\alpha}Z_1,Y_2=\frac1{\alpha}Z_2$, where $Z_1$ and $Z_2$ are a random sample from $f(z|1)$. then
 
 $$\frac{\ln X_1}{\ln X_2}=\frac{Y_1}{Y_2}=\frac{\frac1{\alpha}Z_1}{\frac1{\alpha}Z_2}=\frac{Z_1}{Z_2}$$
 
