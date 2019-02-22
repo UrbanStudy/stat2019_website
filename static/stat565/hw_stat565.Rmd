@@ -602,7 +602,7 @@ model_wash <- aov(Response~Solution+Days, data=table_wash)
 summary(model_wash)
 summary.lm(model_wash)
 ```
-```{r echo=T, collapse=T, out.width='45%'}
+```{r echo=T, collapse=T, out.width='30%',fig.show='hold'}
 # Plot for solutions and days
 plot(LSD.test(model_wash, trt="Solution",alpha = 0.05,p.adj="bonferroni"),main="Ranges of response grouped by solutions")
 plot(LSD.test(aov(Response~Days+Solution, data=table_wash), trt="Days",alpha = 0.05,p.adj="bonferroni"),main="Ranges of response grouped by days")
@@ -617,7 +617,7 @@ pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "ls
 pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
 ```
 
-```{r echo=T,collapse=TRUE, out.width='24%'}
+```{r echo=T,collapse=TRUE, out.width='20%'}
 ols_test_normality(lm(Response~Solution+Days, data=table_wash))
 ols_plot_resid_hist(lm(Response~Solution+Days, data=table_wash))
 plot(model_wash)
@@ -685,12 +685,12 @@ The results of estimating regression coefficients are simular. The P-value of De
 
 The results of paried test are same. The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01333) and Design3(P-value=0.00792) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.7525) at 0.05 significant level.
 
-```{r echo=T,collapse=TRUE, out.width='24%'}
+```{r echo=T,collapse=TRUE, out.width='20%',fig.show='hold'}
 ols_test_normality(lm(Response~Design+Region, data=table_mail))
 ols_test_normality(lm(sqrt(Response)~Design+Region, data=table_mail))
 ols_plot_resid_hist(lm(Response~Design+Region, data=table_mail))
-ols_plot_resid_hist(lm(sqrt(Response)~Design+Region, data=table_mail))
 plot(model_mail)
+ols_plot_resid_hist(lm(sqrt(Response)~Design+Region, data=table_mail))
 plot(lm(sqrt(Response)~Design+Region, data=table_mail))
 ```
 
