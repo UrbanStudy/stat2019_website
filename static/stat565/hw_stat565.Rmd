@@ -589,42 +589,35 @@ The plot of LSD test shows the average response value for Days4 has a different 
 
 Using the code "pairw.anova", The LSD method gave the same result with "TukeyHSD" but the Tukey method didn't find significant difference among the four days at 0.05 significant level. I'm still looking for the reason.
 
-```{r echo=T, collapse=F, out.width='45%'}
-model_wash <- aov(Response~Solution+Days, data=table_wash)
-summary(model_wash)
-summary.lm(model_wash)
-# For solutions
-plot(LSD.test(model_wash, trt="Solution",alpha = 0.05,p.adj="bonferroni"))
-TukeyHSD(model_wash,conf.level = 0.95)
-pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
-pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
-# For days
-plot(LSD.test(aov(Response~Days+Solution, data=table_wash), trt="Days",alpha = 0.05,p.adj="bonferroni"))
-pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
-pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
-```
-
  - Model adequacy Checking
 
-There is a little bit of violation of normality in histogram plot.
-
-The QQ plot has a little bit of heavier left tail.
-
-The residuals versus fitted values shows a slight curved plot. Studentized residuals show some violation of zero mean and constant variance assumptions. This could mean that other regressor variables are needed in the model. Transformations on the regressor or the response variable may also be helpful.
-
-There is not serious outlier and leverage data points. The residuals versus observation number shows the residuals are independent with each other.
-
-```{r echo=T,collapse=TRUE, out.width='24%'}
-ols_test_normality(lm(Response~Solution+Days, data=table_wash))
-ols_plot_resid_hist(lm(Response~Solution+Days, data=table_wash))
-plot(model_wash)
-
-```
+There is a little bit of violation of normality in histogram plot. The QQ plot has a little bit of heavier left tail. The residuals versus fitted values shows a slight curved plot. Studentized residuals show some violation of zero mean and constant variance assumptions. This could mean that other regressor variables are needed in the model. Transformations on the regressor or the response variable may also be helpful. There is not serious outlier and leverage data points. The residuals versus observation number shows the residuals are independent with each other.
 
  - The initial conculsion
 
 Based on the experimental data, we found Solution3 has a stronger effectiveness in retarding bacteria growth in 5-gallon milk containers. Meanwhile, the data in Days4 are significant different with others. Next step, We suggest to investigate the factors affecting the data, refine the design, and repeat the experiment.
 
+```{r echo=T, collapse=F, out.width='45%'}
+model_wash <- aov(Response~Solution+Days, data=table_wash)
+summary(model_wash)
+summary.lm(model_wash)
+# Plot for solutions and days
+plot(LSD.test(model_wash, trt="Solution",alpha = 0.05,p.adj="bonferroni"),main="Ranges of response grouped by solutions")
+plot(LSD.test(aov(Response~Days+Solution, data=table_wash), trt="Days",alpha = 0.05,p.adj="bonferroni"),main="Ranges of response grouped by days")
+# Comparison of solutions
+TukeyHSD(model_wash,conf.level = 0.95)
+pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
+pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
+# Comparison of days
+pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
+pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
+```
+
+```{r echo=T,collapse=TRUE, out.width='24%'}
+ols_test_normality(lm(Response~Solution+Days, data=table_wash))
+ols_plot_resid_hist(lm(Response~Solution+Days, data=table_wash))
+plot(model_wash)
+```
  ---
 
 4.29 Consider the randomized complete block design in Problem 4.9. Assume that the days are random. Estimate the block variance component.
@@ -665,7 +658,7 @@ summary.lm(model_mail)
 
 The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01108) and Design3(P-value=0.00673) at 0.05 significant level, while there is not significant difference between the average response value for Design1 and Design3(P-value=0.76098) at 0.05 significant level.
 
-```{r echo=T,collapse=F, out.width='24%'}
+```{r echo=T,collapse=T, out.width='24%'}
 plot(LSD.test(model_mail, trt="Design",alpha = 0.05,p.adj="bonferroni"))
 pairw.anova(table_mail$Response,table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 ``` 
@@ -676,36 +669,27 @@ pairw.anova(table_mail$Response,table_mail$Design, conf.level = 0.95, method = "
 
  - Model adequacy Checking
  
-The normality test and histogram of residuals show a violation of normality.
-
-The QQ plot of residuals shows a sharp upward and downward curve at both extremes, indicating that the tails of this distribution are too light for it to be considered normal.
-
-The variance of $y$ seems be proportional to $x$ which implies $y$ may be a Poisson random variable in a simple linear regression model and its variance is equal to the mean. We could regress $y′=\sqrt y$ against $x$ since the variance of the square root of a Poisson random variable is independent of the mean. 
-
-```{r echo=T,collapse=TRUE, out.width='24%'}
-ols_test_normality(lm(Response~Design+Region, data=table_mail))
-ols_plot_resid_hist(lm(Response~Design+Region, data=table_mail))
-plot(model_mail)
-
-```
+The normality test and histogram of residuals show a violation of normality. The QQ plot of residuals shows a sharp upward and downward curve at both extremes, indicating that the tails of this distribution are too light for it to be considered normal. The variance of $y$ seems be proportional to $x$ which implies $y$ may be a Poisson random variable in a simple linear regression model and its variance is equal to the mean. We could regress $y′=\sqrt y$ against $x$ since the variance of the square root of a Poisson random variable is independent of the mean. 
 
  - After transformation
 
-The violation of normality in QQ plot and histogram are not obvious as before.
-
-The residuals versus fitted values and studentized residuals don't show strong violation of zero mean and constant variance assumptions.
-
-There is not serious outlier and leverage data points. The residuals versus observation number shows the residuals are independent with each other.
-
-```{r echo=T,collapse=TRUE, out.width='24%'}
-ols_test_normality(lm(sqrt(Response)~Design+Region, data=table_mail))
-ols_plot_resid_hist(lm(sqrt(Response)~Design+Region, data=table_mail))
-plot(lm(sqrt(Response)~Design+Region, data=table_mail))
-```
+The violation of normality in QQ plot and histogram are not obvious as before. The residuals versus fitted values and studentized residuals don't show strong violation of zero mean and constant variance assumptions. There is not serious outlier and leverage data points. The residuals versus observation number shows the residuals are independent with each other.
 
 The ANOVA for RCBD shows simular results. Moreover, MSE after transformation(0.502) is much smaller than before(905). The P-value is smaller too (0.000106 for treatment, 0.000986 for blocks).
 
 The results of estimating regression coefficients are simular. The P-value of Design1 and RegionNE(0.000006), Design2(0.000105), RegionNW(0.004490), RegionSW(0.002479) are smaller, while the P-value of Design3(0.376944) and RegionSE(0.076721) are still larger than 0.05.  The coefficients of Design1, RegionNE, Design2, RegionNW, RegionSW are significant at 0.05 significant level. The rest are not.
+
+The results of paried test are same. The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01333) and Design3(P-value=0.00792) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.7525) at 0.05 significant level.
+
+```{r echo=T,collapse=TRUE, out.width='24%'}
+ols_test_normality(lm(Response~Design+Region, data=table_mail))
+ols_test_normality(lm(sqrt(Response)~Design+Region, data=table_mail))
+
+ols_plot_resid_hist(lm(Response~Design+Region, data=table_mail))
+plot(model_mail)
+ols_plot_resid_hist(lm(sqrt(Response)~Design+Region, data=table_mail))
+plot(lm(sqrt(Response)~Design+Region, data=table_mail))
+```
 
 ```{r echo=T, collapse=F}
 model_mail_sqrt <- aov(sqrt(Response)~Design+Region, data=table_mail)
@@ -713,10 +697,8 @@ summary(model_mail_sqrt)
 summary.lm(model_mail_sqrt)
 ```
 
-The results of paried test are same. The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01333) and Design3(P-value=0.00792) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.7525) at 0.05 significant level.
-
-```{r echo=T,collapse=F, out.width='24%'}
-plot(LSD.test(model_mail_sqrt, trt="Design",alpha = 0.05,p.adj="bonferroni"))
+```{r echo=T,collapse=T, out.width='24%'}
+# plot(LSD.test(model_mail_sqrt, trt="Design",alpha = 0.05,p.adj="bonferroni"))
 pairw.anova(sqrt(table_mail$Response),table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 ``` 
 
