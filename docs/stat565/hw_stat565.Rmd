@@ -553,9 +553,7 @@ leveneTest(Life ~ Brand, data = table_battery,center = "mean")
 
 ### Problem 1 (4.9-29)
 
-Three different washing solutions are being compared to study their effectiveness in retarding bacteria growth in 5-gallon milk containers. The analysis is done in a laboratory,
-and only three trials can be run on any day. Because days could represent a potential source of variability, the experimenter decides to use a randomized block design. Observations
-are taken for four days, and the data are shown here. Analyze the data from this experiment (use $\alpha = 0.05$) and draw conclusions.
+Three different washing solutions are being compared to study their effectiveness in retarding bacteria growth in 5-gallon milk containers. The analysis is done in a laboratory, and only three trials can be run on any day. Because days could represent a potential source of variability, the experimenter decides to use a randomized block design. Observations are taken for four days, and the data are shown here. Analyze the data from this experiment (use $\alpha = 0.05$) and draw conclusions.
 
 ```{r include=FALSE}
 library(readxl)
@@ -573,17 +571,35 @@ table_wash$Solution <- as.factor(table_wash$Solution)
 glimpse(table_wash)
 ```
 
-```{r echo=T, collapse=F}
+ - The overall results
+
+The ANOVA for RCBD shows that both treatments of solutions and blocks of days have significant effects on the average values of bacteria growth at 0.05 significant level. The P-value for treatment is 0.000323 while it for days is 0.000192.
+
+The results of estimating regression coefficients show the P-value of Solution1 and Days1(0.000291), Solution3(0.000359), Days4(0.0000627) are small, while the P-value of Solution2(0.320563), Days2(0.067976), and Days3(0.790493) are larger than 0.05. 
+
+ - Comparing the treatment effects
+ 
+The plot of LSD test shows the average response value for Solution3 has a different interval with that for other solutions. The Tukey test also shows the average response values for Solution3 are significant different with Solution1(P-value=0.0008758) and Solution2(P-value=0.0004067) at 0.05 significant level, while there is not significant difference between Solution1 and Solution2(P-value=0.5577862) at 0.05 significant level.
+
+However, the results by another code "pairw.anova" didn't reveal significant difference among the three solutions in both LSD and Tukey methods. I'm still looking for the reason.
+ 
+ - Comparing the block effects
+ 
+The plot of LSD test shows the average response value for Days4 has a different interval with that for other Days. The Tukey test also shows the average response values for Days4 are significant different with Days1(P-value=0.0002622,), Days2(P-value=0.0010843) and Days3(P-value=0.0003081) at 0.05 significant level, while there is not significant difference between Days1, Days2, and Days3(P-value: 1-2=0.2193500, 1-3=0.9917442, 2-3=0.3037891) at 0.05 significant level.
+
+Using the code "pairw.anova", The LSD method gave the same result with "TukeyHSD" but the Tukey method didn't find significant difference among the four days at 0.05 significant level. I'm still looking for the reason.
+
+```{r echo=T, collapse=F, out.width='45%'}
 model_wash <- aov(Response~Solution+Days, data=table_wash)
 summary(model_wash)
 summary.lm(model_wash)
-# (LSD.test(model_wash, trt="Solution",alpha = 0.05,p.adj="bonferroni"))
-#(LSD.test(aov(Response~Days+Solution, data=table_wash), trt="Days",alpha = 0.05,p.adj="bonferroni"))
+# For solutions
+plot(LSD.test(model_wash, trt="Solution",alpha = 0.05,p.adj="bonferroni"))
 TukeyHSD(model_wash,conf.level = 0.95)
-
 pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
-
+# For days
+plot(LSD.test(aov(Response~Days+Solution, data=table_wash), trt="Days",alpha = 0.05,p.adj="bonferroni"))
 pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
 
@@ -593,14 +609,15 @@ pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "tu
 
 4.29 Consider the randomized complete block design in Problem 4.9. Assume that the days are random. Estimate the block variance component.
 
+$$\hat\sigma_{Blk}^2=\frac{MS_{Blk}-MS_{E}}{a}=\frac{369-8.6}{3}=120.1333$$
+
 ```{r echo=T, collapse=TRUE}
 summary(aov(Response~Solution+Error(Days), data=table_wash))
 ```
 
 ### Problem 2 (4.13)
 
-A consumer products company relies on direct mail marketing pieces as a major component of its advertising campaigns. The company has three different designs for a new brochure and wants to evaluate their effectiveness, as there are substantial differences in costs between the three designs.
-The company decides to test the three designs by mailing 5000 samples of each to potential customers in four different regions of the country. Since there are known regional differences in the customer base, regions are considered as blocks. The number of responses to each mailing is as follows.
+A consumer products company relies on direct mail marketing pieces as a major component of its advertising campaigns. The company has three different designs for a new brochure and wants to evaluate their effectiveness, as there are substantial differences in costs between the three designs. The company decides to test the three designs by mailing 5000 samples of each to potential customers in four different regions of the country. Since there are known regional differences in the customer base, regions are considered as blocks. The number of responses to each mailing is as follows.
 
 ```{r echo=FALSE, out.width='45%'}
 table_mail <- read_xlsx("Exercise4_8.xlsx")
@@ -610,8 +627,11 @@ table_mail$Design <- as.factor(table_mail$Design)
 glimpse(table_mail)
 ```
 
-
 (a) Analyze the data from this experiment.
+
+The ANOVA for RCBD shows that both treatments of Designs and blocks of Regions have significant effects on the average values of bacteria growth at 0.05 significant level. The P-value for treatment is 0.00018 while it for blocks is 0.00208.
+
+The results of estimating regression coefficients show the P-value of Design1 and RegionNE(0.0000201), Design2(0.000173), RegionNW(0.007661), RegionSW(0.003636) are small enough, while the P-value of Design3(0.320563) and RegionSE(0.166470) are larger than 0.05. 
 
 ```{r echo=T, collapse=F}
 model_mail <- aov(Response~Design+Region, data=table_mail)
@@ -623,29 +643,64 @@ summary.lm(model_mail)
 
 (b) Use the Fisher LSD method to make comparisons among the three designs to determine specifically which designs differ in the mean response rate.
 
-```{r echo=T,collapse=F}
-(LSD.test(model_mail, trt="Design",alpha = 0.05,p.adj="bonferroni"))
-pairw.anova(table_mail$Response,table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
+The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01108) and Design3(P-value=0.00673) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.76098) at 0.05 significant level.
 
-(LSD.test(model_mail, trt="Region",alpha = 0.05,p.adj="bonferroni"))
-pairw.anova(table_mail$Response,table_mail$Region, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
+```{r echo=T,collapse=F}
+plot(LSD.test(model_mail, trt="Design",alpha = 0.05,p.adj="bonferroni"))
+pairw.anova(table_mail$Response,table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 ``` 
 
  ---
  
 (c) Analyze the residuals from this experiment.
 
- - The histogram shows a normality of of residuals.
- - The QQ plot of residuals doesn't show obvious problem of normality of residuals.
- - The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
- - There is not outlier and leverage data points. 
- - The residuals versus observation number shows the residuals are independent with each other.
- - The Bartlett’s test shows variances across samples are not different. 
+ - Transfermation
+ 
+The normality test and histogram of residuals show a violation of normality.
+
+The QQ plot of residuals shows a sharp upward and downward curve at both extremes, indicating that the tails of this distribution are too light for it to be considered normal.
+
+The variance of $y$ seems be proportional to $x$ which implies $y$ may be a Poisson random variable in a simple linear regression model and its variance is equal to the mean. We could regress $y′=\sqrt y$ against $x$ since the variance of the square root of a Poisson random variable is independent of the mean. 
 
 ```{r echo=T,collapse=TRUE, out.width='24%'}
-plot(aov(Response~Design+Region, data=table_mail))
-plot(aov(Response~Region+Design, data=table_mail))
+ols_test_normality(lm(Response~Design+Region, data=table_mail))
+ols_plot_resid_hist(lm(Response~Design+Region, data=table_mail))
+plot(model_mail)
+
 ```
+
+ - After transformation
+
+The violation of normality in QQ plot and histogram are not obvious.
+
+The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
+
+There is not serious outlier and leverage data points. 
+
+The residuals versus observation number shows the residuals are independent with each other.
+
+```{r echo=T,collapse=TRUE, out.width='24%'}
+ols_test_normality(lm(sqrt(Response)~Design+Region, data=table_mail))
+ols_plot_resid_hist(lm(sqrt(Response)~Design+Region, data=table_mail))
+plot(lm(sqrt(Response)~Design+Region, data=table_mail))
+```
+
+The ANOVA for RCBD shows same results. Moreover, MSE after transformation(0.502) is much smaller than before(905). The P-value is smaller too (0.000106 for treatment, 0.000986 for blocks).
+
+The results of estimating regression coefficients show the P-value of Design1 and RegionNE(0.000006), Design2(0.000105), RegionNW(0.004490), RegionSW(0.002479) are smaller, while the P-value of Design3(0.376944) and RegionSE(0.076721) are still larger than 0.05. 
+
+```{r echo=T, collapse=F}
+model_mail_sqrt <- aov(sqrt(Response)~Design+Region, data=table_mail)
+summary(model_mail_sqrt)
+summary.lm(model_mail_sqrt)
+```
+
+The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01333) and Design3(P-value=0.00792) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.7525) at 0.05 significant level.
+
+```{r echo=T,collapse=F}
+plot(LSD.test(model_mail_sqrt, trt="Design",alpha = 0.05,p.adj="bonferroni"))
+pairw.anova(sqrt(table_mail$Response),table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
+``` 
 
 ### Problem 3
 
