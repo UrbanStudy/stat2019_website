@@ -575,7 +575,7 @@ glimpse(table_wash)
 
 The ANOVA for RCBD shows that both treatments of solutions and blocks of days have significant effects on the average values of bacteria growth at 0.05 significant level. The P-value for treatment is 0.000323 while it for days is 0.000192.
 
-The results of estimating regression coefficients show the P-value of Solution1 and Days1(0.000291), Solution3(0.000359), Days4(0.0000627) are small, while the P-value of Solution2(0.320563), Days2(0.067976), and Days3(0.790493) are larger than 0.05. 
+The results of estimating regression coefficients show the P-value of Solution1 and Days1(0.000291), Solution3(0.000359), Days4(0.0000627) are small, while the P-value of Solution2(0.320563), Days2(0.067976), and Days3(0.790493) are larger than 0.05.  The coefficients of Solution1, Days1, Solution3, Days4 are significant at 0.05 significant level. The rest are not.
 
  - Comparing the treatment effects
  
@@ -602,6 +602,24 @@ pairw.anova(table_wash$Response,table_wash$Solution, conf.level = 0.95, method =
 plot(LSD.test(aov(Response~Days+Solution, data=table_wash), trt="Days",alpha = 0.05,p.adj="bonferroni"))
 pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 pairw.anova(table_wash$Response,table_wash$Days, conf.level = 0.95, method = "tukey", MSE = NULL, df.err = NULL, control = NULL)
+```
+
+ - Analysis of residuals
+
+There is not obvious violation of normality in histogram plot.
+
+The QQ plot does not show obvious violation of normality.
+
+The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
+
+There is not serious outlier and leverage data points. 
+
+The residuals versus observation number shows the residuals are independent with each other.
+
+```{r echo=T,collapse=TRUE, out.width='24%'}
+ols_test_normality(lm(Response~Solution+Days, data=table_wash))
+ols_plot_resid_hist(lm(Response~Solution+Days, data=table_wash))
+plot(model_wash)
 
 ```
 
@@ -631,7 +649,7 @@ glimpse(table_mail)
 
 The ANOVA for RCBD shows that both treatments of Designs and blocks of Regions have significant effects on the average values of bacteria growth at 0.05 significant level. The P-value for treatment is 0.00018 while it for blocks is 0.00208.
 
-The results of estimating regression coefficients show the P-value of Design1 and RegionNE(0.0000201), Design2(0.000173), RegionNW(0.007661), RegionSW(0.003636) are small enough, while the P-value of Design3(0.320563) and RegionSE(0.166470) are larger than 0.05. 
+The results of estimating regression coefficients show the P-value of Design1 and RegionNE(0.0000201), Design2(0.000173), RegionNW(0.007661), RegionSW(0.003636) are small enough, while the P-value of Design3(0.320563) and RegionSE(0.166470) are larger than 0.05. The coefficients of Design1, RegionNE, Design2, RegionNW, RegionSW are significant at 0.05 significant level. The rest are not.
 
 ```{r echo=T, collapse=F}
 model_mail <- aov(Response~Design+Region, data=table_mail)
@@ -645,7 +663,7 @@ summary.lm(model_mail)
 
 The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01108) and Design3(P-value=0.00673) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.76098) at 0.05 significant level.
 
-```{r echo=T,collapse=F}
+```{r echo=T,collapse=F, out.width='24%'}
 plot(LSD.test(model_mail, trt="Design",alpha = 0.05,p.adj="bonferroni"))
 pairw.anova(table_mail$Response,table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 ``` 
@@ -671,7 +689,7 @@ plot(model_mail)
 
  - After transformation
 
-The violation of normality in QQ plot and histogram are not obvious.
+The violation of normality in QQ plot and histogram are not obvious as before.
 
 The residuals versus fitted values and studentized residuals show no violation of zero mean and constant variance assumptions.
 
@@ -687,7 +705,7 @@ plot(lm(sqrt(Response)~Design+Region, data=table_mail))
 
 The ANOVA for RCBD shows same results. Moreover, MSE after transformation(0.502) is much smaller than before(905). The P-value is smaller too (0.000106 for treatment, 0.000986 for blocks).
 
-The results of estimating regression coefficients show the P-value of Design1 and RegionNE(0.000006), Design2(0.000105), RegionNW(0.004490), RegionSW(0.002479) are smaller, while the P-value of Design3(0.376944) and RegionSE(0.076721) are still larger than 0.05. 
+The results of estimating regression coefficients show the P-value of Design1 and RegionNE(0.000006), Design2(0.000105), RegionNW(0.004490), RegionSW(0.002479) are smaller, while the P-value of Design3(0.376944) and RegionSE(0.076721) are still larger than 0.05.  The coefficients of Design1, RegionNE, Design2, RegionNW, RegionSW are significant at 0.05 significant level. The rest are not.
 
 ```{r echo=T, collapse=F}
 model_mail_sqrt <- aov(sqrt(Response)~Design+Region, data=table_mail)
@@ -697,7 +715,7 @@ summary.lm(model_mail_sqrt)
 
 The plot of LSD test shows the average response value for Design2 has a different interval with that for other designs. The LSD test using "pairw.anova" also shows the average response values for Design2 are significant different with Design1(P-value=0.01333) and Design3(P-value=0.00792) at 0.05 significant level, while there is not significant difference between Design1 and Design3(P-value=0.7525) at 0.05 significant level.
 
-```{r echo=T,collapse=F}
+```{r echo=T,collapse=F, out.width='24%'}
 plot(LSD.test(model_mail_sqrt, trt="Design",alpha = 0.05,p.adj="bonferroni"))
 pairw.anova(sqrt(table_mail$Response),table_mail$Design, conf.level = 0.95, method = "lsd", MSE = NULL, df.err = NULL, control = NULL)
 ``` 
