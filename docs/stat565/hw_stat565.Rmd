@@ -754,3 +754,136 @@ p^2\bar y_{...l}=p^2\hatμ+0+0+0+p^2\hatδ_l \end{array}\right.
 \hatδ_l=\bar y_{...l}-\bar y_{....} \end{array}\right.$$
 
 
+
+
+
+## HW3
+### Problem 1: RCBD with one missing observation
+
+Winter road treatments to clear snow and ice can lead to cracking in the pavement. An experiment was conducted comparing 4 treatments: sodium chloride (A), calcium chloride (B), a proprietary organic compound (C), and sand (D).
+Traffic level was used as a blocking factor and a randomized complete block experiment was conducted.
+One observation is missing, because the spreader in that district was no operating properly.
+The response is new cracks per mile of treated roadway.
+
+```{r include=FALSE}
+library(readxl)
+library(tidyverse)
+require(ggplot2)
+library(agricolae) #LSD.test
+library(asbio) #pairw.anova
+```
+
+```{r echo=FALSE, out.width='45%'}
+table_wash <- read_xlsx("Exercise4_4.xlsx")
+table_wash$Days <- as.factor(table_wash$Days)
+ggplot(table_wash,aes(Solution,Response,lty=Days))+geom_line()+theme(legend.position = c(0.9, 0.85))
+table_wash$Solution <- as.factor(table_wash$Solution)
+glimpse(table_wash)
+```
+
+ (a) Compute the mean response for each treatment and report here. You may copy and paste output table from your software here.
+
+ ---
+
+ (b) Compute the mean response for each block and report here. You may copy and paste output table from your software here.
+
+ ---
+
+ (c) Compute the overall mean response and report here.
+ 
+
+ ---
+
+ (d) Use the approximation method learned to estimate one missing value in Chapter 4 and estimate the value of the missing observation. Report it here. Show any computation here.
+ 
+
+ ---
+
+ (e) Include that estimated missing value in the given data file appropriately and obtain an ANOVA table for this design. Report ONLY the ANOVA table here.
+ 
+
+ ---
+
+ (f) Now, adjust the degrees of freedom for error in the ANOVA table for one missing value. (See the Chapter 4 note). And use adjusted df of error to compute the correct p-value for testing significance of treatments.
+ 
+	Write your conclusion based on your p value and report the p value here.
+	
+
+ ---
+
+ (g) The second method of analyzing data with missing value is extra (partial) sum of squares method. Fit a multiple linear regression model and obtain the extra (partial) sum of squares for treatments. If you forgot how to do this, look at regression analysis labs and notes.
+ 
+	Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.
+	
+	
+
+ ---
+
+ (h) Report the complete code along with output here.
+
+
+### Problem 2 (4.22/27)
+
+The effect of five different ingredients (A, B, C, D, E) on the reaction time of a chemical process is being studied.
+Each batch of new material is only large enough to permit five runs to be made. Furthermore, each run requires approximately 3/2 hours, so only five runs can be made in one day. The experimenter decides to run the experiment as a Latin square so that day and batch effects may be systematically controlled. She obtains the data that follow. Analyze the data from this experiment (use 𝛼 = 0.05) and draw conclusions.
+
+ (a) Create plot of data and report it here.
+
+```{r echo=FALSE, out.width='45%'}
+table_ingredients <- read_xlsx("Exercise4_22.xlsx")
+table_ingredients$Day <- as.factor(table_ingredients$Day)
+table_ingredients$Batch <- as.factor(table_ingredients$Batch)
+ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))
+table_ingredients$Trt <- as.factor(table_ingredients$Trt)
+glimpse(table_ingredients)
+```
+ ---
+
+ (b) Obtain the ANOVA table for this study and report it here.
+
+ ---
+
+ (c) Test whether ingredients have a significant effect on the reaction time at α=0.05. Report your conclusion and p value here.
+
+ ---
+
+ (d) Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.
+
+ ---
+
+ (e) Provide all the necessary residual plots here and use them to explain whether assumptions about the model for this design are valid or not.
+
+ ---
+
+ (d) Report the complete code along with output here.
+
+
+### Problem 3: 
+
+The data below are from a replicated Latin Square with 4 treatments: row blocks were reused, but column blocks were not.
+ 
+ ---
+
+ (a) Obtain the ANOVA table for this study and report it here.
+ 
+ 
+ ---
+
+ (b) Test whether treatments are statistically significant at α=0.01. Report your conclusion and p value here.
+
+
+
+### Problem 4:
+
+The BIBD model with fixed effect is:$y_ij=μ+τ_i+β_j+ε_{ij}$,for i=1,2,…,a$;$j=1,2,…,b; $N=kb=ra≠ab$.
+$ε_{ij} ~ iidN(0,σ^2)$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j =0$; $y_{i.}=\sum_jy_{ij}$,$\bar y_{.j}=\frac1k\sum_iy_{ij}=\frac{y_{.j}}k$.
+Let $Q_i=(y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j})$ where $n_{ij}=\begin{cases}1& \text{if } i^{th} \text{ treatment appears in } j^{th}\text{ block}\\0&\text{Otherwise}\end{cases}$
+Prove  that $\sum_{i=1}^aQ_i=0$
+
+ 
+### Problem 5:
+
+Consider the two-factor factorial model with fixed effects:
+$y_{ijk}=μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk}$, for $i=1,2,…,a$; $j=1,2,…,b$; $k=1,2,…,n$
+$ε_{ij}  ~ iid N(0,σ^2 )$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j=0$; $\sum_{i=1}^a(τβ)_{ij}=0$   and $\sum_{j=1}^b(τβ)_{ij}=0$
+$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $y_{...}=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{...}=\frac{y_{...}}N$. Compute the $E(SS_A)$ where  $SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2$ 

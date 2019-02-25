@@ -554,13 +554,14 @@ $\frac{Z_1}{Z_2}$ is free of $\alpha$. Therefore，$\frac{\ln X_1}{\ln X_2}$ is 
 
  (1) Proof $X_{(1)}=\min_iX_i$ is a minimal sufficient statistic
  
- $X\sim$ location Exponential($\mu$),
+ $X\sim$ location $Expo(\mu)$,
  
-$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\prod_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}$$
+$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\prod_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}$
 
 If and only if $\min\{x_1,..,x_n\} =\min\{y_1,..,y_n\}$, the ratio $\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}$ for every two sample points x and y is constant as a function of $\theta$. Therefore, $T(X)=\min\{X_1,..,X_n\}$ is a minimal sufficient statistic.
  
  (2) Proof complete
+ 
 From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$. $f_X(x)=e^{-(x-\mu)}$, $F_X(x)=1-e^{-(x-\mu)}$, then
 
 $$f_{X_{(1)}}(x)=\frac{n!}{(1-1)!(n-1)!}e^{-(x-\mu)}[1-e^{-(x-\mu)}]^{1-1}[1-(1-e^{-(x-\mu)})]^{n-1}=ne^{-n(x-\mu)}=ne^{n\mu}e^{-nx},x>\mu$$
@@ -573,7 +574,7 @@ For $ne^{n\mu}\neq0$,
 
 $$0=\frac{d}{d\mu}E[g(T)]=\frac{d}{d\mu}\left[\int_\mu^\infty g(x)e^{-nx}dx\right]=0-\mu'[g(\mu)e^{-n\mu}]=-g(\mu)e^{-n\mu}$$
 
-So $g(T)=0\quad\forall\mu$, then P(g(T)=0)=1, $X_{(1)}$ is a complete statistic.
+So $g(T)=0,\forall\mu$, then $P(g(T)=0)=1$, $X_{(1)}$ is a complete statistic.
 
  ---
 
@@ -581,9 +582,11 @@ So $g(T)=0\quad\forall\mu$, then P(g(T)=0)=1, $X_{(1)}$ is a complete statistic.
 
 $f(x|\mu)$ is a location exponential family. Let $Z_i=X_i-\mu$ is a random sample from $f(x|0)$
 
-$$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n((X_i-\mu)-(\bar X-\mu))^2=\frac1{n-1}\sum_{i=1}^n(Z_i-\bar Z)^2$$
+$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n((X_i-\mu)-(\bar X-\mu))^2=\frac1{n-1}\sum_{i=1}^n(Z_i-\bar Z)^2$
 
-$S^2_{\mu}$ is a function of only $Z_1,..,Z_n$ and be free of $\mu$. S^2 is an ancillary statistic. Therefore, $S^2$ and  $X_{(1)}$ are independent by Basu's Theorem.
+$S^2_{\mu}$ is a function of only $Z_1,..,Z_n$ and be free of $\mu$. S^2 is an ancillary statistic.
+
+Therefore, $S^2$ and  $X_{(1)}$ are independent by Basu's Theorem.
 
  ---
 
@@ -599,8 +602,7 @@ $\prod_{i=1}^n x_i^{-2}$ is free of $\theta$. By the Factorial Theorem, $X_{(1)}
 
  (b). Find the MLE of $\theta$.
 
-
-$L(\theta|\mathbf{x})$ was a increasing function of $\theta$. So to maximize $L(\theta|\mathbf{x})$, we should use the largest possible value of $\theta$. $\hat\theta=X_{(1)}$
+$L(\theta|\mathbf{x})$ was a increasing function of $\theta$. So to maximize $L(\theta|\mathbf{x})$, we should use the largest possible value of $\theta$. $\hat\theta_{MLE}=X_{(1)}$
 
  ---
  
@@ -618,12 +620,11 @@ where the parameters $\alpha$ and $\beta$ are positive.
 
  (a). Find a two dimensional sufficient statistic for ($\alpha,\beta$).
  
-By given $F(\mathbf{x}|\alpha,\beta)$, $$f(\mathbf{x}|\alpha,\beta)=\begin{cases}0&\text{if }x<0\\\frac{\alpha}{\beta^\alpha}x^{\alpha-1}&\text{if }0\le x\le\beta\\0&\text{if } x>\beta\end{cases}$$
+By given $F(X_i|\alpha,\beta)$, $f(X_i|\alpha,\beta)=\begin{cases}0&\text{if }x<0\\\frac{\alpha}{\beta^\alpha}x^{\alpha-1}&\text{if }0\le x\le\beta\\0&\text{if } x>\beta\end{cases}$
 
 $$f(\mathbf{x}|\alpha,\beta)=\prod_{i=1}^n\frac{\alpha}{\beta^\alpha}x_i^{\alpha-1}I_{[0,\beta]}(x_i)=\frac{\alpha^n}{\beta^{n\alpha}}(\prod_{i=1}^n x_i)^{\alpha-1}I_{(-\infty,\beta]}(x_{(n)})I_{[0,\infty)}(x_{(1)})$$
 
 By 6.2.6 Facotrization Theorem, $(\prod_{i=1}^n x_i,x_{(n)})$ are sufficient statistic.
-
 
  --- 
  
@@ -631,11 +632,11 @@ By 6.2.6 Facotrization Theorem, $(\prod_{i=1}^n x_i,x_{(n)})$ are sufficient sta
  
 Let $L(\alpha,\beta|\mathbf{x})=f(\mathbf{x}|\alpha,\beta)$
 
- - MLE of $\beta$
+ - $\beta_{MLE}$
 
 $\forall\alpha$, $L(\alpha,\beta|\mathbf{x})=\begin{cases}0&\text{when}\beta<x_{(n)}\\\text{monotonically decreasing}&\text{when}\beta>x_{(n)}\end{cases}$. Thus, $\hat\beta_{MLE}=X_{(n)}$.
 
- - MLE of $\beta$
+ - $\alpha_{MLE}$
 
 Derive the log likehood function. $l(\alpha,\beta|\mathbf{x})=\ln L(\alpha,\beta|\mathbf{x})=n\ln\alpha-n\alpha\ln\beta+(\alpha-1)\ln(\prod_{i=1}^n x_i)$
 
@@ -665,8 +666,6 @@ mean(log(max(cuckoo_egg))-log(cuckoo_egg))^(-1)
 
  (a). Find the MLE of $\theta$, and show that its variance $\to0$ as $n\to\infty$.
 
-$$f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{\theta-1}=\theta^n(\prod_{i=1}^n x_i)^{\theta-1}$$
-
 Let $L(\theta|\mathbf{x})=f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{\theta-1}=\theta^n(\prod_{i=1}^n x_i)^{\theta-1}$
 
 Derive the log likehood function. $l(\theta|\mathbf{x})=\ln L(\theta|\mathbf{x})=n\ln\theta+(\theta-1)\ln\prod_{i=1}^n x_i$
@@ -677,15 +676,17 @@ Set  $\frac{\partial^2}{\partial^2\theta}l(\theta|\mathbf{x})=-\frac{n}{\theta^2
 
 Thus, $\hat\theta_{MLE}=\frac{-n}{\ln(\prod_{i=1}^n x_i)}=\frac{-n}{\sum_{i=1}^n\ln x_i}$
 
-For $(-\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\theta)$ ($-\ln x_i\sim Expo(\theta)$, $-\sum_{i=1}^n\ln x_i\sim Gamma(n,\theta)$)
+For $(-\sum_{i=1}^n\ln x_i)^{-1}\sim$ Inv-Gamma$(n,\theta)$ 
 
-the pdf of $Inv-Gamma(\alpha,\beta)$: $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$. Thus,
+(Note:$-\ln x_i\sim Expo(\theta)$, $-\sum_{i=1}^n\ln x_i\sim Gamma(n,\theta)$)
 
-$$\begin{cases}E[\hat\theta]=nE\left[(-\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\theta}{n-1}&\\E[\hat\theta^2]=n^2E\left[(-\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\theta^2}{(n-1)(n-2)}&\end{cases}$$
+the pdf of Inv-Gamma$(\alpha,\beta)$: $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$. Thus,
 
-$$V[\hat\theta]=E[\hat\theta^2]-E[\hat\theta]^2=\frac{n^2\theta^2}{(n-1)(n-2)}-\frac{n^2\theta^2}{(n-1)^2}=\frac{n^2\theta^2}{(n-1)^2(n-2)}$$
+$\begin{cases}E[\hat\theta]=nE\left[(-\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\theta}{n-1}&\\E[\hat\theta^2]=n^2E\left[(-\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\theta^2}{(n-1)(n-2)}&\end{cases}$
 
-$$\lim_\limits{n\to\infty}\frac{n^2\theta^2}{(n-1)^2(n-2)}=\lim_\limits{n\to\infty}\frac{2\theta^2n}{2(n-1)(n-2)+(n-1)^2}=\lim_\limits{n\to\infty}\frac{2\theta^2}{6n-8}=0$$
+$V[\hat\theta]=E[\hat\theta^2]-E[\hat\theta]^2=\frac{n^2\theta^2}{(n-1)(n-2)}-\frac{n^2\theta^2}{(n-1)^2}=\frac{n^2\theta^2}{(n-1)^2(n-2)}$
+
+$\lim_\limits{n\to\infty}\frac{n^2\theta^2}{(n-1)^2(n-2)}=\lim_\limits{n\to\infty}\frac{2\theta^2n}{2(n-1)(n-2)+(n-1)^2}=\lim_\limits{n\to\infty}\frac{2\theta^2}{6n-8}=0$
 
 Therefore, when $n\to\infty$, $V[\hat\theta]\to0$
 
@@ -693,12 +694,10 @@ Therefore, when $n\to\infty$, $V[\hat\theta]\to0$
 
  (b). Find the method of moments estimator of $\theta$.
 
-$$f(\mathbf{x}|\theta)=\theta x^{\theta-1}=\frac{\Gamma(\theta+1)}{\Gamma(\theta)\Gamma(1)}x^{\theta-1}(1-x)^{1-1}$$
-
+$f(\mathbf{x}|\theta)=\theta x^{\theta-1}=\frac{\Gamma(\theta+1)}{\Gamma(\theta)\Gamma(1)}x^{\theta-1}(1-x)^{1-1}$.
 Thus, $X\sim Beta(\theta,1)$, $\mu'_1=E[X]=\frac{\theta}{\theta+1}$
 
-Set $\bar X=\frac1n\sum_{i=1}^nX_i=\mu'_1=\frac{\theta}{\theta+1}$
-
+Set $\bar X=\frac1n\sum_{i=1}^nX_i=\mu'_1=\frac{\theta}{\theta+1}$.
 Therefore, $\hat\theta_{MOM}=\frac{\sum_{i=1}^nX_i}{n-\sum_{i=1}^nX_i}$
 
 ## HW7
