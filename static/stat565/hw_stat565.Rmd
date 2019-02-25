@@ -920,10 +920,15 @@ glimpse(table_LSD2)
 
 ### Problem 4:
 
-The BIBD model with fixed effect is:$y_ij=μ+τ_i+β_j+ε_{ij}$,for i=1,2,…,a$;$j=1,2,…,b; $N=kb=ra≠ab$.
+The BIBD model with fixed effect is:$y_{ij}=μ+τ_i+β_j+ε_{ij}$,for i=1,2,…,a$;$j=1,2,…,b; $N=kb=ra≠ab$.
 $ε_{ij} ~ iidN(0,σ^2)$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j =0$; $y_{i.}=\sum_jy_{ij}$,$\bar y_{.j}=\frac1k\sum_iy_{ij}=\frac{y_{.j}}k$.
 Let $Q_i=(y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j})$ where $n_{ij}=\begin{cases}1& \text{if } i^{th} \text{ treatment appears in } j^{th}\text{ block}\\0&\text{Otherwise}\end{cases}$
 Prove  that $\sum_{i=1}^aQ_i=0$
+
+$$\sum_{i=1}^aQ_i=\sum_{i=1}^a[y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j}]=\sum_{i=1}^a[\sum_{j=1}^by_{ij}-\sum_{j=1}^bn_{ij}\frac{\sum_{i=1}^ay_{ij}}k]=\sum_{i=1}^a\sum_{j=1}^b(μ+τ_i+β_j+ε_{ij})-\sum_{i=1}^a\sum_{j=1}^b\frac{n_{ij}}k\sum_{i=1}^a(μ+τ_i+β_j+ε_{ij})$$
+
+
+$$=abμ+0+0+\sum_{i=1}^a\sum_{j=1}^bε_{ij}-\sum_{i=1}^a\sum_{j=1}^b\frac{n_{ij}}k(aμ+0+aβ_j+\sum_{i=1}^aε_{ij})=abμ+\sum_{i=1}^a\sum_{j=1}^bε_{ij}-\frac{ab^2\mu}{r}\sum_{i=1}^a\sum_{j=1}^bn_{ij}-0-\sum_{i=1}^a\sum_{j=1}^b\frac{n_{ij}}k\sum_{i=1}^aε_{ij}$$
 
  
 ### Problem 5:
@@ -932,3 +937,7 @@ Consider the two-factor factorial model with fixed effects:
 $y_{ijk}=μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk}$, for $i=1,2,…,a$; $j=1,2,…,b$; $k=1,2,…,n$
 $ε_{ij}  ~ iid N(0,σ^2 )$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j=0$; $\sum_{i=1}^a(τβ)_{ij}=0$   and $\sum_{j=1}^b(τβ)_{ij}=0$
 $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $y_{...}=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{...}=\frac{y_{...}}N$. Compute the $E(SS_A)$ where  $SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2$ 
+
+$$SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2=bn\sum_{i=1}^a(τ_i-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk})^2$$ 
+
+$$E[SS_A]=bnE[\sum_{i=1}^aτ_i^2]+bnE[\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}]^2+bnE[\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}]^2-2Cov[τ_i,ε_{ijk}]-2Cov[τ_i,ε_{ijk}]-Cov(\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk},\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk})$$ 
