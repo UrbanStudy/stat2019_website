@@ -773,39 +773,72 @@ library(agricolae) #LSD.test
 library(asbio) #pairw.anova
 ```
 
-```{r echo=FALSE, out.width='45%'}
-table_wash <- read_xlsx("Exercise4_4.xlsx")
-table_wash$Days <- as.factor(table_wash$Days)
-ggplot(table_wash,aes(Solution,Response,lty=Days))+geom_line()+theme(legend.position = c(0.9, 0.85))
-table_wash$Solution <- as.factor(table_wash$Solution)
-glimpse(table_wash)
+```{r echo=FALSE}
+table_miss1 <- as.table(matrix(c(0,32,27,36,38,40,43,33,40,63,14,27),ncol=4,byrow=TRUE))
+colnames(table_miss1) <- c("A","B","C","D")
+rownames(table_miss1) <- c("Block1","Block2","Block3")
 ```
 
  (a) Compute the mean response for each treatment and report here. You may copy and paste output table from your software here.
+
+```{r echo=FALSE}
+margin.table(table_miss1,2)/c(2,3,3,3)
+```
 
  ---
 
  (b) Compute the mean response for each block and report here. You may copy and paste output table from your software here.
 
+```{r echo=FALSE}
+margin.table(table_miss1,1)/c(3,4,4)
+```
+
  ---
 
  (c) Compute the overall mean response and report here.
- 
+
+```{r echo=FALSE}
+margin.table(table_miss1)/11
+```
 
  ---
 
  (d) Use the approximation method learned to estimate one missing value in Chapter 4 and estimate the value of the missing observation. Report it here. Show any computation here.
  
+$$\hat x=\frac{ay'_{1.}+by'_{.1}-y'_{..}}{(a-1)(b-1)}=\frac{3*95+4*78-393}{(3-1)(4-1)}=34$$
+
+```{r include=FALSE}
+addmargins(table_miss1, margin =c(1,2), FUN = mean, quiet =T)
+
+(3*margin.table(table_miss1,1)[1]+4*margin.table(table_miss1,2)[1]-margin.table(table_miss1))/6
+```
+
 
  ---
 
  (e) Include that estimated missing value in the given data file appropriately and obtain an ANOVA table for this design. Report ONLY the ANOVA table here.
- 
+
+```{r include=FALSE}
+table_complete <- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=rep(c("Block1","Block2","Block3"),4))
+glimpse(table_complete)
+```
+```{r echo=FALSE}
+summary(aov(y~trt+blk,data=table_complete))
+summary(aov(y~blk,data=table_complete))
+```
 
  ---
 
  (f) Now, adjust the degrees of freedom for error in the ANOVA table for one missing value. (See the Chapter 4 note). And use adjusted df of error to compute the correct p-value for testing significance of treatments.
- 
+
+$$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1025.7-539.5}{89.92*(a-1)}=1.802343$$
+
+```{r}
+
+1-pf(1.802343, 3, 6, lower.tail = TRUE, log.p = FALSE)
+qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)
+```
+
 	Write your conclusion based on your p value and report the p value here.
 	
 
@@ -833,7 +866,7 @@ Each batch of new material is only large enough to permit five runs to be made. 
 table_ingredients <- read_xlsx("Exercise4_22.xlsx")
 table_ingredients$Day <- as.factor(table_ingredients$Day)
 table_ingredients$Batch <- as.factor(table_ingredients$Batch)
-ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))
+ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))+theme_gray()
 table_ingredients$Trt <- as.factor(table_ingredients$Trt)
 glimpse(table_ingredients)
 ```
@@ -861,7 +894,17 @@ glimpse(table_ingredients)
 ### Problem 3: 
 
 The data below are from a replicated Latin Square with 4 treatments: row blocks were reused, but column blocks were not.
- 
+
+```{r echo=FALSE, out.width='45%'}
+table_LSD2 <- read_xlsx("Problem3.xlsx")
+table_LSD2$Replicate <- as.factor(table_LSD2$Replicate)
+table_LSD2$Row <- as.factor(table_LSD2$Row)
+table_LSD2$Col <- as.factor(table_LSD2$Col)
+table_LSD2$Trt <- as.factor(table_LSD2$Trt)
+ggplot(table_LSD2,aes(Trt,y))+geom_point(aes(size=Col,shape=Row,col=Replicate))+theme_gray()
+
+glimpse(table_LSD2)
+```
  ---
 
  (a) Obtain the ANOVA table for this study and report it here.
