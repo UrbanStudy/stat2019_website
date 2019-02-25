@@ -771,18 +771,19 @@ library(tidyverse)
 require(ggplot2)
 library(agricolae) #LSD.test
 library(asbio) #pairw.anova
+library(olsrr)
 ```
 
 ```{r echo=FALSE}
-table_miss1 <- as.table(matrix(c(0,32,27,36,38,40,43,33,40,63,14,27),ncol=4,byrow=TRUE))
-colnames(table_miss1) <- c("A","B","C","D")
-rownames(table_miss1) <- c("Block1","Block2","Block3")
+table_miss0 <- as.table(matrix(c(0,32,27,36,38,40,43,33,40,63,14,27),ncol=4,byrow=TRUE))
+colnames(table_miss0) <- c("A","B","C","D")
+rownames(table_miss0) <- c("Block1","Block2","Block3")
 ```
 
  (a) Compute the mean response for each treatment and report here. You may copy and paste output table from your software here.
 
 ```{r echo=FALSE}
-margin.table(table_miss1,2)/c(2,3,3,3)
+margin.table(table_miss0,2)/c(2,3,3,3)
 ```
 
  ---
@@ -790,7 +791,7 @@ margin.table(table_miss1,2)/c(2,3,3,3)
  (b) Compute the mean response for each block and report here. You may copy and paste output table from your software here.
 
 ```{r echo=FALSE}
-margin.table(table_miss1,1)/c(3,4,4)
+margin.table(table_miss0,1)/c(3,4,4)
 ```
 
  ---
@@ -798,7 +799,7 @@ margin.table(table_miss1,1)/c(3,4,4)
  (c) Compute the overall mean response and report here.
 
 ```{r echo=FALSE}
-margin.table(table_miss1)/11
+margin.table(table_miss0)/11
 ```
 
  ---
@@ -808,17 +809,16 @@ margin.table(table_miss1)/11
 $$\hat x=\frac{ay'_{1.}+by'_{.1}-y'_{..}}{(a-1)(b-1)}=\frac{3*95+4*78-393}{(3-1)(4-1)}=34$$
 
 ```{r include=FALSE}
-addmargins(table_miss1, margin =c(1,2), FUN = mean, quiet =T)
-(3*margin.table(table_miss1,1)[1]+4*margin.table(table_miss1,2)[1]-margin.table(table_miss1))/6
+addmargins(table_miss0, margin =c(1,2), FUN = mean, quiet =T)
+(3*margin.table(table_miss0,1)[1]+4*margin.table(table_miss0,2)[1]-margin.table(table_miss0))/6
 ```
-
 
  ---
 
  (e) Include that estimated missing value in the given data file appropriately and obtain an ANOVA table for this design. Report ONLY the ANOVA table here.
 
 ```{r include=FALSE}
-table_complete <- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=rep(c("Block1","Block2","Block3"),4))
+table_complete <- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
 glimpse(table_complete)
 ```
 ```{r echo=FALSE}
@@ -829,14 +829,15 @@ summary(aov(y~trt+blk,data=table_complete))
 
  (f) Now, adjust the degrees of freedom for error in the ANOVA table for one missing value. (See the Chapter 4 note). And use adjusted df of error to compute the correct p-value for testing significance of treatments.
 
-$$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1025.7-539.5}{89.92*(a-1)}=1.802343$$
+$$F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}=0.8794357$$
 
 ```{r}
-1-pf(1.802343, 3, 6, lower.tail = TRUE, log.p = FALSE)
+1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
 Write your conclusion based on your p value and report the p value here.
 	
+$P_{adj}=0.5111382>P_0=0.435$
 
  ---
 
@@ -844,14 +845,20 @@ Write your conclusion based on your p value and report the p value here.
  
 Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.
 	
-	
+$$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1403.7-921.5}{184.30*(a-1)}=0.8721288$$
+
+```{r}
+1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
+```
 
  ---
 
  (h) Report the complete code along with output here.
 
 ```{r}
-summary(aov(y~blk,data=table_complete))
+table_miss1 <- tibble(y=c(NA,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
+summary(aov(y~trt+blk,data=table_miss1))
+summary(aov(y~blk,data=table_miss1))
 # qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)
 
 ```
@@ -876,17 +883,38 @@ glimpse(table_ingredients)
 
  (b) Obtain the ANOVA table for this study and report it here.
 
+```{r}
+model_ingredients <- aov(y~Trt+Day+Batch,data =table_ingredients)
+summary(model_ingredients)
+```
+
  ---
 
  (c) Test whether ingredients have a significant effect on the reaction time at α=0.05. Report your conclusion and p value here.
+
+
+0.000488
 
  ---
 
  (d) Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.
 
+```{r}
+TukeyHSD(model_ingredients,conf.level = 0.95)
+```
+
+
  ---
 
  (e) Provide all the necessary residual plots here and use them to explain whether assumptions about the model for this design are valid or not.
+
+```{r echo=FALSE, warning=FALSE, out.width='20%'}
+table_ingredients$student_resid <- rstudent(model_ingredients)
+ggplot(table_ingredients,aes(Trt,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center")+theme_light()
+ggplot(table_ingredients,aes(Day,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center")+theme_light()
+ggplot(table_ingredients,aes(Batch,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center")+theme_light()
+```
+
 
  ---
 
@@ -903,7 +931,7 @@ table_LSD2$Replicate <- as.factor(table_LSD2$Replicate)
 table_LSD2$Row <- as.factor(table_LSD2$Row)
 table_LSD2$Col <- as.factor(table_LSD2$Col)
 table_LSD2$Trt <- as.factor(table_LSD2$Trt)
-ggplot(table_LSD2,aes(Trt,y))+geom_point(aes(size=Col,shape=Row,col=Replicate))+theme_gray()
+ggplot(table_LSD2,aes(Trt,y))+geom_point(aes(size=Col,shape=Row,alpha=.6))+facet_grid(.~Replicate)+theme_light()
 
 glimpse(table_LSD2)
 ```
@@ -911,12 +939,16 @@ glimpse(table_LSD2)
 
  (a) Obtain the ANOVA table for this study and report it here.
  
+```{r}
+model_LSD2 <- aov(y~Trt+Replicate/Row+Col,data =table_LSD2)
+summary(model_LSD2)
+```
  
  ---
 
  (b) Test whether treatments are statistically significant at α=0.01. Report your conclusion and p value here.
 
-
+0.000107
 
 ### Problem 4:
 
@@ -925,11 +957,7 @@ $ε_{ij} ~ iidN(0,σ^2)$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j =0$; $y_{i.}
 Let $Q_i=(y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j})$ where $n_{ij}=\begin{cases}1& \text{if } i^{th} \text{ treatment appears in } j^{th}\text{ block}\\0&\text{Otherwise}\end{cases}$
 Prove  that $\sum_{i=1}^aQ_i=0$
 
-$$\sum_{i=1}^aQ_i=\sum_{i=1}^a[y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j}]=\sum_{i=1}^a[\sum_{j=1}^by_{ij}-\sum_{j=1}^bn_{ij}\frac{\sum_{i=1}^ay_{ij}}k]=\sum_{i=1}^a\sum_{j=1}^b(μ+τ_i+β_j+ε_{ij})-\sum_{i=1}^a\sum_{j=1}^b\frac{n_{ij}}k\sum_{i=1}^a(μ+τ_i+β_j+ε_{ij})$$
-
-
-$$=abμ+0+0+\sum_{i=1}^a\sum_{j=1}^bε_{ij}-\sum_{i=1}^a\sum_{j=1}^b\frac{n_{ij}}k(aμ+0+aβ_j+\sum_{i=1}^aε_{ij})=abμ+\sum_{i=1}^a\sum_{j=1}^bε_{ij}-\frac{ab^2\mu}{r}\sum_{i=1}^a\sum_{j=1}^bn_{ij}-0-\sum_{i=1}^a\sum_{j=1}^b\frac{n_{ij}}k\sum_{i=1}^aε_{ij}$$
-
+$$\sum_{i=1}^aQ_i=\sum_{i=1}^a[y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j}]=y_{..}-\sum_{j=1}^b(\bar y_{.j}\sum_{i=1}^an_{ij})=y_{..}-y_{..}\sum_{j=1}^b\sum_{i=1}^an_{ij}=0$$
  
 ### Problem 5:
 
@@ -938,6 +966,16 @@ $y_{ijk}=μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk}$, for $i=1,2,…,a$; $j=1,2,…,b$; $
 $ε_{ij}  ~ iid N(0,σ^2 )$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j=0$; $\sum_{i=1}^a(τβ)_{ij}=0$   and $\sum_{j=1}^b(τβ)_{ij}=0$
 $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $y_{...}=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{...}=\frac{y_{...}}N$. Compute the $E(SS_A)$ where  $SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2$ 
 
-$$SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2=bn\sum_{i=1}^a(τ_i-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk})^2$$ 
+$$\bar y_{i..}-\bar y_{...}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n(μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk})-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk})$$ 
 
-$$E[SS_A]=bnE[\sum_{i=1}^aτ_i^2]+bnE[\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}]^2+bnE[\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}]^2-2Cov[τ_i,ε_{ijk}]-2Cov[τ_i,ε_{ijk}]-Cov(\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk},\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk})$$ 
+$$=μ+τ_i+\frac1{b}\sum_{j=1}^bβ_j+\frac1{b}\sum_{j=1}^b(τβ)_{ij}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-μ-\frac1{a}\sum_{i=1}^aτ_i-\frac1{b}\sum_{j=1}^bβ_j-\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(τβ)_{ij}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}$$ 
+
+$$=τ_i+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}=τ_i+\bar ε_{i..}-\bar ε_{...}$$ 
+
+$$SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2=bn\sum_{i=1}^a(τ_i+\bar ε_{i..}-\bar ε_{...})^2=bn\sum_{i=1}^aτ_i^2+bn\sum_{i=1}^a\bar ε_{i..}^2+bn\sum_{i=1}^a\bar ε_{...}^2+--$$ 
+
+$$E[SS_A]=bn\sum_{i=1}^aE[τ_i^2]+bn\sum_{i=1}^aE[\bar ε_{i..}^2]+bn\sum_{i=1}^aE[\bar ε_{...}^2]+2bnCov[\sum_{i=1}^aτ_i,\sum_{i=1}^a\bar ε_{i..}]-2bnCov[\sum_{i=1}^aτ_i,\sum_{i=1}^a\bar ε_{...}]-2bnCov(\sum_{i=1}^a\bar ε_{i..},\sum_{i=1}^a\bar ε_{...})$$ 
+
+$$=bn\sum_{i=1}^a(V[τ_i^2]-E[τ_i]^2)+bn\sum_{i=1}^aE[\bar ε_{i..}^2]+bn\sum_{i=1}^aE[\bar ε_{...}^2]+0-0-2bnCov(\sum_{i=1}^a\bar ε_{i..},\sum_{i=1}^a\bar ε_{...})$$ 
+
+$$=abn(σ^2_τ-τ_i^2)+\frac{a}{bn}σ^2+\frac{1}{abn}σ^2-2abnσ^2=abn(σ^2_τ-τ_i^2)+\frac{a^2+1-a^2b^2n^2}{abn}σ^2$$ 
