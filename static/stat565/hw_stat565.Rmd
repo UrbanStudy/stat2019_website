@@ -809,7 +809,6 @@ $$\hat x=\frac{ay'_{1.}+by'_{.1}-y'_{..}}{(a-1)(b-1)}=\frac{3*95+4*78-393}{(3-1)
 
 ```{r include=FALSE}
 addmargins(table_miss1, margin =c(1,2), FUN = mean, quiet =T)
-
 (3*margin.table(table_miss1,1)[1]+4*margin.table(table_miss1,2)[1]-margin.table(table_miss1))/6
 ```
 
@@ -824,7 +823,6 @@ glimpse(table_complete)
 ```
 ```{r echo=FALSE}
 summary(aov(y~trt+blk,data=table_complete))
-summary(aov(y~blk,data=table_complete))
 ```
 
  ---
@@ -834,25 +832,29 @@ summary(aov(y~blk,data=table_complete))
 $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1025.7-539.5}{89.92*(a-1)}=1.802343$$
 
 ```{r}
-
 1-pf(1.802343, 3, 6, lower.tail = TRUE, log.p = FALSE)
-qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)
 ```
 
-	Write your conclusion based on your p value and report the p value here.
+Write your conclusion based on your p value and report the p value here.
 	
 
  ---
 
  (g) The second method of analyzing data with missing value is extra (partial) sum of squares method. Fit a multiple linear regression model and obtain the extra (partial) sum of squares for treatments. If you forgot how to do this, look at regression analysis labs and notes.
  
-	Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.
+Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.
 	
 	
 
  ---
 
  (h) Report the complete code along with output here.
+
+```{r}
+summary(aov(y~blk,data=table_complete))
+# qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)
+
+```
 
 
 ### Problem 2 (4.22/27)
@@ -862,7 +864,7 @@ Each batch of new material is only large enough to permit five runs to be made. 
 
  (a) Create plot of data and report it here.
 
-```{r echo=FALSE, out.width='45%'}
+```{r echo=FALSE, warning=FALSE, out.width='45%'}
 table_ingredients <- read_xlsx("Exercise4_22.xlsx")
 table_ingredients$Day <- as.factor(table_ingredients$Day)
 table_ingredients$Batch <- as.factor(table_ingredients$Batch)
@@ -895,7 +897,7 @@ glimpse(table_ingredients)
 
 The data below are from a replicated Latin Square with 4 treatments: row blocks were reused, but column blocks were not.
 
-```{r echo=FALSE, out.width='45%'}
+```{r echo=FALSE, warning=FALSE, out.width='45%'}
 table_LSD2 <- read_xlsx("Problem3.xlsx")
 table_LSD2$Replicate <- as.factor(table_LSD2$Replicate)
 table_LSD2$Row <- as.factor(table_LSD2$Row)
