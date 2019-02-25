@@ -611,23 +611,83 @@ P(|X_n-\mu|&gt;\mu-x)=P(X_n-\mu&lt;x-\mu)+P(X_n-\mu&gt;\mu-x)\ge P(X_n-\mu&lt;x-
 <h2>HW6</h2>
 <p><strong>6.30</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from the pdf <span class="math inline">\(f(x|\mu) = e^{-(x-\mu)}\)</span>, where <span class="math inline">\(-\infty&lt;\mu&lt;x&lt;\infty\)</span>.</p>
 <p>(a). Show that <span class="math inline">\(X_{(1)}=\min_iX_i\)</span> is a complete sufficient statistic.</p>
+<ol style="list-style-type: decimal">
+<li>Proof <span class="math inline">\(X_{(1)}=\min_iX_i\)</span> is a minimal sufficient statistic</li>
+</ol>
+<p><span class="math inline">\(X\sim\)</span> location Exponential(<span class="math inline">\(\mu\)</span>),</p>
+<p><span class="math display">\[\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\prod_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}\]</span></p>
+<p>If and only if <span class="math inline">\(\min\{x_1,..,x_n\} =\min\{y_1,..,y_n\}\)</span>, the ratio <span class="math inline">\(\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}\)</span> for every two sample points x and y is constant as a function of <span class="math inline">\(\theta\)</span>. Therefore, <span class="math inline">\(T(X)=\min\{X_1,..,X_n\}\)</span> is a minimal sufficient statistic.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Proof complete From Theorem 5.4.4, <span class="math inline">\(f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}\)</span>. <span class="math inline">\(f_X(x)=e^{-(x-\mu)}\)</span>, <span class="math inline">\(F_X(x)=1-e^{-(x-\mu)}\)</span>, then</li>
+</ol>
+<p><span class="math display">\[f_{X_{(1)}}(x)=\frac{n!}{(1-1)!(n-1)!}e^{-(x-\mu)}[1-e^{-(x-\mu)}]^{1-1}[1-(1-e^{-(x-\mu)})]^{n-1}=ne^{-n(x-\mu)}=ne^{n\mu}e^{-nx},x&gt;\mu\]</span></p>
+<p>Suppose that <span class="math inline">\(E[g(T)]=0, \forall\mu\)</span>,</p>
+<p><span class="math display">\[\int_\mu^\infty g(x)f_{X_{(1)}}(x)dx=\int_\mu^\infty g(x)ne^{n\mu}e^{-nx}dx=ne^{n\mu}\int_\mu^\infty g(x)e^{-nx}dx=0\]</span></p>
+<p>For <span class="math inline">\(ne^{n\mu}\neq0\)</span>,</p>
+<p><span class="math display">\[0=\frac{d}{d\mu}E[g(T)]=\frac{d}{d\mu}\left[\int_\mu^\infty g(x)e^{-nx}dx\right]=0-\mu'[g(\mu)e^{-n\mu}]=-g(\mu)e^{-n\mu}\]</span></p>
+<p>So <span class="math inline">\(g(T)=0\quad\forall\mu\)</span>, then P(g(T)=0)=1, <span class="math inline">\(X_{(1)}\)</span> is a complete statistic.</p>
+<hr />
 <p>(b). Use Basu’s Theorem to show that <span class="math inline">\(X_{(1)}\)</span> and <span class="math inline">\(S^2\)</span> are independent.</p>
+<p><span class="math inline">\(f(x|\mu)\)</span> is a location exponential family. Let <span class="math inline">\(Z_i=X_i-\mu\)</span> is a random sample from <span class="math inline">\(f(x|0)\)</span></p>
+<p><span class="math display">\[S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n((X_i-\mu)-(\bar X-\mu))^2=\frac1{n-1}\sum_{i=1}^n(Z_i-\bar Z)^2\]</span></p>
+<p><span class="math inline">\(S^2_{\mu}\)</span> is a function of only <span class="math inline">\(Z_1,..,Z_n\)</span> and be free of <span class="math inline">\(\mu\)</span>. S^2 is an ancillary statistic. Therefore, <span class="math inline">\(S^2\)</span> and <span class="math inline">\(X_{(1)}\)</span> are independent by Basu’s Theorem.</p>
 <hr />
 <p><strong>7.6</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from the pdf <span class="math inline">\(f(x|\theta)=\theta x^{-2}\)</span>, where <span class="math inline">\(0&lt;\theta\le x&lt;\infty\)</span>.</p>
 <p>(a). What is a sufficient statistic for <span class="math inline">\(\theta\)</span>?</p>
+<p><span class="math display">\[f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{-2}I_{[\theta,\infty)}(x_i)=\theta^n(\prod_{i=1}^n x_i^{-2})I_{[\theta,\infty)}(x_1)\]</span></p>
+<p><span class="math inline">\(\prod_{i=1}^n x_i^{-2}\)</span> is free of <span class="math inline">\(\theta\)</span>. By the Factorial Theorem, <span class="math inline">\(X_{(1)}\)</span> is a sufficient statistic for <span class="math inline">\(\theta\)</span></p>
+<hr />
 <p>(b). Find the MLE of <span class="math inline">\(\theta\)</span>.</p>
+<p><span class="math inline">\(L(\theta|\mathbf{x})\)</span> was a increasing function of <span class="math inline">\(\theta\)</span>. So to maximize <span class="math inline">\(L(\theta|\mathbf{x})\)</span>, we should use the largest possible value of <span class="math inline">\(\theta\)</span>. <span class="math inline">\(\hat\theta=X_{(1)}\)</span></p>
+<hr />
 <p>(c). Find the method of moments estimator of <span class="math inline">\(\theta\)</span>.</p>
+<p><span class="math display">\[E[X]=\int_\theta^\infty x\theta x^{-2}dx=\left.\theta\ln x\right|_\theta^\infty\to \infty\]</span></p>
+<p>The method of moments estimator of <span class="math inline">\(\theta\)</span> does not exist.</p>
 <hr />
-<p><strong>7.10</strong> The independent random variables <span class="math inline">\(X_1,..,X_n\)</span> have the common distribution</p>
-<p><span class="math display">\[P(X_i\le x|\alpha,\beta)=\begin{cases}0&amp;\text{if }x&lt;0\\(\frac{x}\beta)^{\alpha}&amp;\text{if }0\le x\le\beta\\1&amp;\text{if } x&gt;\beta\end{cases}\]</span></p>
-<p>where the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are positive.</p>
-<p>(a). Find a tW&lt;rdimensional sufficient statistic for (<span class="math inline">\(\alpha,\beta\)</span>).</p>
+<p><strong>7.10</strong> The independent random variables <span class="math inline">\(X_1,..,X_n\)</span> have the common distribution <span class="math inline">\(P(X_i\le x|\alpha,\beta)=\begin{cases}0&amp;\text{if }x&lt;0\\(\frac{x}\beta)^{\alpha}&amp;\text{if }0\le x\le\beta\\1&amp;\text{if } x&gt;\beta\end{cases}\)</span> where the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are positive.</p>
+<p>(a). Find a two dimensional sufficient statistic for (<span class="math inline">\(\alpha,\beta\)</span>).</p>
+<p>By given <span class="math inline">\(F(\mathbf{x}|\alpha,\beta)\)</span>, <span class="math display">\[f(\mathbf{x}|\alpha,\beta)=\begin{cases}0&amp;\text{if }x&lt;0\\\frac{\alpha}{\beta^\alpha}x^{\alpha-1}&amp;\text{if }0\le x\le\beta\\0&amp;\text{if } x&gt;\beta\end{cases}\]</span></p>
+<p><span class="math display">\[f(\mathbf{x}|\alpha,\beta)=\prod_{i=1}^n\frac{\alpha}{\beta^\alpha}x_i^{\alpha-1}I_{[0,\beta]}(x_i)=\frac{\alpha^n}{\beta^{n\alpha}}(\prod_{i=1}^n x_i)^{\alpha-1}I_{(-\infty,\beta]}(x_{(n)})I_{[0,\infty)}(x_{(1)})\]</span></p>
+<p>By 6.2.6 Facotrization Theorem, <span class="math inline">\((\prod_{i=1}^n x_i,x_{(n)})\)</span> are sufficient statistic.</p>
+<hr />
 <p>(b). Find the MLEs of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
-<p>(c). The length (in millimeters) of cuckoos’ eggs found in hedge sparrow nests can be modeled with this distribution. For the data <span class="math inline">\(22.0, 23.9, 20.9, 23.8, 25.0, 24.0, 21 .7, 23.8, 22.8, 23. 1, 23. 1 , 23.5, 23.0, 23.0\)</span>, find the MLEs of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
+<p>Let <span class="math inline">\(L(\alpha,\beta|\mathbf{x})=f(\mathbf{x}|\alpha,\beta)\)</span></p>
+<ul>
+<li>MLE of <span class="math inline">\(\beta\)</span></li>
+</ul>
+<p><span class="math inline">\(\forall\alpha\)</span>, <span class="math inline">\(L(\alpha,\beta|\mathbf{x})=\begin{cases}0&amp;\text{when}\beta&lt;x_{(n)}\\\text{monotonically decreasing}&amp;\text{when}\beta&gt;x_{(n)}\end{cases}\)</span>. Thus, <span class="math inline">\(\hat\beta_{MLE}=X_{(n)}\)</span>.</p>
+<ul>
+<li>MLE of <span class="math inline">\(\beta\)</span></li>
+</ul>
+<p>Derive the log likehood function. <span class="math inline">\(l(\alpha,\beta|\mathbf{x})=\ln L(\alpha,\beta|\mathbf{x})=n\ln\alpha-n\alpha\ln\beta+(\alpha-1)\ln(\prod_{i=1}^n x_i)\)</span></p>
+<p>Set <span class="math inline">\(\frac{\partial}{\partial\alpha}l(\alpha,\beta|\mathbf{x})=\frac{n}\alpha-n\ln\beta+\ln(\prod_{i=1}^n x_i)=0\)</span></p>
+<p>Set <span class="math inline">\(\frac{\partial^2}{\partial^2\alpha}l(\alpha,\beta|\mathbf{x})=-\frac{n}{\alpha^2}=0\)</span>, no solution.</p>
+<p>Thus, <span class="math inline">\(\hat\alpha_{MLE}=\frac{n}{n\ln\beta-\ln(\prod_{i=1}^n x_i)}=\frac{n}{n\ln X_{(n)}-(\ln X_{(1)}+..+\ln X_{(n)})}=\frac{n}{(\ln X_{(n)}-\ln X_{(1)})+..+(\ln X_{(n)}-\ln X_{(n)})}=\frac{n}{\sum_{i=1}^n(\ln X_{(n)}-\ln X_{(i)})}\)</span></p>
 <hr />
-<p><strong>7.11</strong> Let <span class="math inline">\(X_1,..,X_n\)</span>, be iid with pdf <span class="math inline">\(f(x|\theta)=\theta x^{\theta-1}\)</span>, where <span class="math inline">\(0\le x\le1,0&lt;\theta&lt;\infty\)</span></p>
-<p>(a). Find the MLE of <span class="math inline">\(\theta\)</span>, and show that its variance <span class="math inline">\(n\to0\)</span> as <span class="math inline">\(n\to\infty\)</span>.</p>
+<p>(c). The length (in millimeters) of cuckoos’ eggs found in hedge sparrow nests can be modeled with this distribution. For the data, find the MLEs of <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span>.</p>
+<p><span class="math inline">\(\hat\beta_{MLE}=X_{(n)}=25.0\)</span>.</p>
+<p><span class="math inline">\(\hat\alpha_{MLE}=\frac{n}{\sum_{i=1}^n(\ln X_{(n)}-\ln X_{(i)})}=12.59487\)</span></p>
+<hr />
+<p><strong>7.11</strong> Let <span class="math inline">\(X_1,..,X_n\)</span>, be iid with pdf <span class="math inline">\(f(\mathbf{x}|\theta)=\theta x^{\theta-1}\)</span>, where <span class="math inline">\(0\le x\le1,0&lt;\theta&lt;\infty\)</span></p>
+<p>(a). Find the MLE of <span class="math inline">\(\theta\)</span>, and show that its variance <span class="math inline">\(\to0\)</span> as <span class="math inline">\(n\to\infty\)</span>.</p>
+<p><span class="math display">\[f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{\theta-1}=\theta^n(\prod_{i=1}^n x_i)^{\theta-1}\]</span></p>
+<p>Let <span class="math inline">\(L(\theta|\mathbf{x})=f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{\theta-1}=\theta^n(\prod_{i=1}^n x_i)^{\theta-1}\)</span></p>
+<p>Derive the log likehood function. <span class="math inline">\(l(\theta|\mathbf{x})=\ln L(\theta|\mathbf{x})=n\ln\theta+(\theta-1)\ln\prod_{i=1}^n x_i\)</span></p>
+<p>Set <span class="math inline">\(\frac{\partial}{\partial\theta}l(\theta|\mathbf{x})=\frac{n}\theta+\ln\prod_{i=1}^n x_i=0\)</span></p>
+<p>Set <span class="math inline">\(\frac{\partial^2}{\partial^2\theta}l(\theta|\mathbf{x})=-\frac{n}{\theta^2}=0\)</span>, no solution.</p>
+<p>Thus, <span class="math inline">\(\hat\theta_{MLE}=\frac{-n}{\ln(\prod_{i=1}^n x_i)}=\frac{-n}{\sum_{i=1}^n\ln x_i}\)</span></p>
+<p>For <span class="math inline">\((-\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\theta)\)</span> (<span class="math inline">\(-\ln x_i\sim Expo(\theta)\)</span>, <span class="math inline">\(-\sum_{i=1}^n\ln x_i\sim Gamma(n,\theta)\)</span>)</p>
+<p>the pdf of <span class="math inline">\(Inv-Gamma(\alpha,\beta)\)</span>: <span class="math inline">\(f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x&gt;0\)</span>, <span class="math inline">\(E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}\)</span>. Thus,</p>
+<p><span class="math display">\[\begin{cases}E[\hat\theta]=nE\left[(-\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\theta}{n-1}&amp;\\E[\hat\theta^2]=n^2E\left[(-\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\theta^2}{(n-1)(n-2)}&amp;\end{cases}\]</span></p>
+<p><span class="math display">\[V[\hat\theta]=E[\hat\theta^2]-E[\hat\theta]^2=\frac{n^2\theta^2}{(n-1)(n-2)}-\frac{n^2\theta^2}{(n-1)^2}=\frac{n^2\theta^2}{(n-1)^2(n-2)}\]</span></p>
+<p><span class="math display">\[\lim_\limits{n\to\infty}\frac{n^2\theta^2}{(n-1)^2(n-2)}=\lim_\limits{n\to\infty}\frac{2\theta^2n}{2(n-1)(n-2)+(n-1)^2}=\lim_\limits{n\to\infty}\frac{2\theta^2}{6n-8}=0\]</span></p>
+<p>Therefore, when <span class="math inline">\(n\to\infty\)</span>, <span class="math inline">\(V[\hat\theta]\to0\)</span></p>
+<hr />
 <p>(b). Find the method of moments estimator of <span class="math inline">\(\theta\)</span>.</p>
+<p><span class="math display">\[f(\mathbf{x}|\theta)=\theta x^{\theta-1}=\frac{\Gamma(\theta+1)}{\Gamma(\theta)\Gamma(1)}x^{\theta-1}(1-x)^{1-1}\]</span></p>
+<p>Thus, <span class="math inline">\(X\sim Beta(\theta,1)\)</span>, <span class="math inline">\(\mu'_1=E[X]=\frac{\theta}{\theta+1}\)</span></p>
+<p>Set <span class="math inline">\(\bar X=\frac1n\sum_{i=1}^nX_i=\mu'_1=\frac{\theta}{\theta+1}\)</span></p>
+<p>Therefore, <span class="math inline">\(\hat\theta_{MOM}=\frac{\sum_{i=1}^nX_i}{n-\sum_{i=1}^nX_i}\)</span></p>
 </div>
 <div id="hw7" class="section level2">
 <h2>HW7</h2>
