@@ -556,13 +556,14 @@ $\frac{Z_1}{Z_2}$ is free of $\alpha$. Therefore，$\frac{\ln X_1}{\ln X_2}$ is 
  
  $X\sim$ location $Expo(\mu)$,
  
-$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\prod_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}$
+$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod\limits_{i=1}^nf(x_i)}{\prod\limits_{i=1}^nf(y_i)}=\frac{\prod\limits_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod\limits_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum\limits_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum\limits_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}$$
 
 If and only if $\min\{x_1,..,x_n\} =\min\{y_1,..,y_n\}$, the ratio $\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}$ for every two sample points x and y is constant as a function of $\theta$. Therefore, $T(X)=\min\{X_1,..,X_n\}$ is a minimal sufficient statistic.
  
  (2) Proof complete
  
-From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$. $f_X(x)=e^{-(x-\mu)}$, $F_X(x)=1-e^{-(x-\mu)}$, then
+$f_X(x)=e^{-(x-\mu)}$, $F_X(x)=1-e^{-(x-\mu)}$.
+From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$, then
 
 $$f_{X_{(1)}}(x)=\frac{n!}{(1-1)!(n-1)!}e^{-(x-\mu)}[1-e^{-(x-\mu)}]^{1-1}[1-(1-e^{-(x-\mu)})]^{n-1}=ne^{-n(x-\mu)}=ne^{n\mu}e^{-nx},x>\mu$$
 
@@ -570,7 +571,7 @@ Suppose that $E[g(T)]=0, \forall\mu$,
 
 $$\int_\mu^\infty g(x)f_{X_{(1)}}(x)dx=\int_\mu^\infty g(x)ne^{n\mu}e^{-nx}dx=ne^{n\mu}\int_\mu^\infty g(x)e^{-nx}dx=0$$
 
-For $ne^{n\mu}\neq0$, 
+For $ne^{n\mu}\neq0$, $\frac{d}{dx}\int_{v(x)}^{u(x)}{f(t)}dt=u'(x)f[u(x)]-v'(x)f[v(x)]$, then
 
 $$0=\frac{d}{d\mu}E[g(T)]=\frac{d}{d\mu}\left[\int_\mu^\infty g(x)e^{-nx}dx\right]=0-\mu'[g(\mu)e^{-n\mu}]=-g(\mu)e^{-n\mu}$$
 
@@ -584,7 +585,7 @@ $f(x|\mu)$ is a location exponential family. Let $Z_i=X_i-\mu$ is a random sampl
 
 $S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n((X_i-\mu)-(\bar X-\mu))^2=\frac1{n-1}\sum_{i=1}^n(Z_i-\bar Z)^2$
 
-$S^2_{\mu}$ is a function of only $Z_1,..,Z_n$ and be free of $\mu$. S^2 is an ancillary statistic.
+$S^2_{\mu}$ is a function of only $Z_1,..,Z_n$ and be free of $\mu$. $S^2$ is an ancillary statistic.
 
 Therefore, $S^2$ and  $X_{(1)}$ are independent by Basu's Theorem.
 
@@ -602,7 +603,7 @@ $\prod_{i=1}^n x_i^{-2}$ is free of $\theta$. By the Factorial Theorem, $X_{(1)}
 
  (b). Find the MLE of $\theta$.
 
-$L(\theta|\mathbf{x})$ was a increasing function of $\theta$. So to maximize $L(\theta|\mathbf{x})$, we should use the largest possible value of $\theta$. $\hat\theta_{MLE}=X_{(1)}$
+Let $L(\theta|\mathbf{x})=f(\mathbf{x}|\theta)=\theta^n(\prod_{i=1}^n x_i^{-2})I_{[\theta,\infty)}(x_1)$ was a increasing function of $\theta$. So to maximize $L(\theta|\mathbf{x})$, we should use the smallest possible value of $\mathbf{x}$. But when $\theta>X_{(1)}$ $I_{[\theta,\infty)}(x_1)=0$. Therefore, $\hat\theta_{MLE}=X_{(1)}$
 
  ---
  
@@ -632,11 +633,11 @@ By 6.2.6 Facotrization Theorem, $(\prod_{i=1}^n x_i,x_{(n)})$ are sufficient sta
  
 Let $L(\alpha,\beta|\mathbf{x})=f(\mathbf{x}|\alpha,\beta)$
 
- - $\beta_{MLE}$
+ - $\hat\beta_{MLE}$
 
 $\forall\alpha$, $L(\alpha,\beta|\mathbf{x})=\begin{cases}0&\text{when}\beta<x_{(n)}\\\text{monotonically decreasing}&\text{when}\beta>x_{(n)}\end{cases}$. Thus, $\hat\beta_{MLE}=X_{(n)}$.
 
- - $\alpha_{MLE}$
+ - $\hat\alpha_{MLE}$
 
 Derive the log likehood function. $l(\alpha,\beta|\mathbf{x})=\ln L(\alpha,\beta|\mathbf{x})=n\ln\alpha-n\alpha\ln\beta+(\alpha-1)\ln(\prod_{i=1}^n x_i)$
 
@@ -644,15 +645,15 @@ Set $\frac{\partial}{\partial\alpha}l(\alpha,\beta|\mathbf{x})=\frac{n}\alpha-n\
 
 Set $\frac{\partial^2}{\partial^2\alpha}l(\alpha,\beta|\mathbf{x})=-\frac{n}{\alpha^2}=0$, no solution.
 
-Thus, $\hat\alpha_{MLE}=\frac{n}{n\ln\beta-\ln(\prod_{i=1}^n x_i)}=\frac{n}{n\ln X_{(n)}-(\ln X_{(1)}+..+\ln X_{(n)})}=\frac{n}{(\ln X_{(n)}-\ln X_{(1)})+..+(\ln X_{(n)}-\ln X_{(n)})}=\frac{n}{\sum_{i=1}^n(\ln X_{(n)}-\ln X_{(i)})}$
+Thus, $$\hat\alpha_{MLE}=\frac{n}{n\ln\hat\beta_{MLE}-\ln\prod\limits_{i=1}^n x_i}=\frac{n}{n\ln X_{(n)}-[\ln X_{(1)}+..+\ln X_{(n)}]}=\frac{n}{[\ln X_{(n)}-\ln X_{(1)}]+..+[\ln X_{(n)}-\ln X_{(n)}]}=\frac{n}{\sum\limits_{i=1}^n[\ln X_{(n)}-\ln X_{(i)}]}$$
 
  ---
  
  (c). The length (in millimeters) of cuckoos' eggs found in hedge sparrow nests can be modeled with this distribution. For the data, find the MLEs of $\alpha$ and $\beta$.
 
-$\hat\beta_{MLE}=X_{(n)}=25.0$.
+$\hat\beta_{MLE}=X_{(n)}=25.0$
 
-$\hat\alpha_{MLE}=\frac{n}{\sum_{i=1}^n(\ln X_{(n)}-\ln X_{(i)})}=12.59487$
+$\hat\alpha_{MLE}=\frac{n}{\sum_{i=1}^n[\ln X_{(n)}-\ln X_{(i)}]}=12.59487$
 
 ```{r eval=FALSE, include=FALSE}
 cuckoo_egg <- c(22.0, 23.9, 20.9, 23.8, 25.0, 24.0, 21.7, 23.8, 22.8, 23.1, 23.1, 23.5, 23.0, 23.0)
@@ -676,9 +677,9 @@ Set  $\frac{\partial^2}{\partial^2\theta}l(\theta|\mathbf{x})=-\frac{n}{\theta^2
 
 Thus, $\hat\theta_{MLE}=\frac{-n}{\ln(\prod_{i=1}^n x_i)}=\frac{-n}{\sum_{i=1}^n\ln x_i}$
 
-For $(-\sum_{i=1}^n\ln x_i)^{-1}\sim$ Inv-Gamma$(n,\theta)$ 
+By 2.1.10 Probability integral transformation, $F_X(\mathbf{x}|\theta)=\int_{-\infty}^x\theta x^{\theta-1}dx=\left.x^\theta\right|_0^x=1-x^\theta \sim Uni(0,1)$. 
 
-(Note:$-\ln x_i\sim Expo(\theta)$, $-\sum_{i=1}^n\ln x_i\sim Gamma(n,\theta)$)
+By 5.6.3 the exponential-uniform transformation, $F^{-1}_X(\mathbf{x}|\theta)=-\ln x\sim Expo(\theta)$, $-\sum_{i-1}^n\ln x\sim Gamma(n,\theta)$, $(-\sum_{i=1}^n\ln x_i)^{-1}\sim$ Inv-Gamma$(n,\theta)$
 
 the pdf of Inv-Gamma$(\alpha,\beta)$: $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$. Thus,
 
