@@ -937,8 +937,10 @@ table_LSD2$Row <- as.factor(table_LSD2$Row)
 table_LSD2$Col <- as.factor(table_LSD2$Col)
 table_LSD2$Trt <- as.factor(table_LSD2$Trt)
 glimpse(table_LSD2)
+ggplot(table_LSD2,aes(Trt,y))+geom_point(data = transform(table_LSD2, Replicate= NULL),aes(shape=Row), alpha=0.2)+geom_point(aes(shape=Row)) +geom_text_repel(aes(label=Col),alpha=.6)+facet_wrap(~Replicate)+theme_light()
 ggplot(table_LSD2,aes(Col,y))+geom_point(data = transform(table_LSD2, Replicate= NULL),aes(shape=Row), alpha=0.2)+geom_point(aes(shape=Row)) +geom_text_repel(aes(label=Trt),alpha=.6)+facet_wrap(~Replicate)+theme_light()
 ```
+
  ---
 
  (a) Obtain the ANOVA table for this study and report it here.
