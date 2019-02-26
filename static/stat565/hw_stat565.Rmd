@@ -771,7 +771,7 @@ library(tidyverse)
 require(ggplot2)
 library(agricolae) #LSD.test
 library(asbio) #pairw.anova
-library(olsrr)
+library(ggrepel)
 ```
 
 ```{r echo=FALSE}
@@ -831,7 +831,7 @@ summary(aov(y~trt+blk,data=table_complete))
 
 $$F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}=0.8794357$$
 
-```{r}
+```{r echo=FALSE}
 1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
@@ -855,10 +855,14 @@ $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full
 
  (h) Report the complete code along with output here.
 
-```{r echo=FALSE}
+```{r eval=FALSE}
 table_miss1 <- tibble(y=c(NA,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
 summary(aov(y~trt+blk,data=table_miss1))
 summary(aov(y~blk,data=table_miss1))
+table_complete <- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
+summary(aov(y~trt+blk,data=table_complete))
+1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
+1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
 # qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)
 
 ```
@@ -875,9 +879,9 @@ Each batch of new material is only large enough to permit five runs to be made. 
 table_ingredients <- read_xlsx("Exercise4_22.xlsx")
 table_ingredients$Day <- as.factor(table_ingredients$Day)
 table_ingredients$Batch <- as.factor(table_ingredients$Batch)
-ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))+theme_gray()
 table_ingredients$Trt <- as.factor(table_ingredients$Trt)
 glimpse(table_ingredients)
+ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))+theme_light()
 ```
 
  ---
@@ -932,9 +936,8 @@ table_LSD2$Replicate <- as.factor(table_LSD2$Replicate)
 table_LSD2$Row <- as.factor(table_LSD2$Row)
 table_LSD2$Col <- as.factor(table_LSD2$Col)
 table_LSD2$Trt <- as.factor(table_LSD2$Trt)
-ggplot(table_LSD2,aes(Trt,y))+geom_point(aes(size=Row,shape=Col,alpha=.6))+facet_grid(.~Replicate)+theme_light()
-
 glimpse(table_LSD2)
+ggplot(table_LSD2,aes(Col,y))+geom_point(data = transform(table_LSD2, Replicate= NULL),aes(shape=Row), alpha=0.2)+geom_point(aes(shape=Row)) +geom_text_repel(aes(label=Trt),alpha=.6)+facet_wrap(~Replicate)+theme_light()
 ```
  ---
 
