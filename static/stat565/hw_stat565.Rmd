@@ -847,7 +847,7 @@ Test whether treatment is a significant factor using extra (partial) SS F test. 
 	
 $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1403.7-921.5}{184.30*(a-1)}=0.8721288$$
 
-```{r}
+```{r echo=FALSE}
 1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
@@ -855,7 +855,7 @@ $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full
 
  (h) Report the complete code along with output here.
 
-```{r}
+```{r echo=FALSE}
 table_miss1 <- tibble(y=c(NA,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
 summary(aov(y~trt+blk,data=table_miss1))
 summary(aov(y~blk,data=table_miss1))
@@ -884,7 +884,7 @@ glimpse(table_ingredients)
 
  (b) Obtain the ANOVA table for this study and report it here.
 
-```{r}
+```{r echo=FALSE}
 model_ingredients <- aov(y~Trt+Day+Batch,data =table_ingredients)
 summary(model_ingredients)
 ```
@@ -900,9 +900,6 @@ summary(model_ingredients)
 
  (d) Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.
 
-```{r}
-TukeyHSD(model_ingredients,conf.level = 0.95)
-```
 
 
  ---
@@ -921,18 +918,21 @@ ggplot(table_ingredients,aes(Batch,student_resid))+geom_dotplot(binaxis = "y", s
 
  (d) Report the complete code along with output here.
 
+```{r,collapse=T}
+TukeyHSD(model_ingredients,conf.level = 0.95)
+```
 
 ### Problem 3: 
 
 The data below are from a replicated Latin Square with 4 treatments: row blocks were reused, but column blocks were not.
 
-```{r echo=FALSE, warning=FALSE, out.height='45%'}
+```{r echo=FALSE, warning=FALSE, out.width='45%'}
 table_LSD2 <- read_xlsx("Problem3.xlsx")
 table_LSD2$Replicate <- as.factor(table_LSD2$Replicate)
 table_LSD2$Row <- as.factor(table_LSD2$Row)
 table_LSD2$Col <- as.factor(table_LSD2$Col)
 table_LSD2$Trt <- as.factor(table_LSD2$Trt)
-ggplot(table_LSD2,aes(Trt,y))+geom_point(aes(size=Col,shape=Row,alpha=.6))+facet_grid(.~Replicate)+theme_light()
+ggplot(table_LSD2,aes(Trt,y))+geom_point(aes(size=Row,shape=Col,alpha=.6))+facet_grid(.~Replicate)+theme_light()
 
 glimpse(table_LSD2)
 ```
