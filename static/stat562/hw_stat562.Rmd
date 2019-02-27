@@ -645,7 +645,7 @@ Set $\frac{\partial}{\partial\alpha}l(\alpha,\beta|\mathbf{x})=\frac{n}\alpha-n\
 
 Set $\frac{\partial^2}{\partial^2\alpha}l(\alpha,\beta|\mathbf{x})=-\frac{n}{\alpha^2}=0$, no solution.
 
-Thus, $$\hat\alpha_{MLE}=\frac{n}{n\ln\hat\beta_{MLE}-\ln\prod\limits_{i=1}^n x_i}=\frac{n}{n\ln X_{(n)}-[\ln X_{(1)}+..+\ln X_{(n)}]}=\frac{n}{[\ln X_{(n)}-\ln X_{(1)}]+..+[\ln X_{(n)}-\ln X_{(n)}]}=\frac{n}{\sum\limits_{i=1}^n[\ln X_{(n)}-\ln X_{(i)}]}$$
+Thus, $\hat\alpha_{MLE}=\frac{n}{n\ln\hat\beta_{MLE}-\ln\prod\limits_{i=1}^n x_i}=\frac{n}{n\ln X_{(n)}-[\ln X_{(1)}+..+\ln X_{(n)}]}=\frac{n}{[\ln X_{(n)}-\ln X_{(1)}]+..+[\ln X_{(n)}-\ln X_{(n)}]}=\frac{n}{\sum\limits_{i=1}^n[\ln X_{(n)}-\ln X_{(i)}]}$
 
  ---
  
@@ -677,12 +677,13 @@ Set  $\frac{\partial^2}{\partial^2\theta}l(\theta|\mathbf{x})=-\frac{n}{\theta^2
 
 Thus, $\hat\theta_{MLE}=\frac{-n}{\ln(\prod_{i=1}^n x_i)}=\frac{-n}{\sum_{i=1}^n\ln x_i}$
 
-By 2.1.10 Probability integral transformation, $F_X(\mathbf{x}|\theta)=\int_{-\infty}^x\theta x^{\theta-1}dx=\left.x^\theta\right|_0^x=1-x^\theta \sim Uni(0,1)$. 
+By 2.1.10 Probability integral transformation, let $U_i=F_X(\mathbf{x}|\theta)=\int_{-\infty}^x\theta x^{\theta-1}dx=\left.x^\theta\right|_{-\infty}^x=x^\theta \sim Uni(0,1)$. 
 
-By 5.6.3 the exponential-uniform transformation, $F^{-1}_X(\mathbf{x}|\theta)=-\ln x\sim Expo(\theta)$, $-\sum_{i-1}^n\ln x\sim Gamma(n,\theta)$, $(-\sum_{i=1}^n\ln x_i)^{-1}\sim$ Inv-Gamma$(n,\theta)$
+By 5.6.3 the exponential-uniform transformation, $-\ln{U}=-\theta\ln x_i\sim Expo(\theta)$, $-\theta\sum_{i-1}^n\ln x_i\sim Gamma(n,\theta)$, $(-\theta\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\theta)$
 
-the pdf of Inv-Gamma$(\alpha,\beta)$: $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$. Thus,
+For the pdf of Inv-Gamma$(\alpha,\beta)$ is $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$.
 
+Thus,
 $\begin{cases}E[\hat\theta]=nE\left[(-\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\theta}{n-1}&\\E[\hat\theta^2]=n^2E\left[(-\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\theta^2}{(n-1)(n-2)}&\end{cases}$
 
 $V[\hat\theta]=E[\hat\theta^2]-E[\hat\theta]^2=\frac{n^2\theta^2}{(n-1)(n-2)}-\frac{n^2\theta^2}{(n-1)^2}=\frac{n^2\theta^2}{(n-1)^2(n-2)}$
