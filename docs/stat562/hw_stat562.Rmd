@@ -474,7 +474,7 @@ According to theorem 6.2.13, if and only if $\sum_{i=1}^ny_i-\sum_{i=1}^nx_i=0$,
  
   (b). $f(x|\theta)=\mathrm{e}^{-(x-\theta)} ,\theta<x<\infty,-\infty<\theta<\infty$ (location exponential)
 
-$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\prod_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}$$
+$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod_{i=1}^nf(x_i)}{\prod_{i=1}^nf(y_i)}=\frac{\prod_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\theta,\infty)}(\min x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\theta,\infty)}(\min y_i)}$$
 
 If and only if $\min\{x_1,..,x_n\} =\min\{y_1,..,y_n\}$, the ratio $\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}$ for every two sample points x and y is constant as a function of $\theta$. Therefore, $T(X)=\min\{X_1,..,X_n\}$ is a minimal sufficient statistic.
  
@@ -552,18 +552,8 @@ $\frac{Z_1}{Z_2}$ is free of $\alpha$. Therefore，$\frac{\ln X_1}{\ln X_2}$ is 
 
 (a). Show that $X_{(1)}=\min_iX_i$ is a complete sufficient statistic.
 
- (1) Proof $X_{(1)}=\min_iX_i$ is a minimal sufficient statistic
- 
- $X\sim$ location $Expo(\mu)$,
- 
-$$\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}=\frac{\prod\limits_{i=1}^nf(x_i)}{\prod\limits_{i=1}^nf(y_i)}=\frac{\prod\limits_{i=1}^n[\mathrm{e}^{-(x_i-\theta)}I_{(\theta,\infty)}(x_i)]}{\prod\limits_{i=1}^n[\mathrm{e}^{-(y_i-\theta)}I_{(\theta,\infty)}(y_i)]}=\frac{\mathrm{e}^{\sum\limits_{i=1}^ny_i}I_{(\theta,\infty)}(x_i)}{\mathrm{e}^{\sum\limits_{i=1}^nx_i}I_{(\theta,\infty)}(y_i)}$$
 
-If and only if $\min\{x_1,..,x_n\} =\min\{y_1,..,y_n\}$, the ratio $\frac{f(\mathbf{x}|\theta)}{f(\mathbf{y}|\theta)}$ for every two sample points x and y is constant as a function of $\theta$. Therefore, $T(X)=\min\{X_1,..,X_n\}$ is a minimal sufficient statistic.
- 
- (2) Proof complete
- 
-$f_X(x)=e^{-(x-\mu)}$, $F_X(x)=1-e^{-(x-\mu)}$.
-From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$, then
+From Theorem 5.4.4, $f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$, $F_X(x)=1-e^{-(x-\mu)}$. Then,
 
 $$f_{X_{(1)}}(x)=\frac{n!}{(1-1)!(n-1)!}e^{-(x-\mu)}[1-e^{-(x-\mu)}]^{1-1}[1-(1-e^{-(x-\mu)})]^{n-1}=ne^{-n(x-\mu)}=ne^{n\mu}e^{-nx},x>\mu$$
 
@@ -581,13 +571,23 @@ So $g(T)=0,\forall\mu$, then $P(g(T)=0)=1$, $X_{(1)}$ is a complete statistic.
 
 (b). Use Basu's Theorem to show that $X_{(1)}$ and $S^2$ are independent.
 
+ (1) Proof $X_{(1)}=\min_iX_i$ is a minimal sufficient statistic
+ 
+ $X\sim$ location $Expo(\mu)$,
+ 
+$$\frac{f(\mathbf {x}|\mu)}{f(\mathbf {y}|\mu)}=\frac{\prod\limits_{i=1}^n(ne^{n\mu}e^{-nx_i})}{\prod\limits_{i=1}^n(ne^{n\mu}e^{-ny_i})}=\frac{\mathrm{e}^{\sum_{i=1}^ny_i}I_{(\mu,\infty)}(\min x_i)}{\mathrm{e}^{\sum_{i=1}^nx_i}I_{(\mu,\infty)}(\min y_i)}$$
+
+If and only if $\min\{x_1,..,x_n\} =\min\{y_1,..,y_n\}$, the ratio $\frac{f(\mathbf{x}|\mu)}{f(\mathbf{y}|\mu)}$ for every two sample points x and y is constant as a function of $\mu$. Therefore, $X_{(1)}=\min\{X_1,..,X_n\}$ is a minimal sufficient statistic.
+ 
+ (2) Proof $S^2$ is an ancillary statistic
+ 
 $f(x|\mu)$ is a location exponential family. Let $Z_i=X_i-\mu$ is a random sample from $f(x|0)$
 
 $S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n((X_i-\mu)-(\bar X-\mu))^2=\frac1{n-1}\sum_{i=1}^n(Z_i-\bar Z)^2$
 
 $S^2_{\mu}$ is a function of only $Z_1,..,Z_n$ and be free of $\mu$. $S^2$ is an ancillary statistic.
 
-Therefore, $S^2$ and  $X_{(1)}$ are independent by Basu's Theorem.
+Therefore, an acillary statistc $S^2$ and a minimal sufficient statistic $X_{(1)}$ are independent by Basu's Theorem.
 
  ---
 
@@ -595,9 +595,11 @@ Therefore, $S^2$ and  $X_{(1)}$ are independent by Basu's Theorem.
 
  (a). What is a sufficient statistic for $\theta$?
 
+$f(\mathbf{x}|\theta)$ is a decreasing function of $X$
+
 $$f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{-2}I_{[\theta,\infty)}(x_i)=\theta^n(\prod_{i=1}^n x_i^{-2})I_{[\theta,\infty)}(x_1)$$
 
-$\prod_{i=1}^n x_i^{-2}$ is free of $\theta$. By the Factorial Theorem, $X_{(1)}$ is a sufficient statistic for $\theta$
+$\prod_{i=1}^n x_i^{-2}$ is free of $\theta$. By the 6.2.6 Factorization Theorem, $X_{(1)}$ is a sufficient statistic for $\theta$
 
  --- 
 
@@ -633,11 +635,9 @@ By 6.2.6 Facotrization Theorem, $(\prod_{i=1}^n x_i,x_{(n)})$ are sufficient sta
  
 Let $L(\alpha,\beta|\mathbf{x})=f(\mathbf{x}|\alpha,\beta)$
 
- - $\hat\beta_{MLE}$
+$\forall\alpha$, $L(\alpha,\beta|\mathbf{x})=\begin{cases}0&\text{when}\beta<x_{(n)}\\\text{monotonically decreasing}&\text{when}\beta>x_{(n)}\end{cases}$. 
 
-$\forall\alpha$, $L(\alpha,\beta|\mathbf{x})=\begin{cases}0&\text{when}\beta<x_{(n)}\\\text{monotonically decreasing}&\text{when}\beta>x_{(n)}\end{cases}$. Thus, $\hat\beta_{MLE}=X_{(n)}$.
-
- - $\hat\alpha_{MLE}$
+Thus, $\hat\beta_{MLE}=X_{(n)}$.
 
 Derive the log likehood function. $l(\alpha,\beta|\mathbf{x})=\ln L(\alpha,\beta|\mathbf{x})=n\ln\alpha-n\alpha\ln\beta+(\alpha-1)\ln(\prod_{i=1}^n x_i)$
 
@@ -645,7 +645,7 @@ Set $\frac{\partial}{\partial\alpha}l(\alpha,\beta|\mathbf{x})=\frac{n}\alpha-n\
 
 Set $\frac{\partial^2}{\partial^2\alpha}l(\alpha,\beta|\mathbf{x})=-\frac{n}{\alpha^2}=0$, no solution.
 
-Thus, $\hat\alpha_{MLE}=\frac{n}{n\ln\hat\beta_{MLE}-\ln\prod\limits_{i=1}^n x_i}=\frac{n}{n\ln X_{(n)}-[\ln X_{(1)}+..+\ln X_{(n)}]}=\frac{n}{[\ln X_{(n)}-\ln X_{(1)}]+..+[\ln X_{(n)}-\ln X_{(n)}]}=\frac{n}{\sum\limits_{i=1}^n[\ln X_{(n)}-\ln X_{(i)}]}$
+Thus, $\hat\alpha_{MLE}=\frac{n}{n\ln\hat\beta_{MLE}-\ln\prod\limits_{i=1}^n x_i}=\frac{n}{[\ln X_{(n)}-\ln X_{(1)}]+..+[\ln X_{(n)}-\ln X_{(n)}]}=\frac{n}{\sum\limits_{i=1}^n[\ln X_{(n)}-\ln X_{(i)}]}$
 
  ---
  
