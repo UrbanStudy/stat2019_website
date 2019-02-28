@@ -635,7 +635,7 @@ P(|X_n-\mu|&gt;\mu-x)=P(X_n-\mu&lt;x-\mu)+P(X_n-\mu&gt;\mu-x)\ge P(X_n-\mu&lt;x-
 <hr />
 <p><strong>7.6</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from the pdf <span class="math inline">\(f(x|\theta)=\theta x^{-2}\)</span>, where <span class="math inline">\(0&lt;\theta\le x&lt;\infty\)</span>.</p>
 <p>(a). What is a sufficient statistic for <span class="math inline">\(\theta\)</span>?</p>
-<p><span class="math inline">\(f(\mathbf{x}|\theta)\)</span> is a decreasing function of <span class="math inline">\(X_i\)</span>, <span class="math inline">\(X_{(1)}=\min_iX_i\)</span>.</p>
+<p>Let <span class="math inline">\(X_{(1)}=\min_iX_i\)</span>.</p>
 <p><span class="math inline">\(f(\mathbf{x}|\theta)=\prod_{i=1}^n\theta x_i^{-2}I_{[\theta,\infty)}(x_i)=\theta^n(\prod_{i=1}^n x_i^{-2})I_{[\theta,\infty)}(x_1)\)</span></p>
 <p><span class="math inline">\(\prod_{i=1}^n x_i^{-2}\)</span> is free of <span class="math inline">\(\theta\)</span>. By the 6.2.6 Factorization Theorem, <span class="math inline">\(X_{(1)}\)</span> is a sufficient statistic for <span class="math inline">\(\theta\)</span></p>
 <hr />
@@ -648,7 +648,7 @@ P(|X_n-\mu|&gt;\mu-x)=P(X_n-\mu&lt;x-\mu)+P(X_n-\mu&gt;\mu-x)\ge P(X_n-\mu&lt;x-
 <hr />
 <p><strong>7.10</strong> The independent random variables <span class="math inline">\(X_1,..,X_n\)</span> have the common distribution <span class="math inline">\(P(X_i\le x|\alpha,\beta)=\begin{cases}0&amp;\text{if }x&lt;0\\(\frac{x}\beta)^{\alpha}&amp;\text{if }0\le x\le\beta\\1&amp;\text{if } x&gt;\beta\end{cases}\)</span> where the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are positive.</p>
 <p>(a). Find a two dimensional sufficient statistic for (<span class="math inline">\(\alpha,\beta\)</span>).</p>
-<p>By given <span class="math inline">\(F(\mathbf{x}|\alpha,\beta)\)</span>, <span class="math inline">\(f(\mathbf{x}|\alpha,\beta)=\begin{cases}0&amp;\text{if }x&lt;0\\\frac{\alpha}{\beta^\alpha}x^{\alpha-1}&amp;\text{if }0\le x\le\beta\\0&amp;\text{if } x&gt;\beta\end{cases}\)</span></p>
+<p>By given <span class="math inline">\(F(\mathbf{x}|\alpha,\beta)\)</span>, <span class="math inline">\(f(\mathbf{x}|\alpha,\beta)=\begin{cases}0&amp;\text{if }x&lt;0\\\frac{\alpha}{\beta^\alpha}x^{\alpha-1}&amp;\text{if }0\le x\le\beta\\0&amp;\text{if } x&gt;\beta\end{cases}\)</span>. Let <span class="math inline">\(X_{(1)}=\min_iX_i\)</span>, <span class="math inline">\(X_{(n)}=\max_iX_i\)</span>.</p>
 <p><span class="math display">\[f(\mathbf{x}|\alpha,\beta)=\prod_{i=1}^n\frac{\alpha}{\beta^\alpha}x_i^{\alpha-1}I_{[0,\beta]}(x_i)=\frac{\alpha^n}{\beta^{n\alpha}}(\prod_{i=1}^n x_i)^{\alpha-1}I_{(-\infty,\beta]}(x_{(n)})I_{[0,\infty)}(x_{(1)})\]</span></p>
 <p><span class="math inline">\(I_{[0,\infty)}(x_{(1)})\)</span> is free of <span class="math inline">\(\alpha,\beta\)</span>. By 6.2.6 Facotrization Theorem, <span class="math inline">\((\prod_{i=1}^n x_i,x_{(n)})\)</span> are sufficient statistic.</p>
 <hr />
@@ -678,8 +678,8 @@ mean(log(max(cuckoo_egg))-log(cuckoo_egg))^(-1)
 <p>Set <span class="math inline">\(\frac{\partial^2}{\partial^2\theta}l(\theta|\mathbf{x})=-\frac{n}{\theta^2}=0\)</span>, no solution.</p>
 <p>Thus, <span class="math inline">\(\hat\theta_{MLE}=\frac{-n}{\ln(\prod_{i=1}^n x_i)}=\frac{-n}{\sum_{i=1}^n\ln x_i}\)</span></p>
 <p>By 2.1.10 Probability integral transformation, let <span class="math inline">\(U_i=F_X(\mathbf{x}|\theta)=\int_{-\infty}^x\theta x^{\theta-1}dx=\left.x^\theta\right|_{-\infty}^x=x^\theta \sim Uni(0,1)\)</span>.</p>
-<p>By 5.6.3 the exponential-uniform transformation, <span class="math inline">\(-\ln{U}=-\theta\ln x_i\sim Expo(\theta)\)</span>; <span class="math inline">\(-\theta\sum_{i=1}^n\ln x_i\sim Gamma(n,\theta)\)</span>; <span class="math inline">\((-\theta\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\theta)\)</span>.</p>
-<p>For the pdf of Inv-Gamma<span class="math inline">\((\alpha,\beta)\)</span> is <span class="math inline">\(f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x&gt;0\)</span>, <span class="math inline">\(E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}\)</span>.</p>
+<p>By 5.6.3 the exponential-uniform transformation, <span class="math inline">\(-\frac1\theta\ln{U}=-\ln x_i\sim Expo(\frac1\theta)\)</span>; <span class="math inline">\(-\sum_{i=1}^n\ln x_i\sim Gamma(n,\frac1\theta)\)</span>; <span class="math inline">\((-\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\theta)\)</span>.</p>
+<p>For a pdf of Inv-Gamma<span class="math inline">\((\alpha,\beta)\)</span> is <span class="math inline">\(f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x&gt;0\)</span>, <span class="math inline">\(E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}\)</span>.</p>
 <p>Thus, <span class="math inline">\(\begin{cases}E[\hat\theta]=nE\left[(-\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\theta}{n-1}&amp;\\E[\hat\theta^2]=n^2E\left[(-\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\theta^2}{(n-1)(n-2)}&amp;\end{cases}\)</span></p>
 <p><span class="math inline">\(V[\hat\theta]=E[\hat\theta^2]-E[\hat\theta]^2=\frac{n^2\theta^2}{(n-1)(n-2)}-\frac{n^2\theta^2}{(n-1)^2}=\frac{n^2\theta^2}{(n-1)^2(n-2)}\)</span></p>
 <p><span class="math inline">\(\lim_\limits{n\to\infty}\frac{n^2\theta^2}{(n-1)^2(n-2)}=\lim_\limits{n\to\infty}\frac{2\theta^2n}{2(n-1)(n-2)+(n-1)^2}=\lim_\limits{n\to\infty}\frac{2\theta^2}{6n-8}=0\)</span></p>
