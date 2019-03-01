@@ -704,6 +704,15 @@ Therefore, $\hat\theta_{MOM}=\frac{\sum_{i=1}^nX_i}{n-\sum_{i=1}^nX_i}$
 
 **5.59** Prove that the algorithm of Example 5.6.7 generates a $Beta(a,b)$ random variable.
 
+Example 5.6.7 (Beta random variable generation-I) Suppose the goal is to
+generate Y IV beta(a, b). If both a and b are integers, then the direct transformation
+method (5.6.5) can be used.
+
+
+$$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^a\ln U_j}\sim Beta(a,b)$$
+
+$$P(Y\le y)= P(V\le y|U<\frac1cf_Y(V))=\frac{P(V\le y,U<\frac1cf_Y(V))}{P(U<\frac1cf_Y(V))}=\frac{\int^y_0\int^{\frac1cf_Y(v)}_0 dudv}{\frac1c}=\frac{\frac1c\int^y_0f_Y(v)dv}{\frac1c}=\int_0^y f_Y(v)dv$$
+
  ---
 
 **5.60** Generalize the algorithm of Example 5.6.7 to apply to any bounded pdf; that is, for an arbitrary bounded pdf $f(x)$ on $[a, b]$, define $c=\max\limits_{a\le x\le b}f(x)$. Let $X$ and $Y$ be independent, with $X \sim Uni(a, b)$ and $Y\sim uni(0,c)$. Let $d$ be a number greater than $b$, and define a new random variable $W=\begin{cases}X&\text{if }Y<f(X)\\d&\text{if }Y\ge f(X)\end{cases}$.
@@ -716,20 +725,61 @@ Therefore, $\hat\theta_{MOM}=\frac{\sum_{i=1}^nX_i}{n-\sum_{i=1}^nX_i}$
 
  ---
 
-**7.22** This exercise will prove the assertions in **Example 7.2.16 (Normal Bayes estimators)**, and more. Let $X_1,..,X_n$ be a random sample from a $n(\theta,\sigma^2)$ population, and suppose that the prior distribution on $\theta$ is $n(\mu,\tau^2)$. Here we assume that $\sigma^2, \mu, \tau^2$ are all known. The posterior distribution of 0 is also normal, with mean and variance given by
+**7.22** This exercise will prove the assertions in **Example 7.2.16 (Normal Bayes estimators)**, and more. Let $X_1,..,X_n$ be a random sample from a $n(\theta,\sigma^2)$ population, and suppose that the prior distribution on $\theta$ is $n(\mu,\tau^2)$. Here we assume that $\sigma^2, \mu, \tau^2$ are all known. The posterior distribution of $\theta$ is also normal, with mean and variance given by
 
 $$E[\theta|x]=\frac{\tau^2}{\tau^2+\sigma^2}x+\frac{\sigma^2}{\sigma^2+\tau^2}\mu$$
 
 $$V[\theta|x]=\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}$$
 
+That is $$f(\theta|x)\sim N(\frac{\tau^2x+\sigma^2\mu}{\tau^2+\sigma^2},\frac{\sigma^2\tau^2}{\sigma^2+\tau^2})$$
+
  (a). Find the joint pdf of $\bar X$ and $\theta$. 
  
+ 
+$$f(\bar x,\theta)=f(\bar x|\theta)\pi(\theta)=\frac{1}{\sqrt{2\pi\frac{\sigma^2}n}} e^{-\frac{(\bar x-\theta)^2}{2\frac{\sigma^2}n}}\cdot\frac{1}{\sqrt{2\pi\tau^2}} e^{-\frac{(\theta-\mu)^2}{2\tau^2}}$$
+ 
+ ---
+ 
  (b). Show that $m(\bar x|\sigma^2,\mu,\tau^2)$, the marginal distribution of $\bar X$, is $n(\mu,\frac{\sigma^2}n+\tau^2)$.
+
+ - the left-bottom part in (a)
+
+$$2\pi\frac{\sigma^2}n\cdot2\pi\tau^2=\frac{2\pi\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}\cdot2\pi(\tau^2+\frac{\sigma^2}n)$$
+
+ - the exponent part in (a)
+
+$$\frac{(\bar x-\theta)^2}{2\frac{\sigma^2}n}+\frac{(\theta-\mu)^2}{2\tau^2}=
+\frac{(\tau^2+\frac{\sigma^2}n)\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)\theta+\tau^2\bar x^2+\frac{\sigma^2}n\mu^2}
+{2\tau^2\frac{\sigma^2}n}$$
+
+$$=\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta+\tau^2(\tau^2+\frac{\sigma^2}n)\bar x^2+\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)\mu^2}
+{2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}$$
+
+$$=\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta
++(\tau^4\bar x^2+\frac{\sigma^4}{n^2}\mu^2+2\tau^2\frac{\sigma^2}n\bar x\mu)(-2\tau^2\frac{\sigma^2}n\bar x\mu+\tau^2\frac{\sigma^2}n\bar x^2+\tau^2\frac{\sigma^2}n\mu^2)}
+{2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}$$
+
+$$=\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta+(\tau^2\bar x+\frac{\sigma^2}n\mu)^2+\tau^2\frac{\sigma^2}n(\bar x-\mu)^2}
+{2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}
+=\frac{\left(\theta-\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n}\right)^2}{\frac{2\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}}
++\frac{(\bar x-\mu)^2}{2(\tau^2+\frac{\sigma^2}n)}$$
+
+$$f(\bar x,\theta)=\frac{1}{\sqrt{2\pi\frac{\sigma^2}n}} e^{-\frac{(\bar x-\theta)^2}{2\frac{\sigma^2}n}}\cdot\frac{1}{\sqrt{2\pi\tau^2}} e^{-\frac{(\theta-\mu)^2}{2\tau^2}}=\frac{1}{\sqrt{\frac{2\pi\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}}} e^{-\frac{\left(\theta-\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n}\right)^2}{\frac{2\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}}}
+\cdot\frac{1}{\sqrt{2\pi(\tau^2+\frac{\sigma^2}n)}} e^{-\frac{(\bar x-\mu)^2}{2(\tau^2+\frac{\sigma^2}n)}}
+=\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)m(\bar x|\sigma^2,\mu,\tau^2)$$
+
+Therefore,
+
+$$m(\bar x|\sigma^2,\mu,\tau^2)\sim N\left(\mu,(\tau^2+\frac{\sigma^2}n)\right)$$
+
+
+
 
  (c). Show that $\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)$, the posterior distribution of $\theta$, is normal with mean and variance given by (7.2.10).
 
 Theorem 7.2.10 (Invariance property of MLEs) If $\hat\theta$ is the $MLE$ of $\theta$, then for any function $\tau(\theta)$, the $MLE$ of $\tau(\theta)$ is $\tau(\hat\theta)$.
 
+$$\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)\sim N\left(\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n},\frac{2\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}\right)$$
 
  ---
 
