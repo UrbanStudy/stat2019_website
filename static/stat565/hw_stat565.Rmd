@@ -772,6 +772,7 @@ require(ggplot2)
 library(agricolae) #LSD.test
 library(asbio) #pairw.anova
 library(ggrepel)
+library(olsrr)
 ```
 
 ```{r echo=FALSE}
@@ -831,7 +832,7 @@ summary(aov(y~trt+blk,data=table_complete))
 
 $$F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}=0.8794357$$
 
-```{r collapse=T}
+```{r echo=FALSE}
 1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
@@ -849,7 +850,7 @@ Test whether treatment is a significant factor using extra (partial) SS F test. 
 	
 $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1403.7-921.5}{184.30*(a-1)}=0.8721288$$
 
-```{r collapse=T}
+```{r echo=FALSE}
 1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
@@ -865,8 +866,6 @@ table_complete <- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A",
 summary(aov(y~trt+blk,data=table_complete))
 1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
 1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
-# qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)
-
 ```
 
 
@@ -890,7 +889,7 @@ ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))+theme
 
  (b) Obtain the ANOVA table for this study and report it here.
 
-```{r collapse=T}
+```{r echo=FALSE}
 model_ingredients <- aov(y~Trt+Day+Batch,data =table_ingredients)
 summary(model_ingredients)
 ```
@@ -905,7 +904,7 @@ The ANOVA for RCBD shows that ingredients have significant effects on the averag
 
  (d) Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.
 
-The reaults of TukeyLSD test show that batches have not significant differents on the average values of reaction time at 0.05 significant level. The P-value of all the paired comparing among batches is large enough.
+The reaults of TukeyLSD test show that there is not significant differents on the average values of reaction time among the batches at 0.05 significant level. The P-value of all the paired comparing among batches is large enough. All of the confident intervals include zero.
 
 |   |diff      |lwr     |upr    |p adj
 |---|---       |---     |---    |---
@@ -924,27 +923,53 @@ The reaults of TukeyLSD test show that batches have not significant differents o
 
  (e) Provide all the necessary residual plots here and use them to explain whether assumptions about the model for this design are valid or not.
 
-```{r echo=FALSE, warning=FALSE, out.width='30%'}
+The plot of studentized residual versus predicted (fitted) value shows that except few outliers, the residuals are evenly distributed about zero at each prededict value (zero mean) and vertical deviations of residuals from zero are about same for each predicted value (constant variance)
+
+The plots of studentized residual versus factor levels didn't show obvious violation of zero mean and constant variance.
+
+The QQ plot shows that some data points are not on the line and flattening at the extremes, which is a pattern typical of samples from a distribution with heavier tails than the normal.
+
+```{r echo=FALSE, warning=FALSE, out.width='20%'}
 table_ingredients$student_resid <- rstudent(model_ingredients)
+ols_plot_resid_stud_fit(lm(y~Trt+Day+Batch,data =table_ingredients))
 ggplot(table_ingredients,aes(Trt,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
 ggplot(table_ingredients,aes(Day,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
 ggplot(table_ingredients,aes(Batch,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
+ols_plot_resid_qq(lm(y~Trt+Day+Batch,data =table_ingredients))
 ```
 
 
  ---
 
- (d) Report the complete code along with output here.
+ (f) Report the complete code along with output here.
 
-```{r,collapse=T}
+```{r,collapse=T, out.width='20%'}
+# (a)
+table_ingredients <- read_xlsx("Exercise4_22.xlsx")
+table_ingredients$Day <- as.factor(table_ingredients$Day)
+table_ingredients$Batch <- as.factor(table_ingredients$Batch)
+table_ingredients$Trt <- as.factor(table_ingredients$Trt)
+glimpse(table_ingredients)
+ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))+theme_light()
+# (b)
+model_ingredients <- aov(y~Trt+Day+Batch,data =table_ingredients)
+summary(model_ingredients)
+# (d)
 TukeyHSD(model_ingredients,conf.level = 0.95)
+# (e)
+table_ingredients$student_resid <- rstudent(model_ingredients)
+ols_plot_resid_stud_fit(lm(y~Trt+Day+Batch,data =table_ingredients))
+ggplot(table_ingredients,aes(Trt,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
+ggplot(table_ingredients,aes(Day,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
+ggplot(table_ingredients,aes(Batch,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
+ols_plot_resid_qq(lm(y~Trt+Day+Batch,data =table_ingredients))
 ```
 
 ### Problem 3: 
 
 The data below are from a replicated Latin Square with 4 treatments: row blocks were reused, but column blocks were not.
 
-```{r echo=FALSE, warning=FALSE, out.width='60%'}
+```{r echo=FALSE, warning=FALSE, out.height='60%'}
 table_LSD2 <- read_xlsx("Problem3.xlsx")
 table_LSD2$Replicate <- as.factor(table_LSD2$Replicate)
 table_LSD2$Row <- as.factor(table_LSD2$Row)
@@ -968,7 +993,7 @@ ggplot(table_LSD2,aes(Col,y))+geom_point(data = transform(filter(table_LSD2,Repl
 
  (a) Obtain the ANOVA table for this study and report it here.
  
-```{r}
+```{r, include=F}
 model_LSD2 <- aov(y~Trt+Replicate/Row+Col,data =table_LSD2)
 summary(model_LSD2)
 ```
@@ -1003,21 +1028,26 @@ $\bar y_{i..}-\bar y_{...}=\frac1{bn}\sum\limits_{j=1}^b\sum\limits_{k=1}^n(μ+�
 
 $=μ+τ_i+\frac1{b}\sum\limits_{j=1}^bβ_j+\frac1{b}\sum\limits_{j=1}^b(τβ)_{ij}+\frac1{bn}\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}-μ-\frac1{a}\sum\limits_{i=1}^aτ_i-\frac1{b}\sum\limits_{j=1}^bβ_j-\frac1{ab}\sum\limits_{i=1}^a\sum\limits_{j=1}^b(τβ)_{ij}-\frac1{abn}\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}$ 
 
-$τ_i+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}=τ_i+\bar ε_{i..}-\bar ε_{ijk}$
+$=τ_i+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}=τ_i+\bar ε_{i..}-\bar ε_{ijk}$
+
+ ---
 
 For $τ_i$ is a constant of the $i^th$ treatment, $E{τ_i}=τ_i,V{τ_i}=0$,
 
 $E[\bar y_{i..}-\bar y_{...}]=E[τ_i+\bar ε_{i..}-\bar ε_{ijk}]=τ_i+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nE[ε_{ijk}]-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[ε_{ijk}]=\tau_i$
 
+ ---
 For $τ_i$ and $ε_{ijk}$ are independent. $Cov\left[τ_i,\bar ε_{i..}\right]=Cov[τ_i,\bar ε_{...}]=0$,
 
-for $ε_{ijk}\sim iidN(0,σ^2)$, $Cov\left[ε_{ijk},\sum_{i=1}^aε_{ijk}\right]=\sigma^2$,
+for $ε_{ijk}\sim iidN(0,σ^2)$, $Cov\left[ε_{ijk},\sum_{i=1}^aε_{ijk}\right]=\sigma^2$, $V[\bar y_{i..}-\bar y_{...}]=$
 
-$$V[\bar y_{i..}-\bar y_{...}]=V[τ_i+\bar ε_{i..}-\bar ε_{ijk}]=V[\tau_i]+V[\frac1{bn}{\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}}]+V[\frac1{abn}{\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}}]+2Cov[τ_i,\bar ε_{i..}]-2Cov[τ_i,\bar ε_{...}]-2Cov[\bar ε_{i..},\bar ε_{...}]$$
+$$V[τ_i+\bar ε_{i..}-\bar ε_{ijk}]=V[\tau_i]+V[\frac1{bn}{\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}}]+V[\frac1{abn}{\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}}]+2Cov[τ_i,\bar ε_{i..}]-2Cov[τ_i,\bar ε_{...}]-2Cov[\bar ε_{i..},\bar ε_{...}]$$
 
 $=0+\frac{σ^2}{bn}+\frac{σ^2}{abn}+0-0-2Cov\left[\frac1{bn}{\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}},\frac1{abn}{\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^nε_{ijk}}\right]=\frac{σ^2}{bn}+\frac{σ^2}{abn}-\frac{2}{ab^2n^2}\sum\limits_{j=1}^b\sum\limits_{k=1}^nCov[ε_{ijk},\sum\limits_{i=1}^aε_{ijk}]$
 
 $=\frac{σ^2}{bn}+\frac{σ^2}{abn}-\frac{2}{ab^2n^2}\sum\limits_{j=1}^b\sum\limits_{k=1}^nσ^2=\frac{a-1}{abn}σ^2$
+
+ ---
 
 For $E[X^2]=E[X]^2+V[X]$, therefore,
 
