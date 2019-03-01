@@ -1255,7 +1255,8 @@ p^2\bar y_{...l}=p^2\hatμ+0+0+0+p^2\hatδ_l \end{array}\right.
 <ol start="5" style="list-style-type: lower-alpha">
 <li>Include that estimated missing value in the given data file appropriately and obtain an ANOVA table for this design. Report ONLY the ANOVA table here.</li>
 </ol>
-<pre><code>##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+<pre class="r"><code>summary(aov(y~trt+blk,data=table_complete))
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
 ## trt          3  486.3  162.08   1.055  0.435
 ## blk          2   79.2   39.58   0.258  0.781
 ## Residuals    6  921.5  153.58</code></pre>
@@ -1264,27 +1265,45 @@ p^2\bar y_{...l}=p^2\hatμ+0+0+0+p^2\hatδ_l \end{array}\right.
 <li>Now, adjust the degrees of freedom for error in the ANOVA table for one missing value. (See the Chapter 4 note). And use adjusted df of error to compute the correct p-value for testing significance of treatments.</li>
 </ol>
 <p><span class="math display">\[F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}=0.8794357\]</span></p>
-<pre><code>## [1] 0.5111382</code></pre>
+<pre class="r"><code>1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
+## [1] 0.5111382</code></pre>
 <p>Write your conclusion based on your p value and report the p value here.</p>
-<p><span class="math inline">\(P_{adj}=0.5111382&gt;P_0=0.435\)</span></p>
+<p>Both of the ANOVA for RCBD of original data and adjusted data show that 4 treatments have not significant effects on the average values of cracking in the pavement at 0.05 significant level. The P-value for treatment with missing observation is 0.435 while adjusted P-value is 0.5111 and 0.5141 in two methods. We find the P-value in the Apporximation method is smaller than the Exact method because the first method is that minimizing only <span class="math inline">\(SSE\)</span> may increasing <span class="math inline">\(SS_{Trt}\)</span> and hence it is more likely to conclude effects are significant when they are actually not.</p>
+<p><span class="math inline">\(P_{adj2}=0.5111&gt;P_{adj1}=0.5141&gt;P_0=0.435\)</span></p>
 <hr />
 <ol start="7" style="list-style-type: lower-alpha">
 <li>The second method of analyzing data with missing value is extra (partial) sum of squares method. Fit a multiple linear regression model and obtain the extra (partial) sum of squares for treatments. If you forgot how to do this, look at regression analysis labs and notes.</li>
 </ol>
 <p>Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.</p>
 <p><span class="math display">\[F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1403.7-921.5}{184.30*(a-1)}=0.8721288\]</span></p>
-<pre><code>## [1] 0.5141271</code></pre>
+<pre class="r"><code>1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
+## [1] 0.5141271</code></pre>
 <hr />
 <ol start="8" style="list-style-type: lower-alpha">
 <li>Report the complete code along with output here.</li>
 </ol>
 <pre class="r"><code>table_miss1 &lt;- tibble(y=c(NA,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;),3),blk=c(rep(&quot;Block1&quot;,4),rep(&quot;Block2&quot;,4),(rep(&quot;Block3&quot;,4))))
 summary(aov(y~trt+blk,data=table_miss1))
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## trt          3  500.2  166.73   0.905  0.501
+## blk          2   62.5   31.25   0.170  0.849
+## Residuals    5  921.5  184.30               
+## 1 observation deleted due to missingness
 summary(aov(y~blk,data=table_miss1))
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## blk          2   80.5   40.26   0.229    0.8
+## Residuals    8 1403.7  175.46               
+## 1 observation deleted due to missingness
 table_complete &lt;- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;,&quot;D&quot;),3),blk=c(rep(&quot;Block1&quot;,4),rep(&quot;Block2&quot;,4),(rep(&quot;Block3&quot;,4))))
 summary(aov(y~trt+blk,data=table_complete))
+##             Df Sum Sq Mean Sq F value Pr(&gt;F)
+## trt          3  486.3  162.08   1.055  0.435
+## blk          2   79.2   39.58   0.258  0.781
+## Residuals    6  921.5  153.58
 1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
+## [1] 0.5111382
 1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
+## [1] 0.5141271
 # qf(0.95, 3, 6, lower.tail = TRUE, log.p = FALSE)</code></pre>
 </div>
 <div id="problem-2-4.2227" class="section level3">
@@ -1304,7 +1323,9 @@ summary(aov(y~trt+blk,data=table_complete))
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Obtain the ANOVA table for this study and report it here.</li>
 </ol>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+<pre class="r"><code>model_ingredients &lt;- aov(y~Trt+Day+Batch,data =table_ingredients)
+summary(model_ingredients)
+##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
 ## Trt          4 141.44   35.36  11.309 0.000488 ***
 ## Day          4  12.24    3.06   0.979 0.455014    
 ## Batch        4  15.44    3.86   1.235 0.347618    
@@ -1315,11 +1336,95 @@ summary(aov(y~trt+blk,data=table_complete))
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Test whether ingredients have a significant effect on the reaction time at α=0.05. Report your conclusion and p value here.</li>
 </ol>
-<p>0.000488</p>
+<p>The ANOVA for RCBD shows that ingredients have significant effects on the average values of reaction time at 0.05 significant level. The P-value of 0.000488 for treatment is samll enough.</p>
 <hr />
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.</li>
 </ol>
+<p>The reaults of TukeyLSD test show that batches have not significant differents on the average values of reaction time at 0.05 significant level. The P-value of all the paired comparing among batches is large enough.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>diff</th>
+<th>lwr</th>
+<th>upr</th>
+<th>p adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2-1</td>
+<td>1.0</td>
+<td>-2.564608</td>
+<td>4.564608</td>
+<td>0.8936609</td>
+</tr>
+<tr class="even">
+<td>3-1</td>
+<td>0.6</td>
+<td>-2.964608</td>
+<td>4.164608</td>
+<td>0.9816047</td>
+</tr>
+<tr class="odd">
+<td>4-1</td>
+<td>2.0</td>
+<td>-1.564608</td>
+<td>5.564608</td>
+<td>0.4225127</td>
+</tr>
+<tr class="even">
+<td>5-1</td>
+<td>-0.2</td>
+<td>-3.764608</td>
+<td>3.364608</td>
+<td>0.9997349</td>
+</tr>
+<tr class="odd">
+<td>3-2</td>
+<td>-0.4</td>
+<td>-3.964608</td>
+<td>3.164608</td>
+<td>0.9960012</td>
+</tr>
+<tr class="even">
+<td>4-2</td>
+<td>1.0</td>
+<td>-2.564608</td>
+<td>4.564608</td>
+<td>0.8936609</td>
+</tr>
+<tr class="odd">
+<td>5-2</td>
+<td>-1.2</td>
+<td>-4.764608</td>
+<td>2.364608</td>
+<td>0.8166339</td>
+</tr>
+<tr class="even">
+<td>4-3</td>
+<td>1.4</td>
+<td>-2.164608</td>
+<td>4.964608</td>
+<td>0.7232162</td>
+</tr>
+<tr class="odd">
+<td>5-3</td>
+<td>-0.8</td>
+<td>-4.364608</td>
+<td>2.764608</td>
+<td>0.9489243</td>
+</tr>
+<tr class="even">
+<td>5-4</td>
+<td>-2.2</td>
+<td>-5.764608</td>
+<td>1.364608</td>
+<td>0.3365811</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <ol start="5" style="list-style-type: lower-alpha">
 <li>Provide all the necessary residual plots here and use them to explain whether assumptions about the model for this design are valid or not.</li>

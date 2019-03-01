@@ -821,7 +821,7 @@ addmargins(table_miss0, margin =c(1,2), FUN = mean, quiet =T)
 table_complete <- tibble(y=c(34,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
 glimpse(table_complete)
 ```
-```{r echo=FALSE}
+```{r collapse=T}
 summary(aov(y~trt+blk,data=table_complete))
 ```
 
@@ -831,13 +831,15 @@ summary(aov(y~trt+blk,data=table_complete))
 
 $$F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}=0.8794357$$
 
-```{r echo=FALSE}
+```{r collapse=T}
 1-pf(0.8794357, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
 Write your conclusion based on your p value and report the p value here.
+
+Both of the ANOVA for RCBD of original data and adjusted data show that 4 treatments have not significant effects on the average values of cracking in the pavement at 0.05 significant level. The P-value for treatment with missing observation is 0.435 while adjusted P-value is 0.5111 and 0.5141 in two methods. We find the P-value in the Apporximation method is smaller than the Exact method because the first method is that minimizing only $SSE$ may increasing $SS_{Trt}$ and hence it is more likely to conclude effects are significant when they are actually not.
 	
-$P_{adj}=0.5111382>P_0=0.435$
+$P_{adj2}=0.5111>P_{adj1}=0.5141>P_0=0.435$
 
  ---
 
@@ -847,7 +849,7 @@ Test whether treatment is a significant factor using extra (partial) SS F test. 
 	
 $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1403.7-921.5}{184.30*(a-1)}=0.8721288$$
 
-```{r echo=FALSE}
+```{r collapse=T}
 1-pf(0.8721288, 3, 5, lower.tail = TRUE, log.p = FALSE)
 ```
 
@@ -855,7 +857,7 @@ $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full
 
  (h) Report the complete code along with output here.
 
-```{r eval=FALSE}
+```{r collapse=T}
 table_miss1 <- tibble(y=c(NA,32,27,36,38,40,43,33,40,63,14,27),trt=rep(c("A","B","C","D"),3),blk=c(rep("Block1",4),rep("Block2",4),(rep("Block3",4))))
 summary(aov(y~trt+blk,data=table_miss1))
 summary(aov(y~blk,data=table_miss1))
@@ -888,7 +890,7 @@ ggplot(table_ingredients,aes(Trt,y))+geom_point(aes(size=Day,shape=Batch))+theme
 
  (b) Obtain the ANOVA table for this study and report it here.
 
-```{r echo=FALSE}
+```{r collapse=T}
 model_ingredients <- aov(y~Trt+Day+Batch,data =table_ingredients)
 summary(model_ingredients)
 ```
@@ -897,14 +899,26 @@ summary(model_ingredients)
 
  (c) Test whether ingredients have a significant effect on the reaction time at α=0.05. Report your conclusion and p value here.
 
-
-0.000488
+The ANOVA for RCBD shows that ingredients have significant effects on the average values of reaction time at 0.05 significant level. The P-value of 0.000488 for treatment is samll enough.
 
  ---
 
  (d) Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.
 
+The reaults of TukeyLSD test show that batches have not significant differents on the average values of reaction time at 0.05 significant level. The P-value of all the paired comparing among batches is large enough.
 
+|   |diff      |lwr     |upr    |p adj
+|---|---       |---     |---    |---
+2-1|1.0|-2.564608|4.564608|0.8936609
+3-1|0.6|-2.964608|4.164608|0.9816047
+4-1|2.0|-1.564608|5.564608|0.4225127
+5-1|-0.2|-3.764608|3.364608|0.9997349
+3-2|-0.4|-3.964608|3.164608|0.9960012
+4-2|1.0|-2.564608|4.564608|0.8936609
+5-2|-1.2|-4.764608|2.364608|0.8166339
+4-3|1.4|-2.164608|4.964608|0.7232162
+5-3|-0.8|-4.364608|2.764608|0.9489243
+5-4|-2.2|-5.764608|1.364608|0.3365811
 
  ---
 
