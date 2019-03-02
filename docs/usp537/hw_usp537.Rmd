@@ -458,9 +458,7 @@ $V_{bus}=-0.08TT_{bus}-0.10WT_{bus}-0.65Fare_{bus}$
 
 where $V_{auto}$ and $V_{bus}$ are the systematic utilities of auto and bus respectively; $TT_{auto}$ is the travel time for mode (in minutes); $Income_{HH}$ is the household annual income (in dollars); $Cost_{parking}$ and $Fare_{bus}$ are in dollars; $TT_{bus}$ is the travel time for the bus (in minutes); $WT_{bus}$is the waiting time for bus (in minutes). For simplicity let’s assume average waiting time to be half the headway. 
 
-Table 1 shows the characteristics of work trips for two population segments. (Think of segment A as people living near the center of a city and segment B as people living in the the the suburbs. People in bothboth segments all work in the downtown area.) 
-
-Table 1: Characteristics of work trips for two population segments
+Table 1 shows the characteristics of work trips for two population segments. (Think of segment A as people living near the center of a city and segment B as people living in the the the suburbs. People in both segments all work in the downtown area.) 
 
 ||Segment|A|Segment|B|
 | --- | --- | --- | --- | :--- |
@@ -477,7 +475,7 @@ $V_{auto}=\begin{cases}-0.05-0.08\times25-0.105\times3.00+0.00001\times40000=-1.
  
 $V_{bus}=\begin{cases}-0.08\times40-0.10\times\frac{15}2-0.65\times0.85=-4.5025 & \text{Segment A} \\-0.08\times60-0.10\times\frac{20}2-0.65\times2.00=-7.1 & \text{Segment B} \end{cases}$
  
-$P_{auto}=\frac{e^{V_{auto}}}{e^{V_{auto}}+e^{V_{bus}}}=\begin{cases} \frac{e^{-1.965}}{e^{-1.965}+e^{-4.5025}}=0.9267293=92.67293\% & \text{Segment A} \\\frac{e^{-3.29}}{e^{-3.29}+e^{-7.1}}=0.9783317=97.83317\%& \text{Segment B} \end{cases}$
+$P_{auto}=\frac{\mathrm{e}^{V_{auto}}}{\mathrm{e}^{V_{auto}}+\mathrm{e}^{V_{bus}}}=\begin{cases} \frac{\mathrm{e}^{-1.965}}{\mathrm{e}^{-1.965}+\mathrm{e}^{-4.5025}}=0.9267293=92.67293\% & \text{Segment A} \\\frac{\mathrm{e}^{-3.29}}{\mathrm{e}^{-3.29}+\mathrm{e}^{-7.1}}=0.9783317=97.83317\%& \text{Segment B} \end{cases}$
 ```{r eval=FALSE, include=FALSE}
 -0.05-0.08*25-0.105*3.00+0.00001*40000
 -0.05-0.08*40-0.105*8.00+0.00001*80000
@@ -493,11 +491,12 @@ The probabilities of choosing auto for a work trip for an individual belonging t
  
  b. In order to increase transit ridership, the local transport authority is considering the following options:
 
+
   i. Reducing the fare by 50 cents in both segments.
 
 $V'_{bus}=\begin{cases}-0.08\times40-0.10\times\frac{15}2-0.65\times(0.85-0.50)=-4.1775 & \text{Segment A} \\-0.08\times60-0.10\times\frac{20}2-0.65\times(2.00-0.50)=-6.775 & \text{Segment B} \end{cases}$
 
-$P'_{bus}=\frac{e^{V'_{bus}}}{e^{V_{auto}}+e^{V'_{bus}}}=\begin{cases} \frac{e^{-4.1775}}{e^{-1.965}+e^{-4.1775}}=0.09863359=9.863359\% & \text{Segment A} \\\frac{e^{-6.775}}{e^{-3.29}+e^{-6.775}}=0.02974205=2.974205\%& \text{Segment B} \end{cases}$
+$P'_{bus}=\frac{\mathrm{e}^{V'_{bus}}}{\mathrm{e}^{V_{auto}}+\mathrm{e}^{V'_{bus}}}=\begin{cases} \frac{\mathrm{e}^{-4.1775}}{\mathrm{e}^{-1.965}+\mathrm{e}^{-4.1775}}=0.09863359=9.863359\% & \text{Segment A} \\\frac{\mathrm{e}^{-6.775}}{\mathrm{e}^{-3.29}+\mathrm{e}^{-6.775}}=0.02974205=2.974205\%& \text{Segment B} \end{cases}$
 
 $\Delta P_{bus}=P'_{bus}-(1-P_{auto})=\begin{cases} 9.863359\%-(1-92.67293\%)=2.536289\% & \text{Segment A} \\2.974205\%-(1-97.83317\%)=0.807375\% & \text{Segment B} \end{cases}$
 
@@ -516,7 +515,7 @@ exp(-6.775)/(exp(-3.29)+exp(-6.775))
 
 $V''_{bus}=\begin{cases}-0.08\times40-0.10\times\frac{15}4-0.65\times0.85=-4.1275 & \text{Segment A} \\-0.08\times60-0.10\times\frac{20}4-0.65\times2.00=-6.6 & \text{Segment B} \end{cases}$
 
-$P''_{bus}=\frac{e^{V''_{bus}}}{e^{V_{auto}}+e^{V''_{bus}}}=\begin{cases} \frac{e^{-4.1275}}{e^{-1.965}+e^{-4.1275}}=0.1031689=10.31689\% & \text{Segment A} \\\frac{e^{-6.6}}{e^{-3.29}+e^{-6.6}}=0.03522972=3.522972\%& \text{Segment B} \end{cases}$
+$P''_{bus}=\frac{\mathrm{e}^{V''_{bus}}}{\mathrm{e}^{V_{auto}}+\mathrm{e}^{V''_{bus}}}=\begin{cases} \frac{\mathrm{e}^{-4.1275}}{\mathrm{e}^{-1.965}+\mathrm{e}^{-4.1275}}=0.1031689=10.31689\% & \text{Segment A} \\\frac{\mathrm{e}^{-6.6}}{\mathrm{e}^{-3.29}+\mathrm{e}^{-6.6}}=0.03522972=3.522972\%& \text{Segment B} \end{cases}$
 
 $\Delta P_{bus}=P''_{bus}-(1-P_{auto})=\begin{cases} 9.863359\%-(1-92.67293\%)=2.98982\% & \text{Segment A} \\2.974205\%-(1-97.83317\%)=1.356142\% & \text{Segment B} \end{cases}$
 
@@ -536,7 +535,7 @@ For each population segment, how will each of these strategies affect transit ri
 
 $V'_{auto}=\begin{cases}-0.05-0.08\times25-0.105\times3.00\times1.5+0.00001\times40000=-2.1225 & \text{Segment A} \\-0.05-0.08\times40-0.105\times8.00\times1.5+0.00001\times80000=-3.71 & \text{Segment B} \end{cases}$
 
-$P'_{auto}=\frac{e^{V'_{auto}}}{e^{V'_{auto}}+e^{V_{bus}}}=\begin{cases} \frac{e^{-2.1225}}{e^{-2.1225}+e^{-4.5025}}=0.9152894=91.52894\% & \text{Segment A} \\\frac{e^{-3.71}}{e^{-3.71}+e^{-7.1}}=0.9673905=96.73905\%& \text{Segment B} \end{cases}$
+$P'_{auto}=\frac{\mathrm{e}^{V'_{auto}}}{\mathrm{e}^{V'_{auto}}+\mathrm{e}^{V_{bus}}}=\begin{cases} \frac{\mathrm{e}^{-2.1225}}{\mathrm{e}^{-2.1225}+\mathrm{e}^{-4.5025}}=0.9152894=91.52894\% & \text{Segment A} \\\frac{\mathrm{e}^{-3.71}}{\mathrm{e}^{-3.71}+\mathrm{e}^{-7.1}}=0.9673905=96.73905\%& \text{Segment B} \end{cases}$
 
 $\Delta P_{bus}=-\Delta P_{auto}=P_{auto}-P'_{auto}=\begin{cases} 92.67293\%-91.52894\%=1.14399\% & \text{Segment A} \\97.83317\%-96.73905\%=1.09412\% & \text{Segment B} \end{cases}$
 
@@ -561,7 +560,7 @@ According to the model, other possible policies include changing the travel time
  
  d. What monetary value of bus travel time, measured in dollars per hour, is implied by the coefficients of this model?
 
-$VOT =\frac{\Delta V}{\Delta t}\frac{\Delta c}{\Delta V}=\frac{-0.08}{-0.65}\times60=7.384615$\$/hour
+$VOT =\frac{\frac{\Delta V_{bus}}{\Delta TT_{bus}}}{\frac{\Delta V_{bus}}{\Delta Fare_{bus}}}=\frac{-0.08}{-0.65}\times60=7.384615$ \$/hour
 
 In this model, bus fare instead of $\frac{cost}{wage}$ measures the systematic utilities per dollar. The monetary value of bus travel time is 7.384615 \$/hour.
 
@@ -598,12 +597,10 @@ curve(500-40*x, 0, 5,add = TRUE);text(2.5,250, "coffee
 0-5");points(5,300, pch =1)
 curve(400-20*x, 5,100/9,add = TRUE);text(8,200, "tea
 5-11.11");points(100/9,1600/9, pch =2)
-curve(200-2*x, 100/9,125,add = TRUE);text(15,120, "wheat
-11.11-125")
+curve(200-2*x, 100/9,100,add = TRUE);text(15,120, "wheat
+11.11-100")
 abline(v=5, lty=3);abline(v=100/9, lty=3)
 ```
-
- ---
  
  b. Land Owner owns 100 acres of land 15 miles from the port. What is the annual rental income? If the interest rate is 5% per year and all prices and costs are expected to remain the same forever, what is the market value of the land?
 
@@ -611,7 +608,7 @@ For wheat is grown in the land 15 miles from the port, then
 
 $R_{wheat}S=(200-2\times15)\times100=\$17000$
 
-$MV=\frac{R_{wheat}S}i=\frac{\$17000}{0.05}=\$340000$
+$MV=\frac{SR_{wheat}}i=\frac{\$17000}{0.05}=\$340000$
 
  ---
  
@@ -627,8 +624,6 @@ For given $D$ is a positive, $R'>R$ , the rents will higher than before. For the
 After subsidy, tea is grown in the land 15 miles from the port, then $MV'=\frac{(400-10\times15)\times100}{0.05}=\$500000$.
 
 The results show that the subsidy will transfer to the land value. The farmers have to pay more rent. Only the land owners can benefit from the subsidy.
-
- ---
  
  d. What happens in (c) if all prices for output fall by 50% as well?
 
@@ -639,7 +634,25 @@ R''_{wheat}=\frac{100}{0.5\times2}-\frac{1D}{0.5\times2}=100-D& D\in[0,100]
 
 The results show that the proportional changes of rent result same land use distribution as the beginning. Wheat is grown in the land 15 miles from the port, $R''=\frac12R=\$8500$, $MV''=\frac12MV=\$170000$.  
 
- ---
+```{r echo=FALSE, out.width='40%',fig.show='hold'}
+plot(c(0,25), c(0,500),xlab ="D", ylab ="R",xaxs = "i",yaxs = "i",main = "50% tranport costs")
+curve(500-20*x, 0, 10,add = TRUE);text(5,250, "coffee
+0-10");points(10,300, pch =1)
+curve(400-10*x, 10,200/9,add = TRUE);text(15,200, "tea
+10-22");points(200/9,1600/9, pch =2)
+curve(200-x, 200/9,100,add = TRUE);text(23,120, "wheat
+22-200")
+abline(v=10, lty=3);abline(v=200/9, lty=3)
+
+plot(c(0,25), c(0,500),xlab ="D", ylab ="R",xaxs = "i",yaxs = "i",main = "50% tranport costs and 50% price for output")
+curve(250-20*x, 0, 5,add = TRUE);text(2.5,120, "coffee
+0-5");points(5,150, pch =1)
+curve(200-10*x, 5,100/9,add = TRUE);text(8,80, "tea
+5-11");points(100/9,800/9, pch =2)
+curve(100-x, 100/9,100,add = TRUE);text(15,40, "wheat
+11-100")
+abline(v=5, lty=3);abline(v=100/9, lty=3)
+```
  
  e. Describe the potential impacts on land use if investments were made to the transportation infrastructure (increasing highway lanes) such that transportation costs are lowered.
  
