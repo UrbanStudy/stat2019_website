@@ -704,43 +704,75 @@ Therefore, $\hat\theta_{MOM}=\frac{\sum_{i=1}^nX_i}{n-\sum_{i=1}^nX_i}$
 
 **5.59** Prove that the algorithm of Example 5.6.7 generates a $Beta(a,b)$ random variable.
 
-Example 5.6.7 (Beta random variable generation-I) Suppose the goal is to
-generate Y IV beta(a, b). If both a and b are integers, then the direct transformation
-method (5.6.5) can be used.
+From Example 5.6.7 (Beta random variable generation-I), to generate $Y\sim beta(a, b)$. If both a and b are integers, use the direct transformation method (5.6.5). Set $U_j$ are iid $uniform(O,1)$ random variables, then
 
+$$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$$
 
-$$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^a\ln U_j}\sim Beta(a,b)$$
+If both a and b are not integers, To generate $Y\sim beta(a, b)$: a. Generate $(U,V)$ independent $uniform(0,1)$. b. If $U<\frac1cf_Y(V)$, set $Y=V$; otherwise, return to step (a). Which means $F_Y(y)=F(V|U)$
 
 $$P(Y\le y)= P(V\le y|U<\frac1cf_Y(V))=\frac{P(V\le y,U<\frac1cf_Y(V))}{P(U<\frac1cf_Y(V))}=\frac{\int^y_0\int^{\frac1cf_Y(v)}_0 dudv}{\frac1c}=\frac{\frac1c\int^y_0f_Y(v)dv}{\frac1c}=\int_0^y f_Y(v)dv$$
 
+As long as $c\ge\max_{y}f_Y(y)$, $F_Y(y)=\int_0^yf_Y(t)dt$. By the definition 1.6.3 (pdf) , this algorithm generates a $beta(a,b)$ random variable.
+
  ---
 
-**5.60** Generalize the algorithm of Example 5.6.7 to apply to any bounded pdf; that is, for an arbitrary bounded pdf $f(x)$ on $[a, b]$, define $c=\max\limits_{a\le x\le b}f(x)$. Let $X$ and $Y$ be independent, with $X \sim Uni(a, b)$ and $Y\sim uni(0,c)$. Let $d$ be a number greater than $b$, and define a new random variable $W=\begin{cases}X&\text{if }Y<f(X)\\d&\text{if }Y\ge f(X)\end{cases}$.
+**5.60** Generalize the algorithm of Example 5.6.7 to apply to any bounded pdf; that is, for an arbitrary bounded pdf $f(x)$ on $[a, b]$, define $c=\max\limits_{a\le x\le b}f(x)$. Let $X$ and $Y$ be independent, with $X \sim Uni(a, b)$ and $Y\sim Uni(0,c)$. Let $d$ be a number greater than $b$, and define a new random variable $W=\begin{cases}X&\text{if }Y<f(X)\\d&\text{if }Y\ge f(X)\end{cases}$.
 
  (a). Show that $P(W\le w)=\int_a^w\frac{f(t)dt}{c(b-a)}$ for $a\le x\le b$.
 
+$f_X(x)=\frac1{b-a},\int_a^bf_X(x)dx=1$, $f_Y(y)=\frac1{c},\int_0^cf_Y(y)dy=1$. Set $w=b$, then we have $P(Y<f(X))=f_X(x)f_Y(y)=\frac1{c(b-a)}$.
+
+$F_W(w)=F(X|Y)$.
+
+$$P(W\le w)= P(a\le X\le w|Y<f(X))=\frac{P(a\le X\le w,Y<f(X))}{P(Y<f(X))}=\frac{\int^w_a\int^{f(x)}_0 dydx}{c(b-a)}=\frac{\int^w_af(x)dx}{c(b-a)}=\frac1{c(b-a)}\int_a^w f(x)dx$$
 
  (b). Using part (a), explain how a random variable with pdf $f(x)$ can be generated. (Hint: Use a geometric argument; a picture will help.)
 
+
+
+As long as $c\ge\max\limits_{a\le x\le b}f(x)$, $F_W(w)=\frac1{c(b-a)}\int_a^w f(t)dt$. By the definition 1.6.3 (pdf) , this algorithm generates a random variable with pdf $f(x)$ from the uniform random variables.
+
+So we can calculate the beta probabilities from the uniform probabilities, which suggests that we can generate the beta random variable 
+
+```{r echo=FALSE, out.width='40%',collapse=T}
+plot(c(0,1), c(0,3), type = "n",main="beta(2.7,6.3)",xlab ="x", ylab ="y")
+curve(dbeta(x,2.7,6.3, ncp = 0, log = FALSE),0,1,add =T)
+abline(h=dbeta((2.7-1)/(2.7+6.3-2),2.7,6.3, ncp = 0, log = FALSE),lty=3)
+abline(v=(2.7-1)/(2.7+6.3-2),lty=2);abline(v=0.5,lty=2)
+
+dbeta(0.2428571,2.7,6.3, ncp = 0, log = FALSE)
+qbeta(1/2.669744,2.7,6.3, ncp = 0, lower.tail = TRUE, log.p = FALSE)
+1-pbeta(1/2.669744,2.7,6.3, ncp = 0, lower.tail = TRUE, log.p = FALSE)
+
+plot(c(0,1), c(0,3), type = "n",main="beta(2,5)",xlab ="x", ylab ="y")
+curve(dbeta(x,2,5, ncp = 0, log = FALSE),0,1,add =T)
+abline(h=dbeta((2-1)/(2+5-2),2,5, ncp = 0, log = FALSE),lty=3);text(0,2.5, "c", col = 2, adj = c(0,0))
+abline(v=(2-1)/(2+5-2),lty=2);text(0.2,0, "1/b", col = 2, adj = c(-.1,0));abline(v=1/2,lty=2);text(0.5,0, "1/a", col = 2, adj = c(-.1,0))
+
+dbeta(0.3291,2,5, ncp = 0, log = FALSE)
+qbeta(1/2,2,5, ncp = 0, lower.tail = TRUE, log.p = FALSE)
+pbeta(1/2,2,5, ncp = 0, lower.tail = TRUE, log.p = FALSE)
+
+plot(c(0,10), c(0,0.5), type = "n",main="Geom(1/2.5)",xlab ="n", ylab ="p")
+points(c(0:20),dgeom(c(0:20), 1/2.5, log = FALSE))
+lines(c(0:20), dgeom(c(0:20), 1/2.5, log = FALSE), col = 2)
+```
 
  ---
 
 **7.22** This exercise will prove the assertions in **Example 7.2.16 (Normal Bayes estimators)**, and more. Let $X_1,..,X_n$ be a random sample from a $n(\theta,\sigma^2)$ population, and suppose that the prior distribution on $\theta$ is $n(\mu,\tau^2)$. Here we assume that $\sigma^2, \mu, \tau^2$ are all known. The posterior distribution of $\theta$ is also normal, with mean and variance given by
 
-$$E[\theta|x]=\frac{\tau^2}{\tau^2+\sigma^2}x+\frac{\sigma^2}{\sigma^2+\tau^2}\mu$$
-
-$$V[\theta|x]=\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}$$
-
-That is $$f(\theta|x)\sim N(\frac{\tau^2x+\sigma^2\mu}{\tau^2+\sigma^2},\frac{\sigma^2\tau^2}{\sigma^2+\tau^2})$$
+$$f(\theta|x)\sim N(\frac{\tau^2x+\sigma^2\mu}{\tau^2+\sigma^2},\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}),\quad E[\theta|x]=\frac{\tau^2}{\tau^2+\sigma^2}x+\frac{\sigma^2}{\sigma^2+\tau^2}\mu,\quad V[\theta|x]=\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}$$
 
  (a). Find the joint pdf of $\bar X$ and $\theta$. 
- 
  
 $$f(\bar x,\theta)=f(\bar x|\theta)\pi(\theta)=\frac{1}{\sqrt{2\pi\frac{\sigma^2}n}} e^{-\frac{(\bar x-\theta)^2}{2\frac{\sigma^2}n}}\cdot\frac{1}{\sqrt{2\pi\tau^2}} e^{-\frac{(\theta-\mu)^2}{2\tau^2}}$$
  
  ---
  
  (b). Show that $m(\bar x|\sigma^2,\mu,\tau^2)$, the marginal distribution of $\bar X$, is $n(\mu,\frac{\sigma^2}n+\tau^2)$.
+
+
 
  - the left-bottom part in (a)
 
@@ -773,11 +805,9 @@ Therefore,
 $$m(\bar x|\sigma^2,\mu,\tau^2)\sim N\left(\mu,(\tau^2+\frac{\sigma^2}n)\right)$$
 
 
-
-
  (c). Show that $\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)$, the posterior distribution of $\theta$, is normal with mean and variance given by (7.2.10).
 
-Theorem 7.2.10 (Invariance property of MLEs) If $\hat\theta$ is the $MLE$ of $\theta$, then for any function $\tau(\theta)$, the $MLE$ of $\tau(\theta)$ is $\tau(\hat\theta)$.
+From Theorem 7.2.10 (Invariance property of MLEs), If $\hat\theta$ is the $MLE$ of $\theta$, then for any function $\tau(\theta)$, the $MLE$ of $\tau(\theta)$ is $\tau(\hat\theta)$.
 
 $$\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)\sim N\left(\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n},\frac{2\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}\right)$$
 

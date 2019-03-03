@@ -492,13 +492,15 @@ The probabilities of choosing auto for a work trip for an individual belonging t
  b. In order to increase transit ridership, the local transport authority is considering the following options:
 
 
-  ii. Reducing the fare by 50 cents in both segments.
+  i. Reducing the fare by 50 cents in both segments.
 
 $V'_{bus}=\begin{cases}-0.08\times40-0.10\times\frac{15}2-0.65\times(0.85-0.50)=-4.1775 & \text{Segment A} \\-0.08\times60-0.10\times\frac{20}2-0.65\times(2.00-0.50)=-6.775 & \text{Segment B} \end{cases}$
 
 $P'_{bus}=\frac{\mathrm{e}^{V'_{bus}}}{\mathrm{e}^{V_{auto}}+\mathrm{e}^{V'_{bus}}}=\begin{cases} \frac{\mathrm{e}^{-4.1775}}{\mathrm{e}^{-1.965}+\mathrm{e}^{-4.1775}}=0.09863359=9.863359\% & \text{Segment A} \\\frac{\mathrm{e}^{-6.775}}{\mathrm{e}^{-3.29}+\mathrm{e}^{-6.775}}=0.02974205=2.974205\%& \text{Segment B} \end{cases}$
 
 $\Delta P_{bus}=P'_{bus}-(1-P_{auto})=\begin{cases} 9.863359\%-(1-92.67293\%)=2.536289\% & \text{Segment A} \\2.974205\%-(1-97.83317\%)=0.807375\% & \text{Segment B} \end{cases}$
+
+$\frac{\Delta P_{busA}}{\Delta P_{busB}}=\frac{2.536289\%}{0.807375\%}=3.141401$
 
 ```{r eval=FALSE, include=FALSE}
 -0.08*40-0.10*15/2-0.65*(0.85-0.50)
@@ -507,6 +509,8 @@ exp(-4.1775)/(exp(-1.965)+exp(-4.1775))
 exp(-6.775)/(exp(-3.29)+exp(-6.775))
 9.863359-(100-92.67293)
 2.974205-(100-97.83317)
+(9.863359-(100-92.67293))/(2.974205-(100-97.83317))
+
 ```
 
  ---
@@ -519,6 +523,8 @@ $P''_{bus}=\frac{\mathrm{e}^{V''_{bus}}}{\mathrm{e}^{V_{auto}}+\mathrm{e}^{V''_{
 
 $\Delta P_{bus}=P''_{bus}-(1-P_{auto})=\begin{cases} 9.863359\%-(1-92.67293\%)=2.98982\% & \text{Segment A} \\2.974205\%-(1-97.83317\%)=1.356142\% & \text{Segment B} \end{cases}$
 
+$\frac{\Delta P_{busA}}{\Delta P_{busB}}=\frac{2.98982\%}{1.356142\%}=2.204651$
+
 ```{r eval=FALSE, include=FALSE}
 -0.08*40-0.10*15/4-0.65*0.85
 -0.08*60-0.10*20/4-0.65*2.00
@@ -526,6 +532,7 @@ exp(-4.1275)/(exp(-1.965)+exp(-4.1275))
 exp(-6.6)/(exp(-3.29)+exp(-6.6))
 10.31689-(100-92.67293)
 3.522972-(100-97.83317)
+(10.31689-(100-92.67293))/(3.522972-(100-97.83317))
 ```
 
  ---
@@ -539,6 +546,8 @@ $P'_{auto}=\frac{\mathrm{e}^{V'_{auto}}}{\mathrm{e}^{V'_{auto}}+\mathrm{e}^{V_{b
 
 $\Delta P_{bus}=-\Delta P_{auto}=P_{auto}-P'_{auto}=\begin{cases} 92.67293\%-91.52894\%=1.14399\% & \text{Segment A} \\97.83317\%-96.73905\%=1.09412\% & \text{Segment B} \end{cases}$
 
+$\frac{\Delta P_{busA}}{\Delta P_{busB}}=\frac{1.14399\%}{1.09412\%}=1.04558$
+
 ```{r eval=FALSE, include=FALSE}
 -0.05-0.08*25-0.105*3.00*1.5+0.00001*40000
 -0.05-0.08*40-0.105*8.00*1.5+0.00001*80000
@@ -546,9 +555,13 @@ exp(-2.1225)/(exp(-2.1225)+exp(-4.5025))
 exp(-3.71)/(exp(-3.71)+exp(-7.1))
 92.67293-91.52894
 97.83317-96.73905
+(92.67293-91.52894)/(97.83317-96.73905)
 ```
 
-Comparing the three $\Delta P_{bus}$, doubling the number of buses on each route is most effective in increasing ridership for both segments.
+Based on the results, all of the options can increase market share of transit in both segment A and B. Comparing the three $\Delta P_{bus}$, doubling the number of buses on each route is most effective in increasing ridership for both segments. It is hard to say which option is best because the cost of each option is unknown. 
+
+In this case, we can find the spatial difference of the effects between segement A and B, which may be called "location elasticity". $\frac{\Delta P_{busA}}{\Delta P_{busB}}=3.141401$ shows reducing fare in city center is much more effective than in suburb. $\frac{\Delta P_{busA}}{\Delta P_{busB}}=2.204651$ also proves doubling the number of buses in city center is better than in subrub. Meanwhile, there is not significant difference of effect between segement A and B for increasing parking costs ($\frac{\Delta P_{busA}}{\Delta P_{busB}}=1.04558$).
+
 
  ---
  
@@ -617,7 +630,7 @@ R'_{tea}=\frac{100}{0.25}-\frac{5D}{0.25\times2}=400-10D'& D'\in[0,40]\\
 R'_{wheat}=\frac{100}{0.5}-\frac{1D}{0.5\times2}=200-D'& D'\in[0,200]
 \end{cases}$$
 
-For given $D$ is a positive, $R'>R$ , the rents will higher than before. For the same rents, $D'=2D$, the coffee lands dominate the distance with the port from 0 to 10 miles; tea lands dominate the distance with the port from 10 to 22.22 miles; wheat lands dominate the distance with the port from 22.22 to 200 miles. We get to know that lower transportation cost results in larger city size.
+For given $D$ is positive, $R'>R$ , the rents will be higher than before. For the same rents, $D'=2D$, the coffee lands dominate the distance with the port from 0 to 10 miles; tea lands dominate the distance with the port from 10 to 22.22 miles; wheat lands dominate the distance with the port from 22.22 to 200 miles. We get to know that lower transportation cost results in larger city size.
 
 After subsidy, tea is grown in the land 15 miles from the port, then $MV'=\frac{(400-10\times15)\times100}{0.05}=\$500000$.
 
@@ -654,4 +667,4 @@ abline(v=5, lty=3);abline(v=100/9, lty=3)
  
  e. Describe the potential impacts on land use if investments were made to the transportation infrastructure (increasing highway lanes) such that transportation costs are lowered.
  
-The impacts on land use by transportation infrastructure are similar to that by a subsidy on transport costs. The difference is these impacts are not even. The lands are closer to highway exits will be more like to change the land use to high output industries with higher rent and land value. The new transportation infrastructure changes the time distance for different locations, which will twist the pattern of concentric rings of land use from the bid-rent model.
+The impacts on land use by transportation infrastructure are similar to that by a subsidy on transport costs. The land area for each crop will expand. The rents will be higher. The city size will be larger. The land owners will benifit from the investements. The difference is these impacts are not even. For example, the lands are closer to highway exits will be more like to change the land use to high output industries with higher rent and land value. The new transportation infrastructure changes the time distance for different locations, which will twist the pattern of concentric rings of land use from the bid-rent model.
