@@ -818,21 +818,15 @@ glimpse(table_complete)
 summary(aov(y~trt+blk,data=table_complete))
 ```
 
- (f) Now, adjust the degrees of freedom for error in the ANOVA table for one missing value. (See the Chapter 4 note). And use adjusted df of error to compute the correct p-value for testing significance of treatments.
+ (f) Now, adjust the degrees of freedom for error in the ANOVA table for one missing value. (See the Chapter 4 note). And use adjusted df of error to compute the correct p-value for testing significance of treatments. Write your conclusion based on your p value and report the p value here.
 
 $$F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}=0.8794357$$
 The adjusted P-value is 0.5111382.
 
-Write your conclusion based on your p value and report the p value here.
+Both of the ANOVA for RCBD of original data and adjusted data show that 4 treatments have not significant effects on the average values of cracking in the pavement at 0.05 significant level. The P-value for treatment with missing observation is 0.435 while adjusted P-value is 0.5111 and 0.5141 in two methods. This means we should use adjusted methods to avoid the type I error (the rejection of a true null hypothesis) for RCBD with one missing observation.
 
-Both of the ANOVA for RCBD of original data and adjusted data show that 4 treatments have not significant effects on the average values of cracking in the pavement at 0.05 significant level. The P-value for treatment with missing observation is 0.435 while adjusted P-value is 0.5111 and 0.5141 in two methods. 
+ (g) The second method of analyzing data with missing value is extra (partial) sum of squares method. Fit a multiple linear regression model and obtain the extra (partial) sum of squares for treatments. If you forgot how to do this, look at regression analysis labs and notes. Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.
 
-This means we should use adjusted methods to avoid the type I error (the rejection of a true null hypothesis) for RCBD with one missing observation.
-
- (g) The second method of analyzing data with missing value is extra (partial) sum of squares method. Fit a multiple linear regression model and obtain the extra (partial) sum of squares for treatments. If you forgot how to do this, look at regression analysis labs and notes.
- 
-Test whether treatment is a significant factor using extra (partial) SS F test. Report the p-value from extra (partial) SS F test.
-	
 $$F_0=\frac{\frac{SSE_{reduced}-SSE_{full}}{dfE_{reduced}-dfE_{full}}}{MSE_{full}}=\frac{1403.7-921.5}{184.30*(a-1)}=0.8721288$$
 
 The adjusted P-value is 0.5141271. the result shows the same conculsion with apporximation method.
@@ -868,7 +862,7 @@ table_ingredients$Day <- as.factor(table_ingredients$Day)
 table_ingredients$Batch <- as.factor(table_ingredients$Batch)
 table_ingredients$Trt <- as.factor(table_ingredients$Trt)
 glimpse(table_ingredients)
-ggplot(table_ingredients,aes(Batch,y))+geom_point(aes(shape=Day),alpha=0)+geom_text(aes(label=Day))+scale_colour_grey()+facet_grid(.~Trt)+theme_light()
+ggplot(table_ingredients,aes(Batch,y))+geom_point(aes(shape=Day,col=Trt),alpha=0)+geom_text(aes(label=Day))+scale_colour_grey()+facet_grid(.~Trt)+theme_light()
 ```
 
  (b) Obtain the ANOVA table for this study and report it here.
@@ -920,8 +914,8 @@ ols_plot_resid_qq(lm(y~Trt+Day+Batch,data =table_ingredients))
 
 ```{r,collapse=T, out.width='20%'}
 # (a)
-table_ingredients <- read_xlsx("Exercise4_22.xlsx");table_ingredients$Day <- as.factor(table_ingredients$Day)
-table_ingredients$Batch <- as.factor(table_ingredients$Batch);table_ingredients$Trt <- as.factor(table_ingredients$Trt)
+table_ingredients <- read_xlsx("Exercise4_22.xlsx");  table_ingredients$Day <- as.factor(table_ingredients$Day)
+table_ingredients$Batch <- as.factor(table_ingredients$Batch);  table_ingredients$Trt <- as.factor(table_ingredients$Trt)
 glimpse(table_ingredients)
 ggplot(table_ingredients,aes(Day,y))+geom_point(aes(shape=Batch))+scale_colour_grey()+facet_grid(.~Trt)+theme_light()
 ```
@@ -997,7 +991,7 @@ $y_{ijk}=μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk}$, for $i=1,2,…,a$; $j=1,2,…,b$; $
 $ε_{ijk}\sim iid N(0,σ^2)$;$\sum_{i=1}^aτ_i=0$ and $\sum_{j=1}^bβ_j=0$; $\sum_{i=1}^a(τβ)_{ij}=0$   and $\sum_{j=1}^b(τβ)_{ij}=0$
 $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $y_{...}=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{...}=\frac{y_{...}}N$. Compute the $E(SS_A)$ where  $SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2$ 
 
-For $i=1,2,…,a$; $j=1,2,…,b$; $k=1,2,…,n$, for $\sum_{i=1}^aτ_i=0$, $\sum_{j=1}^bβ_j=0$; $\sum_{i=1}^a(τβ)_{ij}=0$, and $\sum_{j=1}^b(τβ)_{ij}=0$,
+ - For $i=1,2,…,a$; $j=1,2,…,b$; $k=1,2,…,n$, for $\sum_{i=1}^aτ_i=0$, $\sum_{j=1}^bβ_j=0$; $\sum_{i=1}^a(τβ)_{ij}=0$, and $\sum_{j=1}^b(τβ)_{ij}=0$,
 
 $\bar y_{i..}-\bar y_{...}=\frac1{bn}\sum\limits_{j=1}^b\sum\limits_{k=1}^n(μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk})-\frac1{abn}\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^n(μ+τ_i+β_j+(τβ)_{ij}+ε_{ijk})$
 
@@ -1005,15 +999,11 @@ $=μ+τ_i+\frac1{b}\sum\limits_{j=1}^bβ_j+\frac1{b}\sum\limits_{j=1}^b(τβ)_{i
 
 $=τ_i+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nε_{ijk}-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nε_{ijk}=τ_i+\bar ε_{i..}-\bar ε_{ijk}$
 
- ---
-
-For $τ_i$ is a constant of the $i^th$ treatment, $E{τ_i}=τ_i,V{τ_i}=0$, for $ε_{ijk}\sim iidN(0,σ^2)$, $E[ε_{ijk}]=0$
+ - For $τ_i$ is a constant of the $i^th$ treatment, $E{τ_i}=τ_i,V{τ_i}=0$, for $ε_{ijk}\sim iidN(0,σ^2)$, $E[ε_{ijk}]=0$
 
 $E[\bar y_{i..}-\bar y_{...}]=E[τ_i+\bar ε_{i..}-\bar ε_{ijk}]=τ_i+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^nE[ε_{ijk}]-\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[ε_{ijk}]=\tau_i$
 
- ---
- 
-For $τ_i$ and $ε_{ijk}$ are independent. $Cov\left[τ_i,\bar ε_{i..}\right]=Cov[τ_i,\bar ε_{...}]=0$, for $ε_{ijk}\sim iidN(0,σ^2)$, $Cov\left[ε_{ijk},\sum_{i=1}^aε_{ijk}\right]=\sigma^2$
+ - For $τ_i$ and $ε_{ijk}$ are independent. $Cov\left[τ_i,\bar ε_{i..}\right]=Cov[τ_i,\bar ε_{...}]=0$, for $ε_{ijk}\sim iidN(0,σ^2)$, $Cov\left[ε_{ijk},\sum_{i=1}^aε_{ijk}\right]=\sigma^2$
 
 $V[\bar y_{i..}-\bar y_{...}]=$
 
@@ -1023,9 +1013,7 @@ $=0+\frac{σ^2}{bn}+\frac{σ^2}{abn}+0-0-2Cov\left[\frac1{bn}{\sum\limits_{j=1}^
 
 $=\frac{σ^2}{bn}+\frac{σ^2}{abn}-\frac{2}{ab^2n^2}\sum\limits_{j=1}^b\sum\limits_{k=1}^nσ^2=\frac{a-1}{abn}σ^2$
 
- ---
-
-For $E[X^2]=E[X]^2+V[X]$, therefore,
+ - For $E[X^2]=E[X]^2+V[X]$, therefore,
 
 $$E[SS_A]=bn\sum_{i=1}^aE[(\bar y_{i..}-\bar y_{...})^2]=bn\sum_{i=1}^a(E[\bar y_{i..}-\bar y_{...}]^2+V[\bar y_{i..}-\bar y_{...}])=bn\sum_{i=1}^a(\tau_i^2+\frac{a-1}{abn}σ^2)=bn\sum_{i=1}^aτ_i^2+(a-1)σ^2$$ 
 
