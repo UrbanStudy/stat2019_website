@@ -702,13 +702,16 @@ Therefore, $\hat\theta_{MOM}=\frac{\sum_{i=1}^nX_i}{n-\sum_{i=1}^nX_i}$
 
 ## HW7
 
-**5.59** Prove that the algorithm of Example 5.6.7 generates a $Beta(a,b)$ random variable.
+**5.59** Prove that the algorithm of Example 5.6.7(Beta random variable generation-I) generates a $Beta(a,b)$ random variable.
 
-From Example 5.6.7 (Beta random variable generation-I), to generate $Y\sim beta(a, b)$. If both a and b are integers, use the direct transformation method (5.6.5). Set $U_j$ are iid $uniform(O,1)$ random variables, then
+If both a and b are integers, use the direct transformation method (5.6.5). Set $U_j$ are iid $uni(0,1)$ random variables, then
+$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$
 
-$$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$$
+If both a and b are not integers, To generate $Y\sim beta(a, b)$: 
 
-If both a and b are not integers, To generate $Y\sim beta(a, b)$: a. Generate $(U,V)$ independent $uniform(0,1)$. b. If $U<\frac1cf_Y(V)$, set $Y=V$; otherwise, return to step (a). Which means $F_Y(y)=F(V|U)$
+a. Generate $(U,V)$ independent $uni(0,1)$. 
+
+b. If $U<\frac1cf_Y(V)$, set $Y=V$; otherwise, return to step (a). Which means $F_Y(y)=F(V|U)$
 
 $$P(Y\le y)= P(V\le y|U<\frac1cf_Y(V))=\frac{P(V\le y,U<\frac1cf_Y(V))}{P(U<\frac1cf_Y(V))}=\frac{\int^y_0\int^{\frac1cf_Y(v)}_0 dudv}{\frac1c}=\frac{\frac1c\int^y_0f_Y(v)dv}{\frac1c}=\int_0^y f_Y(v)dv$$
 
@@ -716,7 +719,7 @@ As long as $c\ge\max_{y}f_Y(y)$, $F_Y(y)=\int_0^yf_Y(t)dt$. By the definition 1.
 
  ---
 
-**5.60** Generalize the algorithm of Example 5.6.7 to apply to any bounded pdf; that is, for an arbitrary bounded pdf $f(x)$ on $[a, b]$, define $c=\max\limits_{a\le x\le b}f(x)$. Let $X$ and $Y$ be independent, with $X \sim Uni(a, b)$ and $Y\sim Uni(0,c)$. Let $d$ be a number greater than $b$, and define a new random variable $W=\begin{cases}X&\text{if }Y<f(X)\\d&\text{if }Y\ge f(X)\end{cases}$.
+**5.60** Generalize the algorithm of Example 5.6.7 to apply to any bounded pdf; that is, for an arbitrary bounded pdf $f(x)$ on $[a, b]$, define $c=\max\limits_{a\le x\le b}f(x)$. Let $X$ and $Y$ be independent, with $X \sim Uni(a,b)$ and $Y\sim Uni(0,c)$. Let $d$ be a number greater than $b$, and define a new random variable $W=\begin{cases}X&\text{if }Y<f(X)\\d&\text{if }Y\ge f(X)\end{cases}$.
 
  (a). Show that $P(W\le w)=\int_a^w\frac{f(t)dt}{c(b-a)}$ for $a\le x\le b$.
 
@@ -728,7 +731,11 @@ $$P(W\le w)= P(a\le X\le w|Y<f(X))=\frac{P(a\le X\le w,Y<f(X))}{P(Y<f(X))}=\frac
 
  (b). Using part (a), explain how a random variable with pdf $f(x)$ can be generated. (Hint: Use a geometric argument; a picture will help.)
 
+To generate a random variable with pdf $f(x)$:
 
+a. Generate  independent $X\sim Uni(a,b)$, $Y\sim Uni(0,c)$.
+
+b . If $Y<f(X)$, set $W=X$ ; otherwise, set $W=d,(d>b)$.
 
 As long as $c\ge\max\limits_{a\le x\le b}f(x)$, $F_W(w)=\frac1{c(b-a)}\int_a^w f(t)dt$. By the definition 1.6.3 (pdf) , this algorithm generates a random variable with pdf $f(x)$ from the uniform random variables.
 
