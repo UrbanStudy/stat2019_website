@@ -723,11 +723,11 @@ As long as $c\ge\max_{y}f_Y(y)$, $F_Y(y)=\int_0^yf_Y(t)dt$. By the definition 1.
 
  (a). Show that $P(W\le w)=\int_a^w\frac{f(t)dt}{c(b-a)}$ for $a\le x\le b$.
 
-$f_X(x)=\frac1{b-a},\int_a^bf_X(x)dx=1$, $f_Y(y)=\frac1{c},\int_0^cf_Y(y)dy=1$. Set $w=b$, then we have $P(Y<f(X))=f_X(x)f_Y(y)=\frac1{c(b-a)}$.
+$f_X(x)=\frac1{b-a},\int_a^bf_X(x)dx=1$, $f_Y(y)=\frac1{c},\int_0^cf_Y(y)dy=1$. Set $w=b$, then we have $P(Y<f(X))=\int^b_a\int^{c}_0 dydx={c(b-a)}$.
 
 $F_W(w)=F(X|Y)$.
 
-$$P(W\le w)= P(a\le X\le w|Y<f(X))=\frac{P(a\le X\le w,Y<f(X))}{P(Y<f(X))}=\frac{\int^w_a\int^{f(x)}_0 dydx}{c(b-a)}=\frac{\int^w_af(x)dx}{c(b-a)}=\frac1{c(b-a)}\int_a^w f(x)dx$$
+$$P(W\le w)= P(a\le X\le w|Y<f(X))=\frac{P(a\le X\le w,Y<f(X))}{P(Y<f(X))}=\frac{\int^w_a\int^{f(x)}_0 dydx}{\int^b_a\int^{c}_0 dydx}=\frac{\int^w_af(x)dx}{\int^b_acdx}=\frac1{c(b-a)}\int_a^w f(x)dx$$
 
  (b). Using part (a), explain how a random variable with pdf $f(x)$ can be generated. (Hint: Use a geometric argument; a picture will help.)
 
@@ -751,9 +751,13 @@ abline(h=dbeta((2-1)/(2+5-2),2,5, ncp = 0, log = FALSE),lty=3);text(0,2.5, "c", 
 abline(v=(2-1)/(2+5-2),lty=2);text(0.2,0, "1/b", col = 2, adj = c(-.1,0));abline(v=1/2,lty=2);text(0.5,0, "1/a", col = 2, adj = c(-.1,0))
 
 plot(c(0,10), c(0,0.5), type = "n",main="Geom(1/2.5)",xlab ="n", ylab ="p")
-points(c(0:20),dgeom(c(0:20), 1/2.5, log = FALSE))
-lines(c(0:20), dgeom(c(0:20), 1/2.5, log = FALSE), col = 2)
+points(c(0:20),dgeom(c(0:20), 1/7.5, log = FALSE))
+lines(c(0:20), dgeom(c(0:20), 1/7.5, log = FALSE), col = 2)
 ```
+
+Let $N=$ number of $(X,Y)$ pairs required for one $W$, then $ $is a g$Gome \frac1{c(b-a)} $random
+ ariable. Thus to generate one Y$W$we expect to need E$ (N)  (b-a)$pairs  $UX Y,$ and in
+t is sense minimizing c$c(b-a)$will optimize the algorithm.
 
 ```{r collapse=T}
 dbeta(0.2428571,2.7,6.3, ncp = 0, log = FALSE)
@@ -764,7 +768,6 @@ dbeta(0.3291,2,5, ncp = 0, log = FALSE)
 qbeta(1/2,2,5, ncp = 0, lower.tail = TRUE, log.p = FALSE)
 pbeta(1/2,2,5, ncp = 0, lower.tail = TRUE, log.p = FALSE)
 ```
-
 
  ---
 
@@ -790,7 +793,7 @@ $-\frac{(\bar x-\theta)^2}{2\frac{\sigma^2}n}-\frac{(\theta-\mu)^2}{2\tau^2}=-\f
 
 $=-\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta+\tau^2(\tau^2+\frac{\sigma^2}n)\bar x^2+\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)\mu^2}{2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}$
 
-$=-\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta+(\tau^4\bar x^2+\frac{\sigma^4}{n^2}\mu^2+2\tau^2\frac{\sigma^2}n\bar x\mu)(-2\tau^2\frac{\sigma^2}n\bar x\mu+\tau^2\frac{\sigma^2}n\bar x^2+\tau^2\frac{\sigma^2}n\mu^2)}{2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}$
+$$=-\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta+(\tau^4\bar x^2+\frac{\sigma^4}{n^2}\mu^2+2\tau^2\frac{\sigma^2}n\bar x\mu)+(\tau^2\frac{\sigma^2}n\bar x^2+\tau^2\frac{\sigma^2}n\mu^2-2\tau^2\frac{\sigma^2}n\bar x\mu)}{2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}$$
 
 $$=-\frac{(\tau^2+\frac{\sigma^2}n)^2\theta^2-2(\tau^2\bar x+\frac{\sigma^2}n\mu)(\tau^2+\frac{\sigma^2}n)\theta+(\tau^2\bar x+\frac{\sigma^2}n\mu)^2+\tau^2\frac{\sigma^2}n(\bar x-\mu)^2}
 {2\tau^2\frac{\sigma^2}n(\tau^2+\frac{\sigma^2}n)}
@@ -808,15 +811,14 @@ $$m(\bar x|\sigma^2,\mu,\tau^2)\sim N\left(\mu,(\tau^2+\frac{\sigma^2}n)\right)$
 
  (c). Show that $\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)$, the posterior distribution of $\theta$, is normal with mean and variance given by (7.2.10).
 
-From Theorem 7.2.10 (Invariance property of MLEs), If $\hat\theta$ is the $MLE$ of $\theta$, then for any function $\tau(\theta)$, the $MLE$ of $\tau(\theta)$ is $\tau(\hat\theta)$.
+The result of (a) also shows
 
 $$\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)\sim N\left(\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n},\frac{2\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}\right)$$
 
  ---
 
 **7.23** If $S^2$ is the sample variance based on a sample of size n from a normal population, we know that $(n-1)S^2/\sigma^2$ has a $\chi^2_{n-1}$ distribution. The conjugate prior for $\sigma^2$ is the _inverted gamma_ pdf, $IG(\alpha,\beta)$, given by
-
-$$\pi(\sigma^2)=\frac{1}{\Gamma(\alpha)\beta^\alpha}\frac{1}{(\sigma^2)^{\alpha+1}}\mathrm{e}^{-\frac1{\beta\sigma^2}},0<\sigma^2<\infty$$
+$\pi(\sigma^2)=\frac{1}{\Gamma(\alpha)\beta^\alpha}\frac{1}{(\sigma^2)^{\alpha+1}}\mathrm{e}^{-\frac1{\beta\sigma^2}},0<\sigma^2<\infty$
 
 where $\alpha,\beta$ are positive constants. Show that the posterior distribution of $\sigma^2$ is $IG(\alpha+\frac{n-1}2,[\frac{n-1}2S^2+\frac1\beta]^{-1})$. Find the mean of this distribution, the Bayes estimator of $\sigma^2$.
 
