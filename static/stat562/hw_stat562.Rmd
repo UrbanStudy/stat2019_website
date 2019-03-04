@@ -740,26 +740,25 @@ b. If $Y<f(X)$, set $W=X$ ; otherwise, set $W=d,(d>b)$.
 As long as $c\ge\max\limits_{a\le x\le b}f(x)$, $F_W(w)=\frac1{c(b-a)}\int_a^w f(t)dt$. By the definition 1.6.3 (pdf) , this algorithm generates a random variable with pdf $f(x)$ from the uniform random variables.
 
 ```{r echo=FALSE, out.width='30%',collapse=T, fig.show='hold'}
-plot(c(0,1), c(0,3), type = "n",main="beta(2.7,6.3)",xlab ="x", ylab ="y")
-curve(dbeta(x,2.7,6.3, ncp = 0, log = FALSE),0,1,add =T)
-abline(h=dbeta((2.7-1)/(2.7+6.3-2),2.7,6.3, ncp = 0, log = FALSE),lty=3)
-abline(v=(2.7-1)/(2.7+6.3-2),lty=2);abline(v=0.5,lty=2)
-
 plot(c(0,1), c(0,3), type = "n",main="beta(2,5)",xlab ="x", ylab ="y")
 curve(dbeta(x,2,5, ncp = 0, log = FALSE),0,1,add =T)
 abline(h=dbeta((2-1)/(2+5-2),2,5, ncp = 0, log = FALSE),lty=3);text(0,2.5, "c", col = 2, adj = c(0,0))
 abline(v=(2-1)/(2+5-2),lty=2);text(0.2,0, "1/b", col = 2, adj = c(-.1,0));abline(v=1/2,lty=2);text(0.5,0, "1/a", col = 2, adj = c(-.1,0))
 
-plot(c(0,10), c(0,0.5), type = "n",main="Geom(1/2.5)",xlab ="n", ylab ="p")
+plot(c(0,20), c(0,0.15), type = "n",main="Geom(1/(c(b-a)))",xlab ="n", ylab ="p")
 points(c(0:20),dgeom(c(0:20), 1/7.5, log = FALSE))
 lines(c(0:20), dgeom(c(0:20), 1/7.5, log = FALSE), col = 2)
+abline(v=2.5*(5-2),lty=2);text(7.5,0, "c(b-a)", col = 2, adj = c(-.1,0))
 ```
 
-Let $N=$ number of $(X,Y)$ pairs required for one $W$, then $ $is a g$Gome \frac1{c(b-a)} $random
- ariable. Thus to generate one Y$W$we expect to need E$ (N)  (b-a)$pairs  $UX Y,$ and in
-t is sense minimizing c$c(b-a)$will optimize the algorithm.
+Let $N=$ number of $(X,Y)$ pairs required for one $W$, then $N$is a $Geom(\frac1{c(b-a)}$ random ariable. Thus to generate one $W$, we expect to need $E(N)  (b-a)$ pairs  $(X,Y)$ and in this sense minimizing $c(b-a)$will optimize the algorithm.
 
 ```{r eval=FALSE, collapse=T, include=FALSE}
+plot(c(0,1), c(0,3), type = "n",main="beta(2.7,6.3)",xlab ="x", ylab ="y")
+curve(dbeta(x,2.7,6.3, ncp = 0, log = FALSE),0,1,add =T)
+abline(h=dbeta((2.7-1)/(2.7+6.3-2),2.7,6.3, ncp = 0, log = FALSE),lty=3)
+abline(v=(2.7-1)/(2.7+6.3-2),lty=2);abline(v=0.5,lty=2)
+
 dbeta(0.2428571,2.7,6.3, ncp = 0, log = FALSE)
 qbeta(1/2.669744,2.7,6.3, ncp = 0, lower.tail = TRUE, log.p = FALSE)
 1-pbeta(1/2.669744,2.7,6.3, ncp = 0, lower.tail = TRUE, log.p = FALSE)

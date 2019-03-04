@@ -856,13 +856,20 @@ Each batch of new material is only large enough to permit five runs to be made. 
 
  (a) Create plot of data and report it here.
 
-```{r echo=FALSE, warning=FALSE, out.width='50%'}
+```{r echo=FALSE, warning=FALSE, out.width='25%'}
 table_ingredients <- read_xlsx("Exercise4_22.xlsx")
 table_ingredients$Day <- as.factor(table_ingredients$Day)
 table_ingredients$Batch <- as.factor(table_ingredients$Batch)
 table_ingredients$Trt <- as.factor(table_ingredients$Trt)
 glimpse(table_ingredients)
-ggplot(table_ingredients,aes(Batch,y))+geom_point(aes(shape=Day,col=Trt),alpha=0)+geom_text(aes(label=Day))+scale_colour_grey()+facet_grid(.~Trt)+theme_light()
+table_ingredients%>%ggplot(aes(Batch,y))+geom_point(aes(shape=Day,col=Trt),alpha=0)+geom_text(aes(label=Day))+facet_grid(.~Trt)+theme_light()
+table_ingredients%>%ggplot(aes(Batch,y))+geom_point(aes(shape=Day,col=Trt),alpha=0)+geom_text(aes(label=Trt))+facet_grid(.~Day)+theme_light()
+qplot(reorder(Day,y),y,data=table_ingredients)+geom_line(aes(group=Trt,lty=Trt))+theme_light()
+qplot(reorder(Day,y),y,data=table_ingredients)+geom_line(aes(group=Batch,lty=Batch))+theme_light()
+qplot(reorder(Batch,y),y,data=table_ingredients)+geom_line(aes(group=Trt,lty=Trt))+theme_light()
+qplot(reorder(Batch,y),y,data=table_ingredients)+geom_line(aes(group=Day,lty=Day))+theme_light()
+qplot(reorder(Trt,y),y,data=table_ingredients)+geom_line(aes(group=Day,lty=Day))+theme_light()
+qplot(reorder(Trt,y),y,data=table_ingredients)+geom_line(aes(group=Batch,lty=Batch))+theme_light()
 ```
 
  (b) Obtain the ANOVA table for this study and report it here.
@@ -917,7 +924,14 @@ ols_plot_resid_qq(lm(y~Trt+Day+Batch,data =table_ingredients))
 table_ingredients <- read_xlsx("Exercise4_22.xlsx");  table_ingredients$Day <- as.factor(table_ingredients$Day)
 table_ingredients$Batch <- as.factor(table_ingredients$Batch);  table_ingredients$Trt <- as.factor(table_ingredients$Trt)
 glimpse(table_ingredients)
-ggplot(table_ingredients,aes(Day,y))+geom_point(aes(shape=Batch))+scale_colour_grey()+facet_grid(.~Trt)+theme_light()
+table_ingredients%>%ggplot(aes(Batch,y))+geom_point(aes(shape=Day,col=Trt),alpha=0)+geom_text(aes(label=Day))+facet_grid(.~Trt)+theme_light()
+table_ingredients%>%ggplot(aes(Batch,y))+geom_point(aes(shape=Day,col=Trt),alpha=0)+geom_text(aes(label=Trt))+facet_grid(.~Day)+theme_light()
+qplot(reorder(Day,y),y,data=table_ingredients)+geom_line(aes(group=Trt,lty=Trt))+theme_light()
+qplot(reorder(Day,y),y,data=table_ingredients)+geom_line(aes(group=Batch,lty=Batch))+theme_light()
+qplot(reorder(Batch,y),y,data=table_ingredients)+geom_line(aes(group=Trt,lty=Trt))+theme_light()
+qplot(reorder(Batch,y),y,data=table_ingredients)+geom_line(aes(group=Day,lty=Day))+theme_light()
+qplot(reorder(Trt,y),y,data=table_ingredients)+geom_line(aes(group=Day,lty=Day))+theme_light()
+qplot(reorder(Trt,y),y,data=table_ingredients)+geom_line(aes(group=Batch,lty=Batch))+theme_light()
 ```
 
 ```{r,collapse=T}
