@@ -725,8 +725,6 @@ abline(h=dbeta((2-1)/(2+5-2),2,5, ncp = 0, log = FALSE),lty=3);text(0,2.5, "c", 
 abline(v=1/(dbeta((2-1)/(2+5-2),2,5, ncp = 0, log = FALSE)),lty=2);text(0.4,0, "y", col = 2, adj = c(-1,0))
 ```
 
- ---
-
 **5.60** Generalize the algorithm of Example 5.6.7 to apply to any bounded pdf; that is, for an arbitrary bounded pdf $f(x)$ on $[a, b]$, define $c=\max\limits_{a\le x\le b}f(x)$. Let $X$ and $Y$ be independent, with $X \sim Uni(a,b)$ and $Y\sim Uni(0,c)$. Let $d$ be a number greater than $b$, and define a new random variable $W=\begin{cases}X&\text{if }Y<f(X)\\d&\text{if }Y\ge f(X)\end{cases}$.
 
  (a). Show that $P(W\le w)=\int_a^w\frac{f(t)dt}{c(b-a)}$ for $a\le x\le b$.
@@ -739,7 +737,7 @@ For $c=\max\limits_{a\le x\le b}f(x)$, $P(Y<f(X))=1$.
 
 If $Y<f(X)$, $W=X$ means 
 
-$$P(W\le w)=P(a\le X\le w|Y<f(X))=\frac{P(a\le X\le w,Y<f(X))}{P(Y<f(X))}=\frac{F_{X,Y}(x,y)}{1}=\int^w_a\int^{f(x)}_0f_{X,Y}(x,y) dsdt=\frac1{c(b-a)}\int_a^w f(t)dt$$
+$$P(W\le w)=P(a\le X\le w|Y<f(X))=\frac{P(a\le X\le w,Y<f(X))}{P(Y<f(X))}=\frac{F_{X,Y}(x,y)}{1}=\int^w_a\int^{f(x)}_0f_{X,Y}(x,y) dsdt=\int_a^w \frac{f(t)}{c(b-a)}dt$$
 
 Otherwise, $W=d>b$, then $P(W\le w)=P(b<d\le w)=0$
 
@@ -829,7 +827,7 @@ $$m(\bar x|\sigma^2,\mu,\tau^2)\sim N\left(\mu,(\tau^2+\frac{\sigma^2}n)\right)$
 
 The result of (a) also shows
 
-$$\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)\sim N\left(\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n},\frac{2\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}\right)$$
+$$\pi(\theta|\bar x,\sigma^2,\mu,\tau^2)\sim N\left(\frac{\tau^2\bar x+\frac{\sigma^2}n\mu}{\tau^2+\frac{\sigma^2}n},\frac{\tau^2\frac{\sigma^2}n}{\tau^2+\frac{\sigma^2}n}\right)$$
 
  ---
 
