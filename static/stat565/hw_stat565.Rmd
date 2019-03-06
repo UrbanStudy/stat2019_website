@@ -881,11 +881,15 @@ summary(model_ingredients)
 
  (c) Test whether ingredients have a significant effect on the reaction time at α=0.05. Report your conclusion and p value here.
 
-The ANOVA for Latin-square shows that ingredients have significant effects on the average values of reaction time at 0.05 significant level. The P-value of 0.000488 for treatment is small enough.
+Set the overall hypotheses are $H_0: \mu_1=\mu_2=\mu_3=\mu_4=\mu_5$ or $\tau_1=\tau_2=\tau_3=\tau_4=\tau_5$ versus $H_1$: At least two of $\mu_i$'s are different or At least one $\tau_i\neq0$
+
+The ANOVA for Latin-square shows that the P-value of 0.000488 for treatment is small enough. We can reject the $H_0$ and conclude that the ingredients have significant effects on the average values of reaction time at 0.05 significant level. 
 
  (d) Test the significance of different batches of material at α=0.05. Report your conclusion and p value here.
 
-The reaults of TukeyLSD test show that there is not significant difference on the average values of reaction time among the batches at 0.05 significant level. The P-value of all the paired comparing among batches is large enough. All of the confident intervals include zero.
+Set the hypotheses are $H_0: \beta_1=\beta_2=\beta_3=\beta_4=\beta_5$ versus $H_1$: At least two of $\beta_k$'s are different.
+
+The reaults of TukeyLSD test show that the P-value of all the paired comparing among batches is large enough. All of the confident intervals include zero. We cannot reject $H_0$. There is not significant difference on the average values of reaction time among the batches at 0.05 significant level.
 
 |   |diff      |lwr     |upr    |p adj
 |---|---       |---     |---    |---
@@ -932,7 +936,6 @@ qplot(reorder(Day,y),y,data=table_ingredients)+geom_line(aes(group=Trt,lty=Trt))
 qplot(reorder(Batch,y),y,data=table_ingredients)+geom_line(aes(group=Trt,lty=Trt))+theme_light()
 qplot(reorder(Day,y),y,data=table_ingredients)+geom_line(aes(group=Batch,lty=Batch))+theme_light()
 qplot(reorder(Batch,y),y,data=table_ingredients)+geom_line(aes(group=Day,lty=Day))+theme_light()
-
 ```
 
 ```{r,collapse=T}
@@ -980,15 +983,17 @@ ggplot(table_LSD2,aes(Col,y))+geom_point(data = transform(filter(table_LSD2,Repl
 ```
 
  (a) Obtain the ANOVA table for this study and report it here.
- 
+
 ```{r echo=FALSE}
-model_LSD2 <- aov(y~Trt+Replicate/Row+Col,data =table_LSD2)
+model_LSD2 <- aov(y~Trt+Row+Replicate/Col,data =table_LSD2)
 summary(model_LSD2)
 ```
 
  (b) Test whether treatments are statistically significant at α=0.01. Report your conclusion and p value here.
 
-The P-value of 0.000107 for treatment is samller than 0.01. The ANOVA for replicated Latin-square shows that the treatments have significant effects on the average values of resopnse variable at 0.01 significant level. 
+Set the overall hypotheses are $H_0: \mu_1=\mu_2=\mu_3=\mu_4$ or $\tau_1=\tau_2=\tau_3=\tau_4$ versus $H_1$: At least two of $\mu_i$'s are different or At least one $\tau_i\neq0$.
+
+The ANOVA for replicated Latin-square shows that the P-value of 0.437 for treatment is larger than 0.01. We cannot reject $H_0$. The treatments have not significant effects on the average values of resopnse variable at 0.01 significant level. 
 
 ### Problem 4:
 
