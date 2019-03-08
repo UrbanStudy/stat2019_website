@@ -889,7 +889,7 @@ The ANOVA for Latin-square shows that the P-value of 0.000488 for treatment is s
 
 Set the hypotheses are $H_0: \beta_1=\beta_2=\beta_3=\beta_4=\beta_5$ versus $H_1$: At least two of $\beta_k$'s are different.
 
-The reaults of TukeyLSD test show that the P-value of all the paired comparing among batches is large enough. All of the confident intervals include zero. We cannot reject $H_0$. There is not significant difference on the average values of reaction time among the batches at 0.05 significant level.
+The reaults of ANOVA show that the P-value of overall batches effects is 0.347618. TukeyLSD test show that the P-value of all the paired comparing among batches is large enough. All of the confident intervals include zero. We cannot reject $H_0$. There is not significant difference on the average values of reaction time among the batches at 0.05 significant level.
 
 |   |diff      |lwr     |upr    |p adj
 |---|---       |---     |---    |---
@@ -906,6 +906,8 @@ The reaults of TukeyLSD test show that the P-value of all the paired comparing a
 
  (e) Provide all the necessary residual plots here and use them to explain whether assumptions about the model for this design are valid or not.
 
+The histogram of residuals does not detect obvious violation of normality assumption.
+
 The plot of studentized residual versus predicted (fitted) value shows that except few outliers, the residuals are evenly distributed about zero at each prededict value (zero mean) and vertical deviations of residuals from zero are about same for each predicted value (constant variance).
 
 The plots of studentized residual versus factor levels didn't show obvious violation of zero mean and constant variance.
@@ -914,7 +916,7 @@ The QQ plot shows that some data points are not on the line and flattening at th
 
 ```{r echo=FALSE, warning=FALSE, out.width='30%'}
 table_ingredients$student_resid <- rstudent(model_ingredients)
-ols_plot_resid_fit(lm(y~Trt+Day+Batch,data =table_ingredients))
+ols_plot_resid_hist(lm(y~Trt+Day+Batch,data =table_ingredients))
 ols_plot_resid_stud_fit(lm(y~Trt+Day+Batch,data =table_ingredients))
 ols_plot_resid_qq(lm(y~Trt+Day+Batch,data =table_ingredients))
 ggplot(table_ingredients,aes(Trt,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
@@ -953,7 +955,7 @@ TukeyHSD(model_ingredients,conf.level = 0.95)
 ```{r,collapse=T, out.width='20%',fig.show='hold'}
 # (e)
 table_ingredients$student_resid <- rstudent(model_ingredients)
-ols_plot_resid_fit(lm(y~Trt+Day+Batch,data =table_ingredients))
+ols_plot_resid_hist(lm(y~Trt+Day+Batch,data =table_ingredients))
 ols_plot_resid_stud_fit(lm(y~Trt+Day+Batch,data =table_ingredients))
 ols_plot_resid_qq(lm(y~Trt+Day+Batch,data =table_ingredients))
 ggplot(table_ingredients,aes(Trt,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
