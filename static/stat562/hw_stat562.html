@@ -760,12 +760,60 @@ mean(log(max(cuckoo_egg))-log(cuckoo_egg))^(-1)
 <div id="hw8" class="section level2">
 <h2>HW8</h2>
 <p>Consider <span class="math inline">\(\frac{\sum(X_i-\bar X)^2}{k}\)</span> as an estimator of <span class="math inline">\(\sigma^2\)</span> (under normality). Find the K that minimizes MSE</p>
-<p><strong>7.12</strong></p>
-<p>7.12 Xi iid Bernoulli( ), 0 1/2. a. method of moments: EX = =1nXiXi = ¯X ) ˜ = ¯X . MLE: In Example 7.2.7, we showed that L( |x) is increasing for ¯x and is decreasing for ¯x. Remember that 0 1/2 in this exercise. Therefore, when ¯X 1/2, ¯X is the MLE of , because ¯X is the overall maximum of L( |x). When ¯X &gt; 1/2, L( |x) is an increasing function of on [0, 1/2] and obtains its maximum at the upper bound of which is 1/2. So the MLE is ˆ = min ¯X , 1/2 . b. The MSE of ˜ is MSE(˜ ) = Var ˜ + bias(˜ )2 = ( (1 − )/n) + 02 = (1 − )/n. There is no simple formula for MSE(ˆ ), but an expression is MSE(ˆ ) = E(ˆ − )2 = Xny=0 (ˆ − )2ny y(1 − )n−y=[Xn/2]y=0 yn− 2n y y(1 − )n−y +Xn y=[n/2]+112 − 2 ny</p>
-<p>y(1 − )n−y, where Y =P i Xi binomial(n, ) and [n/2] = n/2, if n is even, and [n/2] = (n − 1)/2, if n is odd. c. Using the notation used in (b), we have MSE(˜ ) = E(¯X − )2 = Xny=0 yn− 2 ny y(1 − )n−y. Therefore, MSE(˜ ) − MSE(ˆ ) = Xn y=[n/2]+1 &quot; yn− 2− 12 − 2ny</p>
-<p>y(1 − )n−y=Xn y=[n/2]+1 yn+12 − 2</p>
-<p>yn−12 ny</p>
-<p>y(1 − )n−y. The facts that y/n &gt; 1/2 in the sum and 1/2 imply that every term in the sum is positive. Therefore MSE(ˆ ) &lt; MSE(˜ ) for every in 0 &lt; 1/2. (Note: MSE(ˆ ) = MSE(˜ ) = 0 at = 0.)</p>
+<p>For <span class="math inline">\(S^2=\frac{\sum(X_i-\bar X)^2}{n-1}\)</span> Let <span class="math inline">\(M=\frac{\sum(X_i-\bar X)^2}{k}=\frac{(n-1)}{k}S^2=\frac{\sigma^2}{k}\frac{(n-1)S^2}{\sigma^2}\)</span>, <span class="math inline">\(\frac{k}{\sigma^2}M=\frac{(n-1)S^2}{\sigma^2}\)</span>.</p>
+<p>For <span class="math inline">\(X_1,..X_i\sim iid\ n(\mu,\sigma^2)\)</span>, <span class="math inline">\(\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}\)</span>,</p>
+<p><span class="math display">\[Var[\frac{(n-1)S^2}{\sigma^2}]=\frac{k^2}{\sigma^4}Var[M]=2(n-1)\implies Var[M]=\frac{2(n-1)\sigma^4}{k^2}\]</span></p>
+<p><span class="math display">\[E[S^2]=\frac{k}{n-1}E[M]=\sigma^2\implies E[M]=\frac{n-1}{k}\sigma^2\]</span></p>
+<p><span class="math display">\[Bias[M]=E[M]-\sigma^2=\frac{n-k-1}{k}\sigma^2\]</span></p>
+<p><span class="math display">\[MSE[M]=Var[M]+Bias^2[M]=\frac{2(n-1)}{k^2}\sigma^4+\frac{(n-k-1)^2}{k^2}\sigma^4=\frac{n^2+k^2-2nk+2k-1}{k^2}\sigma^4\]</span></p>
+<p>When <span class="math inline">\(k=n+1\)</span>, <span class="math inline">\(\min{MSE[M]}=\frac2{n+1}\)</span></p>
+</div>
+<div id="section-1" class="section level2">
+<h2></h2>
+<p><strong>7.12</strong> Let <span class="math inline">\(X_1,..,X_n\)</span>, be a random sample from a population with pmf</p>
+<p><span class="math display">\[P_{\theta}(X=x)=\theta^x(1-\theta)^{1-x}, x=0\ or\ 1, 0\le \theta\le\frac12\]</span></p>
+<ol style="list-style-type: lower-alpha">
+<li>Find the method of moments estimator and MLE of <span class="math inline">\(\theta\)</span></li>
+</ol>
+<p><span class="math inline">\(X_i\sim iid Bernoulli(\theta), 0\le \theta\le\frac12\)</span></p>
+<p>method of moments:</p>
+<p><span class="math display">\[EX=\theta=\frac1n\sum_iX_i=\bar X )\implies\hat\theta=\bar X\]</span></p>
+<p>MLE: In Example 7.2.7, we showed that <span class="math inline">\(L(|x)\)</span> is increasing for <span class="math inline">\(\theta&lt;\bar x\)</span> and is decreasing for <span class="math inline">\(\theta\ge\bar x\)</span>. For <span class="math inline">\(0\le \theta\le\frac12\)</span>. Therefore, when <span class="math inline">\(\bar X\le1/2\)</span>, <span class="math inline">\(\bar X\)</span> is the MLE of <span class="math inline">\(\theta\)</span>, because ¯X is the overall maximum of <span class="math inline">\(L(|\mathbf{x})\)</span>. When <span class="math inline">\(\bar X &gt; 1/2\)</span>, <span class="math inline">\(L(\theta|\mathbf{x})\)</span> is an increasing function of <span class="math inline">\(\theta\)</span> on <span class="math inline">\([0, 1/2]\)</span> and obtains its maximum at the upper bound of <span class="math inline">\(\theta\)</span> which is <span class="math inline">\(1/2\)</span>. So the MLE is <span class="math inline">\(\hat\theta=\min\{\bar X,1/2\}\)</span>.</p>
+<hr />
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Find the mean squared errors of each of the estimators.</li>
+</ol>
+<p>The MSE of <span class="math inline">\(\tilde\theta\)</span>is <span class="math inline">\(MSE(\tilde\theta) = Var\tilde\theta + bias(\tilde\theta)^2=((1−\theta)/n)+0^2=(1−\theta)/n\)</span>. There is no simple formula for <span class="math inline">\(MSE(\theta)\)</span>, but an expression is</p>
+<p><span class="math display">\[MSE(\hat\theta) = E(\hat\theta-\theta)^2=\sum^n_{y=0}(\hat\theta-\theta)^2{n\choose y}\theta^y(1−\theta )^{n−y}=\sum^\frac{n}2_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y} +\sum^n_{y=\frac{n}2+1}(\frac12−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}\]</span> where <span class="math inline">\(Y=\sum_iX_i\sim binomial(n,\theta)\)</span> and <span class="math inline">\([\frac{n}2]=\frac{n}2\)</span>, if n is even, and <span class="math inline">\([\frac{n}2]=\frac{n-1}2\)</span>, if <span class="math inline">\(n\)</span> is odd.</p>
+<hr />
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Which estimator is preferred? Justify your choice</li>
+</ol>
+<p>Using the notation used in (b), we have</p>
+<p><span class="math display">\[MSE(\tilde\theta) = E(\bar X-\theta)^2=\sum^n_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}\]</span> Therefore, <span class="math display">\[MSE(\tilde\theta) − MSE(\hat\theta)=\sum^n_{y=[\frac{n}2]+1}\left[(\frac{y}n−\theta)^2-(\frac12−\theta)^2\right]\binom{n}{y}\theta^y(1−\theta)^{n−y}=\sum^n_{y=[\frac{n}2]+1}(\frac{y}n+\frac12−\theta)(\frac{y}n-\frac12)\binom{n}{y}\theta^y(1−\theta)^{n−y}\]</span></p>
+<p>The facts that y/n &gt; 1/2 in the sum and 1/2 imply that every term in the sum is positive. Therefore <span class="math inline">\(MSE(\hat\theta)&lt;MSE(\tilde\theta)=0\)</span> for every <span class="math inline">\(\theta\)</span> in <span class="math inline">\(0&lt;\tilde\theta&lt;\frac12\)</span>. (Note: <span class="math inline">\(MSE(\hat\theta)=MSE(\tilde\theta)=0\)</span> at <span class="math inline">\(\theta=0\)</span>.)</p>
+<p><strong>7.30</strong> The EM algorithm is useful in a variety of situation, and the definition of “missing data” can be stretched to accommodate many different models. Suppose that we have a mixture density <span class="math inline">\(pf(x) + (1 p)g(x)\)</span>, where <span class="math inline">\(p\)</span> is unknown. If we observe <span class="math inline">\(X = (X_1,..,X_n)\)</span>, the sample density is <span class="math inline">\(\Pi_{i=1}^n[pf(x_i)+(1-p)g(x_i)\)</span> which could be difficult to deal with. (Actually, a mixture of two is not terrible, but consider what the likelihood would look like with a mixture <span class="math inline">\(L:=l P;Ji(X)\)</span> for large k.) The EM solution is to augment the observed (or incomplete) data with <span class="math inline">\(Z (Z_1,..,Z_n)\)</span>, where <span class="math inline">\(Z_i\)</span> tells which component of the mixture <span class="math inline">\(X_i\)</span> came from; that is,</p>
+<p><span class="math inline">\(X_i|z_i=1\sim f(X_i)\)</span> and <span class="math inline">\(X_i|z_i=0\sim g(x_i)\)</span>,and <span class="math inline">\(P(Z_i=1)=p\)</span></p>
+<ol style="list-style-type: lower-alpha">
+<li>Show that the joint density of <span class="math inline">\((X,Z)\)</span> is given by <span class="math inline">\(\sum^n_{i=1}[pf(x_i)^{z_i}][(1-p)g(x_i)^{1-z_i}]\)</span>.</li>
+</ol>
+<p>Joint density <span class="math inline">\(f(x,y)=f(x|y)f(y)\)</span>,</p>
+<p><span class="math display">\[f(\vec x,\vec z)=f(\vec x|\vec z)f(\vec z)=\prod^n_{i=1}f(x_i|z_i)f(z_i)=\prod^n_{i=1}[pf(x_i)]^{z_i}[(1-p)g(x_i)]^{1-z_i}\]</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Show that the missing data distribution, the distribution of <span class="math inline">\(Z_i|x_i,p\)</span> is Bernoulli with success probability <span class="math inline">\(\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}\)</span>.</li>
+</ol>
+<p>Conditional density <span class="math inline">\(f(x|y)=\frac{f(x,y)}{f(y)}\)</span>,</p>
+<p><span class="math display">\[P(Z_i=1|X_i,p)=\frac{f(x_i,1|p)}{f(x_i|p)}=\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}\]</span></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Calculate the expected complete-data log likelihood, and show that the EM sequence is given by</li>
+</ol>
+<p><span class="math display">\[f(\vec x,\vec z)\propto p^{\sum^n_{i=1}z_i}(1-p)^{\sum^n_{i=1}(1-z_i)}\]</span></p>
+<p>which is a Bernoulli joint pdf. For complete data,</p>
+<p><span class="math display">\[\hat p=\frac1n\sum Z_i\]</span></p>
+<p>Replacing the missing data with its expectation,</p>
+<p><span class="math display">\[E(Z_i|X_i,p)=P(Z_i=1|X_i,p)\]</span></p>
+<p>Through r times iteration,</p>
+<p><span class="math display">\[\hat p^{(r+1)}=\frac1n\sum_{i=1}^n\frac{\hat p^{(r)}f(x_i)}{\hat p^{(r)}f(x_i)+(1-\hat p^{(r)})g(x_i)}\]</span></p>
 </div>
 </div>
 
