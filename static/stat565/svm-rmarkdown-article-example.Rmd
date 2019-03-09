@@ -38,126 +38,117 @@ library(mosaic)
 library(agricolae)
 library(DescTools)
 library(dplyr)
+library(car)
+library(pander)
 table_protein <- read_excel("Protein.xlsx")
 table_protein$Trt1 = as.factor(table_protein$Source)
 table_protein$Trt2 = as.factor(table_protein$Amount)
 model_protein <- aov(Gain ~ Trt1*Trt2, data=table_protein)
 ```
 
-(a) Plot the data and report the plot here (A plot with data and means of treatment combinations). Do not report code here. Describe the observed relationship between two factors.
-
-```{r echo=FALSE, out.width='50%'}
-glimpse(table_protein)
-ggplot(data = table_protein, aes(x = Amount, y = Gain, colour=Source, group=Source))+ 
-  geom_point(aes(shape = Source,color = Source),size = 2) + 
-  labs(y = "Weight Gained", x="Amount of table_protein", color ="Source of table_protein", shape ="Source of table_protein")
-```
-
-
-(b) Obtain the numerical summary for each treatment combination and factor levels separately. Report them here in a tabular form.
-
-```{r  echo=FALSE}
-favstats(Gain ~ Source, data=table_protein)
-favstats(Gain ~ Amount , data=table_protein)
-favstats(Gain ~ Source|Amount, data=table_protein)
-```
-
-
-(c) Fit the two-factor factorial model and report the complete ANOVA table here. Do not report code here. The complete ANOVA table should have a row for each of the following: main effects of each treatment, two-factor interaction effects, error and total.
+(a). \textcolor[rgb]{0.5,0.5,0.5}{Plot the data and report the plot here (A plot with data and means of treatment combinations). Do not report code here. Describe the observed relationship between two factors.}
 
 ```{r echo=FALSE}
-summary(model_protein)
-```
-
-(d) Based on the ANOVA table write your conclusion appropriately. Perform all the necessary tests and report the conclusion along with the p-value.
-
-```{r}
-pairwise.t.test(table_protein$Gain, table_protein$Trt2, p.adj = "none") 
-
-pairwise.t.test(table_protein$Gain, table_protein$Trt2, p.adj = "bonf")
-
-plot(LSD.test(model_protein, trt = "Trt2", alpha = 0.05))
-
-(LSD.test(model_protein, trt = "Trt2", alpha = 0.05)) 
-
-TukeyHSD(model_protein, conf.level = 0.95)
-
-ScheffeTest(model_protein, conf.level = 0.95)
+glimpse(table_protein)
+ggline(data = table_protein, x = "Amount", y = "Gain", add = c("mean", "jitter"),shape= "Source",  color = "Source", linetype = "Source", ylab= "Weight Gained", xlab="Amount of table_protein")
 ```
 
 
-(e) Provide the plots of residuals here. Do not report code here.
+(b). \textcolor[rgb]{0.5,0.5,0.5}{Obtain the numerical summary for each treatment combination and factor levels separately. Report them here in a tabular form.}
 
-```{r echo=FALSE, out.width='25%'}
+```{r echo=FALSE}
+pander(favstats(Gain ~ Source, data=table_protein))
+pander(favstats(Gain ~ Source|Amount, data=table_protein))
+```
+
+(c). \textcolor[rgb]{0.5,0.5,0.5}{Fit the two-factor factorial model and report the complete ANOVA table here. Do not report code here. The complete ANOVA table should have a row for each of the following: main effects of each treatment, two-factor interaction effects, error and total.}
+
+    -----------------------------------------------------------
+        &nbsp;       Df   Sum Sq   Mean Sq   F value   Pr(>F)  
+    --------------- ---- -------- --------- --------- ---------
+       **Trt1**      1    220.9     220.9    0.9879    0.3269  
+
+       **Trt2**      1     1300     1300      5.812    0.02114 
+
+     **Trt1:Trt2**   1    883.6     883.6     3.952    0.05447 
+
+     **Residuals**   36    8049     223.6      NA        NA    
+ 
+      **Total**      39   10453.5   268.0385      NA        NA    
+    -----------------------------------------------------------
+
+(d). \textcolor[rgb]{0.5,0.5,0.5}{Based on the ANOVA table write your conclusion appropriately. Perform all the necessary tests and report the conclusion along with the p-value.}
+
+The line plot shows that not all lines are paralle. Difference in Gain between Trt1 is not same for different Trt2. There could be an interaction effect.
+
+According to ANOVA table, there is a significant interaction effect from Trt1 and Trt2 on the Gain around 5% significance level (P-value=0.05447). That means, effect of method and effect of Trt1 and Trt2 on Gain is not independent. Therefore, examie the simple effects.
+
+    ------------------------------------------------------------------------------------------
+               &nbsp;             diff             Tukey                      Scheffe       
+               &nbsp;                      lwr      upr     p adj    lwr.ci   upr.ci    pval
+    ---------------------------- ------- -------- ------- --------- -------- ------- ---------
+     **Cereal:High-Beef:High**    -14.1   -32.11   3.91    0.1698   -33.71   5.509    0.2358
+
+       **Beef:Low-Beef:High**     -20.8   -38.81   -2.79   0.01827   -40.41   -1.191   0.0338
+
+      **Cereal:Low-Beef:High**    -16.1   -34.11   1.91    0.0937   -35.71   3.509    0.1418
+
+      **Beef:Low-Cereal:High**    -6.7    -24.71   11.31   0.7493   -26.31   12.91    0.8004
+
+     **Cereal:Low-Cereal:High**    -2     -20.01   16.01   0.9905   -21.61   17.61    0.9929
+
+      **Cereal:Low-Beef:Low**      4.7    -13.31   22.71   0.8953    -14.91   24.31    0.9195
+    ------------------------------------------------------------------------------------------
+
+(e). \textcolor[rgb]{0.5,0.5,0.5}{Provide the plots of residuals here. Do not report code here.}
+
+```{r echo=FALSE,out.width='25%'}
 plot(model_protein, pch=16)
 ```
 
-
-(f) Based on the residual plots, clearly explain whether assumptions in the model are satisfied or violated.
-
-
-(g) Report the code here without output.
+(f) \textcolor[rgb]{0.5,0.5,0.5}{Based on the residual plots, clearly explain whether assumptions in the model are satisfied or violated.}
 
 
-```{r eval =F, size="tiny", tidy = TRUE}
+(g) \textcolor[rgb]{0.5,0.5,0.5}{Report the code here without output.}
 
+```{r , eval =F, size="footnotesize", tidy = T}
 table_protein <- read_excel("Protein.xlsx")
 glimpse(table_protein)
-
 # Install and load ggplot2 package before using ggplot function #
 ggplot(data = table_protein, aes(x = Amount, y = Gain, colour=Source, group=Source))+ 
   geom_point(aes(shape = Source,color = Source),size = 2) + 
   labs(y = "Weight Gained", x="Amount of table_protein", color ="Source of table_protein", shape ="Source of table_protein")
-
 #Plots the Mean and 1SD error bars for each treatment group #
 ggplot(data = table_protein, aes(x = Amount, y = Gain, colour=Source,shape = Source, group=Source)) +
   stat_summary() + labs(y= "Weight Gained", x="Amount of table_protein", color="Source", shape="Source")
-
 # Install and load ggpubr package before using ggline function # 
 ggline(data = table_protein, x = "Amount", y = "Gain", add = c("mean", "jitter"),shape= "Source",  color = "Source", linetype = "Source", ylab= "Weight Gained", xlab="Amount of table_protein")
-
 #Load mosaic package before using favstats function#
 favstats(Gain ~ Source, data=table_protein)
 favstats(Gain ~ Amount , data=table_protein)
 favstats(Gain ~ Source|Amount, data=table_protein)
 #favstats(Gain ~ Source+Amount, data=table_protein)
-
 #Create Categorical variables so that plot of residuals versus each treatment combination can be obtained using plot function with the fitted model later #
 table_protein$Trt1 = as.factor(table_protein$Source)
 table_protein$Trt2 = as.factor(table_protein$Amount)
-
 model_protein <- aov(Gain ~ Trt1*Trt2, data=table_protein)
 summary(model_protein)
+pander(summary(model_protein))
+sum((table_protein$Gain- mean(table_protein$Gain))^2)
 plot(model_protein, pch=16)
-
 # Pairwise comparisons using t tests with pooled Standard Deviation #
 # The output gives a matrix of p values for each pair of treatments #
 pairwise.t.test(table_protein$Gain, table_protein$Trt2, p.adj = "none") 
-
 # Pairwise comparisons using t tests with pooled Standard Deviation and Bonferroni adjustment #
 # The output gives a matrix of p values for each pair of treatments #
 pairwise.t.test(table_protein$Gain, table_protein$Trt2, p.adj = "bonf")
-
 #Install and load the agricolae package before running the LSD.test function below #
 #p.adj option in the LSD.test function can be used to apply different adjustments to control error rates#
 plot(LSD.test(model_protein, trt = "Trt2", alpha = 0.05))
-#The treatments sharing the same letter on the plot are not different#
-
-(LSD.test(model_protein, trt = "Trt2", alpha = 0.05)) # Using outer parentheses prints the output#
-
-#Tukey's test to get observed difference in means, CI and p value#
-TukeyHSD(model_protein, conf.level = 0.95)
-
-# Scheffe's test to get observed difference in means, CI and p value #
-# Install and load the DescTools package before using the ScheffeTest function #
-ScheffeTest(model_protein, conf.level = 0.95)
-
+(LSD.test(model_protein, trt = "Trt2", alpha = 0.05)) 
+pander(TukeyHSD(model_protein, conf.level = 0.95)[3])
+pander(ScheffeTest(model_protein, conf.level = 0.95)[3])
 ```
-
-
-
-
-
 
 <!--
 # References
