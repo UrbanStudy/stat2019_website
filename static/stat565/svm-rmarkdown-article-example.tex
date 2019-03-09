@@ -1,34 +1,43 @@
-\documentclass[]{article}
-\usepackage{lmodern}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\documentclass[11pt,]{article}
+\usepackage[left=0.5in,top=0.75in,right=0.3in,bottom=0.3in]{geometry}
+\newcommand*{\authorfont}{\fontfamily{phv}\selectfont}
+\usepackage[]{mathpazo}
+
+
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-\fi
-% use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\usepackage[margin=0.25in]{geometry}
-\usepackage{hyperref}
-\hypersetup{unicode=true,
-            pdftitle={STAT565\_Lab},
-            pdfauthor={Shen Qu},
-            pdfborder={0 0 0},
-            breaklinks=true}
-\urlstyle{same}  % don't use monospace font for urls
+
+
+
+\usepackage{abstract}
+\renewcommand{\abstractname}{}    % clear the title
+\renewcommand{\absnamepos}{empty} % originally center
+
+\renewenvironment{abstract}
+ {{%
+    \setlength{\leftmargin}{0mm}
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \relax}
+ {\endlist}
+
+\makeatletter
+\def\@maketitle{%
+  \newpage
+%  \null
+%  \vskip 2em%
+%  \begin{center}%
+  \let \footnote \thanks
+    {\fontsize{18}{20}\selectfont\raggedright  \setlength{\parindent}{0pt} \@title \par}%
+}
+%\fi
+\makeatother
+
+
+
+
+\setcounter{secnumdepth}{0}
+
 \usepackage{color}
 \usepackage{fancyvrb}
 \newcommand{\VerbBar}{|}
@@ -69,6 +78,7 @@
 \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
 \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
 \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -78,57 +88,127 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
+
+\title{Lab 5 Two factor Factorial 1  }
+
+
+
+\author{\Large Shen Qu\vspace{0.05in} \newline\normalsize\emph{March 09, 2019}  }
+
+
+\date{}
+
+\usepackage{titlesec}
+
+\titleformat*{\section}{\normalsize\bfseries}
+\titleformat*{\subsection}{\normalsize\itshape}
+\titleformat*{\subsubsection}{\normalsize\itshape}
+\titleformat*{\paragraph}{\normalsize\itshape}
+\titleformat*{\subparagraph}{\normalsize\itshape}
+
+
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\usepackage[strings]{underscore} % protect underscores in most circumstances
+
+
+
+\newtheorem{hypothesis}{Hypothesis}
+\usepackage{setspace}
+
+\makeatletter
+\@ifpackageloaded{hyperref}{}{%
+\ifxetex
+  \PassOptionsToPackage{hyphens}{url}\usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \PassOptionsToPackage{hyphens}{url}\usepackage[unicode=true]{hyperref}
+\fi
 }
-\setlength{\emergencystretch}{3em}  % prevent overfull lines
+
+\@ifpackageloaded{color}{
+    \PassOptionsToPackage{usenames,dvipsnames}{color}
+}{%
+    \usepackage[usenames,dvipsnames]{color}
+}
+\makeatother
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Shen Qu (March 09, 2019)},
+             pdfkeywords = {},  
+            pdftitle={Lab 5 Two factor Factorial 1},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+% add tightlist ----------
 \providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{0}
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
-%%% Use protect on footnotes to avoid problems with footnotes in titles
-\let\rmarkdownfootnote\footnote%
-\def\footnote{\protect\rmarkdownfootnote}
-
-%%% Change title format to be more compact
-\usepackage{titling}
-
-% Create subtitle command for use in maketitle
-\newcommand{\subtitle}[1]{
-  \posttitle{
-    \begin{center}\large#1\end{center}
-    }
-}
-
-\setlength{\droptitle}{-2em}
-
-  \title{STAT565\_Lab}
-    \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-    \author{Shen Qu}
-    \preauthor{\centering\large\emph}
-  \postauthor{\par}
-      \predate{\centering\large\emph}
-  \postdate{\par}
-    \date{March 09, 2019}
-
+\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 \begin{document}
-\maketitle
+	
+% \pagenumbering{arabic}% resets `page` counter to 1 
+%
+% \maketitle
 
-\begin{enumerate}
+{% \usefont{T1}{pnc}{m}{n}
+\setlength{\parindent}{0pt}
+\thispagestyle{plain}
+{\fontsize{18}{20}\selectfont\raggedright 
+\maketitle  % title \par  
+
+}
+
+{
+   \vskip 13.5pt\relax \normalsize\fontsize{11}{12} 
+\textbf{\authorfont Shen Qu} \hskip 15pt \emph{\small March 09, 2019}   
+
+}
+
+}
+
+
+
+
+
+
+
+
+\begin{abstract}
+
+    \hbox{\vrule height .2pt width 39.14pc}
+
+    \vskip 8.5pt % \small 
+
+\noindent An experiment was designed to study weight gain of rats fed four
+different diets, where there were two levels of protein (high or low)
+and two sources of protein (beef or cereal). This gives 2 x 2 treatment
+combinations: high/beef (HB), high/cereal (HC), low/beef (LB),
+low/cereal (LC). Ten rats were in each of the four treatment groups. Use
+a=0.01
+
+
+    \hbox{\vrule height .2pt width 39.14pc}
+
+
+\end{abstract}
+
+
+\vskip 6.5pt
+
+
+\noindent  \begin{enumerate}
 \def\labelenumi{(\alph{enumi})}
 \tightlist
 \item
@@ -147,7 +227,7 @@
 ## $ Trt2   <fct> Low, Low, Low, Low, Low, Low, Low, Low, Low, Low, High,...
 \end{verbatim}
 
-\includegraphics[width=0.5\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-1}
+\includegraphics[width=0.5\linewidth]{svm-rmarkdown-article-example_files/figure-latex/unnamed-chunk-3-1}
 
 \begin{enumerate}
 \def\labelenumi{(\alph{enumi})}
@@ -211,6 +291,12 @@
   p-value.
 \end{enumerate}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise.t.test}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Gain, table_protein}\OperatorTok{$}\NormalTok{Trt2, }\DataTypeTok{p.adj =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ## 
 ##  Pairwise comparisons using t tests with pooled SD 
@@ -222,6 +308,12 @@
 ## 
 ## P value adjustment method: none
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{pairwise.t.test}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Gain, table_protein}\OperatorTok{$}\NormalTok{Trt2, }\DataTypeTok{p.adj =} \StringTok{"bonf"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -235,7 +327,19 @@
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\includegraphics{lab_stat565_files/figure-latex/unnamed-chunk-6-1.pdf}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{LSD.test}\NormalTok{(model_protein, }\DataTypeTok{trt =} \StringTok{"Trt2"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.05}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{svm-rmarkdown-article-example_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{(}\KeywordTok{LSD.test}\NormalTok{(model_protein, }\DataTypeTok{trt =} \StringTok{"Trt2"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.05}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## $statistics
@@ -263,6 +367,12 @@
 ## [1] "group"
 \end{verbatim}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{TukeyHSD}\NormalTok{(model_protein, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
 \begin{verbatim}
 ##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
@@ -286,6 +396,12 @@
 ## Cereal:Low-Cereal:High  -2.0 -20.0102 16.010198 0.9905411
 ## Cereal:Low-Beef:Low      4.7 -13.3102 22.710198 0.8952934
 \end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ScheffeTest}\NormalTok{(model_protein, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -321,10 +437,10 @@
   Provide the plots of residuals here. Do not report code here.
 \end{enumerate}
 
-\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-1}
-\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-2}
-\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-3}
-\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-4}
+\includegraphics[width=0.25\linewidth]{svm-rmarkdown-article-example_files/figure-latex/unnamed-chunk-7-1}
+\includegraphics[width=0.25\linewidth]{svm-rmarkdown-article-example_files/figure-latex/unnamed-chunk-7-2}
+\includegraphics[width=0.25\linewidth]{svm-rmarkdown-article-example_files/figure-latex/unnamed-chunk-7-3}
+\includegraphics[width=0.25\linewidth]{svm-rmarkdown-article-example_files/figure-latex/unnamed-chunk-7-4}
 
 \begin{enumerate}
 \def\labelenumi{(\alph{enumi})}
@@ -400,4 +516,8 @@
 \end{Shaded}
 
 
+
+
+\newpage
+\singlespacing 
 \end{document}

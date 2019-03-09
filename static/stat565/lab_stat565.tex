@@ -21,7 +21,7 @@
 \usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.25in]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
             pdftitle={STAT565\_Lab},
@@ -122,109 +122,41 @@
   \postauthor{\par}
       \predate{\centering\large\emph}
   \postdate{\par}
-    \date{2019/3/8}
+    \date{March 09, 2019}
 
 
 \begin{document}
 \maketitle
 
-\hypertarget{lab5-two-factor-factorial-1}{%
-\subsection{Lab5 Two factor Factorial
-1}\label{lab5-two-factor-factorial-1}}
-
-An experiment was designed to study weight gain of rats fed four
-different diets, where there were two levels of protein (high or low)
-and two sources of protein (beef or cereal). This gives 2 x 2 treatment
-combinations: high/beef (HB), high/cereal (HC), low/beef (LB),
-low/cereal (LC). Ten rats were in each of the four treatment groups. Use
-\(\alpha=0.01\)
-
 \begin{enumerate}
 \def\labelenumi{(\alph{enumi})}
+\tightlist
 \item
   Plot the data and report the plot here (A plot with data and means of
   treatment combinations). Do not report code here. Describe the
   observed relationship between two factors.
+\end{enumerate}
+
+\begin{verbatim}
+## Observations: 40
+## Variables: 5
+## $ Source <chr> "Beef", "Beef", "Beef", "Beef", "Beef", "Beef", "Beef",...
+## $ Amount <chr> "Low", "Low", "Low", "Low", "Low", "Low", "Low", "Low",...
+## $ Gain   <dbl> 90, 76, 90, 64, 86, 51, 72, 90, 95, 78, 73, 102, 118, 1...
+## $ Trt1   <fct> Beef, Beef, Beef, Beef, Beef, Beef, Beef, Beef, Beef, B...
+## $ Trt2   <fct> Low, Low, Low, Low, Low, Low, Low, Low, Low, Low, High,...
+\end{verbatim}
+
+\includegraphics[width=0.5\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-1}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
 \item
   Obtain the numerical summary for each treatment combination and factor
   levels separately. Report them here in a tabular form.
-\item
-  Fit the two-factor factorial model and report the complete ANOVA table
-  here. Do not report code here. The complete ANOVA table should have a
-  row for each of the following: main effects of each treatment,
-  two-factor interaction effects, error and total.
-\item
-  Based on the ANOVA table write your conclusion appropriately. Perform
-  all the necessary tests and report the conclusion along with the
-  p-value.
-\item
-  Provide the plots of residuals here. Do not report code here.
-\item
-  Based on the residual plots, clearly explain whether assumptions in
-  the model are satisfied or violated.
-\item
-  Report the code here without output.
 \end{enumerate}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{table_protein <-}\StringTok{ }\KeywordTok{read_excel}\NormalTok{(}\StringTok{"Protein.xlsx"}\NormalTok{)}
-\KeywordTok{head}\NormalTok{(table_protein)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 6 x 3
-##   Source Amount  Gain
-##   <chr>  <chr>  <dbl>
-## 1 Beef   Low       90
-## 2 Beef   Low       76
-## 3 Beef   Low       90
-## 4 Beef   Low       64
-## 5 Beef   Low       86
-## 6 Beef   Low       51
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Install and load ggplot2 package before using ggplot function #}
-\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ table_protein, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Amount, }\DataTypeTok{y =}\NormalTok{ Gain, }\DataTypeTok{colour=}\NormalTok{Source, }\DataTypeTok{group=}\NormalTok{Source))}\OperatorTok{+}\StringTok{ }
-\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ Source,}\DataTypeTok{color =}\NormalTok{ Source),}\DataTypeTok{size =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }
-\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{"Weight Gained"}\NormalTok{, }\DataTypeTok{x=}\StringTok{"Amount of table_protein"}\NormalTok{, }\DataTypeTok{color =}\StringTok{"Source of table_protein"}\NormalTok{, }\DataTypeTok{shape =}\StringTok{"Source of table_protein"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-1}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{#Plots the Mean and 1SD error bars for each treatment group #}
-\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ table_protein, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Amount, }\DataTypeTok{y =}\NormalTok{ Gain, }\DataTypeTok{colour=}\NormalTok{Source,}\DataTypeTok{shape =}\NormalTok{ Source, }\DataTypeTok{group=}\NormalTok{Source)) }\OperatorTok{+}
-\StringTok{  }\KeywordTok{stat_summary}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y=} \StringTok{"Weight Gained"}\NormalTok{, }\DataTypeTok{x=}\StringTok{"Amount of table_protein"}\NormalTok{, }\DataTypeTok{color=}\StringTok{"Source"}\NormalTok{, }\DataTypeTok{shape=}\StringTok{"Source"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## No summary function supplied, defaulting to `mean_se()
-\end{verbatim}
-
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-2}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Install and load ggpubr package before using ggline function # }
-\KeywordTok{ggline}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ table_protein, }\DataTypeTok{x =} \StringTok{"Amount"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Gain"}\NormalTok{, }\DataTypeTok{add =} \KeywordTok{c}\NormalTok{(}\StringTok{"mean"}\NormalTok{, }\StringTok{"jitter"}\NormalTok{),}\DataTypeTok{shape=} \StringTok{"Source"}\NormalTok{,  }\DataTypeTok{color =} \StringTok{"Source"}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"Source"}\NormalTok{, }\DataTypeTok{ylab=} \StringTok{"Weight Gained"}\NormalTok{, }\DataTypeTok{xlab=}\StringTok{"Amount of table_protein"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-3}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{#Load mosaic package before using favstats function#}
-\KeywordTok{favstats}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Source, }\DataTypeTok{data=}\NormalTok{table_protein)}
-\end{Highlighting}
-\end{Shaded}
 
 \begin{verbatim}
 ##   Source min   Q1 median    Q3 max mean       sd  n missing
@@ -232,23 +164,11 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## 2 Cereal  56 74.0     87  95.5 111 84.9 14.99438 20       0
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{favstats}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Amount , }\DataTypeTok{data=}\NormalTok{table_protein)}
-\end{Highlighting}
-\end{Shaded}
-
 \begin{verbatim}
 ##   Amount min    Q1 median     Q3 max  mean       sd  n missing
 ## 1   High  56 81.75   93.5 104.75 118 92.95 16.36259 20       0
 ## 2    Low  51 73.50   83.0  91.25 107 81.55 14.63045 20       0
 \end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{favstats}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Source}\OperatorTok{|}\NormalTok{Amount, }\DataTypeTok{data=}\NormalTok{table_protein)}
-\end{Highlighting}
-\end{Shaded}
 
 \begin{verbatim}
 ##        Amount min    Q1 median     Q3 max   mean       sd  n missing
@@ -260,18 +180,16 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## 6         Low  51 73.50   83.0  91.25 107  81.55 14.63045 20       0
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{#favstats(Gain ~ Source+Amount, data=table_protein)}
-
-\CommentTok{#Create Categorical variables so that plot of residuals versus each treatment combination can be obtained using plot function with the fitted model later #}
-\NormalTok{table_protein}\OperatorTok{$}\NormalTok{Trt1 =}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Source)}
-\NormalTok{table_protein}\OperatorTok{$}\NormalTok{Trt2 =}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Amount)}
-
-\NormalTok{model_protein <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Trt1}\OperatorTok{*}\NormalTok{Trt2, }\DataTypeTok{data=}\NormalTok{table_protein)}
-\KeywordTok{summary}\NormalTok{(model_protein)}
-\end{Highlighting}
-\end{Shaded}
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Fit the two-factor factorial model and report the complete ANOVA table
+  here. Do not report code here. The complete ANOVA table should have a
+  row for each of the following: main effects of each treatment,
+  two-factor interaction effects, error and total.
+\end{enumerate}
 
 \begin{verbatim}
 ##             Df Sum Sq Mean Sq F value Pr(>F)  
@@ -283,24 +201,15 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{plot}\NormalTok{(model_protein, }\DataTypeTok{pch=}\DecValTok{16}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-4}
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-5}
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-6}
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-7}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Pairwise comparisons using t tests with pooled Standard Deviation #}
-\CommentTok{# The output gives a matrix of p values for each pair of treatments #}
-\KeywordTok{pairwise.t.test}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Gain, table_protein}\OperatorTok{$}\NormalTok{Trt2, }\DataTypeTok{p.adj =} \StringTok{"none"}\NormalTok{) }
-\end{Highlighting}
-\end{Shaded}
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Based on the ANOVA table write your conclusion appropriately. Perform
+  all the necessary tests and report the conclusion along with the
+  p-value.
+\end{enumerate}
 
 \begin{verbatim}
 ## 
@@ -314,14 +223,6 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## P value adjustment method: none
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Pairwise comparisons using t tests with pooled Standard Deviation and Bonferroni adjustment #}
-\CommentTok{# The output gives a matrix of p values for each pair of treatments #}
-\KeywordTok{pairwise.t.test}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Gain, table_protein}\OperatorTok{$}\NormalTok{Trt2, }\DataTypeTok{p.adj =} \StringTok{"bonf"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
 \begin{verbatim}
 ## 
 ##  Pairwise comparisons using t tests with pooled SD 
@@ -334,23 +235,7 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## P value adjustment method: bonferroni
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{#Install and load the agricolae package before running the LSD.test function below #}
-\CommentTok{#p.adj option in the LSD.test function can be used to apply different adjustments to control error rates#}
-\KeywordTok{plot}\NormalTok{(}\KeywordTok{LSD.test}\NormalTok{(model_protein, }\DataTypeTok{trt =} \StringTok{"Trt2"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.05}\NormalTok{))}
-\end{Highlighting}
-\end{Shaded}
-
-\includegraphics[width=0.3\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-3-8}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{#The treatments sharing the same letter on the plot are not different#}
-
-\NormalTok{(}\KeywordTok{LSD.test}\NormalTok{(model_protein, }\DataTypeTok{trt =} \StringTok{"Trt2"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.05}\NormalTok{)) }\CommentTok{# Using outer parentheses prints the output#}
-\end{Highlighting}
-\end{Shaded}
+\includegraphics{lab_stat565_files/figure-latex/unnamed-chunk-6-1.pdf}
 
 \begin{verbatim}
 ## $statistics
@@ -378,13 +263,6 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## [1] "group"
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{#Tukey's test to get observed difference in means, CI and p value#}
-\KeywordTok{TukeyHSD}\NormalTok{(model_protein, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
 \begin{verbatim}
 ##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
@@ -408,14 +286,6 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## Cereal:Low-Cereal:High  -2.0 -20.0102 16.010198 0.9905411
 ## Cereal:Low-Beef:Low      4.7 -13.3102 22.710198 0.8952934
 \end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Scheffe's test to get observed difference in means, CI and p value #}
-\CommentTok{# Install and load the DescTools package before using the ScheffeTest function #}
-\KeywordTok{ScheffeTest}\NormalTok{(model_protein, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
 
 \begin{verbatim}
 ## 
@@ -442,6 +312,92 @@ low/cereal (LC). Ten rats were in each of the four treatment groups. Use
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 \end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Provide the plots of residuals here. Do not report code here.
+\end{enumerate}
+
+\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-1}
+\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-2}
+\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-3}
+\includegraphics[width=0.25\linewidth]{lab_stat565_files/figure-latex/unnamed-chunk-7-4}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{5}
+\item
+  Based on the residual plots, clearly explain whether assumptions in
+  the model are satisfied or violated.
+\item
+  Report the code here without output.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{table_protein <-}\StringTok{ }\KeywordTok{read_excel}\NormalTok{(}\StringTok{"Protein.xlsx"}\NormalTok{)}
+\KeywordTok{glimpse}\NormalTok{(table_protein)}
+
+\CommentTok{# Install and load ggplot2 package before using ggplot function #}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ table_protein, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Amount, }\DataTypeTok{y =}\NormalTok{ Gain, }\DataTypeTok{colour =}\NormalTok{ Source, }\DataTypeTok{group =}\NormalTok{ Source)) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{shape =}\NormalTok{ Source, }\DataTypeTok{color =}\NormalTok{ Source), }\DataTypeTok{size =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{"Weight Gained"}\NormalTok{, }
+    \DataTypeTok{x =} \StringTok{"Amount of table_protein"}\NormalTok{, }\DataTypeTok{color =} \StringTok{"Source of table_protein"}\NormalTok{, }\DataTypeTok{shape =} \StringTok{"Source of table_protein"}\NormalTok{)}
+
+\CommentTok{# Plots the Mean and 1SD error bars for each treatment group #}
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ table_protein, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Amount, }\DataTypeTok{y =}\NormalTok{ Gain, }\DataTypeTok{colour =}\NormalTok{ Source, }\DataTypeTok{shape =}\NormalTok{ Source, }
+    \DataTypeTok{group =}\NormalTok{ Source)) }\OperatorTok{+}\StringTok{ }\KeywordTok{stat_summary}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{y =} \StringTok{"Weight Gained"}\NormalTok{, }\DataTypeTok{x =} \StringTok{"Amount of table_protein"}\NormalTok{, }
+    \DataTypeTok{color =} \StringTok{"Source"}\NormalTok{, }\DataTypeTok{shape =} \StringTok{"Source"}\NormalTok{)}
+
+\CommentTok{# Install and load ggpubr package before using ggline function #}
+\KeywordTok{ggline}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ table_protein, }\DataTypeTok{x =} \StringTok{"Amount"}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Gain"}\NormalTok{, }\DataTypeTok{add =} \KeywordTok{c}\NormalTok{(}\StringTok{"mean"}\NormalTok{, }\StringTok{"jitter"}\NormalTok{), }
+    \DataTypeTok{shape =} \StringTok{"Source"}\NormalTok{, }\DataTypeTok{color =} \StringTok{"Source"}\NormalTok{, }\DataTypeTok{linetype =} \StringTok{"Source"}\NormalTok{, }\DataTypeTok{ylab =} \StringTok{"Weight Gained"}\NormalTok{, }
+    \DataTypeTok{xlab =} \StringTok{"Amount of table_protein"}\NormalTok{)}
+
+\CommentTok{# Load mosaic package before using favstats function#}
+\KeywordTok{favstats}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Source, }\DataTypeTok{data =}\NormalTok{ table_protein)}
+\KeywordTok{favstats}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Amount, }\DataTypeTok{data =}\NormalTok{ table_protein)}
+\KeywordTok{favstats}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Source }\OperatorTok{|}\StringTok{ }\NormalTok{Amount, }\DataTypeTok{data =}\NormalTok{ table_protein)}
+\CommentTok{# favstats(Gain ~ Source+Amount, data=table_protein)}
+
+\CommentTok{# Create Categorical variables so that plot of residuals versus each}
+\CommentTok{# treatment combination can be obtained using plot function with the fitted}
+\CommentTok{# model later #}
+\NormalTok{table_protein}\OperatorTok{$}\NormalTok{Trt1 =}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Source)}
+\NormalTok{table_protein}\OperatorTok{$}\NormalTok{Trt2 =}\StringTok{ }\KeywordTok{as.factor}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Amount)}
+
+\NormalTok{model_protein <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(Gain }\OperatorTok{~}\StringTok{ }\NormalTok{Trt1 }\OperatorTok{*}\StringTok{ }\NormalTok{Trt2, }\DataTypeTok{data =}\NormalTok{ table_protein)}
+\KeywordTok{summary}\NormalTok{(model_protein)}
+\KeywordTok{plot}\NormalTok{(model_protein, }\DataTypeTok{pch =} \DecValTok{16}\NormalTok{)}
+
+\CommentTok{# Pairwise comparisons using t tests with pooled Standard Deviation # The}
+\CommentTok{# output gives a matrix of p values for each pair of treatments #}
+\KeywordTok{pairwise.t.test}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Gain, table_protein}\OperatorTok{$}\NormalTok{Trt2, }\DataTypeTok{p.adj =} \StringTok{"none"}\NormalTok{)}
+
+\CommentTok{# Pairwise comparisons using t tests with pooled Standard Deviation and}
+\CommentTok{# Bonferroni adjustment # The output gives a matrix of p values for each}
+\CommentTok{# pair of treatments #}
+\KeywordTok{pairwise.t.test}\NormalTok{(table_protein}\OperatorTok{$}\NormalTok{Gain, table_protein}\OperatorTok{$}\NormalTok{Trt2, }\DataTypeTok{p.adj =} \StringTok{"bonf"}\NormalTok{)}
+
+\CommentTok{# Install and load the agricolae package before running the LSD.test}
+\CommentTok{# function below # p.adj option in the LSD.test function can be used to}
+\CommentTok{# apply different adjustments to control error rates#}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{LSD.test}\NormalTok{(model_protein, }\DataTypeTok{trt =} \StringTok{"Trt2"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.05}\NormalTok{))}
+\CommentTok{# The treatments sharing the same letter on the plot are not different#}
+
+\NormalTok{(}\KeywordTok{LSD.test}\NormalTok{(model_protein, }\DataTypeTok{trt =} \StringTok{"Trt2"}\NormalTok{, }\DataTypeTok{alpha =} \FloatTok{0.05}\NormalTok{))  }\CommentTok{# Using outer parentheses prints the output#}
+
+\CommentTok{# Tukey's test to get observed difference in means, CI and p value#}
+\KeywordTok{TukeyHSD}\NormalTok{(model_protein, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)}
+
+\CommentTok{# Scheffe's test to get observed difference in means, CI and p value #}
+\CommentTok{# Install and load the DescTools package before using the ScheffeTest}
+\CommentTok{# function #}
+\KeywordTok{ScheffeTest}\NormalTok{(model_protein, }\DataTypeTok{conf.level =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 
 \end{document}

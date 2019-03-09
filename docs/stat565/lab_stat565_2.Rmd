@@ -1,34 +1,17 @@
 ---
-title: "STAT565_Lab"
-author: "Shen Qu"
-date: "`r format(Sys.time(), '%B %d, %Y')`"
-output: 
-  pdf_document:
-#    highlight: pygments
-geometry: margin=0.25in
-# fontfamily: mathpazo
-# fontsize: 12pt
-# spacing: double
+title: "lab_stat565_2"
+author: "shen"
+date: "2019/3/8"
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,cache=FALSE, size="tiny",cache=FALSE, results="markup", tidy=T)
-
-# theme: default, cerulean, journal, flatly, darkly, readable, spacelab, united, cosmo, lumen, paper, sandstone, simplex, and yeti
-
-# highlight: default, tango, pygments, kate, monochrome, espresso, zenburn, haddock, and textmate
-
-#    includes:
-#      in_header: preamble.tex
-#      before_body: doc-prefix.tex
-#      after_body: doc-suffix.tex
-
-#    df_print: default, kable, tibble
-
-#    citation_package: natbib, biblatex
-
-# size = c("normalsize", "tiny", "scriptsize", "footnotesize", "small", "large", "Large", "LARGE", "huge", "Huge")
+knitr::opts_chunk$set(echo = TRUE, size="small", results="markup",highlight=T)
 ```
+
+## Lab5 Two factor Factorial 1
+
+(a) Plot the data and report the plot here (A plot with data and means of treatment combinations). Do not report code here. Describe the observed relationship between two factors.
 
 ```{r eval=FALSE, include=FALSE}
 install.packages("ggplot2")
@@ -46,68 +29,16 @@ library(mosaic)
 library(agricolae)
 library(DescTools)
 library(dplyr)
+```
+
+```{r echo=FALSE}
 table_protein <- read_excel("Protein.xlsx")
-table_protein$Trt1 = as.factor(table_protein$Source)
-table_protein$Trt2 = as.factor(table_protein$Amount)
-model_protein <- aov(Gain ~ Trt1*Trt2, data=table_protein)
-```
-
-(a) Plot the data and report the plot here (A plot with data and means of treatment combinations). Do not report code here. Describe the observed relationship between two factors.
-
-```{r echo=FALSE, out.width='50%'}
 glimpse(table_protein)
-ggplot(data = table_protein, aes(x = Amount, y = Gain, colour=Source, group=Source))+ 
-  geom_point(aes(shape = Source,color = Source),size = 2) + 
-  labs(y = "Weight Gained", x="Amount of table_protein", color ="Source of table_protein", shape ="Source of table_protein")
 ```
 
 
-(b) Obtain the numerical summary for each treatment combination and factor levels separately. Report them here in a tabular form.
 
-```{r echo=FALSE}
-favstats(Gain ~ Source, data=table_protein)
-favstats(Gain ~ Amount , data=table_protein)
-favstats(Gain ~ Source|Amount, data=table_protein)
-```
-
-
-(c) Fit the two-factor factorial model and report the complete ANOVA table here. Do not report code here. The complete ANOVA table should have a row for each of the following: main effects of each treatment, two-factor interaction effects, error and total.
-
-```{r echo=FALSE}
-summary(model_protein)
-```
-
-(d) Based on the ANOVA table write your conclusion appropriately. Perform all the necessary tests and report the conclusion along with the p-value.
-
-```{r echo=FALSE}
-pairwise.t.test(table_protein$Gain, table_protein$Trt2, p.adj = "none") 
-
-pairwise.t.test(table_protein$Gain, table_protein$Trt2, p.adj = "bonf")
-
-plot(LSD.test(model_protein, trt = "Trt2", alpha = 0.05))
-
-(LSD.test(model_protein, trt = "Trt2", alpha = 0.05)) 
-
-TukeyHSD(model_protein, conf.level = 0.95)
-
-ScheffeTest(model_protein, conf.level = 0.95)
-```
-
-
-(e) Provide the plots of residuals here. Do not report code here.
-
-```{r echo=FALSE, out.width='25%'}
-plot(model_protein, pch=16)
-```
-
-
-(f) Based on the residual plots, clearly explain whether assumptions in the model are satisfied or violated.
-
-
-(g) Report the code here without output.
-
-
-```{r , pressure, eval =F, size="footnotesize", tidy = T}
+```{r, out.width='25%', collapse=T}
 table_protein <- read_excel("Protein.xlsx")
 glimpse(table_protein)
 
@@ -158,4 +89,5 @@ TukeyHSD(model_protein, conf.level = 0.95)
 # Scheffe's test to get observed difference in means, CI and p value #
 # Install and load the DescTools package before using the ScheffeTest function #
 ScheffeTest(model_protein, conf.level = 0.95)
+
 ```
