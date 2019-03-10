@@ -589,8 +589,11 @@ Cov(X,c)=0  &amp; (3) \end{array}\]</span></p>
 </div>
 <div id="order-statistics" class="section level3">
 <h3>5.4 Order Statistics</h3>
-<p><strong>Theorem 5.4.4</strong></p>
-<p><code>2019.01.29``p.9</code></p>
+<p><strong>Definition 5.4.2</strong> The notation <span class="math inline">\(\{b\}\)</span>, when appearing in a subscript, is defined to be the number <span class="math inline">\(b\)</span> rounded to the nearest integer in the usual way. More precisely, if <span class="math inline">\(i\)</span> is an integer and <span class="math inline">\(i-.5\le b&lt;i+.5\)</span>, then <span class="math inline">\(\{b\}=i\)</span>.</p>
+<p><strong>Theorem 5.4.3</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from a discrete distribution with pmf <span class="math inline">\(f_X(x_i)=P_i\)</span>, where <span class="math inline">\(x1&lt;x2&lt;..\)</span> are the possible values of <span class="math inline">\(X\)</span> in ascending order.</p>
+<p>Let <span class="math inline">\(X_{(1)},..,X_{(n)}\)</span> denote the order statistics from the sample. Then</p>
+<p><span class="math display">\[P(X_{(j)}\le X_i)=\sum^n_{k=j}\binom{n}{k}P^k_i(1-P_i)^{n-k}\]</span> <span class="math display">\[P(X_{(j)}=X_i)=\sum^n_{k=j}\binom{n}{k}[P^k_i(1-P_i)^{n-k}-P^k_{i-1}(1-P_{i-1})^{n-k}]\]</span></p>
+<p><strong>Theorem 5.4.4</strong> <code>2019.01.29``p.9</code> Let <span class="math inline">\(X_{(1)},..,X_{(n)}\)</span> denote the order statistics of a random sample, <span class="math inline">\(X_1,..,X_n\)</span> from a continuous population with cdf <span class="math inline">\(Fx (x)\)</span> and pdf <span class="math inline">\(f_X(x)\)</span>. Then the pdf of <span class="math inline">\(X_{(n)}\)</span> is</p>
 <p><span class="math display">\[f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}\]</span></p>
 <p><span class="math display">\[f_{K}(x)=\frac{n!}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}f(x)\]</span></p>
 </div>
@@ -623,6 +626,30 @@ Cov(X,c)=0  &amp; (3) \end{array}\]</span></p>
 <h4>5.5.4 The Delta Method</h4>
 </div>
 </div>
+<div id="generating-a-random-sample" class="section level3">
+<h3>5.6 Generating a Random Sample</h3>
+<div id="direct-methods" class="section level4">
+<h4>5.6.1 Direct Methods</h4>
+<p><strong>Example 5.6.3 (Probability Integral Transform)</strong></p>
+<p><span class="math inline">\(Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)\)</span></p>
+</div>
+<div id="indirect-methods" class="section level4">
+<h4>5.6.2 Indirect Methods</h4>
+<p><strong>Example 5.6.7 (Beta random variable generation-I)</strong> generates a <span class="math inline">\(Beta(a,b)\)</span> random variable.</p>
+<p>If both a and b are integers, use the direct transformation method (5.6.5). Set <span class="math inline">\(U_j\)</span> are iid <span class="math inline">\(uni(0,1)\)</span> random variables, then <span class="math inline">\(Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)\)</span></p>
+<p>If both a and b are not integers, To generate <span class="math inline">\(Y\sim beta(a, b)\)</span>:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>Generate <span class="math inline">\((U,V)\)</span> independent <span class="math inline">\(uni(0,1)\)</span>.</p></li>
+<li><p>If <span class="math inline">\(U&lt;\frac1cf_Y(V)\)</span>, set <span class="math inline">\(Y=V\)</span>; otherwise, return to step (a).</p></li>
+</ol>
+<p>(See HW7)</p>
+</div>
+<div id="the-acceptreject-algorithm" class="section level4">
+<h4>5.6.3 The Accept/Reject Algorithm</h4>
+<p><strong>Example 5.6.8</strong> (See HW7)</p>
+<p><strong>Example 5.6.9 (Beta random variable generation-II)</strong></p>
+</div>
+</div>
 </div>
 <div id="principles-of-data-reduction" class="section level2">
 <h2>6. Principles of Data Reduction</h2>
@@ -653,37 +680,106 @@ Cov(X,c)=0  &amp; (3) \end{array}\]</span></p>
 </div>
 <div id="sufficient-ancillary-and-complete-statistics" class="section level4">
 <h4>6.2.4 Sufficient, Ancillary, and Complete Statistics</h4>
+<p><strong>Definition 6.2.21</strong> Let <span class="math inline">\(f(x|\theta)\)</span> be a family of pdfs or pmfs for a statistic <span class="math inline">\(T(\vec X)\)</span>. The family of probability distributions is called complete if <span class="math inline">\(E_\theta[g(T)]=0, \forall\theta\)</span> implies <span class="math inline">\(P_\theta(g(T)=0)=1\)</span> for all <span class="math inline">\(\theta\)</span>. Equivalently, <span class="math inline">\(T(\vec X)\)</span> is called a <em>complete statistic</em>.</p>
+<p><strong>Example 6.2.22 (Binomial complete sufficient statistic)</strong></p>
+<p><strong>Example 6.2.23 (Uniform complete sufficient statistic)</strong></p>
 <p><strong>Theorem 6.2.24 (Basu’s Theorem)</strong> If <span class="math inline">\(T(\mathbf{X})\)</span> is a complete and minimal sufficient statistic, then <span class="math inline">\(T(\mathbf{X})\)</span> is independent of every ancillary statistic.</p>
+<p><strong>Theorem 6.2.25 (Complete statistics in the exponential family)</strong></p>
+<p><strong>Example 6.2.26 (Using Basu’s Theorem-I)</strong></p>
+<p><strong>Example 6.2.27 (Using Basu’s Theorem-II)</strong></p>
+<p><strong>Theorem 6.2.28</strong> If a minimal sufficient statistic exists, then any complete statistic is also a minimal sufficient statistic.</p>
 </div>
 </div>
 <div id="the-likelihood-principle" class="section level3">
 <h3>6.3 The Likelihood Principle</h3>
+<div id="the-likelihood-function" class="section level4">
+<h4>6.3.1 The Likelihood Function</h4>
+<p><strong>Definition 6.3.1</strong> Let <span class="math inline">\(f(\vec x|\theta)\)</span> denote the joint pdf or pmf of the sample <span class="math inline">\(X=(X_1,..,X_n)\)</span>. Then, given that <span class="math inline">\(\vec X=\vec x\)</span> is observed, the function of <span class="math inline">\(\theta\)</span> defined by <span class="math inline">\(L(\theta|\vec x)=f(\vec x|\theta)\)</span> is called the likelihood function.</p>
+<p><strong>Example 6.3.2 (Negative binomial likelihood)</strong></p>
+<blockquote>
+<p>LIKELIHOOD PRINCIPLE: If x and y are two sample points such that <span class="math inline">\(L(\theta|\vec x)\)</span> is proportional to <span class="math inline">\(L(\theta|\vec y)\)</span>, that is, there exists a constant <span class="math inline">\(C(\vec x,\vec y)\)</span> such that <span class="math inline">\(L(\theta|\vec x)=C(\vec x,\vec y)L(\theta|\vec y) \forall\theta\)</span>, then the conclusions drawn from x and y should be identical.</p>
+</blockquote>
+<p><strong>Example 6.3.3 (Normal fiducial distribution)</strong></p>
+</div>
+<div id="the-formal-likelihood-principle" class="section level4">
+<h4>6.3.2 The Formal Likelihood Principle</h4>
+<p><strong>Example 6.3.4 (Evidence function)</strong></p>
+<blockquote>
+<p>CONDITIONALITY PRINCIPLE</p>
+</blockquote>
+<p><strong>Example 6.3.4 (Binomial/negative binomial experiment)</strong></p>
+<p><strong>Theorem 6.3.6 (Birnbaum’s Theorem)</strong> The Formal Likelihood Principle follows from the Formal Sufficiency Principle and the Conditionality Principle. The converse is also true.</p>
+<p><strong>Example 6.3.7 ( Continuation of Example 6.3.5)</strong></p>
+</div>
 </div>
 <div id="the-equivariance-principle" class="section level3">
 <h3>6.4 The Equivariance Principle</h3>
 <blockquote>
 <p>Equivariance Principle: if <span class="math inline">\(Y=g(\mathbf{X}\)</span> is a change of measurement scale such that the model for <span class="math inline">\(\mathbf{Y}\)</span> has the same formal structure as the model for <span class="math inline">\(\mathbf{X}\)</span>, then an inference procedure should be both measurement equivariant and formally equivariant.</p>
 </blockquote>
+<p><strong>Example 6.4.1 (Binomial equivariance)</strong></p>
+<p><strong>Definition 6.4.2</strong> A set of functions <span class="math inline">\(\{g(\vec x):g\in\mathcal{G}\}\)</span> from the sample space <span class="math inline">\(\mathcal{X}\)</span> onto <span class="math inline">\(\mathcal{X}\)</span> is called a group of transformations of <span class="math inline">\(\mathcal{X}\)</span> if</p>
+<ol style="list-style-type: lower-roman">
+<li><p>(Inverse) For every <span class="math inline">\(g\in\mathcal{G}\)</span> there is a <span class="math inline">\(g'\in\mathcal{G}\)</span> such that <span class="math inline">\(g'(g(\vec x))=\vec x\ \forall\vec x\in\mathcal{X}\)</span>.</p></li>
+<li><p>(Composition) For every <span class="math inline">\(g\in\mathcal{G}\)</span> and <span class="math inline">\(g'\in\mathcal{G}\)</span> there exists <span class="math inline">\(g''\in\mathcal{G}\)</span> such that <span class="math inline">\(g'(g(\vec x))=g''(\vec x)\ \forall\vec x\in\mathcal{X}\)</span>.</p></li>
+</ol>
+<p>Sometimes the third requirement,</p>
+<ol start="3" style="list-style-type: lower-roman">
+<li>(Identity) The identity, <span class="math inline">\(e(\vec x)\)</span>, defined by <span class="math inline">\(e(\vec x)=\vec x\)</span> is an element of <span class="math inline">\(\mathcal{G}\)</span>, is stated as part of the definition of a group. But (iii) is a consequence of (i) and (ii) and need not be verified separately.</li>
+</ol>
+<p><strong>Example 6.4.3 ( Continuation of Example 6.4.1)</strong></p>
+<p><strong>Definition 6.4.4</strong> Let <span class="math inline">\(\mathcal{F}=\{f(\vec x|\theta):\theta\in\Theta\}\)</span> be a set of pdfs or pmfs for <span class="math inline">\(\vec X\)</span>, and let <span class="math inline">\(\mathcal{G}\)</span> be a group of transformations of the sample space <span class="math inline">\(\mathcal{X}\)</span>. Then <span class="math inline">\(\mathcal{F}\)</span> is <em>invariant under the group</em> <span class="math inline">\(\mathcal{G}\)</span> if for every <span class="math inline">\(\theta\in\Theta\)</span> and <span class="math inline">\(g\in\mathcal{G}\)</span> there exists a unique <span class="math inline">\(\theta'\in\Theta\)</span> such that <span class="math inline">\(\vec Y=g(\vec X)\)</span> has the distribution <span class="math inline">\(f(\vec y|\theta')\)</span> if <span class="math inline">\(\vec X\)</span> has the distribution <span class="math inline">\(f(\vec x|\theta)\)</span>.</p>
+<p><strong>Example 6.4.5 (Conclusion of Example 6.4.1)</strong></p>
+<p><strong>Example 6.4.6 (Normal location invariance)</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be iid <span class="math inline">\(n(\mu,\sigma^2)\)</span>, both <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span> unknown. Consider the group of transformations defined by <span class="math inline">\(\mathcal{G}=\{g_a(\vec x),-\infty&lt;a&lt;\infty\}\)</span>, where <span class="math inline">\(g_a(x_1,..,x_n)=(x_1+a,..,x_n+a)\)</span>.</p>
+<p><span class="math inline">\({Y_1,..,Y_n}=g_a(X_1,..,X_n)=(X_1+a,..,X_n+a)\)</span> are iid <span class="math inline">\(n(\mu+a,\sigma^2)\)</span> random variables. Thus, the joint distribution of <span class="math inline">\(\vec Y=g_a(\vec X)\)</span> is in <span class="math inline">\(\mathcal{F}\)</span> and hence <span class="math inline">\(\mathcal{F}\)</span> is invariant under <span class="math inline">\(\mathcal{G}\)</span>.</p>
 </div>
 </div>
 <div id="point-estimation" class="section level2">
 <h2>7. Point Estimation</h2>
 <div id="method-of-moments" class="section level4">
 <h4>7.2.1 Method of Moments</h4>
+<p><span class="math inline">\(f(\mathbf{x}|\theta)=\)</span>. Thus, <span class="math inline">\(X\sim Beta(\theta,1)\)</span>, <span class="math inline">\(\mu'_1=E[X]=\)</span></p>
+<p>Set <span class="math inline">\(\bar X=\frac1n\sum_{i=1}^nX_i=\mu'_1=\)</span>. Therefore, <span class="math inline">\(\hat\theta_{MOM}=\)</span></p>
+<p><strong>Example 7.2.1 (Normal method of moments)</strong></p>
+<p><strong>Example 7.2.2 (Binomial method of moments)</strong></p>
+<p><strong>Example 7.2.3 (Satterthwaite approximation)</strong></p>
 </div>
 <div id="maximum-likelihood-estimators" class="section level4">
 <h4>7.2.2 Maximum Likelihood Estimators</h4>
+<p><span class="math display">\[L(\theta|\mathbf{x})=L(\theta_1,..,\theta_k|x_1,..,x_n)=\prod_{i=1}^n f(x_i|\theta_1,..,\theta_k)\]</span></p>
+<p><strong>Definition 7.2.4</strong> For each sample point <span class="math inline">\(\vec x\)</span>, let <span class="math inline">\(\hat\theta(\vec x)\)</span> be a parameter value at which <span class="math inline">\(L(\theta|\mathbf{x})\)</span> attains its maximum as a function of <span class="math inline">\(\theta\)</span>, with <span class="math inline">\(\vec x\)</span> held fixed. A <em>maximum likelihood estimator</em> (MLE) of the parameter <span class="math inline">\(\theta\)</span> based on a sample <span class="math inline">\(\vec X\)</span> is <span class="math inline">\(\hat\theta(\vec X)\)</span>.</p>
+<p>Let <span class="math inline">\(L(\theta|\mathbf{x})=f(\mathbf{x}|\theta)\)</span>. <span class="math inline">\(\forall\theta\)</span>, <span class="math inline">\(L(\theta|\mathbf{x})=\)</span>. Thus, <span class="math inline">\(\theta_{MLE}=\)</span>.</p>
+<p>Derive the log likehood function. <span class="math inline">\(l(\theta|\mathbf{x})=\ln L(\theta|\mathbf{x})=\)</span></p>
+<p>Set <span class="math inline">\(\frac{\partial}{\partial\theta_i}l(\theta|\mathbf{x})=0,\quad i=1,..,k\)</span></p>
+<p>Set <span class="math inline">\(\frac{\partial}{\partial^2\theta_i}l(\theta|\mathbf{x})=0\)</span>, there is solution or not.</p>
+<p>Thus, <span class="math inline">\(\hat\theta_{MLE}=\)</span></p>
+<p><strong>Example 7.2.5 (Normal likelihood)</strong></p>
+<p><strong>Example 7.2.6 ( Continuation of Example 7.2.5)</strong></p>
+<p><strong>Example 7.2.7 (Bernoulli MLE)</strong></p>
+<p><strong>Example 7.2.8 ( Restricted range MLE)</strong></p>
+<p><strong>Example 7.2.9 ( Binomial MLE, unknown number of trials)</strong></p>
+<p>A useful property of maximum likelihood estimators is what has come to be known as the <em>invariance property of maximum likelihood estimators</em> (not to be confused with the type of invariance discussed in Chapter 6).</p>
 <p><strong>Theorem 7.2.10 (Invariance property of MLEs)</strong> If <span class="math inline">\(\hat\theta\)</span> is the MLE of <span class="math inline">\(\theta\)</span>, then for any function <span class="math inline">\(\tau(\theta)\)</span>, the MLE of <span class="math inline">\(\tau(\theta)\)</span> is <span class="math inline">\(\tau(\hat\theta)\)</span>.</p>
+<p><strong>Example 7.2.11 (Normal MLEs, <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> unknown)</strong></p>
+<p><strong>Example 7.2.12 (Continuation of Example 1.2.11)</strong></p>
+<p><strong>Example 7.2.13 (Continuation of Example 7.2.2)</strong></p>
 </div>
 <div id="bayes-estimators" class="section level4">
 <h4>7.2.3 Bayes Estimators</h4>
-<p><strong>Example 7.2.16 (Normal Bayes estimators)</strong></p>
-<p><span class="math display">\[E(\theta|x)=\frac{\tau^2}{\tau^2+\sigma^2}x+\frac{\sigma^2}{\sigma^2+\tau^2},\]</span></p>
-<p><span class="math display">\[Var(\theta|x)=\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}\]</span></p>
+<p>In the Bayesian approach <span class="math inline">\(\theta\)</span> is considered to be a quantity whose variation can be described by a probability distribution (called the <em>prior distribution</em>). This is a subjective distribution, based on the experimenter’s belief, and is formulated before the data are seen (hence the name prior distribution). A sample is then taken from a population indexed by <span class="math inline">\(\theta\)</span> and the prior distribution is updated with this sample information. The updated prior is called the <em>posterior distribution</em>. This updating is done with the use of Bayes’ Rule (seen in Chapter 1), hence the name Bayesian statistics.</p>
+<p>If we denote the prior distribution by <span class="math inline">\(\pi(\theta)\)</span> and the sampling distribution by <span class="math inline">\(f(\vec x|\theta)\)</span>, then the posterior distribution, the conditional distribution of <span class="math inline">\(\theta\)</span> given the sample, <span class="math inline">\(\vec x\)</span>, is</p>
+<p><span class="math display">\[\pi(\theta|\vec x)=\frac{f(\vec x|\theta)\pi(\theta)}{m(\vec x)},\quad f(\vec x|\theta)\pi(\theta)=f(\vec x,\theta),\quad m(\vec x)=\int f(\vec x|\theta)\pi(\theta)d\theta\]</span></p>
+<p><strong>Example 7.2.14 (Binomial Bayes estimation)</strong></p>
+<p><strong>Definition 7.2.15</strong> Let <span class="math inline">\(\mathcal{F}\)</span> denote the class of pdfs or pmfs <span class="math inline">\(f(\vec x|\theta)\)</span> (indexed by <span class="math inline">\(\theta\)</span>). A class <span class="math inline">\(\Pi\)</span> of prior distributions is a <em>conjugate family</em> for <span class="math inline">\(\mathcal{F}\)</span> if the posterior distribution is in the class <span class="math inline">\(\Pi\ \forall f\in\mathcal{F}\)</span>, all priors in <span class="math inline">\(\Pi\)</span>, and all <span class="math inline">\(x\in\mathcal{X}\)</span>.</p>
+<p><strong>Example 7.2.16 (Normal Bayes estimators)</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from a <span class="math inline">\(n(\theta,\sigma^2)\)</span> population, and suppose that the prior distribution on <span class="math inline">\(\theta\)</span> is <span class="math inline">\(n(\mu,\tau^2)\)</span>. Here we assume that <span class="math inline">\(\sigma^2, \mu, \tau^2\)</span> are all known. The posterior distribution of <span class="math inline">\(\theta\)</span> is also normal, with mean and variance given by</p>
+<p><span class="math display">\[f(\theta|x)\sim N(\frac{\tau^2x+\sigma^2\mu}{\tau^2+\sigma^2},\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}),\quad E(\theta|x)=\frac{\tau^2}{\tau^2+\sigma^2}x+\frac{\sigma^2}{\sigma^2+\tau^2},\quad Var(\theta|x)=\frac{\sigma^2\tau^2}{\sigma^2+\tau^2}\]</span></p>
 </div>
 <div id="the-em-algorithm" class="section level4">
 <h4>7.2.4 The EM Algorithm</h4>
 <p>(Expectation-Maximization)</p>
+<p><strong>Example 7.2.17 (Multiple Poisson rates)</strong></p>
+<p><strong>Example 7.2.18 (Continuation of Example 7.2.17)</strong></p>
+<p><strong>Example 7.2.19 ( Conclusion or Example 7.2.17)</strong></p>
 <p><strong>Theorem 7.2.20 (Monotonic EM sequence)</strong> The sequence {<span class="math inline">\(\hat\theta_{(r)}\)</span>} defined by 7.2.20 satisfies</p>
 <p><span class="math display">\[L\left(\hat\theta^{(r+1)}|y\right)\ge L\left(\hat\theta^{(r)}|y\right)\]</span></p>
 </div>
@@ -694,24 +790,96 @@ Cov(X,c)=0  &amp; (3) \end{array}\]</span></p>
 <p><strong>Definition 7.3.1</strong> The mean squared error (MSE) of an estimator <span class="math inline">\(W\)</span> of a parameter <span class="math inline">\(\theta\)</span> is the function of <span class="math inline">\(\theta\)</span> defined by <span class="math inline">\(E_{\theta}(W-\theta)^2\)</span>.</p>
 <p><span class="math display">\[E_{\theta}(W-\theta)^2=Var_{\theta}W+(E_{\theta}W-\theta)^2=Var_{\theta}W+(Bias_{\theta}W)^2\]</span></p>
 <p><strong>Definition 7.3.2</strong> The <em>bias</em> of a point estimator <span class="math inline">\(W\)</span> of a parameter <span class="math inline">\(\theta\)</span> is the difference between the expected value of <span class="math inline">\(W\)</span> and <span class="math inline">\(\theta\)</span>; that is, <span class="math inline">\(Bias_{\theta}W=E_{\theta}W-\theta\)</span>. An estimator whose bias is identically (in a) equal to 0 is called <em>unbiased</em> and satisfies <span class="math inline">\(E_{\theta}W=\theta\)</span> for all <span class="math inline">\(\theta\)</span>.</p>
+<p>For an unbiased estimator we have <span class="math display">\[E_{\theta}(W-\theta)^2=Var_{\theta}W\]</span> and so, if an estimator is unbiased, its MSE is equal to its variance.</p>
 <p><strong>Example 7.3.3 (Normal MSE)</strong> Let <span class="math inline">\(X_1,..,X_n\sim iid\ n(\mu,\sigma^2)\)</span>. The statistics <span class="math inline">\(\bar X\)</span> and <span class="math inline">\(\sigma^2\)</span> are both unbiased estimators since</p>
-<p><span class="math display">\[E\bar X=\mu,\quad ES^2=\sigma^2, \text{ for all } \mu \text{ and } \sigma^2\]</span></p>
+<p><span class="math display">\[E\bar X=\mu,\quad ES^2=\sigma^2, \forall\mu \text{ and } \sigma^2\]</span></p>
+<p><span class="math display">\[E(\bar X-\mu)^2=Var\bar X=\frac{\sigma^2}{n},\quad E(S^2-\sigma^2)^2=VarS^2=\frac{2\sigma^4}{n-1}\]</span></p>
+<p><strong>Example 7.3.4 (Continuation of Example 7.3.3)</strong> An alternative estimator for <span class="math inline">\(\sigma^2\)</span> is the maximum likelihood estimator <span class="math inline">\(\hat\sigma^2=\frac1n\sum_{i=1}^n(X_i-\bar X)^2=\frac{n-1}nS^2\)</span>. It is straightforward to calculate</p>
+<p><span class="math display">\[E\hat\sigma^2=E\left(\frac{n-1}nS^2\right)=\frac{n-1}n\sigma^2\]</span></p>
+<p>so <span class="math inline">\(\sigma^2\)</span> is a biased estimator of <span class="math inline">\(\hat\sigma^2\)</span>. The variance of <span class="math inline">\(\hat\sigma^2\)</span> can also be calculated as</p>
+<p><span class="math display">\[Var\hat\sigma^2=Var\left(\frac{n-1}nS^2\right)=\left(\frac{n-1}n\right)^2VarS^2=\frac{2(n-1)}{n^2}\sigma^4\]</span> and, hence, its MSE is given by</p>
+<p><span class="math display">\[E(\hat\sigma^2-\sigma^2)^2=\frac{2(n-1)}{n^2}\sigma^4+\left(\frac{n-1}n\sigma^2-\sigma^2\right)^2=\frac{2n-1}{n^2}\sigma^4\]</span> We thus have <span class="math display">\[E(\hat\sigma^2-\sigma^2)^2=\frac{2n-1}{n^2}\sigma^4&lt;\frac{2\sigma^4}{n-1}=E(S^2-\sigma^2)^2\]</span></p>
+<p>showing that <span class="math inline">\(\hat\sigma^2\)</span> has smaller MSE than <span class="math inline">\(S^2\)</span> Thus, by trading off variance for bias, the MSE is improved.</p>
+<p><strong>Example 7.3.5 (MSE of binomial Bayes estimator)</strong></p>
+<p><strong>Example 7.3.6 (MSE o f equivariant estimators)</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be iid <span class="math inline">\(f(x-\theta)\)</span>. For an estimator <span class="math inline">\(W(X_1,..,X_n)\)</span> to satisfy <span class="math inline">\(W(g_a(x))=g_a(W(x))\)</span>, we must have</p>
+<p><span class="math display">\[(7.3.2)\quad W(x_1,..,x_n)+a=W(x_1+a,..,x_n+a)\]</span> which specifies the equivariant estimators with.respect to the group of transformations defined by <span class="math inline">\(\mathcal{G}=\{g_a(\vec x):-\infty&lt;a&lt;\infty\}\)</span>, where <span class="math inline">\(g_a(x_1,..,x_n)=(x_1+a,..,x_n+a)\)</span>. For these estimators we have</p>
+<p><span class="math display">\[(7.3.3)\quad E_\theta(W(X_1,..,X_n)-\theta)^2=\idotsint^\infty_{-\infty}(W(u_1,..,u_n))^2\prod^n_{i=1}f(u_i)du_i\]</span> This last expression does not depend on <span class="math inline">\(\theta\)</span>; hence, the MSEs of these equivariant estimators are not functions of <span class="math inline">\(\theta\)</span>. The MSE can therefore be used to order the equivariant estimators, and an equivariant estimator with smallest MSE can be found. In fact, this estimator is the solution to the mathematical problem of finding the function W that minimizes (7.3.3) subject to (7.3.2).</p>
 </div>
 <div id="best-unbiased-estimators" class="section level4">
 <h4>7.3.2 Best Unbiased Estimators</h4>
+<p><strong>Definition 7.3.7</strong> An estimator <span class="math inline">\(W^*\)</span> is a best unbiased estimator of <span class="math inline">\(\tau(\theta)\)</span> if it satisfies <span class="math inline">\(E_\theta{W^*}=\tau(\theta)\)</span> for all <span class="math inline">\(\theta\)</span> and, for any other estimator <span class="math inline">\(W\)</span> with <span class="math inline">\(E_\theta{W}=\tau(\theta)\)</span>, we have Vare <span class="math inline">\(Var_\theta{W^*}&lt;Var_\theta{W}\)</span> for all <span class="math inline">\(\theta\)</span>. <span class="math inline">\(W^*\)</span> is also called a <em>uniform minimum variance unbiased estimator</em> (UMVUE) of <span class="math inline">\(\tau(\theta)\)</span>.</p>
+<p><strong>Example 7.3.8 (Poisson unbiased estimation)</strong></p>
+<p><strong>Cramer-Rao Lower Bound</strong></p>
+<p><strong>Theorem 7.3.9 ( Cramer-Rao Inequality)</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a sample with pdf <span class="math inline">\(f(\vec x|\theta)\)</span>, and let <span class="math inline">\(W(\vec X)=W(X_1,..,X_n)\)</span> be any estimator satisfying</p>
+<p><span class="math display">\[\frac{d}{d\theta}E_\theta W(\vec X)=\int_{\mathcal{X}}\frac{\partial}{\partial\theta}\left[W(\vec x)f(\vec x|\theta)\right]d\vec x,\quad Var_\theta W(\vec X)&lt;\infty\]</span></p>
+<p><span class="math display">\[Var_\theta W(\vec X)\ge\frac{(\frac{d}{d\theta}E_\theta W(\vec X))^2}{E_\theta\left[(\frac{\partial}{\partial\theta}\ln f(\vec X|\theta))^2\right]}\]</span></p>
 <p><strong>Corollary 7.3.10 (Cramer-Rao Inequality, iid case)</strong></p>
+<p><span class="math display">\[Var_\theta W(\vec X)\ge\frac{(\frac{d}{d\theta}E_\theta W(\vec X))^2}{nE_\theta\left[(\frac{\partial}{\partial\theta}\ln f(X|\theta))^2\right]}\]</span></p>
+<p>The quantity <span class="math inline">\(E_\theta[(\frac{\partial}{\partial\theta}\ln f(\vec X|\theta))^2]\)</span> is called the <em>information number</em>, or <em>Fisher information</em> of the sample.</p>
+<p><strong>Lemma 7.3.11</strong> If <span class="math inline">\(f(x|\theta)\)</span> satisfies</p>
+<p><span class="math display">\[\frac{d}{d\theta}E_\theta\left[\frac{\partial}{\partial\theta}\ln f(X|\theta)\right]=\int\frac{\partial}{\partial\theta}\left(\left[\frac{\partial}{\partial\theta}\ln f(x|\theta)\right]f(x|\theta)\right)dx\]</span> (true for an exponential family), then</p>
+<p><span class="math display">\[E_\theta\left[(\frac{\partial}{\partial\theta}\ln f(X|\theta))^2\right]=-E_\theta\left[\frac{\partial^2}{\partial\theta^2}\ln f(X|\theta)\right]\]</span></p>
+<p><strong>Example 7.3.12 ( Conclusion of Example 7.3.8)</strong></p>
+<p><strong>Example 7.3.13 (Unbiased estimator for the scale uniform)</strong></p>
+<p>A shortcoming of this approach to finding best unbiased estimators is that, even if the Cramer-Roo Theorem is applicable, there is no guarantee that the bound is sharp. That is to say, the value of the Cramer-Roo Lower Bound may be <em>strictly smaller</em> than the variance of <em>any</em> unbiased estimator. In fact, in the usually favorable case of being a one-parameter exponential family, the most that we can say is that <span class="math inline">\(f(x|\theta)\)</span> exists a parameter <span class="math inline">\(\tau(\theta)\)</span> with an unbiased estimator that achieves the Cramer-Roo Lower Bound. However, in other typical situations, for other parameters, the bound may not be attainable. These situations cause concern because, if we cannot find an estimator that attains the lower bound, we have to decide whether no estimator can attain it or whether we must look at more estimators.</p>
+<p><strong>Example 1.3.14 (Normal variance bound)</strong></p>
+<p><strong>Corollary 7.3.15 (Attainment)</strong></p>
+<p><strong>Example 7.3.16 (Continuation of Example 7.3.14)</strong></p>
 </div>
 <div id="sufficiency-and-unbiasedness" class="section level4">
 <h4>7.3.3 Sufficiency and Unbiasedness</h4>
+<p><strong>Theorem 7.3. 17 (Rao-Blackwell)</strong> Let W be any unbiased estimator of T(61), and let T be a sufficient statistic for 61. Define ¢(T) = E (W IT) . Then Eo¢(T) = T(61) and Varo ¢(T) 􀀾 Varo W for all 61; that is, ¢(T) is a uniformly better unbiased estimator of T(e).</p>
 </div>
 <div id="losst-function-optimality" class="section level4">
 <h4>7.3.4 Losst Function Optimality</h4>
 </div>
+</div>
+</div>
+<div id="asymptotic-evaluations" class="section level2">
+<h2>10 Asymptotic Evaluations</h2>
+<div id="point-estimation-1" class="section level3">
+<h3>10.1 Point Estimation</h3>
+<div id="consistency" class="section level4">
+<h4>10.1.1 Consistency</h4>
+</div>
+<div id="efficiency" class="section level4">
+<h4>10.1.2 Efficiency</h4>
+</div>
+<div id="calculations-and-comparisons" class="section level4">
+<h4>10.1.3 Calculations and Comparisons</h4>
+</div>
+<div id="bootstrap-standard-errors" class="section level4">
+<h4>10.1.4 Bootstrap Standard Errors</h4>
+</div>
+</div>
+<div id="robustness" class="section level3">
+<h3>10.2 Robustness</h3>
+<div id="the-mean-and-the-median" class="section level4">
+<h4>10.2.1 The Mean and the Median</h4>
+</div>
+<div id="m-estimators" class="section level4">
+<h4>10.2.2 M-Estimators</h4>
+</div>
+</div>
+<div id="hypothesis-testing" class="section level3">
+<h3>10.3 Hypothesis Testing</h3>
+<div id="asymptotic-distribution-of-lrts" class="section level4">
+<h4>10.3.1 Asymptotic Distribution of LRTs</h4>
+</div>
 <div id="other-large-sample-tests" class="section level4">
 <h4>10.3.2 Other Large-Sample Tests</h4>
 <p><strong>Example 10.3.5 (Large-sample binomial tests)</strong></p>
-<p>Equation ( 10.3.4) is a special case of another useful large-sample test, the <strong>score test</strong>. The <em>score statistic</em> is defined to be</p>
+<p>Equation (10.3.4) is a special case of another useful large-sample test, the <strong>score test</strong>. The <em>score statistic</em> is defined to be</p>
 <p><span class="math display">\[S(\theta)=\frac{\partial}{\partial\theta}\ln f(\vec X|\theta)=\frac{\partial}{\partial\theta}\ln L(\theta|\vec X)\]</span></p>
+</div>
+</div>
+<div id="interval-estimation" class="section level3">
+<h3>10.4 Interval Estimation</h3>
+<div id="approximate-maximum-likelihood-intervals" class="section level4">
+<h4>10.4.1 Approximate Maximum Likelihood Intervals</h4>
+</div>
+<div id="other-large-sample-intervals" class="section level4">
+<h4>10.4.2 Other Large-Sample Intervals</h4>
 </div>
 </div>
 </div>
