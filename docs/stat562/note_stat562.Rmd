@@ -231,11 +231,13 @@ $$\begin{array}{l} Cov(aX,bY)=abCov(X,Y) & (1)\\
 Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)  & (2) \\
 Cov(X,c)=0  & (3) \end{array}$$
 
+$$Cov(X,X)=E[X^2]-\mu_X^2$$
+
 Properties  (1) and (2) make $Cov(x,y)$ a bilinear operator.
 
 `2019.01.10``p.10-13`
 
-**~ Example 4.5.4 (Correlation-I), 4.5.8 (Correlation-II), 4.5.9 (Correlation-III)** 
+**Example 4.5.4 (Correlation-I)** 
 
 $f(x,y)=x+y$, $0<x<1,0<y<1$, find $\rho_{XY}$
 
@@ -262,12 +264,12 @@ $$\rho_{XY}=\frac{-\frac1{144}}{\frac{\sqrt{11}}{12}\frac{\sqrt{11}}{12}}=-\frac
 
 **Theorem 4.5.5** If X and Y are independent (uncorrelated) random variables, then $Cov(X,Y)=0$ and $\rho_{XY}=0$
 
-
+Always check if X and Y are independent. When $y=x^2$, X and Y are dependent, but $Cov(X,Y)=0$
 
 **Theorem 4.5.6** If X and Y are any two random variables and a and b are any two constants, then
 
 $$Var(aX+bY)=a^2VarX+b^2VarY+2abCov(X,Y)$$
-If X and Y are indepent random variables, then
+If X and Y are independent random variables, then
 
 $$Var(aX+bY)=a^2VarX+b^2VarY$$
 
@@ -305,6 +307,8 @@ $$\sigma_{XY}=E[XY]-\mu_X\mu_Y=a\mu_X+bE[X^2]-\mu_X\mu_Y=a\mu_X+b(\sigma_X^2+\mu
 
 $$\rho_{XY}=\frac{\sigma_{XY}}{\sigma_{X}\sigma_{Y}}=\frac{b\sigma_X^2}{\sigma_{X}\sigma_{Y}}=b\frac{\sigma_X}{\sigma_Y}$$
 
+$\rho_{XY}$, $Cov(X,Y)$, and b have same sign.
+
 `2019.01.15``p.6`
 
 Cauchy-Schuwarz also says that equality occurs iff $\vec u= c\vec v$ for some c
@@ -312,6 +316,10 @@ Cauchy-Schuwarz also says that equality occurs iff $\vec u= c\vec v$ for some c
 So $|\rho_{XY}|=1$ iff $Y-\mu_Y=c(X-\mu_X)$, $Y=cX-\mu_Y-c\mu_X)$
 
 Therefore, the correlation equals $\pm1$ iff Y is a perfect linear function of X.
+
+**Example 4.5.8 (Correlation-II)**
+
+**Example 4.5.9 (Correlation-III)**
 
 
 **Definition 4.5.10** bivariate normal pdf with $\mu_X,\mu_Y,\sigma_X^2,\sigma_Y^2, \rho$
@@ -346,6 +354,9 @@ $$f(x_1,..,x_n) =g_1(x_1)\cdots g_n(x_n)$$
 
 **Example 4.6.13 (Multivariate change of variables)**
 
+## 4.7 Inequalities
+
+### 4.7.1 Numerical Inequalities
 
 **Theorem 4.7.3 (Cauchy-Schwarz Inequality)** For any two random variables X and Y,
 
@@ -386,6 +397,19 @@ Squaring both sides and using statistical notation, we have $(Cov(X, y))^2\le \s
 
 Recalling the definition of the correlation coefficient,$\rho$, we have proved that $-1\le \rho^2\le1$1. Furthermore, the condition for equality in Lemma 4.7.1 still carries over, and equality is attained here only if $(X-\mu_X)=c(Y-\mu_Y)$, for some constant c. That is, the correlation is $\pm1$ **if and only if X and Y are linearly related**.
 
+### 4.7.2 Functional Inequalities
+
+**Theorem 4.7.7 (Jensen's Inequality)**
+
+**Theorem 4.7.9 (Covariance Inequality)**
+
+  a. If $g(x)$ is a nondecreasing function and h(x)$ is a nonincreasing junction, then
+$$E(g(X)h(X))\le(Eg(X))(Eh(X))$$
+
+  b. If $g(x)$ and $h(x)$ are either both nondecreasing or both nonincreasing, then
+$$E(g(X)h(X))\ge(Eg(X))(Eh(X))$$
+
+
 # 5. Properties of a Random Sample
 
 `2019.01.15``p.8`
@@ -393,6 +417,8 @@ Recalling the definition of the correlation coefficient,$\rho$, we have proved t
 ## 5.1 Basic Concepts of Random Samples
 
 **Definition 5.1.1** The random variables $X_1,..,X_n$ are called a random sample of size n from the population $f(x)$ if $X_1,..,X_n$ are mutually independent random variables and the marginal pdf or pmf of each $X_i$ is the same function $f(x)$. Alternatively, $X_1,..,X_n$ are called independent and identically distributed random variables with pdf or pmf $f(x)$. This is commonly abbreviated to $iid$ random variables.
+
+$$f(x_1,..,x_n) =f(x_1)\cdots f(x_n)=\prod_{i=1}^nf(x_i)$$
 
 ## 5.2 Sums of Random Variables from a Random Sample
 
@@ -408,10 +434,10 @@ $$\bar X=\frac{X_1+..+X_n}{n}=\frac1n\sum_{i=1}^nX_i$$
 
 **Definition 5.2.3** The sample variance is the statistic defined by
 
-$$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}\sum_{i=1}^n(X_i^2-n\bar X^2)$$
+$$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}(\sum_{i=1}^nX_i^2-n\bar X^2)$$
 The sample standard deviation is the statistic defined by $S=\sqrt{S^2}$
 
-**Theorem 5.2.4** $\sum_{i=1}^n(X_i-a)^2$ is minimized when $a=\bar x$
+**Theorem 5.2.4** a. $\sum_{i=1}^n(X_i-a)^2$ is minimized when $a=\bar x$
 
 Proof
 
@@ -419,10 +445,13 @@ Let $g(a)=\sum_{i=1}^n(X_i-a)^2$, set
 
 $$g'(a)=\sum_{i=1}^n2(X_i-a)(-1)=0\implies a=\frac1n\sum_{i=1}^nX_i=\bar x$$
 
+$$(n-1)s^2=\sum_{i=1}^n(x_i-\bar x)^2=\sum_{i=1}^nx_i^2-n\bar x^2$$
 
 **Lemma 5.2.5** 
 
-$$E\left(\sum_{i=1}^ng(X_i) \right)=nE(g(X_1))$$
+$$(5.2.1)\quad E\left(\sum_{i=1}^ng(X_i) \right)=nE(g(X_1))$$
+(5.2.1) is true for any collection of n identically distributed random variables.
+
 $$Var\left(\sum_{i=1}^ng(X_i) \right)=nVar(g(X_1))$$
 
 **Theorem 5.2.6** 
@@ -440,13 +469,16 @@ $$M_{\bar X}(t)=[M_X(\frac{t}n)]^n$$
 
 $$M_{\bar X}(t)=\left[e^{\mu\frac{t}n+\frac{\sigma^2{(\frac{t}n)}^2}2}\right]^n=e^{\mu t+\frac{(\frac{\sigma^2}{n})t^2}2}$$
 
-Thus, $\bar X$ has a $n(\mu,\sigma^2)$ distribution.
+Thus, $\bar X$ has a $n(\mu,\frac{\sigma^2}n)$ distribution.
 
-Another simple example is given by a $gamma(α,β)$ random sample (4.6.8). Here, we can also easily derive the distribution of  the sample mean. The mgf of the sample mean is
+Another simple example is given by a $Gamma(α,β)$ random sample (4.6.8). Here, we can also easily derive the distribution of  the sample mean. The mgf of the sample mean is
 
 $$M_{\bar X}(t)=\left[\left(\frac1{1-\beta(\frac{t}n)}\right)^{a}\right]^n=\left(\frac1{1-\beta(\frac{t}n)}\right)^{na}$$
 
-which we recognize as the mgf of a $gamma(nα,β/n)$, the distribution of $\bar X$.
+which we recognize as the mgf of a $gGamma(nα,β/n)$, the distribution of $\bar X$.
+
+$$\mu_{\bar X}=nα\cdot\fracβn=αβ=\mu$$
+$$\sigma^2_{\bar X}=nα\cdot(\fracβn)^2=\frac{αβ^2}n=\frac{\sigma^2}n$$
 
 If Theorem 5.2.7 is not applicable, because either the resulting mgf of $\bar X$ is unrecognizable or the population mgf does not exist, then the transformation method of Section 4.3 and 4.6 might be used to find the pdf of $Y=(X_1+..+X_n)$ and $\bar X$. In such cases, the following convolution formula is useful.
 
@@ -512,7 +544,7 @@ $$f_{F}(x)=\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac
 
 **Theorem 5.3.8**
 
- a. $X\sim F_(p,q)$ $\frav{1}X \sim F_(q,p)$
+ a. $X\sim F_(p,q)$ $\frac{1}X \sim F_(q,p)$
 
  b. $X\sim T_(q)$ $X^2 \sim F_(1,q)$
 
@@ -532,9 +564,21 @@ $$P(X_{(j)}=X_i)=\sum^n_{k=j}\binom{n}{k}[P^k_i(1-P_i)^{n-k}-P^k_{i-1}(1-P_{i-1}
 
 **Theorem 5.4.4** `2019.01.29``p.9` Let $X_{(1)},..,X_{(n)}$ denote the order statistics of a random sample, $X_1,..,X_n$ from a continuous population with cdf $Fx (x)$ and pdf $f_X(x)$. Then the pdf of $X_{(n)}$ is
 
-$$f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$$
+$$(5.4.4)\quad f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}f_X(x)[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$$
 
 $$f_{K}(x)=\frac{n!}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}f(x)$$
+
+**Example 5.4.5 (Uniform order statistic pdf)** Let $X_{(1)},..,X_{(n)}$ be iid $Unif(0,1)$ , so $f_X(x)=1$ for $x\in(0,1)$ and $F_X(x)=x$ for $x\in(0,1)$. Using (5.4.4), we see that the pdf of the $j^{th}$ order statistic is
+
+$$f_{X_{(j)}}(x)=\frac{n!}{(j-1)!(n-j)!}x^{j-1}(1-x)^{n-j}=\frac{\Gamma(n+1)}{\Gamma(j)\Gamma(n-j+1)}x^{j-1}(1-x)^{n-j+1-1}$$
+
+$$E{X_{(j)}}=\frac{j}{n+1},\quad Var{X_{(j)}}=\frac{j(n-j+1)}{(n+1)^2(n+2)}$$
+
+**Theorem 5.4.6**
+
+$$f_{X_{(i)},X_{(j)}}(u,v)=\frac{n!}{(i-1)!(j-1-i)!(n-j)!}f_X(u)f_X(v)[F_X(u)]^{i-1}[F_X(v)-F_X(u)]^{j-1-i}[1-F_X(v)]^{n-j}, -\infty<u<v<\infty$$
+
+**Example 5.4.7 (Distribution of the midrange and range)**
 
 ## 5.5 Convergence Concepts
 
@@ -713,6 +757,8 @@ Sometimes the third requirement,
 ${Y_1,..,Y_n}=g_a(X_1,..,X_n)=(X_1+a,..,X_n+a)$ are iid $n(\mu+a,\sigma^2)$ random variables. Thus, the joint distribution of $\vec Y=g_a(\vec X)$ is in $\mathcal{F}$ and hence $\mathcal{F}$ is invariant under $\mathcal{G}$.
 
 # 7. Point Estimation
+
+## 7.2 Methods of Finding Estimators
 
 ### 7.2.1 Method of Moments
 
