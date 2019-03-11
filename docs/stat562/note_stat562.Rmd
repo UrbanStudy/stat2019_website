@@ -401,6 +401,12 @@ Recalling the definition of the correlation coefficient,$\rho$, we have proved t
 
 **Theorem 4.7.7 (Jensen's Inequality)**
 
+**Example 4.7.8 (An inequality for means)** Jensen's Inequality can be used to prove an inequality between three different kinds of means. If $a_1,..,a_n$ are positive numbers, define
+
+$$\begin{array}{l} a_A=\frac1n(a_1+a_2+..+a_n)&\text{(arithmetic mean)}\\a_G=[a_1a_2\cdots a_n]^{\frac1n}&\text{(geometric mean)}\\a_H=\frac{1}{\frac1n(\frac1{a_1}+\frac1{a_2}+..+\frac1{a_n})}&\text{(harmonic mean)} \end{array}$$
+
+An inequality relating these means is $a_H\le a_G\le a_A$
+
 **Theorem 4.7.9 (Covariance Inequality)**
 
   a. If $g(x)$ is a nondecreasing function and h(x)$ is a nonincreasing junction, then
@@ -408,7 +414,6 @@ $$E(g(X)h(X))\le(Eg(X))(Eh(X))$$
 
   b. If $g(x)$ and $h(x)$ are either both nondecreasing or both nonincreasing, then
 $$E(g(X)h(X))\ge(Eg(X))(Eh(X))$$
-
 
 # 5. Properties of a Random Sample
 
@@ -586,13 +591,44 @@ $$f_{X_{(i)},X_{(j)}}(u,v)=\frac{n!}{(i-1)!(j-1-i)!(n-j)!}f_X(u)f_X(v)[F_X(u)]^{
 
 **Definition 5.5.1** A sequence of random variables, $X_1,X_2,..$, $\underrightarrow{\mathcal{P}}$ $X$ if, for every $\varepsilon>0$,
 
-$$\begin{cases}\lim_{n\to\infty}P(|X_n-X|\ge\varepsilon)=0\\\lim_{n\to\infty}P(|X_n-X|<\varepsilon)=1\end{cases}$$
+$$\begin{cases}\lim_{n\to\infty}P(|X_n-X|\ge\epsilon)=0\\\lim_{n\to\infty}P(|X_n-X|<\epsilon)=1\end{cases}$$
+
+**Theorem 5.5.2 (Weak Law of Large Numbers)** Let $X_1,X_2,..$ be iid random variables with $EX_i=\mu$ and $Var Xi =\sigma^2<\infty$. Define $\bar X_n=\frac1n\sum_{i=1}^nX_i$ Then, for every $\epsilon>0$
+
+$$\lim_{n\to\infty}P(|\bar X_n-\mu|<\epsilon)=1$$
+that is, $\bar X_n$ converges in probability to $\mu$.
+
+**Example 5.5.3 (Consistency of $S^2$)** Suppose we have a sequence$X_1,X_2,..$ of iid random variables with $EX_i=\mu$ and $Var Xi =\sigma^2<\infty$. If we define $S_n^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2$
+
+a sufficient condition that $VarS^2_n$ converges in probability to $\sigma^2$ is that $VarS^2_n\to0$ as $n\to\infty$
 
 **Theorem 5.5.4** Suppose that $X_1, X2,..$ converges in probability to a random variable X and that h is a continuous function. Then $h(X_1),h(X2),..$ converges in probability to $h(X)$.
 
+**Example 5.5.5 (Consistency of S)** If $S^2_n$ is a consistent estimator of $\sigma^2$, then by Theorem 5.5.4, the sample standard deviation $S_n=\sqrt{S^2_n}=h(S^2_n)$ is a consistent estimator of $\sigma$. Note that $S_n$ is, in fact, a biased estimator of $\sigma$ (see Exercise 5.11), but the bias disappears asymptotically.
+
 ### 5.5.2 Almost Sure Convergence
 
+**Definition 5.5.6** A sequence of random variables, $X_1,X_2,..$, converges almost surely to a random variable $X$ if, for every $\epsilon>0$,
+$$P(\lim_{n\to\infty}|X_n-X|<\epsilon)=1$$
+
+**Example 5.5.7 (Almost sure convergence)**
+
+**Example 5.5.8 (Convergence, not almost surely)**
+
+**Theorem 5.5.9 (Strong Law of Large Numbers)** Let $X_1,X_2,..$, be iid random variables with $EX_i=\mu$ and $Var Xi =\sigma^2<\infty$, and define $\bar X_n=\frac1n\sum_{i=1}^nX_i$.
+Then, for every $\epsilon>0$,
+$$P(\lim_{n\to\infty}|\bar X_n-\mu|<\epsilon)=1$$
+that is, $\bar X_n$ converges almost surely to $\mu$
+
 ### 5.5.3 Convergence in Distribution
+
+**Definition 5.5.10** A sequence of random variables, $X_1,X_2,..$, converges in distribution to a random variable $X$ if
+$$\lim_{n\to\infty}F_{X_n}(x)=F_X(x)$$
+at all points $x$ where $F_X(x)$ is continuous.
+
+**Example 5.5.11 (Maximum of uniforms)**
+
+**Theorem 5.5.12** If the sequence of random variables, $X_1,X_2,..$ converges in probability to a random variable $X$ the sequence also converges in distribution to $X$.
 
 **Theorem 5.5.13** The sequence of random variables, $X_1,X_2,..$, converges in probability to a constant $\mu$ if and only if the sequence also converges in distribution to $\mu$.
 That is, the statement
@@ -607,6 +643,10 @@ that is, $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}$ has a limiting standard normal d
 
 $$\underrightarrow{p}\quad \lim_{\substack{x\to\infty\\y\to\infty}}()$$
 
+**Theorem 5.5.15 (Stronger (orm of the Central Limit Theorem)**
+
+**Example 5.5.16 (Normal approximation to the negative binomial)**
+
 **Theorem 5.5.17 (Slutsky's Theorem)** If $X_n\to X$ in distribution and $Y_n\to a$, a constant, in probability, then
 
  a. $Y_nX_n\to aX$ in distribution
@@ -615,15 +655,46 @@ $$\underrightarrow{p}\quad \lim_{\substack{x\to\infty\\y\to\infty}}()$$
 
 ### 5.5.4 The Delta Method
 
+**Example 5.5.19 (Estimating the odds)**
+
+**Definition 5.5.20**
+
+**Theorem 5.5.21 (Taylor)**
+
+**Example 5.5.22 (Continuation of Example 5.5.19)**
+
+**Example 5.5.23 (Approximate mean and variance)**
+
+**Theorem 5 .5.24 (Delta Method)**
+
+**Example 5.5.25 (Continuation of Example 5.5.23)**
+
+**Theorem 5.5.26 (Second-order Delta Method)**
+
+**Example 5.5.27 (Moments of a ratio estimator)**
+
+**Theorem 5.5.28 (Multivariate Delta Method)**
+
 ## 5.6 Generating a Random Sample
 
 ### 5.6.1 Direct Methods
 
+**Example 5.6.1 (Exponential lifetime)**
+
+**Example 5.6.2 (Continuation of Example 5.6.1)**
+
 **Example 5.6.3 (Probability Integral Transform)**
 
+The relationship between the exponential and other distributions allows the quick generation of many random variables. For example, if $U_j$ are iid $uniform(0,1)$ random variables, then 
 
+$$Y_j=-\lambda\ln(u_j)\sim Expo(\lambda)$$
+$$Y=-2\sum_{j=1}^\nu\ln U_j\sim \chi^2_{2\nu}$$
+$$Y=-\beta\sum_{j=1}^\alpha\ln U_j\sim Gama(\alpha,\beta)$$
+$$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$$
 
-$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$
+**Example 5.6.5 (Binomial random variable generation)**
+
+**Example 5.6.6 (Distribution of the Poisson variance)**
 
 ### 5.6.2 Indirect Methods
 
@@ -935,7 +1006,30 @@ of T(e).
 
 ### 7.3.4 Losst Function Optimality
 
+Our evaluations of point estimators have been based on their mean squared error performance. Mean squared error is a special case of a function called a _loss function_. The study of the performance, and the optimality, of estimators evaluated through loss functions is a branch of _decision theory_.
 
+The loss function is a nonnegative function that generally increases as the distance between a and $\theta$ increases. If $\theta$ is real-valued, two commonly used loss functions are 
+
+$$\begin{array}{l} L(\theta,a)=|a-\theta|&\text{absolute error loss}\\L(\theta,a)=(a-\theta)^2&\text{squared error loss}\\
+L(\theta,a)=e^{c(a-\theta)}-c(a-\theta)-1,&\text{LINear-EXponential loss E7.65}\\
+L(\theta,a_0)=\begin{cases}0&\theta\in\Theta_0\\1&\theta\in\Theta^c_0\end{cases},
+L(\theta,a_1)=\begin{cases}1&\theta\in\Theta_0\\0&\theta\in\Theta^c_0\end{cases}&\text{binary loss -8.3.5-}\\
+L(\theta,C)=b\text{Length}(C)-I_C(\theta),&\text{CI -9.3.4-} 
+\end{array}$$
+
+where $c$ is a positive constant. As the constant $c$ varies, the loss function varies from very asymmetric to almost symmetric.
+
+**Example 7.3.25 (Binomial risk functions)**
+
+**Example 7.3.26 (Risk of normal variance)**
+
+**Example 7.3.27 (Variance estimation using Stein's loss)**
+
+**Example 7.3.28 (Two Bayes rules)**
+
+**Example 7.3.29 (Normal Bayes estimates)**
+
+**Example 7.3.30 (Binomial Bayes estimates)**
 
 # 10 Asymptotic Evaluations
 ## 10.1 Point Estimation
