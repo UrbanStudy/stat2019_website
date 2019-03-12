@@ -1,14 +1,11 @@
 ---
 title: "STAT565_Lab"
 author: "Shen Qu"
-date: "`Mar 11, 2019"
-output: 
-  pdf_document:
-#    highlight: pygments
+date: '`Mar 11, 2019'
+output:
+  pdf_document: null
+  word_document: default
 geometry: margin=0.25in
-# fontfamily: mathpazo
-# fontsize: 12pt
-# spacing: double
 ---
 
 ```{r setup, include=FALSE}
@@ -122,28 +119,47 @@ The difference in y between varieties 4 applied method b and varieties 3 applied
 The Scheffe methods indicates the difference in y between varieties 4 applied method a and varieties 5 applied method c are significant (P-value=0.0326).
 
  -------------------------------------------------------------
- contrast      estimate   SE   df t.ratio p.value P.adj
- ------------  --------- ---- --- ------- ------- -----------
- c: v2 - v5     73.667   25.6 75  2.878   0.0404 
- v1: a - b        66.8   25.6 75  2.611   0.0290 
- v2: a - b        66.2   25.6 75  2.585   0.0310 
- v3: a - b        76.8   25.6 75  3.002   0.0101  Tukey
- v4: a - b       124.7   25.6 75  4.871   <.0001  0.0002 
- v4: a - c       111.3   25.6 75  4.350   0.0001  0.0016 
- v5: a - c        97.8   25.6 75  3.823   0.0008  0.0096
- v5: b - c        66.7   25.6 75  2.605   0.0295 
- -------------------------------------------------------------
- v1,a - v5,c    92.167   25.6 75  3.601   0.0383 
- v2,a - v5,c    93.000   25.6 75  3.634   0.0349 
- v3,a - v4,b    96.333   25.6 75  3.764   0.0238 
- v3,a - v5,c   105.833   25.6 75  4.135   0.0074 
- v4,a - v1,b   108.833   25.6 75  4.252   0.0050 
- v4,a - v2,b   107.333   25.6 75  4.194   0.0061 
- v4,a - v3,b   105.167   25.6 75  4.109   0.0080 
- v4,a - v4,b   124.667   25.6 75  4.871   0.0006 
- v4,a - v4,c   111.333   25.6 75  4.350   0.0036  Scheffe
- v4,a - v5,c   134.167   25.6 75  5.242   0.0001  0.0326
- v5,a - v5,c    97.833   25.6 75  3.823   0.0199
+  contrast      estimate   SE   df t.ratio p.value P.adj     
+ ------------  --------- ----- --- ------- ------- -----------
+  c: v2-v5      73.667   25.6  75  2.878   0.0404            
+
+  v1: a-b         66.8   25.6  75  2.611   0.0290            
+
+  v2: a-b         66.2   25.6  75  2.585   0.0310            
+
+  v3: a-b         76.8   25.6  75  3.002   0.0101   Tukey      
+
+  v4: a-b        124.7   25.6  75  4.871   <.0001   0.0002      
+
+  v4: a-c        111.3   25.6  75  4.350   0.0001   0.0016     
+
+  v5: a-c         97.8   25.6  75  3.823   0.0008   0.0096     
+
+  v5: b-c         66.7   25.6  75  2.605   0.0295             
+
+\
+
+  v1,a-v5,c     92.167   25.6  75  3.601   0.0383             
+
+  v2,a-v5,c     93.000   25.6  75  3.634   0.0349             
+
+  v3,a-v4,b     96.333   25.6  75  3.764   0.0238             
+
+  v3,a-v5,c    105.833   25.6  75  4.135   0.0074             
+
+  v4,a-v1,b    108.833   25.6  75  4.252   0.0050             
+
+  v4,a-v2,b    107.333   25.6  75  4.194   0.0061             
+
+  v4,a-v3,b    105.167   25.6  75  4.109   0.0080             
+
+  v4,a-v4,b    124.667   25.6  75  4.871   0.0006             
+
+  v4,a-v4,c    111.333   25.6  75  4.350   0.0036   Scheffe    
+
+  v4,a-v5,c    134.167   25.6  75  5.242   0.0001   0.0326     
+
+  v5,a-v5,c     97.833   25.6  75  3.823   0.0199            
  -------------------------------------------------------------
 
 
@@ -190,6 +206,19 @@ The P-value of this contrast test is 0.5819, which is large enough. We cannot re
 (h). \textcolor[rgb]{0.5,0.5,0.5}{Report the code here without output.}
 
 ```{r, eval =F, size="tiny", tidy = T}
+table_grass <- read_excel("Grass.xlsx")
+table_grass$m <-  as.factor(table_grass$method)
+table_grass$v <-  factor(table_grass$variety,levels=c(1,2,3,4,5),labels=c("v1","v2","v3","v4", "v5"))
+table_grass$mv <- interaction(table_grass$m,table_grass$v)
+model_grass <- aov(y ~ m*v, data=table_grass)
+model_grass_inter <- aov(y~mv, data=table_grass)
+str(table_grass)
+ggline(data = table_grass, x = "variety", y = "y", add = c("mean", "jitter"),shape= "method",  color = "method", linetype = "method", ylab= "y", xlab="variety of table_grass")
+pander(favstats(y ~ method, data=table_grass))
+pander(favstats(y ~ method|variety, data=table_grass))
+summary(model_grass)
+plot(model_grass, pch=16)
+
 # Test simple effects #
 # Method-1#
 # 1.1 Multiple comparison of levels in variety factor for a given level of method factor #
