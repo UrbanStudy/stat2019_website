@@ -1,0 +1,195 @@
+---
+title: "STAT565_Lab"
+author: "Shen Qu"
+date: 'Mar 11, 2019'
+output:
+  pdf_document: 
+geometry: margin=0.1in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache=FALSE, size="tiny", results="markup", tidy=T)
+```
+
+```{r eval=FALSE, include=FALSE}
+install.packages("ggplot2")
+install.packages("ggpubr")
+install.packages("mosaic")
+install.packages("agricolae")
+install.packages("DescTools")
+install.packages("emmeans")
+```
+
+# Problem 1 Unbalanced 2-Factor Factorial (Non-significant interaction)
+
+  \textcolor[rgb]{0.5,0.5,0.5}{Source: R.D. White, Jr. (1999). "Are Women More Ethical? Recent Findings on the Effects of Gender Under Moral Development," Journal of Public Administration Research and Theory, Vol. 9, 3, pp.459-471. Description: Ethics scores for a sample of members of the U.S. Coast Guard by Gender (1=Male, 2=Female) and Rank (1=Officer, 2=Enlisted). Data simulated to match cell means and SDs.}
+
+  \textcolor[rgb]{0.5,0.5,0.5}{Variables/Columns:Gender, 8; Rank, 16; Ethics Score,18-24.}
+
+```{r include=FALSE}
+library(readxl)
+library(ggplot2)
+library(ggpubr)
+library(mosaic)
+library(agricolae)
+library(DescTools)
+library(dplyr)
+library(car)
+library(pander)
+library(emmeans)
+table_ethics <- read.table("Ethics.txt",header = T)
+table_ethics$g <-  as.factor(table_ethics$Gender)
+table_ethics$r <-  as.factor(table_ethics$Rank)
+model_ethics <- aov(Score ~ g*r, data=table_ethics)
+```
+
+(a)  \textcolor[rgb]{0.5,0.5,0.5}{Plot the data and report the plot here (A plot with data and means of treatment combinations). Do not report code here. Describe the observed relationship between two factors.}
+
+```{r echo=FALSE, out.width='30%'}
+str(table_ethics)
+ggplot(data = table_ethics, aes(x = r, y = Score, colour=g,shape = g)) +
+   stat_summary() + labs(y= "Ethics Score", x="Rank", color="Gender", shape="Gender")
+# ggline(data = table_ethics, x =r, y =Score, add = c("mean", "jitter"),shape=g,  color =g, linetype =g, ylab= "Ethics Score", xlab="Rank")
+```
+
+
+(b)  \textcolor[rgb]{0.5,0.5,0.5}{Obtain the numerical summary for each treatment combination and factor levels separately. Report them here in a tabular form}
+
+```{r echo=FALSE}
+pander(favstats(Score ~ Gender, data=table_ethics))
+pander(favstats(Score ~ Rank, data=table_ethics))
+pander(favstats(Score ~ Gender+Rank, data=table_ethics))
+```
+
+(c)  \textcolor[rgb]{0.5,0.5,0.5}{Fit the two-factor factorial model and report the complete ANOVA table here. Do not report code here. The complete ANOVA table should have a row for each of the following: main effects of each treatment, two-factor interaction effects, error and total.Report the adjusted (Type III) SS for each effect because of unbalanced design. Note that, adjusted SS and SSE do not add up to SSTotal}
+
+```{r eval=FALSE, include=FALSE}
+pander(summary(model_ethics))
+sum((table_ethics$Score- mean(table_ethics$Score))^2)
+Anova(model_ethics, type="III")
+```
+
+ --------------------------------------------------------------
+    &nbsp;       Df    Sum Sq      Mean Sq   F value    Pr(>F)   
+ --------------- ----- ---------  --------- --------- -----------
+      **g**        1    860.9      860.9     6.034     0.01461  
+
+  **r**            1     3048      3048      21.36    5.693e-06 
+
+   **g:r**         1     34.1      34.1      0.239     0.6253   
+
+  **Residuals**   295   42087      142.7      NA         NA     
+  
+   **Total**      298   46030.1    154.46     NA         NA     
+ --------------------------------------------------------------
+
+(d)  \textcolor[rgb]{0.5,0.5,0.5}{Based on the ANOVA table write your conclusion appropriately. Perform all the necessary tests and report the conclusion along with the p-value. (no need to do pairwise comparison to save the time)}
+
+The line plot shows that not all lines are parallel. Difference in y between methods is not same for different varieties. There could be an interaction effect.
+
+According to ANOVA table, there is a significant interaction effect from methods and varieties on the y at 5% significance level (P-value=0.02409). That means, effect of method and effect of methods and varieties on y is not independent. Therefore, examie the simple effects.
+
+(e)  \textcolor[rgb]{0.5,0.5,0.5}{Report the code here without output.}
+
+```{r, eval =F, size="tiny", tidy = T}
+pander(summary(model_ethics))
+sum((table_ethics$Score- mean(table_ethics$Score))^2)
+Anova(model_ethics, type="III")
+```
+
+# Problem 2: 3-Factor Factorial (Non-significant interaction)
+
+  \textcolor[rgb]{0.5,0.5,0.5}{Results from 3-Factor ANOVA to investigate effects of poker skill (average/expert), poker hand (bad/neutral/good), and bet limit (fixed/none) on winnings. There were 25 individuals in each of 12 combinations (each individual in only one treatment).Use a=0.05}
+
+  \textcolor[rgb]{0.5,0.5,0.5}{Variables/Columns:
+Skill: 1=Expert, 2=Average; Hand:1=Bad, 2=Neutral, 3=Good; Limit: 1=Fixed, 2=None; Final Cash Balance (euros)}
+
+```{r include=FALSE}
+table_poker <- read.csv("Poker.csv")
+table_poker$s <- factor(table_poker$skill); levels(table_poker$s) <- c("Exp", "Nov")
+table_poker$h <- factor(table_poker$hand); levels(table_poker$h) <- c("Bad","Neu","Goo")
+table_poker$l <- factor(table_poker$limit); levels(table_poker$l) <- c("Fix","Non")
+model_poker <- aov(cash ~ s*h*l, data=table_poker)
+```
+
+(a)  \textcolor[rgb]{0.5,0.5,0.5}{Plot the data and report the plot here (A plot with data and means of treatment combinations). Do not report code here.}
+
+```{r echo=FALSE, out.width='30%',fig.show='hold',message=F}
+str(table_poker)
+qplot(x=s, y=cash, data=table_poker, facets=l~h, main="Interaction Plot of Cash Balance",xlab="Skill", ylab="Final cash balance in Euro")+theme_bw()
+ggplot(data =table_poker, aes(x=s, y=cash, colour=l, shape=h, group=h))+stat_summary() + labs(y= "Mean Cash Balance", x="Skill", shape="Hand")
+```
+
+
+(b)  \textcolor[rgb]{0.5,0.5,0.5}{Obtain the numerical summary for each treatment combination and factor levels separately. Report them here in a tabular form}
+
+```{r echo=FALSE, size="tiny"}
+pander(favstats(cash ~ s, data=table_poker))
+pander(favstats(cash ~ h, data=table_poker))
+pander(favstats(cash ~ s+h+l, data=table_poker))
+```
+
+(c)  \textcolor[rgb]{0.5,0.5,0.5}{Fit the two-factor factorial model and report the complete ANOVA table here. Do not report code here. The complete ANOVA table should have a row for each of the following: main effects of each treatment, two-factor interaction effects, error and total.}
+
+```{r eval=FALSE, include=FALSE}
+pander(summary(model_poker))
+sum((table_poker$cash- mean(table_poker$cash))^2)
+```
+
+  --------------------------------------------------------------
+    &nbsp;         Df    Sum Sq    Mean Sq   F value    Pr(>F)   
+  --------------- ----- --------- --------- --------- -----------
+      **s**        1     49.17     49.17     2.839     0.09308  
+
+   **h**           2     2647      1323      76.41    2.389e-27 
+
+   **l**           1     31.68     31.68     1.829     0.1773   
+
+   **s:h**         2     219       109.5     6.324    0.002052  
+
+   **s:l**         1     119.1     119.1     6.878    0.009191  
+
+   **h:l**         2     97.29     48.64     2.809     0.06192  
+
+   **s:h:l**       2     42.38     21.19     1.224     0.2957   
+
+  **Residuals**   288    4987      17.32      NA         NA     
+
+   **Total**      299    8192.67   27.40     NA         NA       
+  --------------------------------------------------------------
+
+
+(d)  \textcolor[rgb]{0.5,0.5,0.5}{Based on the ANOVA table write your conclusion appropriately. Perform all the necessary tests and report the conclusion along with the p-value.}
+
+The line plot shows that not all lines are parallel. Difference in y between methods is not same for different varieties. There could be an interaction effect.
+
+According to ANOVA table, there is a significant interaction effect from methods and varieties on the y at 5% significance level (P-value=0.02409). That means, effect of method and effect of methods and varieties on y is not independent. Therefore, examie the simple effects.
+
+(e)  \textcolor[rgb]{0.5,0.5,0.5}{Suppose that we want to compare the average final cash balance between two types of Skill (Expert versus Average) when the type of Hand is 3 (Good) and Limit is 1 (Fixed). This is the simple effect contrast we learned in class. Test this contrast and report conclusion with p value.}
+
+
+(f)  \textcolor[rgb]{0.5,0.5,0.5}{Report the code here without output.}
+
+```{r eval=T, include=T}
+#If the 3-factor interaction is significant, then test 2-factor interaction for each level of 3rd factor#
+#To do all pairwise comparisons at each level of skill(s) factor  #
+# Load lsmeans or emmeans package #
+contrast(lsmeans(model_poker, ~h*l|s), interaction = "pairwise") # You may use and adjustment method as shown in the next contrast #
+#To do all pairwise comparisons at each level of hand (h) factor  #
+# Load lsmeans or emmeans package #
+contrast(lsmeans(model_poker, ~s*l|h), interaction = "pairwise", adjust="bonferroni")
+#To write contrasts in terms of cell means #
+#First, create a 3-factor interaction term of factors s, h and l #
+#Then fit the model with that factor #
+table_poker$shl<-interaction(table_poker$s,table_poker$h,table_poker$l)
+# Load lsmeans or emmeans package #
+# Save the LSmeans for interaction terms of factors s, h and l #
+
+# Before writing a contrast, check the order of terms in previous lsmf output #
+# Then create a vector of contrast in terms of LSmeans of treatment combinations #
+# Below is the contrast to test mean for two levels of skill factor (Expert versus Average) #
+# when the type of Hand is 3 (Good) and Limit is 1 (Fixed) #
+summary(contrast(lsmeans(lm(cash~shl, table_poker), 'shl'), list(c1 = c(rep(0,4), 1, -1, rep(0,6)))))# rep(0,11) creates a vector of 11 zeros #
+
+
+```
