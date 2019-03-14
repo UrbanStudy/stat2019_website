@@ -145,8 +145,8 @@ From \emph{Fisher--Neyman factorization theorem} (\texttt{2019-2-14p5})
 
 \[f(x|\lambda)=L(\lambda)=\lambda^n(\prod x_i)^{\lambda-1}=\lambda^ne^{(\lambda-1)\sum^n_{i=1} \ln x_i}\cdot1=k(t|\lambda)h(\vec x)\]
 
-\(h(\vec x)=1\) is free of \(\lambda\). So \(T=\sum^n_{i=1} \ln x_i\) a
-sufficient statistic.
+\(h(\vec x)=1\) is free of \(\lambda\). So \(T=\sum^n_{i=1} \ln x_i\) is
+a sufficient statistic.
 
 \begin{itemize}
 \tightlist
@@ -182,7 +182,7 @@ contains an open interval in \(\Re\), so
 Let \(X=Y_n-\bar Y\). For \(N(\theta,\sigma^2)\) is a location family of
 densities (\texttt{2018.11.20p7}),
 
-\[g(y|\theta)=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{y-\theta}{2\sigma^2}}=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\theta)^2}{2\sigma^2}}=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{x^2}{2\sigma^2}}=f(x)=f(y-\theta)\]
+\[g(y|\theta)=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\theta)^2}{2\sigma^2}}=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{x^2}{2\sigma^2}}=f(x)=f(y-\theta)\]
 
 Thus, \(\theta\) is a location parameter.
 
@@ -194,6 +194,17 @@ Thus, \(\theta\) is a location parameter.
 
 \texttt{2019-2-21p4-6}
 
+Consider the group of transformations defined by
+\(\mathcal{G}=\{Y_n-\bar Y,-\infty<\bar Y<\infty\}\), where
+\(Y_n-\bar Y=(y_1-\bar y,..,y_n-\bar y)\). For \(\bar Y\) of a random
+sample is a value,
+
+\[Y_n-\bar Y=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\bar y-\theta)^2}{2\sigma^2}}\sim N(\theta+\bar Y,\sigma^2)\]
+Thus, the joint distribution of \(Y_n-\bar Y\) is in \(\mathcal{F}\) and
+hence \(\mathcal{F}\) is invariant under \(\mathcal{G}\).
+
+\[Y_n-\bar Y=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_n-\theta)^2}{2\sigma^2}}-\frac1n\sum_{i=1}^n\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_i-\theta)^2}{2\sigma^2}}\sim N(\theta+\bar Y,\sigma^2)\]
+
 \begin{itemize}
 \tightlist
 \item
@@ -203,8 +214,20 @@ Thus, \(\theta\) is a location parameter.
 \texttt{2019-2-19p6}
 
 \begin{itemize}
+\tightlist
 \item
   step4: \(\bar Y\) is sufficient statistic for \(\theta\)
+\end{itemize}
+
+\(Y_n\sim N(\theta,\sigma^2)\) is a member of the exponential family,
+
+\[f(\bar y|\vec\theta)=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum(\bar y-\theta)^2}=h(y)c(\vec \theta)e^{\sum^k_{j=1}W_j(\vec \theta)t_j(y)}\]
+
+For \(\theta>0\), \(\{W_1(\vec \theta),..,W_k(\vec \theta)\}\) contains
+an open interval in \(\Re\), so \(T(\vec y)=\bar y)\) is a complete
+sufficient statistic.
+
+\begin{itemize}
 \item
   step5: \(\bar Y\) is complete statistic for \(\theta\)
 \item
@@ -241,6 +264,7 @@ that remains when constants are disregarded
 
 \[\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\lambda e^{-\lambda\theta}\propto\theta^{n+1-1}e^{-\theta(\lambda+\sum x_i)}\]
 which is \(Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})\)
+distribution.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -254,7 +278,10 @@ which is \(Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})\)
 
 \texttt{2019-2-28p1}
 
-Posterior mean \(=\alpha\beta=\frac{n+1}{\lambda+\sum x_i}\)
+Suppose \(L_0(\hat\theta)=(\hat\theta-\theta)^2\).
+\(E[L_0(\hat\theta)|\vec x]\) is minimized when
+\[\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\lambda+\sum x_i}\]
+which is the posterior mean.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -266,11 +293,9 @@ Posterior mean \(=\alpha\beta=\frac{n+1}{\lambda+\sum x_i}\)
   \textcolor[rgb]{0.5,0.5,0.5}{writing this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant}
 \end{enumerate}
 
-\[\frac1{\hat\theta}=\frac{\lambda+\sum x_i}{n+1}=\frac{\lambda+n\bar x}{n+1}=\frac{\frac1{\frac1\lambda}+\frac{n}{\frac1{\bar x}}}{n+1}\]
-
-\[\hat\theta=\frac1{\frac{\frac1\lambda+\frac{n}{\frac1{\bar x}}}{n+1}}=\frac1{\frac1{n+1}(\frac1{1/\lambda}+\frac{n}{1/\bar x})}\]
-which is the weighted hamonic mean of \(\frac1{\lambda}\), which is the
-prior mean, and \(\frac1{\bar x}\), which is the MLE of \(\theta\).
+\[\hat\theta_{Bayes}=\frac1{\frac1{n+1}(\lambda+n\bar x)}=\frac1{\frac1{n+1}(\frac1{1/\lambda}+\frac{n}{1/\bar x})}\]
+which is the weighted hamonic mean of \(1/\lambda\), which is the prior
+mean, and \(1/\bar x\), which is the MLE of \(\theta\).
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -284,8 +309,14 @@ prior mean, and \(\frac1{\bar x}\), which is the MLE of \(\theta\).
 
 \texttt{2019-2-28p4,9}
 
-Postmedian \[\hat\theta=F^{-1}(\frac12)\] where \(F(x)\) is the
-\(Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})\) pdf, for which
+Suppose \(L_1(\hat\theta)=|\hat\theta-\theta|\).
+\(E[|\hat\theta-\theta|]\) is minimized when
+\[\hat\theta_{Bayes}=median[\theta|\vec x]\] For the median of Gamma
+distribution doesn't have a closed form, the posterior median would not
+have a closed form.
+
+Postmedian \(\hat\theta=F^{-1}(\frac12)\) where \(F(x)\) is the
+\(Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})\) cdf, for which
 there is no closed form.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
@@ -300,7 +331,18 @@ there is no closed form.
 
 \texttt{2019-2-28p5-6}
 
-Posterior mode \[\hat\theta=(\alpha-1)\beta=\frac{n}{\lambda+\sum x_i}\]
+Suppose
+\(L_0(\hat\theta)=\begin{cases}0&\hat\theta=\theta\\1&\text{elsewhere}\end{cases}\).
+
+\[E[L_0(\hat\theta)|\vec x]=0\cdot P[\theta=\hat\theta|\vec x]+1\cdot P[\theta\neq\hat\theta|\vec x]=P[\theta\neq\hat\theta|\vec x]=1-P[\theta=\hat\theta|\vec x]\]
+
+To minimized this, maximize \(P[\theta=\hat\theta|\vec x]\)
+
+When \(\hat\theta\) is the posterior mode, it is a Maximum A Posteriori
+estimator. For the mode of Gamma distribution is \((\alpha-1)\beta\)
+
+\[\hat\theta_{Bayes}=mode[\theta|\vec x]=(\alpha-1)\beta=\frac{n}{\lambda+\sum x_i}\]
+which is the posterior mode.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -322,9 +364,9 @@ Posterior mode \[\hat\theta=(\alpha-1)\beta=\frac{n}{\lambda+\sum x_i}\]
 \texttt{2019-2-26p8-9}
 
 For \(\pi(\theta)=1,\theta>0\),
-\(L(\theta)=\theta^n e^{-\theta\sum x_i}\)
+\(L(\theta)=\theta^n e^{-\theta\sum x_i}\), from the kernel of function,
 
-\[\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\sim Gamma(\alpha=n+1,\beta=\frac1{\sum x_i}=\frac{n}{\bar x})\]
+\[\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\sim Gamma(\alpha=n+1,\beta=\frac1{\sum x_i})\]
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -336,7 +378,10 @@ For \(\pi(\theta)=1,\theta>0\),
   \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming square-error loss}
 \end{enumerate}
 
-\[\hat\theta=\alpha\beta=\frac{n+1}{\sum x_i}\]
+Suppose \(L_0(\hat\theta)=(\hat\theta-\theta)^2\).
+\(E[L_0(\hat\theta)|\vec x]\) is minimized when
+\[\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\sum x_i}\]
+which is the posterior mean.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -348,9 +393,9 @@ For \(\pi(\theta)=1,\theta>0\),
   \textcolor[rgb]{0.5,0.5,0.5}{writing this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant}
 \end{enumerate}
 
-\[\frac1{\hat\theta}=\frac{1\times0+n\bar x}{n+1}=\lim_{c\to\infty}\frac{1\times\frac1c+\frac{n}{\frac1{\bar x}}}{n+1}\]
-So \(\hat\theta\) is the limit as \(c\to\infty\) of the hamonic mean of
-\(\frac1{\bar x}\) (the MLE) and \(c\).(the prior mean is infinite)
+\[\hat\theta_{Bayes}=\frac1{\frac1{n+1}(1\times0+n\bar x)}=\lim_{c\to\infty}\frac1{\frac1{n+1}(\frac1{c}+\frac{n}{1/\bar x})}\]
+which is the weighted hamonic mean of \(c\), which is the prior mean
+when \(c\to\infty\), and \(1/\bar x\), which is the MLE of \(\theta\).
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -362,7 +407,11 @@ So \(\hat\theta\) is the limit as \(c\to\infty\) of the hamonic mean of
   \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming absolute loss}
 \end{enumerate}
 
-Posterior median \(\hat\theta\), which has no closed form.
+Suppose \(L_1(\hat\theta)=|\hat\theta-\theta|\).
+\(E[|\hat\theta-\theta|]\) is minimized when
+\[\hat\theta_{Bayes}=median[\theta|\vec x]\] For the median of Gamma
+distribution doesn't have a closed form, the posterior median would not
+have a closed form.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -374,8 +423,18 @@ Posterior median \(\hat\theta\), which has no closed form.
   \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming binary loss}
 \end{enumerate}
 
-Posterior mode
-\[\hat\theta=(\alpha-1)\beta=\frac{n}{\sum x_i}=\frac{1}{\bar x}\]
+Suppose
+\(L_0(\hat\theta)=\begin{cases}0&\hat\theta=\theta\\1&\text{elsewhere}\end{cases}\).
+
+\[E[L_0(\hat\theta)|\vec x]=0\cdot P[\theta=\hat\theta|\vec x]+1\cdot P[\theta\neq\hat\theta|\vec x]=P[\theta\neq\hat\theta|\vec x]=1-P[\theta=\hat\theta|\vec x]\]
+
+To minimized this, maximize \(P[\theta=\hat\theta|\vec x]\)
+
+When \(\hat\theta\) is the posterior mode, it is a Maximum A Posteriori
+estimator. For the mode of Gamma distribution is \((\alpha-1)\beta\)
+
+\[\hat\theta_{Bayes}=mode[\theta|\vec x]=(\alpha-1)\beta=\frac{n}{\sum x_i}=\frac{1}{\bar x}\]
+which is the posterior mode.
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -396,11 +455,11 @@ Posterior mode
 
 \texttt{2019-2-2p12}
 
-\[f(\vec x|\theta)=L(\theta)=\theta^n(\prod x_i)^{\theta-1}=\theta^n e^{(-\theta-1\sum^n_{i=1} \ln x_i)}\]
+\[f(\vec x|\theta)=L(\theta)=\theta^n(\prod x_i)^{\theta-1}=\theta^n e^{(-\theta-1)\sum^n_{i=1} \ln x_i}\]
 \[l(\theta)=n\ln\theta-(\theta+1)\sum^n_{i=1} \ln x_i\]
 \[l'(\theta)=\frac{n}\theta-\sum^n_{i=1} \ln x_i\overset{\text{set}}{=}0\]
 
-\[\hat\theta=\frac{n}{\sum\ln x_i}\]
+\[\hat\theta_{MLE}=\frac{n}{\sum\ln x_i}\]
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -474,12 +533,12 @@ So \(Y_i=\ln x_i\sim Gamma(\alpha=n,\beta=\frac1{\theta})\)
 
 \texttt{2019-2-21p8\ 7.2.1}
 
-\[\mu=\int_1^{\infty}x\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+1}}{-\theta+1}\right|_1^{\infty}=\frac\theta{\theta-1}\]
+\(EX=\mu=\int_1^{\infty}x\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+1}}{-\theta+1}\right|_1^{\infty}=\frac\theta{\theta-1}\)
 
-Set \(\bar X=\frac\theta{\theta-1}\), \(\theta\bar x-\bar x=\theta\),
-\(\theta(\bar x-1)=\bar x\),
+Set
+\(\bar X=\frac\theta{\theta-1}\implies\theta\bar x-\bar x=\theta\implies\theta(\bar x-1)=\bar x\),
 
-\(\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}\)
+\[\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}\]
 
 \begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
 
@@ -491,25 +550,28 @@ Set \(\bar X=\frac\theta{\theta-1}\), \(\theta\bar x-\bar x=\theta\),
   \textcolor[rgb]{0.5,0.5,0.5}{Using the delta method to approximate the expected value of $\hat\theta_{MOM}$.}
 \end{enumerate}
 
+For \(EX=\mu=\frac\theta{\theta-1}\)
+
+\(E[X^2]=\int_1^{\infty}x^2\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+2}}{-\theta+2}\right|_1^{\infty}=\frac\theta{\theta-2}\)
+
+\(Var[X]=\sigma^2=E[X^2]-E[X]^2=\frac\theta{\theta-2}-(\frac\theta{\theta-1})^2\)
+
+\[=\frac{\theta(\theta-1)^2-\theta^2(\theta-2)}{(\theta-1)^2(\theta-2)}=\frac{\theta^3-2\theta^2+\theta-\theta^3+2\theta^2}{(\theta-1)^2(\theta-2)}=\frac{\theta}{(\theta-1)^2(\theta-2)}\]
+
 \texttt{2019-3-5p1}
 
-\[g(x)=\frac{x}{x-1},\quad g'(x)=\frac{(x-1)\times1-x\times1}{(x-1)^2}=\frac{-1}{(x-1)^2},\quad g''(x)=\frac{2}{(x-1)^3}\]
+Use a \(2^{nd}\) order Taylar series
 
 \[g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R\]
+
+Consider
+\(g(x)=\frac{x}{x-1},\quad g'(x)=\frac{(x-1)\times1-x\times1}{(x-1)^2}=\frac{-1}{(x-1)^2},\quad g''(x)=\frac{2}{(x-1)^3}\)
 
 Choose \(x_0=EX=\mu\)
 
 \[g(x)\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(x-\mu)+\frac{2}{(\mu-1)^3}\frac{(x-\mu)^2}2\]
 
 \[\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(\bar x-\mu)+\frac{1}{(\mu-1)^3}(\bar x-\mu)^2\]
-
-For \(EX=\mu=\frac\theta{\theta-1}\)
-
-\[E[X^2]=\int_1^{\infty}x^2\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+2}}{-\theta+2}\right|_1^{\infty}=\frac\theta{\theta-2}\]
-
-\[Var[X]=\sigma^2=E[X^2]-E[X]^2=\frac\theta{\theta-2}-(\frac\theta{\theta-1})^2\]
-
-\[=\frac{\theta(\theta-1)^2-\theta^2(\theta-2)}{(\theta-1)^2(\theta-2)}=\frac{\theta^3-2\theta^2+\theta-\theta^3+2\theta^2}{(\theta-1)^2(\theta-2)}=\frac{\theta}{(\theta-1)^2(\theta-2)}\]
 
 \[E[\hat\theta_{MOM}]\approx \frac{\mu}{\mu-1}+0+\frac{1}{(\mu-1)^3}\frac{\sigma^2}n=\frac{\frac\theta{\theta-1}}{\frac\theta{\theta-1}-1}+\frac{1}{(\frac\theta{\theta-1}-1)^3}\frac1n\frac{\theta}{(\theta-1)^2(\theta-2)}=\theta+\frac{\theta(\theta-1)}{n(\theta-2)}\]
 
@@ -525,7 +587,7 @@ For \(EX=\mu=\frac\theta{\theta-1}\)
 
 \texttt{2019-3-5p3}
 
-\[Var[\hat\theta_{MOM}]\approx Var[g(x_0)+g'(x_0)(x-x_0)]=Var[\frac{\mu}{\mu-1}+\frac{1}{(\mu-1)^2}(\bar x-\mu)]\]
+\(Var[\hat\theta_{MOM}]\approx Var[g(x_0)+g'(x_0)(x-x_0)]=Var[\frac{\mu}{\mu-1}+\frac{1}{(\mu-1)^2}(\bar x-\mu)]\)
 \[=\frac{1}{(\mu-1)^4}\frac{\sigma^2}n=\frac{1}{(\frac\theta{\theta-1}-1)^4}\frac1n\frac{\theta}{(\theta-1)^2(\theta-2)}=\frac{\theta(\theta-1)^2}{n(\theta-2)}\]
 
 \begin{Shaded}
