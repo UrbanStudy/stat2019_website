@@ -5,6 +5,7 @@ date: 'Winter 2019'
 output:
   pdf_document: 
 geometry: margin=0.5in
+fontfamily: mathpazo
 fontsize: 12pt
 spacing: double
 ---
@@ -15,7 +16,7 @@ spacing: double
 $f(x)=\begin{cases}\lambda x^{\lambda-1}&0<x<1\\0&\text{otherwise}\end{cases}$
 Find a complete sufficient statistic for $\lambda$. Justify your answer}
 
- - Step1: Proof sufficient 
+ - **Step1: Proof sufficient** 
 
 From *Fisher–Neyman factorization theorem* (`2019-2-14p5`)
 
@@ -23,9 +24,9 @@ $$f(x|\lambda)=L(\lambda)=\lambda^n(\prod x_i)^{\lambda-1}=\lambda^ne^{(\lambda-
 
 $h(\vec x)=1$ is free of $\lambda$. So $T=\sum^n_{i=1} \ln x_i$ is a sufficient statistic for $\lambda$.
 
- - Step2: Proof complete 
+ - **Step2: Proof complete**
 
-$f(x|\lambda)$ is a member of the exponential family (`2019-2-19p12`),
+$f(x|\lambda)$ is a member of the exponential family (`2019-2-19p12`). By the Theorem of Complete Statistics in the exponential family
 
 $$f(x|\vec\lambda)=\lambda^ne^{\sum^n_{i=1} (\lambda-1)\ln x_i}=h(x)c(\vec \lambda)e^{\sum^k_{j=1}W_j(\vec \lambda)t_j(x)}$$
 
@@ -35,92 +36,38 @@ For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $\{W_1(\vec \lambda),..,W_k
 
 2. \textcolor[rgb]{0.5,0.5,0.5}{Let $Y_n$ be the $n^th$ order statistic of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.}
 
- - Step1:  $\theta$ is a location parameter
+ - **Step1: $\theta$ is a location parameter**
 
-Let $X=Y-\theta$. For $N(\theta,\sigma^2)$ is a location family of densities (`2018.11.20p7`),
+Let $x=y-\theta$. For $N(\theta,\sigma^2)$ is a location family of densities (`2018.11.20p7`),
 
-$$g(y|\theta)=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\theta)^2}{2\sigma^2}}=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{x^2}{2\sigma^2}}=f(x)=f(y-\theta)$$
+$g(y|\theta)=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\theta)^2}{2\sigma^2}}=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{x^2}{2\sigma^2}}=f(x)=f(y-\theta)$
 
 Thus, $\theta$ is a location parameter.
 
- - Step2: $Y_n-\bar Y$ is location invariant
+ - **Step2: $Y_n-\bar Y$ is location invariant**
 
-`2019-2-21p4-6`
+For $Y_n\sim N(\theta,\sigma^2)$, $\bar Y\sim N(\theta,\sigma^2/n)$ `2019-2-21p4-6`
 
-Let $X=Y_n-\bar Y$.
+Consider the group of transformations defined by $\mathcal{G}=\{Y_n-\bar Y,-\infty<\bar Y<\infty\}$, $Y_n+a-(\bar Y+a)=Y_n-\bar Y$.
 
-Consider the group of transformations defined by $\mathcal{G}=\{Y_n-\bar Y,-\infty<\bar Y<\infty\}$, where $Y_n-\bar Y=(y_1-\bar y,..,y_n-\bar y)$. For $\bar Y$ of a random sample is a value,
-
-$$Y_n-\bar Y=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\bar y-\theta)^2}{2\sigma^2}}\sim N(\theta+\bar Y,\sigma^2)$$
 Thus, the joint distribution of $Y_n-\bar Y$ is in $\mathcal{F}$ and hence $\mathcal{F}$ is invariant under $\mathcal{G}$.
 
-$$Y_n-\bar Y=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_n-\theta)^2}{2\sigma^2}}-\frac1n\sum_{i=1}^n\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_i-\theta)^2}{2\sigma^2}}\sim N(\theta+\bar Y,\sigma^2)$$
+ - **step3: $Y_n-\bar Y$ is ancillary statistic for $\theta$**
 
-$$Y_n-\bar Y=Y_n-\frac1n(Y_1+Y2+..+Y_n)$$
+$f(y|\theta)$ is a location exponential family. Let $X_n=Y_n-\theta$ is a random sample from $f(y|0)$ `2019-2-19p6`
+
+$Y_n-\bar Y=Y_n-\frac1{n}\sum_{i=1}^nY_i=(Y_n-\theta)-\frac1{n}\sum_{i=1}^n(Y_i-\theta)= X_n-\frac1{n}\sum_{i=1}^nX_i$
+
+$Y_n-\bar Y$ is a function of only $X_1,..,X_n$ and be free of $\theta$. It is an ancillary statistic for $\theta$.
 
 
+ - **step4: For $Y\sim N(\theta,\sigma^2)$, $\bar Y$ is sufficient statistic for $\theta$**
 
- - step3: $Y_n-\bar Y$ is ancillary statistic for $\theta$
+ - **step5: $\bar Y$ is complete statistic for $\theta$**
  
-`2019-2-19p6`
+$\bar Y\sim N(\theta,\sigma^2/n)$ is a member of the exponential family. It is a complete sufficient statistic.
 
-$f(y|\theta)$ is a location exponential family. Let $X_n=Y_n-\theta$ is a random sample from $f(y|0)$
-
-$$Y_n-\bar Y=Y_n-\frac1{n}\sum_{i=1}^nY_i=(Y_n-\theta)-\frac1{n}\sum_{i=1}^n(Y_i-\theta)= X_n-\frac1{n}\sum_{i=1}^nX_i$$
-
-$Y_n-\bar Y$ is a function of only $X_1,..,X_n$ and be free of $\theta$. It is an ancillary statistic.
-
-
- - step4: $\bar Y$ is sufficient statistic for $\theta$
-
-Method 1: 
-
-$f(\mathbf{y}|\theta)$ is the joint pdf or pmf of $\mathbf{Y}$, $g(\bar y|\theta)$ is the pdf or pmf of $\bar{\mathbf{Y}}$.
-
-$$f(\vec{y}|\theta)=\prod_{i=1}^n(\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_i-\theta)^2}{2\sigma^2}})=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\theta)^2}=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\bar y+\bar y-\theta)^2}$$
-
-For $\sum_{i=1}^n(y_i-\bar y)=0,\quad\sum_{i=1}^n(\bar y-\theta)^2=n(\bar y-\theta)^2$, the part of exponent is
-
-$$=-\frac{1}{2\sigma^2}\sum_{i=1}^n[(y_i-\bar y)^2+(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2]=-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]$$
-
-For $\bar Y\sim N(\theta,\sigma^2/n)$, $g(\bar y|\theta)=\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}$
-
-$$\frac{f(\mathbf{y}|\theta)}{g(\bar y|\theta)}=\frac{\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]}}{\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}}=\frac1{\sqrt{n}(\sigma\sqrt{2\pi})^{n-1}}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\bar y)^2}$$
-
-which is free of $\theta$ (6.2.2). For every $\mathbf{y}$ in the sample space, the ratio $f(\mathbf{y}|\theta)/g(\bar y|\theta)$ is constant as a function of $\theta$, then $\bar{Y}$ is a sufficient statistic for $\theta$. 
-
-
-Method 2: 
-
-$$f(\vec{y}|\theta)=\prod_{i=1}^n(\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_i-\theta)^2}{2\sigma^2}})=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\theta)^2}=\frac{e^{-\frac{n\theta^2}{2\sigma^2}}}{(\sigma\sqrt{2\pi})^n}e^{\frac{\theta}{\sigma^2}\sum_{i=1}^ny_i}e^{-\frac{\sum_{i=1}^ny_i^2}{2\sigma^2}}=k(t|\theta)h(\vec y)$$
-
-$h(\vec y)=e^{-\frac{\sum_{i=1}^ny_i^2}{2\sigma^2}}$ is free of $\theta$. By the *Factorization Theorem*, $\sum_{i=1}^ny_i$ is a sufficient statistic for $\theta$. $\bar Y=\frac1n\sum_{i=1}^ny_i$ is a function of $\sum_{i=1}^ny_i$ and is a minimal sufficient statistic for $\theta$.
-
- - step5: $\bar Y$ is complete statistic for $\theta$ 
- 
- 
-Method 1: `2019-2-19p7-9`
-
-For $\bar Y\sim N(\theta,\sigma^2/n)$, the family of is $\{\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(y-\theta)^2}{2\sigma^2}}:-\infty<\theta<\infty\}$
-
-Supporse that $E[g(Y)]=0\forall\theta$
-
-$$\int_{0}^\infty g(y)f(y)dy=\int_0^\infty g(y)\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(y-\theta)^2}{2\sigma^2}}dy=\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}\int_0^\infty g(y)e^{-\frac{n(y-\theta)^2}{2\sigma^2}}dy=0$$
-
-For $\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}\neq0$, $\frac{d}{dx}\int_{v(x)}^{u(x)}{f(t)}dt=u'(x)f[u(x)]-v'(x)f[v(x)]$, then
-
-$$0=\frac{d}{d\theta}E[g(Y)]=\frac{d}{d\theta}\left[\int_{-\infty}^\infty g(y)e^{-\frac{n(y-\theta)^2}{2\sigma^2}}dy\right]=0-\theta'[g(\theta)e^{-\frac{n(y-\theta)^2}{2\sigma^2}}]=-g(\theta)e^{-\frac{n(y-\theta)^2}{2\sigma^2}}$$
-
-So $g(\theta)=0,\forall\theta$, then $P(g(T)=0)=1$. Thus, $\bar Y$ is a complete statistic.
-
-Method 2:
-
-$f(y|\theta)$ is a member of the exponential family (`2019-2-19p12`),
-
-$$f(y|\vec\theta)=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y-\theta)^2}=e^{-\frac{\sum_{i=1}^ny_i^2}{2\sigma^2}}\frac{e^{-\frac{n\theta^2}{2\sigma^2}}}{(\sigma\sqrt{2\pi})^n}e^{\sum_{i=1}^n\frac{\theta}{\sigma^2}y_i}=h(y)c(\vec \theta)e^{\sum^k_{j=1}W_j(\vec \theta)t_j(y)}$$
-For $\{W_1(\vec \theta),..,W_k(\vec \theta)\}$ contains an open interval in $\Bbb R$, so $T(\vec y)=\bar y)$ is a complete sufficient statistic.
-
- - step6:  By Basu's theorem, an acillary statistc  $Y_n-\bar Y$ and a complete sufficient statistic $\bar Y$ are independent.`2019-2-19p10`
+ - **step6:  By Basu's theorem, an acillary statistc  $Y_n-\bar Y$ and a complete sufficient statistic $\bar Y$ are independent.**`2019-2-19p10`
  
 
  ----
@@ -129,20 +76,19 @@ For $\{W_1(\vec \theta),..,W_k(\vec \theta)\}$ contains an open interval in $\Bb
 
  a. \textcolor[rgb]{0.5,0.5,0.5}{Find the posterior distribution $\pi(\theta|\vec x)$.}
 
-`2019-2-26p8-9,p11-p13`
+For $L(\theta)=\hat\theta e^{-\theta\sum x_i},\quad \pi(\theta)=\lambda e^{-\lambda\theta}$, and the kernel of a function is the main part of the function, the part that remains when constants are disregarded (`2019-2-26p8-9,p11-p13` `2019-2-28p8 Exapmle 2.3.8`). that is
 
-For $L(\theta)=\hat\theta e^{-\theta\sum x_i},\quad \pi(\theta)=\lambda e^{-\lambda\theta}$, and the kernel of a function is the main part of the function, the part that remains when constants are disregarded (`2019-2-28p8 Exapmle 2.3.8`). that is
+$\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\lambda e^{-\lambda\theta}\propto\theta^{n+1-1}e^{-\theta(\lambda+\sum x_i)}$
 
-$$\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\lambda e^{-\lambda\theta}\propto\theta^{n+1-1}e^{-\theta(\lambda+\sum x_i)}$$
 which is $Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})$ distribution.
 
  ----
 
  b. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming square-error loss}
 
-`2019-2-28p1`
 
-Suppose $L_0(\hat\theta)=(\hat\theta-\theta)^2$. $E[L_0(\hat\theta)|\vec x]$ is minimized when 
+
+Suppose $L_0(\hat\theta)=(\hat\theta-\theta)^2$. `2019-2-28p1` $E[L_0(\hat\theta)|\vec x]$ is minimized when 
 $$\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\lambda+\sum x_i}$$
 which is the posterior mean.
  
@@ -169,9 +115,8 @@ For the median of Gamma distribution doesn't have a closed form, the posterior m
  
  ----
  
- e. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming binary loss}
+ e. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming binary loss} `2019-2-28p5-6`
  
- `2019-2-28p5-6`
 
 Suppose $L_0(\hat\theta)=\begin{cases}0&\hat\theta=\theta\\1&\text{elsewhere}\end{cases}$. 
 
@@ -188,9 +133,7 @@ which is the posterior mode.
  
 4. \textcolor[rgb]{0.5,0.5,0.5}{Redo all of problem 3, using the non-informative prior $\pi(\theta)=1,\theta>0$. Note that this is not a valid density function since its intergral is infinite, but proceed with it anyway}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find the posterior distribution $\pi(\theta|\vec x)$.}
-
-`2019-2-26p8-9`
+ a. \textcolor[rgb]{0.5,0.5,0.5}{Find the posterior distribution $\pi(\theta|\vec x)$.} `2019-2-26p8-9`
 
 For $\pi(\theta)=1,\theta>0$, $L(\theta)=\theta^n e^{-\theta\sum x_i}$, from the kernel of function,
 
@@ -238,9 +181,7 @@ which is the posterior mode.
  
 5. \textcolor[rgb]{0.5,0.5,0.5}{Let $X_1,X_2,..X_n\sim$ idd. $f(x|\theta)=\theta x^{-\theta-1}, x_i>1, \theta>2$.}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find $\hat\theta_{MLE}$, the maximum likelihood estimator of $\theta$.}
- 
-`2019-2-2p12`
+ a. \textcolor[rgb]{0.5,0.5,0.5}{Find $\hat\theta_{MLE}$, the maximum likelihood estimator of $\theta$.} `2019-2-2p12`
 
 $$f(\vec x|\theta)=L(\theta)=\theta^n(\prod x_i)^{\theta-1}=\theta^n e^{(-\theta-1)\sum^n_{i=1} \ln x_i}$$
 $$l(\theta)=n\ln\theta-(\theta+1)\sum^n_{i=1} \ln x_i$$
@@ -281,9 +222,7 @@ $$Var[\hat\theta_{U}]=(\frac{n-1}{n})^2\frac{n^2\theta^2}{(n-1)^2(n-2)}=\frac{\t
 
 6. \textcolor[rgb]{0.5,0.5,0.5}{Refer to problem 5.}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find $\hat\theta_{MOM}$, the method of moments estimator of $\theta$.}
-
-`2019-2-21p8 7.2.1`
+ a. \textcolor[rgb]{0.5,0.5,0.5}{Find $\hat\theta_{MOM}$, the method of moments estimator of $\theta$.} `2019-2-21p8 7.2.1`
 
 $EX=\mu=\int_1^{\infty}x\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+1}}{-\theta+1}\right|_1^{\infty}=\frac\theta{\theta-1}$
 
@@ -295,7 +234,6 @@ $$\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}$$
  
  b. \textcolor[rgb]{0.5,0.5,0.5}{Using the delta method to approximate the expected value of $\hat\theta_{MOM}$.}
 
-
 For $EX=\mu=\frac\theta{\theta-1}$
 
 $E[X^2]=\int_1^{\infty}x^2\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+2}}{-\theta+2}\right|_1^{\infty}=\frac\theta{\theta-2}$
@@ -304,9 +242,7 @@ $Var[X]=\sigma^2=E[X^2]-E[X]^2=\frac\theta{\theta-2}-(\frac\theta{\theta-1})^2$
 
 $$=\frac{\theta(\theta-1)^2-\theta^2(\theta-2)}{(\theta-1)^2(\theta-2)}=\frac{\theta^3-2\theta^2+\theta-\theta^3+2\theta^2}{(\theta-1)^2(\theta-2)}=\frac{\theta}{(\theta-1)^2(\theta-2)}$$
 
-`2019-3-5p1`
-
-Use a $2^{nd}$ order Taylar series
+Use a $2^{nd}$ order Taylar series `2019-3-5p1`
 
 $$g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R$$
 
@@ -322,9 +258,7 @@ $$E[\hat\theta_{MOM}]\approx \frac{\mu}{\mu-1}+0+\frac{1}{(\mu-1)^3}\frac{\sigma
 
  ----
  
- c. \textcolor[rgb]{0.5,0.5,0.5}{Using the delta method to approximate the variance of $\hat\theta_{MOM}$.}
-
-`2019-3-5p3`
+ c. \textcolor[rgb]{0.5,0.5,0.5}{Using the delta method to approximate the variance of $\hat\theta_{MOM}$.} `2019-3-5p3`
 
 $Var[\hat\theta_{MOM}]\approx Var[g(x_0)+g'(x_0)(x-x_0)]=Var[\frac{\mu}{\mu-1}+\frac{1}{(\mu-1)^2}(\bar x-\mu)]$
 $$=\frac{1}{(\mu-1)^4}\frac{\sigma^2}n=\frac{1}{(\frac\theta{\theta-1}-1)^4}\frac1n\frac{\theta}{(\theta-1)^2(\theta-2)}=\frac{\theta(\theta-1)^2}{n(\theta-2)}$$
