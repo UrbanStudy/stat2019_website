@@ -138,10 +138,16 @@ sum((table_ethics$Score- mean(table_ethics$Score))^2)
 # To obtain Adjusted SS for factorial design in R when there is an unbalanced design #
 # First, it is necessary to set the contrasts option in R.#
 options(contrasts = c("contr.sum","contr.poly"))
-# Use wither drop1 function or Anova function with type = "III" as below #
-#Type III sum of squares give the adjusted (for all other effects) SS and p values of each effect #
+# Because the multi-way ANOVA model is over-parameterised, #
+# it is necessary to choose a contrasts setting that sums to zero.#
+# otherwise the ANOVA analysis will give incorrect results with respect #
+# to the expected hypothesis. (The default contrasts type does not satisfy this requirement.)
+
+# Use with drop1 function or Anova function with type = "III" as below #
 drop1(model_ethics, .~., test="F")
+#Type III sum of squares give the adjusted (for all other effects) SS and p values of each effect #
 Anova(model_ethics, type="III")
+
 ```
 
 # Problem 2: 3-Factor Factorial (Non-significant interaction)

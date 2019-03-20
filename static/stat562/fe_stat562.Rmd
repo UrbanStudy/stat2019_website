@@ -1,7 +1,7 @@
 ---
-title: "STAT562 Final Exam"
+title: ""
 author: ""
-date: 'Winter 2019'
+date: ''
 output:
   pdf_document: 
 geometry: margin=0.5in
@@ -44,22 +44,24 @@ $g(y|\theta)=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\theta)^2}{2\sigma^2}}=\frac1
 
 Thus, $\theta$ is a location parameter.
 
- - **Step2: $Y_n-\bar Y$ is location invariant**
+ - **Step2: $Y_n-\bar Y$ is location invariant**(`2019-2-21p4-6`)
+ 
+Let $g=Y_n-\bar Y=\frac1n\sum_{i=1}^n(y_{(n)}-y_i)$. Consider the group of transformations defined by $\mathcal{G}=\{g_a(y_1,..,y_n),-\infty<a<\infty\}$, where $g_a=(y_1+a,..,y_n+a)$. From Definition 6.4.2
 
-For $Y_n\sim N(\theta,\sigma^2)$, $\bar Y\sim N(\theta,\sigma^2/n)$ (`2019-2-21p4-6`)
+$g_{-a}(g_a)=g_{-a}(\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a)])=\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a-a)]=g$
 
-Consider the group of transformations defined by $\mathcal{G}=\{Y_n-\bar Y,-\infty<a<\infty\}$, $Y_n+a-(\bar Y+a)=Y_n-\bar Y$.
+$g_{a_2}(g_{a_1})=g_{a_2}(\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a_1)])=\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a_1+a_2)]=g_{a_1+a_2}$
 
-Thus, the joint distribution of $Y_n-\bar Y$ is in $\mathcal{F}$ and hence $\mathcal{F}$ is invariant under $\mathcal{G}$.
+Thus, the joint distribution of $Y_n-\bar Y$ is in $\mathcal{F}$ and hence $\mathcal{F}$ is location invariant under $\mathcal{G}$.
 
  - **step3: $Y_n-\bar Y$ is ancillary statistic for $\theta$**
 
-$f(y|\theta)$ is a location exponential family. Let $X_n=Y_n-\theta$ is a random sample from $f(y|0)$ (`2019-2-19p6`)
+$f(y|\theta)$ is a location parameter family with cdf $F(y-\theta), -\infty<\theta<\infty$. Let $W=Y_n-\bar Y$. From Theorem 3.5.6, let $Z_n,\bar Z$ idd from $F(y)$ (corresponding to $\theta=0$ or $f(y|0)$ `2019-2-19p6`) with $Y_n=Z_n+\theta,\bar Y=\bar Z+\theta$. Thus the cdf of the $W$ is 
 
-$Y_n-\bar Y=Y_n-\frac1{n}\sum_{i=1}^nY_i=(Y_n-\theta)-\frac1{n}\sum_{i=1}^n(Y_i-\theta)= X_n-\frac1{n}\sum_{i=1}^nX_i$
+$F_W(w|\theta)=P_{\theta}(W\le w)=P_{\theta}(Y_n-\bar Y\le w)=P_{\theta}(Z_n+\theta-(\bar Z+\theta)\le w)=P_{\theta}(Z_n-\bar Z\le w)$
 
-$Y_n-\bar Y$ is a function of only $X_1,..,X_n$ and be free of $\theta$. It is an ancillary statistic for $\theta$.
-
+The last probability does not depend on $\theta$ because the distribution of $Z_n,\bar Z$ does
+not depend on $\theta$. Thus, the cdf of $W=Y_n-\bar Y$ does not depend on $\theta$, $W=Y_n-\bar Y$ is an ancillary statistic.
 
  - **step4: For $Y\sim N(\theta,\sigma^2)$, $\bar Y$ is sufficient statistic for $\theta$**
 
@@ -69,11 +71,11 @@ $$f(\vec{y}|\theta)=\prod_{i=1}^n(\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_i-\theta
 
 For $\sum_{i=1}^n(y_i-\bar y)=0,\quad\sum_{i=1}^n(\bar y-\theta)^2=n(\bar y-\theta)^2$, the part of exponent is
 
-$$=-\frac{1}{2\sigma^2}\sum_{i=1}^n[(y_i-\bar y)^2+2(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2]=-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]$$
+$=-\frac{1}{2\sigma^2}\sum_{i=1}^n[(y_i-\bar y)^2+2(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2]=-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]$
 
 Let $\bar Y=g(\bar y|\theta)\sim N(\theta,\sigma^2/n)$, $g(\bar y|\theta)=\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}$
 
-$$\frac{f(\mathbf{y}|\theta)}{g(\bar y|\theta)}=\frac{\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]}}{\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}}=\frac1{\sqrt{n}(\sigma\sqrt{2\pi})^{n-1}}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\bar y)^2}$$
+$\frac{f(\mathbf{y}|\theta)}{g(\bar y|\theta)}=\frac{\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]}}{\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}}=\frac1{\sqrt{n}(\sigma\sqrt{2\pi})^{n-1}}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\bar y)^2}$
 
 which is free of $\theta$ (6.2.2). For every $\vec{y}$ in the sample space, the ratio $f(\vec{y}|\theta)/g(\bar y|\theta)$ is constant as a function of $\theta$, then $\bar{Y}$ is a sufficient statistic for $\theta$. 
 
@@ -192,7 +194,7 @@ which is the posterior mean.
 For $1/\bar x$ is the MLE of $\theta$, we can write this estimator as
 
 $$\hat\theta_{Bayes}=\frac1{\frac1{n+1}(1\times0+n\bar x)}=\lim_{c\to\infty}\frac1{\frac1{n+1}(\frac1{c}+\frac{n}{1/\bar x})}$$
- which is the weighted hamonic mean of $c$ and $1/\bar x$. $c$ is the prior mean when $c\to\infty$, $1/\bar x$ is the MLE of $\theta$.
+ which is the weighted hamonic mean of $c$ and $1/\bar x$. $c$ is the prior constant as $c\to\infty$, $1/\bar x$ is the MLE of $\theta$.
 
  ----
  
@@ -200,7 +202,8 @@ $$\hat\theta_{Bayes}=\frac1{\frac1{n+1}(1\times0+n\bar x)}=\lim_{c\to\infty}\fra
 
  Suppose $L_1(\hat\theta)=|\hat\theta-\theta|$. $E[|\hat\theta-\theta|]$ is minimized when 
 $$\hat\theta_{Bayes}=median[\theta|\vec x]$$
-For the median of $Gamma(n+1,\frac1{\sum_{i=1}^n x_i})$ doesn't have a closed form, the posterior median $\hat\theta$ would not have a closed form.
+
+The posterior median is $\hat\theta=F^{-1}(\frac12)$. $F(x)$ is the $Gamma(\alpha=n+1,\beta=\frac1{\sum_{i=1}^n x_i})$ cdf. $\hat\theta$ doesn't have a closed form.
 
  ----
  
@@ -221,9 +224,9 @@ which is the posterior mode.
 
  a. \textcolor[rgb]{0.7,0.7,0.7}{Find $\hat\theta_{MLE}$, the maximum likelihood estimator of $\theta$.`2019-2-2p12`} 
 
-$$f(\vec x|\theta)=L(\theta)=\theta^n(\prod_{i=1}^n x_i)^{-\theta-1}=\theta^n e^{(-\theta-1)\sum^n_{i=1} \ln x_i}$$
-$$l(\theta)=n\ln\theta-(\theta+1)\sum^n_{i=1} \ln x_i$$
-$$l'(\theta)=\frac{n}\theta-\sum^n_{i=1} \ln x_i\overset{\text{set}}{=}0$$
+$f(\vec x|\theta)=L(\theta)=\theta^n(\prod_{i=1}^n x_i)^{-\theta-1}=\theta^n e^{(-\theta-1)\sum^n_{i=1} \ln x_i}$
+$l(\theta)=n\ln\theta-(\theta+1)\sum^n_{i=1} \ln x_i$
+$l'(\theta)=\frac{n}\theta-\sum^n_{i=1} \ln x_i\overset{\text{set}}{=}0$
 
 $$\hat\theta_{MLE}=\frac{n}{\sum_{i=1}^n\ln x_i}$$
 
@@ -311,13 +314,13 @@ $$=\frac{\theta(\theta-1)^2-\theta^2(\theta-2)}{(\theta-1)^2(\theta-2)}=\frac{\t
 
 Use a $2^{nd}$ order Taylar series
 
-$$g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R$$
+$g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R$
 
 Consider $g(x)=\frac{x}{x-1},\quad g'(x)=\frac{(x-1)\times1-x\times1}{(x-1)^2}=\frac{-1}{(x-1)^2},\quad g''(x)=\frac{2}{(x-1)^3}$
 
 Choose $x_0=EX=\mu$
 
-$$g(x)=\frac{x}{x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(x-\mu)+\frac{2}{(\mu-1)^3}\frac{(x-\mu)^2}2$$
+$g(x)=\frac{x}{x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(x-\mu)+\frac{2}{(\mu-1)^3}\frac{(x-\mu)^2}2$
 
 $$\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(\bar x-\mu)+\frac{1}{(\mu-1)^3}(\bar x-\mu)^2$$
 
@@ -332,5 +335,5 @@ $$=\frac{1}{(\mu-1)^4}\frac{\sigma^2}n=\frac{1}{(\frac\theta{\theta-1}-1)^4}\cdo
 
 
 ```{r, eval =F}
-End
+.
 ```
