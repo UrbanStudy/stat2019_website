@@ -85,10 +85,10 @@ model_sagebrush <- aov(Percent ~ h*d, data=table_sagebrush)
 
 (a). \textcolor[rgb]{0.7,0.7,0.7}{Plot of the data (a plot with data and/or means of treatment combinations). Do not report code here.}
 
-```{r echo=FALSE, out.width='33%',fig.show='hold'}
+```{r echo=FALSE, out.width='30%',fig.show='hold'}
 str(table_sagebrush)
-ggline(data = table_sagebrush, x = "d", y = "Percent", add = c("mean", "jitter"),shape= "h",  color = "h", linetype = "h", ylab= "Percentage of viability", xlab="storage length (day)")
-ggline(data = table_sagebrush, x = "h", y = "Percent", add = c("mean", "jitter"),shape= "d",  color = "d", linetype = "d", ylab= "Percentage of viability", xlab="relative humidity")
+ggline(data = table_sagebrush, x = "d", y = "Percent", add = c("mean", "jitter"),shape= "h",  color = "h", linetype = "h", ylab= "viability of seeds", xlab="storage length (day)")
+ggline(data = table_sagebrush, x = "h", y = "Percent", add = c("mean", "jitter"),shape= "d",  color = "d", linetype = "d", ylab= "viability of seeds", xlab="relative humidity")
 ```
 
 (b). \textcolor[rgb]{0.7,0.7,0.7}{Description of the observed relationship between two factors based on the graph.}
@@ -157,9 +157,9 @@ sum((table_sagebrush$Percent- mean(table_sagebrush$Percent))^2)
 
    **h:d**       12    4154     346.2     71.12    6.511e-24 
 
- **Residuals**   42   204.4     4.867     &nbsp;     &nbsp;    
+ **Residuals**   42   204.4     4.867      NA         NA     
  
-   **Total**     62   17623.78  &nbsp;    &nbsp;     &nbsp;  
+   **Total**     62   17623.78    NA       NA         NA    
  -------------------------------------------------------------
 
 (f). \textcolor[rgb]{0.7,0.7,0.7}{Conclusion from the test of significant interaction effect along with the p value. What do you recommend as the next step in your analysis? (That is, should you test for main effects or simple effects?  Why? Explain clearly and provide reasons).}
@@ -211,11 +211,11 @@ The plots of studentized residual versus humanity and storage length levels didn
 $$\Gamma:\mu_{32}-\frac12(\mu_{12}+\mu_{22})=0\implies\tau_{32}+(\tau\beta)_{32}-\frac12(\tau_{12}+(\tau\beta)_{12}+\tau_{22}+(\tau\beta)_{22})=0$$
 where subscript "32" represents 45% humidity and 60-days storage; "12" represents 0 humidity and 60-days storage; "22" represents 32% humidity and 60-days storage.
 
+(b). \textcolor[rgb]{0.7,0.7,0.7}{test your contrast using the software and provide the conclusion along with p value.}
+
 The $H0$ for contrast is $\mu_{32}-\frac12(\mu_{12}+\mu_{22})=0$ or $\tau_{32}+(\tau\beta)_{32}-\frac12(\tau_{12}+(\tau\beta)_{12}+\tau_{22}+(\tau\beta)_{22})=0$.
 
 The $H1$ is they don't equal zero.
-
-(b). \textcolor[rgb]{0.7,0.7,0.7}{test your contrast using the software and provide the conclusion along with p value.}
 
 The estimated value of the contrast is -16.9 and the adjusted Tukey’s p value for testing the above hypotheses for contrast is less than $0.0001$, which is small enough. We can reject the $H0$ and conclude that the average percentage of viability of seeds for 60-days storage at 45% humidity versus that at 0 and 32% humidity are different at 5% significance level.
 
@@ -249,7 +249,7 @@ ggplot(table_sagebrush,aes(h,student_resid))+geom_dotplot(binaxis="y",stackdir="
 ggplot(table_sagebrush,aes(d,student_resid))+geom_dotplot(binaxis="y",stackdir="center",binwidth=0.1,alpha=0.6)+theme_light()
 # II(b)
 table_sagebrush$hd<-interaction(table_sagebrush$h,table_sagebrush$d)
-kable(summary(contrast(lsmeans(lm(Percent~hd, table_sagebrush),'hd'),list(c32_12.22=c(rep(0,3),-0.5,-0.5,1,rep(0,15)))), adjust="tukey"))%>%kable_styling("condensed",full_width=F)
+kable(summary(contrast(lsmeans(lm(Percent~hd, table_sagebrush),'hd'),list(c32_12.22=c(rep(0,3),-0.5,-0.5,1,rep(0,15)))), adjust="tukey"))%>%kable_styling("condensed",full_width=F,font_size=6)
 ```
 
 ```{r eval=FALSE, include=FALSE}
@@ -266,37 +266,37 @@ kable(d_h,format="latex")%>%kable_styling("condensed",full_width=F,font_size=6)%
 
 This is a two-factor factorial in RCBD model with fixed effect.
 
-$$SSE=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\mu-\tau_i-\beta_j-(\tau\beta)_{ij}-\delta_k)^2$$
+$$SSE=\sum_i^a\sum_j^b\sum_k^n(y_{ijk}-\mu-\tau_i-\beta_j-(\tau\beta)_{ij}-\delta_k)^2$$
 
 Derive
 
-$\left.\frac{\partial SSE}{\partial \mu}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+$\left.\frac{\partial SSE}{\partial \mu}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_i^a\sum_j^b\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
 
 For $i=1,…,a$,
 
-$\left.\frac{\partial SSE}{\partial \tau_i}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+$\left.\frac{\partial SSE}{\partial \tau_i}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_j^b\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
 
 For $j=1,…,b$,
 
-$\left.\frac{\partial SSE}{\partial \beta_j}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{i=1}^a\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+$\left.\frac{\partial SSE}{\partial \beta_j}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_i^a\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
 
 For $i=1,…,a$; $j=1,…,b$,
 
-$\left.\frac{\partial SSE}{\partial (\tau\beta)_{ij}}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+$\left.\frac{\partial SSE}{\partial (\tau\beta)_{ij}}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
 
 For $k=1,…,n$,
 
-$\left.\frac{\partial SSE}{\partial \delta_k}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{i=1}^a\sum_{j=1}^b(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+$\left.\frac{\partial SSE}{\partial \delta_k}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_i^a\sum_j^b(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
 
 $$\left\{\begin{array}{l} 
-y_{...}=abn\hat\mu+bn\sum_{i=1}^a\hat\tau_i+an\sum_{j=1}^b\hat\beta_j+n\sum_{i=1}^a\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}+ab\sum_{k=1}^n\hat\delta_k\\
-y_{i..}=bn\hat\mu+bn\hat\tau_i+n\sum_{j=1}^b\hat\beta_j+n\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}+b\sum_{k=1}^n\hat\delta_k \\
-y_{.j.}=an\hat\mu+n\sum_{i=1}^a\hat\tau_i+an\hat\beta_j+n\sum_{i=1}^a\widehat{(\tau\beta)}_{ij}+a\sum_{k=1}^n\hat\delta_k \\
-y_{ij.}=n\hat\mu+n\hat\tau_i+n\hat\beta_j+n\widehat{(\tau\beta)}_{ij}+\sum_{k=1}^n\hat\delta_k \\
-y_{..k}=ab\hat\mu+b\sum_{i=1}^a\hat\tau_i+a\sum_{j=1}^b\hat\beta_j+\sum_{i=1}^a\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}+ab\hat\delta_k\\
+y_{...}=abn\hat\mu+bn\sum_i^a\hat\tau_i+an\sum_j^b\hat\beta_j+n\sum_i^a\sum_j^b\widehat{(\tau\beta)}_{ij}+ab\sum_k^n\hat\delta_k\\
+y_{i..}=bn\hat\mu+bn\hat\tau_i+n\sum_j^b\hat\beta_j+n\sum_j^b\widehat{(\tau\beta)}_{ij}+b\sum_k^n\hat\delta_k \\
+y_{.j.}=an\hat\mu+n\sum_i^a\hat\tau_i+an\hat\beta_j+n\sum_i^a\widehat{(\tau\beta)}_{ij}+a\sum_k^n\hat\delta_k \\
+y_{ij.}=n\hat\mu+n\hat\tau_i+n\hat\beta_j+n\widehat{(\tau\beta)}_{ij}+\sum_k^n\hat\delta_k \\
+y_{..k}=ab\hat\mu+b\sum_i^a\hat\tau_i+a\sum_j^b\hat\beta_j+\sum_i^a\sum_j^b\widehat{(\tau\beta)}_{ij}+ab\hat\delta_k\\
 \end{array}\right.$$
 
-For $\sum_{i=1}^a\hat\tau_i=0;\ \sum_{j=1}^b\hat\beta_j=0;\ \sum_{i=1}^a\widehat{(\tau\beta)}_{ij}=0;\ \sum_{j=1}^b\widehat{(\tau\beta)}_{ij}=0;\ \sum_{k=1}^n\hat\delta_k=0$,
+For $\sum_i^a\hat\tau_i=0;\ \sum_j^b\hat\beta_j=0;\ \sum_i^a\widehat{(\tau\beta)}_{ij}=0;\ \sum_j^b\widehat{(\tau\beta)}_{ij}=0;\ \sum_k^n\hat\delta_k=0$,
 
 and for $\hat\mu$ is constant, $\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k$ are constants for summations on other parameters,
 
@@ -321,18 +321,18 @@ ab\bar y_{..k}=ab\hat\mu+0+0+0+ab\hat\delta_k \end{array}\right.
   \textcolor[rgb]{0.7,0.7,0.7}{$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$, for $i=1,2,…,a$; $j=1,2,…,b$; $k=1,2,…,n$. $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$;$\sum_{i=1}^a\tau_i=0$ and $\sum_{j=1}^b\beta_j=0$; $\sum_{i=1}^a(\tau\beta)_{ij}=0$, $\sum_{j=1}^b(\tau\beta)_{ij}=0$. $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}$; $y_{...}=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{...}=\frac{y_{...}}{abn}$. $SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2$; $SS_B=an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2$; $SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2$}
 
 
- - Step 1: Expand the sum-of-squares terms
+ - **Step 1: Expand the sum-of-squares terms**
 
 $$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b\left[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})+(\bar y_{i..}-\bar y_{...})+(\bar y_{.j.}-\bar y_{...})\right]^2$$
 
-$$=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2+bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2+an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2+n\sum_{i=1}^a\sum_{j=1}^b\text{[three cross product terms]}$$
+$$=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2+bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2+an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2+n\sum_{i=1}^a\sum_{j=1}^b\text{three cross product items}$$
 
 
- - Step 2: Proof the first cross-product terms equal 0
+ - **Step 2: Proof the first cross-product terms equal 0** 
  
 $$\sum_{i=1}^a\sum_{j=1}^b(\bar y_{i..}-\bar y_{...})(\bar y_{.j.}-\bar y_{...})=\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})=(a\bar y_{...}-a\bar y_{...})(b\bar y_{...}-b\bar y_{...})=0$$
  
- - Step 3: Proof the second cross-product terms equal 0
+ - **Step 3: Proof the second cross-product terms equal 0** 
 
 $$\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})(\bar y_{i..}-\bar y_{...})=\sum_{i=1}^a\sum_{j=1}^b\left[\bar y_{ij.}\bar y_{i..}-\bar y_{i..}^2-\bar y_{i..}\bar y_{.j.}+\bar y_{i..}\bar y_{...}-\bar y_{ij.}\bar y_{...}+\bar y_{i..}\bar y_{...}+\bar y_{.j.}\bar y_{...}-\bar y_{...}^2\right]$$
 
@@ -340,7 +340,7 @@ $$=\sum_{i=1}^a\bar y_{i..}\sum_{j=1}^b\bar y_{ij.}-\sum_{i=1}^a\sum_{j=1}^b\bar
 
 $$=\sum_{i=1}^a\bar y_{i..}b\bar y_{i..}-\sum_{i=1}^ab\bar y_{i..}^2-a\bar y_{...}b\bar y_{...}+2\bar y_{...}ab\bar y_{...}-\bar y_{...}ab\bar y_{...}+\bar y_{...}ab\bar y_{...}-ab\bar y_{...}^2=0$$
 
- - Step 4: Proof the third cross-product terms equal 0
+ - **Step 4: Proof the third cross-product terms equal 0** 
 
 $$\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})(\bar y_{.j.}-\bar y_{...})=\sum_{i=1}^a\sum_{j=1}^b\left[\bar y_{ij.}\bar y_{.j.}-\bar y_{i..}\bar y_{.j.}-\bar y_{.j.}^2+\bar y_{.j.}\bar y_{...}-\bar y_{ij.}\bar y_{...}+\bar y_{i..}\bar y_{...}+\bar y_{.j.}\bar y_{...}-\bar y_{...}^2\right]$$
 
@@ -348,11 +348,151 @@ $$=\sum_{j=1}^b\bar y_{.j.}\sum_{i=1}^a\bar y_{ij.}-\sum_{i=1}^a\bar y_{i..}\sum
 
 $$=\sum_{j=1}^b\bar y_{.j.}a\bar y_{.j.}-a\bar y_{...}b\bar y_{...}-\sum_{i=1}^ab\bar y_{.j.}^2+2\bar y_{...}ab\bar y_{...}-\bar y_{...}ab\bar y_{...}+\bar y_{...}ab\bar y_{...}-ab\bar y_{...}^2=0$$
 
- - Step 5: Cmplete the proof
+ - **Step 5: Cmplete the proof** 
 
-For $n\sum_{i=1}^a\sum_{j=1}^b$(three cross product terms)$=0$, then
+For $n\sum_{i=1}^a\sum_{j=1}^b$(three cross product items)$=0$, then
 
 $$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2+bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2+an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2=SS_{AB}+SS_A+SS_B$$
 
 Therefore,
 $$SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2-SS_A-SS_B$$
+
+
+
+
+
+ - Step 1: Squares of AB
+
+$$(AB)^2=(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2=[(\bar y_{ij.}-\bar y_{...})-(\bar y_{i..}+\bar y_{.j.}-2\bar y_{...})]^2$$
+
+$$=(\bar y_{ij.}-\bar y_{...})2-(\bar y_{i..}-\bar y_{...}+\bar y_{.j.}-\bar y_{...})^2$$
+
+
+$$=(\bar y_{ij.}-\bar y_{...})^2+(\bar y_{i..}+\bar y_{.j.}-2\bar y_{...})^2-2(\bar y_{ij.}-\bar y_{...})(\bar y_{i..}+\bar y_{.j.}-2\bar y_{...})$$
+
+$$=(\bar y_{ij.}-\bar y_{...})^2+(\bar y_{i..}+\bar y_{.j.}-2\bar y_{...})(\bar y_{i..}+\bar y_{.j.}-2\bar y_{...}-2\bar y_{ij.}+2\bar y_{...})$$
+
+$$=(\bar y_{ij.}-\bar y_{...})^2+(\bar y_{i..}-\bar y_{...}+\bar y_{.j.}-\bar y_{...})(\bar y_{i..}-\bar y_{ij.}+\bar y_{.j.}-\bar y_{ij.})$$
+
+$$=(\bar y_{ij.}-\bar y_{...})^2+(\bar y_{i..}-\bar y_{...})(\bar y_{i..}-\bar y_{ij.})+(\bar y_{.j.}-\bar y_{...})(\bar y_{.j.}-\bar y_{ij.})+(\bar y_{i..}-\bar y_{...})(\bar y_{.j.}-\bar y_{ij.})+(\bar y_{i..}-\bar y_{ij.})(\bar y_{.j.}-\bar y_{...})$$
+
+ - Step 2: Squares of A and B
+
+$$A^2=(\bar y_{i..}-\bar y_{...})^2=(\bar y_{i..}-\bar y_{...})(\bar y_{i..}-\bar y_{...})=(\bar y_{i..}-\bar y_{...})(\bar y_{i..}-\bar y_{ij.}+\bar y_{ij.}-\bar y_{...})$$
+
+$$=(\bar y_{i..}-\bar y_{...})(\bar y_{i..}-\bar y_{ij.})+(\bar y_{i..}-\bar y_{...})(\bar y_{ij.}-\bar y_{...})$$
+
+
+$$B^2=(\bar y_{.j.}-\bar y_{...})^2=(\bar y_{.j.}-\bar y_{...})(\bar y_{.j.}-\bar y_{...})=(\bar y_{.j.}-\bar y_{...})(\bar y_{.j.}-\bar y_{ij.}+\bar y_{ij.}-\bar y_{...})$$
+
+$$=(\bar y_{.j.}-\bar y_{...})(\bar y_{.j.}-\bar y_{ij.})+(\bar y_{.j.}-\bar y_{...})(\bar y_{ij.}-\bar y_{...})$$
+
+
+ - Step 1: Squares of AB
+
+$$(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2=[(\bar y_{ij.}-\bar y_{...})-(\bar y_{i..}-\bar y_{...})-(\bar y_{.j.}-\bar y_{...})]^2$$
+
+$$=(\bar y_{ij.}-\bar y_{...})^2+(\bar y_{i..}-\bar y_{...})^2+(\bar y_{.j.}-\bar y_{...})^2+\text{three cross product items}$$
+
+ - Step 2: The three cross product items
+
+$$-2(\bar y_{ij.}-\bar y_{...})(\bar y_{i..}-\bar y_{...})=-2\bar y_{ij.}\bar y_{i..}+2\bar y_{ij.}\bar y_{...}+2\bar y_{i..}\bar y_{...}-2\bar y_{...}^2\qquad \textcircled{\raisebox{-.9pt} {1}}$$
+
+$$-2(\bar y_{ij.}-\bar y_{...})(\bar y_{.j.}-\bar y_{...})=-2\bar y_{ij.}\bar y_{.j.}+2\bar y_{ij.}\bar y_{...}+2\bar y_{.j.}\bar y_{...}-2\bar y_{...}^2\qquad \textcircled{\raisebox{-.9pt} {2}}$$
+
+$$2(\bar y_{i..}-\bar y_{...})(\bar y_{.j.}-\bar y_{...})=2\bar y_{i..}\bar y_{.j.}-2\bar y_{i..}\bar y_{...}-2\bar y_{.j.}\bar y_{...}+2\bar y_{...}^2\qquad \textcircled{\raisebox{-.9pt} {3}}$$
+
+
+$$\textcircled{\raisebox{-.9pt} {1}}+\textcircled{\raisebox{-.9pt} {2}}+\textcircled{\raisebox{-.9pt} {3}}=2\bar y_{ij.}\bar y_{...}-2\bar y_{ij.}\bar y_{i..}+2\bar y_{ij.}\bar y_{...}-2\bar y_{ij.}\bar y_{.j.}+2\bar y_{i..}\bar y_{.j.}-2\bar y_{...}^2$$
+
+
+
+ - Step 3: Summation of cross product items
+ 
+ $$n\sum_{i=1}^a\sum_{j=1}^b(2\bar y_{ij.}\bar y_{...}-2\bar y_{ij.}\bar y_{i..}+2\bar y_{ij.}\bar y_{...}-2\bar y_{ij.}\bar y_{.j.}+2\bar y_{i..}\bar y_{.j.}-2\bar y_{...}^2)$$
+
+$$=4abn\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{ij.}-2bn\sum_{i=1}^a(\bar y_{i..}\sum_{j=1}^b\bar y_{ij.})-2an\sum_{j=1}^b(\bar y_{.j.}\sum_{i=1}^a\bar y_{ij.})+2n(\sum_{i=1}^a\bar y_{i..})(\sum_{j=1}^b\bar y_{.j.})-2n\sum_{i=1}^a\sum_{j=1}^b\bar y_{...}^2$$
+
+$$=4abn\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{ij.}-2bn\sum_{i=1}^a(\bar y_{i..}\sum_{j=1}^b\bar y_{ij.})-2an\sum_{j=1}^b(\bar y_{.j.}\sum_{i=1}^a\bar y_{ij.})+2abn(\sum_{i=1}^a\bar y_{i..})(\sum_{j=1}^b\bar y_{.j.})-2n\sum_{i=1}^a\sum_{j=1}^b\bar y_{...}^2$$
+
+
+ - **Method 2: Using the estimation of model parameters** 
+
+In problem 3, we know $\hat\mu=\bar y_{...},\ \hat\tau_i=\bar y_{i..}-\bar y_{...},\ \hat\beta_j=\bar y_{.j.}-\bar y_{...},\ \widehat{(\tau\beta)}_{ij}=\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}$ for two-factor factorial in RCBD model with fixed effect. It is also true for for two-factor factorial model with fixed effect by the same method.
+
+For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $\widehat{\varepsilon_{ijk}}=0$, $\bar y_{...}=\hat\mu$.
+
+$\hat y_{ijk}=\hat\mu+\hat\tau_i+\hat\beta_j+\widehat{(\tau\beta)}_{ij}+\widehat{\varepsilon_{ijk}}=\bar y_{...}+(\bar y_{i..}-\bar y_{...})+(\bar y_{.j.}-\bar y_{...})+(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})+0=\bar y_{ij.}$
+
+
+Therefore, $\bar y_{ij.}-\bar y_{...}=\hat\mu+\hat\tau_i+\hat\beta_j+\widehat{(\tau\beta)}_{ij}-\hat\mu=\hat\tau_i+\hat\beta_j+\widehat{(\tau\beta)}_{ij}$
+
+$$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b(\hat\tau_i+\hat\beta_j+\widehat{(\tau\beta)}_{ij})^2$$
+
+For the two-factor factorial model with fixed effects, all the cross product terms are zero, then
+
+$n\sum_{i=1}^a\sum_{j=1}^b(\hat\tau_i+\hat\beta_j+\widehat{(\tau\beta)}_{ij})^2=bn\sum_{i=1}^a\hat\tau_i^2+an\sum_{j=1}^b\hat\beta_j^2+n\sum_{i=1}^a\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}^2$
+
+$$=bn\sum_{i=1}^a\hat(\bar y_{i..}-\bar y_{...})^2+an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2+n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2=SS_A+SS_B+SS_{AB}$$
+
+Therefore,
+$$SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2-SS_A-SS_B$$
+
+ - **Method 3**
+
+$$\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\frac1{n}\sum_{k=1}^n(\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk})=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\bar\varepsilon_{ij.}$$
+
+For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$,$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=0$, $\sum_{i=1}^a\tau_i=0$, $\sum_{j=1}^b\beta_j=0$; $\sum_{i=1}^a(\tau\beta)_{ij}=0$, $\sum_{j=1}^b(\tau\beta)_{ij}=0$
+
+$\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk})$
+$$=\mu+\frac1{abn}\left[\sum_{j=1}^b\sum_{k=1}^n(\sum_{i=1}^a\tau_i)+\sum_{i=1}^a\sum_{k=1}^n(\sum_{j=1}^b\beta_j)+\sum_{k=1}^n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\right]=\mu$$
+
+$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n(\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk})$
+$$=\mu+\tau_i+\frac1{bn}\sum_{k=1}^n\sum_{j=1}^b\beta_j+\frac1{bn}\sum_{k=1}^n\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{bn}\sum_{k=1}^n\sum_{j=1}^b\varepsilon_{ijk}=\mu+\tau_i+\bar\varepsilon_{i..}$$
+
+$\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^n(\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk})$
+$$=\mu+\frac1{an}\sum_{k=1}^n\sum_{i=1}^a\tau_i+\beta_j+\frac1{an}\sum_{k=1}^n\sum_{i=1}^a(\tau\beta)_{ij}+\frac1{an}\sum_{k=1}^n\sum_{i=1}^a\varepsilon_{ijk}=\mu+\beta_j+\bar\varepsilon_{.j.}$$
+
+ ---
+
+For $\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=0$, $\sum_{i=1}^a\tau_i=0$, $\sum_{j=1}^b\beta_j=0$; $\sum_{i=1}^a(\tau\beta)_{ij}=0$, $\sum_{j=1}^b(\tau\beta)_{ij}=0$
+
+$$SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2=bn\sum_{i=1}^a(\mu+\tau_i+\bar\varepsilon_{i..}-\mu)^2=bn\sum_{i=1}^a(\tau_i+\bar\varepsilon_{i..})^2=bn\sum_{i=1}^a(\tau_i^2+\bar\varepsilon_{i..}^2+2\tau_i\bar\varepsilon_{i..})$$
+
+
+$$SS_B=an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2=an\sum_{j=1}^b(\mu+\beta_j+\bar\varepsilon_{.j.}-\mu)^2=an\sum_{j=1}^b(\beta_j+\bar\varepsilon_{.j.})^2=an\sum_{j=1}^b(\beta_j^2+\bar\varepsilon_{.j.}^2+2\beta_j\bar\varepsilon_{.j.})$$
+
+$$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\bar\varepsilon_{ij.}-\mu)^2=n\sum_{i=1}^a\sum_{j=1}^b(\tau_i+\beta_j+(\tau\beta)_{ij}+\bar\varepsilon_{ij.})^2$$
+
+$$=n\sum_{i=1}^a\sum_{j=1}^b(\tau_i^2+\beta_j^2+(\tau\beta)^2_{ij}+\bar\varepsilon_{ij.}^2+2\tau_i\beta_j+2\tau_i(\tau\beta)_{ij}+2\beta_j(\tau\beta)_{ij}+2\tau_i\bar\varepsilon_{ij.}+2\beta_j\bar\varepsilon_{ij.}+2(\tau\beta)_{ij}\bar\varepsilon_{ij.})$$
+$=n\sum_{i=1}^a\sum_{j=1}^b(\tau_i^2+\beta_j^2+(\tau\beta)^2_{ij}+\bar\varepsilon_{ij.}^2)+2n\sum_{i=1}^a\tau_i\sum_{j=1}^b\beta_j+2n\sum_{i=1}^a\tau_i\sum_{j=1}^b(\tau\beta)_{ij}+2n\sum_{j=1}^b\beta_j\sum_{i=1}^a(\tau\beta)_{ij}+2n\sum_{i=1}^a\tau_i\sum_{j=1}^b\bar\varepsilon_{ij.}+2n\sum_{j=1}^b\beta_j\sum_{i=1}^a\bar\varepsilon_{ij.}+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}$
+
+$$=n\sum_{i=1}^a\sum_{j=1}^b(\tau_i^2+\beta_j^2+(\tau\beta)^2_{ij}+\bar\varepsilon_{ij.}^2)+2bn\sum_{i=1}^a\tau_i\bar\varepsilon_{i..}+2an\sum_{j=1}^b\beta_j\bar\varepsilon_{.j.}+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}$$
+
+$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2-SS_A-SS_B=n\sum_{i=1}^a\sum_{j=1}^b(\tau_i^2+\beta_j^2+(\tau\beta)^2_{ij}+\bar\varepsilon_{ij.}^2)+2bn\sum_{i=1}^a\tau_i\bar\varepsilon_{i..}+2an\sum_{j=1}^b\beta_j\bar\varepsilon_{.j.}+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}-bn\sum_{i=1}^a(\tau_i^2+\bar\varepsilon_{i..}^2+2\tau_i\bar\varepsilon_{i..})-an\sum_{j=1}^b(\beta_j^2+\bar\varepsilon_{.j.}^2+2\beta_j\bar\varepsilon_{.j.})$
+
+$$=n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}^2+\bar\varepsilon_{ij.}^2)+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}-bn\sum_{i=1}^a\bar\varepsilon_{i..}^2-an\sum_{j=1}^b\bar\varepsilon_{.j.}^2$$
+
+ ---
+
+$$\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\bar\varepsilon_{ij.}-(\mu+\tau_i+\bar\varepsilon_{i..})-(\mu+\beta_j+\bar\varepsilon_{.j.})+\mu=(\tau\beta)_{ij}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}-\bar\varepsilon_{.j.}$$
+
+$SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b\left[(\tau\beta)_{ij}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}-\bar\varepsilon_{.j.}\right]^2$
+
+$=n\sum_{i=1}^a\sum_{j=1}^b((\tau\beta)_{ij}^2+\bar\varepsilon_{ij.}^2+\bar\varepsilon_{i..}^2+\bar\varepsilon_{.j.}^2)+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}$
+
+$\quad-2n\sum_{i=1}^a\bar\varepsilon_{i..}\sum_{j=1}^b(\tau\beta)_{ij}-2n\sum_{j=1}^b\bar\varepsilon_{.j.}\sum_{i=1}^a(\tau\beta)_{ij}-2n\sum_{i=1}^a\sum_{j=1}^b(\bar\varepsilon_{ij.}\bar\varepsilon_{i..}+\bar\varepsilon_{ij.}\bar\varepsilon_{.j.}-\bar\varepsilon_{i..}\bar\varepsilon_{.j.})$
+
+\\
+
+$=n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}^2+\bar\varepsilon_{ij.}^2)+bn\sum_{i=1}^a\bar\varepsilon_{i..}^2+an\sum_{j=1}^b\bar\varepsilon_{.j.}^2+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}-2n\sum_{i=1}^a\bar\varepsilon_{i..}b\bar\varepsilon_{i..}-2n\sum_{j=1}^b\bar\varepsilon_{.j.}a\bar\varepsilon_{.j.}+2n\sum_{i=1}^a\bar\varepsilon_{i..}(\sum_{j=1}^b\frac{\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}}{an})$
+
+$$=n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}^2+\bar\varepsilon_{ij.}^2)+2n\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\bar\varepsilon_{ij.}-bn\sum_{i=1}^a\bar\varepsilon_{i..}^2-an\sum_{j=1}^b\bar\varepsilon_{.j.}^2$$
+
+
+Therefore,
+$$SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2-SS_A-SS_B$$
+
+
+
+
