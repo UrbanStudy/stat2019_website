@@ -1,0 +1,372 @@
+---
+title: ""
+author: ""
+date: ''
+output:
+  pdf_document: 
+geometry: margin=0.5in
+fontfamily: mathpazo
+fontsize: 12pt
+spacing: double
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,cache=FALSE, results="markup", tidy=T)
+```
+
+```{r eval=FALSE, include=FALSE}
+install.packages("ggplot2")
+install.packages("ggpubr")
+install.packages("mosaic")
+install.packages("agricolae")
+install.packages("DescTools")
+install.packages("emmeans")
+install.packages("kableExtra")
+```
+
+```{r include=FALSE}
+library(readxl)
+library(ggplot2)
+library(ggpubr)
+library(mosaic)
+library(agricolae)
+library(DescTools)
+library(dplyr)
+library(car)
+library(olsrr)
+library(pander)
+library(emmeans)
+library(knitr)
+library(kableExtra)
+```
+
+### Question 1 (Show work to get full points)
+
+  \textcolor[rgb]{0.7,0.7,0.7}{Suppose there are 4 levels of a single treatment factor to be compared in a balanced incomplete block design. There are only 6 blocks available each with only 2 experimental units.}
+  
+(a). \textcolor[rgb]{0.7,0.7,0.7}{Compute the number of times each treatment level appears in the whole design.}
+
+4 levels of treatment means $a=4$;  6 blocks means $b=6$;  2 experimental units means $k=2$;
+
+$N=kb=ra\implies r=kb/a=2\times6\div4=3$
+
+(b). \textcolor[rgb]{0.7,0.7,0.7}{Compute the number of times each pair of treatment levels appears in the whole design.}
+
+$\lambda=\frac{r(k-1)}{a-1}=\frac{3(2-1)}{4-1}=1$
+
+(c). \textcolor[rgb]{0.7,0.7,0.7}{Provide a random assignment of treatment levels so that columns represent blocks and rows represent treatment levels.}
+
+```{r echo=FALSE, size="tiny"}
+table_fe1 <- as.table(matrix(c(1,2,3,4,1,2,2,3,4,1,3,4),ncol=6,byrow=TRUE))
+colnames(table_fe1) <- c("block1","block2","block3","block4","block5","block6")
+rownames(table_fe1) <- c("unit1","unit2")
+kable(table_fe1, format = "latex", booktabs = T) %>%kable_styling("striped", full_width = F)
+# table_fe2 <- as.table(matrix(c(12,34,13,24,14,23,34,12,24,13,23,14),ncol=6,byrow=TRUE))
+# colnames(table_fe2) <- c("block1","block2","block3","block4","block5","block6")
+# rownames(table_fe2) <- c("unit1","unit2")
+# kable(table_fe2) %>%kable_styling("striped", full_width = F)
+```
+
+### Question 2 (Use software to analyze the given data)
+
+  \textcolor[rgb]{0.7,0.7,0.7}{Big sagebrush is often planted in range restoration projects. An experiment is performed to determine the effects of storage length and relative humidity on the viability of seeds. Sixty-three batches of 300 seeds each are randomly divided into 21 groups of three. These 21 groups each receive a different treatment, namely the combinations of storage length (0, 60, 120, 180, 240, 300, or 360 days) and storage relative humidity (0, 32, or 45).After the storage time, the seeds are planted, and the response is the percentage of seeds that sprout.The data are shown above and given in Sagebrush Excel file.}
+
+  \textcolor[rgb]{0.7,0.7,0.7}{Part I: Analyze these data for the effects of the factors on viability. Do not report code here. Your analysis should include the following:}
+
+```{r include=FALSE}
+table_sagebrush <- read_xlsx("Sagebrush.xlsx")
+# table_sagebrush <- table_sagebrush%>%mutate(h=factor(case_when(Humidity==0 ~ 1, Humidity==32 ~ 2,Humidity==45 ~ 3), levels=c(1,2,3),labels=c("0%","32%","45%")))
+# table_sagebrush <- table_sagebrush%>%mutate(d=factor(case_when(Days==0 ~ 1, Days==60 ~ 2,Days==120 ~ 3,Days==180 ~ 4,Days==240 ~ 5,Days==300 ~ 6,Days==360 ~ 7), levels=c(1,2,3,4,5,6,7),labels=c("0","60","120","180", "240", "300", "360")))
+                     
+table_sagebrush$h <-  factor(table_sagebrush$Humidity, levels=c(0,32,45),labels=c("0%","32%","45%"))
+table_sagebrush$d <-  factor(table_sagebrush$Days, levels=c(0,60,120,180,240,300,360),labels=c("0","60","120","180", "240", "300", "360"))
+model_sagebrush <- aov(Percent ~ h*d, data=table_sagebrush)
+```
+
+(a). \textcolor[rgb]{0.7,0.7,0.7}{Plot of the data (a plot with data and/or means of treatment combinations). Do not report code here.}
+
+```{r echo=FALSE, out.width='33%',fig.show='hold'}
+str(table_sagebrush)
+ggline(data = table_sagebrush, x = "d", y = "Percent", add = c("mean", "jitter"),shape= "h",  color = "h", linetype = "h", ylab= "Percentage of viability", xlab="storage length (day)")
+ggline(data = table_sagebrush, x = "h", y = "Percent", add = c("mean", "jitter"),shape= "d",  color = "d", linetype = "d", ylab= "Percentage of viability", xlab="relative humidity")
+```
+
+(b). \textcolor[rgb]{0.7,0.7,0.7}{Description of the observed relationship between two factors based on the graph.}
+
+The line plot shows that not all lines are parallel. Difference in average percentage of viability of seeds between relative humidity are not same for different storage length. There could be an interaction effect. The graph also show that,
+
+When relative humidity is 0 or 32%, the average percentage are around 80% and have not obivous difference between diffenent storage length.
+
+When humidity is 45%, the average percentage have obvious difference between different storage length. 
+The longer storage length have lower average percentage of viability of seeds.
+
+When storage length is 0 day, the average percentage have not obvious difference between different humidity. 
+
+When any storage length is applied, the average percentage have not obivous difference between 0 and 32% humidity.
+
+When storage length is 60 to 360 days, the average percentage have significent difference between 45% humidity and other levels of humidity. 
+The higher humidity has lower average percentage of viability of seeds.
+
+(c). \textcolor[rgb]{0.7,0.7,0.7}{Tabular form of the numerical summaries for each treatment combination and factor levels separately.}
+
+```{r echo=FALSE}
+kable(favstats(Percent ~ h, data=table_sagebrush),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 6)%>%footnote(symbol= "h=relative humidity")
+kable(favstats(Percent ~ d, data=table_sagebrush),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 6)%>%footnote(symbol= "d=storage length (days)")
+kable(favstats(Percent ~ h+d, data=table_sagebrush),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 6)%>%footnote(symbol= "h.d=interaction items")
+```
+
+(d). \textcolor[rgb]{0.7,0.7,0.7}{The complete (theoretical, not the estimated) linear model and explain the terms for this experiment.}
+
+This is a two-factor factiorial model with fixed effect.
+
+$$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{jik}$$
+ for $i=1,2,..,a$ represents 0, 32%, and 45% humidity; $j=1,2,..,b$ represents 7 levels of storage length; $k=1,2..,n$ represents 3 experimental units.
+
+$y_{ijk}$ is the the average percentage of viability of seeds for the $k^{th}$ Exerimental Unit when $i^{th}$ level of relative humidity and $j^{th}$ level of storage length are applied.
+
+$a$ is the number of levels of relative humidity being compared;
+
+$b$ is the number of levels of storage length being compared;
+
+$\tau_i$ is fixed main effect of $i^{th}$ level of relative humidity (Treatment effect of relative humidity);
+
+$\beta_j$ is fixed main effect of $j^{th}$ level of storage length (Treatment effect of storage length);
+
+$(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of relative humidity and $j^{th}$ level of storage length (Interaction effect of relative humidity and storage length)
+
+$\varepsilon_{jik}$ is random error for the $k^{th}$ Exerimental Unit when $i^{th}$ level of relative humidity and $j^{th}$ level of storage length are applied.
+
+The model includes below assumptions:
+
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^a\tau_i=0$; $\sum_j^b\beta_j=0$; $\sum_i^a(\tau\beta)_{ij}=0$; $\sum_j^b(\tau\beta)_{ij}=0$
+
+```{r eval=FALSE, include=FALSE}
+model_sagebrush <- aov(Percent ~ h*d, data=table_sagebrush)
+pander(summary(model_sagebrush))
+sum((table_sagebrush$Percent- mean(table_sagebrush$Percent))^2)
+```
+
+(e). \textcolor[rgb]{0.7,0.7,0.7}{The complete ANOVA table for the fitted model you have in part (d). Do not report code here.}
+
+ -------------------------------------------------------------
+    &nbsp;       Df   Sum Sq   Mean Sq   F value    Pr(>F)   
+ --------------- ---- -------- --------- --------- -----------
+ **humidity**     2    11476     5738      1179     1.271e-37 
+
+   **days**       6     1789     298.1     61.25    3.504e-19 
+
+   **h:d**       12    4154     346.2     71.12    6.511e-24 
+
+ **Residuals**   42   204.4     4.867     &nbsp;     &nbsp;    
+ 
+   **Total**     62   17623.78  &nbsp;    &nbsp;     &nbsp;  
+ -------------------------------------------------------------
+
+(f). \textcolor[rgb]{0.7,0.7,0.7}{Conclusion from the test of significant interaction effect along with the p value. What do you recommend as the next step in your analysis? (That is, should you test for main effects or simple effects?  Why? Explain clearly and provide reasons).}
+
+According to ANOVA table, there is a significant interaction effect from relative humidity and storage length on the average percentage at 5% significance level (P-value=$6.511\times\mathrm{e}^{-24}$). That means, effect of humidity and effect of storage length on average percentage of viability is not independent. Therefore, simple effects examinations are recommended.
+
+(g). \textcolor[rgb]{0.7,0.7,0.7}{According to your answer in part (f), conclusion(s) from the appropriate tests about the effect of factors along with the p-value(s).}
+
+The pairwise test adjusted by Tukey method show the simple effects (full table and P-values in Part III):
+
+ - In comparisons of storage length Least Squares Means by humidity, 
+
+When 0 humidity is applied, **NONE** of comparisons of storage length has significant difference on the average percentage around 5% significance level (all P-value>$0.05$). 
+
+When 32% humidity is applied, **NONE** of comparisons of storage length has significant difference on the average percentage around 5% significance level (all P-value>$0.05$).
+
+When 45% humidity applied, **MOST** of comparisons of storage length have significant difference on the average percentage around 5% significance level (P-value<$0.05$)
+**EXCEPT** 60 versus 120 days, 120 versus 180 days, 120 versus 240 days, and 180 versus 240 days (P-value=$0.0815$, $0.2452$, $0.0747$, $1.0000$, respectively)
+
+ - In comparisons of humidity Least Squares Means by storage length, 
+ 
+When 0 day applied, **NONE** of comparisons of humidity have significant difference on the average percentage around 5% significance level (all P-value>$0.05$).
+
+When 60 to 360 day applied, **NONE** of 0 versus 32% have significant difference on the average percentage around 5% significance level (all P-value>$0.05$). **ALL** of 0 versus 45%, 32% versus 45% have significant difference on the average percentage around 5% significance level (all P-value<$0.05$).
+
+The overall conclusion is that humidity lower than 45% can keep the average percentage of viability of seeds being aroud 80%. If we cannot control the high humidity, the shorter storage length can give higher average percentage of viability of seeds.
+
+(h). \textcolor[rgb]{0.7,0.7,0.7}{Check the assumptions of the fitted model and if you find any violation of assumptions, recommend solutions to fix them. Clearly explain and provide all the graphs and/or tables used to answer this question here. (Do not provide any code here).}
+
+```{r echo=FALSE, fig.show='hold', message=FALSE, out.width='30%'}
+table_sagebrush$student_resid <- rstudent(model_sagebrush)
+hist(table_sagebrush$student_resid)
+qqPlot(table_sagebrush$student_resid)
+plot(model_sagebrush,1)
+plot(model_sagebrush,3)
+ggplot(table_sagebrush,aes(h,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
+ggplot(table_sagebrush,aes(d,student_resid))+geom_dotplot(binaxis = "y", stackdir = "center",binwidth=0.1,alpha=0.6)+theme_light()
+```
+
+The histogram of residuals and QQ plot didn't show obvious violation of normality.
+
+The plot of residuals versus fitted value shows the residuals are evenly distributed about zero at each prededict value (zero mean). A few outliers are acceptable.
+
+The plot of studentized residuals versus fitted value shows vertical deviations of residuals from zero are not all the same for each predicted value (constant variance). It might relevant with the two outliers (46, 49). It is acceptable for this experiment and will not change the conclusion. If we are interest in the change of variance, I recommend to improve the design and add more observations of 40%-70% viability of seeds. If the problem still exists, do proper transformation.
+
+The plots of studentized residuals versus humanity and storage length levels didn't show obvious violation of zero mean and constant variance.
+
+\textcolor[rgb]{0.7,0.7,0.7}{Part II: The researchers are interested in testing whether the mean percentage of seeds that sprout is significantly different at humidity of 45\% compared to average of percentage of seeds that sprout at humidity of 0 and 32\% when the storage length is 60 days.}
+
+(a). \textcolor[rgb]{0.7,0.7,0.7}{To test this, write a contrast statement in terms of the treatment means.}
+
+$$\Gamma:\mu_{32}-\frac12(\mu_{12}+\mu_{22})=0\implies\tau_{32}+(\tau\beta)_{32}-\frac12(\tau_{12}+(\tau\beta)_{12}+\tau_{22}+(\tau\beta)_{22})=0$$
+where subscript "32" represents 45% humidity and 60-days storage; "12" represents 0 humidity and 60-days storage; "22" represents 32% humidity and 60-days storage.
+
+The $H0$ for contrast is $\mu_{32}-\frac12(\mu_{12}+\mu_{22})=0$ or $\tau_{32}+(\tau\beta)_{32}-\frac12(\tau_{12}+(\tau\beta)_{12}+\tau_{22}+(\tau\beta)_{22})=0$.
+
+The $H1$ is they don't equal zero.
+
+(b). \textcolor[rgb]{0.7,0.7,0.7}{test your contrast using the software and provide the conclusion along with p value.}
+
+The estimated value of the contrast is -16.9 and the adjusted Tukey’s p value for testing the above hypotheses for contrast is less than $0.0001$, which is small enough. We can reject the $H0$ and conclude that the average percentage of viability of seeds for 60-days storage at 45% humidity versus that at 0 and 32% humidity are different at 5% significance level.
+
+\textcolor[rgb]{0.7,0.7,0.7}{Part III: Provide your full code and/or output (only the ones used to answer above questions) here.}
+
+```{r, eval=c(16:18,28,29), size="tiny", tidy =T}
+# I(a)
+table_sagebrush <- read_xlsx("Sagebrush.xlsx")
+table_sagebrush$h <-  factor(table_sagebrush$Humidity, levels=c(0,32,45),labels=c("0%","32%","45%"))
+table_sagebrush$d <-  factor(table_sagebrush$Days, levels=c(0,60,120,180,240,300,360),labels=c("0","60","120","180","240","300","360"))
+str(table_sagebrush)
+ggline(table_sagebrush,"d","Percent",add=c("mean","jitter"),shape="h",color="h",linetype="h",ylab="viability of seeds",xlab="storage length (day)")
+ggline(table_sagebrush,"h","Percent",add=c("mean","jitter"),shape="d",color="d",linetype="d",ylab="viability of seeds", xlab="relative humidity")
+# I(c)
+favstats(Percent ~ h, data=table_sagebrush)
+favstats(Percent ~ d, data=table_sagebrush)
+favstats(Percent ~ h+d, data=table_sagebrush)
+# I(e)
+model_sagebrush <- aov(Percent ~ h*d, data=table_sagebrush)
+summary(model_sagebrush)
+# I(g)
+h_d <- pairs(lsmeans(model_sagebrush,~ h|d))
+d_h <- pairs(lsmeans(model_sagebrush,~ d|h))
+kable(test(rbind(d_h,h_d),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 6)%>%row_spec(c(43:63,68,69,71,72,74,75,77,78,80,81,83,84),bold =T)%>%row_spec(c(49,54,55,58),background ="#EAFAF1")%>%footnote(symbol= "Adjusted by Tukey's Method")
+# I(h)
+table_sagebrush$student_resid <- rstudent(model_sagebrush)
+hist(table_sagebrush$student_resid)
+qqPlot(table_sagebrush$student_resid)
+plot(model_sagebrush,1);plot(model_sagebrush,3)
+ggplot(table_sagebrush,aes(h,student_resid))+geom_dotplot(binaxis="y",stackdir="center",binwidth=0.1,alpha=0.6)+theme_light()
+ggplot(table_sagebrush,aes(d,student_resid))+geom_dotplot(binaxis="y",stackdir="center",binwidth=0.1,alpha=0.6)+theme_light()
+# II(b)
+table_sagebrush$hd<-interaction(table_sagebrush$h,table_sagebrush$d)
+kable(summary(contrast(lsmeans(lm(Percent~hd, table_sagebrush),'hd'),list(c32_12.22=c(rep(0,3),-0.5,-0.5,1,rep(0,15)))), adjust="tukey"))%>%kable_styling(full_width=F)
+```
+
+```{r eval=FALSE, include=FALSE}
+kable(h_d,format="latex",caption="Humidity Applied; Storage Applied; Adjusted by Tukey Method")%>%kable_styling("condensed",full_width=F,font_size=6)%>%row_spec(16,bold =T,background ="#EAFAF1")
+kable(d_h,format="latex")%>%kable_styling("condensed",full_width=F,font_size=6)%>%row_spec(c(14,17,43:63),bold =T)%>%row_spec(c(54,58),background ="#EAFAF1")
+ScheffeTest(model_sagebrush, conf.level = 0.95)
+```
+
+
+### Question 3 (Show main steps of your work to get full points)
+
+  \textcolor[rgb]{0.7,0.7,0.7}{Let  $y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\delta_k+\varepsilon_{ijk}$; $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; for $i=1,…,a$; $j=1,…,b$; $k=1,…,n$;}
+  \textcolor[rgb]{0.7,0.7,0.7}{Derive the normal equations from the least squares parameter estimation method and estimate the model parameters using the following constraints.}
+  \textcolor[rgb]{0.7,0.7,0.7}{$\sum_i^a\hat\tau_i=0;\ \sum_j^b\hat\beta_j=0;\ \sum_i^a\widehat{(\tau\beta)}_{ij}=0;\ \sum_j^b\widehat{(\tau\beta)}_{ij}=0;\ \sum_k^n\hat\delta_k=0$}
+
+This is a two-factor factorial in RCBD model with fixed effect.
+
+$$SSE=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\mu-\tau_i-\beta_j-(\tau\beta)_{ij}-\delta_k)^2$$
+
+Derive
+
+$\left.\frac{\partial SSE}{\partial \mu}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+
+For $i=1,…,a$,
+
+$\left.\frac{\partial SSE}{\partial \tau_i}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+
+For $j=1,…,b$,
+
+$\left.\frac{\partial SSE}{\partial \beta_j}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{i=1}^a\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+
+For $i=1,…,a$; $j=1,…,b$,
+
+$\left.\frac{\partial SSE}{\partial (\tau\beta)_{ij}}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{k=1}^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+
+For $k=1,…,n$,
+
+$\left.\frac{\partial SSE}{\partial \delta_k}\right|_{\hat\mu,\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k}=2\sum_{i=1}^a\sum_{j=1}^b(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_j-\widehat{(\tau\beta)}_{ij}-\hat\delta_k)(-1)=0$
+
+$$\left\{\begin{array}{l} 
+y_{...}=abn\hat\mu+bn\sum_{i=1}^a\hat\tau_i+an\sum_{j=1}^b\hat\beta_j+n\sum_{i=1}^a\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}+ab\sum_{k=1}^n\hat\delta_k\\
+y_{i..}=bn\hat\mu+bn\hat\tau_i+n\sum_{j=1}^b\hat\beta_j+n\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}+b\sum_{k=1}^n\hat\delta_k \\
+y_{.j.}=an\hat\mu+n\sum_{i=1}^a\hat\tau_i+an\hat\beta_j+n\sum_{i=1}^a\widehat{(\tau\beta)}_{ij}+a\sum_{k=1}^n\hat\delta_k \\
+y_{ij.}=n\hat\mu+n\hat\tau_i+n\hat\beta_j+n\widehat{(\tau\beta)}_{ij}+\sum_{k=1}^n\hat\delta_k \\
+y_{..k}=ab\hat\mu+b\sum_{i=1}^a\hat\tau_i+a\sum_{j=1}^b\hat\beta_j+\sum_{i=1}^a\sum_{j=1}^b\widehat{(\tau\beta)}_{ij}+ab\hat\delta_k\\
+\end{array}\right.$$
+
+For $\sum_{i=1}^a\hat\tau_i=0;\ \sum_{j=1}^b\hat\beta_j=0;\ \sum_{i=1}^a\widehat{(\tau\beta)}_{ij}=0;\ \sum_{j=1}^b\widehat{(\tau\beta)}_{ij}=0;\ \sum_{k=1}^n\hat\delta_k=0$,
+
+and for $\hat\mu$ is constant, $\hat\tau_i,\hat\beta_j,\widehat{(\tau\beta)}_{ij},\hat\delta_k$ are constants for summations on other parameters,
+
+and for $y_{...}=abn \bar y_{...}$, $y_{i..}=bn\bar y_{i..}$, $y_{.j.}=an\bar y_{.j.}$, $y_{ij.}=n\bar y_{ij.}$, $y_{..k}=ab\bar y_{..k}$, then
+
+$$\left\{\begin{array}{l}\ abn\bar y_{...}=abn\hat\mu+0+0+0+0\\
+bn\bar y_{i..}=bn\hat\mu+bn\hat\tau_i+0+0+0 \\
+an\bar y_{.j.}=an\hat\mu+0+an\hat\beta_j+0+0 \\
+n\bar y_{ij.}=n\hat\mu+n\hat\tau_i+n\hat\beta_j+n\widehat{(\tau\beta)}_{ij}+0 \\
+ab\bar y_{..k}=ab\hat\mu+0+0+0+ab\hat\delta_k \end{array}\right.
+\implies
+\left\{\begin{array}{l}\ \hat\mu=\bar y_{...}\\
+\hat\tau_i=\bar y_{i..}-\bar y_{...}\\
+\hat\beta_j=\bar y_{.j.}-\bar y_{...} \\
+\widehat{(\tau\beta)}_{ij}=\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...} \\
+\hat\delta_k=\bar y_{..k}-\bar y_{...} \end{array}\right.$$
+
+### Question 4 (Show main steps of your work to get full points)
+
+  \textcolor[rgb]{0.7,0.7,0.7}{Consider the two-factor factorial model with fixed effects}
+
+  \textcolor[rgb]{0.7,0.7,0.7}{$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$, for $i=1,2,…,a$; $j=1,2,…,b$; $k=1,2,…,n$. $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$;$\sum_{i=1}^a\tau_i=0$ and $\sum_{j=1}^b\beta_j=0$; $\sum_{i=1}^a(\tau\beta)_{ij}=0$, $\sum_{j=1}^b(\tau\beta)_{ij}=0$. $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}$; $y_{...}=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$; $\bar y_{...}=\frac{y_{...}}{abn}$. $SS_A=bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2$; $SS_B=an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2$; $SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2$}
+
+
+ - Step 1: Expand the sum-of-squares terms
+
+$$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b\left[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})+(\bar y_{i..}-\bar y_{...})+(\bar y_{.j.}-\bar y_{...})\right]^2$$
+
+$$=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2+bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2+an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2+n\sum_{i=1}^a\sum_{j=1}^b\text{[three cross product terms]}$$
+
+
+ - Step 2: Proof the first cross-product terms equal 0
+ 
+ For $\sum_{i=1}^a\bar y_{i..}=a\bar y_{...}=\sum_{i=1}^a\bar y_{...},\quad\sum_{j=1}^b\bar y_{.j.}=b\bar y_{...}=\sum_{j=1}^b\bar y_{...}$
+ 
+$$\sum_{i=1}^a\sum_{j=1}^b(\bar y_{i..}-\bar y_{...})(\bar y_{.j.}-\bar y_{...})=\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})=(a\bar y_{...}-a\bar y_{...})(b\bar y_{...}-b\bar y_{...})=0$$
+ 
+ - Step 3: Proof the second cross-product terms equal 0
+
+For $\sum_{j=1}^b\bar y_{ij.}=b\bar y_{i..},\quad \sum_{i=1}^a\sum_{j=1}^b\bar y_{ij.}=ab\bar y_{...}$
+
+$$\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})(\bar y_{i..}-\bar y_{...})=\sum_{i=1}^a\sum_{j=1}^b\left[\bar y_{ij.}\bar y_{i..}-\bar y_{i..}^2-\bar y_{i..}\bar y_{.j.}+\bar y_{i..}\bar y_{...}-\bar y_{ij.}\bar y_{...}+\bar y_{i..}\bar y_{...}+\bar y_{.j.}\bar y_{...}-\bar y_{...}^2\right]$$
+
+$$=\sum_{i=1}^a\bar y_{i..}\sum_{j=1}^b\bar y_{ij.}-\sum_{i=1}^a\sum_{j=1}^b\bar y_{i..}^2-\sum_{i=1}^a\bar y_{i..}\sum_{j=1}^b\bar y_{.j.}+2\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{i..}-\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{ij.}+\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{.j.}-\sum_{i=1}^a\sum_{j=1}^b\bar y_{...}^2$$
+
+$$=\sum_{i=1}^a\bar y_{i..}b\bar y_{i..}-b\sum_{i=1}^a\bar y_{i..}^2-a\bar y_{...}b\bar y_{...}+2\bar y_{...}ab\bar y_{...}-\bar y_{...}ab\bar y_{...}+\bar y_{...}ab\bar y_{...}-ab\bar y_{...}^2$$
+
+$$=b\sum_{i=1}^a\bar y_{i..}^2-b\sum_{i=1}^a\bar y_{i..}^2-ab\bar y_{...}^2+2ab\bar y_{...}^2-ab\bar y_{...}^2+ab\bar y_{...}^2-ab\bar y_{...}^2=0$$
+
+ - Step 4: Proof the third cross-product terms equal 0
+
+For $\sum_{i=1}^a\bar y_{ij.}=a\bar y_{.j.},$
+
+$$\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})(\bar y_{.j.}-\bar y_{...})=\sum_{i=1}^a\sum_{j=1}^b\left[\bar y_{ij.}\bar y_{.j.}-\bar y_{i..}\bar y_{.j.}-\bar y_{.j.}^2+\bar y_{.j.}\bar y_{...}-\bar y_{ij.}\bar y_{...}+\bar y_{i..}\bar y_{...}+\bar y_{.j.}\bar y_{...}-\bar y_{...}^2\right]$$
+
+$$=\sum_{j=1}^b\bar y_{.j.}\sum_{i=1}^a\bar y_{ij.}-\sum_{i=1}^a\bar y_{i..}\sum_{j=1}^b\bar y_{.j.}-\sum_{i=1}^a\sum_{j=1}^b\bar y_{.j.}^2+2\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{.j.}-\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{ij.}+\bar y_{...}\sum_{i=1}^a\sum_{j=1}^b\bar y_{i..}-\sum_{i=1}^a\sum_{j=1}^b\bar y_{...}^2$$
+
+$$=\sum_{j=1}^b\bar y_{.j.}a\bar y_{.j.}-a\bar y_{...}b\bar y_{...}-a\sum_{j=1}^b\bar y_{.j.}^2+2\bar y_{...}ab\bar y_{...}-\bar y_{...}ab\bar y_{...}+\bar y_{...}ab\bar y_{...}-ab\bar y_{...}^2$$
+
+$$=a\sum_{j=1}^b\bar y_{.j.}^2-ab\bar y_{...}^2-a\sum_{j=1}^b\bar y_{.j.}^2+2ab\bar y_{...}^2-ab\bar y_{...}^2+ab\bar y_{...}^2-ab\bar y_{...}^2=0$$
+
+ - Step 5: Cmplete the proof
+
+For $n\sum_{i=1}^a\sum_{j=1}^b$(three cross product terms)$=0$, then
+
+$$n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2+bn\sum_{i=1}^a(\bar y_{i..}-\bar y_{...})^2+an\sum_{j=1}^b(\bar y_{.j.}-\bar y_{...})^2=SS_{AB}+SS_A+SS_B$$
+
+Therefore,
+$$SS_{AB}=n\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2-SS_A-SS_B$$

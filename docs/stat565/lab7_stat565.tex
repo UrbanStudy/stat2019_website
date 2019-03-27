@@ -471,35 +471,35 @@ Pr(\textgreater{}F)\strut
 \begin{minipage}[t]{0.21\columnwidth}\centering
 \textbf{(Intercept)}\strut
 \end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-100173\strut
+180136\strut
 \end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedright
 1\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-702.1\strut
+1263\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\centering
-5.308e-80\strut
+1.327e-108\strut
 \end{minipage}\tabularnewline
 \begin{minipage}[t]{0.21\columnwidth}\centering
 \textbf{g}\strut
 \end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-417.6\strut
+785.2\strut
 \end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedright
 1\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-2.927\strut
+5.503\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\centering
-0.08816\strut
+0.01964\strut
 \end{minipage}\tabularnewline
 \begin{minipage}[t]{0.21\columnwidth}\centering
 \textbf{r}\strut
 \end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-2309\strut
+2021\strut
 \end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\raggedright
 1\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-16.18\strut
+14.17\strut
 \end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\centering
-7.318e-05\strut
+0.000202\strut
 \end{minipage}\tabularnewline
 \begin{minipage}[t]{0.21\columnwidth}\centering
 \textbf{g:r}\strut
@@ -551,12 +551,12 @@ is not obvious interaction effect.
 
 According to ANOVA table, there is not a significant interaction effect
 from ranks and genders on the score at 5\% significance level
-(P-value=0.6253). That means, effect of ranks and effect of genders on y
-is independent. Therefore, examine the main effects.
+(P-value=0.6253). That means, effect of ranks and effect of genders on
+score is independent. Therefore, examine the main effects.
 
 According to type III ANOVA table, there is a significant effect from
-genders on the score at 5\% significance level
-(P-value=\(7.318\times e^{-5}\)).
+genders and ranks on the score at 5\% significance level
+(P-value=0.01964, 0.000202, respectively ).
 
 \begin{enumerate}
 \def\labelenumi{(\alph{enumi})}
@@ -583,9 +583,14 @@ genders on the score at 5\% significance level
 \CommentTok{# To obtain Adjusted SS for factorial design in R when there is an unbalanced design #}
 \CommentTok{# First, it is necessary to set the contrasts option in R.#}
 \KeywordTok{options}\NormalTok{(}\DataTypeTok{contrasts =} \KeywordTok{c}\NormalTok{(}\StringTok{"contr.sum"}\NormalTok{,}\StringTok{"contr.poly"}\NormalTok{))}
-\CommentTok{# Use wither drop1 function or Anova function with type = "III" as below #}
-\CommentTok{#Type III sum of squares give the adjusted (for all other effects) SS and p values of each effect #}
+\CommentTok{# Because the multi-way ANOVA model is over-parameterised, #}
+\CommentTok{# it is necessary to choose a contrasts setting that sums to zero.#}
+\CommentTok{# otherwise the ANOVA analysis will give incorrect results with respect #}
+\CommentTok{# to the expected hypothesis. (The default contrasts type does not satisfy this requirement.)}
+
+\CommentTok{# Use with drop1 function or Anova function with type = "III" as below #}
 \KeywordTok{drop1}\NormalTok{(model_ethics, .}\OperatorTok{~}\NormalTok{., }\DataTypeTok{test=}\StringTok{"F"}\NormalTok{)}
+\CommentTok{#Type III sum of squares give the adjusted (for all other effects) SS and p values of each effect #}
 \KeywordTok{Anova}\NormalTok{(model_ethics, }\DataTypeTok{type=}\StringTok{"III"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}

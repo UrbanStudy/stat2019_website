@@ -1,7 +1,7 @@
 ---
-title: "STAT562 Final Exam"
+title: ""
 author: ""
-date: 'Winter 2019'
+date: ''
 output:
   pdf_document: 
 geometry: margin=0.5in
@@ -12,7 +12,7 @@ spacing: double
 
 
 
-1. \textcolor[rgb]{0.5,0.5,0.5}{$X_1,X_2,..X_n$ is a random sample from a distribution having a p.d.f of the form.
+1. \textcolor[rgb]{0.7,0.7,0.7}{$X_1,X_2,..X_n$ is a random sample from a distribution having a p.d.f of the form.
 $f(x)=\begin{cases}\lambda x^{\lambda-1}&0<x<1\\0&\text{otherwise}\end{cases}$
 Find a complete sufficient statistic for $\lambda$. Justify your answer}
 
@@ -20,7 +20,7 @@ Find a complete sufficient statistic for $\lambda$. Justify your answer}
 
 From *Fisher–Neyman factorization theorem* (`2019-2-14p5`)
 
-$$f(x|\lambda)=L(\lambda)=\lambda^n(\prod x_i)^{\lambda-1}=\lambda^ne^{(\lambda-1)\sum^n_{i=1} \ln x_i}\cdot1=k(t|\lambda)h(\vec x)$$
+$$f(x|\lambda)=L(\lambda)=\lambda^n(\prod_{i=1}^n x_i)^{\lambda-1}=\lambda^ne^{(\lambda-1)\sum^n_{i=1} \ln x_i}\cdot1=k(t|\lambda)h(\vec x)$$
 
 $h(\vec x)=1$ is free of $\lambda$. So $T=\sum^n_{i=1} \ln x_i$ is a sufficient statistic for $\lambda$.
 
@@ -34,7 +34,7 @@ For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $\{W_1(\vec \lambda),..,W_k
 
  ---
 
-2. \textcolor[rgb]{0.5,0.5,0.5}{Let $Y_n$ be the $n^th$ order statistic of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.}
+2. \textcolor[rgb]{0.7,0.7,0.7}{Let $Y_n$ be the $n^th$ order statistic of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.}
 
  - **Step1: $\theta$ is a location parameter**
 
@@ -44,187 +44,257 @@ $g(y|\theta)=\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y-\theta)^2}{2\sigma^2}}=\frac1
 
 Thus, $\theta$ is a location parameter.
 
- - **Step2: $Y_n-\bar Y$ is location invariant**
+ - **Step2: $Y_n-\bar Y$ is location invariant**(`2019-2-21p4-6`)
+ 
+Let $g=Y_n-\bar Y=\frac1n\sum_{i=1}^n(y_{(n)}-y_i)$. Consider the group of transformations defined by $\mathcal{G}=\{g_a(y_1,..,y_n),-\infty<a<\infty\}$, where $g_a=(y_1+a,..,y_n+a)$. From Definition 6.4.2
 
-For $Y_n\sim N(\theta,\sigma^2)$, $\bar Y\sim N(\theta,\sigma^2/n)$ `2019-2-21p4-6`
+$g_{-a}(g_a)=g_{-a}(\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a)])=\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a-a)]=g$
 
-Consider the group of transformations defined by $\mathcal{G}=\{Y_n-\bar Y,-\infty<\bar Y<\infty\}$, $Y_n+a-(\bar Y+a)=Y_n-\bar Y$.
+$g_{a_2}(g_{a_1})=g_{a_2}(\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a_1)])=\frac1n\sum_{i=1}^n[y_{(n)}-(y_1+a_1+a_2)]=g_{a_1+a_2}$
 
-Thus, the joint distribution of $Y_n-\bar Y$ is in $\mathcal{F}$ and hence $\mathcal{F}$ is invariant under $\mathcal{G}$.
+Thus, the joint distribution of $Y_n-\bar Y$ is in $\mathcal{F}$ and hence $\mathcal{F}$ is location invariant under $\mathcal{G}$.
 
  - **step3: $Y_n-\bar Y$ is ancillary statistic for $\theta$**
 
-$f(y|\theta)$ is a location exponential family. Let $X_n=Y_n-\theta$ is a random sample from $f(y|0)$ `2019-2-19p6`
+$f(y|\theta)$ is a location parameter family with cdf $F(y-\theta), -\infty<\theta<\infty$. Let $W=Y_n-\bar Y$. From Theorem 3.5.6, let $Z_n,\bar Z$ idd from $F(y)$ (corresponding to $\theta=0$ or $f(y|0)$ `2019-2-19p6`) with $Y_n=Z_n+\theta,\bar Y=\bar Z+\theta$. Thus the cdf of the $W$ is 
 
-$Y_n-\bar Y=Y_n-\frac1{n}\sum_{i=1}^nY_i=(Y_n-\theta)-\frac1{n}\sum_{i=1}^n(Y_i-\theta)= X_n-\frac1{n}\sum_{i=1}^nX_i$
+$F_W(w|\theta)=P_{\theta}(W\le w)=P_{\theta}(Y_n-\bar Y\le w)=P_{\theta}(Z_n+\theta-(\bar Z+\theta)\le w)=P_{\theta}(Z_n-\bar Z\le w)$
 
-$Y_n-\bar Y$ is a function of only $X_1,..,X_n$ and be free of $\theta$. It is an ancillary statistic for $\theta$.
-
+The last probability does not depend on $\theta$ because the distribution of $Z_n,\bar Z$ does
+not depend on $\theta$. Thus, the cdf of $W=Y_n-\bar Y$ does not depend on $\theta$, $W=Y_n-\bar Y$ is an ancillary statistic.
 
  - **step4: For $Y\sim N(\theta,\sigma^2)$, $\bar Y$ is sufficient statistic for $\theta$**
 
- - **step5: $\bar Y$ is complete statistic for $\theta$**
- 
-$\bar Y\sim N(\theta,\sigma^2/n)$ is a member of the exponential family. It is a complete sufficient statistic.
+Let $Y=f(\mathbf{y}|\theta)\sim N(\theta,\sigma^2)$,
 
- - **step6:  By Basu's theorem, an acillary statistc  $Y_n-\bar Y$ and a complete sufficient statistic $\bar Y$ are independent.**`2019-2-19p10`
+$$f(\vec{y}|\theta)=\prod_{i=1}^n(\frac1{\sigma\sqrt{2\pi}}e^{-\frac{(y_i-\theta)^2}{2\sigma^2}})=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\theta)^2}=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\bar y+\bar y-\theta)^2}$$
+
+For $\sum_{i=1}^n(y_i-\bar y)=0,\quad\sum_{i=1}^n(\bar y-\theta)^2=n(\bar y-\theta)^2$, the part of exponent is
+
+$=-\frac{1}{2\sigma^2}\sum_{i=1}^n[(y_i-\bar y)^2+2(y_i-\bar y)(\bar y-\theta)+(\bar y-\theta)^2]=-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]$
+
+Let $\bar Y=g(\bar y|\theta)\sim N(\theta,\sigma^2/n)$, $g(\bar y|\theta)=\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}$
+
+$\frac{f(\mathbf{y}|\theta)}{g(\bar y|\theta)}=\frac{\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}[\sum_{i=1}^n(y_i-\bar y)^2+n(\bar y-\theta)^2]}}{\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}}=\frac1{\sqrt{n}(\sigma\sqrt{2\pi})^{n-1}}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y_i-\bar y)^2}$
+
+which is free of $\theta$ (6.2.2). For every $\vec{y}$ in the sample space, the ratio $f(\vec{y}|\theta)/g(\bar y|\theta)$ is constant as a function of $\theta$, then $\bar{Y}$ is a sufficient statistic for $\theta$. 
+
+ - **step5: $\bar Y\sim N(\theta,\sigma^2/n)$ is a complete sufficient statistic for $\theta$.**
+ 
+Method 1: from (`2019-2-19p7-9`)
+
+For $\bar Y\sim N(\theta,\sigma^2/n)$, the family of is $\{\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}:-\infty<\theta<\infty\}$ Supporse that $E[g(\bar Y)]=0\forall\theta$
+
+$\int_{0}^\infty g(\bar y)f(\bar y)d\bar y=\int_0^\infty g(\bar y)\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}d\bar y=\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}\int_0^\infty g(\bar y)e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}d\bar y=0$
+
+For $\frac{\sqrt{n}}{\sigma\sqrt{2\pi}}\neq0$, $\frac{d}{dx}\int_{v(x)}^{u(x)}{f(t)}dt=u'(x)f[u(x)]-v'(x)f[v(x)]$, then
+
+$0=\frac{d}{d\theta}E[g(\bar Y)]=\frac{d}{d\theta}\left[\int_{-\infty}^\infty g(\bar y)e^{-\frac{n(\bar y-\theta)^2}{2\sigma^2}}d\bar y\right]=0-\theta'[g(\theta)e^{-\frac{n(\theta-\theta)^2}{2\sigma^2}}]=-g(\theta)$
+
+So $g(\theta)=0,\forall\theta$, then $P(g(T)=0)=1$. Thus, $\bar Y$ is a complete statistic.
+
+Method 2: from (`2019-2-19p12`)
+
+$f(y|\theta)$ is a member of the exponential family,
+
+$f(y|\vec\theta)=\frac1{(\sigma\sqrt{2\pi})^n}e^{-\frac{1}{2\sigma^2}\sum_{i=1}^n(y-\theta)^2}=e^{-\frac{\sum_{i=1}^ny_i^2}{2\sigma^2}}\frac{e^{-\frac{n\theta^2}{2\sigma^2}}}{(\sigma\sqrt{2\pi})^n}e^{\frac{\theta}{\sigma^2}n\bar y}=h(y)c(\vec \theta)e^{\sum^k_{j=1}W_j(\vec \theta)t_j(y)}$
+
+For $\{W_1(\vec \theta),..,W_k(\vec \theta)\}$ contains an open interval in $\Bbb R$, so $T(\vec y)=\bar y$ is a complete sufficient statistic.
+
+ - **step6:  By Basu's theorem, an acillary statistc  $Y_n-\bar Y$ and a complete sufficient statistic $\bar Y$ are independent.** (`2019-2-19p10`)
  
 
  ----
  
-3. \textcolor[rgb]{0.5,0.5,0.5}{Suppose that $X_1,X_2,..X_n\sim$ idd. $f(x|\theta)=\theta e^{-\theta x}, x>0$. Assume that the prior distribution of $\theta$ is $\pi(\theta)=\lambda e^{-\lambda\theta},\theta>0$}
+3. \textcolor[rgb]{0.7,0.7,0.7}{Suppose that $X_1,X_2,..X_n\sim$ idd. $f(x|\theta)=\theta e^{-\theta x}, x>0$. Assume that the prior distribution of $\theta$ is $\pi(\theta)=\lambda e^{-\lambda\theta},\theta>0$}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find the posterior distribution $\pi(\theta|\vec x)$.}
+ a. \textcolor[rgb]{0.7,0.7,0.7}{Find the posterior distribution $\pi(\theta|\vec x)$.`2019-2-26p8-9,p11-p13` `2019-2-28p8 Exapmle 2.3.8`}
 
-For $L(\theta)=\hat\theta e^{-\theta\sum x_i},\quad \pi(\theta)=\lambda e^{-\lambda\theta}$, and the kernel of a function is the main part of the function, the part that remains when constants are disregarded (`2019-2-26p8-9,p11-p13` `2019-2-28p8 Exapmle 2.3.8`). that is
+For $L(\theta)=\prod_{i=1}^n(\theta e^{-\theta x})=\theta^n e^{-\theta\sum_{i=1}^n x_i}=\theta^n e^{-\theta\sum_{i=1}^n x_i},\quad \pi(\theta)=\lambda e^{-\lambda\theta}$, 
 
-$\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\lambda e^{-\lambda\theta}\propto\theta^{n+1-1}e^{-\theta(\lambda+\sum x_i)}$
+and the kernel of a function is the main part of the function, the part that remains when constants are disregarded. that is
+
+$\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\lambda e^{-\lambda\theta}\propto\theta^{n+1-1}e^{-\theta(\lambda+\sum x_i)},\ x>0,\theta>0$
 
 which is $Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})$ distribution.
 
  ----
 
- b. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming square-error loss}
+ b. \textcolor[rgb]{0.7,0.7,0.7}{Find the Bayes estimator of $\theta$, assuming square-error loss. `2019-2-28p1`}
 
-
-
-Suppose $L_0(\hat\theta)=(\hat\theta-\theta)^2$. `2019-2-28p1` $E[L_0(\hat\theta)|\vec x]$ is minimized when 
-$$\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\lambda+\sum x_i}$$
+Suppose $L_0(\hat\theta)=(\hat\theta-\theta)^2$. For Gamma distribution, $E[L_0(\hat\theta)|\vec x]$ is minimized when 
+$$\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\lambda+\sum_{i=1}^n x_i}$$
 which is the posterior mean.
  
  ----
  
- c. \textcolor[rgb]{0.5,0.5,0.5}{writing this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant}
+ c. \textcolor[rgb]{0.7,0.7,0.7}{writing this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant}
 
+$f(\vec x|\theta)=L(\theta)=\theta^n e^{-\theta\sum_{i=1}^n x_i}$
+
+$l(\theta)=n\ln\theta-\theta\sum^n_{i=1} \ln x_i$
+
+$l'(\theta)=\frac{n}\theta-\sum^n_{i=1} \ln x_i\overset{\text{set}}{=}0$
+
+$\hat\theta_{MLE}=\frac{n}{\sum_{i=1}^n\ln x_i}=\frac1{\bar x}$
+
+$\pi(\theta)=\lambda e^{-\lambda\theta}\sim Expo(\lambda)$, $E[\theta]=\frac1\lambda$
+
+Thus, we can write this estimator as
 $$\hat\theta_{Bayes}=\frac1{\frac1{n+1}(\lambda+n\bar x)}=\frac1{\frac1{n+1}(\frac1{1/\lambda}+\frac{n}{1/\bar x})}$$
- which is the weighted hamonic mean of $1/\lambda$, which is the prior mean, and $1/\bar x$, which is the MLE of $\theta$.
+ which is the weighted hamonic mean of $1/\lambda$ and $1/\bar x$. $1/\lambda$ is the prior mean and $1/\bar x$ is the MLE of $\theta$.
  
  ----
  
- d. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming absolute loss}
+ d. \textcolor[rgb]{0.7,0.7,0.7}{Find the Bayes estimator of $\theta$, assuming absolute loss. `2019-2-28p4,9` }
  
- `2019-2-28p4,9`
- 
- Suppose $L_1(\hat\theta)=|\hat\theta-\theta|$. $E[|\hat\theta-\theta|]$ is minimized when 
+Suppose $L_1(\hat\theta)=|\hat\theta-\theta|$. $E[|\hat\theta-\theta|]$ is minimized when 
 $$\hat\theta_{Bayes}=median[\theta|\vec x]$$
-For the median of Gamma distribution doesn't have a closed form, the posterior median would not have a closed form.
  
- Postmedian
- $\hat\theta=F^{-1}(\frac12)$
- where $F(x)$ is the $Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum x_i})$ cdf, for which there is no closed form.
+The posterior median is $\hat\theta=F^{-1}(\frac12)$. $F(x)$ is the $Gamma(\alpha=n+1,\beta=\frac1{\lambda+\sum_{i=1}^n x_i})$ cdf. $\hat\theta$ doesn't have a closed form.
  
  ----
  
- e. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming binary loss} `2019-2-28p5-6`
+ e. \textcolor[rgb]{0.7,0.7,0.7}{Find the Bayes estimator of $\theta$, assuming binary loss. `2019-2-28p5-6`}
  
 
 Suppose $L_0(\hat\theta)=\begin{cases}0&\hat\theta=\theta\\1&\text{elsewhere}\end{cases}$. 
 
-$$E[L_0(\hat\theta)|\vec x]=0\cdot P[\theta=\hat\theta|\vec x]+1\cdot P[\theta\neq\hat\theta|\vec x]=P[\theta\neq\hat\theta|\vec x]=1-P[\theta=\hat\theta|\vec x]$$ 
+$E[L_0(\hat\theta)|\vec x]=0\cdot P[\theta=\hat\theta|\vec x]+1\cdot P[\theta\neq\hat\theta|\vec x]=P[\theta\neq\hat\theta|\vec x]=1-P[\theta=\hat\theta|\vec x]$
 
 To minimized this, maximize $P[\theta=\hat\theta|\vec x]$
 
 When $\hat\theta$ is the posterior mode, it is a Maximum A Posteriori estimator. For the mode of Gamma distribution is $(\alpha-1)\beta$
 
-$$\hat\theta_{Bayes}=mode[\theta|\vec x]=(\alpha-1)\beta=\frac{n}{\lambda+\sum x_i}$$
+$$\hat\theta_{Bayes}=mode[\theta|\vec x]=(\alpha-1)\beta=\frac{n}{\lambda+\sum_{i=1}^n x_i}$$
 which is the posterior mode.
 
  ----
  
-4. \textcolor[rgb]{0.5,0.5,0.5}{Redo all of problem 3, using the non-informative prior $\pi(\theta)=1,\theta>0$. Note that this is not a valid density function since its intergral is infinite, but proceed with it anyway}
+4. \textcolor[rgb]{0.7,0.7,0.7}{Redo all of problem 3, using the non-informative prior $\pi(\theta)=1,\theta>0$. Note that this is not a valid density function since its intergral is infinite, but proceed with it anyway}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find the posterior distribution $\pi(\theta|\vec x)$.} `2019-2-26p8-9`
+ a. \textcolor[rgb]{0.7,0.7,0.7}{Find the posterior distribution $\pi(\theta|\vec x)$.`2019-2-26p8-9`} 
 
 For $\pi(\theta)=1,\theta>0$, $L(\theta)=\theta^n e^{-\theta\sum x_i}$, from the kernel of function,
 
-$$\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^n e^{-\theta\sum x_i}\sim Gamma(\alpha=n+1,\beta=\frac1{\sum x_i})$$
+$$\pi(\theta|\vec x)\propto L(\theta)\pi(\theta)=\theta^{n+1-1} e^{-\theta\sum x_i}\sim Gamma(\alpha=n+1,\beta=\frac1{\sum_{i=1}^n x_i})$$
 
  ----
  
- b. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming square-error loss}
+ b. \textcolor[rgb]{0.7,0.7,0.7}{Find the Bayes estimator of $\theta$, assuming square-error loss}
 
 Suppose $L_0(\hat\theta)=(\hat\theta-\theta)^2$. $E[L_0(\hat\theta)|\vec x]$ is minimized when 
-$$\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\sum x_i}$$
+$$\hat\theta_{Bayes}=E[\theta|\vec x]=\alpha\beta=\frac{n+1}{\sum_{i=1}^n x_i}$$
 which is the posterior mean.
 
  ----
  
- c. \textcolor[rgb]{0.5,0.5,0.5}{writing this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant}
+ c. \textcolor[rgb]{0.7,0.7,0.7}{writing this estimator as a weighted (arithmetic, geometric, or harmonic) average of the MLE and some prior constant}
+
+For $1/\bar x$ is the MLE of $\theta$, we can write this estimator as
 
 $$\hat\theta_{Bayes}=\frac1{\frac1{n+1}(1\times0+n\bar x)}=\lim_{c\to\infty}\frac1{\frac1{n+1}(\frac1{c}+\frac{n}{1/\bar x})}$$
- which is the weighted hamonic mean of $c$, which is the prior mean when $c\to\infty$, and $1/\bar x$, which is the MLE of $\theta$.
+ which is the weighted hamonic mean of $c$ and $1/\bar x$. $c$ is the prior constant as $c\to\infty$, $1/\bar x$ is the MLE of $\theta$.
 
  ----
  
- d. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming absolute loss}
+ d. \textcolor[rgb]{0.7,0.7,0.7}{Find the Bayes estimator of $\theta$, assuming absolute loss}
 
  Suppose $L_1(\hat\theta)=|\hat\theta-\theta|$. $E[|\hat\theta-\theta|]$ is minimized when 
 $$\hat\theta_{Bayes}=median[\theta|\vec x]$$
-For the median of Gamma distribution doesn't have a closed form, the posterior median would not have a closed form.
+
+The posterior median is $\hat\theta=F^{-1}(\frac12)$. $F(x)$ is the $Gamma(\alpha=n+1,\beta=\frac1{\sum_{i=1}^n x_i})$ cdf. $\hat\theta$ doesn't have a closed form.
 
  ----
  
- e. \textcolor[rgb]{0.5,0.5,0.5}{Find the Bayes estimator of $\theta$, assuming binary loss}
+ e. \textcolor[rgb]{0.7,0.7,0.7}{Find the Bayes estimator of $\theta$, assuming binary loss}
 
 Suppose $L_0(\hat\theta)=\begin{cases}0&\hat\theta=\theta\\1&\text{elsewhere}\end{cases}$. 
-
-$$E[L_0(\hat\theta)|\vec x]=0\cdot P[\theta=\hat\theta|\vec x]+1\cdot P[\theta\neq\hat\theta|\vec x]=P[\theta\neq\hat\theta|\vec x]=1-P[\theta=\hat\theta|\vec x]$$ 
-
+$E[L_0(\hat\theta)|\vec x]=1-P[\theta=\hat\theta|\vec x]$
 To minimized this, maximize $P[\theta=\hat\theta|\vec x]$
 
 When $\hat\theta$ is the posterior mode, it is a Maximum A Posteriori estimator. For the mode of Gamma distribution is $(\alpha-1)\beta$
 
-$$\hat\theta_{Bayes}=mode[\theta|\vec x]=(\alpha-1)\beta=\frac{n}{\sum x_i}=\frac{1}{\bar x}$$
+$$\hat\theta_{Bayes}=mode[\theta|\vec x]=(\alpha-1)\beta=\frac{n}{\sum_{i=1}^n x_i}=\frac{1}{\bar x}$$
 which is the posterior mode.
 
  ----
  
-5. \textcolor[rgb]{0.5,0.5,0.5}{Let $X_1,X_2,..X_n\sim$ idd. $f(x|\theta)=\theta x^{-\theta-1}, x_i>1, \theta>2$.}
+5. \textcolor[rgb]{0.7,0.7,0.7}{Let $X_1,X_2,..X_n\sim$ idd. $f(x|\theta)=\theta x^{-\theta-1}, x_i>1, \theta>2$.}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find $\hat\theta_{MLE}$, the maximum likelihood estimator of $\theta$.} `2019-2-2p12`
+ a. \textcolor[rgb]{0.7,0.7,0.7}{Find $\hat\theta_{MLE}$, the maximum likelihood estimator of $\theta$.`2019-2-2p12`} 
 
-$$f(\vec x|\theta)=L(\theta)=\theta^n(\prod x_i)^{\theta-1}=\theta^n e^{(-\theta-1)\sum^n_{i=1} \ln x_i}$$
-$$l(\theta)=n\ln\theta-(\theta+1)\sum^n_{i=1} \ln x_i$$
-$$l'(\theta)=\frac{n}\theta-\sum^n_{i=1} \ln x_i\overset{\text{set}}{=}0$$
+$f(\vec x|\theta)=L(\theta)=\theta^n(\prod_{i=1}^n x_i)^{-\theta-1}=\theta^n e^{(-\theta-1)\sum^n_{i=1} \ln x_i}$
+$l(\theta)=n\ln\theta-(\theta+1)\sum^n_{i=1} \ln x_i$
+$l'(\theta)=\frac{n}\theta-\sum^n_{i=1} \ln x_i\overset{\text{set}}{=}0$
 
-$$\hat\theta_{MLE}=\frac{n}{\sum\ln x_i}$$
+$$\hat\theta_{MLE}=\frac{n}{\sum_{i=1}^n\ln x_i}$$
 
  ----
  
- b. \textcolor[rgb]{0.5,0.5,0.5}{Find the expected value of $\hat\theta_{MLE}$.}
+ b. \textcolor[rgb]{0.7,0.7,0.7}{Find the expected value of $\hat\theta_{MLE}$.}
 
-Let $Y_i=\ln x_i$, then $X=e^y$, $\frac{dx}{dy}e^y$
-
-$$g(Y)=\theta(e^y)^{-\theta-1}e^y=\theta e^{-y\theta}, y>0$$
+ - Method 1
+ 
+Let $Y_i=\ln x_i$, then $X=e^y$, $\frac{dx}{dy}=e^y$
+$g(Y)=\theta(e^y)^{-\theta-1}e^y=\theta e^{-y\theta}, y>0$
 
 So $Y_i=\ln x_i\sim Gamma(\alpha=n,\beta=\frac1{\theta})$
 
-$$E[\hat\theta]=nE[Y^{-1}]=n\frac{\beta^{-1}\Gamma(-1+\alpha)}{\Gamma(\alpha)}=\frac{n\theta\Gamma(n-1)}{\Gamma(n)}=\frac{n\theta(n-2)!}{(n-1)!}=\frac{n\theta}{n-1}$$
+We know if $Y\sim Gamma(\alpha,\beta)$, them $E[Y^k]=\frac{\beta^{k}\Gamma(\alpha+k)}{\Gamma(\alpha)}$, then
 
+$$E[\hat\theta]=nE[Y^{-1}]=n\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{n\theta\Gamma(n-1)}{\Gamma(n)}=\frac{n\theta(n-2)!}{(n-1)!}=\frac{n\theta}{n-1}$$
+
+ - Method 2
+
+By 2.1.10 Probability integral transformation, let $U_i=F_X(\mathbf{x}|\theta)=\int_{-\infty}^x\theta x^{-\theta-1}dx=1-\int_1^{x}\theta x^{-\theta-1}dx=1-(\left.-x^{-\theta}\right|_{1}^x)=x^{-\theta} \sim Uni(0,1)$,
+
+By 5.6.3 the exponential-uniform transformation, $\sum_{i=1}^n\ln X=-\frac1\theta\sum_{i=1}^n\ln U_i\sim Gamma(n,\frac1\theta)$; $(\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\frac1\theta)$.
+
+For a Inv-Gamma$(\alpha,\beta)$, $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$.
+
+Thus,
+$$E[\hat\theta]=E\left[\frac{n}{\sum_{i=1}^n\ln x_i}\right]=nE\left[(\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\theta}{n-1}$$
  ----
  
- c. \textcolor[rgb]{0.5,0.5,0.5}{Find the variance of $\hat\theta_{MLE}$.}
+ c. \textcolor[rgb]{0.7,0.7,0.7}{Find the variance of $\hat\theta_{MLE}$.}
+
+From method 1, 
  
 $$E[\hat\theta^2]=n^2E[Y^{-2}]=n^2\frac{\beta^{-2}\Gamma(-2+\alpha)}{\Gamma(\alpha)}=\frac{n^2\theta^2\Gamma(n-2)}{\Gamma(n)}=\frac{n^2\theta^2(n-3)!}{(n-1)!}=\frac{n^2\theta^2}{(n-1)(n-2)}$$
+
+From method 2,
+
+For Inv-Gamma$(\alpha,\beta)$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$, then
+ 
+ $$E[\hat\theta^2]=E\left[\frac{n^2}{(\sum_{i=1}^n\ln x_i)^2}\right]=n^2E\left[(\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\theta^2}{(n-1)(n-2)}$$
+
+Therefore,
 $$Var[\hat\theta^2]=\frac{n^2\theta^2}{(n-1)(n-2)}-\frac{n^2\theta^2}{(n-1)^2}=\frac{n^2\theta^2}{(n-1)}[\frac1{n-2}-\frac1{n-1}]=\frac{n^2\theta^2}{(n-1)^2(n-2)}$$
 
  ----
  
- d. \textcolor[rgb]{0.5,0.5,0.5}{Using $\hat\theta_{MLE}$, create an unbiased estimator $\hat\theta_{U}$.}
+ d. \textcolor[rgb]{0.7,0.7,0.7}{Using $\hat\theta_{MLE}$, create an unbiased estimator $\hat\theta_{U}$.}
 
-$$\hat\theta_{U}=\frac{n-1}{n}\hat\theta_{MLE}$$
+$E[\hat\theta]=\frac{n\theta}{n-1}$ is a biased estimator.
+
+We can set $\frac{n-1}{n}E[\hat\theta]=E[\frac{n-1}{n}\cdot\frac{n\theta}{n-1}]=\theta$
+
+Therefore, $E[\hat\theta_{U}]=E[\frac{n-1}{n}E[\hat\theta]]=\theta$
+
+$$\hat\theta_{U}=\frac{n-1}{n}\hat\theta_{MLE}\quad \text{is an unbiased estimator.}$$
 
  ----
  
- e. \textcolor[rgb]{0.5,0.5,0.5}{Find the variance of $\hat\theta_{U}$.}
+ e. \textcolor[rgb]{0.7,0.7,0.7}{Find the variance of $\hat\theta_{U}$.`2019-3-5p12`}
 
-$$Var[\hat\theta_{U}]=(\frac{n-1}{n})^2\frac{n^2\theta^2}{(n-1)^2(n-2)}=\frac{\theta^2}{n-2}$$
+$$Var[\hat\theta_{U}]=Var[\frac{n-1}{n}\hat\theta_{MLE}]=(\frac{n-1}{n})^2\frac{n^2\theta^2}{(n-1)^2(n-2)}=\frac{\theta^2}{n-2}$$
 
-6. \textcolor[rgb]{0.5,0.5,0.5}{Refer to problem 5.}
+6. \textcolor[rgb]{0.7,0.7,0.7}{Refer to problem 5.}
 
- a. \textcolor[rgb]{0.5,0.5,0.5}{Find $\hat\theta_{MOM}$, the method of moments estimator of $\theta$.} `2019-2-21p8 7.2.1`
+ a. \textcolor[rgb]{0.7,0.7,0.7}{Find $\hat\theta_{MOM}$, the method of moments estimator of $\theta$.`2019-2-21p8 7.2.1`} 
 
-$EX=\mu=\int_1^{\infty}x\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+1}}{-\theta+1}\right|_1^{\infty}=\frac\theta{\theta-1}$
+$EX=\mu=\int_1^{\infty}x\theta x^{-\theta-1}dx=\left.\theta\frac{1}{-\theta+1}x^{-\theta+1}\right|_1^{\infty}=\frac\theta{\theta-1}$
 
 Set $\bar X=\frac\theta{\theta-1}\implies\theta\bar x-\bar x=\theta\implies\theta(\bar x-1)=\bar x$, 
 
@@ -232,38 +302,38 @@ $$\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}$$
 
  ----
  
- b. \textcolor[rgb]{0.5,0.5,0.5}{Using the delta method to approximate the expected value of $\hat\theta_{MOM}$.}
+ b. \textcolor[rgb]{0.7,0.7,0.7}{Using the delta method to approximate the expected value of $\hat\theta_{MOM}$.`2019-3-5p1,2019-3-12`}
 
 For $EX=\mu=\frac\theta{\theta-1}$
 
-$E[X^2]=\int_1^{\infty}x^2\theta x^{-\theta-1}dx=\left.\theta\frac{x^{-\theta+2}}{-\theta+2}\right|_1^{\infty}=\frac\theta{\theta-2}$
+$E[X^2]=\int_1^{\infty}x^2\theta x^{-\theta-1}dx=\left.\theta\frac{1}{-\theta+2}x^{-\theta+2}\right|_1^{\infty}=\frac\theta{\theta-2}$
 
 $Var[X]=\sigma^2=E[X^2]-E[X]^2=\frac\theta{\theta-2}-(\frac\theta{\theta-1})^2$
 
 $$=\frac{\theta(\theta-1)^2-\theta^2(\theta-2)}{(\theta-1)^2(\theta-2)}=\frac{\theta^3-2\theta^2+\theta-\theta^3+2\theta^2}{(\theta-1)^2(\theta-2)}=\frac{\theta}{(\theta-1)^2(\theta-2)}$$
 
-Use a $2^{nd}$ order Taylar series `2019-3-5p1`
+Use a $2^{nd}$ order Taylar series
 
-$$g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R$$
+$g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R$
 
 Consider $g(x)=\frac{x}{x-1},\quad g'(x)=\frac{(x-1)\times1-x\times1}{(x-1)^2}=\frac{-1}{(x-1)^2},\quad g''(x)=\frac{2}{(x-1)^3}$
 
 Choose $x_0=EX=\mu$
 
-$$g(x)\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(x-\mu)+\frac{2}{(\mu-1)^3}\frac{(x-\mu)^2}2$$
+$g(x)=\frac{x}{x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(x-\mu)+\frac{2}{(\mu-1)^3}\frac{(x-\mu)^2}2$
 
 $$\hat\theta_{MOM}=\frac{\bar x}{\bar x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(\bar x-\mu)+\frac{1}{(\mu-1)^3}(\bar x-\mu)^2$$
 
-$$E[\hat\theta_{MOM}]\approx \frac{\mu}{\mu-1}+0+\frac{1}{(\mu-1)^3}\frac{\sigma^2}n=\frac{\frac\theta{\theta-1}}{\frac\theta{\theta-1}-1}+\frac{1}{(\frac\theta{\theta-1}-1)^3}\frac1n\frac{\theta}{(\theta-1)^2(\theta-2)}=\theta+\frac{\theta(\theta-1)}{n(\theta-2)}$$
+$$E[\hat\theta_{MOM}]\approx \frac{\mu}{\mu-1}+0+\frac{1}{(\mu-1)^3}\frac{\sigma^2}n=\frac{\frac\theta{\theta-1}}{\frac\theta{\theta-1}-1}+\frac{1}{(\frac\theta{\theta-1}-1)^3}\cdot\frac1n\cdot\frac{\theta}{(\theta-1)^2(\theta-2)}=\theta+\frac{\theta(\theta-1)}{n(\theta-2)}$$
 
  ----
  
- c. \textcolor[rgb]{0.5,0.5,0.5}{Using the delta method to approximate the variance of $\hat\theta_{MOM}$.} `2019-3-5p3`
+ c. \textcolor[rgb]{0.7,0.7,0.7}{Using the delta method to approximate the variance of $\hat\theta_{MOM}$.`2019-3-5p3`} 
 
 $Var[\hat\theta_{MOM}]\approx Var[g(x_0)+g'(x_0)(x-x_0)]=Var[\frac{\mu}{\mu-1}+\frac{1}{(\mu-1)^2}(\bar x-\mu)]$
-$$=\frac{1}{(\mu-1)^4}\frac{\sigma^2}n=\frac{1}{(\frac\theta{\theta-1}-1)^4}\frac1n\frac{\theta}{(\theta-1)^2(\theta-2)}=\frac{\theta(\theta-1)^2}{n(\theta-2)}$$
+$$=\frac{1}{(\mu-1)^4}\frac{\sigma^2}n=\frac{1}{(\frac\theta{\theta-1}-1)^4}\cdot\frac1n\cdot\frac{\theta}{(\theta-1)^2(\theta-2)}=\frac{\theta(\theta-1)^2}{n(\theta-2)}$$
 
 
 ```{r, eval =F}
-End
+.
 ```

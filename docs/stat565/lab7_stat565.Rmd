@@ -96,15 +96,15 @@ pander(Anova(model_ethics, type="III"))
  ------------------------------------------------------
     Type III       Sum Sq   Df    F value    Pr(>F)   
  ----------------- -------- ----- --------- -----------
-  **(Intercept)**   100173    1     702.1    5.308e-80 
+ **(Intercept)**   180136    1     1263     1.327e-108 
 
-   **g**            417.6     1     2.927     0.08816  
+   **g**           785.2     1     5.503     0.01964   
 
-   **r**            2309      1     16.18    7.318e-05 
+   **r**            2021     1     14.17     0.000202  
 
-   **g:r**          34.1      1     0.239     0.6253   
+   **g:r**          34.1     1     0.239      0.6253   
 
-   **Residuals**    42087    295     NA         NA     
+  **Residuals**    42087    295     NA          NA     
  
    **Total**       46030.1   298     NA         NA   
  ------------------------------------------------------
@@ -115,9 +115,10 @@ pander(Anova(model_ethics, type="III"))
 
 The line plot shows that two lines are approximately parallel. Difference in score between ranks is same for different genders. There is not obvious interaction effect.
 
-According to ANOVA table, there is not a significant interaction effect from ranks and genders on the score at 5% significance level (P-value=0.6253). That means, effect of ranks and effect of genders on y is independent. Therefore, examine the main effects.
+According to ANOVA table, there is not a significant interaction effect from ranks and genders on the score at 5% significance level (P-value=0.6253). That means, effect of ranks and effect of genders on score is independent. Therefore, examine the main effects.
 
-According to type III ANOVA table, there is a significant effect from genders on the score at 5% significance level (P-value=$7.318\times e^{-5}$).
+According to type III ANOVA table, there is a significant effect from genders and ranks on the score at 5% significance level (P-value=0.01964, 0.000202, respectively
+).
 
 (e)  \textcolor[rgb]{0.5,0.5,0.5}{Report the code here without output.}
 
@@ -137,10 +138,16 @@ sum((table_ethics$Score- mean(table_ethics$Score))^2)
 # To obtain Adjusted SS for factorial design in R when there is an unbalanced design #
 # First, it is necessary to set the contrasts option in R.#
 options(contrasts = c("contr.sum","contr.poly"))
-# Use wither drop1 function or Anova function with type = "III" as below #
-#Type III sum of squares give the adjusted (for all other effects) SS and p values of each effect #
+# Because the multi-way ANOVA model is over-parameterised, #
+# it is necessary to choose a contrasts setting that sums to zero.#
+# otherwise the ANOVA analysis will give incorrect results with respect #
+# to the expected hypothesis. (The default contrasts type does not satisfy this requirement.)
+
+# Use with drop1 function or Anova function with type = "III" as below #
 drop1(model_ethics, .~., test="F")
+#Type III sum of squares give the adjusted (for all other effects) SS and p values of each effect #
 Anova(model_ethics, type="III")
+
 ```
 
 # Problem 2: 3-Factor Factorial (Non-significant interaction)
