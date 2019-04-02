@@ -1001,7 +1001,35 @@ Lower Bound. However, in other typical situations, for other parameters, the bou
 
 **Theorem 7.3. 17 (Rao-Blackwell)** Let $W$ be any unbiased estimator of $\tau(\theta)$, and let $T$ be a sufficient statistic for $\theta$. Define $\phi(T)=E[W|T]$. Then $E_{\theta}\phi(T)=\tau(\theta)$ and $Var_{\theta}\phi(T)\le Var_{\theta}(W)$ for all $\theta$; that is, $\phi(T)$ is a uniformly better unbiased estimator of $\tau(\theta)$.
 
-### 7.3.4 Losst Function Optimality
+**Example 20120405p11** $X_1,X_2\sim$ iid $\frac1\theta e^{-x/\theta}, x>0$. Let $w=x_1, E[W]=\theta, V[W]=\theta^2$
+
+Step 1: Find a sufficient stat T
+
+$L(\theta)=\frac1{\theta^2} e^{-(x_1+x_2)/\theta}\cdot1$ So $T=X_1+X_2$ is sufficient.
+
+Step 2: Find $E[W|T]$
+
+Let $w=X_1, T=X_1+X_2; X_1=w, X_2=T-W$
+
+J=1
+
+$g(w,t)=\frac1{\theta^2}e^{-(x_1+x_2)/\theta}=\frac1{\theta^2}e^{-t/\theta}$
+
+$t\sim Gamma(\alpha=2,\beta=\theta)$
+
+$g(w|t)=\frac{\frac1{\theta^2}e^{-t/\theta}}{h(t)}=\frac{\frac1{\theta^2}e^{-t/\theta}}{\frac1{\theta^2}te^{-t/\theta}}=\frac1t, 0<w<t$
+
+So $W|T\sim Unif(0,T)$
+
+$E[W|T]=\frac{T}2=\frac{X_1+X_2}2=\bar X$
+
+Note $E[\bar X]=\theta, V[\bar X]=\theta^2/2$
+
+End: Find a function of T that is unbiased.
+
+**Theorem 7.3.23 Lehmann-Scheffe** Let $T$ be a complete sufficient statistic for a parameter $\theta$, and let $\phi(T)$ be any estimator based only on $T$. Then $\phi(T)$ is the unique best unbiased estimator of its expected value.
+
+### 7.3.4 Loss Function Optimality
 
 Our evaluations of point estimators have been based on their mean squared error performance. Mean squared error is a special case of a function called a _loss function_. The study of the performance, and the optimality, of estimators evaluated through loss functions is a branch of _decision theory_.
 
