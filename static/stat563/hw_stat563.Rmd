@@ -1,0 +1,81 @@
+---
+title: 'STAT563 Homework'
+author: "Shen Qu"
+date: "Spring 2019"
+output: html_document
+---
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## HW1
+
+**7.12** Let $X_1,..,X_n$, be a random sample from a population with pmf
+
+$$P_{\theta}(X=x)=\theta^x(1-\theta)^{1-x}, x=0\ or\ 1, 0\le \theta\le\frac12$$
+
+(a) Find the method of moments estimator and MLE of $\theta$
+
+$X_i\sim iid Bernoulli(\theta), 0\le \theta\le\frac12$
+
+method of moments:
+
+$$EX=\theta=\frac1n\sum_iX_i=\bar X )\implies\hat\theta=\bar X$$
+
+MLE: In Example 7.2.7, we showed that $L(|x)$ is increasing for $\theta<\bar x$ and is decreasing for $\theta\ge\bar x$. For $0\le \theta\le\frac12$. Therefore, when $\bar X\le1/2$, $\bar X$ is the MLE of $\theta$, because ¯X is the overall maximum of $L(|\mathbf{x})$. When $\bar X > 1/2$, $L(\theta|\mathbf{x})$ is an increasing function of $\theta$ on $[0, 1/2]$ and obtains its maximum at the upper bound of $\theta$ which is $1/2$. So the MLE is $\hat\theta=\min\{\bar X,1/2\}$.
+
+ ---
+ 
+(b) Find the mean squared errors of each of the estimators.
+
+The MSE of $\tilde\theta$is $MSE(\tilde\theta) = Var\tilde\theta + bias(\tilde\theta)^2=((1−\theta)/n)+0^2=(1−\theta)/n$. There is no simple formula for $MSE(\theta)$, but an expression is 
+
+$$MSE(\hat\theta) = E(\hat\theta-\theta)^2=\sum^n_{y=0}(\hat\theta-\theta)^2{n\choose y}\theta^y(1−\theta )^{n−y}=\sum^\frac{n}2_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y} +\sum^n_{y=\frac{n}2+1}(\frac12−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
+where $Y=\sum_iX_i\sim binomial(n,\theta)$ and $[\frac{n}2]=\frac{n}2$, if n is even, and $[\frac{n}2]=\frac{n-1}2$, if $n$ is odd.
+
+ ---
+ 
+(c) Which estimator is preferred? Justify your choice
+
+Using the notation used in (b), we have
+
+$$MSE(\tilde\theta) = E(\bar X-\theta)^2=\sum^n_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
+Therefore,
+$$MSE(\tilde\theta) − MSE(\hat\theta)=\sum^n_{y=[\frac{n}2]+1}\left[(\frac{y}n−\theta)^2-(\frac12−\theta)^2\right]\binom{n}{y}\theta^y(1−\theta)^{n−y}=\sum^n_{y=[\frac{n}2]+1}(\frac{y}n+\frac12−\theta)(\frac{y}n-\frac12)\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
+ 
+The facts that y/n > 1/2 in the sum and     1/2 imply that every term in the sum is positive.
+Therefore $MSE(\hat\theta)<MSE(\tilde\theta)=0$ for every $\theta$ in $0<\tilde\theta<\frac12$. (Note: $MSE(\hat\theta)=MSE(\tilde\theta)=0$ at $\theta=0$.)
+  
+  
+
+**7.30** The EM algorithm is useful in a variety of situation, and the definition of "missing data" can be stretched to accommodate many different models. Suppose that we have a mixture density $pf(x) + (1 p)g(x)$, where $p$ is unknown. If we observe $X = (X_1,..,X_n)$, the sample density is $\Pi_{i=1}^n[pf(x_i)+(1-p)g(x_i)$ which could be difficult to deal with. (Actually, a mixture of two is not terrible, but consider what the likelihood would look like with a mixture $L:=l P;Ji(X)$ for large k.)
+The EM solution is to augment the observed (or incomplete) data with $Z (Z_1,..,Z_n)$, where $Z_i$ tells which component of the mixture $X_i$ came from; that is,
+
+$X_i|z_i=1\sim f(X_i)$ and $X_i|z_i=0\sim g(x_i)$,and $P(Z_i=1)=p$
+
+(a) Show that the joint density of $(X,Z)$ is given by $\sum^n_{i=1}[pf(x_i)^{z_i}][(1-p)g(x_i)^{1-z_i}]$.
+
+Joint density $f(x,y)=f(x|y)f(y)$,
+
+$$f(\vec x,\vec z)=f(\vec x|\vec z)f(\vec z)=\prod^n_{i=1}f(x_i|z_i)f(z_i)=\prod^n_{i=1}[pf(x_i)]^{z_i}[(1-p)g(x_i)]^{1-z_i}$$
+
+(b) Show that the missing data distribution, the distribution of $Z_i|x_i,p$ is Bernoulli with success probability $\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}$.
+
+Conditional density $f(x|y)=\frac{f(x,y)}{f(y)}$,
+
+$$P(Z_i=1|X_i,p)=\frac{f(x_i,1|p)}{f(x_i|p)}=\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}$$
+
+(c) Calculate the expected complete-data log likelihood, and show that the EM sequence is given by
+
+$$f(\vec x,\vec z)\propto p^{\sum^n_{i=1}z_i}(1-p)^{\sum^n_{i=1}(1-z_i)}$$
+
+which is a Bernoulli joint pdf. For complete data,
+
+$$\hat p=\frac1n\sum Z_i$$
+
+Replacing the missing data with its expectation,
+
+$$E(Z_i|X_i,p)=P(Z_i=1|X_i,p)$$
+
+Through r times iteration,
+
+$$\hat p^{(r+1)}=\frac1n\sum_{i=1}^n\frac{\hat p^{(r)}f(x_i)}{\hat p^{(r)}f(x_i)+(1-\hat p^{(r)})g(x_i)}$$

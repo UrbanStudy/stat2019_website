@@ -1477,6 +1477,7 @@ $(document).ready(function () {
       </ul></li>
       <li><a href="#asymptotic-evaluations">10 Asymptotic Evaluations</a><ul>
       <li><a href="#point-estimation-1">10.1 Point Estimation</a></li>
+      <li><a href="#bootstrap-standard-errors">10.1.4 Bootstrap Standard Errors</a></li>
       <li><a href="#robustness">10.2 Robustness</a></li>
       <li><a href="#hypothesis-testing">10.3 Hypothesis Testing</a></li>
       <li><a href="#interval-estimation">10.4 Interval Estimation</a></li>
@@ -2058,14 +2059,14 @@ Cov(X,c)=0  &amp; (3) \end{array}\]</span></p>
 <p><span class="math display">\[E_\theta\left[(\frac{\partial}{\partial\theta}\ln f(X|\theta))^2\right]=-E_\theta\left[\frac{\partial^2}{\partial\theta^2}\ln f(X|\theta)\right]\]</span></p>
 <p><strong>Example 7.3.12 ( Conclusion of Example 7.3.8)</strong></p>
 <p><strong>Example 7.3.13 (Unbiased estimator for the scale uniform)</strong></p>
-<p>A shortcoming of this approach to finding best unbiased estimators is that, even if the Cramer-Roo Theorem is applicable, there is no guarantee that the bound is sharp. That is to say, the value of the Cramer-Roo Lower Bound may be <em>strictly smaller</em> than the variance of <em>any</em> unbiased estimator. In fact, in the usually favorable case of being a one-parameter exponential family, the most that we can say is that <span class="math inline">\(f(x|\theta)\)</span> exists a parameter <span class="math inline">\(\tau(\theta)\)</span> with an unbiased estimator that achieves the Cramer-Roo Lower Bound. However, in other typical situations, for other parameters, the bound may not be attainable. These situations cause concern because, if we cannot find an estimator that attains the lower bound, we have to decide whether no estimator can attain it or whether we must look at more estimators.</p>
+<p>A shortcoming of this approach to finding best unbiased estimators is that, even if the Cramer-Rao Theorem is applicable, there is no guarantee that the bound is sharp. That is to say, the value of the Cramer-Roo Lower Bound may be <em>strictly smaller</em> than the variance of <em>any</em> unbiased estimator. In fact, in the usually favorable case of being a one-parameter exponential family, the most that we can say is that <span class="math inline">\(f(x|\theta)\)</span> exists a parameter <span class="math inline">\(\tau(\theta)\)</span> with an unbiased estimator that achieves the Cramer-Roo Lower Bound. However, in other typical situations, for other parameters, the bound may not be attainable. These situations cause concern because, if we cannot find an estimator that attains the lower bound, we have to decide whether no estimator can attain it or whether we must look at more estimators.</p>
 <p><strong>Example 1.3.14 (Normal variance bound)</strong></p>
 <p><strong>Corollary 7.3.15 (Attainment)</strong></p>
 <p><strong>Example 7.3.16 (Continuation of Example 7.3.14)</strong></p>
 </div>
 <div id="sufficiency-and-unbiasedness" class="section level3">
 <h3>7.3.3 Sufficiency and Unbiasedness</h3>
-<p><strong>Theorem 7.3. 17 (Rao-Blackwell)</strong> Let W be any unbiased estimator of T(61), and let T be a sufficient statistic for 61. Define ¢(T) = E (W IT) . Then Eo¢(T) = T(61) and Varo ¢(T) 􀀾 Varo W for all 61; that is, ¢(T) is a uniformly better unbiased estimator of T(e).</p>
+<p><strong>Theorem 7.3. 17 (Rao-Blackwell)</strong> Let <span class="math inline">\(W\)</span> be any unbiased estimator of <span class="math inline">\(\tau(\theta)\)</span>, and let <span class="math inline">\(T\)</span> be a sufficient statistic for <span class="math inline">\(\theta\)</span>. Define <span class="math inline">\(\phi(T)=E[W|T]\)</span>. Then <span class="math inline">\(E_{\theta}\phi(T)=\tau(\theta)\)</span> and <span class="math inline">\(Var_{\theta}\phi(T)\le Var_{\theta}(W)\)</span> for all <span class="math inline">\(\theta\)</span>; that is, <span class="math inline">\(\phi(T)\)</span> is a uniformly better unbiased estimator of <span class="math inline">\(\tau(\theta)\)</span>.</p>
 </div>
 <div id="losst-function-optimality" class="section level3">
 <h3>7.3.4 Losst Function Optimality</h3>
@@ -2099,10 +2100,28 @@ L(\theta,C)=b\text{Length}(C)-I_C(\theta),&amp;\text{CI -9.3.4-}
 </div>
 <div id="calculations-and-comparisons" class="section level3">
 <h3>10.1.3 Calculations and Comparisons</h3>
+<p><strong>Example 20120405p4-8</strong> <span class="math inline">\(X_1,,X_n\sim Expo(\lambda)\)</span> Compare the MLE of <span class="math inline">\(\lambda\)</span> and an unbiased version of it.</p>
+<p>Step 1 <span class="math inline">\(\hat\lambda_{MLE}\)</span></p>
+<p><span class="math inline">\(L(\lambda)=\prod\lambda e^{-\lambda x_i}=\lambda^ne^{-\lambda\sum x_i}\)</span></p>
+<p><span class="math inline">\(l(\lambda)=n\ln\lambda-\lambda\sum x_i\)</span></p>
+<p><span class="math inline">\(l'(\lambda)=\frac{n}\lambda-\sum x_i\overset{\text{set}}{=}0\)</span></p>
+<p><span class="math inline">\(\hat\lambda_{MLE}=\frac{n}{\sum x_i}=\frac1{\bar x}\)</span></p>
+<p>Step 2 <span class="math inline">\(E[\hat\lambda_{MLE}]\)</span></p>
+<p><span class="math inline">\(E[\hat\lambda_{MLE}]=\frac{n\lambda}{n-1}\)</span></p>
+<p>Step 3 <span class="math inline">\(\hat\lambda_{u}\)</span></p>
+<p><span class="math inline">\(\hat\lambda_{u}=\frac{n-1}{\sum x_i}\)</span></p>
+<p>Step 4 CRLB for unbiased</p>
+<p><span class="math inline">\(\frac{1}{nI(\lambda)}=\frac{1}{n\frac1{\lambda^2}}=\frac{\lambda^2}{n}\)</span></p>
+<p>‘Step 5 <span class="math inline">\(V[\hat\lambda_{MLE}]\)</span>’</p>
+<p><span class="math inline">\(V[\hat\lambda_{MLE}]=\frac{n^2\lambda^2}{(n-1)^2(n-2)}\)</span></p>
+<p>Step 6 <span class="math inline">\(V[\hat\lambda_{u}]\)</span></p>
+<p><span class="math inline">\(V[\hat\lambda_{u}]=V[\frac{n-1}n\hat\lambda_{MLE}]=\frac{\lambda^2}{n-2}\)</span></p>
+<p>efficiency of <span class="math inline">\(\hat\lambda_{u}\)</span> is <span class="math inline">\(\frac{\lambda^2/n}{\lambda^2/(n-2)}=\frac{n-2}n\)</span></p>
+<p><span class="math inline">\(\therefore \hat\lambda_{u}\)</span> is not efficient is asymptotic efficient. <span class="math inline">\(\hat\lambda_{MLE}\)</span> is also asymptotic efficieint.</p>
 </div>
-<div id="bootstrap-standard-errors" class="section level3">
-<h3>10.1.4 Bootstrap Standard Errors</h3>
 </div>
+<div id="bootstrap-standard-errors" class="section level2">
+<h2>10.1.4 Bootstrap Standard Errors</h2>
 </div>
 <div id="robustness" class="section level2">
 <h2>10.2 Robustness</h2>
