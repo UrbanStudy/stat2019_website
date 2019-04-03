@@ -440,14 +440,24 @@ $(document).ready(function () {
 <h2>HW2</h2>
 <p><strong>8.5</strong> A random sample, <span class="math inline">\(X_1,..,X_n\)</span>. , is drawn from a Pareto population with pdf <span class="math inline">\(f(x|\theta,\nu)=\frac{\theta\nu^{\theta}}{x^{\theta+1}}I_{[\nu,\infty)}(x),\theta&gt;0,\nu&gt;0\)</span></p>
 <ol style="list-style-type: lower-alpha">
-<li><p>Find the MLEs of <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\nu\)</span>.</p></li>
-<li><p>Show that the LRT of <span class="math inline">\(H_0:\theta=1, \nu\)</span> unknown, versus <span class="math inline">\(H_1: \theta\ne1,\nu\)</span> unknown, has critical region of the form <span class="math inline">\(\{x:T(x)\le C_1 or T(x)\ge c_2\}\)</span>, where <span class="math inline">\(0&lt;C_1&lt;C_2\)</span> and</p></li>
+<li>Find the MLEs of <span class="math inline">\(\theta\)</span> and <span class="math inline">\(\nu\)</span>.</li>
+</ol>
+<p>The log-likelihood is</p>
+<p>where x(1) = mini xi. For any value of , this is an increasing function of for x(1). So both the restricted and unrestricted MLEs of are ˆ = x(1). To find the MLE of , set</p>
+<p>and solve for yielding</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Show that the LRT of <span class="math inline">\(H_0:\theta=1, \nu\)</span> unknown, versus <span class="math inline">\(H_1: \theta\ne1,\nu\)</span> unknown, has critical region of the form <span class="math inline">\(\{x:T(x)\le C_1 or T(x)\ge c_2\}\)</span>, where <span class="math inline">\(0&lt;C_1&lt;C_2\)</span> and</li>
 </ol>
 <p><span class="math display">\[T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]\]</span></p>
+<p>Under H0, the MLE of is 0 = 1, and the MLE of is still = x(1). So the likelihood ratio statistic is</p>
+<ol start="20" style="list-style-type: upper-alpha">
+<li>log (x) = (n/T) − 1. Hence, (x) is increasing if T n and decreasing if T n. Thus, T c is equivalent to T c1 or T c2, for appropriately chosen constants c1 and c2.</li>
+</ol>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Show that, under <span class="math inline">\(H_0, 2T\)</span> has a chi squared distribution, and find the number of degrees of freedom.</li>
 </ol>
 <p>(Hint: Obtain the joint distribution of the <span class="math inline">\(n-1\)</span> nontrivial terms <span class="math inline">\(X_i/(\min_i X_i)\)</span> conditional on <span class="math inline">\(\min_i X_i\)</span>. Put these <span class="math inline">\(n-1\)</span> terms together, and notice that the distribution of <span class="math inline">\(T\)</span> given <span class="math inline">\(\min_i X_i\)</span> does not depend on <span class="math inline">\(\min_i X_i\)</span>, so it is the unconditional distribution of <span class="math inline">\(T\)</span>.)</p>
+<p>We will not use the hint, although the problem can be solved that way. Instead, make the following three transformations. First, let Yi = logXi, i = 1, . . . , n. Next, make the n-to-1 transformation that sets Z1 = mini Yi and sets Z2, . . . ,Zn equal to the remaining Yis, with their order unchanged. Finally, let W1 = Z1 and Wi = Zi − Z1, i = 2, . . . , n. Then you find that the Wis are independent with W1 fW1 (w) = nne−nw, w &gt; log , and Wi exponential(1), i = 2, . . . , n. Now T = Pn i=2Wi gamma(n − 1, 1), and, hence, 2T gamma(n − 1, 2) = 2 2(n−1).</p>
 <p><strong>8.17</strong> Suppose that <span class="math inline">\(X_1,..,X_n\)</span> are iid with a <span class="math inline">\(beta(\mu,1)\)</span> pdf and <span class="math inline">\(Y_1,..,Y_m\)</span> are iid with a <span class="math inline">\(beta(\theta,1)\)</span> pdf. Also assume that the <span class="math inline">\(X_S\)</span> are independent of the <span class="math inline">\(Y_s\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>Find an LRT of <span class="math inline">\(H_0:(\theta=\mu\)</span> versus <span class="math inline">\(H_1:(\theta\ne\mu\)</span>.</p></li>
@@ -468,7 +478,7 @@ $(document).ready(function () {
 <li><p>Based on one observation, <span class="math inline">\(X\)</span>, find the most powerful size <span class="math inline">\(\alpha\)</span> test of <span class="math inline">\(H_0:\theta=0\)</span> versus <span class="math inline">\(H_1:\theta=1\)</span>. For <span class="math inline">\(\alpha=.2\)</span>, find the size of the Type II Error.</p></li>
 <li><p>Show that the test in part (b) is UMP size <span class="math inline">\(\alpha\)</span> for testing <span class="math inline">\(H_0:\theta\le0\)</span> versus <span class="math inline">\(H_1:\theta&gt;1\)</span>. What can be said about UMP tests in general for the logistic location family?</p></li>
 </ol>
-<p><strong>8.33</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from the <span class="math inline">\(uniform(0,\theta+1)\)</span> distribution. <span class="math inline">\(T_0\)</span> test <span class="math inline">\(H_0:\theta=0\)</span>versus <span class="math inline">\(H_1:\theta&gt;0\)</span>, use the test reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(Y_n\ge1\)</span> or$ Y_1k$, where k is a constant, <span class="math inline">\(Y_1= \min\{X_1,..,X_n\}, Y_n= \max\{X_1,..,X_n\}\)</span>.</p>
+<p><strong>8.33</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from the <span class="math inline">\(uniform(0,\theta+1)\)</span> distribution. <span class="math inline">\(T_0\)</span> test <span class="math inline">\(H_0:\theta=0\)</span>versus <span class="math inline">\(H_1:\theta&gt;0\)</span>, use the test reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(Y_n\ge1\)</span> or <span class="math inline">\(Y_1\ge k\)</span>, where k is a constant, <span class="math inline">\(Y_1= \min\{X_1,..,X_n\}, Y_n= \max\{X_1,..,X_n\}\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>Determine k so that the test will have size <span class="math inline">\(\alpha\)</span>.</p></li>
 <li><p>Find an expression for the power function of the test in part (a) .</p></li>
