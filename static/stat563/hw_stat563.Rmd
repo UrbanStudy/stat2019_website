@@ -14,41 +14,46 @@ $P_{\theta}(X=x)=\theta^x(1-\theta)^{1-x}, x=0\ or\ 1, 0\le \theta\le\frac12$
 
 (a) Find the method of moments estimator and MLE of $\theta$
 
-$X_i\sim iid Bernoulli(\theta), 0\le \theta\le\frac12$
+For $X_i\sim iid Bernoulli(\theta), 0\le \theta\le\frac12$, We have $EX=\theta, VX=\theta(1-\theta)$
 
-method of moments: $EX=\theta=\frac1n\sum_iX_i=\bar X \implies\hat\theta=\bar X$
+ - method of moments: 
+ 
+ $EX=\theta=\frac1n\sum_iX_i=\bar X \implies\hat\theta=\bar X$
 
 Set $\theta=\bar X \implies\hat\theta_{MOM}=\bar X$
 
- ---
+ - MLE: 
 
-MLE: 
+$L(\theta)=\prod\theta^{x_i}(1-\theta)^{1-x_i}=\theta^{\sum x_i}(1-\theta)^{n-\sum x_i}$
 
-$$L(\theta)=\prod\theta^{x_i}(1-\theta)^{1-x_i}=\theta^{\sum x_i}(1-\theta)^{n-\sum x_i}$$
+$l(\theta)=\sum_{i=1}^nx_i\ln\theta+(n-\sum x_i)\ln(1-\theta)$
 
-$$l(\theta)=\sum_{i=1}^nx_i\ln\theta+(n-\sum x_i)\ln(1-\theta)$$
+$l'(\theta)=\frac1\theta\sum_{i=1}^nx_i+\frac1{1-\theta}(n-\sum x_i)\overset{\text{set}}{=}0$
 
-$$l'(\theta)=\frac1\theta\sum_{i=1}^nx_i+\frac1{1-\theta}(n-\sum x_i)\overset{\text{set}}{=}0$$
+$l''(\theta)<0$
 
-$$l''(\theta)<0$$
 
-In Example 7.2.7, we showed that $L(|x)$ is increasing for $\theta<\bar x$ and is decreasing for $\theta\ge\bar x$. For $0\le \theta\le\frac12$. 
+From Example 7.2.7, $L(|x)$ is increasing for $\theta<\bar x$ and is decreasing for $\theta\ge\bar x$. 
 
-When $\bar X\le1/2$, $\hat\theta_{MLE}=\bar X$, because X is the overall maximum of $L(|\mathbf{x})$. 
+For $0\le \theta\le\frac12$, when $\bar X\le1/2$, $\max{L(|\mathbf{x})}=\bar X$, $\hat\theta_{MLE}=\bar X$. 
 
-When $\bar X>1/2$, $L(\theta|\mathbf{x})$ is an increasing function of $\theta$ on $[0, 1/2]$ and obtains its maximum at the upper bound of $\hat\theta_{MLE}=1/2$. 
+When $\bar X>1/2$, $L(\theta|\mathbf{x})$ is an increasing function of $\theta$ on $[0, 1/2]$, $\max{L(|\mathbf{x})}=1/2$, $\hat\theta_{MLE}=1/2$. 
 
 So $\hat\theta_{MLE}=\min\{\bar X,1/2\}$.
-
 
  ---
  
 (b) Find the mean squared errors of each of the estimators.
 
-The MSE of $\tilde\theta$is $MSE(\tilde\theta) = Var\tilde\theta + bias(\tilde\theta)^2=((1−\theta)/n)+0^2=(1−\theta)/n$. There is no simple formula for $MSE(\theta)$, but an expression is 
+$MSE(\hat\theta) = E(\hat\theta-\theta)^2$
 
-$$MSE(\hat\theta) = E(\hat\theta-\theta)^2=\sum^n_{y=0}(\hat\theta-\theta)^2{n\choose y}\theta^y(1−\theta )^{n−y}=\sum^\frac{n}2_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y} +\sum^n_{y=\frac{n}2+1}(\frac12−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
-where $Y=\sum_iX_i\sim binomial(n,\theta)$ and $[\frac{n}2]=\frac{n}2$, if n is even, and $[\frac{n}2]=\frac{n-1}2$, if $n$ is odd.
+Let $y=\sum^n_{i=1}X_i=n\bar X\sim Binomial(n,\theta)$, then $\begin{cases}y\le[n/2]&when\bar X\le1/2\\y\ge[n/2]+1&when\bar X>1/2\end{cases}$
+
+$$MSE(\hat\theta_{MOM}) = E(\bar X-\theta)^2=\sum^n_{y=0}(\frac{y}n-\theta)^2{n\choose y}\theta^y(1−\theta )^{n−y}$$
+
+$$MSE(\hat\theta) = E(\hat\theta_{MLE}-\theta)^2=\sum^{[\frac{n}2]}_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y} +\sum^n_{y=[\frac{n}2]+1}(\frac12−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
+
+Note: The MSE of $\tilde\theta$is $MSE(\tilde\theta) = Var\tilde\theta + bias(\tilde\theta)^2=((1−\theta)/n)+0^2=(1−\theta)/n$. There is no simple formula for $MSE(\theta)$. $[\frac{n}2]=\frac{n}2$, if n is even, and $[\frac{n}2]=\frac{n-1}2$, if $n$ is odd.
 
  ---
  
@@ -56,58 +61,83 @@ where $Y=\sum_iX_i\sim binomial(n,\theta)$ and $[\frac{n}2]=\frac{n}2$, if n is 
 
 Using the notation used in (b), we have
 
-$$MSE(\tilde\theta) = E(\bar X-\theta)^2=\sum^n_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
-Therefore,
-$$MSE(\tilde\theta) − MSE(\hat\theta)=\sum^n_{y=[\frac{n}2]+1}\left[(\frac{y}n−\theta)^2-(\frac12−\theta)^2\right]\binom{n}{y}\theta^y(1−\theta)^{n−y}=\sum^n_{y=[\frac{n}2]+1}(\frac{y}n+\frac12−\theta)(\frac{y}n-\frac12)\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
+$$MSE(\hat\theta_{MOM})−MSE(\hat\theta_{MLE})=\sum^n_{y=0}(\frac{y}n-\theta)^2{n\choose y}\theta^y(1−\theta )^{n−y}-\sum^{[\frac{n}2]}_{y=0}(\frac{y}n−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y} -\sum^n_{y=[\frac{n}2]+1}(\frac12−\theta)^2\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
+
+
+$$=\sum^n_{y=[\frac{n}2]+1}\left[(\frac{y}n−\theta)^2-(\frac12−\theta)^2\right]\binom{n}{y}\theta^y(1−\theta)^{n−y}=\sum^n_{y=[\frac{n}2]+1}(\frac{y}n+\frac12−2\theta)(\frac{y}n-\frac12)\binom{n}{y}\theta^y(1−\theta)^{n−y}$$
  
-The facts that y/n > 1/2 in the sum and     1/2 imply that every term in the sum is positive.
-Therefore $MSE(\hat\theta)<MSE(\tilde\theta)=0$ for every $\theta$ in $0<\tilde\theta<\frac12$. (Note: $MSE(\hat\theta)=MSE(\tilde\theta)=0$ at $\theta=0$.)
+For $y/n>1/2, y/n-1/2>0$. For $\theta\le1/2$, $y/n+1/2>1\ge2\theta$
+
+Therefore, $MSE(\hat\theta_{MOM})−MSE(\hat\theta_{MLE})\ge0$, $MSE(\hat\theta_{MOM})\ge MSE(\hat\theta_{MLE})$
   
-  
-
-**7.30** The EM algorithm is useful in a variety of situation, and the definition of "missing data" can be stretched to accommodate many different models. Suppose that we have a mixture density $pf(x) + (1 p)g(x)$, where $p$ is unknown. If we observe $X = (X_1,..,X_n)$, the sample density is $\Pi_{i=1}^n[pf(x_i)+(1-p)g(x_i)$ which could be difficult to deal with. (Actually, a mixture of two is not terrible, but consider what the likelihood would look like with a mixture $L:=l P;Ji(X)$ for large k.)
-The EM solution is to augment the observed (or incomplete) data with $Z (Z_1,..,Z_n)$, where $Z_i$ tells which component of the mixture $X_i$ came from; that is,
-
-$X_i|z_i=1\sim f(X_i)$ and $X_i|z_i=0\sim g(x_i)$,and $P(Z_i=1)=p$
-
-(a) Show that the joint density of $(X,Z)$ is given by $\sum^n_{i=1}[pf(x_i)^{z_i}][(1-p)g(x_i)^{1-z_i}]$.
-
-Joint density $f(x,y)=f(x|y)f(y)$,
-
-$$f(\vec x,\vec z)=f(\vec x|\vec z)f(\vec z)=\prod^n_{i=1}f(x_i|z_i)f(z_i)=\prod^n_{i=1}[pf(x_i)]^{z_i}[(1-p)g(x_i)]^{1-z_i}$$
-
-(b) Show that the missing data distribution, the distribution of $Z_i|x_i,p$ is Bernoulli with success probability $\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}$.
-
-Conditional density $f(x|y)=\frac{f(x,y)}{f(y)}$,
-
-$$P(Z_i=1|X_i,p)=\frac{f(x_i,1|p)}{f(x_i|p)}=\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}$$
-
-(c) Calculate the expected complete-data log likelihood, and show that the EM sequence is given by
-
-$$f(\vec x,\vec z)\propto p^{\sum^n_{i=1}z_i}(1-p)^{\sum^n_{i=1}(1-z_i)}$$
-
-which is a Bernoulli joint pdf. For complete data,
-
-$$\hat p=\frac1n\sum Z_i$$
-
-Replacing the missing data with its expectation,
-
-$$E(Z_i|X_i,p)=P(Z_i=1|X_i,p)$$
-
-Through r times iteration,
-
-$$\hat p^{(r+1)}=\frac1n\sum_{i=1}^n\frac{\hat p^{(r)}f(x_i)}{\hat p^{(r)}f(x_i)+(1-\hat p^{(r)})g(x_i)}$$
 
 **7.48** Suppose that $X_i, i=1,..,n$, are iid $Bernoulli(p)$.
 
 (a) Show that the variance of the MLE of $p$ attains the Cramer-Rae Lower Bound.
 
+ -MLE of p
+
+$L(p)=\prod p^{x_i}(1-p)^{1-x_i}=p^{\sum x_i}(1-p)^{n-\sum x_i}$
+
+$l(p)=\sum_{i=1}^nx_i\ln p+(n-\sum x_i)\ln(1-p)$
+
+$l'(p)=\frac1p\sum_{i=1}^nx_i+\frac1{1-p}(n-\sum x_i)\overset{\text{set}}{=}0$
+
+$l''(p)<0$
+
+$\hat p_{MLE}=\bar X$
+
+$E[\hat p_{MLE}]=E[\bar X]=p$
+
+$V[\hat p_{MLE}]=V[\bar X]=\frac{p(1-p)}{p}$
+
+Let $w=\bar x$, then $k(p)=E[w]=p$, $f(x|p)=p^x(1-p)^{1-x}\sim Bern(p)$
+
+$\ln f(x|p)=x\ln p+(1-x)\ln(1-p)$
+
+$\frac\partial{\partial{p}}\ln f(x|p)=\frac{x}p-\frac{1-x}{1-p}$
+
+$\frac{\partial^2}{\partial{p}}\ln f(x|p)=-\frac{x}{p^2}-\frac{1-x}{(1-p)^2}=-\frac{x-2px+xp^2+p^2-xp^2}{p^2(1-p)^2}$
+
+$I(p)=-E[\frac{\partial^2}{\partial{p}}\ln f(x|p)]=\frac{1}{p(1-p)}$
+
+By Cramer-Rao Inequality,
+
+$$Var_p(W)\ge\frac{(\frac{\partial}{\partial p}E_p[W])^2}{nI(p)}=\frac{(k'(p))^2}{n\frac{1}{p(1-p)}}=\frac{p(1-p)}{n}$$
+
 (b) For $n\ge4$, show that the product $X_1X_2X_3X_4$ is an unbiased estimator of $p^4$, and use this fact to find the best unbiased estimator of $p^4$.
 
+$E(x_1x_2x_3x_4)=\prod_{i=1}^n EX_i=p^4$ which is a unbiased estimator.
 
+$T(\vec x)=\sum_{i=1}^n X_i\sim Bino(n,p)$ is a complete sufficient statistic.
+
+By Rao-Blackwell and Lehmann-Scheffe Theorem, $E[x_1x_2x_3x_4|\sum_{i=1}^n X_i=t]$ is MUVE of $p^4$.
+
+$$E[x_1x_2x_3x_4|\sum_{i=1}^n X_i=t]=\sum_{x_1=0}^1\sum_{x_2=0}^1\sum_{x_3=0}^1\sum_{x_4=0}^1x_1x_2x_3x_4P(x_1x_2x_3x_4|\sum_{i=1}^n X_i=t)$$
+
+$$=P(x_1=x_2=x_3=x_4=1|\sum_{i=1}^n X_i=t)=\frac{P(x_1=x_2=x_3=x_4=1,\sum_{i=1}^n X_i=t)}{P(\sum_{i=1}^n X_i=t)}$$
+
+$$=\frac{P(x_1=x_2=x_3=x_4=1,\sum_{i=5}^n X_i=t-4)}{P(\sum_{i=1}^n X_i=t)}=\frac{p^4{n-4\choose t-4}p^{t-4}(1−p)^{n−t}}{{n\choose t}p^{t}(1−p)^{n−t}}=\frac{n-4\choose t-4}{n\choose t}$$
 
 **7.59** Let $X_1,..,X_n$ be iid $n(\mu, \sigma^2)$. Find the best unbiased estimator of $\sigma^2$, where $p$ is a known positive constant, not necessarily an integer.
 
+ - Find the complete sufficient statistic for $\sigma^p$ called $T$
+
+Let $T=(n-1)S^2/\sigma^2\sim \chi^2_{n-1}=Gamma(\frac{n-1}2,2)$, then 
+
+ Form Theorem 6.2.25, in the exponential familiy, $T=(n-1)S^2/\sigma^2$ is a complete sufficient statistic.
+ 
+ - Find the function of $T$ that is an unbiased estimator of $\sigma^p$
+ 
+$$E[T^{\frac{p}2}]=\frac{1}{\Gamma(\frac{n-1}2)2^{\frac{n-1}2}}\int_0^\infty t^{\frac{p+n-1}2-1}e^{-t/2}dt=\frac{2^{\frac{p}2}\Gamma(\frac{p+n-1}2)}{\Gamma(\frac{n-1}2)}$$
+
+$$E[T^{\frac{p}2}]=E[(\frac{(n-1)S^2}{\sigma^2})^{\frac{p}2}]=E[\frac{(n-1)^{\frac{p}2}S^p}{\sigma^p}]$$
+
+$$\therefore E[\frac{(n-1)^{\frac{p}2}S^p}{\sigma^p}]=\frac{2^{\frac{p}2}\Gamma(\frac{p+n-1}2)}{\Gamma(\frac{n-1}2)}\implies E[{(\frac{n-1}2})^{\frac{p}2}\frac{\Gamma(\frac{n-1}2)}{\Gamma(\frac{p+n-1}2)}S^p]=\sigma^p$$
+ 
+ ${(\frac{n-1}2})^{\frac{p}2}\frac{\Gamma(\frac{n-1}2)}{\Gamma(\frac{p+n-1}2)}S^p$ is an unbiased estimator of $\sigma^p$.
+
+By Rao-Blackwell and Lehmann-Scheffe Theorem, when a function of T is an unbiased estimator of $\sigma^p$ and $T$ is a complete sufficient statistic for $\sigma^p$,  this function is the best unbiased estimator.
 
 ## HW2
 
@@ -196,3 +226,37 @@ $H_0:\theta=0$versus $H_1:\theta>0$, use the test reject $H_0$ if $Y_n\ge1$ or $
 Show that $\hat x=\frac{by+x-ab}{1+b^2}; \hat y=a+\frac b{1+b^2}(by+x-ab)$
 
 
+  
+
+**7.30** The EM algorithm is useful in a variety of situation, and the definition of "missing data" can be stretched to accommodate many different models. Suppose that we have a mixture density $pf(x) + (1 p)g(x)$, where $p$ is unknown. If we observe $X = (X_1,..,X_n)$, the sample density is $\Pi_{i=1}^n[pf(x_i)+(1-p)g(x_i)$ which could be difficult to deal with. (Actually, a mixture of two is not terrible, but consider what the likelihood would look like with a mixture $L:=l P;Ji(X)$ for large k.)
+The EM solution is to augment the observed (or incomplete) data with $Z (Z_1,..,Z_n)$, where $Z_i$ tells which component of the mixture $X_i$ came from; that is,
+
+$X_i|z_i=1\sim f(X_i)$ and $X_i|z_i=0\sim g(x_i)$,and $P(Z_i=1)=p$
+
+(a) Show that the joint density of $(X,Z)$ is given by $\sum^n_{i=1}[pf(x_i)^{z_i}][(1-p)g(x_i)^{1-z_i}]$.
+
+Joint density $f(x,y)=f(x|y)f(y)$,
+
+$$f(\vec x,\vec z)=f(\vec x|\vec z)f(\vec z)=\prod^n_{i=1}f(x_i|z_i)f(z_i)=\prod^n_{i=1}[pf(x_i)]^{z_i}[(1-p)g(x_i)]^{1-z_i}$$
+
+(b) Show that the missing data distribution, the distribution of $Z_i|x_i,p$ is Bernoulli with success probability $\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}$.
+
+Conditional density $f(x|y)=\frac{f(x,y)}{f(y)}$,
+
+$$P(Z_i=1|X_i,p)=\frac{f(x_i,1|p)}{f(x_i|p)}=\frac{pf(x_i)}{pf(x_i)+(1-p)g(x_i)}$$
+
+(c) Calculate the expected complete-data log likelihood, and show that the EM sequence is given by
+
+$$f(\vec x,\vec z)\propto p^{\sum^n_{i=1}z_i}(1-p)^{\sum^n_{i=1}(1-z_i)}$$
+
+which is a Bernoulli joint pdf. For complete data,
+
+$$\hat p=\frac1n\sum Z_i$$
+
+Replacing the missing data with its expectation,
+
+$$E(Z_i|X_i,p)=P(Z_i=1|X_i,p)$$
+
+Through r times iteration,
+
+$$\hat p^{(r+1)}=\frac1n\sum_{i=1}^n\frac{\hat p^{(r)}f(x_i)}{\hat p^{(r)}f(x_i)+(1-\hat p^{(r)})g(x_i)}$$
