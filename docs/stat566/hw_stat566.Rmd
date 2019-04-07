@@ -1,0 +1,85 @@
+---
+title: "STAT566 Homework"
+author: ''
+date: "Spring 2019"
+output: html_document
+---
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## HW1
+
+### Problem 1: In a home economic experiment, two temperatures (factor A) and two lengths of washing time (factor B) gave the following treatment means:
+
+|     |(1) |a	  |b	 |ab
+| --- | -- | -- | -- | --
+|Mean	|6.2 |14.1|5.4 |7.8
+
+The experiment was conducted as a completely randomized design with n=5 for teach treatment combination. The variable of interest was the amount of impurities (in grams) remaining in the material washed. Assume fixed effects for both factors.
+
+(i) Compute the numerical values of the following effects and interpret in terms of question context:
+	(a) main effect of A
+
+$$A=\frac12(\bar y_a+\bar y_{ab}-\bar y_{(1)}-\bar y_b)=\frac12(14.1+7.8-6.2-5.4)=5.15$$
+	
+	(b) main effect of B
+
+$$B=\frac12(\bar y_b+\bar y_{ab}-\bar y_{(1)}-\bar y_a)=\frac12(5.4+7.8-6.2-14.1)=-3.55$$
+
+	(c) interaction effect of A and B
+	
+$$AB=\frac12(\bar y_{ab}+\bar y_{(1)}-\bar y_a-\bar y_b)=\frac12(7.8+6.2-14.1-5.4)=-2.75$$
+	
+(ii) Explain which effect is highest from the effects in part (i).
+
+The main effect of A is highest and main effect of B is smaller than that while it is higher than interaction effect.
+
+(iii) Compute the sum of square for each effect in part (i).
+
+$$SS_A=\frac{n}4C_A^2=\frac{n}4(\bar y_a+\bar y_{ab}-\bar y_{(1)}-\bar y_b)^2=\frac54(14.1+7.8-6.2-5.4)^2=132.6125$$
+$$SS_B=\frac{n}4C_B^2=\frac{n}4(\bar y_b+\bar y_{ab}-\bar y_{(1)}-\bar y_a)^2=\frac54(5.4+7.8-6.2-14.1)^2=63.0125$$
+$$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{ab}+\bar y_{(1)}-\bar y_a-\bar y_b)^2=\frac54(7.8+6.2-14.1-5.4)^2=37.8125$$
+
+```{r eval=FALSE, include=FALSE}
+(14.1+7.8-6.2-5.4)^2*5/4
+(5.4+7.8-6.2-14.1)^2*5/4
+(7.8+6.2-14.1-5.4)^2*5/4
+29.8*16+132.6125+63.0125+37.8125
+
+132.6125/29.8
+63.0125/29.8
+37.8125/29.8
+
+df(132.6125/29.8, 1, 16,log= FALSE)
+df(63.0125/29.8, 1, 16,log= FALSE)
+df(37.8125/29.8, 1, 16,log= FALSE)
+pf(132.6125/29.8, 1, 16, lower.tail = TRUE, log.p = FALSE)
+qf(132.6125/29.8, 1, 16, lower.tail = TRUE, log.p = FALSE)
+```
+
+(iv) If the MSE = 29.8, then compute all the terms of the ANOVA table for this study.
+
+|Source of Variation|   SS          |      df      | MS     | F      |P-value   |
+|         ---       |   ---         |   ---        | ---    | ---    | ---      |
+|Factor A           |132.6125       |   $2-1=1$    |132.6125|4.450084|0.02312363|
+|Factor B           | 63.0125       |   $2-1=1$    | 63.0125|2.114513|0.1822612 |
+|Interaction AB     | 37.8125       |$(2-1)(2-1)=1$| 37.8125|1.268876|0.1822612 |
+|Error              |$29.8*16=476.8$|$4*(5-1)=16$  | 29.8   |
+|Total              |710.2375       |$2^2*5-1=19$  |
+
+(v) Based on your ANOVA table, explain which of effects in part (i) are statistically significant at 5% significance level.
+
+### Problem 2: 
+
+(i) Create a table of plus and minus for a 25 factorial design. Make sure to use standard order of letter assignments for treatment combinations.
+
+(ii) Write a contrast statement for the four factor interaction effect using standard order of letters as we did in class. Assume n replications for each treatment combination.
+
+### Problem 3: Use any software to do this problem
+
+
+In part (a), show the normal probabiltiy plot. Then explain and name the effects that are neglegible.
+
+In Part (b), write the theoretical model fit for these data without neglegible terms.
+
+
