@@ -417,17 +417,21 @@ $(document).ready(function () {
 </table>
 <p>The experiment was conducted as a completely randomized design with n=5 for teach treatment combination. The variable of interest was the amount of impurities (in grams) remaining in the material washed. Assume fixed effects for both factors.</p>
 <ol style="list-style-type: lower-roman">
-<li><p>Compute the numerical values of the following effects and interpret in terms of question context:</p>
+<li>Compute the numerical values of the following effects and interpret in terms of question context:</li>
+</ol>
 <ol style="list-style-type: lower-alpha">
 <li>main effect of A</li>
-</ol></li>
 </ol>
 <p><span class="math display">\[A=\frac12(\bar y_a+\bar y_{ab}-\bar y_{(1)}-\bar y_b)=\frac12(14.1+7.8-6.2-5.4)=5.15\]</span></p>
 <p>The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high.</p>
-<pre><code> b. main effect of B</code></pre>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>main effect of B</li>
+</ol>
 <p><span class="math display">\[B=\frac12(\bar y_b+\bar y_{ab}-\bar y_{(1)}-\bar y_a)=\frac12(5.4+7.8-6.2-14.1)=-3.55\]</span></p>
 <p>The average amount of impurities remaining in the material washed decrease by 3.55 grams as the lengths of washing time changes from short to long.</p>
-<pre><code> c. interaction effect of A and B</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>interaction effect of A and B</li>
+</ol>
 <p><span class="math display">\[AB=\frac12(\bar y_{ab}+\bar y_{(1)}-\bar y_a-\bar y_b)=\frac12(7.8+6.2-14.1-5.4)=-2.75\]</span></p>
 <p>The average amount of impurities remaining in the material washed decrease by 2.75 grams as the temperatures changes from low to high and the lengths of washing time changes from short to long.</p>
 <ol start="2" style="list-style-type: lower-roman">
@@ -540,52 +544,4338 @@ $(document).ready(function () {
 |bcde | - | + | + | + | + | -  | -  | -  | -  | +  | +  | +  | +  | +  | +  | -   | -   | -   | -   | -   | -   | +   | +   | +   | +   |  -   |  -   |  -   |  -   |  +   |  -    |
 |abcde| + | + | + | + | + | +  | +  | +  | +  | +  | +  | +  | +  | +  | +  | +   | +   | +   | +   | +   | +   | +   | +   | +   | +   |  +   |  +   |  +   |  +   |  +   |  +    | 
 -->
-<pre class="r"><code>five_factor &lt;- tribble(
-~effect, ~A, ~B, ~C, ~D, ~E, ~AB, ~AC, ~AD, ~AE, ~BC, ~BD, ~BE, ~CD, ~CE, ~DE, ~ABC, ~ABD, ~ABE, ~ACD, ~ACE, ~ADE, ~BCD, ~BCE, ~BDE, ~CDE, ~ABCD, ~ABCE, ~ABDE, ~ACDE, ~BCDE, ~ABCDE,
-&quot;(1)&quot; , &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;a&quot;   , &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;b&quot;   , &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;ab&quot;  , &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;c&quot;   , &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;ac&quot;  , &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;bc&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;abc&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;d&quot; , &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;ad&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;bd&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;cd&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;abd&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;acd&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;bcd&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;abcd&quot; , &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;e&quot; , &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;ae&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;be&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;ce&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;de&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;abe&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;ace&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;ade&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot; ,
-&quot;bce&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;bde&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;cde&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot; ,
-&quot;abce&quot; , &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;abde&quot; , &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;acde&quot; , &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot;,&quot;-&quot; ,
-&quot;bcde&quot; , &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;-&quot;,&quot;+&quot;,&quot;-&quot; ,
-&quot;abcde&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;, &quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;,&quot;+&quot;
-)
-
-five_factor%&gt;%
-  cell_spec(&quot;-&quot;,background = &quot;#f9e9e9&quot;) %&gt;%
-  kable(escape = F) %&gt;%
-  kable_styling(&quot;striped&quot;, full_width = F)</code></pre>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+effect
+</th>
+<th style="text-align:left;">
+A
+</th>
+<th style="text-align:left;">
+B
+</th>
+<th style="text-align:left;">
+C
+</th>
+<th style="text-align:left;">
+D
+</th>
+<th style="text-align:left;">
+E
+</th>
+<th style="text-align:left;">
+AB
+</th>
+<th style="text-align:left;">
+AC
+</th>
+<th style="text-align:left;">
+AD
+</th>
+<th style="text-align:left;">
+AE
+</th>
+<th style="text-align:left;">
+BC
+</th>
+<th style="text-align:left;">
+BD
+</th>
+<th style="text-align:left;">
+BE
+</th>
+<th style="text-align:left;">
+CD
+</th>
+<th style="text-align:left;">
+CE
+</th>
+<th style="text-align:left;">
+DE
+</th>
+<th style="text-align:left;">
+ABC
+</th>
+<th style="text-align:left;">
+ABD
+</th>
+<th style="text-align:left;">
+ABE
+</th>
+<th style="text-align:left;">
+ACD
+</th>
+<th style="text-align:left;">
+ACE
+</th>
+<th style="text-align:left;">
+ADE
+</th>
+<th style="text-align:left;">
+BCD
+</th>
+<th style="text-align:left;">
+BCE
+</th>
+<th style="text-align:left;">
+BDE
+</th>
+<th style="text-align:left;">
+CDE
+</th>
+<th style="text-align:left;">
+ABCD
+</th>
+<th style="text-align:left;">
+ABCE
+</th>
+<th style="text-align:left;">
+ABDE
+</th>
+<th style="text-align:left;">
+ACDE
+</th>
+<th style="text-align:left;">
+BCDE
+</th>
+<th style="text-align:left;">
+ABCDE
+</th>
+<th style="text-align:left;">
+cell_spec(“+”, background = “#EAFAF1”)
+</th>
+</tr>
+</thead>
 <tbody>
 <tr>
+<td style="text-align:left;">
+<ol style="list-style-type: decimal">
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+a
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ab
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+c
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ac
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bc
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abc
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+d
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ad
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bd
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cd
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abd
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acd
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bcd
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abcd
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+e
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ae
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+be
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ce
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+de
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abe
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ace
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ade
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bce
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bde
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+cde
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abce
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abde
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acde
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bcde
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+abcde
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<span style="     border-radius: 4px; padding-right: 4px; padding-left: 4px; background-color: #EAFAF1 !important;">+</span>
+</td>
 </tr>
 </tbody>
-</table>
+</table></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ol>
 <ol start="2" style="list-style-type: lower-roman">
 <li>Write a contrast statement for the four factor interaction effect using standard order of letters as we did in class. Assume n replications for each treatment combination.</li>
 </ol>
