@@ -203,15 +203,15 @@ car::qqPlot(hw1_3$effect)
 library(ggplot2)
 hw1_3_qq<-ggplot(hw1_3, aes(sample = effect),label=factor) + stat_qq()
 hw1_3_new<-ggplot_build(hw1_3_qq)$data[[1]]
-# hw1_3_new$name<-hw1_3_new$name[order(hw1_3$factors)]
-hw1_3_new%>%mutate(name=hw1_3$factors)%>%
-ggplot(aes(theoretical,sample,label=name))+geom_text()+ geom_abline(linetype = "dotted") + theme_bw()
+# hw1_3_new$name<-hw1_3_new$name[order(hw1_3$effect)]
+hw1_3_new%>%mutate(name=hw1_3$factors[order(hw1_3$effect)])%>%
+ggplot(aes(theoretical,sample,label=name))+geom_text()+ geom_smooth(method='lm',se=F,linetype = "dotted")+geom_abline(linetype=4,col="red")+ theme_bw()
 
 ```
 
 (b).Identify a tentative model, based on the plot of the effects in part (a) write the theoretical model fit for these data without neglegible terms.
 
-$$y_{ijk}=\mu+\tau_i+\beta_j+\gamma_k+\delta_l+(\tau\beta\gamma\delta)_{ijkl}+\varepsilon_{ijkl}$$
-$$y=\beta_0+\beta_ax_a+\beta_bx_b+\beta_cx_c+\beta_dx_d+\beta_{abcd}x_{a}x_bx_cx_d+\varepsilon$$
+$$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ij}$$
+$$y=\beta_0+\beta_ax_a+\beta_bx_b+\beta_{ab}x_{a}x_b+\varepsilon$$
 
 
