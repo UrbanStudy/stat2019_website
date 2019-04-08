@@ -194,9 +194,24 @@ $$+\bar y_e-\bar y_{ae}-\bar y_{be}-\bar y_{ce}-\bar y_{de}+\bar y_{abe}+\bar y_
 
 ### Problem 3: Use any software to do this problem
 
+(a). contruct a normal probability plot of these effects. Then explain and name the effects that are neglegible.
 
-In part (a), show the normal probabiltiy plot. Then explain and name the effects that are neglegible.
+```{r echo=FALSE}
+hw1_3 <- tribble(~factors, ~effect, "A",76.95, "B", -67.52,"C",-7.84, "D",-18.73, "AB", -51.32, "AC", 11.69, "AD",9.78, "BC", 20.78, "BD", 14.74, "CD", 1.27, "ABC", -2.82, "ABD", -6.5, "ACD",10.2, "BCD",-7.98, "ABCD",-6.25)
+car::qqPlot(hw1_3$effect)
 
-In Part (b), write the theoretical model fit for these data without neglegible terms.
+library(ggplot2)
+hw1_3_qq<-ggplot(hw1_3, aes(sample = effect),label=factor) + stat_qq()
+hw1_3_new<-ggplot_build(hw1_3_qq)$data[[1]]
+# hw1_3_new$name<-hw1_3_new$name[order(hw1_3$factors)]
+hw1_3_new%>%mutate(name=hw1_3$factors)%>%
+ggplot(aes(theoretical,sample,label=name))+geom_text()+ geom_abline(linetype = "dotted") + theme_bw()
+
+```
+
+(b).Identify a tentative model, based on the plot of the effects in part (a) write the theoretical model fit for these data without neglegible terms.
+
+$$y_{ijk}=\mu+\tau_i+\beta_j+\gamma_k+\delta_l+(\tau\beta\gamma\delta)_{ijkl}+\varepsilon_{ijkl}$$
+$$y=\beta_0+\beta_ax_a+\beta_bx_b+\beta_cx_c+\beta_dx_d+\beta_{abcd}x_{a}x_bx_cx_d+\varepsilon$$
 
 
