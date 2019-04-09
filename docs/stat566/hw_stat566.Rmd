@@ -19,10 +19,10 @@ library(dplyr)
 ### Problem 1: 
 In a home economic experiment, two temperatures (factor A) and two lengths of washing time (factor B) gave the following treatment means. The experiment was conducted as a completely randomized design with n=5 for teach treatment combination. The variable of interest was the amount of impurities (in grams) remaining in the material washed. Assume fixed effects for both factors.
 
-```{r}
+```{r echo=FALSE}
 Factor <- c("(1)","a","b","ab")
 Mean <- c(6.2,14.1,5.4,7.8)
-kable(t(data_frame(Factor,Mean)))%>%kable_styling("condensed",full_width = F)
+kable(t(data_frame(Factor,Mean)))%>%kable_styling("condensed",full_width = F, position = "center")
 ```
 
 <!--|     |(1) |a	  |b	 |ab
@@ -33,19 +33,19 @@ kable(t(data_frame(Factor,Mean)))%>%kable_styling("condensed",full_width = F)
 
 a. main effect of A
 
-$$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})=\frac12(-6.2+14.1-5.4+7.8)=5.15$$
+$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})=\frac12(-6.2+14.1-5.4+7.8)=5.15$
 
 The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high. 
 
 b. main effect of B
 
-$$B=\frac12(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})=\frac12(-6.2-14.1+5.4+7.8)=-3.55$$
+$B=\frac12(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})=\frac12(-6.2-14.1+5.4+7.8)=-3.55$
 
 The average amount of impurities remaining in the material washed decrease by 3.55 grams as the lengths of washing time changes from short to long. 
 
 c. interaction effect of A and B
 	
-$$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})=\frac12(6.2-14.1-5.4+7.8)=-2.75$$
+$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})=\frac12(6.2-14.1-5.4+7.8)=-2.75$
 
 The average amount of impurities remaining in the material washed decrease by 2.75 grams as the temperatures changes from low to high and the lengths of washing time changes from short to long. 
 
@@ -55,9 +55,11 @@ The main effect of A is highest and main effect of B is smaller than that while 
 
 (iii) Compute the sum of square for each effect in part (i).
 
-$$SS_A=\frac{n}4C_A^2=\frac{n}4(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})^2=\frac54(-6.2+14.1-5.4+7.8)^2=132.6125$$
-$$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2=\frac54(-6.2-14.1+5.4+7.8)^2=63.0125$$
-$$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2=\frac54(6.2-14.1-5.4+7.8)^2=37.8125$$
+$SS_A=\frac{n}4C_A^2=\frac{n}4(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})^2=\frac54(-6.2+14.1-5.4+7.8)^2=132.6125$
+
+$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2=\frac54(-6.2-14.1+5.4+7.8)^2=63.0125$
+
+$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2=\frac54(6.2-14.1-5.4+7.8)^2=37.8125$
 
 ```{r eval=FALSE, include=FALSE}
 (14.1+7.8-6.2-5.4)^2*5/4
@@ -90,8 +92,8 @@ pf(37.8125/29.8, 1, 16, lower.tail =F, log.p = FALSE)
 |Factor B           | 63.0125       |   $2-1=1$    | 63.0125|$\frac{63.0125}{29.8}=2.114513$|0.1652436 |
 |Interaction AB     | 37.8125       |$(2-1)(2-1)=1$| 37.8125|$\frac{37.8125}{29.8}=1.268876$|0.2765897 |
 |Error              |$29.8*16=476.8$|$4*(5-1)=16$  | 29.8   |
-|Total|$132.6125+63.0125+37.8125$|$2^2*5-1=19$  |
-|     |$+476.8=710.2375$|
+|     |$132.6125+63.0125+37.8125$|
+|Total|$+476.8=710.2375$|$2^2*5-1=19$  |
 
 (v) Based on your ANOVA table, explain which of effects in part (i) are statistically significant at 5% significance level.
 
@@ -174,7 +176,7 @@ five_factor <- tribble(
 "abcde", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]","[+]","[+]","[+]","[+]","[+]","[+]"
 )
 
-five_factor%>%mutate(ABCD=cell_spec(ABCD,background=ifelse(ABCD=="[-]","#EAFAF1","#f9ece9")))%>%kable(,"html",escape = F) %>%kable_styling("condensed",font_size = 7, full_width = F)
+five_factor%>%mutate(ABCD=cell_spec(ABCD,background=ifelse(ABCD=="[-]","#EAFAF1","#f9ece9")))%>%kable(,"html",escape = F) %>%kable_styling("condensed",font_size = 9, full_width = F)
 
 ```
 
