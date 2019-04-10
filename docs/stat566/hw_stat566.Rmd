@@ -7,12 +7,6 @@ output: html_document
 
 #  {.tabset .tabset-fade .tabset-pills}
 
-```{r include=FALSE}
-library(kableExtra)
-library(dplyr)
-
-```
-
 
 ## HW1
 
@@ -20,9 +14,10 @@ library(dplyr)
 In a home economic experiment, two temperatures (factor A) and two lengths of washing time (factor B) gave the following treatment means. The experiment was conducted as a completely randomized design with n=5 for teach treatment combination. The variable of interest was the amount of impurities (in grams) remaining in the material washed. Assume fixed effects for both factors.
 
 ```{r echo=FALSE}
+library(kableExtra)
 Factor <- c("(1)","a","b","ab")
 Mean <- c(6.2,14.1,5.4,7.8)
-kable(t(data_frame(Factor,Mean)))%>%kable_styling("condensed",full_width = F, position = "center")
+kable(t(data.frame(Factor,Mean)))%>%kable_styling("condensed",full_width = F, position = "center")
 ```
 
 <!--|     |(1) |a	  |b	 |ab
@@ -140,6 +135,7 @@ Based on the ANOVA table, all the P-value are larger than 0.05. There is no fact
 -->
 
 ```{r echo=FALSE}
+library(dplyr)
 five_factor <- tribble(
 ~effect, ~A, ~B, ~C, ~D, ~E, ~AB, ~AC, ~AD, ~AE, ~BC, ~BD, ~BE, ~CD, ~CE, ~DE, ~ABC, ~ABD, ~ABE, ~ACD, ~ACE, ~ADE, ~BCD, ~BCE, ~BDE, ~CDE, ~ABCD, ~ABCE, ~ABDE, ~ACDE, ~BCDE, ~ABCDE,
 "1" , "[-]", "[-]", "[-]", "[-]", "[-]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[+]", "[-]", "[-]", "[-]", "[-]", "[-]", "[-]", "[-]", "[-]", "[-]", "[-]","[+]","[+]","[+]","[+]","[+]","[-]" ,
@@ -180,30 +176,21 @@ five_factor%>%mutate(ABCD=cell_spec(ABCD,background=ifelse(ABCD=="[-]","#EAFAF1"
 
 ```
 
-
-
-```{r eval=FALSE, include=FALSE}
-install.packages("FrF2")
-library(FrF2)
-FrF2(32,5, factor.names = c('A', 'B','C', 'D', 'E'), randomize = FALSE)
-design.info(FrF2(8,5,MaxC2=TRUE))
-
- install.packages("AlgDesign")
-library(AlgDesign)
-gen.factorial(levels = 2, nVars = 5, varNames=c("A","B","C","D","E"))
-```
-
 (ii) Write a contrast statement for the four factor interaction effect using standard order of letters as we did in class. Assume n replications for each treatment combination.
 
 $$ABCD=\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab}-\bar y_c+\bar y_{ac}+\bar y_{bc}-\bar y_{abc}-\bar y_d+\bar y_{ad}+\bar y_{bd}+\bar y_{cd}-\bar y_{abd}-\bar y_{acd}-\bar y_{bcd}+\bar y_{abcd}$$
 $$+\bar y_e-\bar y_{ae}-\bar y_{be}-\bar y_{ce}-\bar y_{de}+\bar y_{abe}+\bar y_{ace}+\bar y_{ade}+\bar y_{bce}+\bar y_{bde}+\bar y_{cde}-\bar y_{abce}-\bar y_{abde}-\bar y_{acde}-\bar y_{bcde}+\bar y_{abcde}$$
 
-### Problem 3: Use any software to do this problem
+### Problem 3:
 
 (a). contruct a normal probability plot of these effects. Then explain and name the effects that are neglegible.
 
 ```{r echo=FALSE, results='hold', out.width='30%'}
 hw1_3 <- tribble(~factors, ~effect, "A",76.95, "B", -67.52,"C",-7.84, "D",-18.73, "AB", -51.32, "AC", 11.69, "AD",9.78, "BC", 20.78, "BD", 14.74, "CD", 1.27, "ABC", -2.82, "ABD", -6.5, "ACD",10.2, "BCD",-7.98, "ABCD",-6.25)
+
+factors <-c("A","B","C","D","AB","AC","AD","BC","BD","CD","ABC","ABD", "ACD","BCD","ABCD")
+effect <- c(76.95,-67.52,-7.84,-18.73,-51.32,11.69,9.78,20.78,14.74,1.27,-2.82,-6.5,10.2,-7.98,-6.25)
+hw1_3 <- data.frame(factors,effect)
 
 library(ggplot2)
 hw1_3_qq<-ggplot(hw1_3, aes(sample = effect),label=factors) + stat_qq()
@@ -212,27 +199,46 @@ hw1_3_new<-ggplot_build(hw1_3_qq)$data[[1]]
 hw1_3_new%>%mutate(name=hw1_3$factors[order(hw1_3$effect)])%>%
 ggplot(aes(theoretical,sample,label=name))+geom_text()+stat_qq_line(aes(sample = y), line.p = c(0.25, 0.75),linetype=4, col = "red")+ theme_light()
 library(gghalfnorm)
-gghalfnorm(x = hw1_3$effect,labs =hw1_3$factors, nlab = 3)+ theme_light()
+gghalfnorm(x = hw1_3$effect,labs = as.character(hw1_3$factors), nlab = 3)+ theme_light()
 library(daewr) 
-halfnorm(hw1_3$effect, names(hw1_3$factors), alpha = 0.05)
+halfnorm(hw1_3$effect, names(as.character(hw1_3$factors)), alpha = 0.05)
 ```
 
-```{r echo=TRUE, message=FALSE, out.width='45%', results='hold',collapse=TRUE}
+```{r echo=F, message=FALSE, out.width='45%', results='hold',collapse=TRUE}
 library(FrF2)
 hw1_3_design <- FrF2(nruns=16, nfactors=4, randomize = FALSE)
 hw1_3_response <- c(-1.57,76.95,-67.52,-51.32,-7.84,11.69,20.78,-2.82,-18.73,9.78,14.74,-6.5,1.27,10.2,-7.98,-6.25) 
+# Here the data are effect, should not be used as response variable.
 hw1_3_table<- add.response(hw1_3_design, response =hw1_3_response)
 hw1_3_table
 hw1_3_model <-lm( hw1_3_response ~ A * B * C * D, data =hw1_3_table) 
 hw1_3_effects <- coef(hw1_3_model)[2:16]
 library(daewr) 
 halfnorm(hw1_3_effects, names(hw1_3_effects), alpha = 0.05)
+library(AlgDesign)
+gen.factorial(levels = 2, nVars = 5, varNames=c("A","B","C","D","E"))
+
 ```
 
-Based on the normal QQ plot, only the effects of $A, B, AB$ are significant. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible.
+Based on the normal QQ plot, only the effects of $A, B, AB$ are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible.
 
 (b).Identify a tentative model, based on the plot of the effects in part (a) write the theoretical model fit for these data without neglegible terms.
 
-$$y_{ij}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ij}$$
+The $2^4$ factorial model with fixed effects and replications is:
 
+$$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ijk}+\varepsilon_{ijk}$$
+for $i=1,2$ ; $j=1,2$; $k=1,2..,n$, where 
 
+$\tau_i$ is fixed main effect of $i^{th}$ level of  Factor A;
+
+$\beta_j$ is fixed main effect of $j^{th}$ level of Factor B;
+
+$(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of Factor A and $j^{th}$ level of Factor B;
+
+$\varepsilon_{jik}$ is random error for the $k^{th}$ Exerimental Unit when $i^{th}$ level of Factor A and $j^{th}$ level of Factor A are applied.
+
+$y_{ijk}$ is response for the $k^{th}$ EU when  $i^{th}$ level of Factor A and  $j^{th}$ level of Factor B are applied.
+
+Assumptions:
+
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^2(\tau\beta)_{ij}=0$
