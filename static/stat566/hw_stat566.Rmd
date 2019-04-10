@@ -212,6 +212,16 @@ hw1_3_new<-ggplot_build(hw1_3_qq)$data[[1]]
 hw1_3_new%>%mutate(name=hw1_3$factors[order(hw1_3$effect)])%>%
 ggplot(aes(theoretical,sample,label=name))+geom_text()+stat_qq_line(aes(sample = y), line.p = c(0.25, 0.75),linetype=4, col = "red")+ theme_light()
 
+library(FrF2)
+hw1_3_design <- FrF2(nruns=16, nfactors=4, randomize = FALSE)
+hw1_3_response <- c(-1.57,76.95,-67.52,-51.32,-7.84,11.69,20.78,-2.82,-18.73,9.78,14.74,-6.5,1.27,10.2,-7.98,-6.25) 
+hw1_3_table<- add.response(hw1_3_design, response =hw1_3_response)
+hw1_3_table
+hw1_3_model <-lm( hw1_3_response ~ A * B * C * D, data =hw1_3_table) 
+hw1_3_effects <- coef(hw1_3_model)
+library(daewr) 
+halfnorm(hw1_3_effects[2:16], names(hw1_3_effects), alpha = 0.05)
+
 ```
 
 Based on the normal QQ plot, only the effects of $A, B, AB$ are significant. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible.
