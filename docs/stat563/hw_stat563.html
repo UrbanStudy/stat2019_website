@@ -474,21 +474,28 @@ $(document).ready(function () {
 <p>When <span class="math inline">\(x_{(1)}=\min_i x_i\)</span>,</p>
 <p><span class="math display">\[L(\theta,\nu|x)=\frac{\theta^n\nu^{n\theta}}{\prod_i x_i^{\theta+1}}\]</span> <span class="math display">\[\ln L(\theta,\nu|x)=n\ln\theta+n\theta\ln\nu-(\theta+1)\ln(\prod_i x_i), \nu\le x_{(1)}\]</span></p>
 <p>Which is an increasing function of <span class="math inline">\(\nu\)</span> <span class="math inline">\(\forall \theta\)</span>. So both the restricted and unrestricted <span class="math inline">\(\hat\nu_{MLE}=x_{(1)}\)</span>.</p>
-<p>To find the MLE of , set</p>
-<p>and solve for yielding</p>
+<p>Set</p>
+<p><span class="math display">\[\frac{\partial}{\partial\theta}\ln L(\theta,x_{(1)}|x)=\frac{n}\theta+n\ln x_{(1)}-\ln(\prod_i x_i)=0\]</span></p>
+<p><span class="math display">\[\frac{\partial^2}{\partial\theta^2}\ln L(\theta,x_{(1)}|x)=-\frac{n}{\theta^2}&lt;0\]</span></p>
+<p><span class="math display">\[\hat\theta_{MLE}=\frac{n}{\ln(\prod_i x_i)-n\ln x_{(1)}}=\frac{n}{\ln(\frac{\prod_i x_i}{x_{(1)}^n})}=\frac{n}T\]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
-<li>Show that the LRT of <span class="math inline">\(H_0:\theta=1, \nu\)</span> unknown, versus <span class="math inline">\(H_1: \theta\ne1,\nu\)</span> unknown, has critical region of the form <span class="math inline">\(\{x:T(x)\le C_1 or T(x)\ge c_2\}\)</span>, where <span class="math inline">\(0&lt;C_1&lt;C_2\)</span> and</li>
+<li>Show that the LRT of <span class="math inline">\(H_0:\theta=1, \nu\)</span> unknown, versus <span class="math inline">\(H_1: \theta\ne1,\nu\)</span> unknown, has critical region of the form <span class="math inline">\(\{x:T(x)\le C_1 or T(x)\ge c_2\}\)</span>, where <span class="math inline">\(0&lt;C_1&lt;C_2\)</span> and <span class="math inline">\(T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]\)</span></li>
 </ol>
-<p><span class="math display">\[T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]\]</span></p>
-<p>Under H0, the MLE of is 0 = 1, and the MLE of is still = x(1). So the likelihood ratio statistic is</p>
-<ol start="20" style="list-style-type: upper-alpha">
-<li>log (x) = (n/T) − 1. Hence, (x) is increasing if T n and decreasing if T n. Thus, T c is equivalent to T c1 or T c2, for appropriately chosen constants c1 and c2.</li>
-</ol>
+<p><span class="math inline">\(T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]\implies e^T=\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\implies\prod_{i=1}^n X_i=(\min\limits_{i} X_i)^ne^T=x_{(1)}^ne^T\)</span></p>
+<p>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(\hat\theta_{MLE}=1\)</span>, <span class="math inline">\(\hat\nu_{MLE}=x_{(1)}\)</span>. The likelihood ratio statistic is</p>
+<p><span class="math display">\[\Lambda=\frac{\sup L(\hat\theta_0|x)}{\sup L(\hat\theta_{MLE}|x)}=\frac{\frac{1^nx_{(1)}^{n}}{\prod_i x_i^{1+1}}}{\frac{(\frac{n}T)^nx_{(1)}^{n\frac{n}T}}{\prod_i x_i^{\frac{n}T+1}}}=(\frac{T}n)^n\cdot x_{(1)}^{n-\frac{n^2}T}\cdot\prod_i x_i^{\frac{n}T-1}=(\frac{T}n)^n\cdot x_{(1)}^{n-\frac{n^2}T}\cdot x_{(1)}^{\frac{n^2}T-n}\cdot e^{n-T}=(\frac{T}n)^ne^{n-T}\]</span></p>
+<p><span class="math display">\[\ln\Lambda=n\ln T-n\ln n+n-T\]</span> <span class="math display">\[\frac{\partial}{\partial T}\ln\Lambda=\frac{n}{T}-1\begin{cases}&gt;0&amp;\text{if }T\le n\\&lt;0&amp;\text{if }T\ge n\end{cases}\]</span></p>
+<p>Hence, <span class="math inline">\(\Lambda\)</span> is increasing if <span class="math inline">\(T\le n\)</span> and decreasing if <span class="math inline">\(T\ge n\)</span>. Thus, <span class="math inline">\(T\le c\)</span> is equivalent to <span class="math inline">\(T\le c_1\)</span> or <span class="math inline">\(T\ge c_2\)</span>, for appropriately chosen constants <span class="math inline">\(c_1\)</span> and <span class="math inline">\(c_2\)</span>.</p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Show that, under <span class="math inline">\(H_0, 2T\)</span> has a chi squared distribution, and find the number of degrees of freedom.</li>
 </ol>
 <p>(Hint: Obtain the joint distribution of the <span class="math inline">\(n-1\)</span> nontrivial terms <span class="math inline">\(X_i/(\min_i X_i)\)</span> conditional on <span class="math inline">\(\min_i X_i\)</span>. Put these <span class="math inline">\(n-1\)</span> terms together, and notice that the distribution of <span class="math inline">\(T\)</span> given <span class="math inline">\(\min_i X_i\)</span> does not depend on <span class="math inline">\(\min_i X_i\)</span>, so it is the unconditional distribution of <span class="math inline">\(T\)</span>.)</p>
-<p>We will not use the hint, although the problem can be solved that way. Instead, make the following three transformations. First, let Yi = logXi, i = 1, . . . , n. Next, make the n-to-1 transformation that sets Z1 = mini Yi and sets Z2, . . . ,Zn equal to the remaining Yis, with their order unchanged. Finally, let W1 = Z1 and Wi = Zi − Z1, i = 2, . . . , n. Then you find that the Wis are independent with W1 fW1 (w) = nne−nw, w &gt; log , and Wi exponential(1), i = 2, . . . , n. Now T = Pn i=2Wi gamma(n − 1, 1), and, hence, 2T gamma(n − 1, 2) = 2 2(n−1).</p>
+<p>We will not use the hint, although the problem can be solved that way. Instead, make the following three transformations.</p>
+<p>Let <span class="math inline">\(Y_i=\ln X_i, i=1,..,n\)</span>.</p>
+<p>Sets <span class="math inline">\(Z_1=\min_i Y_i\)</span>, Z2,..,Zn equal to the remaining <span class="math inline">\(Y_i\)</span>s with same order.</p>
+<p>Let <span class="math inline">\(W_1=Z_1\)</span> and <span class="math inline">\(W_i=Z_i−Z_1,i=2,..,n\)</span>.</p>
+<p><span class="math inline">\(W_i\)</span>s are independent with <span class="math inline">\(W_1\)</span>, $f_{W_1}(w)=n<sup>ne</sup>{−nw}, w&gt;$, and <span class="math inline">\(W_i\sim Expo(1), i=2,..,n\)</span>. Now T =Pn i=2, <span class="math inline">\(W_i\sim Gam(n−1,1)\)</span>, and, hence,</p>
+<p><span class="math display">\[2T\sim Gam(n−1, 2)=\chi^2_{2(n−1)}\]</span></p>
 <p><strong>8.17</strong> Suppose that <span class="math inline">\(X_1,..,X_n\)</span> are iid with a <span class="math inline">\(beta(\mu,1)\)</span> pdf and <span class="math inline">\(Y_1,..,Y_m\)</span> are iid with a <span class="math inline">\(beta(\theta,1)\)</span> pdf. Also assume that the <span class="math inline">\(X_S\)</span> are independent of the <span class="math inline">\(Y_s\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>Find an LRT of <span class="math inline">\(H_0:(\theta=\mu\)</span> versus <span class="math inline">\(H_1:(\theta\ne\mu\)</span>.</p></li>

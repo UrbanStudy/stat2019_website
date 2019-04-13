@@ -153,38 +153,51 @@ $$\ln L(\theta,\nu|x)=n\ln\theta+n\theta\ln\nu-(\theta+1)\ln(\prod_i x_i), \nu\l
 
 Which is an increasing function of $\nu$ $\forall \theta$. So both the restricted and unrestricted $\hat\nu_{MLE}=x_{(1)}$.
 
-To find the MLE of , set
+Set
 
-and solve for  yielding
+$$\frac{\partial}{\partial\theta}\ln L(\theta,x_{(1)}|x)=\frac{n}\theta+n\ln x_{(1)}-\ln(\prod_i x_i)=0$$
+
+$$\frac{\partial^2}{\partial\theta^2}\ln L(\theta,x_{(1)}|x)=-\frac{n}{\theta^2}<0$$
+
+$$\hat\theta_{MLE}=\frac{n}{\ln(\prod_i x_i)-n\ln x_{(1)}}=\frac{n}{\ln(\frac{\prod_i x_i}{x_{(1)}^n})}=\frac{n}T$$
 
 (b) Show that the LRT of $H_0:\theta=1, \nu$ unknown, versus $H_1: \theta\ne1,\nu$ unknown, has critical region of the form $\{x:T(x)\le C_1 or T(x)\ge c_2\}$, where $0<C_1<C_2$ and
+$T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]$
 
-$$T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]$$
+$T=\ln\left[\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\right]\implies e^T=\frac{\prod_{i=1}^n X_i}{(\min\limits_{i} X_i)^n}\implies\prod_{i=1}^n X_i=(\min\limits_{i} X_i)^ne^T=x_{(1)}^ne^T$
 
-Under H0, the MLE of  is 0 = 1, and the MLE of  is still  = x(1). So the likelihood ratio
-statistic is
+Under $H_0$, $\hat\theta_{MLE}=1$, $\hat\nu_{MLE}=x_{(1)}$. The likelihood ratio statistic is
 
-(T) log (x) = (n/T) − 1. Hence, (x) is increasing if T  n and decreasing if T  n.
-Thus, T  c is equivalent to T  c1 or T c2, for appropriately chosen constants c1 and c2.
+$$\Lambda=\frac{\sup L(\hat\theta_0|x)}{\sup L(\hat\theta_{MLE}|x)}=\frac{\frac{1^nx_{(1)}^{n}}{\prod_i x_i^{1+1}}}{\frac{(\frac{n}T)^nx_{(1)}^{n\frac{n}T}}{\prod_i x_i^{\frac{n}T+1}}}=(\frac{T}n)^n\cdot x_{(1)}^{n-\frac{n^2}T}\cdot\prod_i x_i^{\frac{n}T-1}=(\frac{T}n)^n\cdot x_{(1)}^{n-\frac{n^2}T}\cdot x_{(1)}^{\frac{n^2}T-n}\cdot e^{n-T}=(\frac{T}n)^ne^{n-T}$$
+
+$$\ln\Lambda=n\ln T-n\ln n+n-T$$
+$$\frac{\partial}{\partial T}\ln\Lambda=\frac{n}{T}-1\begin{cases}>0&\text{if }T\le n\\<0&\text{if }T\ge n\end{cases}$$
+
+Hence, $\Lambda$ is increasing if $T\le n$ and decreasing if $T\ge n$.
+Thus, $T\le c$ is equivalent to $T\le c_1$ or $T\ge c_2$, for appropriately chosen constants $c_1$ and $c_2$.
 
 (c) Show that, under $H_0, 2T$ has a chi squared distribution, and find the number of degrees of freedom. 
 
 (Hint: Obtain the joint distribution of the $n-1$ nontrivial terms $X_i/(\min_i X_i)$ conditional on $\min_i X_i$. Put these $n-1$ terms together, and notice that the distribution of $T$ given $\min_i X_i$ does not depend on $\min_i X_i$, so it is the unconditional distribution of $T$.)
 
-We will not use the hint, although the problem can be solved that way. Instead, make
-the following three transformations. First, let Yi = logXi, i = 1, . . . , n. Next, make the
-n-to-1 transformation that sets Z1 = mini Yi and sets Z2, . . . ,Zn equal to the remaining
-Yis, with their order unchanged. Finally, let W1 = Z1 and Wi = Zi − Z1, i = 2, . . . , n.
-Then you find that the Wis are independent with W1  fW1 (w) = nne−nw, w > log ,
-and Wi  exponential(1), i = 2, . . . , n. Now T =
-Pn
-i=2Wi  gamma(n − 1, 1), and, hence,
-2T  gamma(n − 1, 2) = 2
-2(n−1).
+We will not use the hint, although the problem can be solved that way. Instead, make the following three transformations. 
+
+Let $Y_i=\ln X_i, i=1,..,n$. 
+
+Sets $Z_1=\min_i Y_i$, Z2,..,Zn equal to the remaining $Y_i$s with same order. 
+
+Let $W_1=Z_1$ and $W_i=Z_i−Z_1,i=2,..,n$. 
+
+$W_i$s are independent with $W_1$, $f_{W_1}(w)=n\nu^ne^{−nw}, w>\ln\nu $, and $W_i\sim Expo(1), i=2,..,n$. Now T =Pn i=2, $W_i\sim Gam(n−1,1)$, and, hence,
+
+$$2T\sim Gam(n−1, 2)=\chi^2_{2(n−1)}$$
 
 **8.17** Suppose that $X_1,..,X_n$ are iid with a $beta(\mu,1)$ pdf and $Y_1,..,Y_m$ are iid with a $beta(\theta,1)$ pdf. Also assume that the $X_S$ are independent of the $Y_s$.
 
 (a) Find an LRT of $H_0:(\theta=\mu$ versus $H_1:(\theta\ne\mu$.
+
+
+
 
 (b) Show that the test in part (a) can be based on the statistic
 
