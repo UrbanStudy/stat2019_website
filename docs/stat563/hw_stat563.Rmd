@@ -153,9 +153,7 @@ $$\ln L(\theta,\nu|x)=n\ln\theta+n\theta\ln\nu-(\theta+1)\ln(\prod_i x_i), \nu\l
 
 Which is an increasing function of $\nu$ $\forall \theta$. So both the restricted and unrestricted $\hat\nu_{MLE}=x_{(1)}$.
 
-Set
-
-$$\frac{\partial}{\partial\theta}\ln L(\theta,x_{(1)}|x)=\frac{n}\theta+n\ln x_{(1)}-\ln(\prod_i x_i)=0$$
+$$\frac{\partial}{\partial\theta}\ln L(\theta,x_{(1)}|x)=\frac{n}\theta+n\ln x_{(1)}-\ln(\prod_i x_i)\overset{set}{=}0$$
 
 $$\frac{\partial^2}{\partial\theta^2}\ln L(\theta,x_{(1)}|x)=-\frac{n}{\theta^2}<0$$
 
@@ -176,11 +174,8 @@ $$\frac{\partial}{\partial T}\ln\Lambda=\frac{n}{T}-1\begin{cases}>0&\text{if }T
 Hence, $\Lambda$ is increasing if $T\le n$ and decreasing if $T\ge n$.
 Thus, $T\le c$ is equivalent to $T\le c_1$ or $T\ge c_2$, for appropriately chosen constants $c_1$ and $c_2$.
 
-(c) Show that, under $H_0, 2T$ has a chi squared distribution, and find the number of degrees of freedom. 
-
+(c) Show that, under $H_0, 2T$ has a $\chi^2$ distribution, and find the number of degrees of freedom. 
 (Hint: Obtain the joint distribution of the $n-1$ nontrivial terms $X_i/(\min_i X_i)$ conditional on $\min_i X_i$. Put these $n-1$ terms together, and notice that the distribution of $T$ given $\min_i X_i$ does not depend on $\min_i X_i$, so it is the unconditional distribution of $T$.)
-
-We will not use the hint, although the problem can be solved that way. Instead, make the following three transformations. 
 
 Let $Y_i=\ln X_i, i=1,..,n$. 
 
@@ -192,20 +187,91 @@ $W_i$s are independent with $W_1$, $f_{W_1}(w)=n\nu^ne^{−nw}, w>\ln\nu $, and 
 
 $$2T\sim Gam(n−1, 2)=\chi^2_{2(n−1)}$$
 
-**8.17** Suppose that $X_1,..,X_n$ are iid with a $beta(\mu,1)$ pdf and $Y_1,..,Y_m$ are iid with a $beta(\theta,1)$ pdf. Also assume that the $X_S$ are independent of the $Y_s$.
+**8.17** Suppose that $X_1,..,X_n$ are iid with a $beta(\mu,1)$ pdf and $Y_1,..,Y_m$ are iid with a $beta(\theta,1)$ pdf. Also assume that the $X$s are independent of the $Y$s.
 
 (a) Find an LRT of $H_0:(\theta=\mu$ versus $H_1:(\theta\ne\mu$.
 
+$f_X(x)=\frac{1}{B(\mu,1)}x^{\mu-1}(1-x)^{1-1}=\frac{\Gamma(\mu+1)}{\Gamma(\mu)\Gamma(1)}x^{\mu-1}=\mu x^{\mu-1}$
 
+$f_Y(y)=\theta y^{\theta-1}$
 
+$$L(\mu,\theta|x,y)=\mu^n(\prod_{i=1}^nx_i)^{\mu-1}\theta^m(\prod_{j=1}^my_j)^{\theta-1}$$
+$$\ln L(\mu,\theta|x,y)=n\ln\mu+(\mu-1)\ln(\prod_{i=1}^nx_i)+m\ln\theta+(\theta-1)\ln(\prod_{j=1}^my_j)$$
+
+$$\frac{\partial}{\partial\mu}\ln L(\mu,\theta|x,y)=\frac{n}\mu+\sum_{i=1}^n\ln x_i\overset{set}{=}0\implies\hat\mu_{MLE}=-\frac{n}{\sum_{i=1}^n\ln x_i}$$
+$$\frac{\partial}{\partial\theta}\ln L(\mu,\theta|x,y)=\frac{m}\theta+\sum_{j=1}^m\ln y_j\overset{set}{=}0\implies\hat\theta_{MLE}=-\frac{m}{\sum_{j=1}^m\ln y_j}$$
+
+Under $H_0$, $\theta=\mu$
+
+$$L(\mu|x,y)=\mu^{n+m}(\prod_{i=1}^nx_i\prod_{j=1}^my_j)^{\mu-1}$$
+$$\ln L(\mu|x,y)=(n+m)\ln\mu+(\mu-1)\ln(\prod_{i=1}^nx_i\prod_{j=1}^my_j)^{}$$
+$$\frac{\partial}{\partial\mu}\ln L(\mu|x,y)=\frac{n+m}\mu+\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j\overset{set}{=}0\implies\hat\mu_{0}=-\frac{n+m}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j}$$
+
+The LRT statistic is
+
+$$\Lambda=\frac{\sup L(\hat\mu_0|x,y)}{\sup L(\hat\mu_{MLE}|x,y)}=\frac{\hat\mu_0^{n+m}(\prod_{i=1}^nx_i\prod_{j=1}^my_j)^{\hat\mu_{0}-1}}{\hat\mu_{MLE}^n(\prod_{i=1}^nx_i)^{\hat\mu_{MLE}-1}\hat\theta_{MLE}^m(\prod_{j=1}^my_j)^{\hat\theta_{MLE}-1}}=\frac{\hat\mu_0^{n+m}}{\hat\mu_{MLE}^n\hat\theta_{MLE}^m}\cdot(\prod_{i=1}^nx_i)^{\hat\mu_0-\hat\mu_{MLE}}(\prod_{j=1}^my_j)^{\hat\mu_0-\hat\theta_{MLE}}$$
 
 (b) Show that the test in part (a) can be based on the statistic
 
-$$T=\frac{\sum\ln X_i}{\sum\ln X_i+\sum\ln Y_i}$$
+$$\sum_{i=1}^n\ln x_i=-\frac{n}{\hat\mu_{MLE}},\sum_{j=1}^m\ln y_j=-\frac{m}{\hat\theta_{MLE}}$$
+
+$$T=\frac{\sum\ln X_i}{\sum\ln X_i+\sum\ln Y_i}=\frac{-\frac{n}{\hat\mu_{MLE}}}{-\frac{n}{\hat\mu_{MLE}}-\frac{m}{\hat\theta_{MLE}}}=\frac{n\hat\theta_{MLE}}{n\hat\theta_{MLE}+m\hat\mu_{MLE}}$$
+
+Substituting $(\prod_{i=1}^nx_i)^{\hat\mu_0-\hat\mu_{MLE}}(\prod_{j=1}^my_j)^{\hat\mu_0-\hat\theta_{MLE}}=1$
+
+$$\Lambda=\frac{\hat\mu_0^{n+m}}{\hat\mu_{MLE}^n\hat\theta_{MLE}^m}=\frac{(-\frac{n+m}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{n+m}}{(-\frac{n}{\sum_{i=1}^n\ln x_i})^n(-\frac{m}{\sum_{j=1}^m\ln y_j})^m}=(\frac{n+m}{n})^n(\frac{n+m}{m})^m(\frac{\sum_{i=1}^n\ln x_i}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{n}(\frac{\sum_{j=1}^m\ln y_j}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{m}$$
+$$=(\frac{n+m}{n})^n(\frac{n+m}{m})^mT^n(1-T)^m$$
+
+which is an unimodal function of $T$, so rejecting $H_0$ when $\Lambda\le c$ equivalent to rejecting $H_0$ when $T\le c_0$ or $T\ge c_1$ where $c_0,c_1$ are appropriate chosen constants.
 
 (c) Find the distribution of $T$ when $H_0$ is true, and then show how to get a test of size $\alpha=.10$.
 
-**8.19** The random variable $X$ has pdf $f(x)=e{-x}, x>O$. One observation is obtained on the random variable $Y=X^{\theta}$, and a test of $H_0:\theta=1$ versus $H_1:\theta=2$ needs to be constructed. Find the UMP level $\alpha=.10$ test and compute the Type II Error probability.
+We know if $X\sim Gamma(\mu,\beta)$ and $Y\sim Gamma(\theta,\beta)$ are independent, then $T=\frac{X}{X+Y}\sim Beta(\mu,\theta)$.
+
+It also can derive from $-\ln X_i\sim Expo(\mu),-\ln Y_i\sim Expo(\theta)$ to $W=-\sum_{i=1}^n\ln X_i\sim Gamma(n,\mu),V=-\sum_{j=1}^m\ln Y_i\sim Gamma(n,\theta)$. Then $T=\frac{X}{X+Y}\sim Beta(\mu,\theta)$.
+
+To find $c_1,c_2$,
+
+$$\begin{cases}P(T\le c_1)+P(T\ge c_2)=\alpha=0.10\\c_1^n(1-c_1)^m=c_2^n(1-c_2)^m\end{cases}$$
+
+**8.19** The random variable $X$ has pdf $f(x)=e^{-x}, x>0$. One observation is obtained on the random variable $Y=X^{\theta}$, and a test of $H_0:\theta=1$ versus $H_1:\theta=2$ needs to be constructed. Find the UMP level $\alpha=.10$ test and compute the Type II Error probability.
+
+$f(x)=e^{-x}$ is monotone when $x>0$. $X=Y^{1/\theta}$, $\frac{dx}{dy}=\frac1\theta y^{\frac1\theta-1}$, then
+
+$$f(y|\theta)=f(x|\theta)|\frac{dx}{dy}|=e^{-y^{1/\theta}}\frac1\theta y^{\frac1\theta-1}, y>0$$
+
+
+Neyman-Pearson Theorem says a test of $H_0:\theta_0=1$ versus $H_1:\theta_1=2$, i.e., $\Omega=\{1,2\},\Omega_0=\{1\}$ 
+
+$$\Lambda=\frac{L(\theta_0|y)}{L(\theta_1|y)}=\frac{e^{-y^{1}} y^{1-1}}{e^{-y^{1/2}}\frac12 y^{1/2-1}}=2e^{(y^{1/2}-y)}y^{1/2}\overset{set}{\le}c$$
+
+$$\frac{d}{dy}\Lambda=2e^{(y^{1/2}-y)}(\frac12y^{-1/2}-1)y^{1/2}+e^{(y^{1/2}-y)}y^{-1/2}=e^{(y^{1/2}-y)}(1-2y^{1/2}+y^{-1/2})\begin{cases}>0&\text{if }y< 1\\<0&\text{if }y>1\end{cases}$$
+
+Thus $\Lambda$ is an unimodal function of $y$, $\max\Lambda=2$ when $y=1$.
+The rejection region is $R=\{\vec y:\Lambda\le c\}$, and $c$ is chosen so that $P_{H_0}(\vec y\in R)=\alpha$, which equivalent to
+
+$$\begin{cases}P(Y\le c_0|\theta_0)+P(Y\ge c_1|\theta_0)=\int_{-\infty}^{c_0}e^{-y}dy+\int_{c_1}^{\infty}e^{-y}dy=\left.-e^{-y}\right|_{-\infty}^{c_0}+1-(\left.-e^{-y}\right|_{-\infty}^{c_1})=1-e^{-c_0}+e^{-c_1}=0.10\\2e^{(c_0^{1/2}-c_0)}c_0^{1/2}=2e^{(c_1^{1/2}-c_1)}c_1^{1/2}\end{cases}$$
+
+$$\begin{cases}c_1-c_0=\ln0.90\\c_0^{1/2}-c_0+\frac12\ln c_0=c_1^{1/2}-c_1+\frac12\ln c_1\end{cases}$$
+
+```{r eval=FALSE, include=FALSE}
+# log(a) + log(b) = log(5)
+# 0.5 * (loga + 2 * log(b)) = log(10)
+m <- matrix(c(1, .5, 1, 1), 2)
+exp(solve(m, c(log(5),log(10))))
+
+-exp(-3.637798^0.5)+exp(-0.076546^0.5)
+```
+
+The test $\Lambda\le c_0=0.076546$,$\Lambda\ge c_1=3.637798$ is UMP at $0.10$ level.
+
+The Type II error probability is
+
+$$P(c_0<Y<c_1|\theta_1)=\int_{c_0}^{c_1}\frac12e^{-y^{1/2}} y^{-1/2}dy=\left.-e^{-y^{1/2}}\right|_{c_0}^{c_1}=0.609824$$
+
+
+
+. So we have a test that is most powerful $\forall\theta_1\notin\Omega_0$, so it is UMP.
 
 ## HW3
 
