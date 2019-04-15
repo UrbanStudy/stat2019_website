@@ -1,0 +1,128 @@
+---
+title: ""
+author: ''
+date: ""
+output: html_document
+---
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+
+## lab1 
+
+ - general Factorial Design and obtain Normal Probability plot of effects
+
+Install and load FrF2 package 
+
+FrF2 stands for Fractional Factor 2-level design which will be learned later 
+
+Here we use 4 factors with total of 16 observations
+
+```{r}
+library(FrF2)
+lab1_design <- FrF2(nruns=16, nfactors=4, randomize = FALSE)
+lab1_response <- c(-1.57,76.95,-67.52,-51.32,-7.84,11.69,20.78,-2.82,-18.73,9.78,14.74,-6.5,1.27,10.2,-7.98,-6.25) 
+lab1_table<- add.response(lab1_design, response =lab1_response)
+lab1_table
+```
+Check the design. Note that the output is in the standard order of treatment combinations
+
+Here the data are effect, should not be used as response variable.
+
+```{r eval=FALSE, message=FALSE, collapse=TRUE, include=FALSE, out.width='45%', results='hold'}
+lab1_model <-lm( lab1_response ~ A * B * C * D, data =lab1_table) 
+lab1_effects <- coef(lab1_model)[2:16]
+library(daewr) 
+halfnorm(lab1_effects, names(lab1_effects), alpha = 0.05)
+library(AlgDesign)
+gen.factorial(levels = 2, nVars = 5, varNames=c("A","B","C","D","E"))
+
+qqnorm(lab1_effects, pch=16, ylab="Estimated Effects", xlab="Normal Scores", main="Normal Probability Plot of Treatment Effects")
+qqline(lab1_effects)
+```
+
+## lab2
+
+ - Confounded Factorial Design Exercise 6.22
+
+This experiment was redesigned so that AC and BD interaction effect (and hence ABCD effect) are confounded with 4 blocks.
+
+Install and load FrF2 package 
+
+Use FrF2 function as shown below to create the deign 
+
+blocks option is used to indicate confounding factor effects. Here AD and BC are confounded 
+
+nruns is for the number of runs, must be a power of 2
+
+```{r echo=TRUE, message=FALSE, collapse=TRUE, out.width='45%', results='hold'}
+library(FrF2)
+lab2_des <- FrF2(nruns=16, nfactors = 4, blocks = c("AD", "BC"), randomize = FALSE)
+lab2_des
+```
+
+Note the Blocks are sorted so that both negative (AD-, Bc-), (AD+, BC-), (Ad-,BC+), and both positive
+
+Change the order of AD and BC in the FrF2 function above and see the difference in the output design
+
+If the given data file is sorted by Block, then sort the above design accordingly
+
+If the given data file is sorted by standard order of trt combinations, then sort the above design accordingly 
+Sort Design by Block and each factor to get standard order within each block
+
+```{r}
+lab2_des_sort1 <- lab2_des[order(lab2_des$Blocks, lab2_des$D ,lab2_des$C ,lab2_des$B,lab2_des$A ),]
+lab2_des_sort1
+```
+
+Sort Design by each factor to get standard order
+
+```{r}
+Design_Sort2 <- lab2_des[order(lab2_des$D ,lab2_des$C ,lab2_des$B,lab2_des$A),]
+Design_Sort2
+```
+
+Import the Example Excel file
+
+```{r}
+lab2_example <- readxl::read_xlsx("Example.xlsx")
+```
+This data file is in the standard order
+
+Therefore, use the Design_Sort2 to combine response
+```{r}
+lab2_obs <- cbind(Design_Sort2,lab2_example)
+lab2_obs
+```
+
+Note the Block numbers are different in the design and the actual data file 
+
+Therefore, use Block numbers in the actual data file for the analysis
+
+First, change it to a factor
+
+```{r}
+lab2_obs$Blk <-as.factor(lab2_obs$Block)
+
+lab2_fit1 <- aov(UEC ~ Blk + A * B * C * D, data =lab2_obs)
+lab2_effects <- coef(lab2_fit1)
+lab2_effects
+lab2_l <- length(lab2_effects)
+```
+
+Selects the non-block effects that do not have the value of NA 
+
+```{r echo=TRUE, message=FALSE, collapse=TRUE, out.width='25%', results='hold'}
+lab2_effects <-lab2_effects[5:lab2_l]
+#lab2_effects <-lab2_effects[!is.na(d)]
+qqnorm(lab2_effects, pch=16) 
+qqline(lab2_effects)
+library(ggplot2)
+library(gghalfnorm)
+gghalfnorm(x =lab2_effects,labs =names(lab2_effects), nlab=4)+ theme_light()
+library(daewr) 
+halfnorm(lab2_effects, names(lab2_effects), alpha = 0.15)
+lab2_fit2<- aov(UEC ~ Blk + A + C + D + A:C, data = lab2_obs)
+summary(lab2_fit2)
+plot(lab2_fit2, pch=16) 
+```
