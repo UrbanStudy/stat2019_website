@@ -18,10 +18,10 @@ FrF2 stands for Fractional Factor 2-level design which will be learned later
 
 Here we use 4 factors with total of 16 observations
 
-```{r}
+```{r echo=TRUE, message=FALSE, collapse=TRUE, out.width='25%', results='hold'}
 library(FrF2)
 lab1_design <- FrF2(nruns=16, nfactors=4, randomize = FALSE)
-lab1_response <- c(-1.57,76.95,-67.52,-51.32,-7.84,11.69,20.78,-2.82,-18.73,9.78,14.74,-6.5,1.27,10.2,-7.98,-6.25) 
+lab1_response <- c(1.92, 11.28, 1.09, 5.75, 2.13, 9.53, 1.03, 5.35, 1.60, 11.73, 1.16, 4.68, 2.16, 9.11, 1.07, 5.30)
 lab1_table<- add.response(lab1_design, response =lab1_response)
 lab1_table
 ```
@@ -36,10 +36,32 @@ library(daewr)
 halfnorm(lab1_effects, names(lab1_effects), alpha = 0.05)
 library(AlgDesign)
 gen.factorial(levels = 2, nVars = 5, varNames=c("A","B","C","D","E"))
+library(gghalfnorm)
+gghalfnorm(x =lab1_effects,labs =names(lab1_effects), nlab = 3)+ theme_light()
 
 qqnorm(lab1_effects, pch=16, ylab="Estimated Effects", xlab="Normal Scores", main="Normal Probability Plot of Treatment Effects")
 qqline(lab1_effects)
 ```
+
+```{r echo=TRUE, message=FALSE, collapse=TRUE, out.width='30%', results='hold'}
+# hw1_3 <- tribble(~factors, ~effect, "A",76.95, "B", -67.52,"C",-7.84, "D",-18.73, "AB", -51.32, "AC", 11.69, "AD",9.78, "BC", 20.78, "BD", 14.74, "CD", 1.27, "ABC", -2.82, "ABD", -6.5, "ACD",10.2, "BCD",-7.98, "ABCD",-6.25)
+
+factors <-c("A","B","C","D","AB","AC","AD","BC","BD","CD","ABC","ABD", "ACD","BCD","ABCD")
+effect <- c(76.95,-67.52,-7.84,-18.73,-51.32,11.69,9.78,20.78,14.74,1.27,-2.82,-6.5,10.2,-7.98,-6.25)
+hw1_3 <- data.frame(factors,effect)
+library(dplyr)
+library(ggplot2)
+hw1_3_qq<-ggplot(hw1_3, aes(sample = effect),label=factors) + stat_qq()
+hw1_3_new<-ggplot_build(hw1_3_qq)$data[[1]]
+#### hw1_3_new$name<-hw1_3_new$name[order(hw1_3$effect)]
+hw1_3_new%>%mutate(name=hw1_3$factors[order(hw1_3$effect)])%>%
+ggplot(aes(theoretical,sample,label=name))+geom_text()+stat_qq_line(aes(sample = y), line.p = c(0.25, 0.75),linetype=4, col = "red")+ theme_light()
+library(gghalfnorm)
+gghalfnorm(x = hw1_3$effect,labs = as.character(hw1_3$factors), nlab = 3)+ theme_light()
+library(daewr) 
+halfnorm(hw1_3$effect, names(as.character(hw1_3$factors)), alpha = 0.05)
+```
+
 
 ## lab2
 
