@@ -36,6 +36,7 @@ library(daewr)
 halfnorm(lab1_effects, names(lab1_effects), alpha = 0.05)
 library(AlgDesign)
 gen.factorial(levels = 2, nVars = 5, varNames=c("A","B","C","D","E"))
+library(ggplot2)
 library(gghalfnorm)
 gghalfnorm(x =lab1_effects,labs =names(lab1_effects), nlab = 3)+ theme_light()
 
@@ -50,7 +51,7 @@ factors <-c("A","B","C","D","AB","AC","AD","BC","BD","CD","ABC","ABD", "ACD","BC
 effect <- c(76.95,-67.52,-7.84,-18.73,-51.32,11.69,9.78,20.78,14.74,1.27,-2.82,-6.5,10.2,-7.98,-6.25)
 hw1_3 <- data.frame(factors,effect)
 library(dplyr)
-library(ggplot2)
+
 hw1_3_qq<-ggplot(hw1_3, aes(sample = effect),label=factors) + stat_qq()
 hw1_3_new<-ggplot_build(hw1_3_qq)$data[[1]]
 #### hw1_3_new$name<-hw1_3_new$name[order(hw1_3$effect)]
