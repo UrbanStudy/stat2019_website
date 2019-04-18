@@ -247,7 +247,7 @@ which is an unimodal function of $T$, so rejecting $H_0$ when $\Lambda\le c$ equ
 
  ---
 
-(c) Find the distribution of $T$ when $H_0$ is true, and then show how to get a test of size $\alpha=.10$.
+(c) Find the distribution of $T$ when $H_0$ is true, and then show how to get a test of size $\alpha=.10$.(Hint: Exercise 4.19)
 
 For $X_i\sim Beta(\mu,1), Y_i\sim Beta(\theta,1)$, $-\ln X_i\sim Expo(1/\mu),-\ln Y_i\sim Expo(1/\theta)$, then
 
@@ -305,7 +305,7 @@ $$f(x|\theta)=\frac{e^{x-\theta}}{(1+e^{x-\theta})^2},-\infty<x<\infty,-\infty<\
 
 Let $\theta_2>\theta_1$,
 
-$$\Lambda=\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{\frac{e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}}{\frac{e^{x-\theta_1}}{(1+e^{x-\theta_1})^2}}=e^{\theta_1-\theta_2}\left[\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}}\right]^2$$
+$$\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{\frac{e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}}{\frac{e^{x-\theta_1}}{(1+e^{x-\theta_1})^2}}=e^{\theta_1-\theta_2}\left[\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}}\right]^2$$
 
 Take the derivative of the part in brackets.
 
@@ -317,13 +317,15 @@ For $\theta_2>\theta_1$, $\Lambda$ is a monotone function of $f(x|\theta)$. This
 
 (b) Based on one observation, $X$, find the most powerful size $\alpha$ test of $H_0:\theta=0$ versus $H_1:\theta=1$. For $\alpha=.2$, find the size of the Type II Error.
 
+The MLR $\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{f(x|1)}{f(x|0)}$ is increasing in $x$. The best test is to reject $H_0$ when $\frac{f(x|1)}{f(x|0)}>k$, which is equivalent to rejecting if $x>k'$
 
+$F(x|\theta)=\int_{-\infty}^{x}\frac{e^{x-\theta}}{(1+e^{x-\theta})^2}dx=\frac{e^{x-\theta}}{1+e^{x-\theta}}$
 
-For $\alpha=1-F(k'|0)=1-\frac{e^{k'}}{1+e^{k'}}=\frac{1}{1+e^{k'}}=0.2$,
+For $\alpha=1-F(k'|0)=1-\frac{e^{k'}}{1+e^{k'}}=\frac{1}{1+e^{k'}}=0.2$, 
 
 $k'=\ln{\frac{1-\alpha}{\alpha}}=\ln{\frac{1-0.2}{0.2}}=1.386294$
 
-Type II Error $\beta=F(k'|1)=\frac{e^{k'-1}}{1+e^{k'-1}}=log(4)$
+Type II Error $\beta=F(k'|1)=\frac{e^{k'-1}}{1+e^{k'-1}}=0.5953902$
 
 ```{r eval=FALSE, include=FALSE}
 log(4)
@@ -334,17 +336,66 @@ exp(1.386294-1)/(1+exp(1.386294-1))
 
 (c) Show that the test in part (b) is UMP size $\alpha$ for testing $H_0:\theta\le0$ versus $H_1:\theta>1$. What can be said about UMP tests in general for the logistic location family?
 
+From **Theorem 8.3.17 (Karlin-Rubin)** $H_0:\theta\le\theta_0$ versus $H_1:\theta>\theta_0$. T is a sufficient statistic for $\theta$ and the logistic location family of pdfs $\{g(t|\theta):\theta\in\Theta\}$ of $T$ has an MLR. Then for any $t_0$, the test that rejects $H_0$ if and only if $T>t_0$ is a UMP level $\alpha$ test, where $\alpha= P_{\theta_0}(T>t_0)$.
 
-**8.33** Let $X_1,..,X_n$ be a random sample from the $uniform(0,\theta+1)$ distribution. $T_0$ test
-$H_0:\theta=0$versus $H_1:\theta>0$, use the test reject $H_0$ if $Y_n\ge1$ or $Y_1\ge k$, where k is a constant, $Y_1= \min\{X_1,..,X_n\}, Y_n= \max\{X_1,..,X_n\}$.
+**8.33** Let $X_1,..,X_n$ be a random sample from the $uniform(0,\theta+1)$ distribution. $T_0$ test $H_0:\theta=0$ versus $H_1:\theta>0$, use the test reject $H_0$ if $Y_n\ge1$ or $Y_1\ge k$, where k is a constant, $Y_1= \min\{X_1,..,X_n\}, Y_n= \max\{X_1,..,X_n\}$.
 
 (a) Determine k so that the test will have size $\alpha$.
 
+From theorems 5.4.4 and 5.6.6, the marginal pdf of $Y_{1}$, the joint pdf of $(Y_1,Y_n) are$
+
+$$f_{Y_{1}}(y_1|\theta)=\frac{n!}{(1-1)!(n-1)!}f_{Y_{1}}(y_1|\theta)[F_{Y_{1}}(y_1|\theta)]^{1-1}[1-F_{Y_{1}}(y_1|\theta)]^{n-1}=n[1-(y_1-\theta)]^{n-1},\ \theta<y_1<\theta+1$$
+
+$$f_{Y_{1},Y_{n}}(y_1,y_n|\theta)=\frac{n!}{(1-1)!(n-1-1)!(n-n)!}f_{Y_{1}}(y_1|\theta)f_{Y_{n}}(y_n|\theta)[F_{Y_{1}}(y_1|\theta)]^{1-1}[F_{Y_{n}}(y_n|\theta)-F_{Y_{1}}(y_1|\theta)]^{n-1-1}[1-F_{Y_{n}}(y_n|\theta)]^{n-n}=n(n-1)(y_1-y_n)^{n-2},\ \theta<y_1<y_n<\theta+1$$
+
+Under $H_0:\theta=0$, $P(Y_n\ge1)=0$, 
+
+$$\alpha=P(Y_1\ge k|0)=\int_k^1n[1-(y_1-\theta)]^{n-1}dy_1=(1-k)^n$$
+Thus, use $k=1-\alpha^{1/n}$ to have a size $\alpha$ test.
+
 (b) Find an expression for the power function of the test in part (a) .
 
+For $k<\theta$, $\beta(\theta)=1$.
+
+For $k-1<\theta\le0$, 
+
+$$\beta(\theta)=\int_k^{\theta+1}[1-(y_1-\theta)]^{n-1}dy_1=(\theta+1-k)^n$$
+
+For $k-1\ge\theta$, $\beta(\theta)=0$.
+
+For $k\ge\theta>0$, 
+
+$$\beta(\theta)=\int_k^{\theta+1}[1-(y_1-\theta)]^{n-1}dy_1+\int_\theta^k\int_1^{\theta+1}n(n-1)(y_1-y_n)^{n-2}dy_ndy_1=\alpha+1-(1-\theta)^n$$
+
 (c) Prove that the test is UMP size $\alpha$.
+**Corollary 8.3.13** Consider the hypothesis problem posed in **Theorem 8.3.12**. Suppose $T(\vec X)$ is a sufficient statistic for $\theta$ and $g(t|\theta_i)$ is the pdf or pmf of $T$ corresponding to $\theta_i,i=0,1$. Then any test based on $T$ with rejection region $S$ (a subset of the sample space of T) is a UMP level a test if it satisfies 
+$$t\in S\ \text{ if }\ g(t|\theta_1)>kg(t|\theta)$$
+and
+$$t\in S^c\ \text{ if }\ g(t|\theta_1)<kg(t|\theta)$$
+for some $k\ge 0$, where $\alpha=P_{\theta_0}(T\in S)$
+
+$(Y_1, Y_n)$ are sufficient statistics.
+
+For $0<\theta<1$, the ratio of pdfs is
+
+$$\frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}=\begin{cases}0& \text{if }\ 0<y_1\le\theta,y_1<y_n<1 \\1& \text{if }\ \theta<y_1<y_n<1 \\\infty& \text{if }\ 1\le y_n<\theta,\theta<y_1<y_n \end{cases}$$
+
+For $1\ge\theta$, the ratio of pdfs is
+
+$$\frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}=\begin{cases}0& \text{if }\ y_1<y_n<1 \\\infty& \text{if }\ \theta<y_1<y_n<\theta+1 \end{cases}$$
+
+For $0<\theta<k$, use $k'=1$, 
+
+$$\begin{cases}\text{reject}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}>1 \\\text{accept}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}<1 \end{cases}$$
+
+For $\theta\ge k$, use $k'=0$,
+
+$$\begin{cases}\text{reject}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}>0 \\\text{accept}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}<0 \end{cases}$$
 
 (d) Find values of n and k so that the UMP .10 level test will have power at least .8 if $\theta>1$.
+
+For $\theta\gek=1-\alpha^{1/n}$, $\beta(\theta)=1$. So these conditions are satisfied for any n.
+
 
 ## HW4
 
