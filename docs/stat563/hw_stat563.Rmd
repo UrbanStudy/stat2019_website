@@ -231,7 +231,7 @@ $$\frac{\partial}{\partial\theta}\ln L(\theta|x,y)=\frac{n+m}\theta+\sum_{i=1}^n
 
 The LRT statistic is
 
-$$\Lambda=\frac{\sup L(\hat\theta_0|x,y)}{\sup L(\hat\mu_{MLE}|x,y)}=\frac{\hat\theta_0^{n+m}(\prod_{i=1}^nx_i\prod_{j=1}^my_j)^{\hat\mu_{0}-1}}{\hat\mu_{MLE}^n(\prod_{i=1}^nx_i)^{\hat\mu_{MLE}-1}\hat\theta_{MLE}^m(\prod_{j=1}^my_j)^{\hat\theta_{MLE}-1}}=\frac{\hat\theta_0^{n+m}}{\hat\mu_{MLE}^n\hat\theta_{MLE}^m}\cdot(\prod_{i=1}^nx_i)^{\hat\theta_0-\hat\mu_{MLE}}(\prod_{j=1}^my_j)^{\hat\theta_0-\hat\theta_{MLE}}$$
+$$\Lambda=\frac{\sup L(\hat\theta_0|x,y)}{\sup L(\hat\mu_{MLE},\hat\theta_{MLE}|x,y)}=\frac{\hat\theta_0^{n+m}(\prod_{i=1}^nx_i\prod_{j=1}^my_j)^{\hat\theta_{0}-1}}{\hat\mu_{MLE}^n(\prod_{i=1}^nx_i)^{\hat\mu_{MLE}-1}\hat\theta_{MLE}^m(\prod_{j=1}^my_j)^{\hat\theta_{MLE}-1}}=\frac{\hat\theta_0^{n+m}}{\hat\mu_{MLE}^n\hat\theta_{MLE}^m}\cdot(\prod_{i=1}^nx_i)^{\hat\theta_0-\hat\mu_{MLE}}(\prod_{j=1}^my_j)^{\hat\theta_0-\hat\theta_{MLE}}$$
 
  ---
  
@@ -240,7 +240,7 @@ $T=\frac{\sum\ln X_i}{\sum\ln X_i+\sum\ln Y_i}$
 
 Substituting $(\prod_{i=1}^nx_i)^{\hat\theta_0-\hat\mu_{MLE}}(\prod_{j=1}^my_j)^{\hat\theta_0-\hat\theta_{MLE}}=1$
 
-$$\Lambda=\frac{\hat\mu_0^{n+m}}{\hat\mu_{MLE}^n\hat\theta_{MLE}^m}=\frac{(-\frac{n+m}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{n+m}}{(-\frac{n}{\sum_{i=1}^n\ln x_i})^n(-\frac{m}{\sum_{j=1}^m\ln y_j})^m}=(\frac{n+m}{n})^n(\frac{n+m}{m})^m(\frac{\sum_{i=1}^n\ln x_i}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{n}(\frac{\sum_{j=1}^m\ln y_j}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{m}$$
+$$\Lambda=\frac{\hat\theta_0^{n+m}}{\hat\mu_{MLE}^n\hat\theta_{MLE}^m}=\frac{(-\frac{n+m}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{n+m}}{(-\frac{n}{\sum_{i=1}^n\ln x_i})^n(-\frac{m}{\sum_{j=1}^m\ln y_j})^m}=(\frac{n+m}{n})^n(\frac{n+m}{m})^m(\frac{\sum_{i=1}^n\ln x_i}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{n}(\frac{\sum_{j=1}^m\ln y_j}{\sum_{i=1}^n\ln x_i+\sum_{j=1}^m\ln y_j})^{m}$$
 $$=(\frac{n+m}{n})^n(\frac{n+m}{m})^mT^n(1-T)^m$$
 
 which is an unimodal function of $T$, so rejecting $H_0$ when $\Lambda\le c$ equivalent to rejecting $H_0$ when $T\le c_0$ or $T\ge c_1$ where $c_0,c_1$ are appropriate chosen constants.
@@ -255,8 +255,8 @@ $W=-\sum_{i=1}^n\ln X_i\sim Gamma(n,1/\mu),V=-\sum_{j=1}^m\ln Y_i\sim Gamma(m,1/
 
 Solving this equations
 
-$$\begin{cases}P(T\le c_1)+P(T\ge c_2)=\alpha=0.10\\c_1^{n-1}(1-c_1)^{m-1}=c_2^{n-1}(1-c_2)^{m-1}\end{cases}$$
-The test $\Lambda\le c_1,\Lambda\ge c_2$ is most powerful $\forall\theta\neq\mu$, so it is UMP at $0.10$ level.
+$$\begin{cases}P(T\le c_0)+P(T\ge c_1)=\alpha=0.10\\c_01^{n}(1-c_0)^{m}=c_1^{n}(1-c_1)^{m}\end{cases}$$
+The test $\Lambda\le c_0,\Lambda\ge c_1$ is most powerful $\forall\theta\neq\mu$, so it is a UMP level $\alpha=0.10$ test.
 
  ---
  
@@ -276,9 +276,11 @@ $$\frac{d}{dy}\Lambda=2e^{(y^{1/2}-y)}(\frac12y^{-1/2}-1)y^{1/2}+e^{(y^{1/2}-y)}
 Thus $\Lambda$ is an unimodal function of $y$, $\max\Lambda=2$ when $y=1$.
 The rejection region is $R=\{\vec y:\Lambda\le c\}$, and $c$ is chosen so that $P_{H_0}(\vec y\in R)=\alpha$, which equivalent to
 
-$$\begin{cases}P(Y\le c_0|\theta_0)+P(Y\ge c_1|\theta_0)=\int_{-\infty}^{c_0}e^{-y}dy+\int_{c_1}^{\infty}e^{-y}dy=\left.-e^{-y}\right|_{-\infty}^{c_0}+1-(\left.-e^{-y}\right|_{-\infty}^{c_1})=1-e^{-c_0}+e^{-c_1}=0.10\\2e^{(c_0^{1/2}-c_0)}c_0^{1/2}=2e^{(c_1^{1/2}-c_1)}c_1^{1/2}\end{cases}$$
+$$\begin{cases}P(Y\le c_0|\theta_0)+P(Y\ge c_1|\theta_0)=\alpha& (1)\\2e^{(c_0^{1/2}-c_0)}c_0^{1/2}=2e^{(c_1^{1/2}-c_1)}c_1^{1/2}& (2)\end{cases}$$
 
-$$\begin{cases}c_1-c_0=\ln0.90\\c_0^{1/2}-c_0+\frac12\ln c_0=c_1^{1/2}-c_1+\frac12\ln c_1\end{cases}$$
+$(1)=\int_{-\infty}^{c_0}e^{-y}dy+\int_{c_1}^{\infty}e^{-y}dy=\left.-e^{-y}\right|_{-\infty}^{c_0}+1-(\left.-e^{-y}\right|_{-\infty}^{c_1})=1-e^{-c_0}+e^{-c_1}=0.10\implies c_1-c_0=\ln0.90$
+
+$(2)\implies c_0^{1/2}-c_0+\frac12\ln c_0=c_1^{1/2}-c_1+\frac12\ln c_1$, get $c_0=0.076546, c_1=3.637798$.
 
 ```{r eval=FALSE, include=FALSE}
 # log(a) + log(b) = log(5)
@@ -289,7 +291,7 @@ exp(solve(m, c(log(5),log(10))))
 -exp(-3.637798^0.5)+exp(-0.076546^0.5)
 ```
 
-The test $\Lambda\le c_0=0.076546$,$\Lambda\ge c_1=3.637798$ is most powerful $\forall\theta_1\notin\Omega_0$, so it is UMP at $0.10$ level.
+The test $\Lambda\le c_0=0.076546$,$\Lambda\ge c_1=3.637798$ is most powerful $\forall\theta_1\notin\Omega_0$, so it is a UMP level $\alpha=0.10$ test.
 
 The Type II error probability is
 
@@ -338,6 +340,8 @@ exp(1.386294-1)/(1+exp(1.386294-1))
 
 From **Theorem 8.3.17 (Karlin-Rubin)** $H_0:\theta\le\theta_0$ versus $H_1:\theta>\theta_0$. T is a sufficient statistic for $\theta$ and the logistic location family of pdfs $\{g(t|\theta):\theta\in\Theta\}$ of $T$ has an MLR. Then for any $t_0$, the test that rejects $H_0$ if and only if $T>t_0$ is a UMP level $\alpha$ test, where $\alpha= P_{\theta_0}(T>t_0)$.
 
+ ---
+ 
 **8.33** Let $X_1,..,X_n$ be a random sample from the $uniform(0,\theta+1)$ distribution. $T_0$ test $H_0:\theta=0$ versus $H_1:\theta>0$, use the test reject $H_0$ if $Y_n\ge1$ or $Y_1\ge k$, where k is a constant, $Y_1= \min\{X_1,..,X_n\}, Y_n= \max\{X_1,..,X_n\}$.
 
 (a) Determine k so that the test will have size $\alpha$.
@@ -346,13 +350,17 @@ From theorems 5.4.4 and 5.6.6, the marginal pdf of $Y_{1}$, the joint pdf of $(Y
 
 $$f_{Y_{1}}(y_1|\theta)=\frac{n!}{(1-1)!(n-1)!}f_{Y_{1}}(y_1|\theta)[F_{Y_{1}}(y_1|\theta)]^{1-1}[1-F_{Y_{1}}(y_1|\theta)]^{n-1}=n[1-(y_1-\theta)]^{n-1},\ \theta<y_1<\theta+1$$
 
-$$f_{Y_{1},Y_{n}}(y_1,y_n|\theta)=\frac{n!}{(1-1)!(n-1-1)!(n-n)!}f_{Y_{1}}(y_1|\theta)f_{Y_{n}}(y_n|\theta)[F_{Y_{1}}(y_1|\theta)]^{1-1}[F_{Y_{n}}(y_n|\theta)-F_{Y_{1}}(y_1|\theta)]^{n-1-1}[1-F_{Y_{n}}(y_n|\theta)]^{n-n}=n(n-1)(y_1-y_n)^{n-2},\ \theta<y_1<y_n<\theta+1$$
+$$f_{Y_{1},Y_{n}}(y_1,y_n|\theta)=\frac{n!}{(1-1)!(n-1-1)!(n-n)!}f_{Y_{1}}(y_1|\theta)f_{Y_{n}}(y_n|\theta)[F_{Y_{1}}(y_1|\theta)]^{1-1}[F_{Y_{n}}(y_n|\theta)-F_{Y_{1}}(y_1|\theta)]^{n-1-1}[1-F_{Y_{n}}(y_n|\theta)]^{n-n}$$
+$$=n(n-1)(y_1-y_n)^{n-2},\ \theta<y_1<y_n<\theta+1$$
+
 
 Under $H_0:\theta=0$, $P(Y_n\ge1)=0$, 
 
 $$\alpha=P(Y_1\ge k|0)=\int_k^1n[1-(y_1-\theta)]^{n-1}dy_1=(1-k)^n$$
 Thus, use $k=1-\alpha^{1/n}$ to have a size $\alpha$ test.
 
+ ---
+ 
 (b) Find an expression for the power function of the test in part (a) .
 
 For $k<\theta$, $\beta(\theta)=1$.
@@ -367,6 +375,8 @@ For $k\ge\theta>0$,
 
 $$\beta(\theta)=\int_k^{\theta+1}[1-(y_1-\theta)]^{n-1}dy_1+\int_\theta^k\int_1^{\theta+1}n(n-1)(y_1-y_n)^{n-2}dy_ndy_1=\alpha+1-(1-\theta)^n$$
 
+ ---
+ 
 (c) Prove that the test is UMP size $\alpha$.
 **Corollary 8.3.13** Consider the hypothesis problem posed in **Theorem 8.3.12**. Suppose $T(\vec X)$ is a sufficient statistic for $\theta$ and $g(t|\theta_i)$ is the pdf or pmf of $T$ corresponding to $\theta_i,i=0,1$. Then any test based on $T$ with rejection region $S$ (a subset of the sample space of T) is a UMP level a test if it satisfies 
 $$t\in S\ \text{ if }\ g(t|\theta_1)>kg(t|\theta)$$
@@ -394,7 +404,7 @@ $$\begin{cases}\text{reject}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}
 
 (d) Find values of n and k so that the UMP .10 level test will have power at least .8 if $\theta>1$.
 
-For $\theta\gek=1-\alpha^{1/n}$, $\beta(\theta)=1$. So these conditions are satisfied for any n.
+For $\theta\ge k=1-\alpha^{1/n}$, $\beta(\theta)=1$. So these conditions are satisfied for any n.
 
 
 ## HW4
