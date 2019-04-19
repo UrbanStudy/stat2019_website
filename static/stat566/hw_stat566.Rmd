@@ -237,10 +237,22 @@ $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=
 ## HW2
 
 ### Problem 1: 
-Note: This is a 23 design with replications for each treatment combination. Analyze the data as a typical 3-factor factorial design.
+Note: This is a $2^3$ design with replications for each treatment combination. Analyze the data as a typical 3-factor factorial design.
 In part (a), do all the necessary tests and report conclusions along with p values appropriately.
 In part (b), provide plots along with your answer.
 In Part(c), clearly recommend which factor levels appropriately in question context and provide reasons.
+```{r echo=F, message=F, results='hold', out.width='25%'}
+hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
+hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
+hw2_1_table_mean <- hw2_1_table%>%group_by(A,B,C)%>%summarise(mean_y=mean(y))
+hw2_1_model_mean <- aov(mean_y~A*B*C,hw2_1_table_mean)
+hw2_1_effect <- coef(hw2_1_model_mean)[2:8]
+daewr::halfnorm(hw2_1_effect,alpha=0.55)
+hw2_1_model <- aov(y~A*C,hw2_1_table)
+pander::pander(summary(hw2_1_model))
+plot(hw2_1_model)
+```
+
 
 
 ### Problem 2:
@@ -250,7 +262,7 @@ Analyze these data to determine how the treatments affect time till off odor.
 
 ABCD effects are confounded with blocks according to given table of data.
 
-```{r echo=T,message=F, results='hold', out.width='30%'}
+```{r echo=F, message=F, results='hold', out.width='30%'}
 hw2_2_y <- c(34,34,32,34,34,39,38,37, 35,36,39,41,39,44,44,42)
 hw2_2_block <- c(rep(1,8),rep(2,8))
 hw2_2_name <- c("(1)","ab", "ac", "ad", "bc", "bd", "cd", "abcd", "a", "b", "c", "d", "abc", "abd", "acd", "bcd")
@@ -265,9 +277,9 @@ hw2_2_effect <- coef(hw2_2_model)[3:16]
 library(daewr)
 halfnorm(hw2_2_effect,alpha=0.15)
 
-library(ggplot2)
-library(gghalfnorm)
-gghalfnorm(hw2_2_effect,labs =names(hw2_2_effect), nlab=4)+ theme_light()
+# library(ggplot2)
+# library(gghalfnorm)
+# gghalfnorm(hw2_2_effect,labs =names(hw2_2_effect), nlab=4)+ theme_light()
 ```
 Form the half-normal quantiles plot, D effects is non-negligible after estimating all effects. 
 
@@ -292,7 +304,7 @@ $\varepsilon_{ij}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$
 
 Fit the model with non-negligible effects and block effects. get the complete ANOVA table.
 
-```{r echo=F,message=F, results='hold', out.width='30%'}
+```{r eval=FALSE, message=FALSE, include=FALSE, out.width='30%', results='hold'}
 hw2_2_model_non_neg <- aov(hw2_2_y~hw2_2_block+D,hw2_2_table)
 pander::pander(summary(hw2_2_model_non_neg))
 sum((hw2_2_table$hw2_2_y- mean(hw2_2_table$hw2_2_y))^2)
@@ -306,12 +318,12 @@ sum((hw2_2_table$hw2_2_y- mean(hw2_2_table$hw2_2_y))^2)
 
       **D**         1      81       81        26      0.0002041 
 
-   **Residuals**    13    40.5     3.115      NA         NA     
+   **Residuals**    13    40.5     3.115     
 
    **Total**        15  211.75 
  ---------------------------------------------------------------
 
- Based on the ANOVA table, factor D and block effects are significant at 5% significance level.)
+ Based on the ANOVA table, factor D and block effects are significant at 5% significance level.
 
 
 ### Problem 3:
