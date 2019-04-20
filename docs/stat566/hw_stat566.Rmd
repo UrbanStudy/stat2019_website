@@ -244,6 +244,8 @@ In part (a), do all the necessary tests and report conclusions along with p valu
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
 hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
 hw2_1_model <- aov(y~A*B*C,hw2_1_table)
+hw2_1_effect<- coef(hw2_1_model)[2:8]
+daewr::halfnorm(hw2_1_effect,alpha=0.55)
 
 hw2_1_table$A <- as.factor(hw2_1_table$A)
 hw2_1_table$B <- as.factor(hw2_1_table$B)
@@ -273,8 +275,8 @@ library(emmeans)
 a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
 a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
 b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
-test(rbind(a_b,a_c,b_c),adjust="tukey")
-kable(test(rbind(a_b,a_c),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 6)
+test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,]
+kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,],format="latex")%>%kable_styling("condensed",full_width=F,font_size = 6)
 ```
 
 
