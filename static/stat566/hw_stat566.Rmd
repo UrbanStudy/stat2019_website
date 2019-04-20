@@ -242,6 +242,9 @@ In part (a), do all the necessary tests and report conclusions along with p valu
 
 ```{r echo=F, message=F, results='hold', out.width='30%'}
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
+hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
+hw2_1_model <- aov(y~A*B*C,hw2_1_table)
+
 hw2_1_table$A <- as.factor(hw2_1_table$A)
 hw2_1_table$B <- as.factor(hw2_1_table$B)
 hw2_1_table$C <- as.factor(hw2_1_table$C)
@@ -249,8 +252,6 @@ kableExtra::kable(t(hw2_1_table)) %>%kableExtra::kable_styling("striped", full_w
 library(ggpubr)
 ggline(data = hw2_1_table, x = "A", y = "y", add = c("mean", "jitter"),shape= "B",  color = "C", linetype = "C", ylab= "y", xlab="A")
 
-hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
-hw2_1_model <- aov(y~A*B*C,hw2_1_table)
 pander::pander(summary(hw2_1_model))
 
 hw2_1_effect<- coef(hw2_1_model)[2:8]
