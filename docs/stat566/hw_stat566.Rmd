@@ -240,20 +240,22 @@ $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=
 Note: This is a $2^3$ design with replications for each treatment combination. Analyze the data as a typical 3-factor factorial design.
 In part (a), do all the necessary tests and report conclusions along with p values appropriately.
 
-```{r echo=F, message=F,collapse=T, results='hold', out.width='30%'}
+```{r echo=F, message=F,collapse=T, out.width='30%'}
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
 hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
 hw2_1_model <- aov(y~A*B*C,hw2_1_table)
-hw2_1_effect<- coef(hw2_1_model)[2:8]
-daewr::halfnorm(hw2_1_effect,alpha=0.55)
 
 hw2_1_table$A <- as.factor(hw2_1_table$A)
 hw2_1_table$B <- as.factor(hw2_1_table$B)
 hw2_1_table$C <- as.factor(hw2_1_table$C)
 library(kableExtra)
 kable(t(hw2_1_table)) %>%kable_styling("striped", full_width = F)
+
 library(ggpubr)
 ggline(data = hw2_1_table, x = "A", y = "y", add = c("mean", "jitter"),shape= "B",  color = "C", linetype = "C", ylab= "y", xlab="A")
+
+hw2_1_effect<- coef(hw2_1_model)[2:8]
+daewr::halfnorm(hw2_1_effect,alpha=0.55)
 
 pander::pander(summary(hw2_1_model))
 
@@ -275,8 +277,7 @@ library(emmeans)
 a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
 a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
 b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
-test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,]
-kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,],format="latex")%>%kable_styling("condensed",full_width=F,font_size = 6)
+kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 6)
 ```
 
 
@@ -302,10 +303,17 @@ In Part(c), clearly recommend which factor levels appropriately in question cont
 
 Base on the half-normal quantiles plot, only the effect of factor ABC is negligible after estimating all effects. 
 
+Based on the half-normal quantiles plot, only the effects of A, AC are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible. 
+
+The ANOVA table of new model with factor A, C and AC shows only the interactive effect of AC on average number of orders is significant at 0.05 significance level (P-value=0.008489). We recommend the higher class of email plus offered price can improve the customer response rate for a particular product more effectively.
+
 ```{r echo=F, message=F, results='hold', out.width='30%'}
 
 hw2_1_effect<- coef(hw2_1_model)[2:8]
 daewr::halfnorm(hw2_1_effect,alpha=0.55)
+
+hw2_1_model_ac<- aov(y~A*C,hw2_1_table)
+pander::pander(summary(hw2_1_model_ac))
 
 # hw2_1_table_mean <- hw2_1_table%>%group_by(A,B,C)%>%summarise(mean_y=mean(y))
 # hw2_1_model_mean <- aov(mean_y~A*B*C,hw2_1_table_mean)
