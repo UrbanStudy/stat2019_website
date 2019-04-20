@@ -273,7 +273,8 @@ library(emmeans)
 a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
 a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
 b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
-kable(test(rbind(a_b,a_c,b_c),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 6)
+test(rbind(a_b,a_c,b_c),adjust="tukey")
+kable(test(rbind(a_b,a_c),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 6)
 ```
 
 
@@ -282,11 +283,12 @@ kable(test(rbind(a_b,a_c,b_c),adjust="tukey"),format="latex")%>%kable_styling("c
 In part (b), provide plots along with your answer.
 
 ```{r echo=F, message=F, results='hold', out.width='30%'}
-hist(hw2_1_table$y)
+hw2_1_table$y_resid<- rstudent(hw2_1_model)
+hist(hw2_1_table$y_resid,, breaks =12)
 plot(hw2_1_model)
 ```
 
-The histogram of residuals does not satisfied the normality assumption. This could be caused by the response values being the mean values in each group receiving each treatment combination with 1000 customers. The QQ plot didn't show obvious violation of normality.
+The histogram of residuals and the QQ plot didn't show obvious violation of normality.
 
 The plot of residuals versus fitted value shows the residuals are evenly distributed about zero at each prededict value (zero mean). A few outliers are acceptable.
 
