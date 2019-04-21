@@ -8,9 +8,11 @@ output: html_document
 #  {.tabset .tabset-fade .tabset-pills}
 
 ```{r setup, include=F}
+
 knitr::opts_chunk$set(message=FALSE, warning=F, echo=F)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
+
 ```
 
 ## HW1
@@ -241,6 +243,7 @@ Note: This is a $2^3$ design with replications for each treatment combination. A
 In part (a), do all the necessary tests and report conclusions along with p values appropriately.
 
 ```{r echo=F, message=F,collapse=T, out.width='30%'}
+
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
 hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
 
@@ -249,14 +252,14 @@ hw2_1_table$B <- as.factor(hw2_1_table$B)
 hw2_1_table$C <- as.factor(hw2_1_table$C)
 
 library(kableExtra)
-kable(t(hw2_1_table)) %>%kable_styling("striped", full_width = F)
+kable(t(hw2_1_table))%>%kable_styling("striped", full_width = F)
 
 library(ggpubr)
 ggline(data = hw2_1_table, x = "A", y = "y", add = c("mean", "jitter"),shape= "B",  color = "C", linetype = "C", ylab= "y", xlab="A")
 
 hw2_1_model <- aov(y~A*B*C,hw2_1_table)
-
-pander::pander(summary(hw2_1_model))
+library(pander)
+pander(summary(hw2_1_model))
 
 # hw2_1_model_non_neg <- aov(y~A*C,hw2_1_table)
 # pander::pander(summary(hw2_1_model_non_neg))
@@ -281,6 +284,7 @@ a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
 a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
 b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
 kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 8)
+
 ```
 
 
@@ -316,7 +320,7 @@ hw2_1_effect<- coef(hw2_1_model)[2:8]
 daewr::halfnorm(hw2_1_effect,alpha=0.55)
 
 hw2_1_model_ac<- aov(y~A*C,hw2_1_table)
-pander::pander(summary(hw2_1_model_ac))
+pander(summary(hw2_1_model_ac))
 
 # hw2_1_table_mean <- hw2_1_table%>%group_by(A,B,C)%>%summarise(mean_y=mean(y))
 # hw2_1_model_mean <- aov(mean_y~A*B*C,hw2_1_table_mean)
