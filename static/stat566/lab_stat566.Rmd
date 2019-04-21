@@ -149,3 +149,49 @@ lab2_fit2<- aov(UEC ~ Blk + A + C + D + A:C, data = lab2_obs)
 summary(lab2_fit2)
 plot(lab2_fit2, pch=16) 
 ```
+
+
+## lab3 Example 8.2
+
+Design a 2^5 one-half fractional factorial design with resolution IV and I=ABCDE generator 
+Install and load FrF2 package 
+
+```{r, collapse=T, out.width='25%', results='hold'}
+library(FrF2)
+design_lab3_1 <- FrF2(nfactors = 5, resolution =5, alias.block.2fis = TRUE, randomize = FALSE)
+summary(design_lab3_1)
+```
+
+The same design can be obtained from the following options too
+
+Here nruns and generators are given and resolution is not given 
+
+Since I=ABCDE the generator which is equivalent to E=ABCD, the column E is created using ABCD 
+
+```{r, collapse=T, out.width='25%', results='hold'}
+design_lab3_2 <- FrF2(nfactors = 5, nruns=2^4, generators = "ABCD", alias.block.2fis = TRUE, randomize = FALSE)
+summary(design_lab3_2)
+```
+
+```{r, collapse=T, out.width='25%', results='hold'}
+lab3_y <- c(8, 9, 34, 52,16,22,45,60, 6, 10, 30, 50, 15, 21, 44, 63)
+table_lab3 <- add.response(design_lab3_1,lab3_y)
+table_lab3
+model_lab3 <- aov(lab3_y ~ A*B*C*D*E, data= table_lab3)
+```
+
+The coefficients in this fitted model gives only half of the estimated effect
+
+because each factor has two levels and the coefficient is only for one level of factor
+
+The true value of estimated effect is double of the following effects
+
+However, it does not affect the normal plot because each effect is half of its true value
+
+```{r, collapse=T, out.width='30%', results='hold'}
+effect_lab3 <-coef(model_lab3)
+qqnorm(effect_lab3[2:length(effect_lab3)], pch=16)
+qqline(effect_lab3[2:length(effect_lab3)])
+daewr::halfnorm(effect_lab3[2:length(effect_lab3)], names(effect_lab3[2:length(effect_lab3)]), alpha = 0.05)
+```
+
