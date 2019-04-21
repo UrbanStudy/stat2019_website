@@ -1,0 +1,112 @@
+---
+title: "Reading reflections"
+subtitle: "USP 570"
+author: 'Shen Qu'
+date: "Week 3"
+output:
+  word_document: null
+  pdf_document: default
+bibliography: bib_usp570.bib
+mainfont: Times New Roman
+geometry: margin=1in
+spacing: double
+fontsize: 12pt
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=F)
+knitr::kable
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+
+# install.packages("citr")
+```
+
+
+### Main point
+
+ - Transportation system and spatial form
+ 
+@levinson2018metropolitan emphasize transportation is a necessary but not a sufficient factor for any development. Meanwhile, @Muller2017transportation reviews the evolution of the U.S. urban form and describe the four eras of intrametropolitan growth: walking-horsecar era, electric streetcar era, recreational auto era, and freeway era. Each of the four-stage urban transportation development has its dominated spatial structure, which is hard represented by other socio-economic concepts.  We can see the transportation technology is a determining constraint to other factors for urban form. In the last section of his paper wrote in 1995, Muller stated the two problems of congestion and spatial mismatch caused by suburbanization and auto dependency. He also summarized some socioeconomic dynamics such as postindustrial economy, globalization, and the expansion of the services sector. He didn't talk about how new transportation technology may launch the next era of metropolitan expansion. Now we can see some emerging technological breakthrough is happening. Intelligent Transportation Systems (ITS) are replacing precious travel decision mechanism step by step. Except admitting technology as an initial force, many scholars start to explore how the new force will forge a decidedly different future of urban forms. 
+
+ - The choice of house and job
+
+@levinson2018metropolitan [ch.3] introduces several theories and models explaining how transport influences residential location preferences. From an economic perspective, the transport cost is the core element in Thünen's model of agricultural land and Alonso’s Bid-rent theory. Meanwhile, Schelling’s Segregation Model and Tiebout’s model of 'vote with feet' disclose the significant function of self-selection as a social element.
+
+@levinson2018metropolitan [ch.4] point out "the theory of behavior based on gravity models assume that geography plays a prominent role in predicting who interacts with whom and how frequently." This theory can explain the macrostructure. Some evidence such as 'excess driving' and 'weak ties' show that the transportation network is only a part of travel decisions. Social networks with a 'hub-and-spoke structure' play a prominent role in finding a job.
+
+The mechanism of social networks is difficult to define and measure by such as 'weak or strong link,' 'close relation or not.' We have to depend on modeling to connect the phenomenon and the roots. It is important to highlight the complex and indirect role of geography from @levinson2018metropolitan's argument.
+
+### Discussion
+
+In describing the process of housing choice, some subjectively assessed attributes are hardly measured.
+Hedonic regression analysis is a method using modeling techniques for measuring non-market benefits uses the change in prices of complementary goods to infer a willing to pay (WTP) for a healthier environment or less risky environment. The main hypothesis is that the accessibility of transit or bike facility has some positive effects on housing sale prices. Here we compare the methodology and findings from three articles using hedonic models [@chen1998measuring; @welch2016long; @liu2017impact].
+
+ - The models
+ 
+All the three studies used ordinary least-squares (OLS) modeling, which based on the maximum likelihood principle.  @chen1998measuring's model[^1] is a typical multiple regression. Both @liu2017impact[^2] and @welch2016long[^3] try to control spatial dependence and prevent overestimation of coefficient estimates. @welch2016long employ a spatiotemporal autocorrelation model to overcome the potentially confounding modeling errors. To avoid sample bias, @welch2016long's spatial panel data model adopts bootstrapping regression estimates with a nonparametric approach, which constructed a 'pseudo spatial panel dataset' from a single observation for every grid cell, each year of the study period.
+
+[^1]: @chen1998measuring's model:
+$$P=a+bX +rZ +e$$
+where
+$P$ the sales price or log transformation,
+$a$ constant term,
+$X$ a vector of control variables,
+$Z$ a vector of spatial-related variables,
+$e$ the random error term, and
+$a, b, r$ parameters to be estimated.
+
+[^2]: @liu2017impact's model
+$$P_i=\beta_0+\beta_1T_i+\beta_2H_i+\beta_3R_i+\beta_4B_i+\varepsilon_i$$
+$P_i$ Property sale price;
+$T_i$ TransacSon characterisScs, such as year and season of the sale;
+$H_i$ Internal property characterisScs , such as age, size and property tax liability;
+$R_i$ External neighborhood characterisScs, such as school quality, crime rate, and walk score;
+$B_i$ Bike facility characterisScs, such as distance to nearest advanced bicycle facility, and advanced bike facility density within a half-mile radius.
+$$\begin{cases}Y=\rho W Y+X\beta+\varepsilon& \text{Spatial lag model}\\Y=X\beta+\lambda W\varepsilon+\nu& \text{Spatial error model} \end{cases}$$
+where
+$\rho W Y$ spatially lagged dependent variable that represents the omitted variable in the regression model,
+$\rho$ spatial lag parameter,
+$W$ spatial weighting matrix that represents the interaction between different locations, and
+$X$ vector of all variables included in the OLS model.
+$\lambda$ spatial error parameter,
+$W\varepsilon$ spatial error, interpreted as the mean error from neighboring locations, and
+$\nu$ independent model error.
+
+[^3]: @welch2016long's spatial panel data model
+$$\begin{cases}y=\lambda(I_T\cdot W_N)y+X\beta+u&\\u=(\iota_T\cdot I_N)\mu+\varepsilon&\text{sum of the temporal autocorrelation} \\\varepsilon=\rho(I_T\cdot W_N)\varepsilon+\upsilon&\text{spatial autocorrelation} \end{cases}$$
+where, $y$ is an $NT\times1$ vector of observations on the dependent variable,
+$X$ is a $NT\times k$ matrix of observations on the non-stochastic exogenous variables, 
+$I_T$ is an identity matrix of dimension $T$, 
+$W_N$ is an $N\times N$ spatial weights matrix with diagonal elements set to zero, 
+$\lambda$ represents the corresponding spatial parameter. 
+
+@chen1998measuring examine the simple effects of LRT. The other two research consider the correlated effects of improved bike and rail transit facility access.
+@chen1998measuring evaluate the combined effect of accessibility and nuisance respond to the distance from station or line. However, for LRT, the positive effect of accessibility is only related to the station, not the line. @welch2016long use street network distance instead of the straight-line measurements or a series of areal buffer approximations.
+
+Cross-sectional data analysis observes the cumulated effects in the long term. @welch2016long think panel dataset can examine the long-term influence better. We know the opening of the Yellow Line in 2004, Green Line in 2009, and Central Loop Line in 2012. Is DID method comparing the pre- and post-treatment effects from transit investments better?
+   
+@chen1998measuring only studied a corridor of the light rail system (MAX) in Portland, Oregon. The other two studies include all the City of Portland. With this advantage, @liu2017impact can examine the extensiveness of the bike network and  @welch2016long create a 300-meter grid cell system cast over the city.
+
+@levinson2018metropolitan divide the home attributes into three categories: structural (including internal and external) attributes, location attributes, and neighborhood characteristics. All three studies follow this division.
+Moreover, @liu2017impact distinguish the two property types of SFHs and MFHs, add the advanced bicycle facility characteristics. Her study measures both ease of access (distance) and extensiveness of bike network (density).
+@welch2016long examine the bike facilities types, including local and regional, on-street and off-street.
+There is also a risk of overfitting, which making an overly complex model to explain idiosyncrasies in the data under study. 
+
+Some relevant hedonic price studies show some consistent findings. Al-Mosaind et al. (1993), Lewis-Workman and Brod (1997), Chen et al. (1998), Dueker and Bianco (1999), @welch2016long found the positive effects by Light rail transit.
+Lindsey et al. (2004)	Krizek (2006) Asabere and Huffman (2009) Parent and vom Hofe (2013) found Multi-use paths have positive effects.
+Krizek (2006) and @welch2016long found the effects of bike lanes are not significant or negative.
+@liu2017impact further found extensiveness of the bike network is a positive and statistically significant contributor to property prices after controlling for proximity to bike facilities and other internal and external variables.
+As more and more studies on different urban regions, a meta-analysis may be valuable.
+
+Notes {#notes}
+==========
+
+---
+nocite: | 
+  @litman2017evaluating
+...
+
+
+References {#references .unnumbered}
+==========

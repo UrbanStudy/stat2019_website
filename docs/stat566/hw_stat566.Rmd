@@ -265,19 +265,19 @@ pander::pander(summary(hw2_1_model))
 Based on ANOVA table, factor C, AB, AC, BC have significant effects at 0.05 significance level. Their P-values are 0.008516,0.005602, 0.0004176, 0.003728 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
 
 ```{r echo=F, message=F,collapse=T, results='hold', out.width='30%'}
-library(mosaic)
-kable(favstats(y ~ A, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
-kable(favstats(y ~ B, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
-kable(favstats(y ~ A+B, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
-kable(favstats(y ~ A+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
-kable(favstats(y ~ B+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
-kable(favstats(y ~ A+B+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
-hw2_1_model <- aov(y~A*B*C,hw2_1_table)
+# library(mosaic)
+# kable(favstats(y ~ A, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
+# kable(favstats(y ~ B, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
+# kable(favstats(y ~ A+B, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
+# kable(favstats(y ~ A+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
+# kable(favstats(y ~ B+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
+# kable(favstats(y ~ A+B+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
+# hw2_1_model <- aov(y~A*B*C,hw2_1_table)
 library(emmeans)
 a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
 a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
 b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
-kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 6)
+kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 8)
 ```
 
 
