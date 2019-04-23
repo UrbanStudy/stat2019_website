@@ -548,33 +548,32 @@ $(document).ready(function () {
 </div>
 <div id="hw3" class="section level2">
 <h2>HW3</h2>
-<p><strong>8.28</strong> Let <span class="math inline">\(f(x|\theta)\)</span> be the logistic location pdf</p>
-<p><span class="math display">\[f(x|\theta)=\frac{e^{x-\theta}}{(1+e^{x-\theta})^2},-\infty&lt;x&lt;\infty,-\infty&lt;\theta&lt;\infty\]</span></p>
+<p><strong>8.28</strong> Let <span class="math inline">\(f(x|\theta)\)</span> be the logistic location pdf <span class="math inline">\(f(x|\theta)=\frac{e^{x-\theta}}{(1+e^{x-\theta})^2},-\infty&lt;x&lt;\infty,-\infty&lt;\theta&lt;\infty\)</span></p>
 <ol style="list-style-type: lower-alpha">
 <li>Show that this family has an MLR.</li>
 </ol>
 <p>Let <span class="math inline">\(\theta_2&gt;\theta_1\)</span>,</p>
-<p><span class="math display">\[\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{\frac{e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}}{\frac{e^{x-\theta_1}}{(1+e^{x-\theta_1})^2}}=e^{\theta_1-\theta_2}\left[\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}}\right]^2\]</span></p>
+<p><span class="math display">\[\Lambda=\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{\frac{e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}}{\frac{e^{x-\theta_1}}{(1+e^{x-\theta_1})^2}}=e^{\theta_1-\theta_2}\left[\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}}\right]^2\]</span></p>
 <p>Take the derivative of the part in brackets.</p>
 <p><span class="math display">\[\frac{d}{dx}(\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}})=\frac{(1+e^{x-\theta_1})'(1+e^{x-\theta_2})-(1+e^{x-\theta_1})(1+e^{x-\theta_2})'}{(1+e^{x-\theta_2})^2}=\frac{e^{x-\theta_1}(1+e^{x-\theta_2})-(1+e^{x-\theta_1})e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}=\frac{e^{x-\theta_1}-e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}\]</span></p>
-<p>For <span class="math inline">\(\theta_2&gt;\theta_1\)</span>, <span class="math inline">\(\Lambda\)</span> is a monotone function of <span class="math inline">\(f(x|\theta)\)</span>. This family has a Monotone Likelihood ratio (MLR).</p>
+<p>For <span class="math inline">\(\theta_2&gt;\theta_1\)</span>, <span class="math inline">\(\Lambda\)</span> is a monotone function. This family has a Monotone Likelihood ratio (MLR).</p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Based on one observation, <span class="math inline">\(X\)</span>, find the most powerful size <span class="math inline">\(\alpha\)</span> test of <span class="math inline">\(H_0:\theta=0\)</span> versus <span class="math inline">\(H_1:\theta=1\)</span>. For <span class="math inline">\(\alpha=.2\)</span>, find the size of the Type II Error.</li>
 </ol>
 <p>The MLR <span class="math inline">\(\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{f(x|1)}{f(x|0)}\)</span> is increasing in <span class="math inline">\(x\)</span>. The best test is to reject <span class="math inline">\(H_0\)</span> when <span class="math inline">\(\frac{f(x|1)}{f(x|0)}&gt;k\)</span>, which is equivalent to rejecting if <span class="math inline">\(x&gt;k'\)</span></p>
-<p><span class="math inline">\(F(x|\theta)=\int_{-\infty}^{x}\frac{e^{x-\theta}}{(1+e^{x-\theta})^2}dx=\frac{e^{x-\theta}}{1+e^{x-\theta}}\)</span></p>
-<p>For <span class="math inline">\(\alpha=1-F(k'|0)=1-\frac{e^{k'}}{1+e^{k'}}=\frac{1}{1+e^{k'}}=0.2\)</span>,</p>
+<p><span class="math inline">\(F(x|\theta)=\int_{-\infty}^{x}\frac{e^{x-\theta}}{(1+e^{x-\theta})^2}dx=\left.\frac{e^{x-\theta}}{1+e^{x-\theta}}\right|^x_{-\infty}=\left.1-\frac{1}{1+e^{x-\theta}}\right|^x_{-\infty}=1-\frac{1}{1+e^{x-\theta}}\)</span></p>
+<p>For <span class="math inline">\(\alpha=P(\text{Type I})=P(\text{Reject }H_0|H_0\text{ is ture})=1-F(k'|0)=1-(1-\frac{1}{1+e^{k'}})=\frac{1}{1+e^{k'}}=0.2\)</span>,</p>
 <p><span class="math inline">\(k'=\ln{\frac{1-\alpha}{\alpha}}=\ln{\frac{1-0.2}{0.2}}=1.386294\)</span></p>
-<p>Type II Error <span class="math inline">\(\beta=F(k'|1)=\frac{e^{k'-1}}{1+e^{k'-1}}=0.5953902\)</span></p>
+<p>Type II Error <span class="math inline">\(\beta=P(\text{Type II})=P(\text{Fail to reject }H_0|H_1\text{ is ture})=F(k'|1)=1-\frac{1}{1+e^{k'-1}}=0.5953902\)</span></p>
 <hr />
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Show that the test in part (b) is UMP size <span class="math inline">\(\alpha\)</span> for testing <span class="math inline">\(H_0:\theta\le0\)</span> versus <span class="math inline">\(H_1:\theta&gt;0\)</span>. What can be said about UMP tests in general for the logistic location family?</li>
 </ol>
-<p>From part (a), the logistic location family of pdfs <span class="math inline">\(\{g(t|\theta):\theta\in\Theta\}\)</span> of <span class="math inline">\(T\)</span> has an MLR.</p>
-<p>for testing <span class="math inline">\(H_0:\theta\le0\)</span> versus $H_1:&gt;0, $T is a sufficient statistic for <span class="math inline">\(\theta\)</span>.</p>
-<p>From <strong>Theorem 8.3.17 (Karlin-Rubin)</strong>, if and only if <span class="math inline">\(T&gt;t_0\)</span> is a UMP level <span class="math inline">\(\alpha\)</span> test, where <span class="math inline">\(\alpha= P_{\theta_0}(T&gt;t_0)\)</span>,</p>
-<p>then for any <span class="math inline">\(t_0\)</span>, the test rejects <span class="math inline">\(H_0\)</span> .</p>
+<p>From part (a), the logistic location family of pdfs <span class="math inline">\(\{f(x|\theta):\theta\in\Theta\}\)</span> of <span class="math inline">\(X\)</span> has a MLR.</p>
+<p>For testing <span class="math inline">\(H_0:\theta\le0\)</span> versus <span class="math inline">\(H_1:\theta&gt;0\)</span>, <span class="math inline">\(X\)</span> is a sufficient statistic for <span class="math inline">\(\theta\)</span>.</p>
+<p>From <strong>Theorem 8.3.17 (Karlin-Rubin)</strong>, if and only if <span class="math inline">\(x&gt;k'\)</span> is a UMP level <span class="math inline">\(\alpha\)</span> test, where <span class="math inline">\(\alpha= P_{\theta_0}(x&gt;k')\)</span>,</p>
+<p>then for any <span class="math inline">\(k'\)</span>, the test rejects <span class="math inline">\(H_0\)</span>. Thus, this method can apply on the logistic lcoation family.</p>
 <hr />
 <p><strong>8.33</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from the <span class="math inline">\(uniform(\theta,\theta+1)\)</span> distribution. <span class="math inline">\(T_0\)</span> test <span class="math inline">\(H_0:\theta=0\)</span> versus <span class="math inline">\(H_1:\theta&gt;0\)</span>, use the test reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(Y_n\ge1\)</span> or <span class="math inline">\(Y_1\ge k\)</span>, where k is a constant, <span class="math inline">\(Y_1= \min\{X_1,..,X_n\}, Y_n= \max\{X_1,..,X_n\}\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
@@ -585,19 +584,17 @@ $(document).ready(function () {
 <p><span class="math inline">\(f_{Y_{1}}(y_1|\theta)=\frac{n!}{(1-1)!(n-1)!}f_{X}(y_1|\theta)[F_{X}(y_1|\theta)]^{1-1}[1-F_{X}(y_1|\theta)]^{n-1}=n[1+\theta-y_1]^{n-1},\ \theta\le y_1\le\theta+1\)</span></p>
 <p><span class="math inline">\(f_{Y_{n}}(y_n|\theta)=\frac{n!}{(n-1)!(n-n)!}f_{X}(y_n|\theta)[F_{X}(y_n|\theta)]^{n-1}[1-F_{X}(y_n|\theta)]^{n-n}=n[y_n-\theta]^{n-1},\ \theta\le y_n\le\theta+1\)</span></p>
 <p><span class="math inline">\(f_{Y_{1},Y_{n}}(y_1,y_n|\theta)=\frac{n!f_{X}(y_1|\theta)f_{X}(y_n|\theta)}{(1-1)!(n-1-1)!(n-n)!}[F_{X}(y_1|\theta)]^{1-1}[F_{X}(y_n|\theta)-F_{X}(y_1|\theta)]^{n-1-1}[1-F_{X}(y_n|\theta)]^{n-n}\)</span> <span class="math display">\[=n(n-1)(y_n-y_1)^{n-2},\ \theta\le y_1&lt;y_n\le\theta+1\]</span></p>
-<p>Under <span class="math inline">\(H_0:\theta=0, Y_n\le\theta+1=1\)</span>, <span class="math inline">\(P(Y_n\ge1)=0\)</span>,</p>
+<p>Under <span class="math inline">\(H_0:\theta=0, 0\le k\le Y_1\le Y_n\le\theta+1=1\)</span>, <span class="math inline">\(P(Y_n\ge1)=0\)</span>,</p>
 <p><span class="math display">\[\alpha=P(Y_1\ge k\cup Y_n\ge 1|\theta=0)=\int_k^1n[1+\theta-y_1]^{n-1}dy_1=(1-k)^n\]</span> Thus, use <span class="math inline">\(k=1-\alpha^{1/n}, 0\le k\le1\)</span> to have a size <span class="math inline">\(\alpha\)</span> test.</p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Find an expression for the power function of the test in part (a) .</li>
 </ol>
-<p>When <span class="math inline">\(\theta+1\le k\le1\)</span>, all <span class="math inline">\(Y_1\)</span> and <span class="math inline">\(Y_n\)</span> locate outside the rejection region. <span class="math inline">\(\beta(\theta)=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k, Y_n\ge 1|\theta&gt;0)=0\)</span></p>
-<p>When <span class="math inline">\(0&lt; k\le\theta\)</span>, all <span class="math inline">\(Y_1\)</span> and <span class="math inline">\(Y_n\)</span> locate inside the rejection region. <span class="math inline">\(\beta(\theta)=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k, Y_n\ge 1|\theta&gt;0)=1\)</span></p>
-<p>When <span class="math inline">\(\theta&lt; k\le\theta+1\le1\)</span>, a part of <span class="math inline">\(Y_1\)</span> locate inside the <span class="math inline">\(k\le Y_1\)</span> rejection region. All <span class="math inline">\(Y_n\)</span> locate outside the <span class="math inline">\(1\le Y_n\)</span> rejection region.</p>
-<p><span class="math display">\[\beta(\theta)=P(Y_1\ge k,Y_n\ge 1|\theta&gt;0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1=(\theta+1-k)^n\]</span></p>
-<p>When <span class="math inline">\(\theta\le k\le1\le\theta+1\)</span>, a part of <span class="math inline">\(Y_1\)</span> locate inside the <span class="math inline">\(k\le Y_1\le\theta+1\)</span> rejection region. All <span class="math inline">\(Y_n\)</span> locate outside the <span class="math inline">\(1\le Y_n\)</span> rejection region.</p>
-<p><span class="math inline">\(\beta(\theta)=P(k\le Y_1\le\theta+1|\theta&gt;0)+P(\theta\le Y_1\le k,1\le Y_n\le\theta+1 |\theta&gt;0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1+\int_\theta^k\int_1^{\theta+1}n(n-1)(y_n-y_1)^{n-2}dy_ndy_1\)</span></p>
-<p><span class="math inline">\(=(\theta+1-k)^n+\int_\theta^kn[(\theta+1-y_1)^{n-1}-(1-y_1)^{n-1}]dy_1=(\theta+1-k)^n-(\theta+1-k)^n+1+(1-k)^n-(1-\theta)^{n}=1+\alpha-(1-\theta)^n\)</span></p>
+<p>The rejection regions are <span class="math inline">\(Y_1\ge k\)</span> and <span class="math inline">\(Y_n\ge 1\)</span>.</p>
+<p>When <span class="math inline">\(\theta+1\le k\le1\)</span>, all <span class="math inline">\(Y_1\)</span> and <span class="math inline">\(Y_n\)</span> locate outside the rejection region. The power function<span class="math inline">\(=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k\cup Y_n\ge 1|\theta&gt;0)=0\)</span></p>
+<p>When <span class="math inline">\(0&lt; k\le\theta\)</span>, all <span class="math inline">\(Y_1\)</span> and <span class="math inline">\(Y_n\)</span> locate inside the rejection region. <span class="math inline">\(\beta(\theta)=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k\cup Y_n\ge 1|\theta&gt;0)=1\)</span></p>
+<p>When <span class="math inline">\(\theta&lt; k\le\theta+1\le1\)</span>, a part of <span class="math inline">\(Y_1\)</span> locate inside the <span class="math inline">\(k\le Y_1\)</span> rejection region. All <span class="math inline">\(Y_n\)</span> locate outside the <span class="math inline">\(1\le Y_n\)</span> rejection region. The power function <span class="math inline">\(=P(Y_1\ge k\cup Y_n\ge 1|\theta&gt;0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1=(\theta+1-k)^n\)</span></p>
+<p>When <span class="math inline">\(\theta\le k\le1\le\theta+1\)</span>, a part of <span class="math inline">\(Y_1\)</span> locate inside the <span class="math inline">\(k\le Y_1\le\theta+1\)</span> rejection region, a part of <span class="math inline">\(Y_n\)</span> locate inside the <span class="math inline">\(1\le Y_n\)</span> rejection region. The power function<span class="math inline">\(=P(k\le Y_1\le\theta+1|\theta&gt;0)+P(\theta\le Y_1\le k,1\le Y_n\le\theta+1 |\theta&gt;0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1+\int_\theta^k\int_1^{\theta+1}n(n-1)(y_n-y_1)^{n-2}dy_ndy_1=(\theta+1-k)^n+\int_\theta^kn[(\theta+1-y_1)^{n-1}-(1-y_1)^{n-1}]dy_1=(\theta+1-k)^n-(\theta+1-k)^n+1+(1-k)^n-(1-\theta)^{n}=1+\alpha-(1-\theta)^n\)</span></p>
 <hr />
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Prove that the test is UMP size <span class="math inline">\(\alpha\)</span>.</li>
@@ -611,13 +608,13 @@ $(document).ready(function () {
 <p><span class="math display">\[\begin{cases}\text{reject}&amp; \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}&gt;1 \\\text{fail to reject}&amp; \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}&lt;1 \end{cases}\]</span></p>
 <p>For <span class="math inline">\(\theta\ge k\)</span>, use <span class="math inline">\(k'=0\)</span>,</p>
 <p><span class="math display">\[\begin{cases}\text{reject}&amp; \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}&gt;0 \\\text{fail to reject}&amp; \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}&lt;0 \end{cases}\]</span></p>
-<p>Form <strong>Corollary 8.3.13</strong>, <span class="math inline">\(T(\vec X)\)</span> is a sufficient statistic for <span class="math inline">\(\theta\)</span> and <span class="math inline">\(g(t|\theta_i)\)</span> is the pdf of <span class="math inline">\(T\)</span> corresponding to <span class="math inline">\(\theta_i,i=0,1\)</span>. if it satisfies <span class="math inline">\(t\in S\ \text{ if }\ g(t|\theta_1)&gt;kg(t|\theta)\)</span> and <span class="math inline">\(t\in S^c\ \text{ if }\ g(t|\theta_1)&lt;kg(t|\theta)\)</span></p>
-<p>for some <span class="math inline">\(k\ge 0\)</span>, where <span class="math inline">\(\alpha=P_{\theta_0}(T\in S)\)</span></p>
-<p>Therefore, any test based on <span class="math inline">\(T\)</span> with rejection region <span class="math inline">\(S\)</span> is a UMP level a test.</p>
+<p>Form <strong>Corollary 8.3.13</strong>, <span class="math inline">\((Y_1,Y_n)\)</span> is a sufficient statistic for <span class="math inline">\(\theta\)</span> and <span class="math inline">\(g(y|\theta)\)</span> is the pdf of <span class="math inline">\(Y\)</span> corresponding to <span class="math inline">\(\theta_0,\theta_1\)</span>. if it satisfies <span class="math inline">\(y_1\in S_1\)</span>, <span class="math inline">\(y_n\in S_n\)</span> if <span class="math inline">\(f(y_1,y_n|\theta_1)&gt;kf(y_1,y_n|\theta_0)\)</span> and <span class="math inline">\(y_1\in S_1^c\)</span>, <span class="math inline">\(y_n\in S_n^c\)</span> if <span class="math inline">\(f(y_1,y_n|\theta_1)&lt;kf(y_1,y_n|\theta_0)\)</span> for some <span class="math inline">\(k\ge 0\)</span>, where <span class="math inline">\(\alpha=P_{\theta_0}(y_1\in S_1,y_n\in S_n)\)</span></p>
+<p>Therefore, the test based on <span class="math inline">\((Y_1,Y_n)\)</span> with rejection regions <span class="math inline">\(Y_1\ge k\)</span> and <span class="math inline">\(Y_n\ge 1\)</span> is a UMP level a test.</p>
+<hr />
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Find values of n and k so that the UMP .10 level test will have power at least .8 if <span class="math inline">\(\theta&gt;1\)</span>.</li>
 </ol>
-<p>When <span class="math inline">\(0&lt; k\le\theta\)</span>, all <span class="math inline">\(Y_1\)</span> and <span class="math inline">\(Y_n\)</span> locate inside the rejection region, <span class="math inline">\(\beta(\theta)=1&gt;0.8\)</span>.</p>
+<p>When <span class="math inline">\(0&lt; k\le\theta\)</span>, all <span class="math inline">\(Y_1\)</span> and <span class="math inline">\(Y_n\)</span> locate inside the rejection region, the power function<span class="math inline">\(=1&gt;0.8\)</span>.</p>
 <p><span class="math display">\[k=1-\alpha^{1/n}=1-0.1^{1/n}=0.9, 0.68377, 0.53584,...,n=1,2,3...\]</span></p>
 </div>
 <div id="hw4" class="section level2">

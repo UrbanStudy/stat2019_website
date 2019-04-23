@@ -299,21 +299,19 @@ $$P(c_0<Y<c_1|\theta_1)=\int_{c_0}^{c_1}\frac12e^{-y^{1/2}} y^{-1/2}dy=\left.-e^
 
 ## HW3
 
-**8.28** Let $f(x|\theta)$ be the logistic location pdf
-
-$$f(x|\theta)=\frac{e^{x-\theta}}{(1+e^{x-\theta})^2},-\infty<x<\infty,-\infty<\theta<\infty$$
+**8.28** Let $f(x|\theta)$ be the logistic location pdf $f(x|\theta)=\frac{e^{x-\theta}}{(1+e^{x-\theta})^2},-\infty<x<\infty,-\infty<\theta<\infty$
 
 (a) Show that this family has an MLR.
 
 Let $\theta_2>\theta_1$,
 
-$$\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{\frac{e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}}{\frac{e^{x-\theta_1}}{(1+e^{x-\theta_1})^2}}=e^{\theta_1-\theta_2}\left[\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}}\right]^2$$
+$$\Lambda=\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{\frac{e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}}{\frac{e^{x-\theta_1}}{(1+e^{x-\theta_1})^2}}=e^{\theta_1-\theta_2}\left[\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}}\right]^2$$
 
 Take the derivative of the part in brackets.
 
 $$\frac{d}{dx}(\frac{1+e^{x-\theta_1}}{1+e^{x-\theta_2}})=\frac{(1+e^{x-\theta_1})'(1+e^{x-\theta_2})-(1+e^{x-\theta_1})(1+e^{x-\theta_2})'}{(1+e^{x-\theta_2})^2}=\frac{e^{x-\theta_1}(1+e^{x-\theta_2})-(1+e^{x-\theta_1})e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}=\frac{e^{x-\theta_1}-e^{x-\theta_2}}{(1+e^{x-\theta_2})^2}$$
 
-For $\theta_2>\theta_1$, $\Lambda$ is a monotone function of $f(x|\theta)$. This family has a Monotone Likelihood ratio (MLR).
+For $\theta_2>\theta_1$, $\Lambda$ is a monotone function. This family has a Monotone Likelihood ratio (MLR).
 
  ---
 
@@ -321,13 +319,13 @@ For $\theta_2>\theta_1$, $\Lambda$ is a monotone function of $f(x|\theta)$. This
 
 The MLR $\frac{f(x|\theta_2)}{f(x|\theta_1)}=\frac{f(x|1)}{f(x|0)}$ is increasing in $x$. The best test is to reject $H_0$ when $\frac{f(x|1)}{f(x|0)}>k$, which is equivalent to rejecting if $x>k'$
 
-$F(x|\theta)=\int_{-\infty}^{x}\frac{e^{x-\theta}}{(1+e^{x-\theta})^2}dx=\frac{e^{x-\theta}}{1+e^{x-\theta}}$
+$F(x|\theta)=\int_{-\infty}^{x}\frac{e^{x-\theta}}{(1+e^{x-\theta})^2}dx=\left.\frac{e^{x-\theta}}{1+e^{x-\theta}}\right|^x_{-\infty}=\left.1-\frac{1}{1+e^{x-\theta}}\right|^x_{-\infty}=1-\frac{1}{1+e^{x-\theta}}$
 
-For $\alpha=1-F(k'|0)=1-\frac{e^{k'}}{1+e^{k'}}=\frac{1}{1+e^{k'}}=0.2$, 
+For $\alpha=P(\text{Type I})=P(\text{Reject }H_0|H_0\text{ is ture})=1-F(k'|0)=1-(1-\frac{1}{1+e^{k'}})=\frac{1}{1+e^{k'}}=0.2$, 
 
 $k'=\ln{\frac{1-\alpha}{\alpha}}=\ln{\frac{1-0.2}{0.2}}=1.386294$
 
-Type II Error $\beta=F(k'|1)=\frac{e^{k'-1}}{1+e^{k'-1}}=0.5953902$
+Type II Error $\beta=P(\text{Type II})=P(\text{Fail to reject }H_0|H_1\text{ is ture})=F(k'|1)=1-\frac{1}{1+e^{k'-1}}=0.5953902$
 
 ```{r eval=FALSE, include=FALSE}
 log(4)
@@ -338,13 +336,13 @@ exp(1.386294-1)/(1+exp(1.386294-1))
 
 (c) Show that the test in part (b) is UMP size $\alpha$ for testing $H_0:\theta\le0$ versus $H_1:\theta>0$. What can be said about UMP tests in general for the logistic location family?
 
-From part (a), the logistic location family of pdfs $\{g(t|\theta):\theta\in\Theta\}$ of $T$ has an MLR.
+From part (a), the logistic location family of pdfs $\{f(x|\theta):\theta\in\Theta\}$ of $X$ has a MLR.
 
-for testing $H_0:\theta\le0$ versus $H_1:\theta>0, $T is a sufficient statistic for $\theta$.
+For testing $H_0:\theta\le0$ versus $H_1:\theta>0$, $X$ is a sufficient statistic for $\theta$.
 
-From **Theorem 8.3.17 (Karlin-Rubin)**, if and only if $T>t_0$ is a UMP level $\alpha$ test, where $\alpha= P_{\theta_0}(T>t_0)$,
+From **Theorem 8.3.17 (Karlin-Rubin)**, if and only if $x>k'$ is a UMP level $\alpha$ test, where $\alpha= P_{\theta_0}(x>k')$,
 
-then for any $t_0$, the test rejects $H_0$  .
+then for any $k'$, the test rejects $H_0$. Thus, this method can apply on the logistic lcoation family.
 
  ---
  
@@ -363,7 +361,7 @@ $f_{Y_{n}}(y_n|\theta)=\frac{n!}{(n-1)!(n-n)!}f_{X}(y_n|\theta)[F_{X}(y_n|\theta
 $f_{Y_{1},Y_{n}}(y_1,y_n|\theta)=\frac{n!f_{X}(y_1|\theta)f_{X}(y_n|\theta)}{(1-1)!(n-1-1)!(n-n)!}[F_{X}(y_1|\theta)]^{1-1}[F_{X}(y_n|\theta)-F_{X}(y_1|\theta)]^{n-1-1}[1-F_{X}(y_n|\theta)]^{n-n}$
 $$=n(n-1)(y_n-y_1)^{n-2},\ \theta\le y_1<y_n\le\theta+1$$
 
-Under $H_0:\theta=0, Y_n\le\theta+1=1$, $P(Y_n\ge1)=0$, 
+Under $H_0:\theta=0, 0\le k\le Y_1\le Y_n\le\theta+1=1$, $P(Y_n\ge1)=0$, 
 
 $$\alpha=P(Y_1\ge k\cup Y_n\ge 1|\theta=0)=\int_k^1n[1+\theta-y_1]^{n-1}dy_1=(1-k)^n$$
 Thus, use $k=1-\alpha^{1/n}, 0\le k\le1$ to have a size $\alpha$ test.
@@ -372,19 +370,17 @@ Thus, use $k=1-\alpha^{1/n}, 0\le k\le1$ to have a size $\alpha$ test.
  
 (b) Find an expression for the power function of the test in part (a) .
 
-When $\theta+1\le k\le1$, all $Y_1$ and $Y_n$ locate outside the rejection region. $\beta(\theta)=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k, Y_n\ge 1|\theta>0)=0$
+The rejection regions are $Y_1\ge k$ and $Y_n\ge 1$. 
 
-When $0< k\le\theta$, all $Y_1$ and $Y_n$ locate inside the rejection region. $\beta(\theta)=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k, Y_n\ge 1|\theta>0)=1$
+When $\theta+1\le k\le1$, all $Y_1$ and $Y_n$ locate outside the rejection region. The power function$=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k\cup Y_n\ge 1|\theta>0)=0$
+
+When $0< k\le\theta$, all $Y_1$ and $Y_n$ locate inside the rejection region. $\beta(\theta)=P(\text{reject} H_0|H_1\text{true})=P(Y_1\ge k\cup Y_n\ge 1|\theta>0)=1$
 
 When $\theta< k\le\theta+1\le1$, a part of $Y_1$ locate inside the $k\le Y_1$ rejection region. All $Y_n$ locate outside the $1\le Y_n$ rejection region.
+The power function $=P(Y_1\ge k\cup Y_n\ge 1|\theta>0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1=(\theta+1-k)^n$
 
-$$\beta(\theta)=P(Y_1\ge k,Y_n\ge 1|\theta>0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1=(\theta+1-k)^n$$
-
-When $\theta\le k\le1\le\theta+1$, a part of $Y_1$ locate inside the $k\le Y_1\le\theta+1$ rejection region. All $Y_n$ locate outside the $1\le Y_n$ rejection region.
-
-$\beta(\theta)=P(k\le Y_1\le\theta+1|\theta>0)+P(\theta\le Y_1\le k,1\le Y_n\le\theta+1 |\theta>0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1+\int_\theta^k\int_1^{\theta+1}n(n-1)(y_n-y_1)^{n-2}dy_ndy_1$
-
-$=(\theta+1-k)^n+\int_\theta^kn[(\theta+1-y_1)^{n-1}-(1-y_1)^{n-1}]dy_1=(\theta+1-k)^n-(\theta+1-k)^n+1+(1-k)^n-(1-\theta)^{n}=1+\alpha-(1-\theta)^n$
+When $\theta\le k\le1\le\theta+1$, a part of $Y_1$ locate inside the $k\le Y_1\le\theta+1$ rejection region, a part of $Y_n$ locate inside the $1\le Y_n$ rejection region.
+The power function$=P(k\le Y_1\le\theta+1|\theta>0)+P(\theta\le Y_1\le k,1\le Y_n\le\theta+1 |\theta>0)=\int_k^{\theta+1}(\theta+1-y_1)^{n-1}dy_1+\int_\theta^k\int_1^{\theta+1}n(n-1)(y_n-y_1)^{n-2}dy_ndy_1=(\theta+1-k)^n+\int_\theta^kn[(\theta+1-y_1)^{n-1}-(1-y_1)^{n-1}]dy_1=(\theta+1-k)^n-(\theta+1-k)^n+1+(1-k)^n-(1-\theta)^{n}=1+\alpha-(1-\theta)^n$
 
  ---
  
@@ -409,16 +405,16 @@ For $\theta\ge k$, use $k'=0$,
 
 $$\begin{cases}\text{reject}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}>0 \\\text{fail to reject}& \text{if }\ \frac{f_{Y_{1},Y_{n}}(y_1,y_n|\theta)}{f_{Y_{1},Y_{n}}(y_1,y_n|0)}<0 \end{cases}$$
 
-Form **Corollary 8.3.13**, $T(\vec X)$ is a sufficient statistic for $\theta$ and $g(t|\theta_i)$ is the pdf of $T$ corresponding to $\theta_i,i=0,1$.  if it satisfies 
-$t\in S\ \text{ if }\ g(t|\theta_1)>kg(t|\theta)$ and $t\in S^c\ \text{ if }\ g(t|\theta_1)<kg(t|\theta)$
+Form **Corollary 8.3.13**, $(Y_1,Y_n)$ is a sufficient statistic for $\theta$ and $g(y|\theta)$ is the pdf of $Y$ corresponding to $\theta_0,\theta_1$.  if it satisfies 
+$y_1\in S_1$, $y_n\in S_n$ if $f(y_1,y_n|\theta_1)>kf(y_1,y_n|\theta_0)$ and $y_1\in S_1^c$, $y_n\in S_n^c$ if $f(y_1,y_n|\theta_1)<kf(y_1,y_n|\theta_0)$ for some $k\ge 0$, where $\alpha=P_{\theta_0}(y_1\in S_1,y_n\in S_n)$
 
-for some $k\ge 0$, where $\alpha=P_{\theta_0}(T\in S)$
+Therefore, the test based on $(Y_1,Y_n)$ with rejection regions $Y_1\ge k$ and $Y_n\ge 1$ is a UMP level a test.
 
-Therefore, any test based on $T$ with rejection region $S$ is a UMP level a test.
-
+ ---
+ 
 (d) Find values of n and k so that the UMP .10 level test will have power at least .8 if $\theta>1$.
 
-When $0< k\le\theta$, all $Y_1$ and $Y_n$ locate inside the rejection region, $\beta(\theta)=1>0.8$.
+When $0< k\le\theta$, all $Y_1$ and $Y_n$ locate inside the rejection region, the power function$=1>0.8$.
 
 $$k=1-\alpha^{1/n}=1-0.1^{1/n}=0.9, 0.68377, 0.53584,...,n=1,2,3...$$
 
