@@ -243,7 +243,7 @@ Note: This is a $2^3$ design with replications for each treatment combination. A
 In part (a), do all the necessary tests and report conclusions along with p values appropriately.
 
 ```{r echo=F, message=F,collapse=T,results='hold', out.width='30%'}
-
+library(dplyr)
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
 hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
 
@@ -262,7 +262,7 @@ library(pander)
 pander(summary(hw2_1_model))
 ```
 
-Based on ANOVA table, factor C, AB, AC, BC have significant effects at 0.05 significance level. Their P-values are 0.008516,0.005602, 0.0004176, 0.003728 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
+Based on ANOVA table, factor C, AB, AC, BC have significant effects on average value of y at 0.05 significance level. Their P-values are 0.008516,0.005602, 0.0004176, 0.003728 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
 
 ```{r echo=F, message=F,collapse=T, results='hold', out.width='30%'}
 
@@ -280,9 +280,15 @@ a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
 a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
 b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
 kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 8)
-
 ```
 
+The results show that:
+
+The change in average number of orders placed when the brochure is black-and-white at 1st class is larger by 5.00 than 3rd class at 0.05 significance level (P-value=0.0149155).
+
+The change in average number of orders placed when offered price is $19.95 at 1st class is larger by 6.75 than 3rd class at 0.05 significance level (P-value=0.0025205).
+
+The change in average number of orders placed when offered price is $24.95 at color brochure is smaller by 4.25 than black-and-white at 0.05 significance level (P-value=0.0343721).
 
  ---
 
@@ -304,11 +310,7 @@ The plot of studentized residuals versus fitted value shows vertical deviations 
 
 In Part(c), clearly recommend which factor levels appropriately in question context and provide reasons.
 
-Base on the half-normal quantiles plot, only the effect of factor ABC is negligible after estimating all effects. 
-
 Based on the half-normal quantiles plot, only the effects of A, AC are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible. 
-
-The ANOVA table of new model with factor A, C and AC shows only the interactive effect of AC on average number of orders is significant at 0.05 significance level (P-value=0.008489). We recommend the higher class of email plus offered price can improve the customer response rate for a particular product more effectively.
 
 ```{r echo=F, message=F, results='hold', out.width='30%'}
 
@@ -327,6 +329,7 @@ pander(summary(hw2_1_model_ac))
 # plot(hw2_1_model_ln)
 ```
 
+The ANOVA table of new model with factor A, C and AC shows only the interactive effect of AC on average number of orders is significant at 0.05 significance level (P-value=0.008489). We recommend the higher class of email plus offered price can improve the customer response rate for a particular product more effectively.
 
 ### Problem 2:
 
@@ -396,7 +399,7 @@ sum((hw2_2_table$hw2_2_y- mean(hw2_2_table$hw2_2_y))^2)
    **Total**        15  211.75 
  ---------------------------------------------------------------
 
- Based on the ANOVA table, factor D and block effects are significant at 5% significance level.
+ Based on the ANOVA table, the effects of pH (factor D) and cooler (block) on average shelf life of yogurt are significant at 5% significance level.
 
 
 ### Problem 3:
@@ -416,9 +419,7 @@ $\bar y_{blk1}-\bar y_{...}=\frac{1}{4}[y_{(1)}+y_{ab}+y_{ac}+y_{bc}]-\bar y_{..
 
 $=\frac{1}{8}[y_{111}-y_{211}-y_{121}+y_{221}-y_{112}+y_{212}+y_{122}-y_{222}]=\frac18[y_{(1)}-y_{a}-y_{b}+y_{ab}-y_{c}+ y_{ac}+y_{bc}-y_{abc}]=-\frac18C_{ABC}$
 
-By the same way, $\bar y_{blk2}-\bar y_{...}=\frac18C_{ABC}$
-
-Therefore,
+By the same way, $\bar y_{blk2}-\bar y_{...}=\frac18C_{ABC}$. Therefore,
 
 $$SS_{Block}=2^2[(-\frac18C_{ABC})^2+(\frac18C_{ABC})^2]=\frac1{2^3}C_{ABC}^2=SS_{ABC}$$
 
@@ -485,6 +486,6 @@ $2^p-p-1=2^2-2-1=1$. There is only one automaticlly confounded effect.
 
 ### Problem 7:
 
-Consider the 25 factorial design in 2 blocks. If ABCDE interaction effect is confounded with blocks, then list the remaining treatment combinations in the same block as acde.
+Consider the $2^5$ factorial design in 2 blocks. If ABCDE interaction effect is confounded with blocks, then list the remaining treatment combinations in the same block as acde.
 
 (1), ab, ac, bc, ad, bd, cd, abcd, ae, be, ce, abce, de, abde, acde, bcde
