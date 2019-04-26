@@ -242,6 +242,8 @@ $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=
 Note: This is a $2^3$ design with replications for each treatment combination. Analyze the data as a typical 3-factor factorial design.
 In part (a), do all the necessary tests and report conclusions along with p values appropriately.
 
+The plot shows that the 3rd class mail with black-and-white brochures and \$19.95 price; or 1st class mail with color brochures and \$24.95 price get most orders.
+
 ```{r echo=F, message=F,collapse=T,results='hold', out.width='45%'}
 library(dplyr)
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
@@ -259,7 +261,7 @@ ggline(data = hw2_1_table, x = "A", y = "y", add = c("mean", "jitter"),shape= "B
 
 library(ggplot2)
 ggplot(hw2_1_table,aes(A,y))+geom_point(aes(col=B,shape=C),size = 5) + scale_colour_grey()+
-  labs(y = "Numbers of Orders", x="Class", color ="Type", shape ="Offered price")+theme_light()+facet_grid(B~C)
+  labs(y = "Numbers of Orders", x="Class", color ="Type", shape ="Offered price")+theme_light()
 
 
 hw2_1_model <- aov(y~A*B*C+hw2_1_rep,hw2_1_table)
@@ -330,7 +332,7 @@ The plot of studentized residuals versus fitted value shows vertical deviations 
 
 In Part(c), clearly recommend which factor levels appropriately in question context and provide reasons.
 
-Based on the results before, I recommend 3rd class mail, black-and-white brochures, and an offered price of \$19.95 would achieve the greatest number of orders. If the offered price must be \$24.95, then the 1st class mail with color brochures is recommended.
+Based on the results before, I recommend two combination: 3rd class mail with black-and-white brochures and \$19.95 price; or 1st class mail with color brochures and \$24.95 price.
 
 
 
