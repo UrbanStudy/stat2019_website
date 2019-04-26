@@ -242,27 +242,32 @@ $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=
 Note: This is a $2^3$ design with replications for each treatment combination. Analyze the data as a typical 3-factor factorial design.
 In part (a), do all the necessary tests and report conclusions along with p values appropriately.
 
-```{r echo=F, message=F,collapse=T,results='hold', out.width='30%'}
+```{r echo=F, message=F,collapse=T,results='hold', out.width='45%'}
 library(dplyr)
 hw2_1_table <- readxl::read_excel("Table6_6.xlsx")
 hw2_1_table <- hw2_1_table%>%mutate(hw2_1_rep=c(rep(c(1,2),8)))
 
-hw2_1_table$A <- as.factor(hw2_1_table$A)
-hw2_1_table$B <- as.factor(hw2_1_table$B)
-hw2_1_table$C <- as.factor(hw2_1_table$C)
+hw2_1_table$A <- factor(hw2_1_table$A, labels=c("3rd","1st"))
+hw2_1_table$B <- factor(hw2_1_table$B, labels=c("B&W","Colored"))
+hw2_1_table$C <- factor(hw2_1_table$C, labels=c("$19.95","$24.95"))
 
 library(kableExtra)
 kable(t(hw2_1_table))%>%kable_styling("striped", full_width = F)
 
 library(ggpubr)
-ggline(data = hw2_1_table, x = "A", y = "y", add = c("mean", "jitter"),shape= "B",  color = "C", linetype = "C", ylab= "y", xlab="A")
+ggline(data = hw2_1_table, x = "A", y = "y", add = c("mean", "jitter"),shape= "B",  color = "C", linetype = "C", ylab= "y", xlab="A")+facet_grid(B~C)
 
-hw2_1_model <- aov(y~A*B*C,hw2_1_table)
+library(ggplot2)
+ggplot(hw2_1_table,aes(A,y))+geom_point(aes(col=B,shape=C),size = 5) + scale_colour_grey()+
+  labs(y = "Numbers of Orders", x="Class", color ="Type", shape ="Offered price")+theme_light()+facet_grid(B~C)
+
+
+hw2_1_model <- aov(y~A*B*C+hw2_1_rep,hw2_1_table)
 library(pander)
 pander(summary(hw2_1_model))
 ```
 
-Based on ANOVA table, factor C, AB, AC, BC have significant effects on average value of y at 0.05 significance level. Their P-values are 0.008516,0.005602, 0.0004176, 0.003728 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
+Based on ANOVA table, factor C, AB, AC, BC have significant effects on average value of y at 0.05 significance level. Their P-values are 0.01391,0.009613, 0.0009777, 0.006712 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
 
 ```{r echo=F, message=F,collapse=T, results='hold', out.width='30%'}
 
@@ -275,11 +280,14 @@ Based on ANOVA table, factor C, AB, AC, BC have significant effects on average v
 # kable(favstats(y ~ A+B+C, data=hw2_1_table)) %>%kable_styling("striped", full_width = F,font_size = 6)
 
 hw2_1_model <- aov(y~A*B*C,hw2_1_table)
-library(emmeans)
-a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
-a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
-b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
-kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 8)
+# library(emmeans)
+# a_b <- pairs(lsmeans(hw2_1_model,~ A|B))
+# a_c <- pairs(lsmeans(hw2_1_model,~ A|C))
+# b_c <- pairs(lsmeans(hw2_1_model,~ B|C))
+# kable(test(rbind(a_b,a_c,b_c),adjust="tukey")[1:6,])%>%kable_styling("condensed",full_width=F,font_size = 8)
+
+kable(TukeyHSD(hw2_1_model,conf.level = 0.95)[4:6])%>%kable_styling("condensed",full_width=F,font_size = 8)
+
 ```
 
 The results show that:
@@ -310,7 +318,11 @@ The plot of studentized residuals versus fitted value shows vertical deviations 
 
 In Part(c), clearly recommend which factor levels appropriately in question context and provide reasons.
 
-Based on the half-normal quantiles plot, only the effects of A, AC are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible. 
+Based on the results before, I recommend 3rd class mail, black-and-white brochures, and an offered price of \$19.95 would achieve the greatest number of orders. If the offered price must be \$24.95, then the 1st class mail with color brochures is recommended.
+
+
+
+<!-- Based on the half-normal quantiles plot, only the effects of A, AC are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible. 
 
 ```{r echo=F, message=F, results='hold', out.width='30%'}
 
@@ -329,7 +341,7 @@ pander(summary(hw2_1_model_ac))
 # plot(hw2_1_model_ln)
 ```
 
-The ANOVA table of new model with factor A, C and AC shows only the interactive effect of AC on average number of orders is significant at 0.05 significance level (P-value=0.008489). Based on the results of simple effects in part (a), We recommend that the 1st class of email and $19.95 offered price can improve the customer response rate for a particular product most effectively.
+The ANOVA table of new model with factor A, C and AC shows only the interactive effect of AC on average number of orders is significant at 0.05 significance level (P-value=0.008489). Based on the results of simple effects in part (a), We recommend that the 1st class of email and $19.95 offered price can improve the customer response rate for a particular product most effectively.-->
 
 
 ### Problem 2:
