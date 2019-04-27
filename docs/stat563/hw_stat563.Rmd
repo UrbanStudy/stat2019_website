@@ -420,34 +420,76 @@ $$k=1-\alpha^{1/n}=1-0.1^{1/n}=0.9, 0.68377, 0.53584,...,n=1,2,3...$$
 
 ## HW4
 
-**9.4** 
+**9.4** Let $X_1,..,X_n$ be a random sample from a $n(0,\sigma_X^2)$ , and let $Y_1,..,Y_m$ be a random sample from a $n(0,\sigma_Y^2)$, independent of the $X$s. Define $\lambda=\sigma^2_Y/\sigma^2_X$.
 
-(a) 
+(a) Find the level $\alpha$ LRT of $H0:\lambda=\lambda_0$ versus $H1:\lambda\neq\lambda_0$.
 
-The unrestricted MLEs of 2Xand 2Yare ˆ2X= X2in and ˆ2Y= Y 2im , as usual. Under therestriction,  = 0, 2Y= 02X, and
+$f_X(x)=\frac{1}{\sqrt{2\pi\sigma_X^2}}e^{-x^2/2\sigma_X^2}$, $f_Y(y)=\frac{1}{\sqrt{2\pi\sigma_Y^2}}e^{-x^2/2\sigma_Y^2}$
 
-Differentiating the log likelihood gives
+$$L(\sigma_X^2|x)=\prod_{i=1}^n(2\pi\sigma_X^2)^{-1/2}e^{-x_i^2/2\sigma_X^2}=(2\pi\sigma_X^2)^{-n/2}e^{-\sum_{i=1}^n{x_i^2/2\sigma_X^2}}$$
+$$l(\sigma_X^2|x)=-\frac{n}2\ln(2\pi\sigma_X^2)-\sum_{i=1}^n\frac{x_i^2}{2\sigma_X^2}$$
+$$l'(\sigma_X^2|x)=-\frac{n}{2\sigma_X^2}+\frac{\sum_{i=1}^nx_i^2}{2\sigma_X^4}\overset{set}{=}0$$
+$$\hat\sigma_{X-MLE}^2=\frac{\sum_{i=1}^nx_i^2}{n}$$
 
-which implies
+By the same way, the unrestricted MLEs
+
+$$\hat\sigma_{Y-MLE}^2=\frac{\sum_{i=1}^my_i^2}{m}$$
+
+Under $H0:\lambda=\lambda_0$, $\lambda_0=\sigma^2_Y/\sigma^2_X$, $\sigma^2_Y=\lambda_0\sigma^2_X$
+
+
+$$L(\sigma^2_X,\sigma^2_Y|x,y)=L(\sigma^2_X,\lambda_0\sigma^2_X|x,y)=(2\pi\sigma_X^2)^{-\frac{n}2}e^{{\frac{-\sum_{i=1}^nx_i^2}{2\sigma_X^2}}}(2\pi\lambda_0\sigma^2_X)^{-\frac{m}2}e^{{\frac{-\sum_{i=1}^my_i^2}{2\lambda_0\sigma^2_X}}}=(2\pi\sigma_X^2)^{-(m+n)/2}\lambda_0^{-m/2}e^{\frac{-\lambda_0\sum_{i=1}^nx_i^2-\sum_{i=1}^my_i^2}{2\lambda_0\sigma^2_X}}$$
+$$l(\sigma^2_X,\sigma^2_Y|x,y)=-\frac{m+n}2\ln(2\pi\sigma_X^2)-\frac{m}2\ln\lambda_0-\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{2\lambda_0\sigma^2_X}$$
+
+Differentiating the log likelihood
+
+$$\frac{\partial}{\partial\sigma^2_X}l(\sigma^2_X,\sigma^2_Y|x,y)=-\frac{m+n}{2\sigma_X^2}+\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{2\lambda_0\sigma^4_X}\overset{set}{=}0$$
+$$\hat\sigma^2_{0}=\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)}$$
+
+$$\frac{\partial}{\partial\sigma^2_X}l(\sigma^2_X,\sigma^2_Y|x,y)=-\frac{m+n}{2\sigma_X^2}+\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{2\lambda_0\sigma^4_X}\overset{set}{=}0$$
 
 To see this is a maximum, check the second derivative
 
-and the test is: Reject H0 if (x, y) < k, where k is chosen to give the test size .
+$$\frac{\partial^2}{\partial(\sigma^2_X)^2}l(\sigma^2_X,\sigma^2_Y|x,y)=\frac{m+n}{2\sigma_X^4}-\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(\sigma^2_X)^3}$$
+
+When $\sigma^2_X=\hat\sigma^2_{0}$,
+
+$$l''=\frac{m+n}{2(\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)})^2}-\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)})^3}=\frac{(m+n)^3\lambda_0^2}{(\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2)^2}(\frac12-1)<0$$
+
+For $l'$ is decreasing, $\hat\sigma^2_{0}=\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)}$ is MLE.
+
+The LRT statistic is
+
+$$\Lambda=\frac{\sup\limits_{\lambda=\lambda_0} L(\sigma^2_X,\sigma^2_Y|x,y)}{\sup\limits_{\lambda\in(0,+\infty)}  L(\sigma^2_X,\sigma^2_Y|x,y)}=\frac{(2\pi\hat\sigma_0^2)^{-(m+n)/2}\lambda_0^{-m/2}e^{\frac{-\lambda_0\sum_{i=1}^nx_i^2-\sum_{i=1}^my_i^2}{2\lambda_0\hat\sigma^2_0}}}{(2\pi\hat\sigma_X^2)^{-n/2}e^{-\sum_{i=1}^n{x_i^2/2\hat\sigma_X^2}}(2\pi\hat\sigma_Y^2)^{-m/2}e^{-\sum_{i=1}^m{y_i^2/2\hat\sigma_Y^2}}}=\frac{(\hat\sigma_X^2)^{n/2}(\hat\sigma_Y^2)^{m/2}}{\lambda_0^{m/2}(\hat\sigma_0^2)^{(m+n)/2}}$$
+
+Tthe test is: Reject $H_0$ if $\Lambda<k$, where $k$ is chosen to give the test size $\alpha$.
 
  ---
 
-(b) 
+(b) Express the rejection region of the LRT of part (a) in terms of an $F$ random variable.
 
-where F = Y 2i /0mX2i /n Fm,n under H0. The rejection region is
+Under $H_0$, $\sum_{i=1}^nX_i^2/\sigma_X^2\sim\chi^2_n$, $\sum_{i=1}^mY_i^2/\sigma_Y^2\sim\chi^2_m$. They are independent.
 
+Let $F=\frac{\sum_{i=1}^mY_i^2/(\lambda_0\sigma_X^2m)}{\sum_{i=1}^nX_i^2/(\sigma_X^2n)}\sim F_{m,n}$
+
+$$\Lambda=(\frac{\hat\sigma_X^2}{\hat\sigma_0^2})^{n/2}\cdot(\frac{\hat\sigma_Y^2}{\lambda_0\hat\sigma_0^2})^{m/2}=[\frac{n}{m+n}+\frac{m}{m+n}\frac{\sum_{i=1}^mY_i^2/(\lambda_0\sigma_X^2m)}{\sum_{i=1}^nX_i^2/(\sigma_X^2n)}]^{-n/2}\cdot[\frac{m}{m+n}+\frac{n}{m+n}\frac{\sum_{i=1}^nX_i^2/(\sigma_X^2n)}{\sum_{i=1}^mY_i^2/(\lambda_0\sigma_X^2m)}]^{-m/2}$$
+$$=[\frac{n}{m+n}+\frac{m}{m+n}F]^{-n/2}\cdot[\frac{m}{m+n}+\frac{n}{m+n}F^{-1}]^{-m/2}$$
+
+The rejection region is
+$$\left\{ (x,y):(\frac{n}{m+n}+\frac{m}{m+n}F)^{-n/2}\cdot(\frac{m}{m+n}+\frac{n}{m+n}F^{-1})^{-m/2}<c_{\alpha} \right\}$$
 
 where c is chosen to satisfy
+$$P\left[ (x,y):(\frac{n}{m+n}+\frac{m}{m+n}F)^{-n/2}\cdot(\frac{m}{m+n}+\frac{n}{m+n}F^{-1})^{-m/2}<c_{\alpha} \right]=\alpha$$
 
  ---
 
-(c) 
+(c) Find a $1-\alpha$ confidence interval for A.
 
-To ease notation, let a = m/(n +m) and b = aPy2i Px2i. From the duality of hypothesis tests and confidence sets, the set
+To ease notation, let $a=m/(n+m)$ and $b=a\sum_{i=1}^my^2_i/\sum_{i=1}^nx^2_i$. From the duality of hypothesis tests and confidence sets, the set
+
+$$c(\lambda)=\left\{\lambda:(a+b/\lambda)^{-n/2}\cdot(1-a+a(1-a)\lambda/b)^{-m/2}\ge c_{\alpha} \right\}$$
+
+is a $1-\alpha$ confidence set for $\lambda$
 
 We now must establish that this set is indeed an interval. 
 
@@ -474,63 +516,73 @@ Hence, the function is an upside-down bowl, and the set is an interval.
  
 **9.7** 
 
-(a) 
+(a) Find the $1-\alpha$ confidence set for $\alpha$ that is obtained by inverting the LRT of $H0:a=a_0$ versus $H1:a\neq a_0$ based on a sample $X_1,..,X_n$ from a $n(\theta,a\theta)$ family, where $\theta$ is unknown.
 
-These densities have already appeared in Exercise 8.8, where LRT statistics were calculated for testing H0 : a = 1.
+These densities have already appeared in Exercise 8.8, where LRT statistics were calculated for testing $H_0:a=1$.
 
 
-Using the result of Exercise 8.8(a), the restricted MLE of  (when a = a0) is
+Using the result of Exercise 8.8(a), the restricted MLE of  (when $a=a_0$) is
+
+$$\hat\theta_0=-\frac12a_0+\sqrt{a_0^2+4\sum_{i=1}^nx^2/n}$$
 
 and the unrestricted MLEs are
 
+$\hat\theta=\bar x$ and $\hat a=\frac{1}{n\bar x}\sum_{i=1}^n(x_i-\bar x)^2=\hat\sigma^2/\bar x$
+
 The LRT statistic is
 
-The rejection region of a size  test is {x: (x)  c}, and a 1 −  confidence set is
-{a0 : (x)  c}.
+$$\Lambda=\frac{(1/a_0\hat\theta_0)^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_0)^2/(2a_0\hat\theta_0)}}{(1/\hat a\hat\theta)^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta)^2/(2\hat a\hat\theta)}}=(\frac1{2\pi a_0\hat\theta_0})^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_0)^2/(2a_0\hat\theta_0)}$$
+
+The rejection region of a size $\alpha$ test is $\{x:\lambda(x)\le c_{\alpha}\}$, and a $1-\alpha$ confidence set is $\{a_0:\lambda(x)\ge c_{\alpha}\}$.
 
  ---
 
-(b) 
+(b) A similar question can be asked about the related family, the $n(\theta,a\theta^2)$ family. If $X_1,..,X_n$ are iid $n(\theta,a\theta^2)$, where $\theta$ is unknown, find the $1-\alpha$ confidence set based on inverting the LRT of $H_0:a=a_0$ versus $H_1:a\neq a_0$.
 
-Using the results of Exercise 8.8b, the restricted MLE (for a = a0) is found by solving
+
+Using the results of Exercise 8.8b, the restricted MLE (for $a=a_0$) is found by solving
+
 
 yielding the MLE
 
+$$\hat\theta_R=\bar x+\frac1{2a_0}\sqrt{\bar x+4a_0(\hat\sigma^2+x^2)}$$
+
 The unrestricted MLEs are
+
+$\hat\theta=\bar x$ and $\hat a=\frac{1}{n\bar x^2}\sum_{i=1}^n(x_i-\bar x)^2=\hat\sigma^2/\bar x^2$
 
 yielding the LRT statistic
 
-The rejection region of a size  test is {x: (x)  c}, and a 1 − confidence set is
-{a0 : (x)  c}.
+$$\Lambda=(\hat\sigma^2/\hat\theta_R)^ne^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_R)^2/(2\hat\theta_R)}$$
+
+The rejection region of a size $\alpha$ test is $\{x:\lambda(x)\le c_{\alpha}\}$, and a $1-\alpha$ confidence set is $\{a_0:\lambda(x)\ge c_{\alpha}\}$.
  
  ---
  
-**9.17** 
+**9.17** Find a $1-\alpha$ confidence interval for $\theta$, given $X_1,..,X_n$ iid with pdf
 
-(a) 
 
-Since X −  uniform(−1/2, 1/2), P(a X −  b) = b − a. Any a and b satisfying
-b = a + 1 −  will do. One choice is a = −1
-2 + 
-2 , b = 1
-2 − 
-2 .
+(a) $f(x|\theta)=1, \theta-\frac12<x<\theta+\frac12$
+
+$-\frac12<x-\theta<\frac12$, $X\sim uniform(−1/2, 1/2)$, 
+
+Let $P(-\frac12<x-\theta<\frac12) = b − a$. 
+
+$\forall a,b$, $b-a=1−\alpha$
+
+One choice is $\begin{cases}a=\alpha/2−1/2\\b=\alpha/2+1/2\end{cases}$, or $\begin{cases}a=\alpha/2−1/4\\b=\alpha/2+3/4\end{cases}$
 
  ---
 
-(b) 
+(b) $f(x|\theta)=2x/\theta^2, 0<x<\theta, \theta>0$
 
-Since T = X/ has pdf f(t) = 2t, 0  t  1,
+Let $T = X/\theta$, $X=T\theta$. $|\frac{dx}{dt}|=\theta$. $f(t)=f(x)|\frac{dx}{dt}|=2(t\theta)/\theta^2\cdot\theta=2t, 0\le t\le 1$.
 
-P(a  X/  b) =
-Z b
-a
-2t dt = b2 − a2.
+$P(a\le X/\theta\le b) =\left.\int_b^a2tdt=t^2\right|_a^b=b^2−a^2$.
 
-Any a and b satisfying b2 = a2 + 1 −  will do. One choice is a =
-p/2, b =
-p
-1 − /2.
+$\forall a,b$, $b^2-a^2=1−\alpha$. 
+
+One choice is $\begin{cases}a=\sqrt{\alpha/2}\\b=\sqrt{1-\alpha/2}\end{cases}$
 
 ## 
 

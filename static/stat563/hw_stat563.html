@@ -619,26 +619,43 @@ $(document).ready(function () {
 </div>
 <div id="hw4" class="section level2">
 <h2>HW4</h2>
-<p><strong>9.4</strong></p>
+<p><strong>9.4</strong> Let <span class="math inline">\(X_1,..,X_n\)</span> be a random sample from a <span class="math inline">\(n(0,\sigma_X^2)\)</span> , and let <span class="math inline">\(Y_1,..,Y_m\)</span> be a random sample from a <span class="math inline">\(n(0,\sigma_Y^2)\)</span>, independent of the <span class="math inline">\(X\)</span>s. Define <span class="math inline">\(\lambda=\sigma^2_Y/\sigma^2_X\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
-<li></li>
+<li>Find the level <span class="math inline">\(\alpha\)</span> LRT of <span class="math inline">\(H0:\lambda=\lambda_0\)</span> versus <span class="math inline">\(H1:\lambda\neq\lambda_0\)</span>.</li>
 </ol>
-<p>The unrestricted MLEs of 2Xand 2Yare ˆ2X= X2in and ˆ2Y= Y 2im , as usual. Under therestriction, = 0, 2Y= 02X, and</p>
-<p>Differentiating the log likelihood gives</p>
-<p>which implies</p>
+<p><span class="math inline">\(f_X(x)=\frac{1}{\sqrt{2\pi\sigma_X^2}}e^{-x^2/2\sigma_X^2}\)</span>, <span class="math inline">\(f_Y(y)=\frac{1}{\sqrt{2\pi\sigma_Y^2}}e^{-x^2/2\sigma_Y^2}\)</span></p>
+<p><span class="math display">\[L(\sigma_X^2|x)=\prod_{i=1}^n(2\pi\sigma_X^2)^{-1/2}e^{-x_i^2/2\sigma_X^2}=(2\pi\sigma_X^2)^{-n/2}e^{-\sum_{i=1}^n{x_i^2/2\sigma_X^2}}\]</span> <span class="math display">\[l(\sigma_X^2|x)=-\frac{n}2\ln(2\pi\sigma_X^2)-\sum_{i=1}^n\frac{x_i^2}{2\sigma_X^2}\]</span> <span class="math display">\[l'(\sigma_X^2|x)=-\frac{n}{2\sigma_X^2}+\frac{\sum_{i=1}^nx_i^2}{2\sigma_X^4}\overset{set}{=}0\]</span> <span class="math display">\[\hat\sigma_{X-MLE}^2=\frac{\sum_{i=1}^nx_i^2}{n}\]</span></p>
+<p>By the same way, the unrestricted MLEs</p>
+<p><span class="math display">\[\hat\sigma_{Y-MLE}^2=\frac{\sum_{i=1}^my_i^2}{m}\]</span></p>
+<p>Under <span class="math inline">\(H0:\lambda=\lambda_0\)</span>, <span class="math inline">\(\lambda_0=\sigma^2_Y/\sigma^2_X\)</span>, <span class="math inline">\(\sigma^2_Y=\lambda_0\sigma^2_X\)</span></p>
+<p><span class="math display">\[L(\sigma^2_X,\sigma^2_Y|x,y)=L(\sigma^2_X,\lambda_0\sigma^2_X|x,y)=(2\pi\sigma_X^2)^{-\frac{n}2}e^{{\frac{-\sum_{i=1}^nx_i^2}{2\sigma_X^2}}}(2\pi\lambda_0\sigma^2_X)^{-\frac{m}2}e^{{\frac{-\sum_{i=1}^my_i^2}{2\lambda_0\sigma^2_X}}}=(2\pi\sigma_X^2)^{-(m+n)/2}\lambda_0^{-m/2}e^{\frac{-\lambda_0\sum_{i=1}^nx_i^2-\sum_{i=1}^my_i^2}{2\lambda_0\sigma^2_X}}\]</span> <span class="math display">\[l(\sigma^2_X,\sigma^2_Y|x,y)=-\frac{m+n}2\ln(2\pi\sigma_X^2)-\frac{m}2\ln\lambda_0-\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{2\lambda_0\sigma^2_X}\]</span></p>
+<p>Differentiating the log likelihood</p>
+<p><span class="math display">\[\frac{\partial}{\partial\sigma^2_X}l(\sigma^2_X,\sigma^2_Y|x,y)=-\frac{m+n}{2\sigma_X^2}+\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{2\lambda_0\sigma^4_X}\overset{set}{=}0\]</span> <span class="math display">\[\hat\sigma^2_{0}=\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)}\]</span></p>
+<p><span class="math display">\[\frac{\partial}{\partial\sigma^2_X}l(\sigma^2_X,\sigma^2_Y|x,y)=-\frac{m+n}{2\sigma_X^2}+\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{2\lambda_0\sigma^4_X}\overset{set}{=}0\]</span></p>
 <p>To see this is a maximum, check the second derivative</p>
-<p>and the test is: Reject H0 if (x, y) &lt; k, where k is chosen to give the test size .</p>
+<p><span class="math display">\[\frac{\partial^2}{\partial(\sigma^2_X)^2}l(\sigma^2_X,\sigma^2_Y|x,y)=\frac{m+n}{2\sigma_X^4}-\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(\sigma^2_X)^3}\]</span></p>
+<p>When <span class="math inline">\(\sigma^2_X=\hat\sigma^2_{0}\)</span>,</p>
+<p><span class="math display">\[l''=\frac{m+n}{2(\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)})^2}-\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)})^3}=\frac{(m+n)^3\lambda_0^2}{(\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2)^2}(\frac12-1)&lt;0\]</span></p>
+<p>For <span class="math inline">\(l'\)</span> is decreasing, <span class="math inline">\(\hat\sigma^2_{0}=\frac{\lambda_0\sum_{i=1}^nx_i^2+\sum_{i=1}^my_i^2}{\lambda_0(m+n)}\)</span> is MLE.</p>
+<p>The LRT statistic is</p>
+<p><span class="math display">\[\Lambda=\frac{\sup\limits_{\lambda=\lambda_0} L(\sigma^2_X,\sigma^2_Y|x,y)}{\sup\limits_{\lambda\in(0,+\infty)}  L(\sigma^2_X,\sigma^2_Y|x,y)}=\frac{(2\pi\hat\sigma_0^2)^{-(m+n)/2}\lambda_0^{-m/2}e^{\frac{-\lambda_0\sum_{i=1}^nx_i^2-\sum_{i=1}^my_i^2}{2\lambda_0\hat\sigma^2_0}}}{(2\pi\hat\sigma_X^2)^{-n/2}e^{-\sum_{i=1}^n{x_i^2/2\hat\sigma_X^2}}(2\pi\hat\sigma_Y^2)^{-m/2}e^{-\sum_{i=1}^m{y_i^2/2\hat\sigma_Y^2}}}=\frac{(\hat\sigma_X^2)^{n/2}(\hat\sigma_Y^2)^{m/2}}{\lambda_0^{m/2}(\hat\sigma_0^2)^{(m+n)/2}}\]</span></p>
+<p>Tthe test is: Reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(\Lambda&lt;k\)</span>, where <span class="math inline">\(k\)</span> is chosen to give the test size <span class="math inline">\(\alpha\)</span>.</p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
-<li></li>
+<li>Express the rejection region of the LRT of part (a) in terms of an <span class="math inline">\(F\)</span> random variable.</li>
 </ol>
-<p>where F = Y 2i /0mX2i /n Fm,n under H0. The rejection region is</p>
-<p>where c is chosen to satisfy</p>
+<p>Under <span class="math inline">\(H_0\)</span>, <span class="math inline">\(\sum_{i=1}^nX_i^2/\sigma_X^2\sim\chi^2_n\)</span>, <span class="math inline">\(\sum_{i=1}^mY_i^2/\sigma_Y^2\sim\chi^2_m\)</span>. They are independent.</p>
+<p>Let <span class="math inline">\(F=\frac{\sum_{i=1}^mY_i^2/(\lambda_0\sigma_X^2m)}{\sum_{i=1}^nX_i^2/(\sigma_X^2n)}\sim F_{m,n}\)</span></p>
+<p><span class="math display">\[\Lambda=(\frac{\hat\sigma_X^2}{\hat\sigma_0^2})^{n/2}\cdot(\frac{\hat\sigma_Y^2}{\lambda_0\hat\sigma_0^2})^{m/2}=[\frac{n}{m+n}+\frac{m}{m+n}\frac{\sum_{i=1}^mY_i^2/(\lambda_0\sigma_X^2m)}{\sum_{i=1}^nX_i^2/(\sigma_X^2n)}]^{-n/2}\cdot[\frac{m}{m+n}+\frac{n}{m+n}\frac{\sum_{i=1}^nX_i^2/(\sigma_X^2n)}{\sum_{i=1}^mY_i^2/(\lambda_0\sigma_X^2m)}]^{-m/2}\]</span> <span class="math display">\[=[\frac{n}{m+n}+\frac{m}{m+n}F]^{-n/2}\cdot[\frac{m}{m+n}+\frac{n}{m+n}F^{-1}]^{-m/2}\]</span></p>
+<p>The rejection region is <span class="math display">\[\left\{ (x,y):(\frac{n}{m+n}+\frac{m}{m+n}F)^{-n/2}\cdot(\frac{m}{m+n}+\frac{n}{m+n}F^{-1})^{-m/2}&lt;c_{\alpha} \right\}\]</span></p>
+<p>where c is chosen to satisfy <span class="math display">\[P\left[ (x,y):(\frac{n}{m+n}+\frac{m}{m+n}F)^{-n/2}\cdot(\frac{m}{m+n}+\frac{n}{m+n}F^{-1})^{-m/2}&lt;c_{\alpha} \right]=\alpha\]</span></p>
 <hr />
 <ol start="3" style="list-style-type: lower-alpha">
-<li></li>
+<li>Find a <span class="math inline">\(1-\alpha\)</span> confidence interval for A.</li>
 </ol>
-<p>To ease notation, let a = m/(n +m) and b = aPy2i Px2i. From the duality of hypothesis tests and confidence sets, the set</p>
+<p>To ease notation, let <span class="math inline">\(a=m/(n+m)\)</span> and <span class="math inline">\(b=a\sum_{i=1}^my^2_i/\sum_{i=1}^nx^2_i\)</span>. From the duality of hypothesis tests and confidence sets, the set</p>
+<p><span class="math display">\[c(\lambda)=\left\{\lambda:(a+b/\lambda)^{-n/2}\cdot(1-a+a(1-a)\lambda/b)^{-m/2}\ge c_{\alpha} \right\}\]</span></p>
+<p>is a <span class="math inline">\(1-\alpha\)</span> confidence set for <span class="math inline">\(\lambda\)</span></p>
 <p>We now must establish that this set is indeed an interval.</p>
 <p>To do this, we establish that the function on the left hand side of the inequality has only an interior maximum.</p>
 <p>That is, it looks like an upside-down bowl. Furthermore, it is straightforward to establish that the function is zero at both = 0 and = 1. These facts imply that the set of values for which the function is greater than or equal to c must be an interval.</p>
@@ -651,35 +668,45 @@ $(document).ready(function () {
 <hr />
 <p><strong>9.7</strong></p>
 <ol style="list-style-type: lower-alpha">
-<li></li>
+<li>Find the <span class="math inline">\(1-\alpha\)</span> confidence set for <span class="math inline">\(\alpha\)</span> that is obtained by inverting the LRT of <span class="math inline">\(H0:a=a_0\)</span> versus <span class="math inline">\(H1:a\neq a_0\)</span> based on a sample <span class="math inline">\(X_1,..,X_n\)</span> from a <span class="math inline">\(n(\theta,a\theta)\)</span> family, where <span class="math inline">\(\theta\)</span> is unknown.</li>
 </ol>
-<p>These densities have already appeared in Exercise 8.8, where LRT statistics were calculated for testing H0 : a = 1.</p>
-<p>Using the result of Exercise 8.8(a), the restricted MLE of (when a = a0) is</p>
+<p>These densities have already appeared in Exercise 8.8, where LRT statistics were calculated for testing <span class="math inline">\(H_0:a=1\)</span>.</p>
+<p>Using the result of Exercise 8.8(a), the restricted MLE of (when <span class="math inline">\(a=a_0\)</span>) is</p>
+<p><span class="math display">\[\hat\theta_0=-\frac12a_0+\sqrt{a_0^2+4\sum_{i=1}^nx^2/n}\]</span></p>
 <p>and the unrestricted MLEs are</p>
+<p><span class="math inline">\(\hat\theta=\bar x\)</span> and <span class="math inline">\(\hat a=\frac{1}{n\bar x}\sum_{i=1}^n(x_i-\bar x)^2=\hat\sigma^2/\bar x\)</span></p>
 <p>The LRT statistic is</p>
-<p>The rejection region of a size test is {x: (x) c}, and a 1 − confidence set is {a0 : (x) c}.</p>
+<p><span class="math display">\[\Lambda=\frac{(1/a_0\hat\theta_0)^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_0)^2/(2a_0\hat\theta_0)}}{(1/\hat a\hat\theta)^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta)^2/(2\hat a\hat\theta)}}=(\frac1{2\pi a_0\hat\theta_0})^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_0)^2/(2a_0\hat\theta_0)}\]</span></p>
+<p>The rejection region of a size <span class="math inline">\(\alpha\)</span> test is <span class="math inline">\(\{x:\lambda(x)\le c_{\alpha}\}\)</span>, and a <span class="math inline">\(1-\alpha\)</span> confidence set is <span class="math inline">\(\{a_0:\lambda(x)\ge c_{\alpha}\}\)</span>.</p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
-<li></li>
+<li>A similar question can be asked about the related family, the <span class="math inline">\(n(\theta,a\theta^2)\)</span> family. If <span class="math inline">\(X_1,..,X_n\)</span> are iid <span class="math inline">\(n(\theta,a\theta^2)\)</span>, where <span class="math inline">\(\theta\)</span> is unknown, find the <span class="math inline">\(1-\alpha\)</span> confidence set based on inverting the LRT of <span class="math inline">\(H_0:a=a_0\)</span> versus <span class="math inline">\(H_1:a\neq a_0\)</span>.</li>
 </ol>
-<p>Using the results of Exercise 8.8b, the restricted MLE (for a = a0) is found by solving</p>
+<p>Using the results of Exercise 8.8b, the restricted MLE (for <span class="math inline">\(a=a_0\)</span>) is found by solving</p>
 <p>yielding the MLE</p>
+<p><span class="math display">\[\hat\theta_R=\bar x+\frac1{2a_0}\sqrt{\bar x+4a_0(\hat\sigma^2+x^2)}\]</span></p>
 <p>The unrestricted MLEs are</p>
+<p><span class="math inline">\(\hat\theta=\bar x\)</span> and <span class="math inline">\(\hat a=\frac{1}{n\bar x^2}\sum_{i=1}^n(x_i-\bar x)^2=\hat\sigma^2/\bar x^2\)</span></p>
 <p>yielding the LRT statistic</p>
-<p>The rejection region of a size test is {x: (x) c}, and a 1 − confidence set is {a0 : (x) c}.</p>
+<p><span class="math display">\[\Lambda=(\hat\sigma^2/\hat\theta_R)^ne^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_R)^2/(2\hat\theta_R)}\]</span></p>
+<p>The rejection region of a size <span class="math inline">\(\alpha\)</span> test is <span class="math inline">\(\{x:\lambda(x)\le c_{\alpha}\}\)</span>, and a <span class="math inline">\(1-\alpha\)</span> confidence set is <span class="math inline">\(\{a_0:\lambda(x)\ge c_{\alpha}\}\)</span>.</p>
 <hr />
-<p><strong>9.17</strong></p>
+<p><strong>9.17</strong> Find a <span class="math inline">\(1-\alpha\)</span> confidence interval for <span class="math inline">\(\theta\)</span>, given <span class="math inline">\(X_1,..,X_n\)</span> iid with pdf</p>
 <ol style="list-style-type: lower-alpha">
-<li></li>
+<li><span class="math inline">\(f(x|\theta)=1, \theta-\frac12&lt;x&lt;\theta+\frac12\)</span></li>
 </ol>
-<p>Since X − uniform(−1/2, 1/2), P(a X − b) = b − a. Any a and b satisfying b = a + 1 − will do. One choice is a = −1 2 + 2 , b = 1 2 − 2 .</p>
+<p><span class="math inline">\(-\frac12&lt;x-\theta&lt;\frac12\)</span>, <span class="math inline">\(X\sim uniform(−1/2, 1/2)\)</span>,</p>
+<p>Let <span class="math inline">\(P(-\frac12&lt;x-\theta&lt;\frac12) = b − a\)</span>.</p>
+<p><span class="math inline">\(\forall a,b\)</span>, <span class="math inline">\(b-a=1−\alpha\)</span></p>
+<p>One choice is <span class="math inline">\(\begin{cases}a=\alpha/2−1/2\\b=\alpha/2+1/2\end{cases}\)</span>, or <span class="math inline">\(\begin{cases}a=\alpha/2−1/4\\b=\alpha/2+3/4\end{cases}\)</span></p>
 <hr />
 <ol start="2" style="list-style-type: lower-alpha">
-<li></li>
+<li><span class="math inline">\(f(x|\theta)=2x/\theta^2, 0&lt;x&lt;\theta, \theta&gt;0\)</span></li>
 </ol>
-<p>Since T = X/ has pdf f(t) = 2t, 0 t 1,</p>
-<p>P(a X/ b) = Z b a 2t dt = b2 − a2.</p>
-<p>Any a and b satisfying b2 = a2 + 1 − will do. One choice is a = p/2, b = p 1 − /2.</p>
+<p>Let <span class="math inline">\(T = X/\theta\)</span>, <span class="math inline">\(X=T\theta\)</span>. <span class="math inline">\(|\frac{dx}{dt}|=\theta\)</span>. <span class="math inline">\(f(t)=f(x)|\frac{dx}{dt}|=2(t\theta)/\theta^2\cdot\theta=2t, 0\le t\le 1\)</span>.</p>
+<p><span class="math inline">\(P(a\le X/\theta\le b) =\left.\int_b^a2tdt=t^2\right|_a^b=b^2−a^2\)</span>.</p>
+<p><span class="math inline">\(\forall a,b\)</span>, <span class="math inline">\(b^2-a^2=1−\alpha\)</span>.</p>
+<p>One choice is <span class="math inline">\(\begin{cases}a=\sqrt{\alpha/2}\\b=\sqrt{1-\alpha/2}\end{cases}\)</span></p>
 </div>
 <div id="section-1" class="section level2">
 <h2></h2>
