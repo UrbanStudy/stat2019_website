@@ -1,0 +1,241 @@
+---
+title: ""
+author: ''
+date: ""
+output: html_document
+---
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+```{r setup, include=F}
+
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=F)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+
+```
+
+ - If the response values (or mean response with number of replications) of a 2k factorial design are given, then be able to
+compute estimated value of any effect,
+
+**interpret main or 2-factor interaction effects, and**
+
+$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})=\frac12(-6.2+14.1-5.4+7.8)=5.15$
+
+The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high.
+
+$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})=\frac12(6.2-14.1-5.4+7.8)=-2.75$
+
+The change in average amount of impurities remaining in the material washed when the temperatures changes from low to high at long wsahing time is smaller by 2.75 grams than short washing time. 
+
+**compute sum of square (SS) for any effect.**
+
+$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2=\frac54(-6.2-14.1+5.4+7.8)^2=63.0125$
+
+$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2=\frac54(6.2-14.1-5.4+7.8)^2=37.8125$
+
+ - If the table of estimated effects and the corresponding half normal probability plot (without any labels of effects) of any single replicated 2k-p design are given, then be able to
+decide which effects are non-negligible,
+
+Based on the normal QQ plot, only the effects of $A, B, AB$ are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible.
+
+Form the half-normal quantiles plot, D effects is non-negligible after estimating all effects. 
+
+**write the complete model with non-negligible effects, and**
+
+The single replicate $2^4$ factorial model with fixed effects and replications, and without neglegible terms is:
+
+$$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$$
+for $i=1,2$ ; $j=1,2$; $k=1,2,3,4$, where 
+
+$\tau_i$ is fixed main effect of $i^{th}$ level of  Factor A;
+
+$\beta_j$ is fixed main effect of $j^{th}$ level of Factor B;
+
+$(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of Factor A and $j^{th}$ level of Factor B;
+
+$\varepsilon_{ijk}$ is random error for the single replicate Exerimental Unit when $i^{th}$ level of Factor A and $j^{th}$ level of Factor B are applied.
+
+$y_{ijk}$ is response for the 4 replicate EU when  $i^{th}$ level of Factor A and  $j^{th}$ level of Factor B are applied.
+
+Assumptions:
+
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^2(\tau\beta)_{ij}=0$
+
+The single replicate $2^4$ factorial model with confounde ABCD effect as blocks, and without neglegible terms is:
+
+$$y_{ijk}=\mu+\tau_i+\beta_{j}+\varepsilon_{ijk}$$
+for $i=1,2$ ; $j=1,2$; $k=1,2,3,4$, where 
+
+$\tau_i$ is fixed main effect of $i^{th}$ level of  Factor D;
+
+$\beta_{j}$ is effect of $j^{th}$ level of block;
+
+$\varepsilon_{ijk}$ is random error for the $k^{th}$ replicate Exerimental Units when $i^{th}$ level of Factor D and $j^{th}$ level of block are applied.
+
+$y_{ijk}$ is response for the $k^{th}$ replicate EU when  $i^{th}$ level of Factor D and  $j^{th}$ level of block are applied.
+
+Assumptions:
+
+$\varepsilon_{ij}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$
+
+
+
+**write the ANOVA table with only Source and DF.**
+
+
+|source|$SS_{Blk}$|$SS_A$|$SS_B$|$SS_{AB}$|$SS_{C}$|$SS_{AC}$|$SS_{BC}$|$SS_{D}$|$SS_{BD}$|$SS_{ABD}$|$SS_{CD}$|$SS_{ACD}$|$SS_{ABCD}$|$SS_E$|$SS_T$|
+| ---  | ---      | ---  | ---  | ---     | ---    |    ---  |    ---  |   ---  |    ---  |     ---  |    ---  |     ---  |      ---  | ---  | --- |
+|   df |  3       |   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |   0  |15   |
+|   df |  blk-1   |   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |     |$2^kn-1$|
+
+Based on the ANOVA table, all the P-value are larger than 0.05. There is no factor has significant effects at 5% significance level.
+
+Based on ANOVA table, factor C, AB, AC, BC have significant effects on average value of y at 0.05 significance level. Their P-values are 0.01391,0.009613, 0.0009777, 0.006712 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
+
+Based on the ANOVA table, the effects of pH (factor D) and cooler (block) on average shelf life of yogurt are significant at 5% significance level.
+
+The change in average number of orders placed when the brochure is black-and-white at 1st class is smaller by 5.00 than 3rd class at 0.05 significance level (P-value=0.0149155).
+
+ - If the treatment assignment of blocks in a 2k factorial with 2p blocks design, then find out and list all the effects confounded with blocks.
+
+A $2^4$ factorial experiment is to be conducted in 4 blocks with ABC interaction and BCD interaction effects are confounded with incomplete blocks with single replication.
+
+$ABC\times BCD=AB^2C^2D=AD$ is confounded with incomplete blocks automatically.
+
+There is $2^p-p-1=2^2-2-1=1$ automaticlly confounded effect.
+
+the treatment assignment of blocks for one replication of experiment.
+
+| Block1 | Block2| Block3 | Block4|
+| --- | --- | --- | --- |
+| ABC- | ABC- | ABC+ | ABC+ |
+| BCD- | BCD+ | BCD- | BCD+ |
+| (1) | ab | a  | b  |
+| bc  | ac | abc| c  |
+| abd | bcd| bd | ad |
+| acd |  d | cd |abcd|
+
+a $2^4$ factorial experiment but cannot obtain complete blocks. Two blocks of 8 homogeneous experimental units (EU)s are obtained and the researcher arbitrarily assigns treatments to the blocks. the effects that are confounded with incomplete blocks.
+
+|   | Block 1 | Block 2 | confounded effects |
+| --- | --- | --- | --- |
+|(i) |a, ab, ac, abc, bd, bcd, cd, d	  | (1), ad, abd, acd, abcd, b, c, bc| AD |
+|(ii)|(1), a, abc, abd, acd, bc, bd, cd|ab, ac, ad, abcd, b, c, bcd, d| BCD |
+
+
+$2^5$ factorial design in 2 blocks. If ABCDE interaction effect is confounded with blocks, the remaining treatment combinations in the same block as acde.
+
+(1), ab, ac, bc, ad, bd, cd, abcd, ae, be, ce, abce, de, abde, acde, bcde
+
+A $2^4$ factorial experiment is planned but complete blocks of 16 experimental units (EUs) cannot be obtained. Numerous blocks of 8 homogenous EU are available. Assume that we obtain only one observation for each treatment combination.
+
+There are $2^4=16$ treatment combination, 16 observation. There are $16/8=2$ blocks of 8 homogenous EU.
+
+(a)  the ABCD interaction is confounded with incomplete blocks
+
+|Block1 | Block2|
+|  ---  |  ---  |
+|(1),ab, ac, bc, ad, bd, cd abcd | a, b, c, abc, d, abd, acd, bcd|
+
+(b)  the ABC interaction is confounded with incomplete blocks
+
+|Block1 | Block2|
+| ---   | --- |
+|(1), ab, ac, bc, d, abd, acd, bcd | a, b, c, abc, ad, bd, cd, abcd|
+
+
+ - For a given any $2^{k-p}$ fractional factorial design, be able to find out the following things:
+
+One-Quarter Fraction of $2^k$ design. p=2
+
+**the total number of factors**
+
+k
+
+**the total number of blocks (that is, what is the fraction)**
+
+p
+
+Fraction=$\frac1{2^p}$
+
+**the number of experimental units in each block**
+
+$2^{k-2}$
+
+**the total number of generators**
+
+For $2^{7-3}_{IV}$ p=3 independent generators I=ABCE=BCDF=ACDG Resolution=4, $2^p-p-1=2^3-3-1=4$ generalized interactions, Each effect has $2^3-1=7$ aliases.
+
+$ABCE*BCDF=ADEF$
+
+$ABCE*ACDG=BDEG$
+
+$BCDF*ACDG=ABFG$
+
+$ABCE*BCDF*ACDG=CEFG$
+
+A=BCE=ABCDF=CDG=DEF=ABDEG=BFG=ACEFG
+
+For $2^{6-2}_{III}$ p=2 generators define the relation, I=ABC=DEF=ABCDEF Resolution=3, $2^p-p-1=2^2-2-1=1$ additional generator (generalized interaction)
+
+A=BC=ADEF=BCDEF; 
+
+B=AC=BDEF=ACDEF; AB=
+
+C=AB=CDEF=ABDEF; AC=; 
+
+D=ABCD=EF=ABCEF; AD=BCDF=AE=BCEF
+
+E=ABCE=DF=ABCDF; AE=
+
+F=ABCF=DE=ABCDE; AF=
+
+ - If the number of factors and the independent generators of a $2^{k-p}$ fractional factorial design are given, then be able to decide resolution and write the complete alias structure.
+
+Each effect has $2^p-1$ aliases.
+
+For $2^{6-2}_{IV}$ I=ABCD=CDEF=ABEF Resolution=4, complete alias structure=4*12?
+
+A=BCD=ACDEF=BEF; 
+
+B=ACD=BCDEF=AEF; AB=CD=ABCDEF=EF
+
+C=ABD=DEF=ABCEF; AC=BD=ADEF=BCEF; BC=AD=BDEF=ACEF
+
+D=ABC=CEF=ABDEF; AD=BC=ACEF=BDEF
+
+E=ABCDE=CDF=ABF; AE=BCDE=ACDF=BF
+
+F=ABCDF=CDE=ABE; AF=BCDF=ACDE=BE
+
+
+a contrast statement for the four factor interaction effect using standard order of letters.
+
+$ABCD=\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab}-\bar y_c+\bar y_{ac}+\bar y_{bc}-\bar y_{abc}-\bar y_d+\bar y_{ad}+\bar y_{bd}+\bar y_{cd}-\bar y_{abd}-\bar y_{acd}-\bar y_{bcd}+\bar y_{abcd}$
+$+\bar y_e-\bar y_{ae}-\bar y_{be}-\bar y_{ce}-\bar y_{de}+\bar y_{abe}+\bar y_{ace}+\bar y_{ade}+\bar y_{bce}+\bar y_{bde}+\bar y_{cde}-\bar y_{abce}-\bar y_{abde}-\bar y_{acde}-\bar y_{bcde}+\bar y_{abcde}$
+
+
+the single replicated $2^3$ factorial design with ABC confounded with two blocks, $p=1$. 
+Each block have 4 observations. The ABC interaction is defined as the average difference between the BC interaction at the two different levels of A.
+
+$SS_{ABC}=\sum_i^2\sum_j^2\sum_k^2(\hat\tau\hat\beta\hat\gamma)_{ijk}^2=2^3(\frac{-y_{111}+y_{211}+y_{121}-y_{221}+y_{112}-y_{212}-y_{122}+y_{222}}{2^3})^2$
+
+$=\frac1{2^3}(-y_{(1)}+ y_{a}+y_{b}- y_{ab}+ y_{c}- y_{ac}- y_{bc}+ y_{abc})^2=\frac{1}{2^3}C_{ABC}^2$
+
+$SS_{Block}=\sum_i^2\sum_j^2\sum_k^2\sum_l^2\hat\delta_l^2=2^2(\delta_1^2+\delta_2^2)=2^2[(\bar y_{blk1}-\bar y_{...})^2+(\bar y_{blk2}-\bar y_{...})^2]$
+
+$=2^2[(-\frac18C_{ABC})^2+(\frac18C_{ABC})^2]=\frac1{2^3}C_{ABC}^2=SS_{ABC}$
+
+
+
+
+
+
+
+
+
+
+
+
+
