@@ -14,13 +14,10 @@ options(repos="https://cran.rstudio.com")
 
 ```
 
- - If the response values (or mean response with number of replications) of a $2^k$ factorial design are given, then be able to
-compute estimated value of any effect,
-
 |effects  | SS   |interpret  |
 |   --- | ---| --------- |
-|$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})$|$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2$|The average value of y increase by \* as A changes from low to high.
-|$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})$|$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$|The change in average value of y when A changes from low to high at high B is smaller by \* than low B. 
+|$A=\frac1{2^{k-1}}(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})$|$SS_B=\frac{n}{2^k}C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2$|The average value of y increase by \* as A changes from low to high.
+|$AB=\frac1{2^{k-1}}(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})$|$SS_{AB}=\frac{n}{2^k}C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$|The change in average value of y when A changes from low to high at high B is smaller by \* than low B. 
 
 Form the half-normal quantiles plot, D effects is non-negligible after estimating all effects. 
 
@@ -28,7 +25,6 @@ The single replicate $2^4$ factorial model with fixed effects and confounde ABCD
 
 $$y_{ijkl}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\delta_l+\varepsilon_{ijkl}$$
 for $i=1,2$; $j=1,2$; $k=1,2,$; $l=1,2$ where 
-
 $\tau_i$ is fixed main effect of $i^{th}$ level of  Factor A;
 $\beta_j$ is fixed main effect of $j^{th}$ level of Factor B;
 $(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of Factor A and $j^{th}$ level of Factor B;
@@ -66,33 +62,6 @@ $2^k$ factorial with $2^p$ blocks, $ABC\times BCD=AB^2C^2D=AD$, $2^p-p-1=2^2-2-1
 |generalized interactions|$2^p-p-1$|0 |1 |4 |11|26|57|
 |aliases/effect          |$2^p-1$  |1 |3 |7 |15|31|63|
 
-
-|   Fraction   |Run|C|D  |   E |   F  |  G    |   H   |    J  |  K  |
-|   ---        |---|---|---  |   --- |   ---  |  ---    |   ---   |    ---  |  ---  |
-$2^{3−1}_{III}$|4|±AB|
-$2^{4−1}_{IV}$ |8|   |±ABC|
-$2^{5−1}_{V}$  |16|  |    |±ABCD|
-$2^{5−2}_{III}$| 8|  |±AB | ±AC|
-$2^{6−1}_{VI}$ |32|  |    |    |±ABCDE|
-$2^{6−2}_{IV}$ |16|  |    |±ABC| ±BCD
-$2^{6−3}_{III}$|8 |  |±AB | ±AC| ±BC
-$2^{7−1}_{VII}$|64|  |    |    |     | ±ABCDEF
-$2^{7−2}_{IV}$ |32|  |    |    |±ABCD| ±ABDE
-$2^{7−3}_{IV}$ |16|  |    |±ABC| ±BCD| ±ACD
-$2^{7−4}_{III}$|8|   |±AB | ±AC| ±BC | ±ABC
-$2^{8−2}_V$    |64|  |    |    |     | ±ABCD| ±ABEF
-$2^{8−3}_{IV}$ |32|  |    |    | ±ABC| ±ABD | ±BCDE
-$2^{8−4}_{IV}$ |16|  |    |±BCD| ±ACD| ±ABC | ±ABD
-$2^{9−2}_{VI}$ |128| |    |    |     |      |±ACDFG| ±BCEFG
-$2^{9−3}_{IV}$ |64|  |    |    |     | ±ABCD| ±ACEF| ±CDEF
-$2^{9−4}_{IV}$ |32|  |    |    |±BCDE| ±ACDE| ±ABDE| ±ABCE
-$2^{9−5}_{III}$|16|  |    |±ABC| ±BCD| ±ACD | ±ABD | ±ABCD|
-$2^{10−3}_V$   |128| |    |    |     |      | ±ABCG| ±BCDE| ±ACDF
-$2^{10−4}_{IV}$ |64| |    |    |     | ±BCDF| ±ACDF| ±ABDE| ±ABCE
-$2^{10−5}_{IV}$ |32| |    |    |±ABCD| ±ABCE| ±ABDE| ±ACDE| ±BCDE
-$2^{10−6}_{III}$|16| |    |±ABC|±BCD | ±ACD | ±ABD | ±ABCD| ±AB|
-
-
 $2^{7-3}_{IV}$ p=3 independent generators I=ABCE=BCDF=ACDG, $2^p-p-1=4$ generalized interactions, $2^3-1=7$ aliases.
 
 ABCE\*BCDF=ADEF；ABCE\*ACDG=BDEG；BCDF\*ACDG=ABFG；ABCE\*BCDF\*ACDG=CEFG
@@ -123,8 +92,6 @@ A=BCE=ABCDF=CDG=DEF=ABDEG=BFG=ACEFG
 |D = BCF = AEF = ABCDE |AD = EF = BCDE = ABCF|BD = CF = ACDE = ABEF
 |E = ABC = ADF = BCDEF |AE = BC = DF = ABCDEF
 |F = BCD = ADE = ABCEF |AF = DE = BCEF = ABCD|BF = CD = ACEF = ABDE
-|                      
-
 
 |$2^{7−2}_{IV}$| Three Design|Aliases (two-factor interactions)
 | --- | --- | ------
@@ -132,6 +99,30 @@ F = ABC, G = BCD| I = ABCF = BCDG = ADFG| AB = CF,AC = BF,AD = FG,AG = DF, BD = 
 F = ABC, G = ADE| I = ABCF = ADEG = BCDEFG| AB = CF,AC = BF,AD = EG,AE = DG,AF = BC,AG = DE
 F = ABCD, G = ABDE| I = ABCDF = ABDEG = CEFG| CE = FG,CF = EG,CG = EF
 
+|   Fraction   |Run|C|D  |   E |   F  |  G    |   H   |    J  |  K  |
+|   ---        |---|---|---  |   --- |   ---  |  ---    |   ---   |    ---  |  ---  |
+$2^{3−1}_{III}$|4|±AB|
+$2^{4−1}_{IV}$ |8|   |±ABC|
+$2^{5−1}_{V}$  |16|  |    |±ABCD|
+$2^{5−2}_{III}$| 8|  |±AB | ±AC|
+$2^{6−1}_{VI}$ |32|  |    |    |±ABCDE|
+$2^{6−2}_{IV}$ |16|  |    |±ABC| ±BCD
+$2^{6−3}_{III}$|8 |  |±AB | ±AC| ±BC
+$2^{7−1}_{VII}$|64|  |    |    |     | ±ABCDEF
+$2^{7−2}_{IV}$ |32|  |    |    |±ABCD| ±ABDE
+$2^{7−3}_{IV}$ |16|  |    |±ABC| ±BCD| ±ACD
+$2^{7−4}_{III}$|8|   |±AB | ±AC| ±BC | ±ABC
+$2^{8−2}_V$    |64|  |    |    |     | ±ABCD| ±ABEF
+$2^{8−3}_{IV}$ |32|  |    |    | ±ABC| ±ABD | ±BCDE
+$2^{8−4}_{IV}$ |16|  |    |±BCD| ±ACD| ±ABC | ±ABD
+$2^{9−2}_{VI}$ |128| |    |    |     |      |±ACDFG| ±BCEFG
+$2^{9−3}_{IV}$ |64|  |    |    |     | ±ABCD| ±ACEF| ±CDEF
+$2^{9−4}_{IV}$ |32|  |    |    |±BCDE| ±ACDE| ±ABDE| ±ABCE
+$2^{9−5}_{III}$|16|  |    |±ABC| ±BCD| ±ACD | ±ABD | ±ABCD|
+$2^{10−3}_V$   |128| |    |    |     |      | ±ABCG| ±BCDE| ±ACDF
+$2^{10−4}_{IV}$ |64| |    |    |     | ±BCDF| ±ACDF| ±ABDE| ±ABCE
+$2^{10−5}_{IV}$ |32| |    |    |±ABCD| ±ABCE| ±ABDE| ±ACDE| ±BCDE
+$2^{10−6}_{III}$|16| |    |±ABC|±BCD | ±ACD | ±ABD | ±ABCD| ±AB|
 
 a contrast statement for the four factor interaction effect using standard order of letters.
 
