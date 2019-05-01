@@ -5,7 +5,6 @@ date: ""
 output: html_document
 ---
 
-#  {.tabset .tabset-fade .tabset-pills}
 
 ```{r setup, include=F}
 
@@ -15,22 +14,18 @@ options(repos="https://cran.rstudio.com")
 
 ```
 
- - If the response values (or mean response with number of replications) of a 2k factorial design are given, then be able to
+ - If the response values (or mean response with number of replications) of a $2^k$ factorial design are given, then be able to
 compute estimated value of any effect,
 
 |       |effects  | SS   |interpret  |
 |  ---  |   --- | ---| --------- |
-|main    |$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})$|$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2$|The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high.
-|interaction|$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})$|$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$|The change in average amount of impurities remaining in the material washed when the temperatures changes from low to high at long wsahing time is smaller by 2.75 grams than short washing time. 
+|main    |$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})$|$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2$|The average value of y increase by \* as A changes from low to high.
+|interaction|$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})$|$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$|The change in average value of y when A changes from low to high at high B is smaller by \* than low B. 
 
 
-
- - If the table of estimated effects and the corresponding half normal probability plot (without any labels of effects) of any single replicated 2k-p design are given, then be able to
-decide which effects are non-negligible,
+ - If the table of estimated effects and the corresponding half normal probability plot of any single replicated $2^{k-p}$ design are given, then be able to decide which effects are non-negligible,
 
 Form the half-normal quantiles plot, D effects is non-negligible after estimating all effects. 
-
-**write the complete model with non-negligible effects, and**
 
 The single replicate $2^4$ factorial model with fixed effects and confounde ABCD effect as blocks, and without neglegible terms is:
 
@@ -47,79 +42,32 @@ $\delta_{l}$ is effect of $l^{th}$ level of block;
 
 $\varepsilon_{ijkl}$ is random error for the $k^{th}$ replicate EU when $i^{th}$ level of Factor A, $j^{th}$ level of Factor B, and $l^{th}$ level of block are applied.
 
-$y_{ijk}$ is response for the
+$y_{ijkl}$ is response for the
 
 Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^2(\tau\beta)_{ij}=0$; $\sum_l^2\delta_l=0$
 
 
-
-**write the ANOVA table with only Source and DF.**
-
-
 |source|Blk|A|B|AB|C|AC|BC|D|BD|ABD|CD|ACD|ABCD|E|T|
 | ---  | ---      | ---  | ---  | ---     | ---    |    ---  |    ---  |   ---  |    ---  |     ---  |    ---  |     ---  |      ---  | ---  | --- |
-|   df |  3       |   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |   0  |15   |
 |   df |$2^p-1$|   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |$2^k(n-1)$|$2^kn-1$|
+|   df |  3       |   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |   0  |15   |
 
-Based on the ANOVA table, all the P-value are larger than 0.05. There is no factor has significant effects at 5% significance level.
+Based on ANOVA table, factor AB, AC, BC have significant effects on average value of y at 0.05 significance level. Their P-values  respectivly. That means, effect of A, B, and C on average number of orders are not independent. Therefore, simple effects examinations are recommended.
 
-Based on ANOVA table, factor C, AB, AC, BC have significant effects on average value of y at 0.05 significance level. Their P-values are 0.01391,0.009613, 0.0009777, 0.006712 respectivly. That means, effect of class of mail, type of mail, and offered price on average number of orders are not independent. Therefore, simple effects examinations are recommended.
-
-Based on the ANOVA table, the effects of pH (factor D) and cooler (block) on average shelf life of yogurt are significant at 5% significance level.
-
-The change in average number of orders placed when the brochure is black-and-white at 1st class is smaller by 5.00 than 3rd class at 0.05 significance level (P-value=0.0149155).
+Based on the ANOVA table, the effects of factor D and block on average value of y are significant at 5% significance level.
 
  - If the treatment assignment of blocks in a $2^k$ factorial with $2^p$ blocks design, then find out and list all the effects confounded with blocks.
 
-A $2^4$ factorial experiment is to be conducted in 4 blocks with ABC interaction and BCD interaction effects are confounded with incomplete blocks with single replication.
+ factorial experiment, $2^2$ blocks, $ABC\times BCD=AB^2C^2D=AD$, $2^p-p-1=2^2-2-1=1$ automaticlly confounded effect.
 
-$ABC\times BCD=AB^2C^2D=AD$ is confounded with incomplete blocks automatically.
+|$2^2$|ABC|BCD|AD|$2^{4-2}$,$2^2-2-1$||$2^{4-1}$|AD|BCD|ABC|
+|---|---|---|---|---     ||---|---|---| ---|
+| 1 |-|-|+|(1),bc,abd,acd||1|(1), ad, abd, acd, abcd, b, c, bc|(1), a, abc, abd, acd, bc, bd, cd|(1), ab, ac, bc, d, abd, acd, bcd|(1),ab, ac, bc, ad, bd, cd abcd
+| 2 |-|+|-|ab,ac,bcd,d   ||2|a, ab, ac, abc, bd, bcd, cd, d   |ab, ac, ad, abcd, b, c, bcd, d   |a, b, c, abc, ad, bd, cd, abcd|a, b, c, abc, d, abd, acd, bcd
+| 3 |+|-|-|a,abc,bd,cd   ||
+| 4 |+|+|+|b,c,ad,abcd   ||
 
-There is $2^p-p-1=2^2-2-1=1$ automaticlly confounded effect.
-
-the treatment assignment of blocks for one replication of experiment.
-
-| Block1 | Block2| Block3 | Block4|
-| --- | --- | --- | --- |
-| ABC- | ABC- | ABC+ | ABC+ |
-| BCD- | BCD+ | BCD- | BCD+ |
-| (1) | ab | a  | b  |
-| bc  | ac | abc| c  |
-| abd | bcd| bd | ad |
-| acd |  d | cd |abcd|
-
-a $2^4$ factorial experiment but cannot obtain complete blocks. Two blocks of 8 homogeneous experimental units (EU)s are obtained and the researcher arbitrarily assigns treatments to the blocks. the effects that are confounded with incomplete blocks.
-
-|   | Block 1 | Block 2 | confounded effects |
-| --- | --- | --- | --- |
-|(i) |a, ab, ac, abc, bd, bcd, cd, d	  | (1), ad, abd, acd, abcd, b, c, bc| AD |
-|(ii)|(1), a, abc, abd, acd, bc, bd, cd|ab, ac, ad, abcd, b, c, bcd, d| BCD |
-
-
-$2^5$ factorial design in 2 blocks. If ABCDE interaction effect is confounded with blocks, the remaining treatment combinations in the same block as acde.
-
-(1), ab, ac, bc, ad, bd, cd, abcd, ae, be, ce, abce, de, abde, acde, bcde
-
-A $2^4$ factorial experiment is planned but complete blocks of 16 experimental units (EUs) cannot be obtained. Numerous blocks of 8 homogenous EU are available. Assume that we obtain only one observation for each treatment combination.
-
-There are $2^4=16$ treatment combination, 16 observation. There are $16/8=2$ blocks of 8 homogenous EU.
-
-(a)  the ABCD interaction is confounded with incomplete blocks
-
-|Block1 | Block2|
-|  ---  |  ---  |
-|(1),ab, ac, bc, ad, bd, cd abcd | a, b, c, abc, d, abd, acd, bcd|
-
-(b)  the ABC interaction is confounded with incomplete blocks
-
-|Block1 | Block2|
-| ---   | --- |
-|(1), ab, ac, bc, d, abd, acd, bcd | a, b, c, abc, ad, bd, cd, abcd|
-
-
- - For a given any $2^{k-p}$ fractional factorial design, be able to find out the following things:
-
-One-Quarter Fraction of $2^k$ design. p=2
+|$2^{5-1}$ABCDE|(1), ab, ac, bc, ad, bd, cd, abcd, ae, be, ce, abce, de, abde, acde, bcde
 
 |$2^{k-p}$               |$k$      |  |3 |4 |5 |6 |7 |
 | ---                    | ---     |---|---|---|---|---|---|
@@ -132,57 +80,46 @@ One-Quarter Fraction of $2^k$ design. p=2
 
 |   Fraction   |Run|C|D  |   E |   F  |  G    |   H   |    J  |  K  |
 |   ---        |---|---|---  |   --- |   ---  |  ---    |   ---   |    ---  |  ---  |
-$2^{3−1}_{III}$|4|C=±AB|
-$2^{4−1}_{IV}$ |8|     |D=±ABC|
-$2^{5−1}_{V}$  |16|    |      |E=±ABCD|
-$2^{5−2}_{III}$| 8|    |D=±AB |E = ±AC|
-$2^{6−1}_{VI}$ |32|    |      |       |F=±ABCDE|
-$2^{6−2}_{IV}$ |16|    |      |E =±ABC|F = ±BCD
-$2^{6−3}_{III}$|8 |    |D=±AB |E = ±AC|F = ±BC
-$2^{7−1}_{VII}$|64|    |      |       |        |G = ±ABCDEF
-$2^{7−2}_{IV}$ |32|    |      |       |F=±ABCD |G = ±ABDE
-$2^{7−3}_{IV}$ |16|    |      |E =±ABC|F = ±BCD|G = ±ACD
-$2^{7−4}_{III}$|8|     |D=±AB |E = ±AC|F = ±BC |G = ±ABC
-$2^{8−2}_V$    |64|    |      |       |        |G = ±ABCD|H = ±ABEF
-$2^{8−3}_{IV}$ |32|    |      |       |F = ±ABC|G = ±ABD |H = ±BCDE
-$2^{8−4}_{IV}$ |16|    |      |E=±BCD |F = ±ACD|G = ±ABC |H = ±ABD
-$2^{9−2}_{VI}$ |128|   |      |       |        |         |H = ±ACDFG|J = ±BCEFG
-$2^{9−3}_{IV}$ |64|    |      |       |        |G = ±ABCD|H = ±ACEF|J = ±CDEF
-$2^{9−4}_{IV}$ |32|    |      |       |F= ±BCDE|G = ±ACDE|H = ±ABDE|J = ±ABCE
-$2^{9−5}_{III}$|16|    |      |E= ±ABC|F = ±BCD|G = ±ACD |H = ±ABD |J = ±ABCD|
-$2^{10−3}_V$   |128|   |      |       |        |         |H = ±ABCG|J = ±BCDE|K = ±ACDF
-$2^{10−4}_{IV}$ |64|   |      |       |        |G = ±BCDF|H = ±ACDF|J = ±ABDE|K = ±ABCE
-$2^{10−5}_{IV}$ |32|   |      |       |F= ±ABCD|G = ±ABCE|H = ±ABDE|J = ±ACDE|K = ±BCDE
-$2^{10−6}_{III}$|16|   |      |E=±ABC |F= ±BCD |G = ±ACD |H = ±ABD |J = ±ABCD|K = ±AB|
+$2^{3−1}_{III}$|4|±AB|
+$2^{4−1}_{IV}$ |8|   |±ABC|
+$2^{5−1}_{V}$  |16|  |    |±ABCD|
+$2^{5−2}_{III}$| 8|  |±AB | ±AC|
+$2^{6−1}_{VI}$ |32|  |    |    |±ABCDE|
+$2^{6−2}_{IV}$ |16|  |    |±ABC| ±BCD
+$2^{6−3}_{III}$|8 |  |±AB | ±AC| ±BC
+$2^{7−1}_{VII}$|64|  |    |    |     | ±ABCDEF
+$2^{7−2}_{IV}$ |32|  |    |    |±ABCD| ±ABDE
+$2^{7−3}_{IV}$ |16|  |    |±ABC| ±BCD| ±ACD
+$2^{7−4}_{III}$|8|   |±AB | ±AC| ±BC | ±ABC
+$2^{8−2}_V$    |64|  |    |    |     | ±ABCD| ±ABEF
+$2^{8−3}_{IV}$ |32|  |    |    | ±ABC| ±ABD | ±BCDE
+$2^{8−4}_{IV}$ |16|  |    |±BCD| ±ACD| ±ABC | ±ABD
+$2^{9−2}_{VI}$ |128| |    |    |     |      |±ACDFG| ±BCEFG
+$2^{9−3}_{IV}$ |64|  |    |    |     | ±ABCD| ±ACEF| ±CDEF
+$2^{9−4}_{IV}$ |32|  |    |    |±BCDE| ±ACDE| ±ABDE| ±ABCE
+$2^{9−5}_{III}$|16|  |    |±ABC| ±BCD| ±ACD | ±ABD | ±ABCD|
+$2^{10−3}_V$   |128| |    |    |     |      | ±ABCG| ±BCDE| ±ACDF
+$2^{10−4}_{IV}$ |64| |    |    |     | ±BCDF| ±ACDF| ±ABDE| ±ABCE
+$2^{10−5}_{IV}$ |32| |    |    |±ABCD| ±ABCE| ±ABDE| ±ACDE| ±BCDE
+$2^{10−6}_{III}$|16| |    |±ABC|±BCD | ±ACD | ±ABD | ±ABCD| ±AB|
 
 
 For $2^{7-3}_{IV}$ p=3 independent generators I=ABCE=BCDF=ACDG c=4, $2^p-p-1=2^3-3-1=4$ generalized interactions, Each effect has $2^3-1=7$ aliases.
 
-$ABCE*BCDF=ADEF$
-
-$ABCE*ACDG=BDEG$
-
-$BCDF*ACDG=ABFG$
-
-$ABCE*BCDF*ACDG=CEFG$
+$ABCE*BCDF=ADEF$；$ABCE*ACDG=BDEG$；$BCDF*ACDG=ABFG$；$ABCE*BCDF*ACDG=CEFG$
 
 A=BCE=ABCDF=CDG=DEF=ABDEG=BFG=ACEFG
 
-For $2^{6-2}_{III}$ p=2 generators define the relation, I=ABC=DEF=ABCDEF Resolution=3, $2^p-p-1=2^2-2-1=1$ additional generator (generalized interaction)
+Resolution=3
 
-A=BC=ADEF=BCDEF; 
-
-B=AC=BDEF=ACDEF; AB=
-
-C=AB=CDEF=ABDEF; AC=; 
-
-D=ABCD=EF=ABCEF; AD=BCDF=AE=BCEF
-
-E=ABCE=DF=ABCDF; AE=
-
-F=ABCF=DE=ABCDE; AF=
-
- - If the number of factors and the independent generators of a $2^{k-p}$ fractional factorial design are given, then be able to decide resolution and write the complete alias structure.
+|I=ABC=DEF=ABCDEF|$2^{6-2}_{III}$|Alias Structure
+| ---            | ---           | ---
+|A=BC=ADEF=BCDEF |
+|B=AC=BDEF=ACDEF |AB=
+|C=AB=CDEF=ABDEF |AC=
+|D=ABCD=EF=ABCEF |AD=BCDF=AE=BCEF|
+|E=ABCE=DF=ABCDF |AE=
+|F=ABCF=DE=ABCDE |AF=
 
 Resolution=4
 |I=ABCD=CDEF=ABEF|$2^{6-2}_{IV}$ |Alias Structure
@@ -195,10 +132,10 @@ Resolution=4
 |F=ABCDF=CDE=ABE |AF=BCDF=ACDE=BE
 
 
-|I = ABCE = BCDF = ADEF|$2^{6−2}_{IV}$        |Alias Structure
-| ---                  | ---                  |
-|A = BCE = DEF = ABCDF |AB = CE = ACDF = BDEF |ABD = CDE = ACF = BEF
-|B = ACE = CDF = ABDEF |AC = BE = ABDF = CDEF |ACD = BDE = ABF = CEF
+|I = ABCE = BCDF = ADEF|$2^{6−2}_{IV}$       |Alias Structure
+| ---                  | ---                 |
+|A = BCE = DEF = ABCDF |AB = CE = ACDF = BDEF|ABD = CDE = ACF = BEF
+|B = ACE = CDF = ABDEF |AC = BE = ABDF = CDEF|ACD = BDE = ABF = CEF
 |C = ABE = BDF = ACDEF |AD = EF = BCDE = ABCF
 |D = BCF = AEF = ABCDE |AE = BC = DF = ABCDEF
 |E = ABC = ADF = BCDEF |AF = DE = BCEF = ABCD
