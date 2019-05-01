@@ -19,7 +19,7 @@ options(repos="https://cran.rstudio.com")
 compute estimated value of any effect,
 
 |       |effects  | SS   |interpret  |
-|  ---  |   ----- | -----| --------- |
+|  ---  |   --- | ---| --------- |
 |main    |$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})$|$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2$|The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high.
 |interaction|$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})$|$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$|The change in average amount of impurities remaining in the material washed when the temperatures changes from low to high at long wsahing time is smaller by 2.75 grams than short washing time. 
 
@@ -28,16 +28,14 @@ compute estimated value of any effect,
  - If the table of estimated effects and the corresponding half normal probability plot (without any labels of effects) of any single replicated 2k-p design are given, then be able to
 decide which effects are non-negligible,
 
-Based on the normal QQ plot, only the effects of $A, B, AB$ are non-negligible. The reset factors gather around the quantile-quantile line. The effects or interaction effects of rest factors are negligible.
-
 Form the half-normal quantiles plot, D effects is non-negligible after estimating all effects. 
 
 **write the complete model with non-negligible effects, and**
 
-The single replicate $2^4$ factorial model with fixed effects and replications, and without neglegible terms is:
+The single replicate $2^4$ factorial model with fixed effects and confounde ABCD effect as blocks, and without neglegible terms is:
 
-$$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$$
-for $i=1,2$ ; $j=1,2$; $k=1,2,3,4$, where 
+$$y_{ijkl}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\delta_l+\varepsilon_{ijkl}$$
+for $i=1,2$; $j=1,2$; $k=1,2,$; $l=1,2$ where 
 
 $\tau_i$ is fixed main effect of $i^{th}$ level of  Factor A;
 
@@ -45,30 +43,13 @@ $\beta_j$ is fixed main effect of $j^{th}$ level of Factor B;
 
 $(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of Factor A and $j^{th}$ level of Factor B;
 
-$\varepsilon_{ijk}$ is random error for the single replicate Exerimental Unit when $i^{th}$ level of Factor A and $j^{th}$ level of Factor B are applied.
+$\delta_{l}$ is effect of $l^{th}$ level of block;
 
-$y_{ijk}$ is response for the 4 replicate EU when  $i^{th}$ level of Factor A and  $j^{th}$ level of Factor B are applied.
+$\varepsilon_{ijkl}$ is random error for the $k^{th}$ replicate EU when $i^{th}$ level of Factor A, $j^{th}$ level of Factor B, and $l^{th}$ level of block are applied.
 
-Assumptions:
+$y_{ijk}$ is response for the
 
-$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^2(\tau\beta)_{ij}=0$
-
-The single replicate $2^4$ factorial model with confounde ABCD effect as blocks, and without neglegible terms is:
-
-$$y_{ijk}=\mu+\tau_i+\beta_{j}+\varepsilon_{ijk}$$
-for $i=1,2$ ; $j=1,2$; $k=1,2,3,4$, where 
-
-$\tau_i$ is fixed main effect of $i^{th}$ level of  Factor D;
-
-$\beta_{j}$ is effect of $j^{th}$ level of block;
-
-$\varepsilon_{ijk}$ is random error for the $k^{th}$ replicate Exerimental Units when $i^{th}$ level of Factor D and $j^{th}$ level of block are applied.
-
-$y_{ijk}$ is response for the $k^{th}$ replicate EU when  $i^{th}$ level of Factor D and  $j^{th}$ level of block are applied.
-
-Assumptions:
-
-$\varepsilon_{ij}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_i^2\beta_j=0$
+Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_j^2\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^2(\tau\beta)_{ij}=0$; $\sum_l^2\delta_l=0$
 
 
 
@@ -88,7 +69,7 @@ Based on the ANOVA table, the effects of pH (factor D) and cooler (block) on ave
 
 The change in average number of orders placed when the brochure is black-and-white at 1st class is smaller by 5.00 than 3rd class at 0.05 significance level (P-value=0.0149155).
 
- - If the treatment assignment of blocks in a 2k factorial with 2p blocks design, then find out and list all the effects confounded with blocks.
+ - If the treatment assignment of blocks in a $2^k$ factorial with $2^p$ blocks design, then find out and list all the effects confounded with blocks.
 
 A $2^4$ factorial experiment is to be conducted in 4 blocks with ABC interaction and BCD interaction effects are confounded with incomplete blocks with single replication.
 
