@@ -18,21 +18,12 @@ options(repos="https://cran.rstudio.com")
  - If the response values (or mean response with number of replications) of a 2k factorial design are given, then be able to
 compute estimated value of any effect,
 
-**interpret main or 2-factor interaction effects, and**
+|       |effects| SS |interpret
+|  ---  |   --- | ---| ---
+|main    |$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})$|$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2$|The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high.
+|interaction|$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})$|$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$|The change in average amount of impurities remaining in the material washed when the temperatures changes from low to high at long wsahing time is smaller by 2.75 grams than short washing time. 
 
-$A=\frac12(-\bar y_{(1)}+\bar y_a-\bar y_b+\bar y_{ab})=\frac12(-6.2+14.1-5.4+7.8)=5.15$
 
-The average amount of impurities remaining in the material washed increase by 5.15 grams as the temperatures changes from low to high.
-
-$AB=\frac12(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})=\frac12(6.2-14.1-5.4+7.8)=-2.75$
-
-The change in average amount of impurities remaining in the material washed when the temperatures changes from low to high at long wsahing time is smaller by 2.75 grams than short washing time. 
-
-**compute sum of square (SS) for any effect.**
-
-$SS_B=\frac{n}4C_B^2=\frac{n}4(-\bar y_{(1)}-\bar y_a+\bar y_b+\bar y_{ab})^2=\frac54(-6.2-14.1+5.4+7.8)^2=63.0125$
-
-$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2=\frac54(6.2-14.1-5.4+7.8)^2=37.8125$
 
  - If the table of estimated effects and the corresponding half normal probability plot (without any labels of effects) of any single replicated 2k-p design are given, then be able to
 decide which effects are non-negligible,
@@ -77,17 +68,17 @@ $y_{ijk}$ is response for the $k^{th}$ replicate EU when  $i^{th}$ level of Fact
 
 Assumptions:
 
-$\varepsilon_{ij}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$
+$\varepsilon_{ij}\sim iid N(0,\sigma^2)$; $\sum_i^2\tau_i=0$; $\sum_i^2\beta_j=0$
 
 
 
 **write the ANOVA table with only Source and DF.**
 
 
-|source|$SS_{Blk}$|$SS_A$|$SS_B$|$SS_{AB}$|$SS_{C}$|$SS_{AC}$|$SS_{BC}$|$SS_{D}$|$SS_{BD}$|$SS_{ABD}$|$SS_{CD}$|$SS_{ACD}$|$SS_{ABCD}$|$SS_E$|$SS_T$|
+|source|Blk|A|B|AB|C|AC|BC|D|BD|ABD|CD|ACD|ABCD|E|T|
 | ---  | ---      | ---  | ---  | ---     | ---    |    ---  |    ---  |   ---  |    ---  |     ---  |    ---  |     ---  |      ---  | ---  | --- |
 |   df |  3       |   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |   0  |15   |
-|   df |  blk-1   |   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |     |$2^kn-1$|
+|   df |$2^p-1$|   1  |   1  |   1     |   1    |   1     |   1     |   1    |   1     |       1  |      1  |       1  |        1  |$2^k(n-1)$|$2^kn-1$|
 
 Based on the ANOVA table, all the P-value are larger than 0.05. There is no factor has significant effects at 5% significance level.
 
@@ -149,23 +140,12 @@ There are $2^4=16$ treatment combination, 16 observation. There are $16/8=2$ blo
 
 One-Quarter Fraction of $2^k$ design. p=2
 
-**the total number of factors**
+|Design|factors|blocks|fraction|EU/Blk|indep generators|generalized interactions|aliases/effect|
+| ---  | ---   | ---  | ---    | ---  | ---            | ---                    | ---          |
+$2^{k-p}$| $k$ |$2^p$ |$\frac1{2^p}$|$2^{k-2}$| $P$    | $2^p-p-1$              | $2^p-1$    |
 
-k
 
-**the total number of blocks (that is, what is the fraction)**
-
-p
-
-Fraction=$\frac1{2^p}$
-
-**the number of experimental units in each block**
-
-$2^{k-2}$
-
-**the total number of generators**
-
-For $2^{7-3}_{IV}$ p=3 independent generators I=ABCE=BCDF=ACDG Resolution=4, $2^p-p-1=2^3-3-1=4$ generalized interactions, Each effect has $2^3-1=7$ aliases.
+For $2^{7-3}_{IV}$ p=3 independent generators I=ABCE=BCDF=ACDG c=4, $2^p-p-1=2^3-3-1=4$ generalized interactions, Each effect has $2^3-1=7$ aliases.
 
 $ABCE*BCDF=ADEF$
 
