@@ -502,18 +502,29 @@ Hence, the function is an upside-down bowl, and the set $\left\{\lambda:\frac{(m
  
 **9.7** 
 
-(a) Find the $1-\alpha$ confidence set for $\alpha$ that is obtained by inverting the LRT of $H0:a=a_0$ versus $H1:a\neq a_0$ based on a sample $X_1,..,X_n$ from a $n(\theta,a\theta)$ family, where $\theta$ is unknown.
+(a) Find the $1-\alpha$ confidence set for $\alpha$ that is obtained by inverting the LRT of $H0:a=a_0$ versus $H1:a\neq a_0$ based on a sample $X_1,..,X_n$ from a $n(\theta,a\theta)$ family, where $\theta$ is unknown.(Exercise 8.8)
 
-These densities have already appeared in Exercise 8.8, where LRT statistics were calculated for testing $H_0:a=1$.
+$f_X(x)=\frac{1}{\sqrt{2\pi a\theta}}e^{-x^2/2a\theta}$, 
 
+$$L(a,\theta|x)=\prod_{i=1}^n(2\pi a\theta)^{-1/2}e^{-(x_i-\theta)^2/2a\theta}=(2\pi a\theta)^{-n/2}e^{-\sum_{i=1}^n{(x_i-\theta)^2/2a\theta}}$$
+$$l(a,\theta|x)=-\frac{n}2\ln(2\pi a\theta)-\sum_{i=1}^n\frac{(x_i-\theta)^2}{2a\theta}$$
 
-Using the result of Exercise 8.8(a), the restricted MLE of  (when $a=a_0$) is
+$$\frac{\partial}{\partial a}l(a,\theta|x)=-\frac{n}{2a}+\frac{1}{2\theta a^2}\sum_{i=1}^n(x_i-\theta)^2\overset{set}{=}0$$
 
-$$\hat\theta_0=-\frac12a_0+\sqrt{a_0^2+4\sum_{i=1}^nx^2/n}$$
+$$\frac{\partial}{\partial\theta}l(a,\theta|x)=-\frac{n}{2\theta}+\frac{1}{2a\theta^2}\sum_{i=1}^n(x_i-\theta)^2+\frac{1}{a\theta}\sum_{i=1}^n(x_i-\theta)=-\frac{n}{2\theta}+\frac{1}{2a\theta^2}\sum_{i=1}^n(x_i-\theta)^2+\frac{n\bar x-n\theta}{a\theta}$$
 
-and the unrestricted MLEs are
+$$a=\frac{\sum_{i=1}^n(x_i-\theta)^2}{n\theta}$$
 
-$\hat\theta=\bar x$ and $\hat a=\frac{1}{n\bar x}\sum_{i=1}^n(x_i-\bar x)^2=\hat\sigma^2/\bar x$
+$$\frac{\partial}{\partial\theta}l(a,\theta|x)=-\frac{n}{2\theta}+\frac{n}{2a\theta}+\frac{n\bar x-n\theta}{a\theta}\overset{set}{=}0\implies\hat\theta=\bar x$$
+Thus
+
+$$\hat a=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n\bar x}=\frac{\hat\sigma^2}{\bar x}$$
+
+$\hat\theta=\bar x$ and $\hat a=\hat\sigma^2/\bar x$ are the unrestricted MLEs.
+
+Under $a=a_0$, the restricted MLE of $\theta$ is
+
+$$\hat\theta_0=-\frac12a_0+\frac12\sqrt{a_0^2+4\sum_{i=1}^nx_i^2/n}$$
 
 The LRT statistic is
 
@@ -525,19 +536,29 @@ The rejection region of a size $\alpha$ test is $\{x:\lambda(x)\le c_{\alpha}\}$
 
 (b) A similar question can be asked about the related family, the $n(\theta,a\theta^2)$ family. If $X_1,..,X_n$ are iid $n(\theta,a\theta^2)$, where $\theta$ is unknown, find the $1-\alpha$ confidence set based on inverting the LRT of $H_0:a=a_0$ versus $H_1:a\neq a_0$.
 
+$f_X(x)=\frac{1}{\sqrt{2\pi a\theta^2}}e^{-x^2/2a\theta^2}$, 
 
-Using the results of Exercise 8.8b, the restricted MLE (for $a=a_0$) is found by solving
+$$L(a,\theta|x)=\prod_{i=1}^n(2\pi a\theta^2)^{-1/2}e^{-(x_i-\theta)^2/2a\theta^2}=(2\pi a\theta^2)^{-n/2}e^{-\sum_{i=1}^n{(x_i-\theta)^2/2a\theta^2}}$$
+$$l(a,\theta|x)=-\frac{n}2\ln(2\pi a\theta^2)-\sum_{i=1}^n\frac{(x_i-\theta)^2}{2a\theta^2}$$
 
+$$\frac{\partial}{\partial a}l(a,\theta|x)=-\frac{n}{2a}+\frac{1}{2a^2\theta^2 }\sum_{i=1}^n(x_i-\theta)^2\overset{set}{=}0$$
 
-yielding the MLE
+$$\frac{\partial}{\partial\theta}l(a,\theta|x)=-\frac{n}{\theta}+\frac{1}{a\theta^3}\sum_{i=1}^n(x_i-\theta)^2+\frac{1}{a\theta^2}\sum_{i=1}^n(x_i-\theta)$$
 
-$$\hat\theta_R=\bar x+\frac1{2a_0}\sqrt{\bar x+4a_0(\hat\sigma^2+x^2)}$$
+$$a=\frac{\sum_{i=1}^n(x_i-\theta)^2}{n\theta^2}$$
 
-The unrestricted MLEs are
+$$\frac{\partial}{\partial\theta}l(a,\theta|x)=-\frac{n}{\theta}+\frac{n}{\theta}+\frac{n\sum_{i=1}^n(x_i-\theta)}{\sum_{i=1}^n(x_i-\theta)^2}\overset{set}{=}0\implies\hat\theta=\bar x$$
+Thus
 
-$\hat\theta=\bar x$ and $\hat a=\frac{1}{n\bar x^2}\sum_{i=1}^n(x_i-\bar x)^2=\hat\sigma^2/\bar x^2$
+$$\hat a=\frac{\sum_{i=1}^n(x_i-\bar x)^2}{n\bar x^2}=\frac{\hat\sigma^2}{\bar x^2}$$
 
-yielding the LRT statistic
+The unrestricted MLEs are $\hat\theta=\bar x$ and $\hat a=\hat\sigma^2/\bar x^2$
+
+Under $a=a_0$, the restricted MLE of $\theta$ is
+
+$$\hat\theta_R=\bar x+\frac1{2a_0}\sqrt{\bar x+4a_0(\hat\sigma^2+\bar x^2)}$$
+
+The LRT statistic is
 
 $$\Lambda=(\hat\sigma^2/\hat\theta_R)^ne^{n/2}e^{-\sum_{i=1}^n(x_i-\hat\theta_R)^2/(2\hat\theta_R)}$$
 
