@@ -4944,7 +4944,8 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <li>Compute the estimated variance of batches of raw material.</li>
 </ol>
 <p><span class="math display">\[\bar y_{..}=(23.458+23.492+23.524+23.380+23.364)/5=23.4436\]</span></p>
-<p><span class="math display">\[MS_{Trt}=4\sum_{i=1}^5(\bar y_{i.}-\bar y_{..})^2/(a-1)=4[(23.458-23.4436)^2+(23.492-23.4436)^2+(23.524-23.4436)^2+(23.380-23.4436)^2+(23.364-23.4436)^2]/4=0.0193952\]</span></p>
+<p><span class="math display">\[MS_{Trt}=4\sum_{i=1}^5(\bar y_{i.}-\bar y_{..})^2/(a-1)=\]</span></p>
+<p><span class="math display">\[4[(23.458-23.4436)^2+(23.492-23.4436)^2+(23.524-23.4436)^2+(23.380-23.4436)^2+(23.364-23.4436)^2]/4=0.0193952\]</span></p>
 <p><span class="math display">\[\hat\sigma_{\tau}^2=(MS_{Trt}-MSE)/n=(0.0193952-0.0044)/4=0.0037488\]</span></p>
 <ol start="5" style="list-style-type: lower-alpha">
 <li>Compute the estimated value for proportion of variance in the response explained by the different batches of raw material.</li>
@@ -4967,12 +4968,16 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <div id="problem-2-2" class="section level3">
 <h3>Problem 2:</h3>
 <p>Find the E(SSAB) for the two-way ANOVA model (or two-factor model) when both factors have random effects.</p>
-<p><span class="math display">\[E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\hat\tau\hat\beta)_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]\]</span></p>
+<p><span class="math display">\[E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]\]</span></p>
+<p><span class="math display">\[\bar y_{ij.}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}\]</span></p>
+<p><span class="math display">\[\bar y_{i.}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}\]</span></p>
+<p><span class="math display">\[\bar y_{.j}=\mu+\beta_j-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}\]</span></p>
+<p><span class="math display">\[\bar y_{..}=\mu+\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}\]</span></p>
 <p><span class="math display">\[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}\]</span></p>
 <p><span class="math display">\[E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=E[ε_{ij}]-\frac1{a}\sum_{i=1}^aE[ε_{ij}]-\frac1{b}\sum_{j=1}^bE[ε_{ij}]+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bE[ε_{ij}]=0\]</span></p>
 <p><span class="math display">\[Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[ε_{ij}-\frac1a\sum_{i=1}^aε_{ij}-\frac1b\sum_{j=1}^bε_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bε_{ij}]=\]</span></p>
-<p><span class="math display">\[Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}{b}+\frac{2Cov[ε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{j=1}^bε_{ij}]}{ab}\]</span></p>
-<p><span class="math display">\[-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}\]</span></p>
+<p><span class="math display">\[Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}{b}\]</span></p>
+<p><span class="math display">\[+\frac{2Cov[ε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{j=1}^bε_{ij}]}{ab}-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}\]</span></p>
 <p><span class="math display">\[=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}\]</span></p>
 <p><span class="math display">\[E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]++E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2\]</span></p>
 <p><span class="math display">\[E(SS_{AB})=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})\]</span></p>
