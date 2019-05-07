@@ -4915,6 +4915,69 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <p>(1), ab, ac, bc, ad, bd, cd, abcd, ae, be, ce, abce, de, abde, acde, bcde</p>
 </div>
 </div>
+<div id="hw3" class="section level2">
+<h2>HW3</h2>
+<div id="problem-1-2" class="section level3">
+<h3>Problem 1:</h3>
+<p>A manufacturer suspects that the batches of raw material furnished by his supplier differ significantly in calcium content. There are a large number of batches currently in the warehouse. Five of these are randomly selected for study. A chemist makes four determinations on each batch and obtains the following numerical summaries of data:</p>
+<p>Batch 1 2 3 4 5 Mean 23.458 23.492 23.524 23.380 23.364 Variance 0.005 0.004 0.005 0.004 0.004</p>
+<ol style="list-style-type: lower-alpha">
+<li>Write the complete model you fit for these data.</li>
+</ol>
+<p><span class="math display">\[y_{ij}=\mu+\tau_i+\varepsilon_{ij}\]</span></p>
+<p>for <span class="math inline">\(i=1,2,3,4,5\)</span> is the number of treatment being compared;</p>
+<p><span class="math inline">\(j=1,2,3,4\)</span> is the number of replications for each treatment;</p>
+<p><span class="math inline">\(y_{ij}\)</span> is response value for the <span class="math inline">\(j^{th}\)</span> replication when <span class="math inline">\(i^{th}\)</span> treatment is applied;</p>
+<p><span class="math inline">\(\mu\)</span> is the overall true mean response;</p>
+<p><span class="math inline">\(\tau_i\)</span> is the random effect of <span class="math inline">\(i^{th}\)</span> treatment (batches);</p>
+<p><span class="math inline">\(\varepsilon_{ij}\)</span> is random error for the <span class="math inline">\(j^{th}\)</span> replication when <span class="math inline">\(i^{th}\)</span> treatment is applied;</p>
+<p>Assumptions: <span class="math inline">\(\varepsilon_{ij}\sim iid N(0,\sigma^2)\)</span>; <span class="math inline">\(\tau_{i}\sim iid N(0,\sigma_\tau^2)\)</span>; <span class="math inline">\(\varepsilon_{ij}\)</span> and <span class="math inline">\(\tau_{i}\)</span> are independent.</p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Compute the SSE for the ANOVA of the model.</li>
+</ol>
+<p><span class="math display">\[SSE=(n-1)\sum_{i=1}^5S_i^2=(4-1)(0.005+0.004+0.005+0.004+0.004)=0.066\]</span></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Compute the estimated error variance and a 95% confidence interval for the true error variance.</li>
+</ol>
+<p><span class="math display">\[\hat\sigma^2=MSE=SSE/(N-a)=0.066/(20-5)=0.0044\]</span></p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Compute the estimated variance of batches of raw material.</li>
+</ol>
+<p><span class="math display">\[\bar y_{..}=(23.458+23.492+23.524+23.380+23.364)/5=23.4436\]</span></p>
+<p><span class="math display">\[MS_{Trt}=4\sum_{i=1}^5(\bar y_{i.}-\bar y_{..})^2/(a-1)=4[(23.458-23.4436)^2+(23.492-23.4436)^2+(23.524-23.4436)^2+(23.380-23.4436)^2+(23.364-23.4436)^2]/4=0.0193952\]</span></p>
+<p><span class="math display">\[\hat\sigma_{\tau}^2=(MS_{Trt}-MSE)/n=(0.0193952-0.0044)/4=0.0037488\]</span></p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Compute the estimated value for proportion of variance in the response explained by the different batches of raw material.</li>
+</ol>
+<p><span class="math display">\[\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)=(0.0037488)/(0.0037488+0.0044)=0.4600432\]</span></p>
+<ol start="6" style="list-style-type: lower-alpha">
+<li>Compute a 99% confidence interval for the true proportion of variance in the response explained by the different batches of raw material.</li>
+</ol>
+<p><span class="math display">\[\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}\sim F_{a-1,N-a}\]</span></p>
+<p><span class="math display">\[P\left[F_{1-\alpha/2}&lt;\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}&lt;F_{\alpha/2}\right]=1-\alpha\]</span></p>
+<p><span class="math inline">\(100(1-\alpha)\%=99\%\)</span>, <span class="math inline">\(\alpha=0.01\)</span>, then the Lower bound and Uper bound for <span class="math inline">\(\hat\sigma_{\tau}^2/\hat\sigma^2\)</span> are</p>
+<p><span class="math display">\[L=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*5.802907}-1\right)=-0.06009518\]</span></p>
+<p><span class="math display">\[U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*0.04892783}-1\right)=22.27297\]</span></p>
+<p>99% confidence interal for <span class="math inline">\(\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)\)</span> is</p>
+<p><span class="math display">\[\left(\frac{L}{L+U},\frac{U}{L+U}\right)=\left(\frac{-0.06009518}{-0.06009518+22.27297},\frac{22.27297}{-0.06009518+22.27297}\right)=(-0.002705421,1.002705)\]</span></p>
+<pre><code>## [1] 0.007959677</code></pre>
+<pre><code>## [1] 0.99</code></pre>
+<pre><code>## [1] 5.802907</code></pre>
+</div>
+<div id="problem-2-2" class="section level3">
+<h3>Problem 2:</h3>
+<p>Find the E(SSAB) for the two-way ANOVA model (or two-factor model) when both factors have random effects.</p>
+<p><span class="math display">\[E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\hat\tau\hat\beta)_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]\]</span></p>
+<p><span class="math display">\[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}\]</span></p>
+<p><span class="math display">\[E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=E[ε_{ij}]-\frac1{a}\sum_{i=1}^aE[ε_{ij}]-\frac1{b}\sum_{j=1}^bE[ε_{ij}]+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bE[ε_{ij}]=0\]</span></p>
+<p><span class="math display">\[Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[ε_{ij}-\frac1a\sum_{i=1}^aε_{ij}-\frac1b\sum_{j=1}^bε_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bε_{ij}]=\]</span></p>
+<p><span class="math display">\[Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}{b}+\frac{2Cov[ε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{j=1}^bε_{ij}]}{ab}\]</span></p>
+<p><span class="math display">\[-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}\]</span></p>
+<p><span class="math display">\[=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}\]</span></p>
+<p><span class="math display">\[E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]++E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2\]</span></p>
+<p><span class="math display">\[E(SS_{AB})=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})\]</span></p>
+</div>
+</div>
 </div>
 
 

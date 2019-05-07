@@ -516,3 +516,106 @@ $2^p-p-1=2^2-2-1=1$. There is only one automaticlly confounded effect.
 Consider the $2^5$ factorial design in 2 blocks. If ABCDE interaction effect is confounded with blocks, then list the remaining treatment combinations in the same block as acde.
 
 (1), ab, ac, bc, ad, bd, cd, abcd, ae, be, ce, abce, de, abde, acde, bcde
+
+## HW3
+
+### Problem 1:
+A manufacturer suspects that the batches of raw material furnished by his supplier differ significantly in calcium content. There are a large number of batches currently in the warehouse. Five of these are randomly selected for study. A chemist makes four determinations on each batch and obtains the following numerical summaries of data:
+
+Batch	1	2	3	4	5
+Mean	23.458	23.492	23.524	23.380	23.364
+Variance	0.005	0.004	0.005	0.004	0.004
+
+(a) Write the complete model you fit for these data.
+
+$$y_{ij}=\mu+\tau_i+\varepsilon_{ij}$$
+
+for $i=1,2,3,4,5$ is the number of treatment being compared; 
+
+$j=1,2,3,4$ is the number of replications for each treatment; 
+
+$y_{ij}$ is response value for the $j^{th}$ replication when $i^{th}$ treatment is applied;
+
+$\mu$ is the overall true mean response;
+
+$\tau_i$ is the random effect of $i^{th}$ treatment (batches);
+
+$\varepsilon_{ij}$ is random error for the $j^{th}$ replication when $i^{th}$ treatment is applied;
+
+Assumptions: $\varepsilon_{ij}\sim iid N(0,\sigma^2)$; $\tau_{i}\sim iid N(0,\sigma_\tau^2)$; $\varepsilon_{ij}$ and $\tau_{i}$ are independent.
+
+(b) Compute the SSE for the ANOVA of the model.
+
+$$SSE=(n-1)\sum_{i=1}^5S_i^2=(4-1)(0.005+0.004+0.005+0.004+0.004)=0.066$$
+
+(c) Compute the estimated error variance and a 95% confidence interval for the true error variance.
+
+$$\hat\sigma^2=MSE=SSE/(N-a)=0.066/(20-5)=0.0044$$
+
+(d)  Compute the estimated variance of batches of raw material.
+
+$$\bar y_{..}=(23.458+23.492+23.524+23.380+23.364)/5=23.4436$$
+
+$$MS_{Trt}=4\sum_{i=1}^5(\bar y_{i.}-\bar y_{..})^2/(a-1)=4[(23.458-23.4436)^2+(23.492-23.4436)^2+(23.524-23.4436)^2+(23.380-23.4436)^2+(23.364-23.4436)^2]/4=0.0193952$$
+
+
+$$\hat\sigma_{\tau}^2=(MS_{Trt}-MSE)/n=(0.0193952-0.0044)/4=0.0037488$$
+
+(e) Compute the estimated value for proportion of variance in the response explained by the different batches of raw material.
+
+$$\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)=(0.0037488)/(0.0037488+0.0044)=0.4600432$$
+
+(f) Compute a 99% confidence interval for the true proportion of variance in the response explained by the different batches of raw material.
+
+$$\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}\sim F_{a-1,N-a}$$
+
+$$P\left[F_{1-\alpha/2}<\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}<F_{\alpha/2}\right]=1-\alpha$$
+
+$100(1-\alpha)\%=99\%$, $\alpha=0.01$, then the Lower bound and Uper bound for $\hat\sigma_{\tau}^2/\hat\sigma^2$ are
+
+$$L=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*5.802907}-1\right)=-0.06009518$$
+
+$$U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*0.04892783}-1\right)=22.27297$$
+
+
+ 99% confidence interal for $\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)$ is
+ 
+ $$\left(\frac{L}{L+U},\frac{U}{L+U}\right)=\left(\frac{-0.06009518}{-0.06009518+22.27297},\frac{22.27297}{-0.06009518+22.27297}\right)=(-0.002705421,1.002705)$$
+
+
+```{r}
+# Find the probability of F equalling x
+df(4.89321, 4, 15,log= FALSE)
+# Find the cumulative probability (lower.tail = TRUE for left tail, lower.tail = FALSE for right tail) of less than or equal to value q
+pf(4.89321, 4, 15, lower.tail = T, log.p = FALSE)
+
+# Find the value of x at the qth percentile.
+qf(0.005, 4, 15, lower.tail = F, log.p = FALSE)
+
+```
+
+
+### Problem 2:
+
+Find the E(SSAB) for the two-way ANOVA model (or two-factor model) when both factors have random effects.
+
+$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\hat\tau\hat\beta)_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]$$
+
+
+
+
+$$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}$$
+
+$$E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=E[ε_{ij}]-\frac1{a}\sum_{i=1}^aE[ε_{ij}]-\frac1{b}\sum_{j=1}^bE[ε_{ij}]+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bE[ε_{ij}]=0$$
+
+$$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[ε_{ij}-\frac1a\sum_{i=1}^aε_{ij}-\frac1b\sum_{j=1}^bε_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bε_{ij}]=$$
+
+$$Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}{b}+\frac{2Cov[ε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{j=1}^bε_{ij}]}{ab}$$
+
+$$-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}$$
+
+$$=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}$$
+
+$$E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]++E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2$$
+
+$$E(SS_{AB})=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})$$
