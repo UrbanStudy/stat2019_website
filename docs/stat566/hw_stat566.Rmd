@@ -552,6 +552,11 @@ $$SSE=(n-1)\sum_{i=1}^5S_i^2=(4-1)(0.005+0.004+0.005+0.004+0.004)=0.066$$
 
 $$\hat\sigma^2=MSE=SSE/(N-a)=0.066/(20-5)=0.0044$$
 
+$$\frac{SSE}{\chi^2_{\alpha/2,df_E=15}}=0.066/24.99579=0.002640445\qquad \frac{SSE}{\chi^2_{1-\alpha/2,df_E=15}}=0.066/7.260944=0.009089727$$
+
+The 95% confidence interval for the true error variance is $[0.002640445,0.009089727]$
+
+
 (d)  Compute the estimated variance of batches of raw material.
 
 $$\bar y_{..}=(23.458+23.492+23.524+23.380+23.364)/5=23.4436$$
@@ -594,6 +599,10 @@ pf(4.89321, 4, 15, lower.tail = T, log.p = FALSE)
 # Find the value of x at the qth percentile.
 qf(0.005, 4, 15, lower.tail = F, log.p = FALSE)
 
+qchisq(0.05, 15, lower.tail = F, log.p = FALSE)
+
+qchisq(0.95, 15, lower.tail = F, log.p = FALSE)
+
 ```
 
 
@@ -613,7 +622,7 @@ $\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}=\mu+\beta_j+\frac1a \sum
 
 $\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\frac1a \sum_{i=1}^a\tau_i+\frac1b\sum_{j=1}^b\beta_j+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}+\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
+$$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
 
  ---
 
@@ -623,11 +632,13 @@ $Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\var
 
 For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})$
 
-$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$
+$$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$$
+
+ ---
 
 $Var[W]=Var[(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$
 
-$=Var[(\tau\beta)_{ij}]+\frac1{a^2}\sum_{i=1}^aVar[(\tau\beta)_{ij}]-\frac1{b^2} \sum_{j=1}^bVar[(\tau\beta)_{ij}]+\frac1{a^2b^2}\sum_{i=1}^a\sum_{j=1}^bVar[(\tau\beta)_{ij}]$
+$=Var[(\tau\beta)_{ij}]+\frac1{a^2}\sum_{i=1}^aVar[(\tau\beta)_{ij}]+\frac1{b^2} \sum_{j=1}^bVar[(\tau\beta)_{ij}]+\frac1{a^2b^2}\sum_{i=1}^a\sum_{j=1}^bVar[(\tau\beta)_{ij}]$
 
 $-\frac2{a}Cov[(\tau\beta)_{ij},\sum_{i=1}^a(\tau\beta)_{ij}]-\frac2{b}Cov[(\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]+\frac2{ab}Cov[(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$
 

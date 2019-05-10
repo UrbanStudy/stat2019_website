@@ -1,0 +1,118 @@
+---
+title: ""
+author: ""
+date: ''
+output:
+  pdf_document: 
+geometry: margin=0.5in
+fontfamily: mathpazo
+fontsize: 12pt
+spacing: double
+---
+
+
+
+1. \textcolor[rgb]{0.7,0.7,0.7}{\textcolor[rgb]{0.7,0.7,0.7}{Assume that $X_1,X_2,..X_{10}$ is a random sample from a distribution having a p.d.f. of the form $f(x)=\begin{cases}\lambda x^{\lambda-1}& 0<x<1\\0&\text{otherwise}\end{cases}$.}
+
+$$f(x)=\lambda x^{\lambda-1}=\lambda e^{(\lambda-1)\ln x}\implies\ln x\sim Exp()$$
+
+Let $Y_i=-\ln x_i$, $0<x<1$, then $X=e^{-y}$, $\frac{dx}{dy}=-e^{-y}$
+$g(Y)=\lambda(e^{-y})^{\lambda-1}|-e^{-y}|=\lambda e^{-\lambda y}, y>0$
+
+So $Y_i=-\sum_{i=1}^{10}\ln x_i\sim Gamma(\alpha=10,\beta=\frac1{\lambda})$, then,
+
+$$E[\hat\lambda_{MLE}]=10E[Y^{-1}]=10\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{10\lambda\Gamma(10-1)}{\Gamma(10)}=\frac{10\lambda}{9}$$
+
+
+
+
+ ---
+
+$$L(\lambda)=\lambda^{10}(\prod_{i=1}^{10} x_i)^{\lambda-1}=\lambda^{10}e^{(\lambda-1)\sum^{10}_{i=1} \ln x_i}$$
+$$l(\lambda)=10\ln\lambda+(\lambda-1)\sum^{10}_{i=1} \ln x_i$$
+$$l'(\lambda)=\frac{10}\lambda-\sum^{10}_{i=1} \ln x_i\overset{\text{set}}{=}0$$
+
+$$\hat\lambda_{MLE}=\frac{10}{\sum_{i=1}^{10}\ln x_i}$$
+
+ ----
+ 
+5. \textcolor[rgb]{0.7,0.7,0.7}{Find the MUVE of $\lambda$.} 
+
+
+ - **Step1: Proof sufficient** 
+
+From *Fisher–Neyman factorization theorem* (`2019-2-14p5`)
+
+$$f(x|\lambda)=L(\lambda)=\lambda^n(\prod_{i=1}^n x_i)^{\lambda-1}=\lambda^ne^{(\lambda-1)\sum^n_{i=1} \ln x_i}\cdot1=k(t|\lambda)h(\vec x)$$
+
+$h(\vec x)=1$ is free of $\lambda$. So $T=\sum^n_{i=1} \ln x_i$ is a sufficient statistic for $\lambda$.
+
+ - **Step2: Proof complete**
+
+$f(x|\lambda)$ is a member of the exponential family (`2019-2-19p12`). By the Theorem of Complete Statistics in the exponential family
+
+$$f(x|\vec\lambda)=\lambda^ne^{\sum^n_{i=1} (\lambda-1)\ln x_i}=h(x)c(\vec \lambda)e^{\sum^k_{j=1}W_j(\vec \lambda)t_j(x)}$$
+
+For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $\{W_1(\vec \lambda),..,W_k(\vec \lambda)\}$ contains an open interval in $\Bbb R$, so $T(\vec x)=\sum^n_{i=1} \ln x_i)$ is a complete sufficient statistic for $\lambda$.
+
+6. \textcolor[rgb]{0.7,0.7,0.7}{Show that the MUVE of $\lambda$ is asymptotically efficient.} 
+
+
+
+ ----
+ 
+ b. \textcolor[rgb]{0.7,0.7,0.7}{Find the expected value of $\hat\lambda_{MLE}$.}
+
+ - Method 1
+ 
+
+ - Method 2
+
+By 2.1.10 Probability integral transformation, let $U_i=F_X(\mathbf{x}|\lambda)=\int_{-\infty}^x\lambda x^{-\lambda-1}dx=1-\int_1^{x}\lambda x^{-\lambda-1}dx=1-(\left.-x^{-\lambda}\right|_{1}^x)=x^{-\lambda} \sim Uni(0,1)$,
+
+By 5.6.3 the exponential-uniform transformation, $\sum_{i=1}^n\ln X=-\frac1\lambda\sum_{i=1}^n\ln U_i\sim Gamma(n,\frac1\lambda)$; $(\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\frac1\lambda)$.
+
+For a Inv-Gamma$(\alpha,\beta)$, $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$.
+
+Thus,
+$$E[\hat\lambda]=E\left[\frac{n}{\sum_{i=1}^n\ln x_i}\right]=nE\left[(\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\lambda}{n-1}$$
+ ----
+ 
+ c. \textcolor[rgb]{0.7,0.7,0.7}{Find the variance of $\hat\lambda_{MLE}$.}
+
+From method 1, 
+ 
+$$E[\hat\lambda^2]=n^2E[Y^{-2}]=n^2\frac{\beta^{-2}\Gamma(-2+\alpha)}{\Gamma(\alpha)}=\frac{n^2\lambda^2\Gamma(n-2)}{\Gamma(n)}=\frac{n^2\lambda^2(n-3)!}{(n-1)!}=\frac{n^2\lambda^2}{(n-1)(n-2)}$$
+
+From method 2,
+
+For Inv-Gamma$(\alpha,\beta)$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$, then
+ 
+ $$E[\hat\lambda^2]=E\left[\frac{n^2}{(\sum_{i=1}^n\ln x_i)^2}\right]=n^2E\left[(\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\lambda^2}{(n-1)(n-2)}$$
+
+Therefore,
+$$Var[\hat\lambda^2]=\frac{n^2\lambda^2}{(n-1)(n-2)}-\frac{n^2\lambda^2}{(n-1)^2}=\frac{n^2\lambda^2}{(n-1)}[\frac1{n-2}-\frac1{n-1}]=\frac{n^2\lambda^2}{(n-1)^2(n-2)}$$
+
+ ----
+ 
+ d. \textcolor[rgb]{0.7,0.7,0.7}{Using $\hat\lambda_{MLE}$, create an unbiased estimator $\hat\lambda_{U}$.}
+
+$E[\hat\lambda]=\frac{n\lambda}{n-1}$ is a biased estimator.
+
+We can set $\frac{n-1}{n}E[\hat\lambda]=E[\frac{n-1}{n}\cdot\frac{n\lambda}{n-1}]=\lambda$
+
+Therefore, $E[\hat\lambda_{U}]=E[\frac{n-1}{n}E[\hat\lambda]]=\lambda$
+
+$$\hat\lambda_{U}=\frac{n-1}{n}\hat\lambda_{MLE}\quad \text{is an unbiased estimator.}$$
+
+ ----
+ 
+ e. \textcolor[rgb]{0.7,0.7,0.7}{Find the variance of $\hat\lambda_{U}$.`2019-3-5p12`}
+
+$$Var[\hat\lambda_{U}]=Var[\frac{n-1}{n}\hat\lambda_{MLE}]=(\frac{n-1}{n})^2\frac{n^2\lambda^2}{(n-1)^2(n-2)}=\frac{\lambda^2}{n-2}$$
+
+
+
+```{r, eval =F}
+.
+```
