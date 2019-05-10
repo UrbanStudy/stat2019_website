@@ -12,19 +12,30 @@ spacing: double
 
 
 
-1. \textcolor[rgb]{0.7,0.7,0.7}{\textcolor[rgb]{0.7,0.7,0.7}{Assume that $X_1,X_2,..X_{10}$ is a random sample from a distribution having a p.d.f. of the form $f(x)=\begin{cases}\lambda x^{\lambda-1}& 0<x<1\\0&\text{otherwise}\end{cases}$.}
+1.  Assume that $X_1,X_2,..X_{10}$ is a random sample from a distribution having a p.d.f. of the form $f(x)=\begin{cases}\lambda x^{\lambda-1}& 0<x<1\\0&\text{otherwise}\end{cases}$
 
 $$f(x)=\lambda x^{\lambda-1}=\lambda e^{(\lambda-1)\ln x}\implies\ln x\sim Exp()$$
 
 Let $Y_i=-\ln x_i$, $0<x<1$, then $X=e^{-y}$, $\frac{dx}{dy}=-e^{-y}$
-$g(Y)=\lambda(e^{-y})^{\lambda-1}|-e^{-y}|=\lambda e^{-\lambda y}, y>0$
 
-So $Y_i=-\sum_{i=1}^{10}\ln x_i\sim Gamma(\alpha=10,\beta=\frac1{\lambda})$, then,
+$g(y)=\lambda(e^{-y})^{\lambda-1}|-e^{-y}|=\lambda e^{-\lambda y}\sim Exp(\lambda), y>0$
 
-$$E[\hat\lambda_{MLE}]=10E[Y^{-1}]=10\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{10\lambda\Gamma(10-1)}{\Gamma(10)}=\frac{10\lambda}{9}$$
+So $\sum_{i=1}^{10}Y_i=-\sum_{i=1}^{10}\ln x_i\sim Gamma(\alpha=10,\beta=\frac1{\lambda})=\chi^2_{20}$, then,
+
+$$\Lambda=\frac{\sup L(\hat\lambda_0|x)}{\sup L(\hat\lambda_{1}|x)}=\frac{(1/2)^{10}(\prod_{i=1}^{10} x_i)^{1/2-1}}{(1)^{10}(\prod_{i=1}^{10} x_i)^{1-1}}=(1/2)^{10}(\prod_{i=1}^{10} x_i)^{-1/2}\le C$$
+
+Take derivae in both sides, $\Lambda\le C$ is equivalent $-\sum_{i=1}^{10}\ln x_i\le C'_1$ or $-\sum_{i=1}^{10}\ln x_i\ge C'_2$.
+
+$\chi^2_{(0.05/2),20}=34.16961$, $\chi^2_{(1-0.05/2),20}=9.590777$
+
+So the critical region are $-\sum_{i=1}^{10}\ln x_i\in(0, 9.590777]$ and $-\sum_{i=1}^{10}\ln x_i\in[34.16961,\infty)$
 
 
+```{r eval=FALSE, include=FALSE}
+qchisq(0.025, 20, lower.tail = F, log.p = FALSE)
 
+qchisq(0.975, 20, lower.tail = F, log.p = FALSE)
+```
 
  ---
 
@@ -33,10 +44,11 @@ $$l(\lambda)=10\ln\lambda+(\lambda-1)\sum^{10}_{i=1} \ln x_i$$
 $$l'(\lambda)=\frac{10}\lambda-\sum^{10}_{i=1} \ln x_i\overset{\text{set}}{=}0$$
 
 $$\hat\lambda_{MLE}=\frac{10}{\sum_{i=1}^{10}\ln x_i}$$
+$$E[\hat\lambda_{MLE}]=10E[Y^{-1}]=10\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{10\lambda\Gamma(10-1)}{\Gamma(10)}=\frac{10\lambda}{9}$$
 
  ----
  
-5. \textcolor[rgb]{0.7,0.7,0.7}{Find the MUVE of $\lambda$.} 
+5. Find the MUVE of $\lambda$.
 
 
  - **Step1: Proof sufficient** 
@@ -55,13 +67,13 @@ $$f(x|\vec\lambda)=\lambda^ne^{\sum^n_{i=1} (\lambda-1)\ln x_i}=h(x)c(\vec \lamb
 
 For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $\{W_1(\vec \lambda),..,W_k(\vec \lambda)\}$ contains an open interval in $\Bbb R$, so $T(\vec x)=\sum^n_{i=1} \ln x_i)$ is a complete sufficient statistic for $\lambda$.
 
-6. \textcolor[rgb]{0.7,0.7,0.7}{Show that the MUVE of $\lambda$ is asymptotically efficient.} 
+6. Show that the MUVE of $\lambda$ is asymptotically efficient. 
 
 
 
  ----
  
- b. \textcolor[rgb]{0.7,0.7,0.7}{Find the expected value of $\hat\lambda_{MLE}$.}
+ b. Find the expected value of $\hat\lambda_{MLE}$.
 
  - Method 1
  
@@ -78,7 +90,7 @@ Thus,
 $$E[\hat\lambda]=E\left[\frac{n}{\sum_{i=1}^n\ln x_i}\right]=nE\left[(\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\lambda}{n-1}$$
  ----
  
- c. \textcolor[rgb]{0.7,0.7,0.7}{Find the variance of $\hat\lambda_{MLE}$.}
+ c. Find the variance of $\hat\lambda_{MLE}$.
 
 From method 1, 
  
@@ -95,7 +107,7 @@ $$Var[\hat\lambda^2]=\frac{n^2\lambda^2}{(n-1)(n-2)}-\frac{n^2\lambda^2}{(n-1)^2
 
  ----
  
- d. \textcolor[rgb]{0.7,0.7,0.7}{Using $\hat\lambda_{MLE}$, create an unbiased estimator $\hat\lambda_{U}$.}
+ d. Using $\hat\lambda_{MLE}$, create an unbiased estimator $\hat\lambda_{U}$.
 
 $E[\hat\lambda]=\frac{n\lambda}{n-1}$ is a biased estimator.
 
@@ -107,12 +119,8 @@ $$\hat\lambda_{U}=\frac{n-1}{n}\hat\lambda_{MLE}\quad \text{is an unbiased estim
 
  ----
  
- e. \textcolor[rgb]{0.7,0.7,0.7}{Find the variance of $\hat\lambda_{U}$.`2019-3-5p12`}
+ e. Find the variance of $\hat\lambda_{U}$.`2019-3-5p12`
 
 $$Var[\hat\lambda_{U}]=Var[\frac{n-1}{n}\hat\lambda_{MLE}]=(\frac{n-1}{n})^2\frac{n^2\lambda^2}{(n-1)^2(n-2)}=\frac{\lambda^2}{n-2}$$
 
 
-
-```{r, eval =F}
-.
-```
