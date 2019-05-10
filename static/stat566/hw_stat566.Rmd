@@ -582,7 +582,7 @@ $$U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)=\frac14\left(\frac
 
  99% confidence interal for $\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)$ is
  
- $$\left(\frac{L}{L+U},\frac{U}{L+U}\right)=\left(\frac{-0.06009518}{-0.06009518+22.27297},\frac{22.27297}{-0.06009518+22.27297}\right)=(-0.002705421,1.002705)$$
+ $$\left(\frac{L}{1+L},\frac{U}{1+U}\right)=\left(\frac{-0.06009518}{1-0.06009518},\frac{22.27297}{1+22.27297}\right)=(-0.06393752,0.9570317)$$
 
 
 ```{r}
@@ -601,28 +601,60 @@ qf(0.005, 4, 15, lower.tail = F, log.p = FALSE)
 
 Find the E(SSAB) for the two-way ANOVA model (or two-factor model) when both factors have random effects.
 
-$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]$$
+$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$$
 
-$$\bar y_{ij.}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}$$
+$y_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$
 
-$$\bar y_{i.}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}$$
+$\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$\bar y_{.j}=\mu+\beta_j-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}$$
+$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b {\sum_{j=1}^b[\beta_j+(\tau\beta)_{ij}]}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$\bar y_{..}=\mu+\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}$$
+$\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}=\mu+\beta_j+\frac1a \sum_{i=1}^a[\tau_i+(\tau\beta)_{ij}]+\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=\mu+\tau_{i}+\beta_j+ε_{ij}-\frac{\sum_{i=1}^a(\mu+\tau_{i}+\beta_j+ε_{ij})}a-\frac {\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}b+\frac{\sum_{i=1}^a\sum_{j=1}^b(\mu+\tau_{i}+\beta_j+ε_{ij})}{ab}$$
+$\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\frac1a \sum_{i=1}^a\tau_i+\frac1b\sum_{j=1}^b\beta_j+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=E[ε_{ij}]-\frac1{a}\sum_{i=1}^aE[ε_{ij}]-\frac1{b}\sum_{j=1}^bE[ε_{ij}]+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bE[ε_{ij}]=0$$
+$$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}+\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
 
-$$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[ε_{ij}-\frac1a\sum_{i=1}^aε_{ij}-\frac1b\sum_{j=1}^bε_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^bε_{ij}]=$$
+ ---
 
-$$Var[ε_{ij}]+\frac{\sum_{i=1}^aVar[ε_{ij}]}{a^2}+\frac{\sum_{j=1}^bVar[ε_{ij}]}{b^2}+\frac{\sum_{i=1}^a\sum_{j=1}^bVar[ε_{ij}]}{a^2b^2}-\frac{2Cov[ε_{ij},\sum_{i=1}^aε_{ij}]}{a}-\frac{2Cov[ε_{ij},\sum_{j=1}^bε_{ij}]}{b}$$
+Let $W=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}$
 
-$$+\frac{2Cov[ε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab}+\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{j=1}^bε_{ij}]}{ab}-\frac{2Cov[\sum_{i=1}^aε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{a^2b}-\frac{2Cov[\sum_{j=1}^bε_{ij},\sum_{i=1}^a\sum_{j=1}^bε_{ij}]}{ab^2}$$
+$Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$=\sigma^2+\frac{\sigma^2}{a}+\frac{\sigma^2}{b}+\frac{\sigma^2}{ab}-\frac{2\sigma^2}{a}-\frac{2\sigma^2}{b}+\frac{2\sigma^2}{ab}+\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}-\frac{2\sigma^2}{ab}=\frac{(ab-a-b+1)\sigma^2}{ab}$$
+For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})$
 
-$$E[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]++E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2$$
+$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$
 
-$$E(SS_{AB})=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})$$
+$Var[W]=Var[(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$
+
+$=Var[(\tau\beta)_{ij}]+\frac1{a^2}\sum_{i=1}^aVar[(\tau\beta)_{ij}]-\frac1{b^2} \sum_{j=1}^bVar[(\tau\beta)_{ij}]+\frac1{a^2b^2}\sum_{i=1}^a\sum_{j=1}^bVar[(\tau\beta)_{ij}]$
+
+$-\frac2{a}Cov[(\tau\beta)_{ij},\sum_{i=1}^a(\tau\beta)_{ij}]-\frac2{b}Cov[(\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]+\frac2{ab}Cov[(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$
+
+$+\frac2{ab}Cov[(\sum_{i=1}^a\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{a^2b}Cov[\sum_{i=1}^a(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{ab^2}Cov[\sum_{j=1}^b(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$
+
+$$=\sigma^2_{\tau\beta}+\frac{\sigma^2_{\tau\beta}}{a}+\frac{\sigma^2_{\tau\beta}}{b}+\frac{\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{a}-\frac{2\sigma^2_{\tau\beta}}{b}+\frac{2\sigma^2_{\tau\beta}}{ab}+\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}$$
+
+ ---
+
+$Var[Z]=Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$
+
+$=\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{a^2n^2}\sum_{i=1}^a\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{a^2b^2n^2}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]$
+
+$-\frac{2}{an^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+\frac{2}{abn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$
+
+$+\frac{2}{abn^2}Cov[\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]-\frac{2}{a^2bn^2}Cov[\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]-\frac{2}{ab^2n^2}Cov[\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$
+
+$$=\frac1n\sigma^2+\frac{\sigma^2}{an}+\frac{\sigma^2}{bn}+\frac{\sigma^2}{abn}-\frac{2\sigma^2}{an}-\frac{2\sigma^2}{bn}+\frac{2\sigma^2}{abn}+\frac{2\sigma^2}{abn}-\frac{2\sigma^2}{abn}-\frac{2\sigma^2}{abn}=\frac{(a-1)(b-1)\sigma^2}{abn}$$
+
+ ---
+
+For $\varepsilon_{ijk}$ and $(\tau\beta)_{ij}$ are independent and are the only variable in $W$ and $Z$ corresponsively, $Cov[W,Z]=0$, then
+
+$$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}$$
+
+For $E[(\widehat{\tau\beta})_{ij}]=0$
+
+$E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]+E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2\right\}$
+
+$$=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})$$
