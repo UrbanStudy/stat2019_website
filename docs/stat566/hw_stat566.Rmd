@@ -552,19 +552,17 @@ $$SSE=(n-1)\sum_{i=1}^5S_i^2=(4-1)(0.005+0.004+0.005+0.004+0.004)=0.066$$
 
 $$\hat\sigma^2=MSE=SSE/(N-a)=0.066/(20-5)=0.0044$$
 
-$$\frac{SSE}{\chi^2_{\alpha/2,df_E=15}}=0.066/24.99579=0.002640445\qquad \frac{SSE}{\chi^2_{1-\alpha/2,df_E=15}}=0.066/7.260944=0.009089727$$
+$$\frac{SSE}{\chi^2_{\alpha/2,df_E=15}}=0.066/27.48839=0.002401014\qquad \frac{SSE}{\chi^2_{1-\alpha/2,df_E=15}}=0.066/6.262138=0.01053953$$
 
-The 95% confidence interval for the true error variance is $[0.002640445,0.009089727]$
+The 95% confidence interval for the true error variance is $[0.002401014,0.01053953]$
 
 
 (d)  Compute the estimated variance of batches of raw material.
 
-$$\bar y_{..}=(23.458+23.492+23.524+23.380+23.364)/5=23.4436$$
+$\bar y_{..}=(23.458+23.492+23.524+23.380+23.364)/5=23.4436$
 
-$$MS_{Trt}=4\sum_{i=1}^5(\bar y_{i.}-\bar y_{..})^2/(a-1)=$$
-
-$$4[(23.458-23.4436)^2+(23.492-23.4436)^2+(23.524-23.4436)^2+(23.380-23.4436)^2+(23.364-23.4436)^2]/4=0.0193952$$
-
+$MS_{Trt}=4\sum_{i=1}^5(\bar y_{i.}-\bar y_{..})^2/(a-1)=$
+$4[(23.458-23.4436)^2+(23.492-23.4436)^2+(23.524-23.4436)^2+(23.380-23.4436)^2+(23.364-23.4436)^2]/4=0.0193952$
 
 $$\hat\sigma_{\tau}^2=(MS_{Trt}-MSE)/n=(0.0193952-0.0044)/4=0.0037488$$
 
@@ -574,20 +572,19 @@ $$\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)=(0.0037488)/(0.0037488+
 
 (f) Compute a 99% confidence interval for the true proportion of variance in the response explained by the different batches of raw material.
 
-$$\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}\sim F_{a-1,N-a}$$
+$\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}\sim F_{a-1,N-a}$
 
 $$P\left[F_{1-\alpha/2}<\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}<F_{\alpha/2}\right]=1-\alpha$$
 
 $100(1-\alpha)\%=99\%$, $\alpha=0.01$, then the Lower bound and Uper bound for $\hat\sigma_{\tau}^2/\hat\sigma^2$ are
 
-$$L=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*5.802907}-1\right)=-0.06009518$$
+$L=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*5.802907}-1\right)=-0.06009518$
 
-$$U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*0.04892783}-1\right)=22.27297$$
+$U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*0.04892783}-1\right)=22.27297$
 
+ $$\frac{L}{1+L}=\frac{-0.06009518}{1-0.06009518}=-0.06393752,\quad\frac{U}{1+U}=\frac{22.27297}{1+22.27297}=0.9570317$$
 
- 99% confidence interal for $\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)$ is
- 
- $$\left(\frac{L}{1+L},\frac{U}{1+U}\right)=\left(\frac{-0.06009518}{1-0.06009518},\frac{22.27297}{1+22.27297}\right)=(-0.06393752,0.9570317)$$
+ 99% confidence interal for $\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)$ is $[0,0.9570317]$
 
 
 ```{r eval=FALSE, include=FALSE}
@@ -599,9 +596,9 @@ pf(4.89321, 4, 15, lower.tail = T, log.p = FALSE)
 # Find the value of x at the qth percentile.
 qf(0.005, 4, 15, lower.tail = F, log.p = FALSE)
 
-qchisq(0.05, 15, lower.tail = F, log.p = FALSE)
+qchisq(0.025, 15, lower.tail = F, log.p = FALSE)
 
-qchisq(0.95, 15, lower.tail = F, log.p = FALSE)
+qchisq(0.975, 15, lower.tail = F, log.p = FALSE)
 
 ```
 
