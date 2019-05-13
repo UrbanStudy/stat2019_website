@@ -12,115 +12,131 @@ spacing: double
 
 
 
-1.  Assume that $X_1,X_2,..X_{10}$ is a random sample from a distribution having a p.d.f. of the form $f(x)=\begin{cases}\lambda x^{\lambda-1}& 0<x<1\\0&\text{otherwise}\end{cases}$
+Assume that $X_1,X_2,..X_{10}$ is a random sample from a distribution having a p.d.f. of the form $f(x)=\begin{cases}\lambda x^{\lambda-1}& 0<x<1\\0&\text{otherwise}\end{cases}$
 
-$$f(x)=\lambda x^{\lambda-1}=\lambda e^{(\lambda-1)\ln x}\implies\ln x\sim Exp()$$
+1.  Find the best critical region of level 0.05 for testing $H_0: \lambda=1/2$ against $H_1:\lambda=1$
 
-Let $Y_i=-\ln x_i$, $0<x<1$, then $X=e^{-y}$, $\frac{dx}{dy}=-e^{-y}$
+The regiction region is $R=\{\vec x: \Lambda\le C\}$
 
-$g(y)=\lambda(e^{-y})^{\lambda-1}|-e^{-y}|=\lambda e^{-\lambda y}\sim Exp(\lambda), y>0$
+$$\Lambda=\frac{L(\hat\lambda_0|x)}{L(\hat\lambda_{1}|x)}=\frac{(1/2)^{10}(\prod_{i=1}^{10} x_i)^{1/2-1}}{(1)^{10}(\prod_{i=1}^{10} x_i)^{1-1}}=(1/2)^{10}e^{1/2(-\sum_{i=1}^{10}\ln x_i)}\le C\implies-\sum_{i=1}^{10}\ln x_i\le C'$$
 
-So $\sum_{i=1}^{10}Y_i=-\sum_{i=1}^{10}\ln x_i\sim Gamma(\alpha=10,\beta=\frac1{\lambda})=\chi^2_{20}$, then,
+Let $T_i=-\ln x_i$, $0<x<1$, then $X=e^{-t}$, $\frac{dx}{dt}=-e^{-t}$
 
-$$\Lambda=\frac{\sup L(\hat\lambda_0|x)}{\sup L(\hat\lambda_{1}|x)}=\frac{(1/2)^{10}(\prod_{i=1}^{10} x_i)^{1/2-1}}{(1)^{10}(\prod_{i=1}^{10} x_i)^{1-1}}=(1/2)^{10}(\prod_{i=1}^{10} x_i)^{-1/2}\le C$$
+$g(t)=\lambda(e^{-t})^{\lambda-1}|-e^{-t}|=\lambda e^{-\lambda t}\sim Exp(\lambda), t>0$
 
-Take derivative of both sides, $\Lambda\le C$ is equivalent $-\sum_{i=1}^{10}\ln x_i\le C'_1$ or $-\sum_{i=1}^{10}\ln x_i\ge C'_2$.
+So $\sum_{i=1}^{10}T_i=\sum_{i=1}^{10}(-\ln x_i)\sim Gamma(\alpha=10,\beta=\frac1{\lambda})$
 
-$\chi^2_{(0.05/2),20}=34.16961$, $\chi^2_{(1-0.05/2),20}=9.590777$
+Under $H_0: \lambda=1/2$, $-\sum_{i=1}^{10}\ln x_i\sim Exp(1/2)=Gamma(\alpha=10,\beta=2)=\chi^2_{20}$. Then,
 
-So the critical region are $-\sum_{i=1}^{10}\ln x_i\in(0, 9.590777]$ and $-\sum_{i=1}^{10}\ln x_i\in[34.16961,\infty)$
+For Reject $H_0$, $\Lambda\le C$ is equivalent $-\sum_{i=1}^{10}\ln x_i\le C'$, where $C'$ cuts off the upper $\alpha$ area in the $\chi^2_{20}$ distribution.
 
+$1-P(-\sum_{i=1}^{10}\ln x_i\le C'|\lambda=1/2)=\alpha=0.05$
+
+$C'=\chi^2_{(1-0.05),20}=10.85081$. So the critical region are $-\sum_{i=1}^{10}\ln x_i\in(0, 10.85081]$.
 
 ```{r eval=FALSE, include=FALSE}
-qchisq(0.025, 20, lower.tail = F, log.p = FALSE)
-
-qchisq(0.975, 20, lower.tail = F, log.p = FALSE)
+qchisq(0.05, 20, lower.tail = T, log.p = FALSE)
+qchisq(0.95, 20, lower.tail = F, log.p = FALSE)
 ```
 
  ---
+ 
+2.  Find the power of the test in (1)
 
-$$L(\lambda)=\lambda^{10}(\prod_{i=1}^{10} x_i)^{\lambda-1}=\lambda^{10}e^{(\lambda-1)\sum^{10}_{i=1} \ln x_i}$$
-$$l(\lambda)=10\ln\lambda+(\lambda-1)\sum^{10}_{i=1} \ln x_i$$
-$$l'(\lambda)=\frac{10}\lambda-\sum^{10}_{i=1} \ln x_i\overset{\text{set}}{=}0$$
+Let $W_i=2T_i=-2\ln x_i$, $0<x<1$, then $X=e^{-\frac12w}$, $\frac{dx}{dw}=-\frac12e^{-\frac12w}$
 
-$$\hat\lambda_{MLE}=\frac{10}{\sum_{i=1}^{10}\ln x_i}$$
-$$E[\hat\lambda_{MLE}]=10E[Y^{-1}]=10\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{10\lambda\Gamma(10-1)}{\Gamma(10)}=\frac{10\lambda}{9}$$
+$g(w)=\lambda(e^{-\frac12w})^{\lambda-1}|-\frac12e^{-\frac12w}|=\frac\lambda2 e^{-\frac\lambda2 w}\sim Exp(\frac\lambda2), w>0$
+
+Under $H_1: \lambda=1$, $W=-2\sum_{i=1}^{10}\ln x_i\sim Exp(1/2)=Gamma(\alpha=10,\beta=2)=\chi^2_{20}$.
+
+The rejection rule is $-\sum_{i=1}^{10}\ln x_i\le 10.85081$, then
+
+Power $=P(\text{reject }H_0|H_1\text{ is ture})$
+$$=P(-\sum_{i=1}^{10}\ln x_i\le 10.85081|\lambda=1)=P(-2\sum_{i=1}^{10}\ln x_i\le 2*10.85081|\lambda=1)=0.6430814$$
+
+```{r echo=FALSE, out.width='45%'}
+curve(dchisq(x, df=20), col='red', main = "Chi-Square Density Graph",from=0,to=60); abline(v=10.85081,lty=2);text(10.85081,0, "10.85")
+curve(dchisq(2*x, df=20),add = TRUE,col='blue')
+polygon(c(0,seq(0,10.85081,0.01),10.85081),c(0,dchisq(2*seq(0,10.85081,0.01), df=20),0), density=10, angle=45,lty =3)
+```
+
+```{r eval=FALSE, include=FALSE}
+pchisq(2*10.85081, 20, lower.tail = T, log.p = FALSE)
+```
+
+ ---
+ 
+3. Is your answer from (1) uniformly most powerful for testing $H_0: \lambda=1/2$ against $H_1:\lambda>1/2$? Explain
+
+For $H_0: \lambda=1/2$, $H_1:\lambda=\lambda_1$ where $\lambda_1>1/2$, Neyman-Pearson Theorem says that the test is most powerful when
+
+$$\Lambda=\frac{\sup L(1/2|x)}{\sup L(\lambda_{1}|x)}=\frac{(1/2)^{10}(\prod_{i=1}^{10} x_i)^{1/2-1}}{(\lambda_1)^{10}(\prod_{i=1}^{10} x_i)^{\lambda_1-1}}=(2\lambda_1)^{-10}e^{(1/2-\lambda_1)\sum_{i=1}^{10} x_i}\overset{set}{\le} C$$
+
+Take derivative of both sides, $-10\ln(2\lambda_1)(\lambda_1-1/2)(-\sum_{i=1}^{10})\ln x_i\le \ln C$
+
+For $\lambda_1-1/2\ge0$,$\Lambda\le C$ is equivalent $-\sum_{i=1}^{10}\ln x_i\le C'$, the most powerfule test is $T=-\sum_{i=1}^{10}\ln x_i$
+
+The sturcture of the test $T$ does not involve the actual value of $\lambda_1$, then $T$ is UMP.
+
+ ---
+
+4. Find the  for the Cramer-Rao lower bound for variance of an unbiased estimator of $\lambda$.
+
+$\ln f(x)=\ln\lambda+(\lambda-1)\ln x_i$
+
+$\frac{\partial}{\partial\lambda}\ln f(x)=\frac{1}\lambda+\ln x_i$
+
+$\frac{\partial^2}{\partial\lambda^2}\ln f(x)=-\frac{1}{\lambda^2}$
+
+$I_{\lambda}=-E[\frac{\partial^2}{\partial\lambda^2}\ln f(x)]=\frac{1}{\lambda^2}$
+
+$$CRLB=\frac1{nI_{\lambda}}=\frac{\lambda^2}{10}$$
 
  ----
  
 5. Find the MUVE of $\lambda$.
 
+$f(x)=\lambda x^{\lambda-1}=\lambda e^{-(\lambda-1)(-\ln x)}$ is a member of the exponential family.
 
- - **Step1: Proof sufficient** 
+$$L(\lambda)=\lambda^ne^{-(\lambda-1)(-\sum^n_{i=1} \ln x_i)}=h(x)c(\lambda)e^{W_i(\lambda)t_i(\vec x)}$$
 
-From *Fisher–Neyman factorization theorem* (`2019-2-14p5`)
+For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $W_i(\lambda)=\lambda-1$ contains an open interval in $\Bbb R$, so $T=-\sum^n_{i=1} \ln x_i$ is a complete sufficient statistic for $\lambda$.
 
-$$f(x|\lambda)=L(\lambda)=\lambda^n(\prod_{i=1}^n x_i)^{\lambda-1}=\lambda^ne^{(\lambda-1)\sum^n_{i=1} \ln x_i}\cdot1=k(t|\lambda)h(\vec x)$$
+$L(\lambda)=\lambda^{10}(\prod_{i=1}^{10} x_i)^{\lambda-1}=\lambda^{10}e^{(\lambda-1)\sum^{10}_{i=1} \ln x_i}$
 
-$h(\vec x)=1$ is free of $\lambda$. So $T=\sum^n_{i=1} \ln x_i$ is a sufficient statistic for $\lambda$.
+$l(\lambda)=10\ln\lambda+(\lambda-1)\sum^{10}_{i=1} \ln x_i$
 
- - **Step2: Proof complete**
+$l'(\lambda)=\frac{10}\lambda+\sum^{10}_{i=1} \ln x_i\overset{\text{set}}{=}0$
 
-$f(x|\lambda)$ is a member of the exponential family (`2019-2-19p12`). By the Theorem of Complete Statistics in the exponential family
+$\hat\lambda_{MLE}=\frac{10}{-\sum_{i=1}^{10}\ln x_i}$
 
-$$f(x|\vec\lambda)=\lambda^ne^{\sum^n_{i=1} (\lambda-1)\ln x_i}=h(x)c(\vec \lambda)e^{\sum^k_{j=1}W_j(\vec \lambda)t_j(x)}$$
+For $-\sum_{i=1}^{10}\ln x_i\sim Gamma(\alpha=10,\beta=\frac1\lambda)$
 
-For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $\{W_1(\vec \lambda),..,W_k(\vec \lambda)\}$ contains an open interval in $\Bbb R$, so $T(\vec x)=\sum^n_{i=1} \ln x_i)$ is a complete sufficient statistic for $\lambda$.
+$E[\hat\lambda_{MLE}]=10E[Y^{-1}]=10\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{10\lambda\Gamma(10-1)}{\Gamma(10)}=\frac{10\lambda}{9}$
+
+Create an unbiased estimator $\hat\lambda_{U}=\frac{9}{10}\hat\lambda_{MLE}$.
+
+$E[\hat\lambda_{U}]=E[\frac{9}{10}\hat\lambda_{MLE}]=\frac{9}{10}\cdot\frac{10\lambda}{9}=\lambda$ 
+
+$$\hat\lambda_{U}=\frac{9}{10}\hat\lambda_{MLE}=\frac{9}{-\sum_{i=1}^{10}\ln x_i}=\frac9T$$
+
+From Lehmann-Scheffe Theorem,$\hat\lambda_{U}=\frac9T$ is the unique MVUE of $\lambda$ because it is an unbiased estimator of $\lambda$ and a function of $T$, which is a complete sufficient statistic for $\lambda$.
+
+ ---
+
 
 6. Show that the MUVE of $\lambda$ is asymptotically efficient. 
 
+When sample size $n\to\infty$, from previou results, $CRLB=\frac1{nI_{\lambda}}=\frac{\lambda^2}{n}$, $-\sum_{i=1}^{n}\ln x_i\sim Gamma(n,\frac1\lambda)$
 
+$\hat\lambda_{U}=\frac{n-1}{-\sum_{i=1}^{n}\ln x_i}=\frac{n-1}T,\quad E[\hat\lambda_{U}]=\lambda$
 
- ----
+$E[\hat\lambda_{U}^2]=(n-1)^2E[T^{-2}]=(n-1)^2\frac{\beta^{-2}\Gamma(\alpha-2)}{\Gamma(\alpha)}=\frac{(n-1)^2\lambda^2\Gamma(n-2)}{\Gamma(n)}=\frac{(n-1)\lambda^2}{n-2}$
+
+$Var[\hat\lambda_{U}]=E[\hat\lambda_{U}^2]-E[\hat\lambda_{U}]^2=\frac{(n-1)\lambda^2}{n-2}-\lambda^2=\frac{\lambda^2}{n-2}$
+
+$$\lim_{n\to\infty}\frac{CRLB}{Var[\hat\lambda_{U}]}=\lim_{n\to\infty}\frac{\frac{\lambda^2}{n}}{\frac{\lambda^2}{n-2}}=\lim_{n\to\infty}\frac{n-2}{n}=1$$
  
- b. Find the expected value of $\hat\lambda_{MLE}$.
-
- - Method 1
- 
-
- - Method 2
-
-By 2.1.10 Probability integral transformation, let $U_i=F_X(\mathbf{x}|\lambda)=\int_{-\infty}^x\lambda x^{-\lambda-1}dx=1-\int_1^{x}\lambda x^{-\lambda-1}dx=1-(\left.-x^{-\lambda}\right|_{1}^x)=x^{-\lambda} \sim Uni(0,1)$,
-
-By 5.6.3 the exponential-uniform transformation, $\sum_{i=1}^n\ln X=-\frac1\lambda\sum_{i=1}^n\ln U_i\sim Gamma(n,\frac1\lambda)$; $(\sum_{i=1}^n\ln x_i)^{-1}\sim Inv-Gamma(n,\frac1\lambda)$.
-
-For a Inv-Gamma$(\alpha,\beta)$, $f_{X}(x)=\frac{\beta^{\alpha}}{\Gamma(\alpha)}x^{-\alpha-1}e^{-\frac\beta{x}},x>0$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$.
-
-Thus,
-$$E[\hat\lambda]=E\left[\frac{n}{\sum_{i=1}^n\ln x_i}\right]=nE\left[(\sum_{i=1}^n\ln x_i)^{-1}\right]=\frac{n\lambda}{n-1}$$
- ----
- 
- c. Find the variance of $\hat\lambda_{MLE}$.
-
-From method 1, 
- 
-$$E[\hat\lambda^2]=n^2E[Y^{-2}]=n^2\frac{\beta^{-2}\Gamma(-2+\alpha)}{\Gamma(\alpha)}=\frac{n^2\lambda^2\Gamma(n-2)}{\Gamma(n)}=\frac{n^2\lambda^2(n-3)!}{(n-1)!}=\frac{n^2\lambda^2}{(n-1)(n-2)}$$
-
-From method 2,
-
-For Inv-Gamma$(\alpha,\beta)$, $E[x^n]=\frac{\beta^n}{(\alpha-1)\cdots(\alpha-n)}$, then
- 
- $$E[\hat\lambda^2]=E\left[\frac{n^2}{(\sum_{i=1}^n\ln x_i)^2}\right]=n^2E\left[(\sum_{i=1}^n\ln x_i)^{-2}\right]=\frac{n^2\lambda^2}{(n-1)(n-2)}$$
-
-Therefore,
-$$Var[\hat\lambda^2]=\frac{n^2\lambda^2}{(n-1)(n-2)}-\frac{n^2\lambda^2}{(n-1)^2}=\frac{n^2\lambda^2}{(n-1)}[\frac1{n-2}-\frac1{n-1}]=\frac{n^2\lambda^2}{(n-1)^2(n-2)}$$
-
- ----
- 
- d. Using $\hat\lambda_{MLE}$, create an unbiased estimator $\hat\lambda_{U}$.
-
-$E[\hat\lambda]=\frac{n\lambda}{n-1}$ is a biased estimator.
-
-We can set $\frac{n-1}{n}E[\hat\lambda]=E[\frac{n-1}{n}\cdot\frac{n\lambda}{n-1}]=\lambda$
-
-Therefore, $E[\hat\lambda_{U}]=E[\frac{n-1}{n}E[\hat\lambda]]=\lambda$
-
-$$\hat\lambda_{U}=\frac{n-1}{n}\hat\lambda_{MLE}\quad \text{is an unbiased estimator.}$$
-
- ----
- 
- e. Find the variance of $\hat\lambda_{U}$.`2019-3-5p12`
-
-$$Var[\hat\lambda_{U}]=Var[\frac{n-1}{n}\hat\lambda_{MLE}]=(\frac{n-1}{n})^2\frac{n^2\lambda^2}{(n-1)^2(n-2)}=\frac{\lambda^2}{n-2}$$
+Therefore, the MUVE $\frac{n-1}{-\sum_{i=1}^{10}\ln x_i}$ is asymptotically efficient.
 
 

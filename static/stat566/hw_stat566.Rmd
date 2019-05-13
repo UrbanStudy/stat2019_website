@@ -607,7 +607,7 @@ qchisq(0.975, 15, lower.tail = F, log.p = FALSE)
 
 Find the E(SSAB) for the two-way ANOVA model (or two-factor model) when both factors have random effects.
 
-$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$$
+$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$$
 
 $y_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$
 
@@ -619,7 +619,7 @@ $\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}=\mu+\beta_j+\frac1a \sum
 
 $\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\frac1a \sum_{i=1}^a\tau_i+\frac1b\sum_{j=1}^b\beta_j+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}$$
+$$\bar y_{ij.}-\bar y_{i.}-\bar y_{.j.}+\bar y_{...}=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}$$
 $$+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
 
  ---
@@ -630,7 +630,7 @@ $Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\var
 
 For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})$
 
-$$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$$
+$$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$$
 
  ---
 
@@ -660,10 +660,164 @@ $$=\frac1n\sigma^2+\frac{\sigma^2}{an}+\frac{\sigma^2}{bn}+\frac{\sigma^2}{abn}-
 
 For $\varepsilon_{ijk}$ and $(\tau\beta)_{ij}$ are independent and are the only variable in $W$ and $Z$ corresponsively, $Cov[W,Z]=0$, then
 
-$$Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}$$
+$$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}$$
 
 For $E[(\widehat{\tau\beta})_{ij}]=0$
 
-$$E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]+E[y_{ij}-\bar y_{i.}-\bar y_{.j}+\bar y_{..}]^2\right\}$$
+$$E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}$$
+
+$$=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})$$
+
+
+## HW4
+
+### Problem 1: (13.1)
+
+An experiment was performed to investigate the capability of a measurement system. Ten parts were randomly
+selected, and two randomly selected operators measured each part three times. The tests were made in random order.
+
+Create a plot of data first.
+
+(a) Analyze the data from this experiment 
+
+write the model you would fit for these data, then fit the model and report the complete ANOVA table and then write the conclusions along with p values.
+
+Check assumptions.
+
+(b) Estimate the variance components using ths ANOVA method.
+report all the estimated variance components.
+
+Report your code here.
+
+### Problem 2 (13.6)
+
+Reanalyze the measurement systems experiment in Problem 13.1, assuming that operators are a fixed factor. Estimate the appropriate model components using the ANOVA method.
+
+Fit the restricted model using REML.
+
+
+Report the complete ANOVA table and then write the conclusions along with p values.
+Report all the estimated variance components.
+
+Check the model assumptions.
+
+Report your code here.
+
+### Problem 3
+
+Consider a single replicated 3-factor factorial model with all the main effects and only AB interaction and AC interaction effects where all the effects are random.
+
+(a) Write the complete model.
+
+$$y_{ijk}=\mu+\tau_i+\beta_j+\gamma_i+(\tau\beta)_{ij}+(\tau\gamma)_{ik}+\varepsilon_{ijk}$$
+
+for $i=1,2..,a$ is the number of treatment $A$ ; 
+
+$j=1,2,..,b$ is the number of treatment $B$; 
+
+$k=1,2,..,c$ is the number of treatment $C$; 
+
+$y_{ijk}$ is response value when $i^{th}$ treatment A, $j^{th}$ treatment B, and $k^{th}$ treatment C is applied;
+
+$\mu$ is the overall true mean response;
+
+$\tau_i$ is the random effect of $i^{th}$ treatment;
+
+$\beta_j$ is the random effect of $j^{th}$ treatment;
+
+$\gamma_k$ is the random effect of $k^{th}$ treatment;
+
+$(\tau\beta)_{ij}$ is the interaction random effect of $i^{th}$ treatment $A$ and $j^{th}$ treatment $B$;
+
+$(\tau\gamma)_{ik}$ is the interaction random effect of $i^{th}$ treatment $A$ and $k^{th}$ treatment $C$;
+
+$\varepsilon_{ijk}$ is random error when $i^{th}$ treatment A, $j^{th}$ treatment B, and $k^{th}$ treatment C is applied.
+
+Assumptions: 
+
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\tau_{i}\sim iid N(0,\sigma_\tau^2)$; $\beta_{j}\sim iid N(0,\sigma_\beta^2)$; $\gamma_{k}\sim iid N(0,\sigma_\gamma^2)$; 
+
+$(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$; $(\tau\gamma)_{ik}\sim iid N(0,\sigma_{\tau\gamma}^2)$; 
+
+$\varepsilon_{ijk}$, $\tau_{i}$, $\beta_{j}$ and $\gamma_{k}$ are independent.
+
+(b) Create the table with df, SS, EMS and F test statistic for each term in the model.
+
+|term | i | j | k | df |  SS | EMS | F   |
+| --- |-- |-- | --| -- | --- | --- | --- |
+|$\tau_{i}$|1|b|c|$a-1$|
+|$\beta_{j}$|a|1|c|$b-1$|
+|$\gamma_{k}$|a|b|1|$c-1$|
+|$(\tau\beta)_{ij}$|1|1|c|$(a-1)(b-1)$|
+|$(\tau\gamma)_{ik}$|1|b|1|$(b-1)(c-1)$|
+|$\varepsilon_{ijk}$|1|1|1|$abc(n-1)$|$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{y_{ijk}^2}n$|$\sigma^2$||
+
+
+
+### Problem 4
+
+Consider the two-factor restricted mixed model with A has fixed effect and B has random effect given below.
+ 
+
+Derive the E(SSAB) for this model using only the given information here.
+
+$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$$
+
+$y_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$
+
+$\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}$
+
+$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b {\sum_{j=1}^b[\beta_j+(\tau\beta)_{ij}]}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
+
+$\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}=\mu+\beta_j+\frac1a \sum_{i=1}^a[\tau_i+(\tau\beta)_{ij}]+\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}$
+
+$\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\frac1a \sum_{i=1}^a\tau_i+\frac1b\sum_{j=1}^b\beta_j+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
+
+$$\bar y_{ij.}-\bar y_{i.}-\bar y_{.j.}+\bar y_{...}=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}$$
+$$+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
+
+ ---
+
+Let $W=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}$
+
+$Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
+
+For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})$
+
+$$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$$
+
+ ---
+
+$$Var[W]=Var[(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$$
+
+$$=Var[(\tau\beta)_{ij}]+\frac1{a^2}\sum_{i=1}^aVar[(\tau\beta)_{ij}]+\frac1{b^2} \sum_{j=1}^bVar[(\tau\beta)_{ij}]+\frac1{a^2b^2}\sum_{i=1}^a\sum_{j=1}^bVar[(\tau\beta)_{ij}]$$
+
+$$-\frac2{a}Cov[(\tau\beta)_{ij},\sum_{i=1}^a(\tau\beta)_{ij}]-\frac2{b}Cov[(\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]+\frac2{ab}Cov[(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$$
+
+$$+\frac2{ab}Cov[(\sum_{i=1}^a\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{a^2b}Cov[\sum_{i=1}^a(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{ab^2}Cov[\sum_{j=1}^b(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$$
+
+$$=\sigma^2_{\tau\beta}+\frac{\sigma^2_{\tau\beta}}{a}+\frac{\sigma^2_{\tau\beta}}{b}+\frac{\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{a}-\frac{2\sigma^2_{\tau\beta}}{b}+\frac{2\sigma^2_{\tau\beta}}{ab}+\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}$$
+
+ ---
+
+$$Var[Z]=Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$$
+
+$$=\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{a^2n^2}\sum_{i=1}^a\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{a^2b^2n^2}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]$$
+
+$$-\frac{2}{an^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+\frac{2}{abn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$$
+
+$$+\frac{2}{abn^2}Cov[\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]-\frac{2}{a^2bn^2}Cov[\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]-\frac{2}{ab^2n^2}Cov[\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk},\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$$
+
+$$=\frac1n\sigma^2+\frac{\sigma^2}{an}+\frac{\sigma^2}{bn}+\frac{\sigma^2}{abn}-\frac{2\sigma^2}{an}-\frac{2\sigma^2}{bn}+\frac{2\sigma^2}{abn}+\frac{2\sigma^2}{abn}-\frac{2\sigma^2}{abn}-\frac{2\sigma^2}{abn}=\frac{(a-1)(b-1)\sigma^2}{abn}$$
+
+ ---
+
+For $\varepsilon_{ijk}$ and $(\tau\beta)_{ij}$ are independent and are the only variable in $W$ and $Z$ corresponsively, $Cov[W,Z]=0$, then
+
+$$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}$$
+
+For $E[(\widehat{\tau\beta})_{ij}]=0$
+
+$$E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}$$
 
 $$=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})$$
