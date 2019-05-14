@@ -731,6 +731,7 @@ sum((hw4_table$Measurement- mean(hw4_table$Measurement))^2)
 write the conclusions along with p values.
 
 Check assumptions.
+
 ```{r echo=FALSE, out.width='33%',fig.show='hold'}
 hw4_residual <- rstudent(hw4_model2)
 plot(hw4_residual)
@@ -740,7 +741,9 @@ qqnorm(hw4_residual)
 qqline(hw4_residual)
 plot(hw4_model2)
 ```
+
  ---
+ 
 (b) Estimate the variance components using ths ANOVA method.
 report all the estimated variance components.
 
@@ -760,11 +763,30 @@ Reanalyze the measurement systems experiment in Problem 13.1, assuming that oper
 
 Fit the restricted model using REML.
 
+```{r}
+hw4_model4 <- lmer(formula = Measurement ~ (1|PartNo) + Operator + (1|PartNo:Operator), data=hw4_table, REML = T)
+summary(hw4_model4)
+pander::pander(anova(hw4_model4))
+pander::pander(confint(hw4_model4))
+```
 
 Report the complete ANOVA table and then write the conclusions along with p values.
+
+
 Report all the estimated variance components.
 
+
 Check the model assumptions.
+
+```{r echo=FALSE, out.width='33%',fig.show='hold'}
+hw4_residual4 <- rstudent(hw4_model4)
+plot(hw4_residual4)
+hw4_y_hat4 <- fitted(hw4_model4)
+plot(hw4_y_hat4,hw4_residual4)
+qqnorm(hw4_residual4)
+qqline(hw4_residual4)
+plot(hw4_model4)
+```
 
 Report your code here.
 
