@@ -678,14 +678,79 @@ selected, and two randomly selected operators measured each part three times. Th
 
 Create a plot of data first.
 
+```{r echo=FALSE, out.width='33%',fig.show='hold'}
+library(dplyr)
+hw4_table <-readxl::read_xlsx("TableP13_1.xlsx")
+hw4_table$PartNo <-  factor(hw4_table$PartNo)
+hw4_table$Operator <-  factor(hw4_table$Operator)
+str(hw4_table)
+ggpubr::ggline(hw4_table,"PartNo", "Measurement", add = c("mean", "jitter"), shape= "Operator", color = "Operator", linetype = "Operator", ylab= "Measurement", xlab="PartNo")
+library(ggplot2)
+ggplot(hw4_table, aes(PartNo,Measurement, shape = Operator, color=Operator))+ stat_summary() + labs(y= "Mean Measurement", x="PartNo", shape="Operator", color = "Operator")
+```
+
 (a) Analyze the data from this experiment 
 
-write the model you would fit for these data, then fit the model and report the complete ANOVA table and then write the conclusions along with p values.
+write the model you would fit for these data, then 
+
+$$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$$
+
+for $i=1,2..,10$ is the number of parts; 
+$j=1,2$ is the number of operators; 
+$k=1,2,3$ is the number of replication; 
+
+$\mu$ is the overall true mean response;
+$\tau_i$ is the random effect of $i^{th}$ part;
+$\beta_j$ is the random effect of $j^{th}$ operator;
+$(\tau\beta)_{ij}$ is the interaction random effect of $i^{th}$ part and $j^{th}$ operator;
+
+$y_{ijk}$ is response value for the $k^{th}$ replication when $i^{th}$ part and $j^{th}$ operator are applied;
+$\varepsilon_{ijk}$ is random error for the $k^{th}$ replication when $i^{th}$ treatment A, $j^{th}$ treatment B, and $k^{th}$ treatment C is applied.
+
+Assumptions: 
+
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\tau_{i}\sim iid N(0,\sigma_\tau^2)$; $\beta_{j}\sim iid N(0,\sigma_\beta^2)$; 
+$(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$;
+
+$\varepsilon_{ijk}$, $\tau_{i}$ and $\beta_{j}$ are independent.
+
+fit the model and report the complete ANOVA table and then 
+
+```{r echo=FALSE}
+hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
+summary(hw4_model1)
+pander::pander(anova(hw4_model1))
+library(lme4)
+hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+summary(hw4_model2)
+pander::pander(anova(hw4_model2))
+pander::pander(confint(hw4_model2))
+sum((hw4_table$Measurement- mean(hw4_table$Measurement))^2)
+```
+
+write the conclusions along with p values.
 
 Check assumptions.
-
+```{r echo=FALSE, out.width='33%',fig.show='hold'}
+hw4_residual <- rstudent(hw4_model2)
+plot(hw4_residual)
+hw4_y_hat <- fitted(hw4_model2)
+plot(hw4_y_hat,hw4_residual)
+qqnorm(hw4_residual)
+qqline(hw4_residual)
+plot(hw4_model2)
+```
+ ---
 (b) Estimate the variance components using ths ANOVA method.
 report all the estimated variance components.
+
+```{r}
+hw4_model3 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = F)
+summary(hw4_model3)
+pander::pander(anova(hw4_model3))
+pander::pander(confint(hw4_model3))
+```
+
 
 Report your code here.
 
