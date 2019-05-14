@@ -4956,7 +4956,7 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <li>Compute a 99% confidence interval for the true proportion of variance in the response explained by the different batches of raw material.</li>
 </ol>
 <p><span class="math inline">\(\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}\sim F_{a-1,N-a}\)</span></p>
-<p><span class="math display">\[P\left[F_{1-\alpha/2}&lt;\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}&lt;F_{\alpha/2}\right]=1-\alpha\]</span></p>
+<p><span class="math display">\[P\left[F_{1-\alpha/2}&lt;\frac{MS_{Trt}}{MS_E}\cdot\frac{\sigma^2}{n\sigma_{\tau}^2+\sigma^2}&lt;F_{\alpha/2}\right]=1-\alpha\]</span></p>
 <p><span class="math inline">\(100(1-\alpha)\%=99\%\)</span>, <span class="math inline">\(\alpha=0.01\)</span>, then the Lower bound and Uper bound for <span class="math inline">\(\hat\sigma_{\tau}^2/\hat\sigma^2\)</span> are</p>
 <p><span class="math inline">\(L=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*5.802907}-1\right)=-0.06009518\)</span></p>
 <p><span class="math inline">\(U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)=\frac14\left(\frac{0.0193952}{0.0044*0.04892783}-1\right)=22.27297\)</span></p>
@@ -4976,7 +4976,7 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <hr />
 <p>Let <span class="math inline">\(W=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\)</span></p>
 <p><span class="math inline">\(Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\)</span></p>
-<p>For <span class="math inline">\(\varepsilon_{ijk}\sim iid N(0,\sigma^2)\)</span>, <span class="math inline">\((\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})\)</span></p>
+<p>For <span class="math inline">\(\varepsilon_{ijk}\sim iid N(0,\sigma^2)\)</span>, <span class="math inline">\((\tau\beta)_{ij}\sim iid N(0,\sigma^2_{\tau\beta})\)</span></p>
 <p><span class="math display">\[Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]\]</span></p>
 <hr />
 <p><span class="math display">\[Var[W]=Var[(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]\]</span></p>
@@ -5077,9 +5077,9 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <td>b</td>
 <td>c</td>
 <td><span class="math inline">\(a-1\)</span></td>
-<td></td>
-<td></td>
-<td></td>
+<td><span class="math inline">\(\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac{1}{abc}y_{...}^2\)</span></td>
+<td><span class="math inline">\(bc\sigma^2_{\tau}+c\sigma^2_{\tau\beta}+b\sigma^2_{\tau\gamma}+\sigma^2\)</span></td>
+<td><span class="math inline">\(\frac{MS_{A}}{MS_{AB}+MS_{AC}-MS_{E}}\)</span></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\beta_{j}\)</span></td>
@@ -5087,9 +5087,9 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <td>1</td>
 <td>c</td>
 <td><span class="math inline">\(b-1\)</span></td>
-<td></td>
-<td></td>
-<td></td>
+<td><span class="math inline">\(\frac1{ac}\sum_{j=1}^by_{.j.}^2-\frac{1}{abc}y_{...}^2\)</span></td>
+<td><span class="math inline">\(ac\sigma^2_{\beta}+c\sigma^2_{\tau\beta}+\sigma^2\)</span></td>
+<td><span class="math inline">\(\frac{MS_{B}}{MS_{AB}}\)</span></td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(\gamma_{k}\)</span></td>
@@ -5097,9 +5097,9 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <td>b</td>
 <td>1</td>
 <td><span class="math inline">\(c-1\)</span></td>
-<td></td>
-<td></td>
-<td></td>
+<td><span class="math inline">\(\frac1{ab}\sum_{k=1}^cy_{..k}^2-\frac{1}{abc}y_{...}^2\)</span></td>
+<td><span class="math inline">\(ab\sigma^2_{\gamma}+b\sigma^2_{\tau\gamma}+\sigma^2\)</span></td>
+<td><span class="math inline">\(\frac{MS_{C}}{MS_{AC}}\)</span></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\((\tau\beta)_{ij}\)</span></td>
@@ -5107,9 +5107,9 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <td>1</td>
 <td>c</td>
 <td><span class="math inline">\((a-1)(b-1)\)</span></td>
-<td></td>
-<td></td>
-<td></td>
+<td><span class="math inline">\(\frac1c\sum_{i=1}^a\sum_{j=1}^by_{ij.}^2-\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac1{ac}\sum_{j=1}^by_{.j.}^2+\frac{1}{abc}y_{...}^2\)</span></td>
+<td><span class="math inline">\(c\sigma^2_{\tau\beta}+\sigma^2\)</span></td>
+<td><span class="math inline">\(\frac{MS_{AB}}{MS_{E}}\)</span></td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\((\tau\gamma)_{ik}\)</span></td>
@@ -5117,9 +5117,9 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <td>b</td>
 <td>1</td>
 <td><span class="math inline">\((b-1)(c-1)\)</span></td>
-<td></td>
-<td></td>
-<td></td>
+<td><span class="math inline">\(\frac1b\sum_{i=1}^a\sum_{k=1}^cy_{i.k}^2-\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac1{ab}\sum_{k=1}^cy_{..k}^2+\frac{1}{abc}y_{...}^2\)</span></td>
+<td><span class="math inline">\(b\sigma^2_{\tau\gamma}+\sigma^2\)</span></td>
+<td><span class="math inline">\(\frac{MS_{AC}}{MS_{E}}\)</span></td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\varepsilon_{ijk}\)</span></td>
@@ -5127,7 +5127,7 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <td>1</td>
 <td>1</td>
 <td><span class="math inline">\(abc(n-1)\)</span></td>
-<td><span class="math inline">\(\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{y_{ijk}^2}n\)</span></td>
+<td><span class="math inline">\(\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{1}{abc}y_{...}^2\)</span></td>
 <td><span class="math inline">\(\sigma^2\)</span></td>
 <td></td>
 </tr>
@@ -5148,14 +5148,14 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <hr />
 <p>Let <span class="math inline">\(W=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}\)</span></p>
 <p><span class="math inline">\(Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\)</span></p>
-<p>For <span class="math inline">\(\varepsilon_{ijk}\sim iid N(0,\sigma^2)\)</span>, <span class="math inline">\((\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})\)</span></p>
+<p>For <span class="math inline">\(\varepsilon_{ijk}\sim iid N(0,\sigma^2)\)</span>, <span class="math inline">\((\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})\)</span></p>
 <p><span class="math display">\[Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]\]</span></p>
 <hr />
 <p><span class="math display">\[Var[W]=Var[(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^b(\tau\beta)_{ij}+\frac1{ab}\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]\]</span></p>
 <p><span class="math display">\[=Var[(\tau\beta)_{ij}]+\frac1{a^2}\sum_{i=1}^aVar[(\tau\beta)_{ij}]+\frac1{b^2} \sum_{j=1}^bVar[(\tau\beta)_{ij}]+\frac1{a^2b^2}\sum_{i=1}^a\sum_{j=1}^bVar[(\tau\beta)_{ij}]\]</span></p>
 <p><span class="math display">\[-\frac2{a}Cov[(\tau\beta)_{ij},\sum_{i=1}^a(\tau\beta)_{ij}]-\frac2{b}Cov[(\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]+\frac2{ab}Cov[(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]\]</span></p>
 <p><span class="math display">\[+\frac2{ab}Cov[(\sum_{i=1}^a\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{a^2b}Cov[\sum_{i=1}^a(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{ab^2}Cov[\sum_{j=1}^b(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]\]</span></p>
-<p><span class="math display">\[=\sigma^2_{\tau\beta}+\frac{\sigma^2_{\tau\beta}}{a}+\frac{\sigma^2_{\tau\beta}}{b}+\frac{\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{a}-\frac{2\sigma^2_{\tau\beta}}{b}+\frac{2\sigma^2_{\tau\beta}}{ab}+\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}\]</span></p>
+<p><span class="math display">\[=\frac{a-1}{a}\sigma^2_{\tau\beta}(1+\frac{1}{a}+\frac{1}{b}+\frac{1}{ab}-\frac{2}{a}-\frac{2}{b}+\frac{2}{ab}+\frac{2}{ab}-\frac{2}{ab}-\frac{2}{ab})=\frac{(a-1)^2(b-1)\sigma^2_{\tau\beta}}{a^2b}\]</span></p>
 <hr />
 <p><span class="math display">\[Var[Z]=Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]\]</span></p>
 <p><span class="math display">\[=\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{a^2n^2}\sum_{i=1}^a\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{a^2b^2n^2}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]\]</span></p>
@@ -5164,10 +5164,10 @@ The ANOVA table of new model with factor A, C and AC shows only the interactive 
 <p><span class="math display">\[=\frac1n\sigma^2+\frac{\sigma^2}{an}+\frac{\sigma^2}{bn}+\frac{\sigma^2}{abn}-\frac{2\sigma^2}{an}-\frac{2\sigma^2}{bn}+\frac{2\sigma^2}{abn}+\frac{2\sigma^2}{abn}-\frac{2\sigma^2}{abn}-\frac{2\sigma^2}{abn}=\frac{(a-1)(b-1)\sigma^2}{abn}\]</span></p>
 <hr />
 <p>For <span class="math inline">\(\varepsilon_{ijk}\)</span> and <span class="math inline">\((\tau\beta)_{ij}\)</span> are independent and are the only variable in <span class="math inline">\(W\)</span> and <span class="math inline">\(Z\)</span> corresponsively, <span class="math inline">\(Cov[W,Z]=0\)</span>, then</p>
-<p><span class="math display">\[Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}\]</span></p>
-<p>For <span class="math inline">\(E[(\widehat{\tau\beta})_{ij}]=0\)</span></p>
+<p><span class="math display">\[Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)^2(b-1)\sigma^2_{\tau\beta}}{a^2b}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(an\sigma^2_{\tau\beta}-n\sigma^2_{\tau\beta}+a\sigma^2)}{a^2bn}\]</span></p>
+<p>For <span class="math inline">\((\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})\)</span>, <span class="math inline">\(E[(\widehat{\tau\beta})_{ij}]=0\)</span></p>
 <p><span class="math display">\[E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}\]</span></p>
-<p><span class="math display">\[=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})\]</span></p>
+<p><span class="math display">\[=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(an\sigma^2_{\tau\beta}-n\sigma^2_{\tau\beta}+a\sigma^2)}{a^2bn}=\frac1a(a-1)(b-1)(an\sigma^2_{\tau\beta}-n\sigma^2_{\tau\beta}+a\sigma^2)\]</span></p>
 </div>
 </div>
 </div>

@@ -574,7 +574,7 @@ $$\hat\sigma_{\tau}^2/(\hat\sigma_{\tau}^2+\hat\sigma^2)=(0.0037488)/(0.0037488+
 
 $\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}\sim F_{a-1,N-a}$
 
-$$P\left[F_{1-\alpha/2}<\frac{MS_{Trt}}{MS_E}\cdot\frac{\hat\sigma^2}{n\hat\sigma_{\tau}^2+\hat\sigma^2}<F_{\alpha/2}\right]=1-\alpha$$
+$$P\left[F_{1-\alpha/2}<\frac{MS_{Trt}}{MS_E}\cdot\frac{\sigma^2}{n\sigma_{\tau}^2+\sigma^2}<F_{\alpha/2}\right]=1-\alpha$$
 
 $100(1-\alpha)\%=99\%$, $\alpha=0.01$, then the Lower bound and Uper bound for $\hat\sigma_{\tau}^2/\hat\sigma^2$ are
 
@@ -628,7 +628,7 @@ Let $W=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^
 
 $Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})$
+For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{\tau\beta})$
 
 $$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$$
 
@@ -745,12 +745,12 @@ $\varepsilon_{ijk}$, $\tau_{i}$, $\beta_{j}$ and $\gamma_{k}$ are independent.
 
 |term | i | j | k | df |  SS | EMS | F   |
 | --- |-- |-- | --| -- | --- | --- | --- |
-|$\tau_{i}$|1|b|c|$a-1$|
-|$\beta_{j}$|a|1|c|$b-1$|
-|$\gamma_{k}$|a|b|1|$c-1$|
-|$(\tau\beta)_{ij}$|1|1|c|$(a-1)(b-1)$|
-|$(\tau\gamma)_{ik}$|1|b|1|$(b-1)(c-1)$|
-|$\varepsilon_{ijk}$|1|1|1|$abc(n-1)$|$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{y_{ijk}^2}n$|$\sigma^2$||
+|$\tau_{i}$|1|b|c|$a-1$|$\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac{1}{abc}y_{...}^2$|$bc\sigma^2_{\tau}+c\sigma^2_{\tau\beta}+b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{A}}{MS_{AB}+MS_{AC}-MS_{E}}$|
+|$\beta_{j}$|a|1|c|$b-1$|$\frac1{ac}\sum_{j=1}^by_{.j.}^2-\frac{1}{abc}y_{...}^2$|$ac\sigma^2_{\beta}+c\sigma^2_{\tau\beta}+\sigma^2$|$\frac{MS_{B}}{MS_{AB}}$|
+|$\gamma_{k}$|a|b|1|$c-1$|$\frac1{ab}\sum_{k=1}^cy_{..k}^2-\frac{1}{abc}y_{...}^2$|$ab\sigma^2_{\gamma}+b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{C}}{MS_{AC}}$|
+|$(\tau\beta)_{ij}$|1|1|c|$(a-1)(b-1)$|$\frac1c\sum_{i=1}^a\sum_{j=1}^by_{ij.}^2-\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac1{ac}\sum_{j=1}^by_{.j.}^2+\frac{1}{abc}y_{...}^2$|$c\sigma^2_{\tau\beta}+\sigma^2$|$\frac{MS_{AB}}{MS_{E}}$|
+|$(\tau\gamma)_{ik}$|1|b|1|$(b-1)(c-1)$|$\frac1b\sum_{i=1}^a\sum_{k=1}^cy_{i.k}^2-\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac1{ab}\sum_{k=1}^cy_{..k}^2+\frac{1}{abc}y_{...}^2$|$b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{AC}}{MS_{E}}$|
+|$\varepsilon_{ijk}$|1|1|1|$abc(n-1)$|$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{1}{abc}y_{...}^2$|$\sigma^2$||
 
 
 
@@ -782,7 +782,7 @@ Let $W=(\tau\beta)_{ij}-\frac1a \sum_{i=1}^a(\tau\beta)_{ij}-\frac1b \sum_{j=1}^
 
 $Z=\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}+\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\sigma^2_{ij})$
+For $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$, $(\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})$
 
 $$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=Var[W+Z]=Var[W]+Var[Z]+Cov[W,Z]$$
 
@@ -796,7 +796,7 @@ $$-\frac2{a}Cov[(\tau\beta)_{ij},\sum_{i=1}^a(\tau\beta)_{ij}]-\frac2{b}Cov[(\ta
 
 $$+\frac2{ab}Cov[(\sum_{i=1}^a\tau\beta)_{ij},\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{a^2b}Cov[\sum_{i=1}^a(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]-\frac2{ab^2}Cov[\sum_{j=1}^b(\tau\beta)_{ij},\sum_{i=1}^a\sum_{j=1}^b(\tau\beta)_{ij}]$$
 
-$$=\sigma^2_{\tau\beta}+\frac{\sigma^2_{\tau\beta}}{a}+\frac{\sigma^2_{\tau\beta}}{b}+\frac{\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{a}-\frac{2\sigma^2_{\tau\beta}}{b}+\frac{2\sigma^2_{\tau\beta}}{ab}+\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}-\frac{2\sigma^2_{\tau\beta}}{ab}=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}$$
+$$=\frac{a-1}{a}\sigma^2_{\tau\beta}(1+\frac{1}{a}+\frac{1}{b}+\frac{1}{ab}-\frac{2}{a}-\frac{2}{b}+\frac{2}{ab}+\frac{2}{ab}-\frac{2}{ab}-\frac{2}{ab})=\frac{(a-1)^2(b-1)\sigma^2_{\tau\beta}}{a^2b}$$
 
  ---
 
@@ -814,10 +814,10 @@ $$=\frac1n\sigma^2+\frac{\sigma^2}{an}+\frac{\sigma^2}{bn}+\frac{\sigma^2}{abn}-
 
 For $\varepsilon_{ijk}$ and $(\tau\beta)_{ij}$ are independent and are the only variable in $W$ and $Z$ corresponsively, $Cov[W,Z]=0$, then
 
-$$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)(b-1)\sigma^2_{\tau\beta}}{ab}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}$$
+$$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)^2(b-1)\sigma^2_{\tau\beta}}{a^2b}+\frac{(a-1)(b-1)\sigma^2}{abn}=\frac{(a-1)(b-1)(an\sigma^2_{\tau\beta}-n\sigma^2_{\tau\beta}+a\sigma^2)}{a^2bn}$$
 
-For $E[(\widehat{\tau\beta})_{ij}]=0$
+For $(\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})$, $E[(\widehat{\tau\beta})_{ij}]=0$
 
 $$E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}$$
 
-$$=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(\sigma^2+n\sigma^2_{\tau\beta})$$
+$$=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(an\sigma^2_{\tau\beta}-n\sigma^2_{\tau\beta}+a\sigma^2)}{a^2bn}=\frac1a(a-1)(b-1)(an\sigma^2_{\tau\beta}-n\sigma^2_{\tau\beta}+a\sigma^2)$$
