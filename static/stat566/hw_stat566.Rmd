@@ -754,13 +754,14 @@ report all the estimated variance components.
 
 Random effects:
 
- --------------- ----------- ------------ ------------
+ -----------------------------------------------------
  **Groups**        **Name**  **Variance** **Std.Dev.**
+ --------------- ----------- ------------ ------------ 
  PartNo:Operator (Intercept)   0.000       0.000   
  PartNo          (Intercept)   1.614       1.271   
  Operator        (Intercept)   0.000       0.000   
  Residual                      1.317       1.147   
- --------------- ----------- ------------ ------------ 
+ ----------------------------------------------------- 
 
 Number of obs: 60, groups:  PartNo:Operator, 20; PartNo, 10; Operator, 2
 
@@ -779,7 +780,7 @@ pander::pander(confint(hw4_model2))
 
 Report your code here.
 
-```{r eval=FALSE, include=T}
+```{r eval=FALSE, echo=T, include=FALSE}
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
 anova(hw4_model1)
 hist(hw4_table$Measurement)
@@ -795,20 +796,46 @@ Reanalyze the measurement systems experiment in Problem 13.1, assuming that oper
 
 Fit the restricted model using REML.
 
-```{r}
+```{r include=FALSE}
 hw4_model4 <- lmer(formula = Measurement ~ (1|PartNo) + Operator + (1|PartNo:Operator), data=hw4_table, REML = T)
 summary(hw4_model4)
 ```
 
 Report the complete ANOVA table and then write the conclusions along with p values.
 
-```{r}
+```{r echo=FALSE}
 pander::pander(anova(hw4_model4))
-pander::pander(confint(hw4_model4))
+df(0.3121, 1, 40,log = FALSE)
 ```
+
+Based on ANOVA table, the operator don't have significant effects on average value of output at 0.05 significance level. The P-values is $0.6051357$.
 
 Report all the estimated variance components.
 
+Random effects:
+
+ ----------------------------------------------------- 
+ **Groups**        **Name**  **Variance** **Std.Dev.**
+ --------------- ----------- ------------ ------------ 
+ PartNo:Operator (Intercept) 0.000        0.000   
+ PartNo          (Intercept) 1.611        1.269   
+ Residual                    1.335        1.155   
+ ----------------------------------------------------- 
+ 
+Number of obs: 60, groups:  PartNo:Operator, 20; PartNo, 10
+
+Fixed effects:
+
+ ----------------------------------------------------- 
+                  Estimate    Std. Error   t value
+ --------------- ----------- ------------ ------------ 
+  (Intercept)     50.0333       0.4534     110.340
+  Operator2       -0.1667       0.2983     -0.559
+ ----------------------------------------------------- 
+ 
+```{r echo=FALSE}
+pander::pander(confint(hw4_model4))
+```
 
 Check the model assumptions.
 
@@ -822,9 +849,28 @@ qqline(hw4_residual4)
 plot(hw4_model4)
 ```
 
+The QQ plot didn’t show obvious violation of normality.
+
+The plot of residuals and plot of residuals versus fitted value shows the residuals are evenly distributed about zero at each prededict value (zero mean).
+
 Report your code here.
 
+```{r eval=FALSE, echo=T, include=FALSE}
+hw4_model4 <- lmer(formula = Measurement ~ (1|PartNo) + Operator + (1|PartNo:Operator), data=hw4_table, REML = T)
+summary(hw4_model4)
 
+anova(hw4_model4)
+df(0.3121, 1, 40,log = FALSE)
+confint(hw4_model4)
+
+hw4_residual4 <- rstudent(hw4_model4)
+plot(hw4_residual4)
+hw4_y_hat4 <- fitted(hw4_model4)
+plot(hw4_y_hat4,hw4_residual4)
+qqnorm(hw4_residual4)
+qqline(hw4_residual4)
+plot(hw4_model4)
+```
 
 ### Problem 3
 
