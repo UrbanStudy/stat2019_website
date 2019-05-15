@@ -691,7 +691,7 @@ ggplot(hw4_table, aes(PartNo,Measurement, shape = Operator, color=Operator))+ st
 
 (a) Analyze the data from this experiment 
 
-write the model you would fit for these data, then 
+write the model
 
 $$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$$
 
@@ -714,48 +714,80 @@ $(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$;
 
 $\varepsilon_{ijk}$, $\tau_{i}$ and $\beta_{j}$ are independent.
 
-fit the model and report the complete ANOVA table and then 
+fit the model and the complete ANOVA table
 
 ```{r echo=FALSE}
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
-summary(hw4_model1)
+
 pander::pander(anova(hw4_model1))
-library(lme4)
-hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
-summary(hw4_model2)
-pander::pander(anova(hw4_model2))
-pander::pander(confint(hw4_model2))
+
 sum((hw4_table$Measurement- mean(hw4_table$Measurement))^2)
 ```
 
 write the conclusions along with p values.
 
+Based on ANOVA table, only the part has significant effects on average value of output at 0.05 significance level. The P-values is $3.216\times10^{-6}$.
+
 Check assumptions.
 
 ```{r echo=FALSE, out.width='33%',fig.show='hold'}
-hw4_residual <- rstudent(hw4_model2)
-plot(hw4_residual)
-hw4_y_hat <- fitted(hw4_model2)
-plot(hw4_y_hat,hw4_residual)
-qqnorm(hw4_residual)
-qqline(hw4_residual)
-plot(hw4_model2)
+# hw4_residual <- rstudent(hw4_model1)
+# plot(hw4_residual)
+# hw4_y_hat <- fitted(hw4_model1)
+# plot(hw4_y_hat,hw4_residual)
+# qqnorm(hw4_residual)
+# qqline(hw4_residual)
+hist(hw4_table$Measurement)
+plot(hw4_model1)
 ```
+
+The histogram of residuals and the QQ plot didn’t show obvious violation of normality.
+
+The plot of residuals versus fitted value shows the residuals are evenly distributed about zero at each prededict value (zero mean).
+
+The plot of studentized residuals versus fitted value shows vertical deviations of residuals from zero are almost the same for each predicted value (constant variance).
 
  ---
  
 (b) Estimate the variance components using ths ANOVA method.
 report all the estimated variance components.
 
-```{r}
-hw4_model3 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = F)
-summary(hw4_model3)
-pander::pander(anova(hw4_model3))
-pander::pander(confint(hw4_model3))
+Random effects:
+
+ --------------- ----------- ------------ ------------
+ **Groups**        **Name**  **Variance** **Std.Dev.**
+ PartNo:Operator (Intercept)   0.000       0.000   
+ PartNo          (Intercept)   1.614       1.271   
+ Operator        (Intercept)   0.000       0.000   
+ Residual                      1.317       1.147   
+ --------------- ----------- ------------ ------------ 
+
+Number of obs: 60, groups:  PartNo:Operator, 20; PartNo, 10; Operator, 2
+
+```{r echo=FALSE}
+library(lme4)
+hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+# summary(hw4_model2)
+# pander::pander(anova(hw4_model2))
+pander::pander(confint(hw4_model2))
+
+# hw4_model3 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = F)
+# summary(hw4_model3)
+# pander::pander(anova(hw4_model3))
+# pander::pander(confint(hw4_model3))
 ```
 
-
 Report your code here.
+
+```{r eval=FALSE, include=T}
+hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
+anova(hw4_model1)
+hist(hw4_table$Measurement)
+plot(hw4_model1)
+hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+confint(hw4_model2)
+```
+
 
 ### Problem 2 (13.6)
 
@@ -766,12 +798,14 @@ Fit the restricted model using REML.
 ```{r}
 hw4_model4 <- lmer(formula = Measurement ~ (1|PartNo) + Operator + (1|PartNo:Operator), data=hw4_table, REML = T)
 summary(hw4_model4)
-pander::pander(anova(hw4_model4))
-pander::pander(confint(hw4_model4))
 ```
 
 Report the complete ANOVA table and then write the conclusions along with p values.
 
+```{r}
+pander::pander(anova(hw4_model4))
+pander::pander(confint(hw4_model4))
+```
 
 Report all the estimated variance components.
 
@@ -789,6 +823,8 @@ plot(hw4_model4)
 ```
 
 Report your code here.
+
+
 
 ### Problem 3
 
