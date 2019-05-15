@@ -758,8 +758,11 @@ Random effects:
  **Groups**        **Name**  **Variance** **Std.Dev.**
  --------------- ----------- ------------ ------------ 
  PartNo:Operator (Intercept)   0.000       0.000   
+ 
  PartNo          (Intercept)   1.614       1.271   
+ 
  Operator        (Intercept)   0.000       0.000   
+ 
  Residual                      1.317       1.147   
  ----------------------------------------------------- 
 
@@ -780,7 +783,7 @@ pander::pander(confint(hw4_model2))
 
 Report your code here.
 
-```{r eval=FALSE, echo=T, include=FALSE}
+```{r eval=FALSE, echo=T, include=T}
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
 anova(hw4_model1)
 hist(hw4_table$Measurement)
@@ -818,7 +821,9 @@ Random effects:
  **Groups**        **Name**  **Variance** **Std.Dev.**
  --------------- ----------- ------------ ------------ 
  PartNo:Operator (Intercept) 0.000        0.000   
+ 
  PartNo          (Intercept) 1.611        1.269   
+ 
  Residual                    1.335        1.155   
  ----------------------------------------------------- 
  
@@ -830,6 +835,7 @@ Fixed effects:
                   Estimate    Std. Error   t value
  --------------- ----------- ------------ ------------ 
   (Intercept)     50.0333       0.4534     110.340
+  
   Operator2       -0.1667       0.2983     -0.559
  ----------------------------------------------------- 
  
@@ -839,7 +845,7 @@ pander::pander(confint(hw4_model4))
 
 Check the model assumptions.
 
-```{r echo=FALSE, out.width='33%',fig.show='hold'}
+```{r echo=FALSE, out.width='25%',fig.show='hold'}
 hw4_residual4 <- rstudent(hw4_model4)
 plot(hw4_residual4)
 hw4_y_hat4 <- fitted(hw4_model4)
@@ -855,7 +861,7 @@ The plot of residuals and plot of residuals versus fitted value shows the residu
 
 Report your code here.
 
-```{r eval=FALSE, echo=T, include=FALSE}
+```{r eval=FALSE, echo=T, include=T}
 hw4_model4 <- lmer(formula = Measurement ~ (1|PartNo) + Operator + (1|PartNo:Operator), data=hw4_table, REML = T)
 summary(hw4_model4)
 
