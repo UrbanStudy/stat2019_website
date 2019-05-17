@@ -730,7 +730,7 @@ Based on ANOVA table, only the part has significant effects on average value of 
 
 Check assumptions.
 
-```{r echo=FALSE, out.width='33%',fig.show='hold'}
+```{r echo=FALSE, out.width='20%',fig.show='hold'}
 # hw4_residual <- rstudent(hw4_model1)
 # plot(hw4_residual)
 # hw4_y_hat <- fitted(hw4_model1)
@@ -780,6 +780,7 @@ pander::pander(confint(hw4_model2))
 # pander::pander(anova(hw4_model3))
 # pander::pander(confint(hw4_model3))
 ```
+Based on the variance componets and confidence intervals, only the part has significant effects on average value of output. The standard devison is $1.271$. The confidence interval is $[0.7347,2.094]$ at $0.05$ significance level.
 
 Report your code here.
 
@@ -811,7 +812,7 @@ pander::pander(anova(hw4_model4))
 df(0.3121, 1, 9,log = FALSE)
 ```
 
-Based on ANOVA table, the operator don't have significant effects on average value of output at 0.05 significance level. The P-values is $0.5857311$.
+Based on ANOVA table, the operator don't have significant effects on average value of output at 0.05 significance level. The degrees of fredom in $F$ test are $1$ and $9$. The P-values is $0.5857311$.
 
 Report all the estimated variance components.
 
@@ -829,19 +830,11 @@ Random effects:
  
 Number of obs: 60, groups:  PartNo:Operator, 20; PartNo, 10
 
-Fixed effects:
-
- ----------------------------------------------------- 
-                  Estimate    Std. Error   t value
- --------------- ----------- ------------ ------------ 
-  (Intercept)     50.0333       0.4534     110.340
-  
-  Operator2       -0.1667       0.2983     -0.559
- ----------------------------------------------------- 
- 
 ```{r echo=FALSE}
 pander::pander(confint(hw4_model4))
 ```
+
+Based on the variance componets and confidence intervals, only the part has significant effects on average value of output. The standard devison is $1.269$. The confidence interval is $[0.7358,2.094]$ at $0.05$ significance level.
 
 Check the model assumptions.
 
@@ -918,6 +911,8 @@ $\varepsilon_{ijk}$, $\tau_{i}$, $\beta_{j}$ and $\gamma_{k}$ are independent.
 
 (b) Create the table with df, SS, EMS and F test statistic for each term in the model.
 
+$df_E=df_T-df_A-df_B-df_C-df_{AB}-df_{AC}=abc-1-(a-1)-(b-1)-(c-1)-(ab-a-b+1)-(ac-a-c+1)=a(b-1)(c-1)$
+
 |term | i | j | k | df |  SS | EMS | F   |
 | --- |-- |-- | --| -- | --- | --- | --- |
 |$\tau_{i}$|1|b|c|$a-1$|$\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac{1}{abc}y_{...}^2$|$bc\sigma^2_{\tau}+c\sigma^2_{\tau\beta}+b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{A}}{MS_{AB}+MS_{AC}-MS_{E}}$|
@@ -925,7 +920,7 @@ $\varepsilon_{ijk}$, $\tau_{i}$, $\beta_{j}$ and $\gamma_{k}$ are independent.
 |$\gamma_{k}$|a|b|1|$c-1$|$\frac1{ab}\sum_{k=1}^cy_{..k}^2-\frac{1}{abc}y_{...}^2$|$ab\sigma^2_{\gamma}+b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{C}}{MS_{AC}}$|
 |$(\tau\beta)_{ij}$|1|1|c|$(a-1)(b-1)$|$\frac1c\sum_{i=1}^a\sum_{j=1}^by_{ij.}^2-\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac1{ac}\sum_{j=1}^by_{.j.}^2+\frac{1}{abc}y_{...}^2$|$c\sigma^2_{\tau\beta}+\sigma^2$|$\frac{MS_{AB}}{MS_{E}}$|
 |$(\tau\gamma)_{ik}$|1|b|1|$(b-1)(c-1)$|$\frac1b\sum_{i=1}^a\sum_{k=1}^cy_{i.k}^2-\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac1{ab}\sum_{k=1}^cy_{..k}^2+\frac{1}{abc}y_{...}^2$|$b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{AC}}{MS_{E}}$|
-|$\varepsilon_{ijk}$|1|1|1|$abc(n-1)$|$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{1}{abc}y_{...}^2$|$\sigma^2$||
+|$\varepsilon_{ijk}$|1|1|1|$a(b-1)(c-1)$|$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{1}{abc}y_{...}^2$|$\sigma^2$||
 
 
 
@@ -936,7 +931,7 @@ Consider the two-factor restricted mixed model with A has fixed effect and B has
 
 Derive the E(SSAB) for this model using only the given information here.
 
-$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$$
+$$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$$
 
 $y_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$
 
@@ -944,7 +939,7 @@ $\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+(\tau\beta)_{ij}
 
 $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b {\sum_{j=1}^b[\beta_j+(\tau\beta)_{ij}]}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-For $\frac1a \sum_{i=1}^a\tau_i=0$, $\frac1a \sum_{i=1}^a(\tau\beta)_{ij}=0$
+For $\frac1a \sum_{i=1}^a\tau_i=0, \quad\frac1a \sum_{i=1}^a(\tau\beta)_{ij}=0$
 
 $\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}=\mu+\beta_j+\frac1a \sum_{i=1}^a[\tau_i+(\tau\beta)_{ij}]+\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}=\mu+\beta_j+\frac1{an}\sum_{i=1}^a\sum_{k=1}^n\varepsilon_{ijk}$
 
@@ -990,6 +985,6 @@ $$Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]=\frac{(a-1)(b-1)\sigm
 
 For $(\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})$, $E[(\widehat{\tau\beta})_{ij}]=0$
 
-$$E(SS_{AB})=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^nE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}$$
+$$E(SS_{AB})=n\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=n\sum_{i=1}^a\sum_{j=1}^b\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}$$
 
-$$=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{a^2bn}=\frac1a(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)$$
+$$=n\sum_{i=1}^a\sum_{j=1}^b\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)$$
