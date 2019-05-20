@@ -622,9 +622,7 @@ $$\frac{\partial^2 f(b)}{\partial b^2}=2(S_{xx}-S_{yy})\frac{(1+b^2)^2-b(2)(1+b^
 
 $$=\frac{2(S_{xx}-S_{yy})(1-3b^2)}{(1+b^2)^3}-\frac{4bS_{xy}(1+b^2)}{(1+b^2)^3}+\frac{16bS_{xy}}{(1+b^2)^3}=\frac{2}{(1+b^2)^3}[(S_{xx}-S_{yy})(1-3b^2)+2bS_{xy}(3-b^2)]=c$$
 
-$$\frac{\partial^2 f(b)}{\partial b^2}=\frac{[2(S_{xx}-S_{yy})+4bS_{xy}](1+b^2)^2-[2(S_{xx}-S_{yy})b+2S_{xy}b^2-2S_{xy}][2(1+b^2)(2b)]}{(1+b^2)^4}$$
 
-$$=\frac{2}{(1+b^2)^3}[(S_{xx}-S_{yy})(1-3b^2)+2bS_{xy}(3-b^2)]=c$$
 
 When $b=\frac{-(S_{xx}-S_{yy})+\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}$
 
@@ -634,20 +632,21 @@ $$\frac{(1+b^2)^3}{2}c=(S_{xx}-S_{yy})(1-3\frac{(S_{xx}-S_{yy})^2+2S_{xy}^2-(S_{
 
 $$\frac{(1+b^2)^3}{2}c=-5(S_{xx}-S_{yy})+4\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}-\frac{3(S_{xx}-S_{yy})^3-3(S_{xx}-S_{yy})^2\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}^2}+\left[-(S_{xx}-S_{yy})+\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}\right](-\frac{(S_{xx}-S_{yy})^2-(S_{xx}-S_{yy})\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}^2})$$
 
-When $b(S_{xx}-S_{yy})=S_{xy}(1-b^2)$
+For $b(S_{xx}-S_{yy})=S_{xy}(1-b^2)$
 
-$$\frac{(1+b^2)^3}{2}c=\frac{S_{xy}}b(1-b^2)(1-3b^2)+2bS_{xy}(3-b^2)=\frac{S_{xy}}b(1+2b^2+b^4)=\frac{S_{xy}}b(1+b^2)^2$$
+$$\frac{\partial^2 f(b)}{\partial b^2}=\frac{[2(S_{xx}-S_{yy})+4bS_{xy}](1+b^2)^2-[2(S_{xx}-S_{yy})b+2S_{xy}b^2-2S_{xy}][2(1+b^2)(2b)]}{(1+b^2)^4}$$
 
-$$\frac{(1+b^2)}{2}c=\frac{2S_{xy}^2}{-(S_{xx}-S_{yy}) +\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}>0$$
+$$=\frac{2}{(1+b^2)^3}[(S_{xx}-S_{yy})(1-3b^2)+2bS_{xy}(3-b^2)]=\frac{2S_{xy}}{(1+b^2)^3}[\frac{(1-b^2)(1-3b^2)}b+2b(3-b^2)]$$
 
-For $\frac{\partial^2 f(b)}{\partial b^2}=c>0$, $f(b)$ has gives the minimum of $f(b)$.
+
+$$=\frac{2S_{xy}}{b(1+b^2)^3}(1+2b^2+b^4)=\frac{2S_{xy}}{b(1+b^2)}=\frac{4S_{xy}^2}{(1+b^2)[-(S_{xx}-S_{yy}) +\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}]}>0$$
+
+For $\frac{\partial^2 f(b)}{\partial b^2}=c>0$, $b=\frac{-(S_{xx}-S_{yy})+\sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}$ has gives the minimum of $f(b)$.
 
  ---
 
 **12.4** Consider the MLE of the slope in the EIV model
-
 $\hat\beta(\lambda)=\frac{-(S_{xx}-\lambda S_{yy}) + \sqrt{(S_{xx}-\lambda S_{yy})^2 +4\lambda S_{xy}^2}}{2\lambda S_{xy}}$
-
 where $\lambda=\sigma^2_\delta/\sigma^2_\varepsilon$ is assumed known.
 
 (a) Show that $\lim\limits_{\lambda\to0}\hat\beta(\lambda)=S_{xy}/S_{xx}$, the slope of the ordinary regression of y on x.
@@ -691,13 +690,16 @@ y <-c(44.50, 15.50, 8.10, 5.50, 6.40, 4.00, 12.30, .30)
 s_xx <- sum((x-mean(x))^2)
 s_yy <- sum((y-mean(y))^2)
 s_xy<- sum((x-mean(x))*(y-mean(y)))
+var(x)
+var(y)
 ```
 
-```{r echo=FALSE}
+```{r echo=TRUE, collapse=T}
 s_xx
 s_yy
 s_xy
 (s_yy-s_xx+sqrt((s_xx-s_yy)^2+4*s_xy^2))/(2*s_xy)
+var(x)/var(y)
 s_xx/s_yy
 s_xy/s_xx
 s_yy/s_xy
@@ -708,7 +710,7 @@ When $\lambda=1$
 
 $$\hat\beta(\lambda)=\frac{-(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}=14.10272$$
 
-$\lambda=S_{xx}/S_{yy}=0.006696296$
+$\lambda=V[x]/V[y]=S_{xx}/S_{yy}=0.006696296$
 
 The slope of the ordinary regression of y on x is $S_{xy}/S_{xx}=10.57143$.
 
