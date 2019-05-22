@@ -712,17 +712,29 @@ Assumptions:
 $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\tau_{i}\sim iid N(0,\sigma_\tau^2)$; $\beta_{j}\sim iid N(0,\sigma_\beta^2)$; 
 $(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$;
 
-$\varepsilon_{ijk}$, $\tau_{i}$ and $\beta_{j}$ are independent.
+$\varepsilon_{ijk}$, $\tau_{i}$, $\beta_{j}$, and $(\tau\beta)_{ij}$ are independent.
 
 fit the model and the complete ANOVA table
 
-```{r echo=FALSE}
+```{r include=FALSE}
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
-
 pander::pander(anova(hw4_model1))
-
 sum((hw4_table$Measurement- mean(hw4_table$Measurement))^2)
 ```
+
+ -------------------------------------------------------------------
+       &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)   
+ --------------------- ---- -------- --------- --------- -----------
+     **PartNo**        9    99.02      11       7.335    3.216e-06 
+
+    **Operator**       1    0.4167   0.4167    0.2778     0.6011   
+
+ **PartNo:Operator**   9    5.417    0.6019    0.4012      0.927   
+
+    **Residuals**      40     60       1.5       NA         NA     
+
+   **Total**           59   164.85
+ -------------------------------------------------------------------
 
 write the conclusions along with p values.
 
@@ -779,8 +791,11 @@ pander::pander(confint(hw4_model2))
 # summary(hw4_model3)
 # pander::pander(anova(hw4_model3))
 # pander::pander(confint(hw4_model3))
+
+# 0.7347^2
+# 2.094^2
 ```
-Based on the variance componets and confidence intervals, only the part has significant effects on average value of output. The standard devison is $1.271$. The confidence interval is $[0.7347,2.094]$ at $0.05$ significance level.
+Based on the variance componets and confidence intervals, only the part has significant effects on average value of output. The estimated variance is $1.614$. The confidence interval is $[0.5397841,4.384836]$ at $0.05$ significance level.
 
 Report your code here.
 
@@ -809,7 +824,7 @@ Report the complete ANOVA table and then write the conclusions along with p valu
 
 ```{r echo=FALSE}
 pander::pander(anova(hw4_model4))
-df(0.3121, 1, 9,log = FALSE)
+# df(0.3121, 1, 9,log = FALSE)
 ```
 
 Based on ANOVA table, the operator don't have significant effects on average value of output at 0.05 significance level. The degrees of fredom in $F$ test are $1$ and $9$. The P-values is $0.5857311$.
@@ -832,9 +847,12 @@ Number of obs: 60, groups:  PartNo:Operator, 20; PartNo, 10
 
 ```{r echo=FALSE}
 pander::pander(confint(hw4_model4))
+
+# 0.7358^2
+# 2.094^2
 ```
 
-Based on the variance componets and confidence intervals, only the part has significant effects on average value of output. The standard devison is $1.269$. The confidence interval is $[0.7358,2.094]$ at $0.05$ significance level.
+Based on the variance componets and confidence intervals, only the part has significant variation in average value of output. The estimated variance is $1.611$. The confidence interval is $[0.5414016,4.384836]$ at $0.05$ significance level.
 
 Check the model assumptions.
 
