@@ -720,19 +720,23 @@ fit the model and the complete ANOVA table
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
 pander::pander(anova(hw4_model1))
 sum((hw4_table$Measurement- mean(hw4_table$Measurement))^2)
-
-library(lme4)
-hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+11.0019/0.6019
+0.4167/0.6019
+(11.0019-0.6019)^2/(11.0019^2/9+0.6019^2/9)
+(0.4167-0.6019)^2/(0.4167^2/1+0.6019^2/9)
+df(18.27862, 9, 9,log = FALSE)
+df(0.6923077, 1, 9,log = FALSE)
+df(0.4012, 9, 40,log = FALSE)
 ```
 
  -------------------------------------------------------------------
        &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)   
  --------------------- ---- -------- --------- --------- -----------
-     **PartNo**        9    99.02      11       7.335    3.216e-06 
+     **PartNo**        9    99.02      11       18.27862  0.000 
 
-    **Operator**       1    0.4167   0.4167    0.2778     0.6011   
+    **Operator**       1    0.4167   0.4167    0.6923077  0.3219569
 
- **PartNo:Operator**   9    5.417    0.6019    0.4012      0.927   
+ **PartNo:Operator**   9    5.417    0.6019    0.4012     0.5328432
 
     **Residuals**      40     60       1.5       NA         NA     
 
@@ -741,11 +745,14 @@ hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo
 
 write the conclusions along with p values.
 
-Based on ANOVA table, only the part has significant effects on average value of output at 0.05 significance level. The P-values is $3.216\times10^{-6}$.
+Based on ANOVA table, only the part has significant effects on average value of output at 0.05 significance level. The P-values is $2.115195\times10^{-5}$.
 
 Check assumptions.
 
 ```{r echo=FALSE, out.width='25%',fig.show='hold'}
+library(lme4)
+hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+
 hw4_residual2 <- rstudent(hw4_model2)
 plot(hw4_residual2)
 # hw4_y_hat2 <- fitted(hw4_model2)
@@ -804,6 +811,14 @@ Report your code here.
 ```{r eval=FALSE, echo=T, include=T}
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
 anova(hw4_model1)
+11.0019/0.6019
+0.4167/0.6019
+(11.0019-0.6019)^2/(11.0019^2/9+0.6019^2/9)
+(0.4167-0.6019)^2/(0.4167^2/1+0.6019^2/9)
+df(18.27862, 9, 9,log = FALSE)
+df(0.6923077, 1, 9,log = FALSE)
+df(0.4012, 9, 40,log = FALSE)
+
 hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
 hw4_residual2 <- rstudent(hw4_model2)
 plot(hw4_residual2)
