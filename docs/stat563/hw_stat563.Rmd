@@ -671,11 +671,11 @@ Therefore, $\hat\beta(\lambda)$ is monotone in $\lambda$ and is increasing if $S
 
 (d) Show that the orthogonal least squares line $\lambda=1$ is always between the lines given by the ordinary regressions of y on x and of x on y.
 
-For $\lambda=1$, $S_{yy}\ge0$, $S_{xx}\ge0$, and the formula in (a), when $S_{xy}>0$,
+For $\lambda=1$, $S_{yy}\ge0$, $S_{xx}\ge0$, $S_{yy}S_{xx}>S_{xy}^2$, and the formula in (a), when $S_{xy}>0$,
 
-$$\hat\beta(\lambda)=\frac{-(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}\le\frac{S_{yy} + \sqrt{(-S_{yy})^2 }}{2S_{xy}}=\frac{S_{yy}}{S_{xy}}$$
+$\hat\beta(\lambda)=\frac{-(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}\le\frac{S_{yy}-S_{xx}+ \sqrt{(S_{yy}-S_{xx})^2+4S_{xx}S_{yy}}}{2S_{xy}}=\frac{S_{yy}-S_{xx}+|S_{yy}+S_{xx}|}{2S_{xy}}=\frac{S_{yy}}{S_{xy}}$
 
-$$\hat\beta(\lambda)=\frac{2S_{xy}}{(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}\ge\frac{2S_{xy}}{S_{xx} + \sqrt{(S_{xx})^2 }}=\frac{S_{xy}}{S_{xx}}$$
+$\hat\beta(\lambda)=\frac{2S_{xy}}{(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}\ge\frac{2S_{xy}}{S_{xx}-S_{yy}+ \sqrt{(S_{xx}-S_{yy})^2+4S_{xx}S_{yy}}}=\frac{2S_{xy}}{S_{xx}-S_{yy}+ |S_{yy}+S_{xx}|}=\frac{S_{xy}}{S_{xx}}$
 
 When $S_{xy}<0$, $\frac{-S_{xy}}{S_{xx}}<-\hat\beta(\lambda)<\frac{S_{yy}}{-S_{xy}}$, then,
 
@@ -736,6 +736,56 @@ The slope of the ordinary regression of y on x is $S_{xy}/S_{xx}=10.57143$.
 The reciprocal of the slope of the ordinary regression of x on y is $S_{yy}/S_{xy}=14.1264$ 
 
 The results show that the MLE of the slope assuming the EIV model locates in the boundaries between the slopes of the ordinary regression of x on y and of y on x.
+
+
+
+## HW6
+
+Another way in which underlying assumptions can be violated is if there is correlation in the sampling, which can seriously affect the properties of the sample mean. Suppose we introduce correlation in the case discussed in Exercise 10.2.1; that is, we observe $X_1,..,X_n$, where $X_i\sim n(\theta,\sigma^2)$, but the $X_i$s are no longer independent.
+
+(a) For the equicorrelated case, that is, $Corr(X_i,X_j)=\rho$ for $i\neq j$, show that 
+$Var(\bar X)=\frac{\sigma^2}{n}+\frac{n-1}{n}\rho\sigma^2$
+so $Var(\bar X)\not\to0$ as $n\to\infty$.
+
+The variance of $\bar X$ is
+
+$$Var[\bar X]=E[\bar X-\mu]^2=E[\frac1n\sum_iX_i-\mu]^2=\frac1{n^2}E[\sum_i(X_i-\mu)^2+2\sum_{i>j}(X_i-\mu)(X_j-\mu)]$$
+
+$$=\frac1{n^2}[n\sigma^2+\frac{2n(n-1)}{2}\rho\sigma^2]=\frac{\sigma^2}{n}+\frac{n-1}{n}\rho\sigma^2$$
+
+ ---
+
+(b) If the $X_i$S are observed through time (or distance), it is sometimes assumed that the correlation decreases with time (or distance) , with one specific model being  $Corr(X_i,X_j)=\rho^{|i-j|}$. Show that in this case
+$Var(\bar X)=\frac{\sigma^2}{n}+\frac{2\sigma^2}{n^2}\frac{\rho}{1-\rho}(n+\frac{1-\rho^n}{1-\rho})$
+so $Var(\bar X)\not\to0$ as $n\to\infty$. (See Miscellanea 5.8.2 for another effect of correlation.)
+
+$$E[\sum_{i>j}(X_i-\mu)(X_j-\mu)]=\sigma^2\sum_{i=2}^n\sum_{j=1}^{i-1}\rho^{i-j}$$
+
+In the double sum $\rho$ appears $n−1$ times, $\rho^2$ appears $n−2$ times, etc.. so
+
+$$\sum_{i=2}^n\sum_{j=1}^{i-1}\rho^{|i-j|}=\sum_{i=1}^{n-1}(n-i)\rho^{i}=\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})$$
+
+where the series can be summed using (1.5.4), the partial sum of the geometric series, or using Mathematica.
+
+ ---
+ 
+(c) The correlation structure in part (b) arises in an autoregressive $AR(l)$ model, where we assume that $X_{i+1}=\rho X_i+\delta_i$, with $\delta_i\sim iid\ n(0,1)$. If $|\rho_i|<1$ and we define $\sigma^2=1/(1-\rho^2)$, show that $Corr(X_1,X_i) =\rho^{|i-1|}$.
+
+The mean and variance of $X_i$ are
+$$E[X_i]=E[E(X_i|X_{i−1})] = E[\rho X_{i−1}] =\cdots=\rho^{i−1}E[X_1]$$
+and
+$$Var[X_i]= Var[E(X_i|X_{i−1})]+ E[Var(X_i|X_{i−1})]=\rho^2\sigma^2+1=\sigma^2$$
+
+for $\sigma^2=1/(1−\rho^2)$. Also, by iterating the expectation
+$$E[X_1X_i]= E[E(X_1X_i|X_{i−1})] = E[E(X_1|X_{i−1})E(X_i|X_{i−1})] =\rho E[X_1X_{i−1}]$$,
+
+where we used the facts that $X_1$ and $X_i$ are independent conditional on $X_{i−1}$. Continuing with the argument we get that $E[X_1X_i]=\rho^{i−1}EX_1^2$. Thus,
+
+$$Corr(X_1,X_i)=\frac{\rho^{i−1}EX_1^2−\rho^{i−1}(EX_1)^2}{VarX_1VarX_i}
+=\frac{\rho^{i−1}\sigma^2}
+{\sqrt{\sigma^2\sigma^2}}
+=\rho^{i−1}$$
+
 
 
 ##

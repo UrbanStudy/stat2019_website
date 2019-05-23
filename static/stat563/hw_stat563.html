@@ -761,9 +761,9 @@ $(document).ready(function () {
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Show that the orthogonal least squares line <span class="math inline">\(\lambda=1\)</span> is always between the lines given by the ordinary regressions of y on x and of x on y.</li>
 </ol>
-<p>For <span class="math inline">\(\lambda=1\)</span>, <span class="math inline">\(S_{yy}\ge0\)</span>, <span class="math inline">\(S_{xx}\ge0\)</span>, and the formula in (a), when <span class="math inline">\(S_{xy}&gt;0\)</span>,</p>
-<p><span class="math display">\[\hat\beta(\lambda)=\frac{-(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}\le\frac{S_{yy} + \sqrt{(-S_{yy})^2 }}{2S_{xy}}=\frac{S_{yy}}{S_{xy}}\]</span></p>
-<p><span class="math display">\[\hat\beta(\lambda)=\frac{2S_{xy}}{(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}\ge\frac{2S_{xy}}{S_{xx} + \sqrt{(S_{xx})^2 }}=\frac{S_{xy}}{S_{xx}}\]</span></p>
+<p>For <span class="math inline">\(\lambda=1\)</span>, <span class="math inline">\(S_{yy}\ge0\)</span>, <span class="math inline">\(S_{xx}\ge0\)</span>, <span class="math inline">\(S_{yy}S_{xx}&gt;S_{xy}^2\)</span>, and the formula in (a), when <span class="math inline">\(S_{xy}&gt;0\)</span>,</p>
+<p><span class="math inline">\(\hat\beta(\lambda)=\frac{-(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}{2S_{xy}}\le\frac{S_{yy}-S_{xx}+ \sqrt{(S_{yy}-S_{xx})^2+4S_{xx}S_{yy}}}{2S_{xy}}=\frac{S_{yy}-S_{xx}+|S_{yy}+S_{xx}|}{2S_{xy}}=\frac{S_{yy}}{S_{xy}}\)</span></p>
+<p><span class="math inline">\(\hat\beta(\lambda)=\frac{2S_{xy}}{(S_{xx}-S_{yy}) + \sqrt{(S_{xx}-S_{yy})^2 +4S_{xy}^2}}\ge\frac{2S_{xy}}{S_{xx}-S_{yy}+ \sqrt{(S_{xx}-S_{yy})^2+4S_{xx}S_{yy}}}=\frac{2S_{xy}}{S_{xx}-S_{yy}+ |S_{yy}+S_{xx}|}=\frac{S_{xy}}{S_{xx}}\)</span></p>
 <p>When <span class="math inline">\(S_{xy}&lt;0\)</span>, <span class="math inline">\(\frac{-S_{xy}}{S_{xx}}&lt;-\hat\beta(\lambda)&lt;\frac{S_{yy}}{-S_{xy}}\)</span>, then,</p>
 <p><span class="math display">\[\frac{|S_{xy}|}{S_{xx}}&lt;|\hat\beta(\lambda)|&lt;\frac{S_{yy}}{|S_{xy}|}\]</span></p>
 <p>Therefore, the orthogonal least squares line <span class="math inline">\(\lambda=1\)</span> is always between the lines given by the ordinary regressions of y on x and of x on y.</p>
@@ -783,6 +783,35 @@ $(document).ready(function () {
 <p>The slope of the ordinary regression of y on x is <span class="math inline">\(S_{xy}/S_{xx}=10.57143\)</span>.</p>
 <p>The reciprocal of the slope of the ordinary regression of x on y is <span class="math inline">\(S_{yy}/S_{xy}=14.1264\)</span></p>
 <p>The results show that the MLE of the slope assuming the EIV model locates in the boundaries between the slopes of the ordinary regression of x on y and of y on x.</p>
+</div>
+<div id="hw6" class="section level2">
+<h2>HW6</h2>
+<p>Another way in which underlying assumptions can be violated is if there is correlation in the sampling, which can seriously affect the properties of the sample mean. Suppose we introduce correlation in the case discussed in Exercise 10.2.1; that is, we observe <span class="math inline">\(X_1,..,X_n\)</span>, where <span class="math inline">\(X_i\sim n(\theta,\sigma^2)\)</span>, but the <span class="math inline">\(X_i\)</span>s are no longer independent.</p>
+<ol style="list-style-type: lower-alpha">
+<li>For the equicorrelated case, that is, <span class="math inline">\(Corr(X_i,X_j)=\rho\)</span> for <span class="math inline">\(i\neq j\)</span>, show that <span class="math inline">\(Var(\bar X)=\frac{\sigma^2}{n}+\frac{n-1}{n}\rho\sigma^2\)</span> so <span class="math inline">\(Var(\bar X)\not\to0\)</span> as <span class="math inline">\(n\to\infty\)</span>.</li>
+</ol>
+<p>The variance of <span class="math inline">\(\bar X\)</span> is</p>
+<p><span class="math display">\[Var[\bar X]=E[\bar X-\mu]^2=E[\frac1n\sum_iX_i-\mu]^2=\frac1{n^2}E[\sum_i(X_i-\mu)^2+2\sum_{i&gt;j}(X_i-\mu)(X_j-\mu)]\]</span></p>
+<p><span class="math display">\[=\frac1{n^2}[n\sigma^2+\frac{2n(n-1)}{2}\rho\sigma^2]=\frac{\sigma^2}{n}+\frac{n-1}{n}\rho\sigma^2\]</span></p>
+<hr />
+<ol start="2" style="list-style-type: lower-alpha">
+<li>If the <span class="math inline">\(X_i\)</span>S are observed through time (or distance), it is sometimes assumed that the correlation decreases with time (or distance) , with one specific model being <span class="math inline">\(Corr(X_i,X_j)=\rho^{|i-j|}\)</span>. Show that in this case <span class="math inline">\(Var(\bar X)=\frac{\sigma^2}{n}+\frac{2\sigma^2}{n^2}\frac{\rho}{1-\rho}(n+\frac{1-\rho^n}{1-\rho})\)</span> so <span class="math inline">\(Var(\bar X)\not\to0\)</span> as <span class="math inline">\(n\to\infty\)</span>. (See Miscellanea 5.8.2 for another effect of correlation.)</li>
+</ol>
+<p><span class="math display">\[E[\sum_{i&gt;j}(X_i-\mu)(X_j-\mu)]=\sigma^2\sum_{i=2}^n\sum_{j=1}^{i-1}\rho^{i-j}\]</span></p>
+<p>In the double sum <span class="math inline">\(\rho\)</span> appears <span class="math inline">\(n−1\)</span> times, <span class="math inline">\(\rho^2\)</span> appears <span class="math inline">\(n−2\)</span> times, etc.. so</p>
+<p><span class="math display">\[\sum_{i=2}^n\sum_{j=1}^{i-1}\rho^{|i-j|}=\sum_{i=1}^{n-1}(n-i)\rho^{i}=\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})\]</span></p>
+<p>where the series can be summed using (1.5.4), the partial sum of the geometric series, or using Mathematica.</p>
+<hr />
+<ol start="3" style="list-style-type: lower-alpha">
+<li>The correlation structure in part (b) arises in an autoregressive <span class="math inline">\(AR(l)\)</span> model, where we assume that <span class="math inline">\(X_{i+1}=\rho X_i+\delta_i\)</span>, with <span class="math inline">\(\delta_i\sim iid\ n(0,1)\)</span>. If <span class="math inline">\(|\rho_i|&lt;1\)</span> and we define <span class="math inline">\(\sigma^2=1/(1-\rho^2)\)</span>, show that <span class="math inline">\(Corr(X_1,X_i) =\rho^{|i-1|}\)</span>.</li>
+</ol>
+<p>The mean and variance of <span class="math inline">\(X_i\)</span> are <span class="math display">\[E[X_i]=E[E(X_i|X_{i−1})] = E[\rho X_{i−1}] =\cdots=\rho^{i−1}E[X_1]\]</span> and <span class="math display">\[Var[X_i]= Var[E(X_i|X_{i−1})]+ E[Var(X_i|X_{i−1})]=\rho^2\sigma^2+1=\sigma^2\]</span></p>
+<p>for <span class="math inline">\(\sigma^2=1/(1−\rho^2)\)</span>. Also, by iterating the expectation <span class="math display">\[E[X_1X_i]= E[E(X_1X_i|X_{i−1})] = E[E(X_1|X_{i−1})E(X_i|X_{i−1})] =\rho E[X_1X_{i−1}]\]</span>,</p>
+<p>where we used the facts that <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_i\)</span> are independent conditional on <span class="math inline">\(X_{i−1}\)</span>. Continuing with the argument we get that <span class="math inline">\(E[X_1X_i]=\rho^{i−1}EX_1^2\)</span>. Thus,</p>
+<p><span class="math display">\[Corr(X_1,X_i)=\frac{\rho^{i−1}EX_1^2−\rho^{i−1}(EX_1)^2}{VarX_1VarX_i}
+=\frac{\rho^{i−1}\sigma^2}
+{\sqrt{\sigma^2\sigma^2}}
+=\rho^{i−1}\]</span></p>
 </div>
 <div id="section-1" class="section level2">
 <h2></h2>
