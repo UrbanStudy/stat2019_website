@@ -720,6 +720,9 @@ fit the model and the complete ANOVA table
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
 pander::pander(anova(hw4_model1))
 sum((hw4_table$Measurement- mean(hw4_table$Measurement))^2)
+
+library(lme4)
+hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
 ```
 
  -------------------------------------------------------------------
@@ -742,15 +745,15 @@ Based on ANOVA table, only the part has significant effects on average value of 
 
 Check assumptions.
 
-```{r echo=FALSE, out.width='20%',fig.show='hold'}
-# hw4_residual <- rstudent(hw4_model1)
-# plot(hw4_residual)
-# hw4_y_hat <- fitted(hw4_model1)
-# plot(hw4_y_hat,hw4_residual)
-# qqnorm(hw4_residual)
-# qqline(hw4_residual)
+```{r echo=FALSE, out.width='25%',fig.show='hold'}
+hw4_residual2 <- rstudent(hw4_model2)
+plot(hw4_residual2)
+# hw4_y_hat2 <- fitted(hw4_model2)
+# plot(hw4_y_hat2,hw4_residual2)
+qqnorm(hw4_residual2)
+qqline(hw4_residual2)
 hist(hw4_table$Measurement)
-plot(hw4_model1)
+plot(hw4_model2)
 ```
 
 The histogram of residuals and the QQ plot didn’t show obvious violation of normality.
@@ -781,8 +784,7 @@ Random effects:
 Number of obs: 60, groups:  PartNo:Operator, 20; PartNo, 10; Operator, 2
 
 ```{r echo=FALSE}
-library(lme4)
-hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+
 # summary(hw4_model2)
 # pander::pander(anova(hw4_model2))
 pander::pander(confint(hw4_model2))
@@ -802,9 +804,16 @@ Report your code here.
 ```{r eval=FALSE, echo=T, include=T}
 hw4_model1 <- aov( Measurement ~ PartNo*Operator, data=hw4_table)
 anova(hw4_model1)
-hist(hw4_table$Measurement)
-plot(hw4_model1)
 hw4_model2 <- lmer(formula = Measurement ~ (1|PartNo) + (1|Operator) + (1|PartNo:Operator), data=hw4_table, REML = TRUE)
+hw4_residual2 <- rstudent(hw4_model2)
+plot(hw4_residual2)
+# hw4_y_hat2 <- fitted(hw4_model2)
+# plot(hw4_y_hat2,hw4_residual2)
+qqnorm(hw4_residual2)
+qqline(hw4_residual2)
+hist(hw4_table$Measurement)
+plot(hw4_model2)
+summary(hw4_model2)
 confint(hw4_model2)
 ```
 
