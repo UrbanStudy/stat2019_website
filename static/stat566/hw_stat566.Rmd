@@ -1054,3 +1054,90 @@ For $(\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})$, $E[(\wide
 $$E(SS_{AB})=n\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]=n\sum_{i=1}^a\sum_{j=1}^b\left\{Var[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]+E[\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...}]^2\right\}$$
 
 $$=n\sum_{i=1}^a\sum_{j=1}^b\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{abn}=(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)$$
+
+## HW5
+
+### Problem 1: (14.5)
+
+Consider the three-stage nested design shown in Figure 14.5 to investigate alloy hardness. Using the data that follow, analyze the design, assuming that alloy chemistry and heats are fixed factors and ingots are random. Use the restricted form of the mixed model.
+
+Create a plot of data first.
+
+```{r, echo=FALSE, out.width='33%',fig.show='hold'}
+hw5_table <- readxl::read_xlsx("TableP14_5.xlsx")
+hw5_table$Chem <- as.factor(hw5_table$Chem)
+hw5_table$Heat <- as.factor(hw5_table$Heat)
+hw5_table$Ignot <- as.factor(hw5_table$Ignot)
+str(hw5_table)
+hw5_table%>%ggplot(aes(Chem,Hardness))+geom_label()
+
+ggpubr::ggline(hw5_table,"Chem", "Hardness", add = c("mean", "jitter"), shape= "Heat", color = "Heat", linetype = "Heat", ylab= "Hardness", xlab="Chemistry")
+library(ggplot2)
+ggplot(hw5_table, aes(x=Heat,y=Hardness, shape = Ignot, color=Ignot))+ stat_summary() + labs(y= "Mean Hardness", x="Heat", shape="Ingots", color = "Ingnot")+facet_wrap(facet="Chem")+theme_light()
+```
+
+
+(a) Write the complete model you would fit for these data.
+
+$$y_{ijkl}=\mu+\tau_i+\beta_j+\gamma_{k(i)}+(\tau\beta)_{ij}+(\beta\gamma)_{jk(i)}+\varepsilon_{ijkl}$$
+
+for $i=1,2$ is the number of Chemistry; 
+$j=1,2,3$ is the number of Heat; 
+$k=1,2$ is the number of Ingots; 
+$l=1,2$ is the number of replication; 
+
+$\mu$ is the overall true mean response;
+$\tau_i$ is the fixed effect of $i^{th}$ Chemistry;
+$\beta_j$ is the fixed effect of $j^{th}$ Heat;
+$\gamma_{k(i)}$ is the random effect of $k^{th}$ Ingots;
+$(\tau\beta)_{ij}$ is the interaction fixed effect of $i^{th}$ Chemistry and $j^{th}$ Heat;
+$(\beta\gamma)_{jk(i)}$ is the interaction fixed effect of $j^{th}$ Heat and $k^{th}$ Ingots;
+
+$y_{ijkl}$ is response value for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied;
+$\varepsilon_{ijkl}$ is random error for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied.
+
+Assumptions: 
+
+$\varepsilon_{ijkl}\sim iid N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\sum_{j=1}^3\beta_{j}=0$; 
+$\sum_{i=1}^2(\tau\beta)_{ij}=0$; $\sum_{j=1}^3(\tau\beta)_{ij}=0$; $(\beta\gamma)_{jk(i)}\sim iid N(0,\sigma_{\beta\gamma}^2)$
+
+$\varepsilon_{ijkl}$ and $(\beta\gamma)_{jk(i)}$ are independent.
+
+(b) Fit the model using software. Report the ANOVA table and/or the estimated variances.
+
+(c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
+
+(d) Check model assumptions.
+
+(e) Report your code here.
+
+
+### Problem 2: 
+
+Consider a 3-stage nested design with A has fixed effect while B and C have random effects.
+
+(a) Write the complete model. Assume the restricted model.
+
+$$y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k(ij)}+\varepsilon_{ijkl}$$
+
+for $i=1,..,a$ is the number of factor A; 
+$j=1,..,b$ is the number offactor B; 
+$k=1,..,c$ is the number of factor C; 
+$l=1,..,n$ is the number of replication; 
+
+$\mu$ is the overall true mean response;
+$\tau_i$ is the fixed effect of $i^{th}$ factor A;
+$\beta_{j(i)}$ is the random effect of $j^{th}$ factor B;
+$\gamma_{k(ij)}$ is the random effect of $k^{th}$ factor C;
+
+$y_{ijkl}$ is response value for the $l^{th}$ replication when $i^{th}$ factor A, $j^{th}$ factor B, and $k^{th}$  factor C are applied;
+$\varepsilon_{ijkl}$ is random error for the $l^{th}$ replication when $i^{th}$ factor A, $j^{th}$ factor B, and $k^{th}$  factor C are applied.
+
+Assumptions: 
+
+$\varepsilon_{ijkl}\sim iid\ N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\beta_{j(i)}\sim iid\ N(0,\sigma_{\beta}^2)$ ; $\gamma_{k(ij)}\sim iid\ N(0,\sigma_{\gamma}^2)$
+
+$\varepsilon_{ijkl}$, $\beta_{j(i)}$, and $\gamma_{k(ij)}$ are independent.
+
+
+(b) Create the table with df, SS, EMS and F test statistic for each term in the model. If there is no exact F test, then find the (Satterthwaite) approximate F test statistic.
