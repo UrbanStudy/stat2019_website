@@ -1078,7 +1078,7 @@ ggplot(hw5_table, aes(x=Heat,y=Hardness, shape = Ignot, color=Ignot))+ stat_summ
 
 (a) Write the complete model you would fit for these data.
 
-$$y_{ijkl}=\mu+\tau_i+\beta_j+\gamma_{k(i)}+(\tau\beta)_{ij}+(\beta\gamma)_{jk(i)}+\varepsilon_{ijkl}$$
+$$y_{ijkl}=\mu+\tau_i+\beta_j(i)+\gamma_{k(ij)}+\varepsilon_{l(ijk)}$$
 
 for $i=1,2$ is the number of Chemistry; 
 $j=1,2,3$ is the number of Heat; 
@@ -1089,47 +1089,64 @@ $\mu$ is the overall true mean response;
 $\tau_i$ is the fixed effect of $i^{th}$ Chemistry;
 $\beta_j$ is the fixed effect of $j^{th}$ Heat;
 $\gamma_{k(i)}$ is the random effect of $k^{th}$ Ingots;
-$(\tau\beta)_{ij}$ is the interaction fixed effect of $i^{th}$ Chemistry and $j^{th}$ Heat;
-$(\beta\gamma)_{jk(i)}$ is the interaction fixed effect of $j^{th}$ Heat and $k^{th}$ Ingots;
 
 $y_{ijkl}$ is response value for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied;
-$\varepsilon_{ijkl}$ is random error for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied.
+$\varepsilon_{l(ijk)}$ is random error for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied.
 
 Assumptions: 
 
-$\varepsilon_{ijkl}\sim iid N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\sum_{j=1}^3\beta_{j}=0$; 
-$\sum_{i=1}^2(\tau\beta)_{ij}=0$; $\sum_{j=1}^3(\tau\beta)_{ij}=0$; $(\beta\gamma)_{jk(i)}\sim iid N(0,\sigma_{\beta\gamma}^2)$
+$\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\sum_{j=1}^3\beta_{j}=0$; 
+$\gamma_{k(ij)}\sim iid N(0,\sigma_{\gamma}^2)$
 
-$\varepsilon_{ijkl}$ and $(\beta\gamma)_{jk(i)}$ are independent.
+$\varepsilon_{l(ijk)}$ and $\gamma_{k(ij)}$ are independent.
 
 (b) Fit the model using software. Report the ANOVA table and/or the estimated variances.
 
 ```{r echo=FALSE, out.width='25%',fig.show='hold'}
 library(lme4)
-hw5_model <- lmer(formula = Hardness ~ Chem*Heat +(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
-hw5_model1 <- aov(Hardness ~ Chem*Heat*Ignot, data=hw5_table)
+hw5_model <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
+hw5_model1 <- aov(Hardness ~ Chem+Heat+Ignot, data=hw5_table)
 ```
 
+ -------------------------------------------------------------
+     &nbsp;       Df   Sum Sq   Mean Sq   F value    Pr(>F)   
+ --------------- ---- -------- --------- --------- -----------
+   **Chem**      1    315.4     315.4    0.4844854  0.308059
+
+   **Heat**      2     6129     3065     4.708141  0.02181553
+
+   **Ignot**     1     651       651      3.061    0.05053016
+
+ **Residuals**   19    4041     212.7                   
+
+    **Total**    23   11136.96
  -------------------------------------------------------------------
-       &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)   
- --------------------- ---- -------- --------- --------- -----------
-      **Chem**         1    315.4     315.4     1.767     0.2084   
+ 
+```{r include=FALSE}
+sum((hw5_table$Hardness- mean(hw5_table$Hardness))^2)
+315.4/651
+3065/651
 
-      **Heat**         2     6129     3065      17.17    0.0003014 
+df(0.4844854, 1, 1,log = FALSE)
+df(4.708141, 1, 9,log = FALSE)
+df(3.061, 1, 19,log = FALSE)
 
-      **Ignot**        1     651       651      3.648     0.08032  
+9.384^2
+21.06^2
+```
 
-    **Chem:Heat**      2    324.7     162.4    0.9099     0.4286   
+Random effects:
 
-   **Chem:Ignot**      1    108.4     108.4    0.6073     0.4509   
+ ----------------- ----------- -------- ----------------------------
+ Groups            Name        Variance Std.Dev.
 
-   **Heat:Ignot**      2    125.1     62.54    0.3505     0.7113   
+ Ignot:(Heat:Chem) (Intercept)  96.29    9.813  
 
- **Chem:Heat:Ignot**   2     1342     670.9     3.759      0.054   
+ Heat:Chem         (Intercept) 310.60   17.624  
 
-    **Residuals**      12    2141     178.5      NA         NA     
+ Chem              (Intercept) 267.53   16.356  
 
-    **Total**          23   11136.96
+ Residual                      178.46   13.359  
  -------------------------------------------------------------------
 
 ```{r echo=FALSE}
@@ -1138,19 +1155,11 @@ pander::pander(anova(hw5_model))
 pander::pander(confint(hw5_model))
 ```
 
-```{r include=FALSE}
-sum((hw5_table$Hardness- mean(hw5_table$Hardness))^2)
-11.0019/0.6019
-0.4167/0.6019
-(11.0019-0.6019)^2/(11.0019^2/9+0.6019^2/9)
-(0.4167-0.6019)^2/(0.4167^2/1+0.6019^2/9)
-df(18.27862, 9, 9,log = FALSE)
-df(0.6923077, 1, 9,log = FALSE)
-df(0.4012, 9, 40,log = FALSE)
-
-```
-
 (c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
+
+The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $0.02181553$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $0.05053016$.
+
+The results of variance components and condidence intervals show that only random error has significant variance on average value of Hardness at 0.05 significance level. The variance is $178.46$ and the confidence intervale is $[88.05946,443.5236]$ at 0.05 significance level.
 
 (d) Check model assumptions.
 
@@ -1165,8 +1174,27 @@ hist(hw5_table$Hardness)
 plot(hw5_model)
 ```
 
+The histogram of residuals and the QQ plot didn’t show obvious violation of normality.
+
+The plot of residuals versus fitted value shows the residuals are evenly distributed about zero at each prededict value (zero mean).
+
+The plot of studentized residuals versus fitted value shows vertical deviations of residuals from zero are almost the same for each predicted value (constant variance).
+
 (e) Report your code here.
 
+```{r eval=FALSE, echo=T, include=T}
+hw5_model <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
+summary(hw5_model)
+anova(hw5_model)
+confint(hw5_model)
+
+hw5_residual <- rstudent(hw5_model)
+plot(hw5_residual)
+qqnorm(hw5_residual)
+qqline(hw5_residual)
+hist(hw5_table$Hardness)
+plot(hw5_model)
+```
 
 ### Problem 2: 
 
