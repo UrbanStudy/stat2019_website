@@ -1104,9 +1104,41 @@ $\varepsilon_{ijkl}$ and $(\beta\gamma)_{jk(i)}$ are independent.
 
 (b) Fit the model using software. Report the ANOVA table and/or the estimated variances.
 
+```{r echo=FALSE, out.width='25%',fig.show='hold'}
+library(lme4)
+hw5_model <- lmer(formula = Hardness ~ Chem*Heat +(1|Ignot/Chem), data=hw5_table, REML = TRUE)
+
+```
+
+```{r include=FALSE}
+summary(hw5_model)
+pander::pander(anova(hw5_model))
+sum((hw5_table$Hardness- mean(hw5_table$Hardness))^2)
+11.0019/0.6019
+0.4167/0.6019
+(11.0019-0.6019)^2/(11.0019^2/9+0.6019^2/9)
+(0.4167-0.6019)^2/(0.4167^2/1+0.6019^2/9)
+df(18.27862, 9, 9,log = FALSE)
+df(0.6923077, 1, 9,log = FALSE)
+df(0.4012, 9, 40,log = FALSE)
+
+pander::pander(confint(hw4_model2))
+```
+
 (c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
 
 (d) Check model assumptions.
+
+```{r echo=FALSE, out.width='25%',fig.show='hold'}
+hw5_residual <- rstudent(hw5_model)
+plot(hw5_residual)
+# hw4_y_hat2 <- fitted(hw4_model2)
+# plot(hw4_y_hat2,hw4_residual2)
+qqnorm(hw5_residual)
+qqline(hw5_residual)
+hist(hw5_table$Hardness)
+plot(hw5_model)
+```
 
 (e) Report your code here.
 
@@ -1138,5 +1170,18 @@ $\varepsilon_{ijkl}\sim iid\ N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\beta_{j
 
 $\varepsilon_{ijkl}$, $\beta_{j(i)}$, and $\gamma_{k(ij)}$ are independent.
 
-
 (b) Create the table with df, SS, EMS and F test statistic for each term in the model. If there is no exact F test, then find the (Satterthwaite) approximate F test statistic.
+
+$df_E=df_T-df_A-df_B-df_C-df_{AB}-df_{AC}=abc-1-(a-1)-(b-1)-(c-1)-(ab-a-b+1)-(ac-a-c+1)$
+$=abc-ab-ac+a=a(b-1)(c-1)$
+
+|term | i(f) | j(r) | k(r) | l(r) | df |  SS | EMS | F   |
+| --- |-- |-- | --| -- | -- | --- | --- | --- |
+|A$\tau_{i}$f|0|b|c|n|a-1|$\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac{1}{abc}y_{...}^2$|$bc\sigma^2_{\tau}+c\sigma^2_{\tau\beta}+b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{A}}{MS_{AB}+MS_{AC}-MS_{E}}$|
+|B(A)$\beta_{j(i)}$r|1|1|c|n|a(b-1)|$\frac1{ac}\sum_{j=1}^by_{.j.}^2-\frac{1}{abc}y_{...}^2$|$ac\sigma^2_{\beta}+c\sigma^2_{\tau\beta}+\sigma^2$|$\frac{MS_{B}}{MS_{AB}}$|
+|C(BA)$\gamma_{k(ji)}$r|1|1|1|n|a(b-1)(c-1)|$\frac1{ab}\sum_{k=1}^cy_{..k}^2-\frac{1}{abc}y_{...}^2$|$ab\sigma^2_{\gamma}+b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{C}}{MS_{AC}}$|
+|$\varepsilon_{ijkl}$|1|1|1|1|abc(n-1)|$\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^cy_{ijk}^2-\frac1c\sum\limits_{i=1}^a\sum\limits_{j=1}^by_{ij.}^2-\frac1b\sum\limits_{i=1}^a\sum\limits_{k=1}^cy_{i.k}^2+\frac1{bc}\sum\limits_{i=1}^ay_{i..}^2$|$\sigma^2$||
+|Total| | | |$abc-1$|$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{1}{abc}y_{...}^2$|
+
+|$(\tau\beta)_{ij}$|1|1|c|$(a-1)(b-1)$|$\frac1c\sum\limits_{i=1}^a\sum\limits_{j=1}^by_{ij.}^2-\frac1{bc}\sum\limits_{i=1}^ay_{i..}^2-\frac1{ac}\sum\limits_{j=1}^by_{.j.}^2+\frac{1}{abc}y_{...}^2$|$c\sigma^2_{\tau\beta}+\sigma^2$|$\frac{MS_{AB}}{MS_{E}}$|
+|$(\tau\gamma)_{ik}$|1|b|1|$(a-1)(c-1)$|$\frac1b\sum\limits_{i=1}^a\sum\limits_{k=1}^cy_{i.k}^2-\frac1{bc}\sum\limits_{i=1}^ay_{i..}^2-\frac1{ab}\sum\limits_{k=1}^cy_{..k}^2+\frac{1}{abc}y_{...}^2$|$b\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{MS_{AC}}{MS_{E}}$|
