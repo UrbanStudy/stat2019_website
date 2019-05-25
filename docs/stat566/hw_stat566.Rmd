@@ -1106,13 +1106,39 @@ $\varepsilon_{ijkl}$ and $(\beta\gamma)_{jk(i)}$ are independent.
 
 ```{r echo=FALSE, out.width='25%',fig.show='hold'}
 library(lme4)
-hw5_model <- lmer(formula = Hardness ~ Chem*Heat +(1|Ignot/Chem), data=hw5_table, REML = TRUE)
+hw5_model <- lmer(formula = Hardness ~ Chem*Heat +(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
+hw5_model1 <- aov(Hardness ~ Chem*Heat*Ignot, data=hw5_table)
+```
 
+ -------------------------------------------------------------------
+       &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)   
+ --------------------- ---- -------- --------- --------- -----------
+      **Chem**         1    315.4     315.4     1.767     0.2084   
+
+      **Heat**         2     6129     3065      17.17    0.0003014 
+
+      **Ignot**        1     651       651      3.648     0.08032  
+
+    **Chem:Heat**      2    324.7     162.4    0.9099     0.4286   
+
+   **Chem:Ignot**      1    108.4     108.4    0.6073     0.4509   
+
+   **Heat:Ignot**      2    125.1     62.54    0.3505     0.7113   
+
+ **Chem:Heat:Ignot**   2     1342     670.9     3.759      0.054   
+
+    **Residuals**      12    2141     178.5      NA         NA     
+
+    **Total**          23   11136.96
+ -------------------------------------------------------------------
+
+```{r echo=FALSE}
+# summary(hw5_model)
+pander::pander(anova(hw5_model))
+pander::pander(confint(hw5_model))
 ```
 
 ```{r include=FALSE}
-summary(hw5_model)
-pander::pander(anova(hw5_model))
 sum((hw5_table$Hardness- mean(hw5_table$Hardness))^2)
 11.0019/0.6019
 0.4167/0.6019
@@ -1122,7 +1148,6 @@ df(18.27862, 9, 9,log = FALSE)
 df(0.6923077, 1, 9,log = FALSE)
 df(0.4012, 9, 40,log = FALSE)
 
-pander::pander(confint(hw4_model2))
 ```
 
 (c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
@@ -1177,7 +1202,7 @@ $\varepsilon_{ijkl}$, $\beta_{j(i)}$, and $\gamma_{k(ij)}$ are independent.
 |A$\tau_{i}$f|0|b|c|n|a-1|$\frac1{bcn}\sum_{i=1}^ay_{i...}^2-\frac{1}{abcn}y_{....}^2$|$bcn\sigma^2_{\tau}+cn\sigma^2_{\beta}+n\sigma^2_{\gamma}+\sigma^2$|$\frac{MS_{A}}{MS_{B(A)}}$|
 |B(A)$\beta_{j(i)}$r|1|1|c|n|a(b-1)|$\frac1{cn}\sum\limits_{i=1}^a\sum\limits_{j=1}^by_{.j..}^2-\frac1{bcn}\sum_{i=1}^ay_{i...}^2$|$cn\sigma^2_{\beta}+n\sigma^2_{\gamma}+\sigma^2$|$\frac{MS_{B(A)}}{MS_{C(AB)}}$|
 |C(BA)$\gamma_{k(ji)}$r|1|1|1|n|ab(c-1)|$\frac1{n}{\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^cy_{ijk.}^2}-\frac1{cn}{\sum\limits_{i=1}^a\sum\limits_{j=1}^by_{.j..}^2}$|$n\sigma^2_{\gamma}+\sigma^2$|$\frac{MS_{C(AB)}}{MS_{E}}$|
-|$\varepsilon_{ijkl}$|1|1|1|1|a(b-1)(c-1)(n-1)|$\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^c\sum\limits_{l=1}^ny_{ijkl}^2-\frac1n\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^cy_{ijk.}^2$|$\sigma^2$||
+|$\varepsilon_{ijkl}$|1|1|1|1|abc(n-1)|$\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^c\sum\limits_{l=1}^ny_{ijkl}^2-\frac1n\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^cy_{ijk.}^2$|$\sigma^2$||
 |Total| | | | |abcn-1|$\sum\limits_{i=1}^a\sum\limits_{j=1}^b\sum\limits_{k=1}^c\sum\limits_{l=1}^ny_{ijkl}^2-\frac{y_{....}^2}{abcn}$|
 
 |$(\tau\beta)_{ij}$|1|1|c|$(a-1)(b-1)$|$\frac1c\sum\limits_{i=1}^a\sum\limits_{j=1}^by_{ij.}^2-\frac1{bc}\sum\limits_{i=1}^ay_{i..}^2-\frac1{ac}\sum\limits_{j=1}^by_{.j.}^2+\frac{1}{abc}y_{...}^2$|$c\sigma^2_{\tau\beta}+\sigma^2$|$\frac{MS_{AB}}{MS_{E}}$|
