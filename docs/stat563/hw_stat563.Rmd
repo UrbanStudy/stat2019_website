@@ -765,8 +765,7 @@ In the double sum $\rho$ appears $n−1$ times, $\rho^2$ appears $n−2$ times, 
 
 $$\sum_{i=2}^n\sum_{j=1}^{i-1}\rho^{|i-j|}=\sum_{i=1}^{n-1}(n-i)\rho^{i}=\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})$$
 
-Note: The partial sum of the geometric series is
-$(1.5.4)\qquad \sum_{k=1}^nt^{k-1}=\frac{1-t^n}{1-t},\ t\neq1$
+
 
  ---
  
@@ -782,15 +781,58 @@ $$E[X_1X_i]= E[E(X_1X_i|X_{i−1})] = E[E(X_1|X_{i−1})E(X_i|X_{i−1})] =\rho 
 
 where we used the facts that $X_1$ and $X_i$ are independent conditional on $X_{i−1}$. Continuing with the argument we get that $E[X_1X_i]=\rho^{i−1}EX_1^2$. Thus,
 
-$$Corr(X_1,X_i)=\frac{\rho^{i−1}EX_1^2−\rho^{i−1}(EX_1)^2}{VarX_1VarX_i}
-=\frac{\rho^{i−1}\sigma^2}
-{\sqrt{\sigma^2\sigma^2}}
-=\rho^{i−1}$$
+$$Corr(X_1,X_i)=\frac{\rho^{i−1}EX_1^2−\rho^{i−1}(EX_1)^2}{\sqrt{VarX_1VarX_i}}=\frac{\rho^{i−1}\sigma^2}{\sqrt{\sigma^2\sigma^2}}=\rho^{i−1}$$
 
 
 
 ##
 
+$$Var[\bar X]=E[\bar X-\mu]^2=E[\frac1n\sum_{i=1}^nX_i-\mu]^2=E[\frac1n(\sum_{i=1}^nX_i-n\mu)]^2$$
+
+$$=\frac1{n^2}E[(X_1-\mu)^2+\cdots+(X_n-\mu)^2+2(X_1-\mu)(X_2-\mu)+\cdots+2(X_{n-1}-\mu)(X_n-\mu)]$$
+
+$$=\frac1{n^2}\sum_{i=1}^nE[(X_i-\mu)^2+\frac2{n^2}\binom{n}{2}Cov(X_i,X_j)=\frac{1}{n^2}\sum_{i=1}^n\sigma^2+\frac2{n^2}\frac{n(n-1)}{2}\sigma^2Cor(X_i,X_j)=\frac{\sigma^2}{n}+\frac{(n-1)}{n}\sigma^2\rho$$
+
+ ---
+
+$$Var[\bar X]=\frac{\sigma^2}{n}+\frac2{n^2}\underline{E[(X_1-\mu)(X_2-\mu)+\cdots+(X_{n-1}-\mu)(X_n-\mu)]}$$
+
+$$=E\begin{bmatrix}
+ (X_{1}-\mu)(X_2-\mu) & (X_{1}-\mu)(X_3-\mu) & (X_{1}-\mu)(X_4-\mu) & \cdots & (X_{1}-\mu)(X_n-\mu) \\
+  0 & (X_{2}-\mu)(X_3-\mu) & (X_{2}-\mu)(X_4-\mu) & \cdots & (X_{2}-\mu)(X_n-\mu) \\
+  \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+  0 & 0 & 0 & \cdots & (X_{n-1}-\mu)(X_n-\mu)
+ \end{bmatrix}_{(n-1)\times(n-1)}$$
+
+$$=(n-1)\rho\sigma^2+(n-2)\rho^{2}\sigma^2+\cdots+\rho^{n-1}\sigma^2=\sigma^2\sum_{i=1}^{n-1}(n-i)\rho^{i}=\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})$$
+
+Note: The partial sum of the geometric series is
+$(1.5.4)\qquad \sum_{k=1}^nt^{k-1}=\frac{1-t^n}{1-t},\ t\neq1$
+
+$$=\sum_{i=1}^{n-1}n\rho^{i}-\sum_{i=1}^{n-1}i\rho^{i}=n\frac{1-\rho^{n-1}}{1-\rho}-\sum_{i=1}^{n-1}i\rho^{i}$$
+
+ ---
+ 
+ $$EX_{i+1}=E[\rho X_i+\delta_i]=\rho E[X_i]$$
+ 
+ $$E[X_i]=E[E(X_i|X_{i−1})]=E[E(\rho X_{i-1}+\delta_{i-1}|X_{i−1})]= E[\rho X_{i−1}]=\rho^2E[ X_{i−2}]=\cdots=\rho^{i−1}E[X_1]$$
+
+ $$Var[X_{i+1}]=Var[\rho X_i+\delta_i]=\rho^2 Var[X_i]+Var[\delta_i]+2\rho Cov[X_i,\delta_i]=\rho^2 Var[X_i]+1$$
+
+$$Var[X_i]=Var[E(X_i|X_{i−1})]+ E[Var(X_i|X_{i−1})]=Var[E(\rho X_{i-1}+\delta_{i-1}|X_{i−1})]+ E[Var(\rho X_{i-1}+\delta_{i-1})|X_{i−1})]=?$$
+ 
+$$=Var[\rho^{i−1}EX_1]+E[\rho^2 VarX_1+1]=\rho^2\sigma^2+1=\sigma^2$$
+
+Note: $\sigma^2-\rho^2\sigma^2=1$
+
+$$E[X_1X_i]= E[E(X_1X_i|X_{i−1})] = E[E(X_1|X_{i−1})E(X_i|X_{i−1})]=E[E(X_1)\rho E(X_{i−1})]=\rho E[X_1X_{i−1}]=\cdots=\rho^{i-1} E[X_1X_{1}]$$
+
+
+$$Corr(X_1,X_i)=\frac{Cov[X_1,X_i]}{\sqrt{VarX_1VarX_i}}=\frac{E[X_1X_i]-E[X_1]E[X_i]}{\sqrt{\sigma^2\sigma^2}}=\frac{\rho^{i-1}E[X_1^2]-E[X_1]\rho^{i-1}E[X_1]}{\sigma^2}$$
+
+$$=\frac{\rho^{i−1}}{\sigma^2}[EX_1^2−(EX_1)^2]=\frac1{\sigma^2}{\rho^{i−1}\sigma^2}=\rho^{i−1}$$
+
+ ---
 
 $$\frac{\partial f(b)}{\partial b}=\frac{2(S_{xx}-S_{yy})b}{(1+b^2)^2}+\frac{2S_{xy}}{1+b^2}-\frac{4S_{xy}}{(1+b^2)^2}$$
 
