@@ -5516,10 +5516,14 @@ plot(hw4_model4)</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Write the complete model you would fit for these data.</li>
 </ol>
-<p><span class="math display">\[y_{ijkl}=\mu+\tau_i+\beta_j(i)+\gamma_{k(ij)}+\varepsilon_{l(ijk)}\]</span></p>
-<p>for <span class="math inline">\(i=1,2\)</span> is the number of Chemistry; <span class="math inline">\(j=1,2,3\)</span> is the number of Heat; <span class="math inline">\(k=1,2\)</span> is the number of Ingots; <span class="math inline">\(l=1,2\)</span> is the number of replication;</p>
-<p><span class="math inline">\(\mu\)</span> is the overall true mean response; <span class="math inline">\(\tau_i\)</span> is the fixed effect of <span class="math inline">\(i^{th}\)</span> Chemistry; <span class="math inline">\(\beta_j\)</span> is the fixed effect of <span class="math inline">\(j^{th}\)</span> Heat; <span class="math inline">\(\gamma_{k(i)}\)</span> is the random effect of <span class="math inline">\(k^{th}\)</span> Ingots;</p>
-<p><span class="math inline">\(y_{ijkl}\)</span> is response value for the <span class="math inline">\(l^{th}\)</span> replication when <span class="math inline">\(i^{th}\)</span> Chemistry, <span class="math inline">\(j^{th}\)</span> Heat, and <span class="math inline">\(k^{th}\)</span> Ingots are applied; <span class="math inline">\(\varepsilon_{l(ijk)}\)</span> is random error for the <span class="math inline">\(l^{th}\)</span> replication when <span class="math inline">\(i^{th}\)</span> Chemistry, <span class="math inline">\(j^{th}\)</span> Heat, and <span class="math inline">\(k^{th}\)</span> Ingots are applied.</p>
+<p><span class="math display">\[y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k(ij)}+\varepsilon_{l(ijk)}\]</span></p>
+<p>for <span class="math inline">\(i=1,2\)</span> is the number of Chemistry being compared; <span class="math inline">\(j=1,2,3\)</span> is the number of Heat being compared; <span class="math inline">\(k=1,2\)</span> is the number of Ingots; <span class="math inline">\(l=1,2\)</span> is the number of replication;</p>
+<p><span class="math inline">\(\mu\)</span> is the overall true mean response;</p>
+<p><span class="math inline">\(\tau_i\)</span> is the main fixed effect of <span class="math inline">\(i^{th}\)</span> level of Chemistry;</p>
+<p><span class="math inline">\(\beta_{j(i)}\)</span> is the fixed effect of <span class="math inline">\(j^{th}\)</span> level of Heat nested in <span class="math inline">\(i^{th}\)</span> level of Chemistry;</p>
+<p><span class="math inline">\(\gamma_{k(ij)}\)</span> is the random effect of <span class="math inline">\(k^{th}\)</span> Ingots nested in <span class="math inline">\(j^{th}\)</span> level of Heat in <span class="math inline">\(i^{th}\)</span> level of Chemistry;</p>
+<p><span class="math inline">\(y_{ijkl}\)</span> is response value for the <span class="math inline">\(l^{th}\)</span> replication for <span class="math inline">\(k^{th}\)</span> Ingots nested in <span class="math inline">\(j^{th}\)</span> level of Heat in <span class="math inline">\(i^{th}\)</span> level of Chemistry;</p>
+<p><span class="math inline">\(\varepsilon_{l(ijk)}\)</span> is random error for the <span class="math inline">\(l^{th}\)</span> replication for <span class="math inline">\(k^{th}\)</span> Ingots nested in <span class="math inline">\(j^{th}\)</span> level of Heat in <span class="math inline">\(i^{th}\)</span> level of Chemistry.</p>
 <p>Assumptions:</p>
 <p><span class="math inline">\(\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)\)</span>; <span class="math inline">\(\sum_{i=1}^2\tau_{i}=0\)</span>; <span class="math inline">\(\sum_{j=1}^3\beta_{j(i)}=0\)</span>; <span class="math inline">\(\gamma_{k(ij)}\sim iid N(0,\sigma_{\gamma}^2)\)</span></p>
 <p><span class="math inline">\(\varepsilon_{l(ijk)}\)</span> and <span class="math inline">\(\gamma_{k(ij)}\)</span> are independent.</p>
@@ -5540,34 +5544,16 @@ plot(hw4_model4)</code></pre>
     **Total**    23   11136.96
  ------------------------------------------------------------------ -->
 <p>Random effects:</p>
-<table style="width:94%;">
-<colgroup>
-<col width="25%"></col>
-<col width="16%"></col>
-<col width="12%"></col>
-<col width="40%"></col>
-</colgroup>
+<table>
 <tbody>
 <tr class="odd">
-<td align="center">Groups</td>
-<td align="center">Name</td>
-<td align="right">Variance</td>
-<td align="center">Std.Dev.</td>
-</tr>
-<tr class="even">
-<td align="center">Chem:Heat:Ignot</td>
-<td align="center">(Intercept)</td>
-<td align="right">96.29</td>
-<td align="center">9.813</td>
-</tr>
-<tr class="odd">
-<td align="center">Residual</td>
-<td align="center"></td>
-<td align="right">178.46</td>
-<td align="center">13.359</td>
+<td align="center">Groups Name Variance Std.Dev.</td>
 </tr>
 </tbody>
 </table>
+<p>Chem:Heat:Ignot (Intercept) 96.29 9.813</p>
+<p>Residual 178.46 13.359<br />
+——————————————————————-</p>
 <table style="width:69%;">
 <caption>Analysis of Variance Table</caption>
 <colgroup>
@@ -5675,7 +5661,7 @@ plot(hw4_model4)</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.</li>
 </ol>
-<!--The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $0.02181553$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $0.05053016$.-->
+<p>The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is <span class="math inline">\(***\)</span>. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is <span class="math inline">\(***\)</span>.</p>
 <p>The results of variance components and condidence intervals show that only random error has significant variance on average value of Hardness at 0.05 significance level. The variance is <span class="math inline">\(178.46\)</span> and the confidence intervale is <span class="math inline">\([88.05946,443.5236]\)</span> at 0.05 significance level.</p>
 <ol start="4" style="list-style-type: lower-alpha">
 <li>Check model assumptions.</li>
@@ -5706,9 +5692,16 @@ plot(hw5_model)</code></pre>
 <li>Write the complete model.</li>
 </ol>
 <p><span class="math display">\[y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k(ij)}+\varepsilon_{(ijk)l}\]</span></p>
-<p>for <span class="math inline">\(i=1,..,a\)</span> is the number of factor A being compared; <span class="math inline">\(j=1,..,b\)</span> is the number offactor B being compared; <span class="math inline">\(k=1,..,c\)</span> is the number of factor C being compared; <span class="math inline">\(l=1,..,n\)</span> is the number of replication for <span class="math inline">\(k^{th}\)</span> level of factor C in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
-<p><span class="math inline">\(\mu\)</span> is the overall true mean response; <span class="math inline">\(\tau_i\)</span> is the main fixed effect of <span class="math inline">\(i^{th}\)</span> level of factor A; <span class="math inline">\(\beta_{j(i)}\)</span> is the random effect of <span class="math inline">\(j^{th}\)</span> level of factor B nested in <span class="math inline">\(i^{th}\)</span> level of factor A; <span class="math inline">\(\gamma_{k(ij)}\)</span> is the random effect of <span class="math inline">\(k^{th}\)</span> level of factor C nested in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
-<p><span class="math inline">\(y_{ijkl}\)</span> is response value for the <span class="math inline">\(l^{th}\)</span> replication for <span class="math inline">\(k^{th}\)</span> level of factor C in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A; <span class="math inline">\(\varepsilon_{(ijk)l}\)</span> is random error for the <span class="math inline">\(l^{th}\)</span> EU nested in <span class="math inline">\(k^{th}\)</span> level of factor C in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A.</p>
+<p>for <span class="math inline">\(i=1,..,a\)</span> is the number of factor A being compared;</p>
+<p><span class="math inline">\(j=1,..,b\)</span> is the number offactor B being compared;</p>
+<p><span class="math inline">\(k=1,..,c\)</span> is the number of factor C being compared;</p>
+<p><span class="math inline">\(l=1,..,n\)</span> is the number of replication for <span class="math inline">\(k^{th}\)</span> level of factor C in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
+<p><span class="math inline">\(\mu\)</span> is the overall true mean response;</p>
+<p><span class="math inline">\(\tau_i\)</span> is the main fixed effect of <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
+<p><span class="math inline">\(\beta_{j(i)}\)</span> is the random effect of <span class="math inline">\(j^{th}\)</span> level of factor B nested in <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
+<p><span class="math inline">\(\gamma_{k(ij)}\)</span> is the random effect of <span class="math inline">\(k^{th}\)</span> level of factor C nested in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
+<p><span class="math inline">\(y_{ijkl}\)</span> is response value for the <span class="math inline">\(l^{th}\)</span> replication for <span class="math inline">\(k^{th}\)</span> level of factor C in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A;</p>
+<p><span class="math inline">\(\varepsilon_{(ijk)l}\)</span> is random error for the <span class="math inline">\(l^{th}\)</span> EU nested in <span class="math inline">\(k^{th}\)</span> level of factor C in <span class="math inline">\(j^{th}\)</span> level of factor B in <span class="math inline">\(i^{th}\)</span> level of factor A.</p>
 <p>Assumptions:</p>
 <p><span class="math inline">\(\varepsilon_{ijkl}\sim iid\ N(0,\sigma^2)\)</span>; <span class="math inline">\(\sum_{i=1}^2\tau_{i}=0\)</span>; <span class="math inline">\(\beta_{j(i)}\sim iid\ N(0,\sigma_{\beta}^2)\)</span> ; <span class="math inline">\(\gamma_{k(ij)}\sim iid\ N(0,\sigma_{\gamma}^2)\)</span></p>
 <p><span class="math inline">\(\varepsilon_{(ijk)l}\)</span>, <span class="math inline">\(\beta_{j(i)}\)</span>, and <span class="math inline">\(\gamma_{k(ij)}\)</span> are independent.</p>

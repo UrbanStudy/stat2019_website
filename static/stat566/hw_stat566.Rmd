@@ -1078,20 +1078,24 @@ ggplot(hw5_table, aes(x=Heat,y=Hardness, shape = Ignot, color=Ignot))+ stat_summ
 
 (a) Write the complete model you would fit for these data.
 
-$$y_{ijkl}=\mu+\tau_i+\beta_j(i)+\gamma_{k(ij)}+\varepsilon_{l(ijk)}$$
+$$y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k(ij)}+\varepsilon_{l(ijk)}$$
 
-for $i=1,2$ is the number of Chemistry; 
-$j=1,2,3$ is the number of Heat; 
+for $i=1,2$ is the number of Chemistry being compared; 
+$j=1,2,3$ is the number of Heat being compared; 
 $k=1,2$ is the number of Ingots; 
 $l=1,2$ is the number of replication; 
 
 $\mu$ is the overall true mean response;
-$\tau_i$ is the fixed effect of $i^{th}$ Chemistry;
-$\beta_j$ is the fixed effect of $j^{th}$ Heat;
-$\gamma_{k(i)}$ is the random effect of $k^{th}$ Ingots;
 
-$y_{ijkl}$ is response value for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied;
-$\varepsilon_{l(ijk)}$ is random error for the $l^{th}$ replication when $i^{th}$ Chemistry, $j^{th}$ Heat, and $k^{th}$  Ingots are applied.
+$\tau_i$ is the main fixed effect of $i^{th}$ level of Chemistry;
+
+$\beta_{j(i)}$ is the fixed effect of $j^{th}$ level of Heat nested in $i^{th}$ level of Chemistry;
+
+$\gamma_{k(ij)}$ is the random effect of $k^{th}$ Ingots nested in $j^{th}$ level of Heat in $i^{th}$ level of Chemistry;
+
+$y_{ijkl}$ is response value for the $l^{th}$ replication for $k^{th}$ Ingots nested in $j^{th}$ level of Heat in $i^{th}$ level of Chemistry;
+
+$\varepsilon_{l(ijk)}$ is random error for the $l^{th}$ replication for $k^{th}$ Ingots nested in $j^{th}$ level of Heat in $i^{th}$ level of Chemistry.
 
 Assumptions: 
 
@@ -1139,9 +1143,10 @@ pf(3.061, 1, 19,log = FALSE, lower.tail = F)
 
 Random effects:
 
- ----------------- ----------- -------- ----------------------------
+ -------------------------------------------------------------------
  Groups            Name        Variance Std.Dev.
-
+ ----------------- ----------- -------- ----------------------------
+ 
    Chem:Heat:Ignot (Intercept)  96.29    9.813  
  
    Residual                    178.46   13.359  
@@ -1171,7 +1176,7 @@ pander::pander(confint(hw5_model))
 
 (c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
 
-<!--The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $0.02181553$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $0.05053016$.-->
+The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $***$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $***$.
 
 The results of variance components and condidence intervals show that only random error has significant variance on average value of Hardness at 0.05 significance level. The variance is $178.46$ and the confidence intervale is $[88.05946,443.5236]$ at 0.05 significance level.
 
@@ -1219,16 +1224,23 @@ Consider a 3-stage nested design with A has fixed effect while B and C have rand
 $$y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k(ij)}+\varepsilon_{(ijk)l}$$
 
 for $i=1,..,a$ is the number of factor A being compared; 
+
 $j=1,..,b$ is the number offactor B being compared; 
+
 $k=1,..,c$ is the number of factor C being compared; 
+
 $l=1,..,n$ is the number of replication for $k^{th}$ level of factor C in $j^{th}$ level of factor B in $i^{th}$ level of factor A; 
 
 $\mu$ is the overall true mean response;
+
 $\tau_i$ is the main fixed effect of $i^{th}$ level of factor A;
+
 $\beta_{j(i)}$ is the random effect of $j^{th}$ level of factor B nested in $i^{th}$ level of factor A;
+
 $\gamma_{k(ij)}$ is the random effect of $k^{th}$ level of factor C nested in $j^{th}$ level of factor B in $i^{th}$ level of factor A;
 
 $y_{ijkl}$ is response value for the $l^{th}$ replication for $k^{th}$ level of factor C in $j^{th}$ level of factor B in $i^{th}$ level of factor A;
+
 $\varepsilon_{(ijk)l}$ is random error for the $l^{th}$ EU nested in $k^{th}$ level of factor C in $j^{th}$ level of factor B in $i^{th}$ level of factor A.
 
 Assumptions: 
