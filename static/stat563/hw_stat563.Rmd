@@ -766,6 +766,8 @@ so $Var(\bar X)\not\to0$ as $n\to\infty$. (See Miscellanea 5.8.2 for another eff
 
 $$Var[\bar X]=\frac{\sigma^2}{n}+\frac2{n^2}\underline{E[(X_1-\mu)(X_2-\mu)+\cdots+(X_{n-1}-\mu)(X_n-\mu)]}$$
 
+The part of underline:
+
 $$=E\begin{bmatrix}
  (X_{1}-\mu)(X_2-\mu) & (X_{1}-\mu)(X_3-\mu) & (X_{1}-\mu)(X_4-\mu) & \cdots & (X_{1}-\mu)(X_n-\mu) \\
   0 & (X_{2}-\mu)(X_3-\mu) & (X_{2}-\mu)(X_4-\mu) & \cdots & (X_{2}-\mu)(X_n-\mu) \\
@@ -774,23 +776,20 @@ $$=E\begin{bmatrix}
  \end{bmatrix}_{(n-1)\times(n-1)}$$
 
 $$=(n-1)\rho\sigma^2+(n-2)\rho^{2}\sigma^2+\cdots+\rho^{n-1}\sigma^2=\sigma^2\sum_{i=1}^{n-1}(n-i)\rho^{i}$$
+$$=\sum_{i=1}^{n-1}n\rho^{i}-\sum_{i=1}^{n-1}i\rho^{i}=n\frac{1-\rho^{n}}{1-\rho}-\frac{n(-1+\rho)\rho^{n}+\rho(1-\rho^{n})}{(1-\rho)^2}=\frac{n\rho(1-\rho)-\rho(1-\rho^{n})}{(1-\rho)^2}=\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})$$
 
 Note: The partial sum of the geometric series is
-$(1.5.4)\qquad \sum_{k=1}^nt^{k-1}=\frac{1-t^n}{1-t},\ t\neq1$
+$(1.5.4)\qquad \sum_{k=1}^nt^{k-1}=\frac{1-t^n}{1-t},\ t\neq1$, 
+$\sum_{k=0}^{n-1}t^{k}=\frac{1-t^{n}}{1-t}$, 
+$\sum_{k=0}^{n-1}kt^{k}=\frac{t-nt^{n}+(n-1)t^{n+1}}{(1-t)^2}=\frac{n(-1+t)t^{n}+t(1-t^{n})}{(1-t)^2}$
 
-$$\sum_{k=0}^{n-1}t^{k}=\frac{1-t^{n}}{1-t}$$
-
-$$\sum_{k=0}^{n-1}kt^{k}=\frac{t-nt^{n}+(n-1)t^{n+1}}{(1-t)^2}=\frac{n(-1+t)t^{n}+t(1-t^{n})}{(1-t)^2}$$
-
-$$=\sum_{i=1}^{n-1}n\rho^{i}-\sum_{i=1}^{n-1}i\rho^{i}=n\frac{1-\rho^{n}}{1-\rho}-\frac{n(-1+\rho)\rho^{n}+\rho(1-\rho^{n})}{(1-\rho)^2}=\frac{n\rho(1-\rho)-\rho(1-\rho^{n})}{(1-\rho)^2}=\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})$$
+Therefore,
 
 $$Var[\bar X]=\frac{\sigma^2}{n}+\frac2{n^2}\frac{\rho}{1-\rho}(n-\frac{1-\rho^n}{1-\rho})$$
 
  ---
  
 (c) The correlation structure in part (b) arises in an autoregressive $AR(1)$ model, where we assume that $X_{i+1}=\rho X_i+\delta_i$, with $\delta_i\sim iid\ n(0,1)$. If $|\rho_i|<1$ and we define $\sigma^2=1/(1-\rho^2)$, show that $Corr(X_1,X_i) =\rho^{|i-1|}$.
-
- $EX_{i+1}=E[\rho X_i+\delta_i]=\rho E[X_i]$, 
  
  $Var[X_{i+1}]=Var[\rho X_i+\delta_i]=\rho^2 Var[X_i]+Var[\delta_i]+2\rho Cov[X_i,\delta_i]=\rho^2 Var[X_i]+1$
  
@@ -798,9 +797,11 @@ $$Var[\bar X]=\frac{\sigma^2}{n}+\frac2{n^2}\frac{\rho}{1-\rho}(n-\frac{1-\rho^n
 
 $$Var[X_i]=Var[E(X_i|X_{i−1})]+ E[Var(X_i|X_{i−1})]=Var[E(\rho X_{i-1}+\delta_{i-1}|X_{i−1})]+ E[Var(\rho X_{i-1}+\delta_{i-1})|X_{i−1})]=?$$
  
-$$=Var[\rho^{i−1}EX_1]+E[\rho^2 VarX_1+1]=\rho^2\sigma^2+1=\sigma^2$$
+$$Var[\rho^{i−1}EX_1|X_{i−1}]+E(\rho^2 Var[X_i]+Var[\delta_i]+2\rho Cov[X_i,\delta_i]|X_{i−1})$$
 
-Note: $\sigma^2-\rho^2\sigma^2=1$
+For $X_i,\delta_i$ are independent, $\delta_i\sim iid\ n(0,1)$, $X_i\sim n(\theta,\sigma^2)$, and $\sigma^2-\rho^2\sigma^2=1$,
+
+$$Var[X_i]=0+\rho^2\sigma^2+1+0=\sigma^2$$
 
 $$E[X_1X_i]= E[E(X_1X_i|X_{i−1})] = E[E(X_1|X_{i−1})E(X_i|X_{i−1})]=E[E(X_1)\rho E(X_{i−1})]=\rho E[X_1X_{i−1}]=\cdots=\rho^{i-1} E[X_1X_{1}]$$
 
