@@ -1104,32 +1104,34 @@ $\varepsilon_{l(ijk)}$ and $\gamma_{k(ij)}$ are independent.
 
 ```{r echo=FALSE, out.width='25%',fig.show='hold'}
 library(lme4)
-hw5_model <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
-hw5_model1 <- aov(Hardness ~ Chem+Heat+Ignot, data=hw5_table)
+hw5_model <- lmer(formula = Hardness ~ Chem+Chem:Heat+(1|Chem:Heat:Ignot), data=hw5_table, REML = TRUE)
+hw5_model1 <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
+hw5_model2 <- aov(Hardness ~ Chem+Heat+Ignot, data=hw5_table)
 ```
 
- -------------------------------------------------------------
+<!-- -------------------------------------------------------------
      &nbsp;       Df   Sum Sq   Mean Sq   F value    Pr(>F)   
  --------------- ---- -------- --------- --------- -----------
-   **Chem**      1    315.4     315.4    0.4844854  0.308059
+   **Chem**      1     151.7     151.7     0.85    
 
-   **Heat**      2     6129     3065     4.708141  0.02181553
+   **Heat**      4     3104      776       4.348   
 
    **Ignot**     1     651       651      3.061    0.05053016
 
  **Residuals**   19    4041     212.7                   
 
     **Total**    23   11136.96
- -------------------------------------------------------------------
+ ------------------------------------------------------------------ -->
  
 ```{r include=FALSE}
 sum((hw5_table$Hardness- mean(hw5_table$Hardness))^2)
-315.4/651
+
+151.7/651
 3065/651
 
-df(0.4844854, 1, 1,log = FALSE)
-df(4.708141, 1, 9,log = FALSE)
-df(3.061, 1, 19,log = FALSE)
+pf(0.4844854, 1, 1,log = FALSE, lower.tail = F)
+pf(4.708141, 1, 9,log = FALSE, lower.tail = F)
+pf(3.061, 1, 19,log = FALSE, lower.tail = F)
 
 9.384^2
 21.06^2
@@ -1140,13 +1142,9 @@ Random effects:
  ----------------- ----------- -------- ----------------------------
  Groups            Name        Variance Std.Dev.
 
- Ignot:(Heat:Chem) (Intercept)  96.29    9.813  
-
- Heat:Chem         (Intercept) 310.60   17.624  
-
- Chem              (Intercept) 267.53   16.356  
-
- Residual                      178.46   13.359  
+   Chem:Heat:Ignot (Intercept)  96.29    9.813  
+ 
+   Residual                    178.46   13.359  
  -------------------------------------------------------------------
 
 ```{r echo=FALSE}
@@ -1157,7 +1155,7 @@ pander::pander(confint(hw5_model))
 
 (c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
 
-The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $0.02181553$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $0.05053016$.
+<!--The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $0.02181553$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $0.05053016$.-->
 
 The results of variance components and condidence intervals show that only random error has significant variance on average value of Hardness at 0.05 significance level. The variance is $178.46$ and the confidence intervale is $[88.05946,443.5236]$ at 0.05 significance level.
 
@@ -1183,7 +1181,7 @@ The plot of studentized residuals versus fitted value shows vertical deviations 
 (e) Report your code here.
 
 ```{r eval=FALSE, echo=T, include=T}
-hw5_model <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
+hw5_model <- lmer(formula = Hardness ~ Chem+Chem:Heat+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
 summary(hw5_model)
 anova(hw5_model)
 confint(hw5_model)
