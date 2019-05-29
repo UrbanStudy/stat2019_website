@@ -1110,32 +1110,38 @@ $\varepsilon_{l(ijk)}$ and $\gamma_{k(ij)}$ are independent.
 library(lme4)
 hw5_model <- lmer(formula = Hardness ~ Chem+Chem:Heat+(1|Chem:Heat:Ignot), data=hw5_table, REML = TRUE)
 hw5_model1 <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
-hw5_model2 <- aov(Hardness ~ Chem+Heat+Ignot, data=hw5_table)
+hw5_model2 <- aov(Hardness ~ Chem*Heat*Ignot, data=hw5_table)
 ```
 
-<!-- -------------------------------------------------------------
-     &nbsp;       Df   Sum Sq   Mean Sq   F value    Pr(>F)   
- --------------- ---- -------- --------- --------- -----------
-   **Chem**      1     151.7     151.7     0.85    
 
-   **Heat**      4     3104      776       4.348   
+By combining some rows, the nested ANOVA is
 
-   **Ignot**     1     651       651      3.061    0.05053016
+ -------------------------------------------------------------------
+       &nbsp;          Df   Sum Sq   Mean Sq   F value    Pr(>F)   
+ --------------------- ---- -------- --------- --------- -----------
+       **Chem**         1    315.4     315.4   0.1954848  0.6812439
 
- **Residuals**   19    4041     212.7                   
+     **Chem:Heat**      4    6453.7  1613.425  4.347878   0.05451892
 
-    **Total**    23   11136.96
- ------------------------------------------------------------------ -->
- 
+  **Chem:Heat:Ignot**   6    2226.5   371.0833  2.078898  0.132204
+
+    **Residuals**      12    2141     178.5                     
+
+     **Total**         23   11136.96
+ -------------------------------------------------------------------
+
 ```{r include=FALSE}
 sum((hw5_table$Hardness- mean(hw5_table$Hardness))^2)
+pander::pander(anova(hw5_model2))
 
-151.7/651
-3065/651
-
-pf(0.4844854, 1, 1,log = FALSE, lower.tail = F)
-pf(4.708141, 1, 9,log = FALSE, lower.tail = F)
-pf(3.061, 1, 19,log = FALSE, lower.tail = F)
+(6129+324.7)/4 
+(651+108.4+125.1+1342)/6
+315.4/1613.425
+1613.425/371.0833
+371.0833/178.5
+pf(0.1954848, 1, 4,log = FALSE, lower.tail = F)
+pf(4.347878, 4, 6,log = FALSE, lower.tail = F)
+pf(2.078898, 6, 12,log = FALSE, lower.tail = F)
 
 9.384^2
 21.06^2
