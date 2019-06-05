@@ -1061,7 +1061,7 @@ $$=n\sum_{i=1}^a\sum_{j=1}^b\frac{(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)}{ab
 
 Consider the three-stage nested design shown in Figure 14.5 to investigate alloy hardness. Using the data that follow, analyze the design, assuming that alloy chemistry and heats are fixed factors and ingots are random. Use the restricted form of the mixed model.
 
-Create a plot of data first.
+
 
 ```{r, echo=FALSE, out.width='33%',fig.show='hold'}
 hw5_table <- readxl::read_xlsx("TableP14_5.xlsx")
@@ -1075,6 +1075,7 @@ library(ggplot2)
 ggplot(hw5_table, aes(x=Heat,y=Hardness, shape = Ignot, color=Ignot))+ stat_summary() + labs(y= "Mean Hardness", x="Heat", shape="Ingots", color = "Ingnot")+facet_wrap(facet="Chem")+theme_light()
 ```
 
+The plots of data show that the average hardness of alloy among three types of heats are different. There is no obvious difference between two chemistry and between two ingots.
 
 (a) Write the complete model you would fit for these data.
 
@@ -1144,7 +1145,7 @@ pf(4.347878, 4, 6,log = FALSE, lower.tail = F)
 pf(2.078898, 6, 12,log = FALSE, lower.tail = F)
 
 9.384^2
-21.06^2
+18.43^2
 ```
 
 Random effects:
@@ -1159,15 +1160,17 @@ Random effects:
 
 ```{r echo=FALSE}
 # summary(hw5_model)
-pander::pander(anova(hw5_model))
+# pander::pander(anova(hw5_model))
 pander::pander(confint(hw5_model))
 ```
 
 (c) Write the conclusions along with p values or using confidence intervals. Based on your conclusion, provide recommendations appropriately.
 
-The results of ANOVA show that, Only Heats have significant effects on avarage value of Hardness at 0.05 significance level. The P-value is $***$. Ingots have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $***$.
+The results of ANOVA show that, Only the Heats nested in the Chemistry have significant effects on avarage value of Hardness at 0.10 significance level. The P-value is $0.05451892$. There is no significant evidents that prove the Chemistry and Ingots have effects on avarage value of Hardness. The P-value is $0.3921308$ and $0.132204$.
 
-The results of variance components and condidence intervals show that only random error has significant variance on average value of Hardness at 0.05 significance level. The variance is $178.46$ and the confidence intervale is $[88.05946,443.5236]$ at 0.05 significance level.
+The results of variance components and condidence intervals show that only Heats nested in the Chemistry have significant variance on average value of Hardness at 0.05 significance level. The variance is $96.29$ and the confidence intervale is $[88.05946,339.6649]$ at 0.05 significance level.
+
+Based on these result, next experiment could neglect the factor of Ingot. A crossed factorial design, including Chemistry and Heat can examine the main effects and interaction effects more clear.
 
 (d) Check model assumptions.
 
@@ -1182,7 +1185,7 @@ hist(hw5_table$Hardness)
 plot(hw5_model)
 ```
 
-The histogram of residuals and the QQ plot didn’t show obvious violation of normality.
+The histogram of residuals is not a perfect normal distribution. The QQ plot didn’t show obvious violation of normality.
 
 The plot of residuals versus fitted value shows the residuals are evenly distributed about zero at each prededict value (zero mean).
 
@@ -1191,7 +1194,7 @@ The plot of studentized residuals versus fitted value shows vertical deviations 
 (e) Report your code here.
 
 ```{r eval=FALSE, echo=T, include=T}
-hw5_model <- lmer(formula = Hardness ~ Chem+Chem:Heat+(1|Chem/Heat/Ignot), data=hw5_table, REML = TRUE)
+hw5_model <- lmer(formula = Hardness ~ Chem+Chem:Heat+(1|Chem:Heat:Ignot), data=hw5_table, REML = TRUE)
 summary(hw5_model)
 anova(hw5_model)
 confint(hw5_model)
