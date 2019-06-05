@@ -14,35 +14,67 @@ spacing: double
 
 a) Find the MLE of $\gamma$
 
-$\mu_i=\gamma x_i$, $\mu_i=\gamma x_i$
+$$L(\gamma)=\prod_{i=1}^{n}(\frac{\mu_i^{y_i}}{y_i!}e^{-\mu_i})=\prod_{i=1}^{n}\frac{(\gamma x_i)^{y_i}e^{-\gamma x_i}}{y_i!}=\frac{\gamma^{\sum_{i=1}^{n}y_i}\prod_{i=1}^{n}x_i^{y_i}}{\prod_{i=1}^{n}y_i!}e^{-\gamma\sum_{i=1}^{n}x_i},\quad y_i \in 0,1,2..$$
 
+$$l(\gamma)=\ln\gamma\sum_{i=1}^{n}y_i+\sum_{i=1}^{n}x_i^{y_i}-\sum_{i=1}^{n}\ln y_i!-\gamma\sum_{i=1}^{n}x_i$$
 
-$$L(\gamma)=\prod_{i=1}^{n}(\frac{\mu_i^y}{y!}e^{-\mu_i})=\prod_{i=1}^{n}\frac{(\gamma x_i)^ye^{-\gamma x_i}}{y!}=\frac{(\gamma^n\prod_{i=1}^{n}x_i)^{y}}{\prod_{i=1}^{n}y!}e^{-\gamma\sum_{i=1}^{n}x_i},\quad y \in 0,1..$$
+$$l'(\gamma)=\frac{\sum_{i=1}^{n}y_i}\gamma-\sum_{i=1}^{n}x_i\overset{\text{set}}{=}0$$
 
-$$l(\gamma)=ny\ln\gamma+y\sum_{i=1}^{n}\ln x_i-\sum_{i=1}^{n}\ln y!-\gamma\sum_{i=1}^{n}x_i$$
-
-$$l'(\gamma)=\frac{ny}\gamma-\sum_{i=1}^{n}x_i\overset{\text{set}}{=}0$$
-
-$\hat\\gamma_{MLE}=\frac{ny}{\sum_{i=1}^{n}x_i}$
-
+$$\hat\gamma_{MLE}=\frac{\sum_{i=1}^{n}y_i}{\sum_{i=1}^{n}x_i}$$
 
  ---
 
 b) Find the mean and variance of $\hat\gamma_{MLE}$
 
+For $x_i$ are known constants. $Y_i\sim Poisson(\mu_i)$, $E[y_i]=Var[y_i]=\mu_i=\gamma x_i$,
+
+$$E[\hat\gamma_{MLE}]=\frac{E[\sum_{i=1}^{n}y_i]}{\sum_{i=1}^{n}x_i}=\frac{\sum_{i=1}^{n}E[y_i]}{\sum_{i=1}^{n}x_i}=\frac{\sum_{i=1}^{n}\gamma x_i}{\sum_{i=1}^{n}x_i}=\gamma$$
+
+For $Y_i$ are independent random variables, $Cov(y_i,y_j)=0,i\neq j$, $Var[\sum_{i=1}^{n}y_i]=\sum_{i=1}^{n}Var[y_i]$ 
+
+$$Var[\hat\gamma_{MLE}]=\frac{Var[\sum_{i=1}^{n}y_i]}{(\sum_{i=1}^{n}x_i)^2}=\frac{\sum_{i=1}^{n}Var[y_i]}{(\sum_{i=1}^{n}x_i)^2}=\frac{\sum_{i=1}^{n}\gamma x_i}{(\sum_{i=1}^{n}x_i)^2}=\frac{\gamma}{\sum_{i=1}^{n}x_i}$$
 
  ---
 
-2. Consider the regression  model $Y_I=\beta_0+\beta_1x_i+\varepsilon_i$, $i=1,..,n$. Find the maximum likelihood estimates of the paramiters if:
+2. Consider the regression  model $Y_i=\beta_0+\beta_1x_i+\varepsilon_i$, $i=1,..,n$. Find the maximum likelihood estimates of the paramiters if:
 
 a)$\varepsilon_i\sim N(0,\sigma^2x_i^2)$, independent for $i=1,..,n$.
 
+For $E[\varepsilon_i]=0,\ Var[\varepsilon_i]=\sigma^2x_i^2$, $x_i$ and $\varepsilon_i$ are independents,
+
+$E[y_i]=E[\beta_0+\beta_1x_i]+E[\varepsilon_i]=\beta_0+\beta_1x_i$
+
+$Var[y_i]=Var[\beta_0+\beta_1x_i]+Var[\varepsilon_i]=\sigma^2x_i^2$
+
+From Slutsky's theorem? C.L.T.?
+
+$Y_i\sim N(\beta_0+\beta_1x_i,\sigma^2x_i^2)$
+
+$f_Y(y_i)=\frac{1}{ x_i\sqrt{2\pi\sigma^2}}e^{\frac{-1}{2\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}$
+
+$$L(\sigma)=\prod_{i=1}^{n}({ x_i\sqrt{2\pi\sigma^2}})^{-1}e^{\sum_{i=1}^{n}\frac{-1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}={(2\pi\sigma^2)^{-\frac{n}2} (\prod_{i=1}^{n}x_i})^{-1}e^{\sum_{i=1}^{n}\frac{-1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}$$
+
+$$l(\sigma)=-n\ln\sigma^2-\frac{n}{2}\ln{(2\pi)}-\ln(\prod_{i=1}^{n}x_i)-\sum_{i=1}^{n}\frac{1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2$$
+
+$$l'(\sigma)=-\frac{n}{\sigma^2}+\frac{1}{\sigma^4}\sum_{i=1}^{n}\frac{1}{x_i^2}(y_i-\beta_0-\beta_1x_i)^2\overset{\text{set}}{=}0$$
+
+$$\hat\sigma_{MLE}=\frac{1}{n}\sum_{i=1}^{n}\frac{1}{x_i^2}(y_i-\beta_0-\beta_1x_i)^2$$
 
  ---
 
 b) $\varepsilon_i\sim i.i.d.\ f(\varepsilon;\lambda)=\frac\lambda2e^{-\lambda|x|}$.
 
+$\varepsilon_i=y_i-\beta_0-\beta_1x_i+$
 
+$f_Y(y_i)=\frac{\lambda}{ 2}e^{-\lambda|y_i-\beta_0-\beta_1x_i|}$
+
+$$L(\lambda)=\prod_{i=1}^{n}(\frac{\lambda}{ 2}e^{-\lambda|y_i-\beta_0-\beta_1x_i|})=\lambda^n2^{-n}e^{-\lambda\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|}$$
+
+$$l(\lambda)=n\ln\lambda-n\ln2-\lambda\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|$$
+
+$$l'(\lambda)=\frac{n}\lambda-\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|\overset{\text{set}}{=}0$$
+
+$$\hat\lambda_{MLE}=\frac{n}{\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|}$$
 
  ---
 
@@ -50,148 +82,62 @@ b) $\varepsilon_i\sim i.i.d.\ f(\varepsilon;\lambda)=\frac\lambda2e^{-\lambda|x|
 
 a) the Mean Absolute Deviation, or $\frac1n\sum_{i=1}^n|X_i-\bar X_i|$.
 
+The finite breakdown point is the smallest proportion $m/n$ of the sample values such that $|\hat\theta^*-\hat\theta|$ can be made arbitarily large by corrupting m data values and computing $\hat\theta^*$, where $n$ is the samle size, $\hat\theta$ is the estimator. The limit as $n\to\infty$ is called the breakdown point.
+
+Replace $X_i$ with $X_i^*$
+
+$|\hat\theta^*-\hat\theta|=|\frac1n\sum_{i=1}^n|X_n^*-\bar X_i|-\frac1n\sum_{i=1}^n|X_n-\bar X_i||=\frac1n|X_n^*- X_n|=\frac1n$
+
+The breakdown point $=\frac{1}{n}$
+
+$$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}\frac1n=0$$
 
  ---
 
 b) the Median Absolute Deviation, or Median$\{(X_1-\bar X_i),..,(X_n-\bar X_i)\}$.
 
+When $n$ is even, 
 
+$|\hat\theta^*-\hat\theta|=|(X^*_{\frac{n}2}-\bar X_i)-(X_{\frac{n}2}-\bar X_i)|=|X_{\frac{n}2}^*- X_{\frac{n}2}|$
+
+The breakdown point $=\frac{n/2}{n}=\frac12$
+
+$$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}(\frac12)=\frac12$$
+
+When $n$ is odd, 
+
+$|\hat\theta^*-\hat\theta|=|(X^*_{\frac{n+1}2}-\bar X_i)-(X_{\frac{n+1}2}-\bar X_i)|=|X_{\frac{n+1}2}^*- X_{\frac{n+1}2}|$
+
+The breakdown point $=\frac{(n+1)/2}{n}=\frac12+\frac1{2n}$
+
+$$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}(\frac12+\frac1{2n})=\frac12$$
 
  ---
 
 4. Assume that $X_1,X_2,..X_{n}$ are i.i.d. $Uniform(a,b)$. Find the asymptotic relative efficiency of the sample median to the sample mean.
 
+For $X\sim Unif(a,b)$, $E[X]=\frac{a+b}2,\ Var[X]=\frac{(b-a)^2}{12}$, 
+$\bar X=\frac1n\sum_{i=1}^nx_i$, 
 
+$E[\bar X]=E[\frac1n\sum_{i=1}^nx_i]=\frac1n\sum_{i=1}^nE[x_i]=\frac1n\sum_{i=1}^n\frac{a+b}2=\frac{a+b}2$
 
+For $X_i$ are independent,
 
+$Var[\bar X]=Var[\frac1n\sum_{i=1}^nx_i]=\frac1{n^2}\sum_{i=1}^nVar[x_i]=\frac1{n^2}\sum_{i=1}^n\frac{(b-a)^2}{12}=\frac{(b-a)^2}{12n}$
 
-#
+From Slutsky's theorem? C.L.T.?
 
-Assume that $X_1,X_2,..X_{10}$ is a random sample from a distribution having a p.d.f. of the form $f(x)=\begin{cases}\lambda x^{\lambda-1}& 0<x<1\\0&\text{otherwise}\end{cases}$
+$$\bar X\sim N(\frac{a+b}2,\frac{(b-a)^2}{12n})$$
 
-1.  Find the best critical region of level 0.05 for testing $H_0: \lambda=1/2$ against $H_1:\lambda=1$
+For large $n$, the sample median $m_n\approx N(M, \frac{1}{4nf^2(M)})$, where $M$ is the population median, $f(x)$ is the p.d.f. of $X$
 
-The regiction region is $R=\{\vec x: \Lambda\le C\}$
+$E[m_n]=M$
 
-$$\Lambda=\frac{L(\hat\lambda_0|x)}{L(\hat\lambda_{1}|x)}=\frac{(1/2)^{10}(\prod_{i=1}^{10} x_i)^{1/2-1}}{(1)^{10}(\prod_{i=1}^{10} x_i)^{1-1}}=(1/2)^{10}e^{1/2(-\sum_{i=1}^{10}\ln x_i)}\le C\implies-\sum_{i=1}^{10}\ln x_i\le C'$$
+$Var[m_n]=\frac{1}{4nf^2(M)}=\frac{(b-a)^2}{4n}$
 
-Let $T_i=-\ln x_i$, $0<x<1$, then $X=e^{-t}$, $\frac{dx}{dt}=-e^{-t}$
+The asymptotic relative efficiency of $m_n$ to $\bar X$
 
-$g(t)=\lambda(e^{-t})^{\lambda-1}|-e^{-t}|=\lambda e^{-\lambda t}\sim Exp(\lambda), t>0$
+$$=\frac{Var[\bar X]}{Var[m_n]}=\frac{\frac{(b-a)^2}{12n}}{\frac{(b-a)^2}{4n}}=\frac13$$
 
-So $\sum_{i=1}^{10}T_i=\sum_{i=1}^{10}(-\ln x_i)\sim Gamma(\alpha=10,\beta=\frac1{\lambda})$
-
-Under $H_0: \lambda=1/2$, $-\sum_{i=1}^{10}\ln x_i\sim Exp(1/2)=Gamma(\alpha=10,\beta=2)=\chi^2_{20}$. Then,
-
-For Reject $H_0$, $\Lambda\le C$ is equivalent $-\sum_{i=1}^{10}\ln x_i\le C'$, where $C'$ cuts off the upper $\alpha$ area in the $\chi^2_{20}$ distribution.
-
-$1-P(-\sum_{i=1}^{10}\ln x_i\le C'|\lambda=1/2)=\alpha=0.05$
-
-$C'=\chi^2_{(1-0.05),20}=10.85081$. So the critical region are $-\sum_{i=1}^{10}\ln x_i\in(0, 10.85081]$.
-
-```{r eval=FALSE, include=FALSE}
-qchisq(0.05, 20, lower.tail = T, log.p = FALSE)
-qchisq(0.95, 20, lower.tail = F, log.p = FALSE)
-```
-
- ---
- 
-2.  Find the power of the test in (1)
-
-Let $W_i=2T_i=-2\ln x_i$, $0<x<1$, then $X=e^{-\frac12w}$, $\frac{dx}{dw}=-\frac12e^{-\frac12w}$
-
-$g(w)=\lambda(e^{-\frac12w})^{\lambda-1}|-\frac12e^{-\frac12w}|=\frac\lambda2 e^{-\frac\lambda2 w}\sim Exp(\frac\lambda2), w>0$
-
-Under $H_1: \lambda=1$, $W=-2\sum_{i=1}^{10}\ln x_i\sim Exp(1/2)=Gamma(\alpha=10,\beta=2)=\chi^2_{20}$.
-
-The rejection rule is $-\sum_{i=1}^{10}\ln x_i\le 10.85081$, then
-
-Power $=P(\text{reject }H_0|H_1\text{ is ture})$
-$$=P(-\sum_{i=1}^{10}\ln x_i\le 10.85081|\lambda=1)=P(-2\sum_{i=1}^{10}\ln x_i\le 2*10.85081|\lambda=1)=0.6430814$$
-
-```{r echo=FALSE, out.width='45%'}
-curve(dchisq(x, df=20), col='red', main = "Chi-Square Density Graph",from=0,to=60); abline(v=10.85081,lty=2);text(10.85081,0, "10.85")
-curve(dchisq(2*x, df=20),add = TRUE,col='blue',lty=2)
-polygon(c(0,seq(0,10.85081,0.01),10.85081),c(0,dchisq(2*seq(0,10.85081,0.01), df=20),0), density=10, angle=45,lty =3)
-```
-
-```{r eval=FALSE, include=FALSE}
-pchisq(2*10.85081, 20, lower.tail = T, log.p = FALSE)
-```
-
- ---
- 
-3. Is your answer from (1) uniformly most powerful for testing $H_0: \lambda=1/2$ against $H_1:\lambda>1/2$? Explain
-
-For $H_0: \lambda=1/2$, $H_1:\lambda=\lambda_1$ where $\lambda_1>1/2$, Neyman-Pearson Theorem says that the test is most powerful when
-
-$$\Lambda=\frac{\sup L(1/2|x)}{\sup L(\lambda_{1}|x)}=\frac{(1/2)^{10}(\prod_{i=1}^{10} x_i)^{1/2-1}}{(\lambda_1)^{10}(\prod_{i=1}^{10} x_i)^{\lambda_1-1}}=(2\lambda_1)^{-10}e^{(1/2-\lambda_1)\sum_{i=1}^{10} x_i}\overset{set}{\le} C$$
-
-Take derivative of both sides, $-10\ln(2\lambda_1)(\lambda_1-1/2)(-\sum_{i=1}^{10}\ln x_i)\le \ln C$
-
-For $\lambda_1-1/2\ge0$,$\Lambda\le C$ is equivalent $-\sum_{i=1}^{10}\ln x_i\le C'$, the most powerfule test is $T=-\sum_{i=1}^{10}\ln x_i$
-
-The sturcture of the test $T$ does not involve the actual value of $\lambda_1$, then $T$ is UMP.
-
- ---
-
-4. Find the  for the Cramer-Rao lower bound for variance of an unbiased estimator of $\lambda$.
-
-$\ln f(x)=\ln\lambda+(\lambda-1)\ln x_i$
-
-$\frac{\partial}{\partial\lambda}\ln f(x)=\frac{1}\lambda+\ln x_i$
-
-$\frac{\partial^2}{\partial\lambda^2}\ln f(x)=-\frac{1}{\lambda^2}$
-
-$I_{\lambda}=-E[\frac{\partial^2}{\partial\lambda^2}\ln f(x)]=\frac{1}{\lambda^2}$
-
-$$CRLB=\frac1{nI_{\lambda}}=\frac{\lambda^2}{10}$$
-
- ----
- 
-5. Find the MUVE of $\lambda$.
-
-$f(x)=\lambda x^{\lambda-1}=\lambda e^{-(\lambda-1)(-\ln x)}$ is a member of the exponential family.
-
-$$L(\lambda)=\lambda^{10}e^{-(\lambda-1)(-\sum^{10}_{i=1} \ln x_i)}=h(x)c(\lambda)e^{W_i(\lambda)t_i(\vec x)}$$
-
-For pdf $f(x)>0$ and $x^{\lambda-1}>0$, $\lambda>0$. $W_i(\lambda)=\lambda-1$ contains an open interval in $\Bbb R$, so $T=-\sum^{10}_{i=1} \ln x_i$ is a complete sufficient statistic for $\lambda$.
-
-$L(\lambda)=\lambda^{10}(\prod_{i=1}^{10} x_i)^{\lambda-1}=\lambda^{10}e^{(\lambda-1)\sum^{10}_{i=1} \ln x_i}$
-
-$l(\lambda)=10\ln\lambda+(\lambda-1)\sum^{10}_{i=1} \ln x_i$
-
-$l'(\lambda)=\frac{10}\lambda+\sum^{10}_{i=1} \ln x_i\overset{\text{set}}{=}0$
-
-$\hat\lambda_{MLE}=\frac{10}{-\sum_{i=1}^{10}\ln x_i}$
-
-For $-\sum_{i=1}^{10}\ln x_i\sim Gamma(\alpha=10,\beta=\frac1\lambda)$
-
-$E[\hat\lambda_{MLE}]=10E[Y^{-1}]=10\frac{\beta^{-1}\Gamma(\alpha-1)}{\Gamma(\alpha)}=\frac{10\lambda\Gamma(10-1)}{\Gamma(10)}=\frac{10\lambda}{9}$
-
-Create an unbiased estimator $\hat\lambda_{U}=\frac{9}{10}\hat\lambda_{MLE}$.
-
-$E[\hat\lambda_{U}]=E[\frac{9}{10}\hat\lambda_{MLE}]=\frac{9}{10}\cdot\frac{10\lambda}{9}=\lambda$ 
-
-$$\hat\lambda_{U}=\frac{9}{10}\hat\lambda_{MLE}=\frac{9}{-\sum_{i=1}^{10}\ln x_i}=\frac9T$$
-
-From Lehmann-Scheffe Theorem,$\hat\lambda_{U}=\frac9T$ is the unique MVUE of $\lambda$ because it is an unbiased estimator of $\lambda$ and a function of $T$, which is a complete sufficient statistic for $\lambda$.
-
- ---
-
-
-6. Show that the MUVE of $\lambda$ is asymptotically efficient. 
-
-When sample size $n\to\infty$, from previou results, $CRLB=\frac1{nI_{\lambda}}=\frac{\lambda^2}{n}$, $-\sum_{i=1}^{n}\ln x_i\sim Gamma(n,\frac1\lambda)$
-
-$\hat\lambda_{U}=\frac{n-1}{-\sum_{i=1}^{n}\ln x_i}=\frac{n-1}T,\quad E[\hat\lambda_{U}]=\lambda$
-
-$E[\hat\lambda_{U}^2]=(n-1)^2E[T^{-2}]=(n-1)^2\frac{\beta^{-2}\Gamma(\alpha-2)}{\Gamma(\alpha)}=\frac{(n-1)^2\lambda^2\Gamma(n-2)}{\Gamma(n)}=\frac{(n-1)\lambda^2}{n-2}$
-
-$Var[\hat\lambda_{U}]=E[\hat\lambda_{U}^2]-E[\hat\lambda_{U}]^2=\frac{(n-1)\lambda^2}{n-2}-\lambda^2=\frac{\lambda^2}{n-2}$
-
-$$\lim_{n\to\infty}\frac{CRLB}{Var[\hat\lambda_{U}]}=\lim_{n\to\infty}\frac{\frac{\lambda^2}{n}}{\frac{\lambda^2}{n-2}}=\lim_{n\to\infty}\frac{n-2}{n}=1$$
- 
-Therefore, the MUVE $\frac{n-1}{-\sum_{i=1}^{10}\ln x_i}$ is asymptotically efficient.
-
+Therefore, the sample mean is asymptotic more efficiency than sample median.
 
