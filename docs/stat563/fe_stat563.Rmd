@@ -40,41 +40,79 @@ $$Var[\hat\gamma_{MLE}]=\frac{Var[\sum_{i=1}^{n}y_i]}{(\sum_{i=1}^{n}x_i)^2}=\fr
 
 a)$\varepsilon_i\sim N(0,\sigma^2x_i^2)$, independent for $i=1,..,n$.
 
-For $E[\varepsilon_i]=0,\ Var[\varepsilon_i]=\sigma^2x_i^2$, $x_i$ and $\varepsilon_i$ are independents,
+For $E[\varepsilon_i]=0,\ Var[\varepsilon_i]=\sigma^2x_i^2$, $x_i$ and $\varepsilon_i$ are independent,
 
 $E[y_i]=E[\beta_0+\beta_1x_i]+E[\varepsilon_i]=\beta_0+\beta_1x_i$
 
 $Var[y_i]=Var[\beta_0+\beta_1x_i]+Var[\varepsilon_i]=\sigma^2x_i^2$
 
-From Slutsky's theorem? C.L.T.?
-
 $Y_i\sim N(\beta_0+\beta_1x_i,\sigma^2x_i^2)$
 
 $f_Y(y_i)=\frac{1}{ x_i\sqrt{2\pi\sigma^2}}e^{\frac{-1}{2\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}$
 
-$$L(\sigma)=\prod_{i=1}^{n}({ x_i\sqrt{2\pi\sigma^2}})^{-1}e^{\sum_{i=1}^{n}\frac{-1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}={(2\pi\sigma^2)^{-\frac{n}2} (\prod_{i=1}^{n}x_i})^{-1}e^{\sum_{i=1}^{n}\frac{-1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}$$
+$$L(\beta_0,\beta_1,\sigma^2)=\prod_{i=1}^{n}({ x_i\sqrt{2\pi\sigma^2}})^{-1}e^{\sum_{i=1}^{n}\frac{-1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}={(2\pi\sigma^2)^{-\frac{n}2} (\prod_{i=1}^{n}x_i})^{-1}e^{\sum_{i=1}^{n}\frac{-1}{2\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2}$$
 
-$$l(\sigma)=-n\ln\sigma^2-\frac{n}{2}\ln{(2\pi)}-\ln(\prod_{i=1}^{n}x_i)-\sum_{i=1}^{n}\frac{1}{\sigma^2x_i^2}(y_i-\beta_0-\beta_1x_i)^2$$
+$$l(\beta_0,\beta_1,\sigma^2)=-\frac{n}2\ln\sigma^2-\frac{n}{2}\ln{(2\pi)}-\ln(\prod_{i=1}^{n}x_i)-\frac{1}{2\sigma^2}\sum_{i=1}^{n}(\frac{y_i}{x_i}-\frac{\beta_0}{x_i}-\beta_1)^2$$
 
-$$l'(\sigma)=-\frac{n}{\sigma^2}+\frac{1}{\sigma^4}\sum_{i=1}^{n}\frac{1}{x_i^2}(y_i-\beta_0-\beta_1x_i)^2\overset{\text{set}}{=}0$$
+Let $u_i=\frac{1}{x_i}$, $v_i=\frac{y_i}{x_i}$
 
-$$\hat\sigma_{MLE}=\frac{1}{n}\sum_{i=1}^{n}\frac{1}{x_i^2}(y_i-\beta_0-\beta_1x_i)^2$$
+$\frac{\partial l}{\partial\beta_1}=-\frac{1}{2\sigma^2}\sum_{i=1}^{n}2(v_i-u_i\beta_0-\beta_1)(-1)\overset{\text{set}}{=}0$
+
+$$n\hat\beta_1=\sum_{i=1}^{n}v_i-\hat\beta_0\sum_{i=1}^{n}u_i\implies\hat\beta_1=\bar v-\bar u\hat\beta_0\quad (1)$$
+
+$\frac{\partial l}{\partial\beta_0}=-\frac{1}{2\sigma^2}\sum_{i=1}^{n}2(v_i-u_i\beta_0-\beta_1)(-u_i)\overset{\text{set}}{=}0$
+
+$$\hat\beta_1\sum_{i=1}^{n}u_i=\sum_{i=1}^{n}u_iv_i-\hat\beta_0\sum_{i=1}^{n}u_i^2\implies n\bar u\hat\beta_1=\sum_{i=1}^{n}u_iv_i-\hat\beta_0\sum_{i=1}^{n}u_i^2\quad (2)$$
+
+The solution of (1) and (2) is 
+
+$$\hat\beta_0=\frac{\sum_{i=1}^{n}u_iv_i-n\bar u\bar v}{\sum_{i=1}^{n}u_i^2-n\bar u^2}=\frac{S_{uv}}{S_{uu}}$$
+
+$$\hat\beta_1=\bar v-\bar u\frac{S_{uv}}{S_{uu}}$$
+
+$\frac{\partial l}{\partial\sigma^2}=-\frac{n}{2\sigma^2}+\frac{1}{2\sigma^4}\sum_{i=1}^{n}(v_i-u_i\beta_0-\beta_1)^2\overset{\text{set}}{=}0$
+
+$\hat\sigma^2=\frac{1}{n}\sum_{i=1}^{n}(v_i-u_i\beta_0-\beta_1)^2=\frac{1}{n}\sum_{i=1}^{n}(v_i-u_i\beta_0-\bar v+\bar u\hat\beta_0)^2$
+
+$=\frac{1}{n}\left[\sum_{i=1}^{n}(v_i-\bar v)^2+\beta_0^2\sum_{i=1}^{n}(u_i-\bar u)^2-2\beta_0\sum_{i=1}^{n}(u_i-\bar u)(v_i-\bar v)\right]$
+
+$$=\frac{1}{n}\left[S_{vv}+(\frac{S_{uv}}{S_{uu}})^2S_{uu}^2-2\frac{S_{uv}}{S_{uu}}S_{uv}\right]=\frac{1}{n}\left[S_{vv}-\frac{S_{uv}^2}{S_{uu}}\right]$$
+
+For $u_i=\frac{1}{x_i}$, $v_i=\frac{y_i}{x_i}$
+
+$$\hat\beta_0=\frac{\sum_{i=1}^{n}u_iv_i-n\bar u\bar v}{\sum_{i=1}^{n}u_i^2-n\bar u^2}=\frac{\sum_{i=1}^{n}(y_i/x_i^2)-n\overline{(1/x)}\overline{(y/x)}}{\sum_{i=1}^{n}(1/x_i)^2-n\overline{(1/x)}^2}$$
+
+$$\hat\beta_1=\frac{\bar v\sum_{i=1}^{n}u_i^2-\bar u\sum_{i=1}^{n}u_iv_i}{\sum_{i=1}^{n}u_i^2-n\bar u^2}=\frac{\overline{(y/x)}\sum_{i=1}^{n}(1/x_i)^2-\overline{(1/x)}\sum_{i=1}^{n}(y_i/x_i^2)}{\sum_{i=1}^{n}(1/x_i)^2-n\overline{(1/x)}^2}$$
+
+$$\hat\sigma^2=\frac{1}{n}\left\{\sum_{i=1}^{n}(y_i^2/x_i^2)-n\overline{(y/x)}^2-\frac{\left[\sum_{i=1}^{n}(y_i/x_i^2)-n\overline{(1/x)}\overline{(y/x)}\right]^2}{\sum_{i=1}^{n}(1/x_i)^2-n\overline{(1/x)}^2}\right\}$$
 
  ---
 
 b) $\varepsilon_i\sim i.i.d.\ f(\varepsilon;\lambda)=\frac\lambda2e^{-\lambda|x|}$.
 
-$\varepsilon_i=y_i-\beta_0-\beta_1x_i+$
+$\varepsilon_i=y_i-\beta_0-\beta_1x_i$
 
 $f_Y(y_i)=\frac{\lambda}{ 2}e^{-\lambda|y_i-\beta_0-\beta_1x_i|}$
 
-$$L(\lambda)=\prod_{i=1}^{n}(\frac{\lambda}{ 2}e^{-\lambda|y_i-\beta_0-\beta_1x_i|})=\lambda^n2^{-n}e^{-\lambda\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|}$$
+Assume $\varepsilon_1,..,\varepsilon_n$ are ordered. Let $\varepsilon_1,\varepsilon_2,..,\varepsilon_j<0$, $\varepsilon_{j+1},\varepsilon_{j+2},..,\varepsilon_n>0$
 
-$$l(\lambda)=n\ln\lambda-n\ln2-\lambda\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|$$
+$$L(\beta_0,\beta_1,\lambda)=\prod_{i=1}^{n}(\frac{\lambda}{ 2}e^{-\lambda|y_i-\beta_0-\beta_1x_i|})=\lambda^n2^{-n}e^{\lambda\sum_{i=1}^{j}(y_i-\beta_0-\beta_1x_i)-\lambda\sum_{i=j+1}^{n}(y_i-\beta_0-\beta_1x_i)}$$
 
-$$l'(\lambda)=\frac{n}\lambda-\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|\overset{\text{set}}{=}0$$
+$$l(\beta_0,\beta_1,\lambda)=n\ln\lambda-n\ln2+\lambda\sum_{i=1}^{j}(y_i-\beta_0-\beta_1x_i)-\lambda\sum_{i=j+1}^{n}(y_i-\beta_0-\beta_1x_i)$$
 
-$$\hat\lambda_{MLE}=\frac{n}{\sum_{i=1}^{n}|y_i-\beta_0-\beta_1x_i|}$$
+$$\frac{\partial l}{\partial\beta_1}=-\lambda\sum_{i=1}^{j}x_i+\lambda\sum_{i=j+1}^{n}x_i=\lambda(\sum_{i=j+1}^{n}x_i-\sum_{i=1}^{j}x_i)\overset{\text{set}}{=}0\implies x_j=\bar x$$
+
+$$\frac{\partial l}{\partial\beta_0}=-j\lambda+(n-j)\lambda=(n-2j)\lambda\overset{\text{set}}{=}0\implies j=\frac{n}2,\ x_j=x_{m}\quad(median)$$
+
+To minimize the total absolute deviations,
+
+$$\begin{cases}y_m-\hat\beta_0-\hat\beta_1x_m=0\\ \bar y-\hat\beta_0-\hat\beta_1\bar x=0\end{cases}\implies \begin{cases}\hat\beta_0=\frac{x_m\bar y-y_m\bar x}{x_m-\bar x}\\ \hat\beta_1=\frac{y_m-\bar y}{x_m-\bar x}\end{cases}$$
+
+For median is more robust to outliers,
+
+$$\frac{\partial l}{\partial\lambda}=\frac{n}\lambda+\sum_{i=1}^{\frac{n}2}(y_i-\beta_0-\beta_1x_i)-\sum_{i=\frac{n}2+1}^{n}(y_i-\beta_0-\beta_1x_i)\overset{\text{set}}{=}0$$
+
+$$\hat\lambda_{MLE}=\frac{n}{\sum_{i=1}^{n}|y_i-\frac{x_m\bar y-y_m\bar x}{x_m-\bar x}-\frac{y_m-\bar y}{x_m-\bar x}x_i|}$$
 
  ---
 
@@ -84,33 +122,62 @@ a) the Mean Absolute Deviation, or $\frac1n\sum_{i=1}^n|X_i-\bar X_i|$.
 
 The finite breakdown point is the smallest proportion $m/n$ of the sample values such that $|\hat\theta^*-\hat\theta|$ can be made arbitarily large by corrupting m data values and computing $\hat\theta^*$, where $n$ is the samle size, $\hat\theta$ is the estimator. The limit as $n\to\infty$ is called the breakdown point.
 
-Replace $X_i$ with $X_i^*$
+Assume the $X_1,..,X_n$ are ordered.
 
-$|\hat\theta^*-\hat\theta|=|\frac1n\sum_{i=1}^n|X_n^*-\bar X_i|-\frac1n\sum_{i=1}^n|X_n-\bar X_i||=\frac1n|X_n^*- X_n|=\frac1n$
+Let $X_j<\bar X,\ X_{j+1}>\bar X$,replace $X_n$ with a arbitrarily large $X_n^*$. 
 
-The breakdown point $=\frac{1}{n}$
+If $X_n^*>nX_n-\sum_{i=1}^{n-1}X_i$, then $\bar X^*>X_n$
 
-$$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}\frac1n=0$$
+$|\hat\theta^*-\hat\theta|=|\frac1n\sum_{i=1}^{n-1}(-X_i+\bar X^*)+\frac1n(X_n^*-\bar X^*)-\frac1n\sum_{i=1}^{j}(-X_i+\bar X)-\frac1n\sum_{i=j+1}^{n-1}(X_i-\bar X)-\frac1n(X_n-\bar X)|$
+
+$=\frac1n|\sum_{i=1}^{j}(\bar X^*-\bar X)+\sum_{i=j+1}^{n-1}(\bar X^*+\bar X)-2\sum_{i=j+1}^{n-1}X_i-(\bar X^*-\bar X)+X_n^*-X_n|$
+
+$=\frac1n|(n-2)\bar X^*+(n-2j)\bar X-2\sum_{i=j+1}^{n-1}X_i+X_n^*-X_n|$
+
+$=\frac1{n^2}|(n-2)(\sum_{i=1}^{n-1}X_i+X_n^*)+(n-2j)(\sum_{i=1}^{n-1}X_i+X_n)-2n\sum_{i=j+1}^{n-1}X_i+nX_n^*-nX_n|$
+
+$=\frac1{n^2}|(2n-2j-2)\sum_{i=1}^{n-1}X_i+(2n-2)X_n^*-2jX_n-2n\sum_{i=j+1}^{n-1}X_i|$
+
+$=\frac2{n^2}|(n-j-1)\sum_{i=1}^{n-1}X_i+(n-1)X_n^*-jX_n-n\sum_{i=j+1}^{n-1}X_i|$
+
+$$=\frac2{n^2}|n\sum_{i=1}^{j}X_i-j\sum_{i=1}^{n}X_i-\sum_{i=1}^{n-1}X_i+(n-1)X_n^*|$$
+
+We just need corrupt one value in order to corrupt MAD.
+
+The finite breakdown point $=\frac{1}{n}$
+
+The infinite breakdown point
+$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}\frac1n=0$
 
  ---
 
-b) the Median Absolute Deviation, or Median$\{(X_1-\bar X_i),..,(X_n-\bar X_i)\}$.
+b) the Median Absolute Deviation, or Median$\{|X_1-\bar X|,..,|X_n-\bar X|\}$.
 
-When $n$ is even, 
+Assume the $X_1,..,X_n$ are ordered. Let $X_j<\bar X<X_{j+1}$
 
-$|\hat\theta^*-\hat\theta|=|(X^*_{\frac{n}2}-\bar X_i)-(X_{\frac{n}2}-\bar X_i)|=|X_{\frac{n}2}^*- X_{\frac{n}2}|$
+$$\{|X_1-\bar X|,..,|X_n-\bar X|\}=\{-X_1+\bar X,..,-X_j+\bar X,X_{j+1}-\bar X,..,X_n-\bar X\}$$
 
-The breakdown point $=\frac{n/2}{n}=\frac12$
+Rearrange the order
 
-$$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}(\frac12)=\frac12$$
+$$\begin{cases}\{-X_j+\bar X,..,-X_1+\bar X\}& (1)\\ \{X_{j+1}-\bar X,..,X_n-\bar X\}& (2)\end{cases}$$
 
-When $n$ is odd, 
+The MAD might be $-X_k+\bar X$ or $X_k-\bar X$. $k$ depend on both orders of (1) and (2).
 
-$|\hat\theta^*-\hat\theta|=|(X^*_{\frac{n+1}2}-\bar X_i)-(X_{\frac{n+1}2}-\bar X_i)|=|X_{\frac{n+1}2}^*- X_{\frac{n+1}2}|$
+Replace $X_{n}$ with a arbitrarily large $X_n^*$, $\bar X^*>X_n$
 
-The breakdown point $=\frac{(n+1)/2}{n}=\frac12+\frac1{2n}$
+$$\{|X_1-\bar X^*|,..,|X_n^*-\bar X^*|\}=\{-X_1+\bar X^*,..,-X_{n-1}+\bar X^*,X_n^*-\bar X^*\}$$
 
-$$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}(\frac12+\frac1{2n})=\frac12$$
+When $n$ is even, the MAD is $-X_{\frac{n}2}+\bar X^*$. 
+When $n$ is odd, the MAD is $-X_{\frac{n+1}2}+\bar X^*$.
+
+The new MAD depend on the order of $X_i$. It is not relevant with $k$.
+
+Therefore, we just need corrupt one value in order to corrupt MAD.
+
+The finite breakdown point $=\frac{1}{n}$
+
+The infinite breakdown point
+$\lim_{n\to\infty}|\hat\theta^*-\hat\theta|=\lim_{n\to\infty}\frac1n=0$
 
  ---
 
@@ -124,8 +191,6 @@ $E[\bar X]=E[\frac1n\sum_{i=1}^nx_i]=\frac1n\sum_{i=1}^nE[x_i]=\frac1n\sum_{i=1}
 For $X_i$ are independent,
 
 $Var[\bar X]=Var[\frac1n\sum_{i=1}^nx_i]=\frac1{n^2}\sum_{i=1}^nVar[x_i]=\frac1{n^2}\sum_{i=1}^n\frac{(b-a)^2}{12}=\frac{(b-a)^2}{12n}$
-
-From Slutsky's theorem? C.L.T.?
 
 $$\bar X\sim N(\frac{a+b}2,\frac{(b-a)^2}{12n})$$
 
@@ -141,3 +206,28 @@ $$=\frac{Var[\bar X]}{Var[m_n]}=\frac{\frac{(b-a)^2}{12n}}{\frac{(b-a)^2}{4n}}=\
 
 Therefore, the sample mean is asymptotic more efficiency than sample median.
 
+ ---
+ 
+ $=\frac{\bar v\sum_{i=1}^{n}u_i^2-n\bar u^2\bar v-\bar u\sum_{i=1}^{n}u_iv_i+n\bar u^2\bar v}{\sum_{i=1}^{n}u_i^2-n\bar u^2}$
+ 
+ Let $X_n^*>X_n>\bar X$,replace $X_n$ with $X_n^*$
+
+$$|\hat\theta^*-\hat\theta|=|\frac1n\sum_{i=1}^{n}(X_n^*-\frac{X_n^*}n-\frac1{n}\sum_{i=1}^{n-1}X_i)-\frac1n\sum_{i=1}^n(X_n-\frac{X_n}n-\frac1n\sum_{i=1}^{n-1}X_i)|=\frac1n\sum_{i=1}^{n}|\frac{n-1}n(X_n^*-X_n)|=\frac{n-1}n(X_n^*-X_n)$$
+
+Let $X_1^*<X_1<\bar X$,replace $X_1$ with $X_1^*$
+
+$$|\hat\theta^*-\hat\theta|=|\frac1n\sum_{i=1}^{n}(-X_1^*+\frac{X_1^*}n+\frac1{n}\sum_{i=2}^{n}X_i)+\frac1n\sum_{i=1}^n(X_1-\frac{X_1}n-\frac1n\sum_{i=2}^{n}X_i)|=\frac1n\sum_{i=1}^{n}|\frac{n-1}n(X_1-X_1^*)|=\frac{n-1}n(X_1-X_1^*)$$
+
+$$|\hat\theta^*-\hat\theta|=|(X^*_{\frac{n}2}-\frac{X_{\frac{n}2}^*}n-\frac1{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac1{n}\sum_{i=\frac{n}2+1}^{n}X_i)-(X_{\frac{n}2}-\frac{X_{\frac{n}2}}n-\frac1{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac1{n}\sum_{i=\frac{n}2+1}^{n}X_i)|=\frac{n-1}n|X_{\frac{n}2}^*- X_{\frac{n}2}|$$
+
+if $X_{\frac{n}2}^*>\bar X,\ X_{\frac{n}2}<\bar X$
+
+$$|\hat\theta^*-\hat\theta|=|(X^*_{\frac{n}2}-\frac{X_{\frac{n}2}^*}n-\frac1{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac1{n}\sum_{i=\frac{n}2+1}^{n}X_i)+(X_{\frac{n}2}-\frac{X_{\frac{n}2}}n-\frac1{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac1{n}\sum_{i=\frac{n}2+1}^{n}X_i)|=|\frac{n-1}n(X_{\frac{n}2}+ X^*_{\frac{n}2})-\frac2{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac2{n}\sum_{i=\frac{n}2+1}^{n}X_i|$$
+
+if $X_{\frac{n}2}^*<\bar X,\ X_{\frac{n}2}>\bar X$
+
+$$|\hat\theta^*-\hat\theta|=|-(X^*_{\frac{n}2}-\frac{X_{\frac{n}2}^*}n-\frac1{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac1{n}\sum_{i=\frac{n}2+1}^{n}X_i)-(X_{\frac{n}2}-\frac{X_{\frac{n}2}}n-\frac1{n}\sum_{i=1}^{\frac{n}2-1}X_i-\frac1{n}\sum_{i=\frac{n}2+1}^{n}X_i)|=|\frac2{n}\sum_{i=1}^{\frac{n}2-1}X_i+\frac2{n}\sum_{i=\frac{n}2+1}^{n}X_i-\frac{n-1}n(X_{\frac{n}2}+ X^*_{\frac{n}2})|$$
+
+If $X_{\frac{n}2+1}^*>\bar X,\ X_{\frac{n}2+1}<\bar X$, or $X_{\frac{n}2+1}^*<\bar X,\ X_{\frac{n}2+1}>\bar X$
+
+$$|\hat\theta^*-\hat\theta|=|\frac2{n}\sum_{i=1}^{\frac{n}2}X_i+\frac2{n}\sum_{i=\frac{n}2+2}^{n}X_i-\frac{n-1}n(X_{\frac{n}2+1}+ X^*_{\frac{n}2+1})|$$

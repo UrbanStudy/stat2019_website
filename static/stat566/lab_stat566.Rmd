@@ -195,3 +195,54 @@ qqline(effect_lab3[2:length(effect_lab3)])
 daewr::halfnorm(effect_lab3[2:length(effect_lab3)], names(effect_lab3[2:length(effect_lab3)]), alpha = 0.05)
 ```
 
+
+
+## Lab4 Mixed Models
+
+
+## Lab5 Split-Plot Design
+
+```{r}
+table14_16 <- readxl::read_xlsx("Table14_16.xlsx")
+table14_16$R <- as.factor(table14_16$Rep)
+table14_16$A <- as.factor(table14_16$Pulp)
+table14_16$B <- as.factor(table14_16$Temp)
+```
+
+Fit the model assuming RepxAxB is negligible and use to compute error
+
+Fit the model assuming all the terms containing both Rep and B are negligible and use to compute error
+
+```{r}
+library("lme4")
+model_lab5_1 <- lmer(formula = Strength ~ (1|R) + A + (1|R:A) + B + (1|R:B) + A:B, data=table14_16, REML = TRUE)
+summary(model_lab5_1)
+anova(model_lab5_1)
+plot(model_lab5_1)
+
+model_lab5_2 <- lmer(formula = Strength ~ (1|R) + A + (1|R:A) + B + A:B, data=table14_16, REML = TRUE)
+summary(model_lab5_2)
+anova(model_lab5_2)
+plot(model_lab5_2)
+```
+
+In this example, you may not see a difference in F values of B and AB because RxB variance is estimated to be zero.
+If it was not zero, then results in two models would be different
+
+```{r}
+library("GAD")
+table14_16$RR <- as.random(table14_16$Rep)
+table14_16$AA <- as.fixed(table14_16$Pulp)
+table14_16$BB <- as.fixed(table14_16$Temp)
+```
+
+This gives complete ANOVA table and does not give estimated variances
+
+Fit the model assuming all the terms containing both Rep and B are negligible and use to compute error
+
+```{r}
+model_lab5_3 <- aov(formula = Strength ~ RR + AA + AA%in%RR + BB + AA:BB, data=table14_16)
+gad(model_lab5_3)
+plot(model_lab5_3)
+```
+

@@ -1114,6 +1114,15 @@ hw5_model1 <- lmer(formula = Hardness ~ Chem+(1|Chem/Heat/Ignot), data=hw5_table
 hw5_model2 <- aov(Hardness ~ Chem*Heat*Ignot, data=hw5_table)
 ```
 
+```{r eval=FALSE}
+library("GAD")
+hw5_table$Chem_f <- as.fixed(hw5_table$Chem)
+hw5_table$Heat_f <- as.random(hw5_table$Heat)
+hw5_table$Ignot_r <- as.random(hw5_table$Ignot)
+hw5_model3 <- aov(formula = Hardness ~ Chem_f+Heat_f%in%Chem_f+Ignot_r%in%Heat_f%in%Chem_f, data=hw5_table)
+gad(hw5_model3)
+```
+
 
 By combining some rows, the nested ANOVA is
 
