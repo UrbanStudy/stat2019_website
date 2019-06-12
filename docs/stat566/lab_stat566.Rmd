@@ -151,7 +151,9 @@ plot(lab2_fit2, pch=16)
 ```
 
 
-## lab3 Example 8.2
+## lab3 
+
+ - Example 8.2
 
 Design a 2^5 one-half fractional factorial design with resolution IV and I=ABCDE generator 
 Install and load FrF2 package 
@@ -197,10 +199,14 @@ daewr::halfnorm(effect_lab3[2:length(effect_lab3)], names(effect_lab3[2:length(e
 
 
 
-## Lab4 Mixed Models
+## Lab4 
+
+- Mixed Models
 
 
-## Lab5 Split-Plot Design
+## Lab5 
+
+- Split-Plot Design
 
 ```{r}
 table14_16 <- readxl::read_xlsx("Table14_16.xlsx")
@@ -244,5 +250,79 @@ Fit the model assuming all the terms containing both Rep and B are negligible an
 model_lab5_3 <- aov(formula = Strength ~ RR + AA + AA%in%RR + BB + AA:BB, data=table14_16)
 gad(model_lab5_3)
 plot(model_lab5_3)
+```
+
+
+
+
+## Lab6
+
+ - Nested & Crossed Design
+ 
+ An industrial engineer is studying the hand insertion of electronic components on printed circuit boards to improve the speed of the assembly operation. The engineer has designed three assembly fixtures and two workplace layouts that seem promising.
+ 
+Operators are required to perform the assembly, and it is decided to randomly select four operators for each fixture–layout combination. However, because the workplaces are in different locations within the plant, it is difficult to use the same four operators for each layout. Therefore, the four operators chosen for layout 1 are different individuals from the four operators chosen for layout 2.
+
+Because there are only three fixtures and two layouts, but the operators are chosen at random, this is a mixed model. The treatment combinations in this design are run in random order, and two replicates are obtained. The assembly times are measured in seconds.
+
+In this experiment, operators are nested within the levels of layouts, whereas fixtures and layouts are arranged in a factorial.
+
+```{r}
+lab6_table <- readxl::read_xlsx("Table14_10.xlsx")
+lab6_table$A <- as.factor(lab6_table$Fixture)
+lab6_table$B <- as.factor(lab6_table$Layout)
+lab6_table$C <- as.factor(lab6_table$Operator)
+```
+
+```{r}
+lab6_model1 <- lmer(formula = Time ~ A*B +(1|B:C) + (1|A:B:C), data=lab6_table, REML = TRUE)
+summary(lab6_model1)
+anova(lab6_model1)
+plot(lab6_model1)
+
+confint(lab6_model1)
+```
+
+```{r}
+lab6_model11 <- lmer(formula = Time ~ A*B +(1|B:C) + A:(1|B:C), data=lab6_table, REML = TRUE)
+summary(lab6_model11)
+anova(lab6_model11)
+plot(lab6_model11)
+
+confint(lab6_model11)
+```
+
+```{r}
+lab6_residual1 <- rstudent(lab6_model1)
+lab6_y_hat1 <- fitted(lab6_model1)
+plot(lab6_residual1)
+plot(lab6_y_hat1,lab6_residual1)
+qqnorm(lab6_residual1) ; qqline(lab6_residual1)
+```
+
+```{r}
+lab6_model2 <- lmer(formula = Time ~ A*B +(1|B:C) + (1|A:B:C), data=lab6_table, REML = FALSE)
+summary(lab6_model2)
+anova(lab6_model2)
+plot(lab6_model2)
+confint(lab6_model2)
+```
+
+```{r}
+lab6_residual2 <- rstudent(lab6_model2)
+lab6_y_hat2 <- fitted(lab6_model2)
+plot(lab6_residual2)
+plot(lab6_y_hat1,lab6_residual2)
+qqnorm(lab6_residual2) ; qqline(lab6_residual2)
+```
+
+```{r}
+lab6_table$AA <- as.fixed(lab6_table$Fixture)
+lab6_table$BB <- as.fixed(lab6_table$Layout)
+lab6_table$CC <- as.random(lab6_table$Operator)
+
+lab6_model3 <- aov(formula = Time ~ AA*BB + CC%in%BB + CC%in%BB*AA, data=lab6_table)
+gad(lab6_model3)
+plot(lab6_model3)
 ```
 
