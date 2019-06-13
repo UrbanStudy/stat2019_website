@@ -203,6 +203,59 @@ daewr::halfnorm(effect_lab3[2:length(effect_lab3)], names(effect_lab3[2:length(e
 
 - Mixed Models
 
+See Chapter 13-Part 4 Note for the description of data.
+
+```{r}
+lab4_table <- readxl::read_xlsx("Table13_9.xlsx")
+lab4_table$A <- as.factor(lab4_table$Temp)
+lab4_table$B <- as.factor(lab4_table$Operator)
+lab4_table$C <- as.factor(lab4_table$Gauge)
+```
+
+```{r}
+ggpubr::ggline(data = lab4_table, x = "A", y = "y", add = c("mean", "jitter"), shape= "B", color = "C", linetype = "C", ylab= "Response", xlab="Temperature")
+
+ggplot(data = lab4_table, aes(x = A, y = y, shape = B, color=C)) + stat_summary() + labs(y= "Mean Response", x="Temperature", shape="Operator", color = "Gauge")
+```
+
+```{r}
+library(lme4)
+lab4_model1 <- lmer(formula = y ~ A + (1|B) + A:(1|B) + (1|C) + A:(1|C) + (1|B:C) + A:(1|B:C), data=lab4_table, REML = TRUE)
+summary(lab4_model1)
+anova(lab4_model1)
+confint(lab4_model1)
+```
+
+```{r}
+lab4_model2 <- lmer(formula = y ~ A + (1|B) + (1|A:B) + (1|C) + (1|A:C) + (1|B:C) + (1|A:B:C), data=lab4_table, REML = TRUE)
+summary(lab4_model2)
+anova(lab4_model2)
+confint(lab4_model2)
+```
+
+```{r}
+lab4_residual <- rstudent(lab4_model2)
+plot(lab4_residual)
+lab4_y_hat <- fitted(lab4_model2)
+plot(lab4_y_hat,lab4_residual)
+qqnorm(lab4_residual)
+qqline(lab4_residual)
+plot(lab4_model2)
+```
+
+```{r}
+library(emmeans)
+lsmeans(lab4_model2, pairwise ~ A, adjust = c("tukey"))
+```
+
+```{r}
+lab4_model3 <- lmer(y ~ A + (1|B) + (1|A:B) + (1|C) + (1|A:C) + (1|B:C) + (1|A:B:C), data=lab4_table, REML = FALSE)
+
+summary(lab4_model3)
+anova(lab4_model3)
+```
+
+
 
 ## Lab5 
 

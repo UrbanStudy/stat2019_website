@@ -84,9 +84,9 @@ $\beta_{j}$ is the random effect of $j^{th}$ level of Power;
 
 $\gamma_{k(i)}$ is the main fixed effect of $k^{th}$ stations nested in $i^{th}$ level of Machine;
 
-$(\tau\beta)_{ij}$ is the interaction random effect of $i^{th}$ level of Machine and $j^{th}$ level of Power;
+$(\tau\beta)_{ij}$ is the interaction effect of $i^{th}$ level of Machine and $j^{th}$ level of Power;
 
-$(\beta\gamma)_{jk(i)}$ is the interaction random effect of $j^{th}$ level of Power and $k^{th}$ stations nested in $i^{th}$ level of Machine.
+$(\beta\gamma)_{jk(i)}$ is the interaction effect of $j^{th}$ level of Power and $k^{th}$ stations nested in $i^{th}$ level of Machine.
 
 $y_{ijkl}$ is response value for the $l^{th}$ replication for $k^{th}$ stations nested in $i^{th}$ level of Machine when $j^{th}$ level of Power is applied;
 
@@ -94,14 +94,10 @@ $\varepsilon_{l(ijk)}$ is random error for the $l^{th}$ replication for $k^{th}$
 
 Assumptions: 
 
-$\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)$; 
-$\tau_{i}\sim iid N(0,\sigma_{\tau}^2)$
-$\beta_{j}\sim iid N(0,\sigma_{\beta}^2)$
-$\sum_{k=1}^3\gamma_{k(i)}=0$; 
-$(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$
-$(\beta\gamma)_{jk(i)}\sim iid N(0,\sigma_{\beta\gamma}^2)$
-
-$\varepsilon_{l(ijk)}$, $\tau_{i}$, $\beta_{j}$, $(\tau\beta)_{ij}$, and $(\beta\gamma)_{jk(i)}$ are independent.
+|$\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)$|$\tau_{i}\sim iid N(0,\sigma_{\tau}^2)$|$\beta_{j}\sim iid N(0,\sigma_{\beta}^2)$|
+|--- |--- |--- |
+$\sum_{k=1}^3\gamma_{k(i)}=0$|$(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$|$(\beta\gamma)_{jk(i)}\sim iid N(0,\frac{3-1}{3}\sigma_{\beta\gamma}^2)$
+$\varepsilon_{l(ijk)}$, $\tau_{i}$, $\beta_{j}$, $(\tau\beta)_{ij}$, and $(\beta\gamma)_{jk(i)}$ are independent. For restricted model, $\sum_{k=1}^3(\beta\gamma)_{jk(i)}=0$
  
 \textcolor[rgb]{0.7,0.7,0.7}{Produce the corrected ANOVA table with Source, df, SS, MS, EMS, F value along with numerator and denominator df, and p value for each test.}
 
@@ -160,9 +156,9 @@ $\tau_i\sim iid N(0,\sigma_{\tau}^2)$;
 $\sum_{j=1}^b\beta_j(i)=0$;
 $\varepsilon_{(ij)k}$, $\tau_{i}$ are independent.
 
-$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}^2$
-$\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}$
-$\bar y_{ij.}=\frac1n\sum_{i=1}^a\sum_{j=1}^by_{ijk}$
+$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$;
+$\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}$;
+$\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}$;
 $\bar y_{...}=\frac{1}{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$
 
 (a). \textcolor[rgb]{0.7,0.7,0.7}{Derive the least squares estimator of $\beta_{j(i)}$. Provide the appropriate constraints about estimators used when solving normal equations. (Use only sum to zero constraints)}
@@ -177,13 +173,15 @@ For $i=1,…,a$, $j=1,…,b$,
 
 $\frac{\partial SSE}{\partial \tau_i}=2\sum_j^b\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_{j(i)})(-1)=0$
 
-For $\sum_j^b\hat\beta_{j(i)}=0$,
+For $\sum_j^b\hat\beta_{j(i)}=0$, $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$,
 
-$$\sum_j^b\sum_k^ny_{ijk}=bn\hat\mu+bn\hat\tau_i+n\sum_j^b\hat\beta_{j(i)}=bn\bar y_{i..}\implies \hat\mu+\hat\tau_i=\bar y_{i..}$$
+$\sum_j^b\sum_k^ny_{ijk}=bn\hat\mu+bn\hat\tau_i+n\sum_j^b\hat\beta_{j(i)}=bn\bar y_{i..}\implies \hat\mu+\hat\tau_i=\bar y_{i..}$
 
 $\frac{\partial SSE}{\partial \beta_{j(i)}}=2\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_{j(i)})(-1)=0$
 
-$$\sum_k^ny_{ijk}=n\hat\mu+n\hat\tau_i+n\hat\beta_{j(i)}=n\bar y_{ij.}\implies \hat\mu+\hat\tau_i+\hat\beta_{j(i)}=\bar y_{ij.}$$
+For $\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}$,
+
+$\sum_k^ny_{ijk}=n\hat\mu+n\hat\tau_i+n\hat\beta_{j(i)}=n\bar y_{ij.}\implies \hat\mu+\hat\tau_i+\hat\beta_{j(i)}=\bar y_{ij.}$
 
 $$\implies \hat\beta_{j(i)}=\bar y_{ij.}-\bar y_{i..}$$
 
@@ -193,9 +191,9 @@ $$\implies \hat\beta_{j(i)}=\bar y_{ij.}-\bar y_{i..}$$
 
 For $\sum_j^b\hat\beta_{j(i)}=0$,
 
-$$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b \sum_{j=1}^b\beta_{j(i)}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=\mu+\tau_{i}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
+$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b \sum_{j=1}^b\beta_{j(i)}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=\mu+\tau_{i}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$
 
-$$\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}$$
+$\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}$
 
 $$\bar y_{ij.}-\bar y_{i..}=\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
 
@@ -204,22 +202,21 @@ $Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^
 
 For $\varepsilon_{(ij)k}\sim iid N(0,\sigma^2)$, $E[\varepsilon_{(ij)k}]=0$, $V[\varepsilon_{(ij)k}]=\sigma^2$
 
-$$E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]=\beta_{j(i)}$$
+$E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]=\beta_{j(i)}$
 
-$$Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]$$
+$Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]$
 
+$=Var[\beta_{j(i)}]+Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+2Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$
 
-$$=Var[\beta_{j(i)}]+Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+2Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$$
-
-$$=0+\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+0$$
+$=0+\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+0$
 
 $$=\frac1n\sigma^2+\frac{\sigma^2}{bn}-\frac{2\sigma^2}{bn}=\frac{(b-1)\sigma^2}{bn}$$
 
-For $MS_{B(A)}=SS_{B(A)}/df_{B(A)}=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2$
+For $MS_{B(A)}=SS_{B(A)}/df_{B(A)}=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\hat\beta_{j(i)}^2=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2$
 
 $$E(MS_{B(A)})=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..})^2]=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{Var[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2\right\}$$
 
-$$=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{\beta_{j(i)}^2+\frac{(b-1)\sigma^2}{bn}\right\}=\sigma^2+\frac{bn}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\beta_{j(i)}^2$$
+$$=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{\beta_{j(i)}^2+\frac{(b-1)\sigma^2}{bn}\right\}=\sigma^2+\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\beta_{j(i)}^2$$
 
 
 ### Question 3 
@@ -248,35 +245,28 @@ library(mosaic)
 library(emmeans)
 ```
 
-The above plots show that:
-
+The above plots show that: The average purity analysed in Lab 1 is lower than that from Lab 2.
+There is not much difference in the average purity among technicians.
 The average purity of a chemical compound synthesized from source 2 and 3 are higher than that from source 1.
-
 There is not much difference in the average purity between sources 2 and 3.
+
+```{r echo=FALSE}
+kable(favstats(Purity ~ Lab, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
+kable(favstats(Purity ~ Technician, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
+kable(favstats(Purity ~ Source, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
+```
+
+There is not much difference in the average purity of sources 3 between lab 1 and 2.
 
 Not all the lines are parallel in the interaction plot. Therefore, in the model, there is the interaction effect of source level and technicians nested in the lab. The Tables show the same thing with the numerical summaries for each factor level and their combinations.
 
 ```{r echo=FALSE}
-kable(favstats(Purity ~ Source, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
-```
 
-The average purity analysed in Lab 1 is lower than that from Lab 2.
-
-There is not much difference in the average purity of sources 3 between lab 1 and 2.
-
-```{r echo=FALSE}
-kable(favstats(Purity ~ Lab, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
 kable(favstats(Purity ~ Lab+Source, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
-```
-
-There is not much difference in the average purity among technicians.
-
-```{r echo=FALSE}
-kable(favstats(Purity ~ Technician, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
 kable(favstats(Purity ~ Technician+Source, data=fe_table_chem),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
 ```
 
-This is a neseted and crossed design. Three fixed sources apply on all random selected technicians are nested in fixed labs.
+This is a neseted and crossed design. Three fixed sources apply on all random selected technicians nested in fixed labs.
 
 $$y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{j(i)k}+\varepsilon_{(ijk)l}$$
 
@@ -296,44 +286,55 @@ $(\beta\gamma)_{j(i)k}$ is the interaction random effect of $k^{th}$ level of so
 
 $y_{ijkl}$ is response value for the $l^{th}$ replication for $j^{th}$ level of technicians nested in $i^{th}$ level of labs when $k^{th}$ level of sources is applied;
 
-$\varepsilon_{l(ijk)}$ is random error for the $l^{th}$ replication for $j^{th}$ level of technicians nested in $i^{th}$ level of labs when $k^{th}$ level of sources is applied.
+$\varepsilon_{(ijk)l}$ is random error for the $l^{th}$ replication for $j^{th}$ level of technicians nested in $i^{th}$ level of labs when $k^{th}$ level of sources is applied.
 
-Assumptions: Ususally, the nunber of technican are limited. Thus, I tend to believe that this is an unrestricted mode. We cannot expect the summation of randem effects are zero.
+Assumptions: Usually, the technicians in a lab are skillful. From the above plots, the technicians' performances are stable. The covariance between two observations from the same level of the random factor can be either positive or negative. Thus we assume this is an **restricted model**. $\varepsilon_{(ijk)l}$, $\beta_{j(i)}$, and $(\beta\gamma)_{j(i)k}$ are independent.
 
-|$\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)$|$\sum_{i=1}^2\tau_{i}=0$|$\sum_{k=1}^3\gamma_{k}=0$|$\beta_{j(i)}\sim iid N(0,\sigma_{\beta}^2)$|
-| --- | --- | --- | --- |
-|$\sum_{i=1}^2(\tau\gamma)_{ik}=0$|$\sum_{k=1}^3(\tau\gamma)_{ik}=0$|$\sum_{i=1}^2(\beta\gamma)_{j(i)k}=0$|$\sum_{k=1}^3(\beta\gamma)_{jk(i)}=0$|
 
-$\varepsilon_{l(ijk)}$, $\beta_{j(i)}$, and $(\beta\gamma)_{jk(i)}$ are independent.
+
+|$\varepsilon_{(ijk)l}\sim iid N(0,\sigma^2)$|$\sum_{i=1}^2\tau_{i}=0$|$\sum_{k=1}^3\gamma_{k}=0$|$\beta_{j(i)}\sim iid N(0,\sigma_{\beta}^2)$|
+| --- | --- | --- | ----- |
+|$\sum_{i=1}^2(\tau\gamma)_{ik}=0$|$\sum_{k=1}^3(\tau\gamma)_{ik}=0$|$\sum_{i=1}^2(\beta\gamma)_{j(i)k}=0$|$(\beta\gamma)_{j(i)k}\sim iid N(0,\frac{2-1}{2}\sigma_{\beta\gamma}^2)$|
 
 ```{r echo=F, message=FALSE}
 library("GAD")
 fe_table_chem$Lab_f <- as.fixed(fe_table_chem$Lab)
 fe_table_chem$Technician_r <- as.random(fe_table_chem$Technician)
 fe_table_chem$Source_f <- as.fixed(fe_table_chem$Source)
-fe_model_chem1 <- aov(formula = Purity ~ Lab_f+Source_f+Technician_r%in%Lab_f+Source_f:Lab_f+Source_f:Technician_r%in%Lab_f, data=fe_table_chem)
+fe_model_chem1 <- aov(formula = Purity ~ Lab_f*Source_f+Technician_r%in%Lab_f+Source_f*Technician_r%in%Lab_f, data=fe_table_chem)
 pander::pander(gad(fe_model_chem1))
+library(lme4)
+fe_model_chem2 <- lmer(formula = Purity ~ Lab*Source+(1|Lab:Technician)+(1|Source:Lab:Technician), data=fe_table_chem, REML = TRUE)
 ```
 
-The ANOVA table shows that the average purity of a chemical compound synthesized from three sources are differnet at 0.05 significance level (p-value=0.0001783). As the main effects of sources shown in the above tables, the average purity from source 1 is lowest (12.72222). The the average purity from source 2 and 3 are 21.38889 and 20.27778 respectively.
+The ANOVA table shows that only sources have significant effects on the average purity of a chemical compound synthesized at 0.05 significance level (p-value=0.0001783).
 
-The results of variance components and condidence intervals show that none of the effects related with technician has significant variance on average value of Hardness at 0.05 significance level. The variance of technicians nested in labs is zero. The variance of interaction effect between sources and technicians nested in labs is zero too.
-Their confidence intervals are both [$0,1.589^2$] at 0.05 significance level.
-
- ----------------------------------------------
- Groups           Name        Variance Std.Dev.
- ---------------- ----------- -------- --------
- Lab.Technician   (Intercept)  0.00    0.000   
+ --------------------------------------------------------------------------------
+ Groups           Name               Variance Std.Dev.
+ ----------------------- ----------- -------- -------- --------------------------
+ Source:Lab:Technician   (Intercept)  0.00    0.000    $\sigma^2_{\beta\gamma}=0$
  
- Lab.Technician.1 (Intercept)  0.00    0.000   
+ Lab:Technician          (Intercept)  0.00    0.000    $\sigma^2_{\beta}=0$
  
- Residual                     17.87    4.227  
- ----------------------------------------------
+ Residual                            17.87    4.227    $\sigma^2=17.87$
+ --------------------------------------------------------------------------------
+ 
+ ------------------------------------------------------------------------------
+      &nbsp;        2.5 %    97.5 % 
+ ------------------ -------- ------- ------------------------------------------
+     **.sig01**        0      1.539   $CI_{\sigma^2_{\beta\gamma}}:(0,1.539^2)$
 
-```{r echo=F, message=FALSE}
-library(lme4)
-fe_model_chem2 <- lmer(formula = Purity ~ Lab+Source+(1|Lab:Technician)+Source:Lab+Source:(1|Lab:Technician), data=fe_table_chem, REML = TRUE)
-# summary(fe_model_chem)
+   **.sig02**          0      1.603   $CI_{\sigma^2_{\beta}}:(0,1.603^2)$
+
+   **.sigma**        3.337    4.873   $CI_{\sigma^2}:(3.337^2,4.873^2)$
+ ------------------------------------------------------------------------------
+
+The results of variance components and condidence intervals show that none of the effects related with technician has significant variance on average value of purity at 0.05 significance level. The variance of interaction effect between sources and technicians nested in labs is zero with confidence intervals ($0,1.539^2$) at 0.05 significance level. The variance of technicians nested in labs is zero with confidence intervals ($0,1.603^2$) at 0.05 significance level. 
+
+**Conclusion:**  As the main effects of sources shown in the above tables, the average purity is different with sources. The average purity from source 1 is lowest (12.72222). The the average purity from source 2 and 3 are 21.38889 and 20.27778 respectively. The selections of labs and technicians don't change this result.
+
+```{r eval=F, include=FALSE, message=FALSE}
+summary(fe_model_chem2)
 pander::pander(confint(fe_model_chem2))
 ```
  
@@ -358,15 +359,15 @@ pander::pander(confint(fe_model_chem5))
 ```
 
 
-```{r echo=FALSE, out.width='20%',fig.show='hold'}
+```{r echo=FALSE, out.width='25%',fig.show='hold'}
 fe_residual_chem <- rstudent(fe_model_chem2)
 plot(fe_residual_chem)
-fechem_y_hat <- fitted(fe_model_chem2)
-plot(fechem_y_hat,fe_residual_chem)
+plot(fe_model_chem2)
+# fechem_y_hat <- fitted(fe_model_chem2)
+# plot(fechem_y_hat,fe_residual_chem)
 qqnorm(fe_residual_chem)
 qqline(fe_residual_chem)
-hist(fe_table_chem$Purity)
-plot(fe_model_chem2)
+hist(fe_residual_chem)
 ```
 
 In the plots of residuals versus predicted value of purity, there is no significant pattern on this plot besides that more values occur when the predicted value is higher. Therefore, the fitted model is good enough to describe the relationship between the mean value of purity and the labs, technician, and sources.
@@ -377,6 +378,29 @@ The points are along the straight line in the normal qq plot shown at bottom lef
 
   \textcolor[rgb]{0.7,0.7,0.7}{Report your code and/or output at the end of the analysis.}
 
+```{r eval=F}
+favstats(Purity ~ Source, data=fe_table_chem)
+favstats(Purity ~ Lab, data=fe_table_chem)
+favstats(Purity ~ Lab+Source, data=fe_table_chem)
+favstats(Purity ~ Technician, data=fe_table_chem)
+favstats(Purity ~ Technician+Source, data=fe_table_chem)
+fe_table_chem$Lab_f <- as.fixed(fe_table_chem$Lab)
+fe_table_chem$Technician_r <- as.random(fe_table_chem$Technician)
+fe_table_chem$Source_f <- as.fixed(fe_table_chem$Source)
+fe_model_chem1 <- aov(formula = Purity ~ Lab_f*Source_f+Technician_r%in%Lab_f+Source_f*Technician_r%in%Lab_f, data=fe_table_chem)
+gad(fe_model_chem1)
+
+fe_model_chem2 <- lmer(formula = Purity ~ Lab*Source+(1|Lab:Technician)+(1|Source:Lab:Technician), data=fe_table_chem, REML = TRUE)
+summary(fe_model_chem2)
+confint(fe_model_chem2)
+
+fe_residual_chem <- rstudent(fe_model_chem2)
+plot(fe_residual_chem)
+plot(fe_model_chem2)
+qqnorm(fe_residual_chem)
+qqline(fe_residual_chem)
+hist(fe_residual_chem)
+```
 
   
 ### Question 4
@@ -409,15 +433,11 @@ library(emmeans)
 The above plots show that:
 There is not much difference in the average force of the cookie from different days or form different fat.
 The tables show the same thing with the numerical summaries for each factor level and their combinations.
-
-```{r echo=FALSE}
-kable(favstats(force ~ day, data=fe_table_cookie),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
-kable(favstats(force ~ fat, data=fe_table_cookie),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
-```
-
 The average force of the cookie are higher when the temperature is higher.
 
-```{r echo=FALSE}
+```{r echo=FALSE, collapse=T}
+kable(favstats(force ~ day, data=fe_table_cookie),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
+kable(favstats(force ~ fat, data=fe_table_cookie),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
 kable(favstats(force ~ temp, data=fe_table_cookie),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
 ```
 
@@ -429,9 +449,9 @@ kable(favstats(force ~ temp+fat, data=fe_table_cookie),format="latex",booktabs=T
 kable(favstats(force ~ temp+day, data=fe_table_cookie),format="latex",booktabs=T) %>%kable_styling("striped", full_width = F,font_size = 8)%>%column_spec(7,background ="#EAFAF1")
 ```
 
-This is a simple Split-Plot design model (day is whole-plot factor and temperature is split-plot factor)
+This is a simple Split-Plot design model (fat is whole-plot factor and temperature is split-plot factor)
 
-$$y_{ijkl}=\mu+\tau_i+\beta_{j}+(\tau\beta)_{ij}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{jk}+(\tau\beta\gamma)_{ijk}+\varepsilon_{ijk}$$
+$$y_{ijk}=\mu+\tau_i+\beta_{j}+(\tau\beta)_{ij}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{jk}+(\tau\beta\gamma)_{ijk}+\varepsilon_{ijk}$$
 
 for $i=1,2,3,4$; $j=1,2,3$; $k=1,2,3,4$ 
 
@@ -439,13 +459,13 @@ $\mu$ is the overall true mean response;
 
 $\tau_i$ is the effect of $i^{th}$ replication of days;
 
-$\beta_{j}$ is the main effect of $j^{th}$ level of temperature (effect of whole-plot factor);
+$\beta_{j}$ is the main effect of $j^{th}$ level of temperature (effect of split-plot factor);
 
-$(\tau\beta)_{ij}$ is the interaction effect of $i^{th}$ replication and $j^{th}$ level of temperature (whole-plot error);
+$(\tau\beta)_{ij}$ is the interaction effect of $i^{th}$ replication and $j^{th}$ level of temperature;
 
-$\gamma_{k}$ is the main effect of $k^{th}$ level of fat;
+$\gamma_{k}$ is the main effect of $k^{th}$ level of fat (effect of whole-plot factor);
 
-$(\tau\gamma)_{ik}$ is the interaction effect of $i^{th}$ replicatin and $k^{th}$ level of fat;
+$(\tau\gamma)_{ik}$ is the interaction effect of $i^{th}$ replicatin and $k^{th}$ level of fat(whole-plot error);
 
 $(\beta\gamma)_{jk}$ is the interaction effect of $j^{th}$ level of temperature and $k^{th}$ level of fat;
 
@@ -453,11 +473,11 @@ $(\tau\beta\gamma)_{ijk}$ is the interaction effect of $i^{th}$ replicatin, $j^{
 
 $y_{ijk}$ is response value for the $i^{th}$ replication when $j^{th}$ level of temperature and $k^{th}$ level of fat are applied;
 
-$\varepsilon_{l(ijk)}$ is random error for the $i^{th}$ replication when $j^{th}$ level of temperature and $k^{th}$ level of fat are applied.
+$\varepsilon_{ijk}$ is random error for the $i^{th}$ replication when $j^{th}$ level of temperature and $k^{th}$ level of fat are applied.
 
-Assumptions: I tend to believe that, for an experienced baker, the selection of temperature is deliberate. There are numerous days for choosing. Thus, this is a restricted model.
+Assumptions: For an experienced baker, he/she will try to let the recipe and temperature are accurate in each day. the covariance between two observations from the same level of the random factor can be either positive or negative. Thus, we assume this is a **restricted model**.
 
-|$\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)$|$\tau_i\sim iid N(0,\sigma_{\tau}^2)$|
+|$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$|$\tau_i\sim iid N(0,\sigma_{\tau}^2)$|
 | --- | --- | ------ |
 |$\sum_{j=1}^3\beta_{j}=0$|$\sum_{j=1}^3(\tau\beta)_{ij}=0$|$(\tau\beta)_{ij}\sim iid N(0,\frac{3-1}{3}\sigma_{\tau\beta}^2)$|
 |$\sum_{k=1}^4\gamma_{k}=0$|$\sum_{k=1}^4(\tau\gamma)_{ik}=0$|$(\tau\gamma)_{ik}\sim iid N(0,\frac{4-1}{4}\sigma_{\tau\gamma}^2)$|
@@ -473,47 +493,49 @@ library("GAD")
 fe_table_cookie$day_r <- as.random(fe_table_cookie$day)
 fe_table_cookie$temp_f <- as.fixed(fe_table_cookie$temp)
 fe_table_cookie$fat_f <- as.fixed(fe_table_cookie$fat)
-fe_model_cookie1 <- aov(formula = force ~ day_r+fat_f+fat_f%in%day_r+temp_f+temp_f%in%day_r+temp_f:fat_f, data=fe_table_cookie)
+fe_model_cookie1 <- aov(formula = force ~ day_r+fat_f+fat_f%in%day_r+temp_f%in%day_r+temp_f+temp_f:fat_f, data=fe_table_cookie)
 pander::pander(gad(fe_model_cookie1))
 
 library(lme4)
-fe_model_cookie2 <- lmer(formula = force ~ (1|day)+fat+(1|day:fat)+temp+(1|day:temp)+temp*fat, data=fe_table_cookie, REML = TRUE)
+fe_model_cookie2 <- lmer(formula = force ~ (1|day)+fat+(1|day:fat)+temp+(1|day:temp)+temp:fat, data=fe_table_cookie, REML = TRUE)
 ```
+
+The results show the interaction effect of day and fat is not significant at 0.05 significance level (P-value=0.5082). 
+
+The interaction effect of day and temperature is significant at 0.05 significance level (P-value=$6.251\times{10}^{-08}$).
+
+The interaction effect of temperature and fat is not significant at 0.05 significance level (P-value=0.05113).
 
 ```{r eval=FALSE, include=FALSE}
 summary(fe_model_cookie2)
 pander::pander(confint(fe_model_cookie2))
 ```
 
-Random effects:
-
- -----------------------------------------
+ ----------------------------------------------------------------------------
  Groups   Name        Variance  Std.Dev. 
- -------- ----------- --------- ----------
- day:fat  (Intercept) 1.697e-15 4.120e-08
+ -------- ----------- --------- --------- -----------------------------------
+ day:fat  (Intercept) 1.697e-15 4.120e-08 $\hat\sigma^2_{\tau\gamma}=0$
  
- day:temp (Intercept) 6.252e-01 7.907e-01
+ day:temp (Intercept) 6.252e-01 7.907e-01 $\hat\sigma^2_{\tau\beta}=0.6252$
  
- day      (Intercept) 4.055e-01 6.368e-01
+ day      (Intercept) 4.055e-01 6.368e-01 $\hat\sigma^2_{\tau}=0.4055$
  
- Residual             9.856e-02 3.140e-01
- -----------------------------------------
+ Residual             9.856e-02 3.140e-01 $\hat\sigma^2=0.9856$
+ ----------------------------------------------------------------------------
   
- --------------------------------------
+ -------------------------------------------------------------------------------------
       &nbsp;         2.5 %    97.5 %  
- ------------------ --------- ---------
-    **.sig01**         0      0.1906  
+ ------------------ --------- -------- -----------------------------------------------
+    **.sig01**         0      0.1906    $CI_{\sigma^2_{\tau\gamma}}:(0,0.1906^2)$
 
-    **.sig02**      0.4371     1.242  
+   **.sig02**       0.4371     1.242    $CI_{\sigma^2_{\tau\beta}}:(0.4371^2,1.242^2)$
 
-    **.sig03**         0       1.626  
+   **.sig03**         0       1.626     $CI_{\sigma^2_{\tau}}:(0,1.626^2)$
 
-    **.sigma**      0.2116    0.3492  
+   **.sigma**       0.2116    0.3492    $CI_{\sigma^2}:(0.2116^2,0.3492^2)$
+ -------------------------------------------------------------------------------------
 
- **(Intercept)**     6.414     8.436  
- --------------------------------------
-
-The results show the interaction term of days and fat is negligible. I use it to compute error and set a new model.
+The results of variance components show the variance of interaction term of days and fat is negligible and hence dropping interaction term of days and fat.
 
 ```{r echo=F}
 fe_model_cookie3 <- aov(formula = force ~ day_r+fat_f+temp_f+temp_f%in%day_r+temp_f:fat_f, data=fe_table_cookie)
@@ -522,14 +544,37 @@ pander::pander(gad(fe_model_cookie3))
 fe_model_cookie4 <- lmer(formula = force ~ (1|day)+fat+temp+(1|day:temp)+temp*fat, data=fe_table_cookie, REML = TRUE)
 ```
 
-The ANOVA table shows that there is a significant interaction effect from the day and temperature, on average amount of force (g) (p-value=$4.298\times10^{-10}$). This means that the effect of day and effect of temperature on the force are not independent. 
-Similarly, there is a significant interaction effect from the fat and temperature, on average amount of force (g) (p-value=0.03544). This means that the effect of fat and effect of temperature on the force are not independent. Hence, the simple effects must be tested.
+The ANOVA table of new model shows that there is a significant interaction effect from the day and temperature, on average amount of force (g) (p-value=$4.298\times10^{-10}$).
+Similarly, there is a significant interaction effect from the fat and temperature, on average amount of force (g) (p-value=0.03544).
+
+This means that the effects of day v.s.temperature and fat v.s.temperature on the force are not independent. Hence, the simple effects must be tested.
+The variances and confidence intervals don't change.
 
 ```{r eval=FALSE, include=FALSE}
 summary(fe_model_cookie4)
 # pander::pander(anova(fe_model_cookie))
 pander::pander(confint(fe_model_cookie4))
 ```
+
+ ----------------------------------------------------------------------------
+ Groups   Name        Variance  Std.Dev. 
+ -------- ----------- --------- --------- -----------------------------------
+ day:temp (Intercept)  0.62520   0.7907    $\hat\sigma^2_{\tau\beta}=0.6252$
+ 
+ day      (Intercept)  0.40554   0.6368    $\hat\sigma^2_{\tau}=0.40554$
+ 
+ Residual              0.09856   0.3140    $\hat\sigma^2=0.9856$
+ ----------------------------------------------------------------------------
+
+ -------------------------------------------------------------------------------------
+      &nbsp;         2.5 %    97.5 %  
+ ------------------ --------- -------- -----------------------------------------------
+   **.sig02**       0.4371     1.242    $CI_{\sigma^2_{\tau\beta}}:(0.4371^2,1.242^2)$
+
+   **.sig03**         0       1.626     $CI_{\sigma^2_{\tau}}:(0,1.626^2)$
+
+   **.sigma**       0.2116    0.3492    $CI_{\sigma^2}:(0.2116^2,0.3492^2)$
+ -------------------------------------------------------------------------------------
 
 Since there are several simple effects comparison tests, the Tukey’s adjustment was used to compute p value to reduce the experimentwise error rate. The Tables below show the summary of all those simple effect comparison tests.
 
@@ -555,68 +600,72 @@ When temperature was 350°F and 400°F, the mean forces are significantly differ
 
 When temperature was 375°F, the mean forces are significantly different between the day 1 v.s. day 3, and day 1 v.s. day 4 (p value=0.0000000).
 
-
 ```{r echo=FALSE, out.width='30%',fig.show='hold'}
 temp_fat <- pairs(lsmeans(fe_model_cookie4,~ temp|fat))
 fat_temp <- pairs(lsmeans(fe_model_cookie4,~ fat|temp))
-kable(test(rbind(temp_fat,fat_temp),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(2,5,6,8:12,15,20),bold =T)%>%row_spec(c(2,5,6,8:12,15,20),background ="#EAFAF1")%>%footnote(symbol= "Adjusted by Tukey's Method")
-
+kable(test(rbind(temp_fat,fat_temp),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(2,5,6,8:12,15,20),bold =T)%>%row_spec(c(2,5,6,8:12,15,20),background ="#EAFAF1")
 temp_day <- pairs(lsmeans(fe_model_cookie3,~ temp_f|day_r))
 day_temp <- pairs(lsmeans(fe_model_cookie3,~ day_r|temp_f))
-kable(test(rbind(temp_day,day_temp),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(1,2,4:13,16,17,20:23,25,28,29),bold =T)%>%row_spec(c(1,2,4:13,16,17,20:23,25,28,29),background ="#EAFAF1")%>%footnote(symbol= "Adjusted by Tukey's Method")
-
-# kable(lsmeans(fe_model_cookie3, pairwise~ temp_f|day_r,adjust=c("tukey"))[1])%>%kable_styling("condensed",full_width=F,font_size = 8)%>%footnote(symbol= "Adjusted by Tukey's Method")
+kable(test(rbind(temp_day,day_temp),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(1,2,4:13,16,17,20:23,25,28,29),bold =T)%>%row_spec(c(1,2,4:13,16,17,20:23,25,28,29),background ="#EAFAF1")
 ```
 
+**Conclusion:** Choosing a higher temperature for a given amount of fat can get a harder texture of the surface. In most of the cases, changing fat for a given temperature doesn't change the texture.
 
+For a given temperature, almost all of the amount of fat cannot change the texture but different days don't give consistent results. If the baker wants to examine the texture for a specific temperature, he/she should check what other factors in different days may affect the results and redo the experiment.
 
-```{r echo=FALSE, out.width='20%',fig.show='hold'}
-fe_residual_cookie <- rstudent(fe_model_cookie2)
+```{r echo=FALSE, out.width='25%',fig.show='hold'}
+fe_residual_cookie <- rstudent(fe_model_cookie4)
 plot(fe_residual_cookie)
-fe_chem_y_hat <- fitted(fe_model_cookie2)
-plot(fe_chem_y_hat,fe_residual_cookie)
+plot(fe_model_cookie4)
+# fe_chem_y_hat <- fitted(fe_model_cookie4)
+# plot(fe_chem_y_hat,fe_residual_cookie)
 qqnorm(fe_residual_cookie)
 qqline(fe_residual_cookie)
-hist(fe_table_cookie$force)
-plot(fe_model_cookie2)
+hist(fe_residual_cookie)
 ```
 
-In the plots of residuals versus predicted value of purity, there is no significant pattern on this plot besides that more values occur when the predicted value is higher. Therefore, the fitted model is good enough to describe the relationship between the mean value of purity and the labs, technician, and sources.
+In the plots of residuals versus predicted value of purity, there is no significant pattern on this plot. Therefore, the fitted model is good enough to describe the relationship between the mean value of focre and the days, temperature, and fats.
 
 The residuals in this plot are almost symmetrically distributed about zero and hence zero mean assumption is not violated. Further, the vertical deviation of the residuals from zero is about same for each predicted value and hence the constant variance assumption is not violated.
 
 The points are along the straight line in the normal qq plot shown at bottom left and the histogram of residuals shown at the top right is about normal. These plots show no violation of normal distribution assumption of residuals.
 
- ---
- 
- For $\sum_j^b\hat\beta_{j(i)}=0$,
+```{r eval=F}
+favstats(force ~ day, data=fe_table_cookie)
+favstats(force ~ fat, data=fe_table_cookie)
+favstats(force ~ temp, data=fe_table_cookie)
+favstats(force ~ day+fat, data=fe_table_cookie)
+favstats(force ~ temp+fat, data=fe_table_cookie)
+favstats(force ~ temp+day, data=fe_table_cookie)
 
-$$\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b \sum_{j=1}^b\beta_{j(i)}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=\mu+\tau_{i}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
+fe_table_cookie$day_r <- as.random(fe_table_cookie$day)
+fe_table_cookie$temp_f <- as.fixed(fe_table_cookie$temp)
+fe_table_cookie$fat_f <- as.fixed(fe_table_cookie$fat)
+fe_model_cookie1 <- aov(formula = force ~ day_r+fat_f+fat_f%in%day_r+temp_f%in%day_r+temp_f+temp_f:fat_f, data=fe_table_cookie)
+gad(fe_model_cookie1)
 
-$$\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}$$
+fe_model_cookie2 <- lmer(formula = force ~ (1|day)+fat+(1|day:fat)+temp+(1|day:temp)+temp:fat, data=fe_table_cookie, REML = TRUE)
+summary(fe_model_cookie2)
+confint(fe_model_cookie2)
 
-$$\bar y_{ij.}-\bar y_{i..}=\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}$$
+fe_model_cookie3 <- aov(formula = force ~ day_r+fat_f+temp_f+temp_f%in%day_r+temp_f:fat_f, data=fe_table_cookie)
+gad(fe_model_cookie3)
+fe_model_cookie4 <- lmer(formula = force ~ (1|day)+fat+temp+(1|day:temp)+temp*fat, data=fe_table_cookie, REML = TRUE)
+summary(fe_model_cookie4)
+confint(fe_model_cookie4)
 
-For B nested in the random factor A, $\beta_j(i)\sim iid\ N(0,\sigma_\beta^2)$, $E[\beta_{j(i)}]=0$, $V[\beta_{j(i)}]=\sigma_\beta^2$
+temp_fat <- pairs(lsmeans(fe_model_cookie4,~ temp|fat))
+fat_temp <- pairs(lsmeans(fe_model_cookie4,~ fat|temp))
+test(rbind(temp_fat,fat_temp),adjust="tukey")
+temp_day <- pairs(lsmeans(fe_model_cookie3,~ temp_f|day_r))
+day_temp <- pairs(lsmeans(fe_model_cookie3,~ day_r|temp_f))
+test(rbind(temp_day,day_temp),adjust="tukey")
 
-For $\tau_{i}$ and $\varepsilon_{(ij)k}$ are independent, $\beta_{j(i)}$ and $\varepsilon_{(ij)k}$ are independent.
-$Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]=0$
+fe_residual_cookie <- rstudent(fe_model_cookie4)
+plot(fe_residual_cookie)
+plot(fe_model_cookie4)
+qqnorm(fe_residual_cookie)
+qqline(fe_residual_cookie)
+hist(fe_residual_cookie)
+```
 
-For $\varepsilon_{(ij)k}\sim iid N(0,\sigma^2)$, $E[\varepsilon_{(ij)k}]=0$, $V[\varepsilon_{(ij)k}]=\sigma^2$
-
-$$E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]=0$$
-
-$$Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]$$
-
-
-$$=Var[\beta_{j(i)}]+Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+2Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]$$
-
-$$=\sigma_\beta^2+\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+0$$
-
-$$=\sigma_\beta^2+\frac1n\sigma^2+\frac{\sigma^2}{bn}-\frac{2\sigma^2}{bn}=\sigma_\beta^2+\frac{(b-1)\sigma^2}{bn}$$
-
-For $MS_{B(A)}=SS_{B(A)}/df_{B(A)}=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2$
-
-$$E(MS_{B(A)})=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..})^2]=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{Var[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2\right\}$$
-
-$$=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{\sigma_\beta^2+\frac{(b-1)\sigma^2}{bn}\right\}=\sigma^2+\frac{bn}{b-1}\sigma_\beta^2$$
