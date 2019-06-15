@@ -1,78 +1,183 @@
 ---
-title: "Applied Regression Analysis"
-description: "Basic concepts of regression analysis, matrix approach to linear regression selecting the “best” regression equation, and multiple regression. Computational algorithms and computer software regression packages. Applications in science, engineering,and business. "
+title: "STAT2019"
+description: "Fariborz Maseeh Department of Mathematics and Statistics, PSU"
 markup: "mmark"
 ---
 
-*STAT564*
-In this course we focus on learning the various mathematical and statistical criteria used to build models, find the “best model”, check for model adequacy, alleviate, if possible, the problems so as to improve the model adequacy, estimate the parameters (quantities) of interest, and predict future outcomes. The corresponding formal tests of statistical inference are discussed. Case studies via computer application are used to motivate and illustrate the various techniques.
+### Core Requirements (33 credits):
 
-### Course info
+Candidates must complete an approved 45-credit program, which includes at least 33 core credits in courses with the STAT prefix. These 33 credits must include courses distributed as follows:
 
-{.table .table-condensed .table-striped .text-left}
- <span></span>     | <span></span>
-------------|---------------------------------------------
-When        |  MWF	10:15-11:05                |
-Where       |   DF    Douglas Fir 1                                  |
-Office Hours|  MWF  11.05-12:00 in DF1, 3–4 pm on Monday or 2–4 pm on Thursday in East Hall (EH) 310 or by appointment|
+ - Two 9-credit sequences:
 
+STAT 561, 562, 563 Mathematical Statistics I, II, III and
 
-### Instructor
+STAT 564, 565, 566 Applied Regression Analysis and Experimental Design
+
+ - One 9-credit sequence chosen from
+
+STAT 661, 662, 663 Advanced Mathematical Statistics I, II, III or
+
+STAT 664, 665, 666 Theory of Linear Models I, II, III or
+
+MTH 667, 668, 669 Stochastic Processes and Probability Theory I, II, III.
+
+STAT 671, 672, 673 Statistical Learning I, II, III
+
+STAT 570 Topics in Statistical Consulting, 3 credits (this course is currently offered during Spring term only)
+
+3 credits of STAT 501, Statistical Literature and Problems.
+
+### electives-12-credits
+
+A total of 12 elective credit hours must be completed. The following list of courses is pre-approved for elective credit:
+
+Stat 571 Applied Multivariate Statistical Analysis
+
+Stat 572 Bayesian Statistics
+
+Stat 573 Computer Intensive Methods in Statistics
+
+Stat 576 Sampling Theory and Methods
+
+Stat 577 Categorical Data Analysis
+
+Stat 578 Survival Analysis
+
+Stat 580 Nonparametric Methods
+
+Stat 661 Advanced Mathematical Statistics I
+
+Stat 662 Advanced Mathematical Statistics II
+
+Stat 663 Advanced Mathematical Statistics III
+
+Stat 664 Theory of Linear Models I
+
+Stat 665 Theory of Linear Models II
+
+Stat 666 Theory of Linear Models III
+
+Stat 567 Applied Probability I
+
+Stat 568 Applied Probability II
+
+Mth 667 Stochastic Processes and Probability Theory I
+
+Mth 668 Stochastic Processes and Probability Theory II
+
+Mth 669 Stochastic Processes and Probability Theory III
+
+Stat 671 Statistical Learning I
+
+Stat 672 Statistical Learning II
+
+Stat 673 Statistical Learning III
+
+CS 545 Machine Learning
+
+Ec 572 Time Series Analysis and Forecasts
+
+USP 655 Advanced Data Analysis: Structural Equation Modeling
+
+Other statistically orientated courses outside the Department and other mathematics courses may be substituted, but must be approved as electives by the statistics graduate program advisor. &quot;Approved as elective&quot; means that it is approved inside the 12 elective credit hours but not inside the 33 statistical credit hour core requirements. A course or sequence cannot be counted both within the 33-hour core and as an elective course or sequence.
+
+### MS Examinations:
+
+Students must pass two examinations, one in Mathematical Statistics which covers STAT 561, 562, 563 and one in Applied Statistics which includes the core topics covered in STAT 564, 565, and 566. Examinations are scheduled twice per year, the week before the Fall term and during the first week of Spring term. Students may take any examination at most two times. Students must be registered for and complete at least one graduate credit during the term in which they take an exam. See the MS examination policy for more detailed information.
+
+### Applied Statistics
+
+The Applied Statistics Exam is comprised of two components:
+
+ - Applied regression analysis
+
+ - Design of experiments and ANOVA
+
+Both components consist of a written exam portion and a separate, in-laboratory, statistical computing applications portion. The Applied Statistics Exam may be repeated once; that is, a maximum of two tries is permitted.
+
+A Pass (P) or Fail (F) is given on each component.
+
+Two P's equal a PASS on the exam.
+
+One P equals a CONDITIONAL PASS on the exam. The Examination Committee will inform the student of the requirements for removal of the Conditional. Two F's equal a FAIL on the exam. In this case the entire exam must be retaken.
+
+ - Topics:
+ 
+**Regression:** Simple linear regression, model assumptions, diagnostics, and inference; matrix approach to regression; multiple regression, model assumptions, diagnostics and inference; indicator variables; interaction; stepwise and other model building procedures, Box-Cox transformation on the response.
+
+**Experimental Design:** Introduction to analysis of variance, single factor design, model assumptions and diagnostics, multiple comparisons of means, contrasts, test for equal variance, Latin and Graeco-Latin squares, randomized block designs, balanced incomplete designs; factorial designs including 2k and 3k and fractional factorials with confounding; fixed and random effects and expected mean squares; nested and crossed effects; randomization restrictions; analysis of covariance, connection to regression models; response surfaces; rank-based methods.
+
+ - References:
+
+Introduction to Regression Modeling, by Abraham and Ledolter
+
+Applied Linear Regression Models, 3rd ed. by Neter, Kutner, Nachtsheim, and Wasserman
+
+Classical and Modern Regression with Applications, 2nd ed. by Myers
+
+Design and Analysis of Experiments with R by John Lawson
+
+A First Course in the Design of Experiments: A Linear Models Approach by Weber and Skillings
+
+Statistical Design & Analysis of Experiments with Applications to Engineering and Science, 2nd ed. by Mason, Gunst, Hess.
+
+Design and Analysis of Experiments by Montgomery
+
+ - Supporting courses:
+ 
+STAT 4/564 Applied Regression Analysis
+
+STAT 4/565, 466/566 Experimental Design: Theory and Methods
+
+ - Computing portion of examination:
+ 
+In addition to the above written examination, there will be a THREE-hour computer or laboratory based examination where a data set will be provided and students will be asked to use appropriate software to do the data analysis necessary to answer questions posed. Data set(s) will be selected from among regression and experimental design.
+
+### Mathematical Statistics
+
+ - Topics:
+
 {.table .table-condensed .table-striped .text-left}
 <span></span>     | <span></span>     | <span></span>    | <span></span>         
 ------------------|-------------------|------------------|------------------
-Instructor        | [	Nadeeshani S. Jayasena ](https://www.pdx.edu/math/nadeeshani-jayasena)  | East Hall, Room 310 | <a href="mailto:nadeej2@pdx.edu" title="email"><i class="fa fa-envelope"></i></a> &nbsp;  503-725-8296
+Probability theory, random variables and expectation, discrete and continuous distributions, conditional distributions, transformations of random variables, moment generating functions, exponential families of distributions, |multivariate distributions, univariate sampling algorithms.Holder’s Inequality, Minkowski’s Inequality, Jensen’s Inequality, |Sampling distributions, Order Statistics, Convergence concepts, Data reduction, Sufficiency, Completeness, Basu’s theorem, Cramer-Rao inequality, Methods of estimation,Maximum likelihood estimation, Bayes estimation, EM Algorithm, |Most Powerful tests, Neyman-Pearson Lemma, UMP Tests, Likelihood Ratio Tests, Interval Estimation, Large sample properties of estimators and the tests of hypotheses.
 
-### Texts
+ - References:
+ 
+Statistical Inference by Casella and Berger, 2nd ed., Duxbury.
 
-*Required for additional reading and homework problems*
+Mathematical Statistics with Applications by Wackerly, Mendenhall and Scheaffer, 7th ed.
+
+Introduction to Mathematical Statistics by Hogg, MacKean and Craig, 6th ed.
+
+ - Supporting courses:
+ 
+STAT 461, 462 - Introduction to Mathematical Statistics
+
+STAT 4/567 - Applied Probability
+
+STAT 561, 562, 563 - Mathematical Statistics
+
+### Fall 2019 – Master’s Examinations
+
+ - Schedule
+
+{.table .table-condensed .table-striped .text-left}
+ <span></span>     | <span>date</span> | <span>time</span> 
+-----------|------------------------|--------------
+Math Statistics	|Monday, 9/23/2019	|10:00am-1:00pm
+Applied Stats-Written Part	|Wednesday, 9/25/2019	|10:00am-1:00pm
+Applied Stats-Lab Part	|Thursday, 9/26/2019	|10:00am-1:00pm
+
+It will be possible to sign up for examinations through the end of Monday, 8/26/2019. Students may cancel signups for master’s exam through the end of Monday, 9/16/2019 by emailing Constance LaGue, laguec@pdx.edu.
+
+Students taking a master’s exam must be registered for at least one graduate credit during fall term. Please bring your PSU ID card with you to the exam to show the proctor.
+
+### Committees
 
 {.table .table-condensed .table-striped .text-left}
  <span></span>     | <span></span> | <span></span> 
------------|---------------------------------|----------------------------------
-[Introduction to Linear Regression Analysis](https://www.amazon.com/Introduction-Linear-Regression-Analysis-Fifth/dp/1118780574) | Douglas C. Montgomery, Elizabeth A. Peck, G. Geoffrey Vining | John Wiley & Sons, Jun 29, 2015
-
-*References*
-
-{.table .table-condensed .table-striped .text-left}
- <span></span>     | <span></span> | <span></span> 
------------|---------------------------------|----------------------------------
-Classical and Modern Regression with Applications | Raymond Myers | 2nd edition
-Applied Linear Regression Models | Neter, Kunter, Nachtscheim |4th edition, 2004
-Applied regression analysis | Draper and Smith | New York: Wiley, 1998
-Probability and Statistical Inference | Hogg, Tanis, and Zimmerman| 9th edition, 2015
-Introduction to Mathematical Statistics | Hogg and Craig| 5th edition, 1995
-Quick Start to Data Analysis with SAS | DiIorio and Hardy, 1996
-SAS programming for researchers and social scientists | Paul E. Spector | 2001
-[Freely available resource for learning R programming](http://cmdlinetips.com/2018/01/free-online-resources-books-to-learn-r-and-data-science/) |
-[Multiple Regression in R](http://web.math.ku.dk/~richard/courses/regression2013/regression.pdf) |
-
-*Other references*
-
-{.table .table-condensed .table-striped .text-left}
- <span></span>     | <span></span> | <span></span> 
------------|---------------------------------|----------------------------------
-[Regression Analysis for the Social Sciences](https://www.amazon.com/Regression-Analysis-Social-Sciences-2/dp/113881251X) | Gordon, Rachel | Routledge, 2015
-[OpenIntro Statistics](https://www.openintro.org/stat/index.php) | David M Diez, Christopher D Barr, Mine C¸ etinkaya-Rundel | 3rd edition, 2015
-[R for Data Science](http://r4ds.had.co.nz/) | Grolemund, Wickham | O'Reilly, 1st edition, 2017
-
-### Prerequisites: 
-
-Mth 261 and either Stat 451/Stat 551 or Stat 461/Stat 561.
-
-### Attendance: 
-
-Students are required to attend all lectures in order to be successful in the course. If you happen to miss class, it is your responsibility to retrieve what you missed.
-
-### Lectures:
-
-Lecture handouts are incorporated in all lectures. Incomplete handouts will be posted on D2L/ Content weekly. Students are encouraged to bring these to class, and complete those and/or make additional notes. You should know what is not on your lecture notes during the class. Lecture notes are not a substitution for lecture, reading assignments, and homework. They are intended to be guide line for the text, outlining some important topics in each section.
-
-### Statistical Software and Lab
-
-Students have the freedom to use SAS or R (and RStudio). SAS is not free to download and is available in the BDWY225, DF001, and URBN computer labs at PSU. Also, if you take your personal computer to Office of Information Technology (OIT) at room 18 (basement level) of SMSU, you can get SAS installed for free. R (and RStudio) is a free software and available in all the computer labs at PSU as well as to download for free. You can use the computers in this lab (DF 1) when there is no session. The schedule of this computer lab is available at http://www.pdx.edu/math/math-computer-lab-schedule.
-
-### Attributions
-
-- This course website is adapted from [USP654 Data Analysis II by Liming Wang at Portland State](https://usp654.github.io), which in turn is based on [STA 112FS by Mine Çetinkaya-Rundel at Duke University](http://www2.stat.duke.edu/courses/Fall17/sta112.01/) and [ESPM-157 by Carl Boettinger](https://espm-157.carlboettiger.info/).
-- Background photo ["City of Darkness: Life in Kowloon Walled City" by Greg Girard](http://greggirard.bigcartel.com/)
+-----------|--------------------|------------------
+Applied Statistics:	|Daniel Taylor-Rodriguez	|Bruno Jedynak
+Mathematical Statistics:	|Bob Fountain	|Subhash Kochar
