@@ -4,24 +4,57 @@ markup: "mmark"
 output: html_document
 ---
 
-## {.tabset .tabset-fade .tabset-pills}
 
 
-### Demonstration  {.tabset .tabset-fade .tabset-pills}
+### Table of Common Distributions
 
-https://www.symbolab.com/
+Distribution | CDF | P(X=x),f(x) | μ | $\mathbf{EX^2}$ | Var | MGF,$M_X(t),E[e^{tx}]$ | M'(t) | M''(t)
+|---|---|---|---|---|---|---|---|---
+$Bern(p)$ | | $p^xq^{1-x},x\in\{1,0\}$ | $p$ | $p$ | $pq$ | $pe^t+q$
+$Binom(n,p)$ | $I_{1-p}(n-x,x+1)$ | $\binom{n}{x}p^x q^{n-x}; x \in \{0,1..n\}$ | $np$ | $\mu(\mu+q)$ | $\mu{q}$ | $(pe^t+q)^n$
+$Geom(p)$ | $1-q^x$ | $pq^{x-1},x\in 1,2,..$ | $\frac1p$ | $\frac{p+2q}{p^2}$ | $\frac{q}{p^2}$ | $\frac{pe^t}{1-qe^t},t<-\ln{q}$  
+$Geom2(p)$ | $1-q^{x+1}$ | $pq^x,x\in 0,1,..$ | $\frac{q}p$ | $\frac{q^2+q}{p^2}$ | $\frac{q}{p^2}$ | $\frac{p}{1-qe^t}, qe^t<1$ | $\frac{pqe^t}{(1-qe^t)^2}$ | $\frac{2pqe^t}{(1-qe^t)^3}-M'(t)$ 
+$NBin(r,p)$ | $x\in r,r+1..$ | $\binom{x-1}{r-1}p^rq^{x-r}$ | $\frac{r}p$ | $ $ | $\frac{rq}{p^2}$ | $(\frac{pe^t}{1-qe^t})^r$
+$NBin2(r,p)$ | $ $ | $\binom{x+r-1}{r-1}p^rq^x, x \in 0,1..$ | $\frac{rq}p$ | $ $ | $\frac{rq}{p^2}$ | $(\frac{p}{1-qe^t})^r, qe^t<1$
+$Hgeom(N,m,k)$ | $ $ | $\frac{\binom{m}{x}\binom{N-m}{k-x}}{\binom{N}{k}}$ | $\frac{km}{N}$ | $ $ | $\mu\frac{(N-m)(N-k)}{N(N-1)}$ 
+$Hgeom(w,b,k)$ | $ $ | $\frac{\binom{w}{x}\binom{b}{k-x}}{\binom{w+b}{k}}$ | $\frac{kw}{w+b}$ | $ $ | $\mu\frac{b(w+b-k)}{(w+b)(w+b-1)}$   
+$Pois(\mu)$ | $e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$ | $\frac{\mu^x}{x!}e^{-\mu},x \in 0,1..$ | $\mu$ | $\mu^2+\mu$ | $\mu$ | $e^{\mu(e^t-1)}$ | $\mu e^tM(t)$ | $\mu e^t(1+\mu e^t)M(t)$ 
+$Unif(n)$ |  | $\frac{1}n,x \in 1,2..n$ | $\frac{n+1}2$ | $\frac{(n+1)(2n+1)}{6}$ | $\frac{(n^2-1)}{12}$ |  $\frac{\sum_{i=1}^n{e^{ti}}}n$
+$Unif(a,b)$ | $\frac{x-a}{b-a}$ | $\frac{1}{b-a},x \in(a,b)$ | $\frac{a+b}{2}$ | $\frac{(b^2+ab+a^2)}{3}$| $\frac{(b-a)^2}{12}$ |  $\frac{e^{tb}-e^{ta}}{t(b-a)}$
+$N(\mu,\sigma^2)$ |  | $\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ | $\mu$ | $\mu^2+\sigma^2$ | $\sigma^2$ | $e^{\mu t +\frac{\sigma^2t^2}2}$ | $(\mu+\sigma^2t)M(t)$ | $[(\mu+\sigma^2t)^2+\sigma^2]M(t)$
+$N(0, 1)$ |  | $\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$ | $0$ | $1$ | $1$ | $e^{\frac{t^2}2}$ 
+$\mathcal{LN}(\mu,\sigma^2)$ | $x>0$ | $\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$ | $e^{\mu+\frac{\sigma^2}2}$ | $e^{2\mu+2\sigma^2}$ | $\theta^2(e^{\sigma^2}-1)$ | $\times$
+$Cauchy(\theta,\sigma^2)$ |  | $\frac{1}{\pi\sigma}\frac1{1+(\frac{x-\theta}{\sigma})^2}$ | $\theta{median}$ | $\theta\pm\sigma{quartiles}$ | $\times$ | $ $ 
+$DExpo(\mu,\sigma^2)$ | $-\infty<x<\infty$ | $\frac{1}{2\sigma} e^{-|\frac{x-\mu}{\sigma}|}$ | $\mu$ | $\mu^2+2\sigma^2$ | $2\sigma^2$ | $\frac{e^{\mu t}}{1-\sigma^2t^2}$ | $\frac{e^{\mu t}(\mu-\mu\sigma^2t^2+2\sigma^2t)}{(1-\sigma^2t^2)^2}$ 
+$Expo(\lambda)$ | $1-e^{-\lambda x}$ | $\lambda e^{-\lambda x}$ | $\frac{1}{\lambda}$ | $ $ | $\frac{1}{\lambda^2}$ | $\frac{\lambda}{\lambda - t}, t < \lambda$
+$Expo2(\beta)$ | $x \in (0,\infty)$ | $\frac1{\beta} e^{-\frac{x}\beta}$ | $\beta$ | $ $ | $\beta^2$ | $(1-\beta t)^{-1}$ | $\beta(1-\beta t)^{-2}$ | $2\beta^2(1-\beta t)^{-3}$
+$Gam(a, \lambda)$ | $x \in (0,\infty)$ | $\frac{\lambda^a}{\Gamma(a)}x^{a-1}e^{-\lambda x}$ | $\frac{a}{\lambda}$ | | $\frac{a}{\lambda^2}$ | $(\frac{\lambda}{\lambda - t})^a, t < \lambda$
+$Gam2(\alpha,\beta)$ | $ $ | $\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}$ | $\alpha\beta$  | $\alpha(\alpha+1)\beta^2$ | $\alpha\beta^2$ | $(1-\beta t)^{-a}, t <\frac1\beta$ | $\mu{M(t)}(1-\beta t)^{-1}$  | $E[X^2]{M(t)}(1-\beta t)^{-2}$
+$\Gamma(\alpha)=$ | $(\alpha-1)!$ | $\int_0^\infty t^{\alpha-1}e^{-t}dt$ | $\Gamma(\frac12)=\sqrt{\pi}$  | $\Gamma(1)=1$ | $\Gamma(\alpha+1)=\alpha\Gamma(\alpha)$  | $\Gamma(-\frac12)=-2\Gamma(\frac12)$ | $\Gamma(0)=\Gamma(-1)=\infty$ 
+$B(\alpha,\beta)=$ | $\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$ | $\int_0^1 t^{\alpha-1}(1-t)^{\beta-1}dt$ | $ $  | $ $
+$Beta(a, b)$ | $x\in(0,1)$ | $\frac{1}{B(a,b)}x^{a-1}(1-x)^{b-1}$ | $\frac{a}{a+b}$ | $\frac{a(a+1)}{(a+b)(a+b+1)}$  | $\frac{ab}{(a+b)^2(a+b+1)}$ | $V=\frac{\mu(1-\mu)}{(a+b+1)}$ | $ $ | $M^n(t)=\frac{\Gamma(a+n)\Gamma(a+b)}{\Gamma(a+b+n)\Gamma(a)}$ 
+$\chi_p^2$ | $x>0$ | $\frac{1}{2^{\frac{p}2}\Gamma(\frac{p}2)}x^{\frac{p}2-1}e^{-\frac{x}2}$ | $p$ | $2p+p^2$ | $2p$ | $(1-2t)^{-\frac{p}2}, t<\frac12$
+$t_n$ | $ $ | $\frac{\Gamma(\frac{n+1}2)}{\sqrt{n\pi} \Gamma(\frac{n}2)} (1+\frac{x^2}n)^{-\frac{n+1}2}$ | $0,n>1$ | $ $ | $\frac{n}{n-2},n>2$ | $\times$
 
-The ASA's Statement on p-Values: Context, Process, and Purpose
+code | distribution
+|---|---
+dbinom(k,n,p) | PMF $P(X=k)$ for $X \sim \Bin(n,p)$
+pbinom(x,n,p) | CDF $P(X \leq x)$ for $X \sim \Bin(n,p)$
+qbinom(a,n,p) |   $a$th quantile for $X \sim \Bin(n,p)$
+rbinom(r,n,p) |  vector of $r$ i.i.d.~$\Bin(n,p)$ r.v.s
+dgeom(k,p) | PMF $P(X=k)$ for $X \sim \Geom(p)$
+dhyper(k,w,b,n) | PMF $P(X=k)$ for $X \sim \HGeom(w,b,n)$
+dnbinom(k,r,p) | PMF $P(X=k)$ for $X \sim \NBin(r,p)$
+dpois(k,r) | PMF $P(X=k)$ for $X \sim \Pois(r)$
+dbeta(x,a,b) | PDF $f(x)$ for $X \sim \Beta(a,b)$
+dchisq(x,n) | PDF $f(x)$ for $X \sim \chi^2_n$
+dexp(x,b) | PDF $f(x)$ for $X \sim \Expo(b)$
+dgamma(x,a,r) | PDF $f(x)$ for $X \sim \Gam(a,r)$
+dlnorm(x,m,s) | PDF $f(x)$ for $X \sim \mathcal{LN}(m,s^2)$
+dnorm(x,m,s) | PDF $f(x)$ for $X \sim \N(m,s^2)$
+dt(x,n) | PDF $f(x)$ for $X \sim t_n$
+dunif(x,a,b) | PDF $f(x)$ for $X \sim \Unif(a,b)$
 
-http://dx.doi.org/10.1080/00031305.2016.1154108
-
-stplanr
-
-https://www.rdocumentation.org/packages/stplanr
-
-A visual indtroduction to probability and statistics
-
-https://seeing-theory.brown.edu
 
 
 Normal_PDF|Normal_CDF|Chi^2_PDF|Chi^2_CDF
@@ -35,19 +68,6 @@ Exponential_pmf|Exponential_cdf|Binomial_pmf|Binomial_cdf
 
 
 
-
-
-#### interactive visualization
-
-
-- [Interpreting Confidence Intervals](http://rpsychologist.com/d3/CI/) 
-
-- [Interpreting Cohen's d effect size](http://rpsychologist.com/d3/cohend/)
-
-- [Interpreting Correlations](http://rpsychologist.com/d3/correlation/)
-
-- [Understanding Statistical Power and Significance Testing](http://rpsychologist.com/d3/NHST/)
-
 ### Univariable Distribution
 
 1. [Chart of Univariable Distribution](https://www.wolfram.com/mathematica/new-in-8/parametric-probability-distributions/index.html)
@@ -59,21 +79,23 @@ Exponential_pmf|Exponential_cdf|Binomial_pmf|Binomial_cdf
 
 1. www.probabilitycourse.com
 
+
 ### Glossary of Statistical Terms
 
-
 - ANOVA: 
+
 Analysis of variance usually refers to an analysis of a continuous dependent variable where all the predictor variables are categorical. One-way ANOVA, where there is only one predictor variable (factor; grouping variable), is a generalization of the 2-sample t-test. ANOVA with 2 groups is identical to the t-test. Two-way ANOVA refers to two predictors, and if the two are allowed to interact in the model, two-way ANOVA involves cross-classification of observations simultaneously by both factors. It is not appropriate to refer to repeated measures within subjects as two-way ANOVA (e.g., treatment× time). An ANOVA table sometimes refers to statistics for more complex models, where explained variation from partial and total effects are displayed and continuous variables may be included.
 
 - Bayes’ rule or theorem: 
 
-$Pr(A|B) = \frac{Pr(B|A) Pr(A)}{Pr(B)}$, read as the probability that event A happens given that event B has happened equals the probability that B happens given that A has happened multiplied by the (unconditional) probability that A happens and divided by the (unconditional) probability that B happens. Bayes’ rule follows immediately from the law of conditional probability which states that $Pr(A|B) = Pr(A \cap B)Pr(B)$.
+$Pr(A|B) = \frac{Pr(B|A) Pr(A)}{Pr(B)}$, read as the probability that event A happens given that event B has happened equals the probability that B happens given that A has happened multiplied by the (unconditional) probability that A happens and divided by the (unconditional) probability that B happens. Bayes’ rule follows immediately from the law of conditional probability which states that $P(A|B)=P(A\cap B)P(B)$.
 
 - Bayesian inference: 
 
 A branch of statistics based on Bayes’ theorem. Bayesian inference doesn’t use P -values and generally does not test hypotheses. It requires one to formally specify a probability distribution encapsulating the prior knowledge about, say, a treatment effect. The state of prior knowledge can be specified as “no knowledge” by using a flat distribution. Once the prior distribution is specified, the data are used to modify the prior state of knowledge to obtain the post-experiment state of knowledge. Final probabilities computed in the Bayesian framework are probabilities of various treatment effects.
 
 - bias: 
+
 A systematic error. Examples: a miscalibrated machine that reports cholesterol too high by 20mg% on the average; a satisfaction questionnaire that leads patients to never report that they are dissatisfied with their medical care; using each patient’s lowest blood pressure over 24 hours to describe a drug’s antihyptertensive properties.
 
 - binary variable: 
@@ -372,18 +394,4 @@ Failing to detect an effect that is real, i.e., the false negative rate. The typ
 - variance: 
 
 A measure of the spread or variability of a distribution, equaling the average value of the squared difference between measurements and the population mean measurement. From a sample of measurements, the variance is estimated by the sample variance, which is the sum of squared differences from the sample mean, divided by the number of measurements minus 1. The minus 1 is a kind of “penalty” that corrects for estimating the population mean with the sample mean. Variances are typically only useful when the measurements follow a normal or at least a symmetric distribution.
-
-
-
-### Machine Learning by PwC
-
-<img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-overview-thumb.png" style="max-width:15%;min-width:40px;" >
-[Machine learning overview](http://usblogs.pwc.com/emerging-technology/machine-learning-overview-infographic-redirect/)
-
-<img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-methods-thumb.png" style="max-width:15%;min-width:40px;" >
-[Machine learning methods](http://usblogs.pwc.com/emerging-technology/machine-learning-methods-infographic/)
-
-<img src="https://usblogs.pwc.com/emerging-technology/wp-content/uploads/2017/05/machine-learning-evolution-thumb.png" style="max-width:15%;min-width:40px;" >
-[Machine learning evolution](https://usblogs.pwc.com/emerging-technology/machine-learning-evolution-infographic/)
-
 
