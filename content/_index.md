@@ -10,9 +10,9 @@ Candidates must complete an approved 45-credit program, which includes at least 
 
  - Two 9-credit sequences:
 
-STAT 561, 562, 563 Mathematical Statistics I, II, III and
+~~STAT 561, 562, 563 Mathematical Statistics I, II, III~~ and
 
-STAT 564, 565, 566 Applied Regression Analysis and Experimental Design
+~~STAT 564, 565, 566 Applied Regression Analysis and Experimental Design~~
 
  - One 9-credit sequence chosen from
 
