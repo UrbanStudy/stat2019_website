@@ -411,9 +411,9 @@ Let $0\le Y_1<Y_2<..<Y_n$ denote the order statistics of the sample. Define $W_i
 
 Let X be a rv with finite mean $\mu$, finite variance $\sigma^2$, and assume $E(X^8)<\infty$. Prove or disprove:
 
-(a) $E[(X-\mu/\sigma)^2]\ge1$.
+(a) $E[(\frac{X-\mu}{\sigma})^2]\ge1$.
 
-(b) $E[(X-\mu/\sigma)^4]\ge1$.
+(b) $E[(\frac{X-\mu}{\sigma})^4]\ge1$.
 
 ### 2005S4
 [@MGF] [@Cor] [@joint]
@@ -1526,14 +1526,14 @@ $f(x,\mu)=\begin{cases}e^{-(x-\mu)}& \mu<x<\infty\\0& e.w.\end{cases}$
 Tableman, Kochar
 
 ### 2015S1Aa
-[2005S3][]
+[2005S3][] [Jesen's Inequality p190]
 
 Let X be a random variable with finite mean $\mu$, finite variance $\sigma^2$,
 and assume $E(X^8)<\infty$. Prove or disprove:
 
-i. $E[(X-\mu/\sigma)^2]\ge1$.
+i. $E[(\frac{X-\mu}{\sigma})^2]\ge1$.
 
-ii. $E[(X-\mu/\sigma)^4]\ge1$.
+ii. $E[(\frac{X-\mu}{\sigma})^4]\ge1$.
 
 ### 2015S1Ab
 [2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1][] [@joint] [@marg]
@@ -1544,6 +1544,10 @@ $f(x)=\begin{cases}2(1-x)&0<x<1\\0& o.w.\end{cases}$
 
 Suppose a tack is selected at random from this box and this tack is then tossed three times independently. Determine the probability the tack will land with its point up on all three tosses.
 
+$E[X^3]=\int_0^1y^3f(y)dy=1/10$
+
+$E^3[X]=(\int_0^1xf(x)dx)^3=1/27$
+
 ### 2015S2A
 [2007F2A][] [2008S5A][] [2009FA1][] [2014F4A][] [2019SA2][]
 
@@ -1552,6 +1556,12 @@ Suppose $Y_1$ and $Y_2$ are i.i.d. random variables and the p.d.f. of each of th
 $f(x)=\begin{cases}10e^{-10x}& x>0\\0& o.w.\end{cases}$
 
 Find the p.d.f. of $X=Y_1-Y_2$.
+
+$f(y_1,y_2)$
+
+$f(x,w)$
+
+$f(x)=5e^{-10|x|}$  [@Laplace]
 
 ### 2015S3A
 [2005S8][] [2014SA3][] [2014SA5][] [2016S3][] [@SNorm] [@mean]
@@ -1563,21 +1573,31 @@ median is the $k^{th}$ order statistic, denoted by $Y_k$.
 
 (b) (5) Determine the $E(Y_k|\bar X)$, where $\bar X$ is the sample mean of the above random sample. Justify your answer.
 
+[7.3.23 p347]
+
+ $E(Y_k|\bar X)=\bar X$
+
 ### 2015S4A
 [2007F4A][] [@CDF]
 
 (a) Let X be a continuous type random variable with cumulative distribution function $F(x)$. Find the distribution of the random variable $Y=\ln(1-F(X))$:
 
+$1-e^{-y}$
+
 (b) Prove that for any $y\ge c$, the function $G_c(y)=P[X\le y|X\ge c]$
 
 ### 2015S5A
-[@Pois]
+[@Pois] [@cond]
 
 Suppose X and Y are independent Poisson random variables with parameters $\lambda$ and $2\lambda$, respectively.
 
-(a) Find the distribution of $X+Y$.
+(a) Find the distribution of $X+Y$.$Pois(3\lambda)$
+
+trans or MGF p158
 
 (b) Find $E[X|X+Y=5]$.
+
+$P(x|x+y=5)=\frac{P(x)P(y=5-x)}{P(x+y=5)}$
 
 ### 2015S1B
 [2007F5A][] [2013FB2][] [2014F1B][] [@CDF] [@MLE]
@@ -1586,11 +1606,20 @@ Let $X_1,X_2,..,X_n$ be a random sample from a distribution with cumulative dist
 
 $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{cases}$
 
-(a) Find $\hat\theta$, the mle of $\theta$.
+(a) Find $\hat\theta$, the mle of $\theta$. 
+
+$X_{(1)}$ or $X_{(n)}$ ?
 
 (b) Find $E[\hat\theta]$.
 
+$EX_{(1)}=\frac{14n}{3\theta^2}(\frac{\theta^2-1}{\theta^2})^{n-1}$
+
+$EX_{(n)}=\frac{2n}{2n+1}\theta$
+
 (c) Prove that $\hat\theta$ is consistent for $\theta$.
+
+$\lim\to0$, Bias$\to0$
+
 
 ### 2015S2B
 [2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
@@ -1603,9 +1632,15 @@ for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
 
+$\frac{n}{\theta^2}$
+
 (b) Find the 90th percentile of this distribution as a function of $\theta$ and call it $g(\theta)$.
 
+$0.9=\int_0^{g(\theta)}f(x,\theta)$
+
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
+
+$Var\ge\frac{g'(\theta)^2}{I_{\theta}}$
 
 ### 2015S3B
 [2004F8][] [2007F4B][] [2013FB4][] [2018S1B][] [2019SB2][] [@Laplace] [@MLE]
@@ -1625,7 +1660,11 @@ $f(y|\theta)=\begin{cases}\theta y^{\theta-1}& 0<x<1,\theta>0\\0& o.w.\end{cases
 
 (a) Sketch the power function of the test of the rejection: $Y>0.5$.
 
+$\alpha=P_{\theta_1}(T<t_0)$
+
 (b) Based on the single observation $Y$ , find the uniformly most powerful test of size $\alpha$ for testing $H_0:\theta=1$ against $H_A :\theta>1$.
+
+$f_1/f_0c_0$ reject
 
 ### 2015S5B
 [2009FA3][] [2019SA4][] [@FishI] [@CI]
@@ -1650,11 +1689,15 @@ Let $X_1,X_2,..,X_{n}$ be iid continuous uniform r.v.'s over $[0,\theta]$, where
 
 (a) (5 pts) Find $E[Y_n]$.
 
+$f(x)$, $F(x)$, $f_{Y_{(n)}}(x)$, $n\theta/(n-1)$
+
 (b) (5 pts) Find $Var[Y_n]$.
 
 (c) (5 pts) Show that $Y_n$ is a sufficient statistic for $\theta$.
 
 (d) (5 pts) Assuming $Y_n$ is a complete sufficient statistic for $\theta$, find the UMVUE of $\theta$.
+
+7.3.23
 
 (e) (5 pts) Assuming $Y_n$ is a complete sufficient statistic for $\theta$, find the UMVUE of $\theta^2$.
 
@@ -1665,9 +1708,17 @@ Suppose $X_1$ and $X_2$ are iid exponential with parameter = 1.
 
 (a) (5 pts) Find the pdf of $Y_1=X_1/(X_1+X_2)$.
 
+[@trans] $Expo(1)\sim Gamma(1,1)$
+
+$\frac{G(\alpha_1,\beta)}{G(\alpha_1,\beta)+G(\alpha_2,\beta)}\sim Beta(\alpha_1,\alpha_2)$
+
 (b) (5 pts) Find the pdf of $Y_2=X_1+X_2$.
 
+$f_{Y_2}(y_2)$
+
 (c) (5 pts) Are $Y_1$ and $Y_2$ independent?
+
+$f(y_1,y_2)=f(y_1)f(y_2)$
 
 ### 2015F3
 [@Unif] [@LimD]
@@ -1679,11 +1730,18 @@ corresponding order statistics.
 
 (b) (5 pts) Find $E[Y_k]$.
 
+$f(x)$, $F(x)$, $f_{Y_{(n)}}(x)$
+
 (c) (5 pts) Find $Var[Y_k]$.
 
 (d) (5 pts) What is the limiting distribution of $W_1=nY_1$?
 
+p235
+
 (e) (5 pts) What is the limiting distribution of $W_n=n(1-Y_n)$?
+
+p236
+
 
 ### 2015F4
 [2010FB2] [@Beta] [@HypoT] [@power]
@@ -1712,6 +1770,8 @@ Crain, Kim
 Let $X_1,X_2,..,X_n$ be iid (independent, identically distributed) Poisson random variables with parameter $\lambda>0$.
 
 (a) Find a complete sufficient statistic for $\lambda$.
+
+$T=\sum x_i\sim Pois(n\lambda)$
 
 (b) Find the MVUE (Minimum Variance Unbiased Estimator) of $\lambda$.
 
@@ -1866,37 +1926,77 @@ conditional density $f(y|\theta) = \frac1{\sqrt{2\pi}}e^{−(y-\theta)^2/2},y\in
 
 (a) the conditional density of $\Theta$ given $Y = y$, (2 pts)
 
-(b) the marginal density of $Y$. (3 pts)
+$f(y,\theta)$
+
+$f(\theta|Y=y)$
+
+(b) the marginal density of $Y$. (3 pts) 
+
+$f(y)\sim Norm$ 
 
 ### 2017S2
+[@trans] [@SNorm] [Cauchy]
 
 If $Z_1,Z_2$ are independent standard normal random variables, find the density of $Z_1/Z_2$.
 
 
 ### 2017S3
+[@MGF] [@Expo]
 
 Suppose $X_1,X_2,..,X_n$ is a random sample of $Exp(1)$ @Expo random variables. Find the moment generating function $M(t)=E(e^{tX_{(1)}}), t\in\mathbb R$, where $X_{(1)}$ is the minimum. (5 pts)
 
+$f_{X_{1}}(x)\sim Expo(1/n)$
+
+MGF= $\frac1{1-\beta t}=\frac1{1-t/n}$
+
 ### 2017S4
+p625
 
 Let $X=e^Z$ be a lognormal random variable, $Z\sim N(0,1)$. Find its skewness $E(X − μ)^3/\sigma^3$.
 
+$E[X^n]=e^{n\mu+n^2\sigma^2/2}$
+
+$E[X^1]=$
+$E[X^2]=$
+$E[X^3]=$
+
 ### 2017S5
+[@Norm] [@MLE] [@Cor]
 
 Suppose $X_1,X_2,..,X_n$ is a random sample of $N(\mu,\sigma^2)$ random variables.
 
 (a) Find the expectation of the MLE for $\sigma^2$. (3 pts)
+p214
+
+$\hat\sigma^2=\frac{\sum(x_i-\mu)^2}{n}$
+
+$\frac{n-1}{n}S^2=\hat\sigma^2$
 
 (b) Compute the correlation of $\bar X$ and $X_n$. (2 pts)
+p169
+
+$\sigma^2/n$
 
 ### 2017S6
 [2003F9][] [2011F6][] [@Pois] [@UMP]
 
 Let $X_1,X_2,X_3,...$ be i.i.d. $Poisson(\lambda)$ random variables. Find a UMP (uniformly most powerful) test of $H_0:\lambda\le1$ versus $H_1:\lambda>1$ at a level $\alpha$ near .05. (5 pts)
+[p391]
+
+Step1 suff $T=\sum x_i\sim Pois(n\lambda)$
+
+Step2 $T\sim Pois$ Expo family has MLR
+
+Step3 $T>t_0$ is UMP test at $\alpha=P_{\theta_0}(T>t_0)=0.05$
 
 ### 2017S7
+[@Var] [@Beta] [@Bino]
 
-Suppose that $(P,X)$ is a pair of random variables with $P\sim Beta(1/2, 1/2)$ and then $X_{|P=p}\sim bin(n,p)$. Find the variance of X.
+Suppose that $(P,X)$ is a pair of random variables with $P\sim Beta(1/2, 1/2)$ and then $X_{|P=p}\sim bin(n,p)$. Find the variance of X. 
+
+$E[P]$, $E[P^2]$, $Var[P]$
+
+$Var[X|P]=n(n+1)/8$
 
 ### 2017S8
 [@CRLB]
@@ -1904,6 +2004,7 @@ Suppose that $(P,X)$ is a pair of random variables with $P\sim Beta(1/2, 1/2)$ a
 Let $X_1,X_2,..,X_n$ be a random sample of $N(\mu,\sigma^2)$ random variables. Find the Cramer-Rao
 lower bound  on the variance of an unbiased estimator for $\sigma^2$. (Assume $\mu$ is known.)
 
+$2\sigma^4/n$
 
 ## 2017F
 
@@ -1933,13 +2034,15 @@ $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 If X and Y are independent $Exp(1)$ random variables, and the density of the ratio $X/(X+Y)$.
 
 ### 2017FA4
+[@Expo] [@trans]
 
 Let $F$ be the cdf of an exponential random variable with median 10 and let $G$ be
 that of an independent exponential random variable Y with median 5. Find the distribution
 of $V=F(X)+G(Y)$.
 
+
 ### 2017FB1
-[2016S2][] @Bino
+[2016S2][] [@Bino]
 
 Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y)$ of $Y$,
 
@@ -1960,6 +2063,10 @@ $f(x;\theta)=\begin{cases}e^{-(x-\theta)}& \theta<x<\infty\\0& e.w.\end{cases}$
 
 where $-\infty<\theta<\infty$is an unknown parameter. For testing the null hypothesis $H_0:\theta=0$
 vs the alterative $H_1:\theta>0$, a reasonable test is to reject the null hypothesis if $X_{(1)}=\min\{X_1,X_2,..,X_{10}\}\ge C$. Find $C$ so that the size of the test is 0.05. Also find the power of this test at $\theta=1$. Is this test unbiased?
+
+$\alpha=P_{\theta_0}(x_{(1)}\ge c)$, $c=$
+
+$\beta=P_{\theta_1}(x_{(1)}\ge c)$
 
 ### 2017FB3
 [2008S5B][] [@Norm] [@MLR] [@UMP] [@power] [@HypoT]
@@ -1997,26 +2104,31 @@ where $\theta>-1$ is an unknown parameter.
 Kochar, Kim
 
 ### 2018S1A
+[@CDF][@trans][@Expo]
+[Ex1.55]
 
 An electric device has lifetime denoted by $T$. The device has value $V=5$ if it fails before time t = 3; otherwise, it has value $V = 2T$. Find the cdf of $V$ , if $T$ has pdf
 
 $f_T(t)=\frac1{1.5}e^{-\frac1{1.5}t}, t>0$
 
 ### 2018S2A
+[@trans]
+[Example 2.1.7]
 
-Let $X$ have pdf
-
-$fX(x)=\frac29(x+1), -1\le x\le2$
-
+Let $X$ have pdf 
+$fX(x)=\frac29(x+1), -1\le x\le2$ 
 Find the pdf of $Y=X^2$.
 
+$\begin{cases}&1\le y\le4\\& 0\le y\le1\end{cases}$
+
 ### 2018S3A
-[2017FA1][]
+[2017FA1][] 
 
 Suppose Xenophon and Yves meet for lunch, and Xenophon arrives at time X
 uniformly from 1 to 2 P.M., and Yves arrives independently at time Y with the same distribution. Find the distribution of $|Y-X|$ and its expectation, that is, the expected waiting time of either party.
 
 ### 2018S4A
+[@trans][@indep][@Norm][@MGF]
 
 Let $X\sim N(\mu,\sigma^2)$ and $Y\sim N(\gamma,\sigma^2)$. Suppose that X and Y are independent. Deine $U=X+Y$ and $V=X-Y$.
 
@@ -2025,14 +2137,14 @@ Let $X\sim N(\mu,\sigma^2)$ and $Y\sim N(\gamma,\sigma^2)$. Suppose that X and Y
 (b) Find the distribution of each of them.
 
 ### 2018S1B
-[2007F4B][] [2019SB2][] [@Laplace]
+[2004F8][] [2007F4B][] [2013FB4][] [2019SB2][] [@Laplace] [@MLE]
 
 Let $X_1,X_2,..,X_1$ be a random sample of size 11 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
-
 where $-\infty<\theta<\infty$ is unknown.
-
 Find the m.l.e. of $\theta$ and find its bias.
+
+$\theta$= sample median unbiased
 
 ### 2018S2B
 [2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2015S2B][] [@Expo] [@FishI] [@CRLB]
@@ -2050,7 +2162,7 @@ for which the parameter $\theta>0$ is unknown.
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
 ### 2018S3B
-[2003S9][] [2004F9][] [2007F5B][] [2015S4B][] [2019SB3][] [@SPower] [@power] [@UMP]
+[2003S9][] [2004F9][] [2007F5B][] [2015S4B][] [2019SB3][] [@SPower] [@power] [@UMP] [@HypoT]
 
 Let $X_1,X_2,..,X_n$ be a random sample from a a distribution with pdf
 
@@ -2061,11 +2173,10 @@ $H_0:\theta=1\quad H_1 :\theta>1$
 Derive the UMP test of size $\alpha$ and obtain the null distribution of your test statistic.
 
 ### 2018S4B
-[2004F12][] [2010SB4][] [2010FB4][] [2011S6][] [2015F5][] [@Expo] [@LRT] [@HypoT] [@power]
+[2004F12][] [2010SB4][] [2010FB4][] [2011S6][] [2015F5][] [@Expo] [@LRT] [@HypoT] [@power] [@HypoT]
 
 The life time of an electronic component has exponential distribution with mean $\mu$.
-10 such components are put on test at the same time and the experiment is terminated when all of them fail and the times of their failure, $X_1,X_2,..,X_n$ are noted. Based on this information,
-derive the likelihood ratio test @LRT at the level $\alpha= 05$ of the null hypothesis $H_0:\mu=5$ against the alternative $H_1:\mu\neq5$. Also find an expression for the power function of this test.
+10 such components are put on test at the same time and the experiment is terminated when all of them fail and the times of their failure, $X_1,X_2,..,X_n$ are noted. Based on this information, derive the likelihood ratio test LRT at the level $\alpha= 05$ of the null hypothesis $H_0:\mu=5$ against the alternative $H_1:\mu\neq5$. Also find an expression for the power function of this test.
 
 $T=\sim x_i$, $\frac{2T}{\theta}\sim\chi^2_{2n}$
 
@@ -2081,21 +2192,25 @@ Kochar, Bruno
 Suppose $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}C&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
 
-(a) Find the value of c.
+(a) Find the value of c. =2
 
 (b) Find the marginal density functions of $Y_1$ and $Y_2$ and check whether they are independent.
 
-(c) Find $E[Y_1+Y_2]$
+$f_{Y_1}=2-y_1$
+$f_{Y_2}=2y_2$ dependent
 
-(d) Find $P(Y_1\le1/3|Y_1\le3/4)$
+(c) Find $E[Y_1+Y_2]$ =1
+
+(d) Find $P(Y_1\le1/3|Y_1\le3/4)$ 495/576 55/64
 
 ### 2018FA2
+[@CDF] [range]
 
 Let $X_1,X_2,..,X_n$ be a random sample from an  exponential distribution [@Expo] with mean 5.
 
 $X_{(r)}=(n-j):(n-1)$
 
-(a) Find the @CDF of the sample range.
+(a) Find the CDF of the sample range.
 
 pdf $X_{(n)}-X_{(1)}$
 
@@ -2111,12 +2226,14 @@ $E[X_{(r)}]=\sum_{j=1}^{n-1}\frac1{(n-1)-j+1}$
 $P=30-3X-X^2$
 Find the expected profit per foot.
 
-$E[P]=30-3EX-EX^2$
+$E[P]=30-3EX-EX^2$ =9
 
 
 (b) (5 pts) Suppose that $X$ is distributed as $U(0,1)$ and that $Y$ is a random variable with
 $E(Y|X=x)=\alpha+\beta x^2$
-Find $E[Y]$.
+Find $E[Y]$. p164-7(190-3)
+
+$\alpha+\beta/3$
 
 $E[Y]=E(E[Y|X])$
 
@@ -2133,7 +2250,7 @@ Delta Method
 $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})\to n(0,\frac{[(e^{-\mu})']^2}{I(\mu)})$
 
 ### 2018FB1
-@LRT
+[@LRT]
 
 (4+6 pts) Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution with mean 120 and unknown variance $\sigma^2$. Derive the likelihood ratio test for testing the null hypothesis $H_0:\sigma^2=4$ against the alternative $H_1:\sigma^2\neq4$. Also fnd the exact as well as the asymptotic null distributions of your test statistic.
 
@@ -2156,7 +2273,7 @@ where $\theta>-1$ is an unknown parameter.
 (d) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
 
 ### 2018FB3
-[@UMVUE]
+[@UMVUE] [@Norm] [@FishI]
 
 Let $X_1,X_2,..,X_n$ be a random sample from $N(\mu,\sigma^2)$ distribution. Find a lower bound on the variance of any unbiased estimator of the 95th percentile of this distribution based on the Information Inequality. Also compare this bound to the variance of the uniformly minimum variance unbiased estimator .
 
