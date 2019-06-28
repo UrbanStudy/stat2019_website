@@ -1738,9 +1738,15 @@ $f(x)$, $F(x)$, $f_{Y_{(n)}}(x)$
 
 p235
 
+$P(|y_{(n)}-1|\ge\varepsilon)=(1-\varepsilon)^n$
+
 (e) (5 pts) What is the limiting distribution of $W_n=n(1-Y_n)$?
 
 p236
+
+$P(y_{(n)}\le1-t/n)=(1-t/n)^n\to e^{-t}$
+
+$P(y_{(n)}\le1-t/n)=P(n(1-y_n)\ge t)\to 1-e^{-t}$
 
 
 ### 2015F4
@@ -1771,17 +1777,37 @@ Let $X_1,X_2,..,X_n$ be iid (independent, identically distributed) Poisson rando
 
 (a) Find a complete sufficient statistic for $\lambda$.
 
-$T=\sum x_i\sim Pois(n\lambda)$
+$T=\sum x_i\sim Pois(n\lambda)$, $\bar X$
 
 (b) Find the MVUE (Minimum Variance Unbiased Estimator) of $\lambda$.
 
+ $\bar X/n$
+
 (c) Find the MVUE of $\lambda^2$:
+
+ $\bar X^2-\bar X$
 
 (d) Find the MVUE of $e^{-\lambda}$.
 
+ $ X_1=0$
+
+$E(T|y)=(\frac{n-1}{n})^y$
+
+
+
 (e) Find the MVUE of $P(X_i=1)=\lambda^1e^{-\lambda}/1!$:
 
+7.3.23 p347
+
+$ X_1=1$
+
+$E(T|y)= \sim Bino(y,1/n)$
+
 (f) Find the MVUE of $P(X_i=k)=\lambda^ke^{-\lambda}/k!$:
+
+ $ X_1=k$
+
+$E(T|y)= \sim Bino(y,1/n)$
 
 ### 2016S2
 [2017FB1][] [@Bino] [@MVUE]
@@ -1790,11 +1816,19 @@ Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y
 
 (a) What is the MVUE of $p$?
 
+$y/n$
+
 (b) What is the MVUE of $p^2$?
+
+$\frac{y^2-y}{n^2-n}$
 
 (c) What is the MVUE of $pq=p(1-p)$?
 
+$\frac{y^2-y}{n^2-n}-\frac{y}n$
+
 (d) What is the MVUE of $P(Y=k)=\binom{n}{k}p^k(1-p)^{n-k}$?
+
+
 
 
 ### 2016S3
@@ -1802,15 +1836,21 @@ Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y
 
 Let $Z$ be $N(0,1)$. Let $\Phi(z)=\int_{-\infty}^z=\phi(x)dx$, where $\phi(x) = \frac1{\sqrt{2\pi}}e^{−x^2/2},-\infty<x<\infty$, where $\phi(x)$ is the standard normal pdf, and $\Phi(z)$ is the standard normal cdf.
 
-(a) Find $E[\Phi(Z)]$.
+(a) Find $E[\Phi(Z)]$. =1/2
 
-(b) Find $E[\Phi^{2}(Z)]$.
+$\Phi^n |_{-\infty}^{\infty}=1$
+
+(b) Find $E[\Phi^{2}(Z)]$. =1/3
 
 (c) Find $E[n\Phi^{n-1}(Z)]$.
 
-(d) Find $E[Z^4]$.
+(d) Find $E[Z^4]$. =3
 
-(e) Find $E[Z^5]$
+$E(Z^{2k})=\frac{(2k)!}{2^KK!}$, k=1,2,..
+
+(e) Find $E[Z^5]$ =0
+
+$E(Z^{2k+1})=0$
 
 ### 2016S4
 [2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][]
@@ -1823,22 +1863,41 @@ where $\theta>-1$ is an unknown parameter.
 
 (a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
 
+$\hat\theta=-\frac{n}{\sum\ln x_i}-1$
+
 (b) (2 pts) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$.
+
+$\hat\theta_U=-\frac{n-1}{\sum\ln x_i}-1$
 
 (c) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
 
+$\frac{(\theta+1)^2}{n}$
+
 (d) (2 pts) What is the asymptotic distribution of $\hat\theta$?
 
+
+
 ### 2016S5
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg] [@trans]
 
 Let $X$ and $Y$ have the following joint pdf:
 $f(x,y) =\begin{cases}6(y-x)& 0<x<y<1\\0& o.w.\end{cases}$
 Define $Z=(X+Y)=2$ and $W=Y$, respectively.
 
+
 (a) Find the joint pdf of Z and W.
 
+$|J=2|$
+
+$f_{Z,W}(z,w)=24(w-z)$, $0<2z<2w<1+w$, $0<w/2<z<w<1$
+
 (b) Find the marginal pdf of Z.
+
+$f_{Z}(z)=\int_{2z}^{1}24(w-z)dw=24z-12$
+
+$f_{Z}(z)=\int_{z}^{2z}24(w-z)dw=12z^2$
+
+$f_{Z}(z)=\int_{z}^{1}24(w-z)dw=12(z-1)^2$
 
 ## 2016F
 
@@ -1848,58 +1907,110 @@ Fountain, Ian Dinwoodie
 [@Norm]
 
 Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution with mean $\mu$ and variance $\sigma^2$.
-Let $S_k^2=\frac1k\sum_{i=1}^n(X_i-\bar X)^2$ be an estimator of $\sigma^2$. Find the value of $k$ that minimizes the mean squared error of the estimator.
+Let $S_k^2=\frac1k\sum_{i=1}^n(X_i-\bar X)^2$ be an estimator of $\sigma^2$. Find the value of $k$ that minimizes the mean squared error of the estimator. =n+1
+
+$W$, $E[W]$, $Var[W]$, $Bias$, $MSE$
+
+$S_k^2=\frac{n-1}{k}S^2$
+
+$\frac{\partial MSE}{\partial k}=0$
+
+$\hat\theta=S_{n+1}^2$
 
 ### 2016F2
-[@MGF]
+[@MGF] [561-me2]
 
-The moment generating function of a particular random variable is $M_X(t)=\frac{e^t}{4-3e^t}$. Find the coefficient of variation ($CV=\sigma/\mu$) of this distribution.
+The moment generating function of a particular random variable is $M_X(t)=\frac{e^t}{4-3e^t}$. Find the coefficient of variation ($CV=\sigma/\mu$) of this distribution. $=\sqrt3/2$
+
+$M'_X(t)$ 
+
+$EX=M'_X(0)$ 
+
+$M''_X(t)$ 
+
+$EX=M''_X(0)$ 
+
 
 ### 2016F3
-[2008F3][]
+[2008F3][] [@Cheb]
 
-If X is a random variable such that $E[X]=2$ and $E[X^2]=13$, determine a lower bound for the probability $P(-4<X<8)$. (Hint: Use a famous inequality.)
+If X is a random variable such that $E[X]=2$ and $E[X^2]=13$, determine a lower bound for the probability $P(-4<X<8)$. (Hint: Use a famous inequality.) 
+
+Chebyshev Inequality p122
+
+
+$P(-4<x<8)\ge3/4$
 
 ### 2016F4
-[2008S3A][] [2008F1][] [@Unif] [@CDF] [@PDF]
+[2008S3A][] [2008F1][] [@Unif] [@CDF] [@PDF] [@trans]
 
 Let $Y_1$ and $Y_2$ be a random sample of size 2 from $Uniform(0,1)$. Find the cumulative distribution and probability density functions of $U=Y_1+Y_2$.
+
+$f_u(u)=\begin{cases}&0\le\mu\le1\\&1\le\mu\le2\end{cases}$
+
+$F_u(u)=\begin{cases}&0\le\mu\le1\\&1\le\mu\le2\end{cases}$
 
 ### 2016F5
 [2003S10][] [2008F6][] [@Norm] [@indep] [@Basu] 
 
 Let $Y_n$ be the $n^{th}$ order statistic of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.
 
-562-2
+[562-me2] [Ancillary p284]
 
 ### 2016F6
 [2008F7][] [@Expo] [@BayesE]
 
 Suppose that $X_1,X_2,..,X_n$ i.i.d. $Exponential(\theta)$, i.e. $f(x;\theta)=\theta e^{-\theta x},x>0$. Also assume that the prior distribution of $\theta$ is $h(\theta)=\lambda e^{-\lambda\theta},\theta>0$. Find the Bayes estimator of $\theta$, assuming squared error loss.
 
+$f(\bar X|\theta)$
+
+$\pi(\theta|\bar X)\propto f(\bar X|\theta)\pi(\theta)$
+
+
 ### 2016F7
-[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2017FB4][] [2018FB2][] [2019SB4][] [@UMP]
+[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2017FB4][] [2018FB2][] [2019SB4][] [@UMP] [@MOM]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from the following distribution:
-
 $f(x;\theta)=(\theta+1)x^\theta,\ 0\le x\le 1$
-
 where $\theta>-1$ is an unknown parameter.
+
+$\sim Beta(\theta+1,1)$
+
 
 (a) Find the method of moments estimator for $\theta$.
 
+p312, p107
+
+$E[X^n]=\frac{\Gamma(\alpha+n)\Gamma\beta+n)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$
+
+$E[X^1]=\bar X=\frac{\theta+1}{\theta+2}$
+
+$\theta_{MOM}=\frac{2\bar X-1}{1-\bar X}$
+
 (b) Find the maximum likelihood estimator for $\theta$.
+
+p315
+
 
 (c) Determine if your MLE is unbiased.
 
+Bias$=E[\hat\theta]-\theta$
+
 (d) Find the asmptotic variance of your MLE in part (b), as $n\to\infty$.
+
+$\sqrt{n}[\tau(\hat\theta)-\tau(\theta)]\to n(0,\frac{[\tau'(\theta)]^2}{I(\theta)})$
 
 (e) Find the Cramer-Rao lower bound on the variance of an unbiased estimator of $\theta$.
 
+$(\theta+1)^2/n$
+
 (f) Identify the sufficient statistic for $\theta$.
+
+Expo family
 
 (g) Suppose you've taken a sample of size $n=10$. Determine the UMP test of the null hypothesis $\theta=.5$ vs. the alternative $\theta>0.5$.
 
+Step 1 suff; Step 2 Expo has MLR; Step 3 $T\le t_0$ is UMP
 
 ### 2016F8
 [2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
@@ -1907,11 +2018,21 @@ where $\theta>-1$ is an unknown parameter.
 Let $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}c(1-y_2)&0\le y1\le y2\le 1\\0& o.w.\end{cases}$
 
-(a) Find the value of c.
+(a) Find the value of c. =6
+
+$\int_0^1\int_0^{y_2}c(1-y_2)dy_1dy_2=1$
 
 (b) Find the marginal density functions of $Y_1$ and $Y_2$.
 
-(c) Find $P(Y_2\le1/2|Y_1\le3/4)$
+$f_{Y_1}(y_1)=$
+
+$f_{Y_2}(y_2)=$
+
+(c) Find $P(Y_1\le1/2|Y_2\le3/4)$ =25/27
+
+$P(Y_1\le1/2, Y_2\le3/4)=25/32$
+
+$P(Y_2\le3/4)=27/32$
 
 
 
