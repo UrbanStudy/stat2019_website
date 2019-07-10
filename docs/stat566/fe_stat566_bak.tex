@@ -27,6 +27,46 @@
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -178,12 +218,11 @@ stations; \(l=1,2,3\) is the number of replication;
 \(\gamma_{k(i)}\) is the main fixed effect of \(k^{th}\) stations nested
 in \(i^{th}\) level of Machine;
 
-\((\tau\beta)_{ij}\) is the interaction random effect of \(i^{th}\)
-level of Machine and \(j^{th}\) level of Power;
+\((\tau\beta)_{ij}\) is the interaction effect of \(i^{th}\) level of
+Machine and \(j^{th}\) level of Power;
 
-\((\beta\gamma)_{jk(i)}\) is the interaction random effect of \(j^{th}\)
-level of Power and \(k^{th}\) stations nested in \(i^{th}\) level of
-Machine.
+\((\beta\gamma)_{jk(i)}\) is the interaction effect of \(j^{th}\) level
+of Power and \(k^{th}\) stations nested in \(i^{th}\) level of Machine.
 
 \(y_{ijkl}\) is response value for the \(l^{th}\) replication for
 \(k^{th}\) stations nested in \(i^{th}\) level of Machine when
@@ -195,15 +234,30 @@ for \(k^{th}\) stations nested in \(i^{th}\) level of Machine when
 
 Assumptions:
 
-\(\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)\);
-\(\tau_{i}\sim iid N(0,\sigma_{\tau}^2)\)
-\(\beta_{j}\sim iid N(0,\sigma_{\beta}^2)\)
-\(\sum_{k=1}^3\gamma_{k(i)}=0\);
-\((\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)\)
-\((\beta\gamma)_{jk(i)}\sim iid N(0,\sigma_{\beta\gamma}^2)\)
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+\begin{minipage}[b]{0.30\columnwidth}\raggedright
+\(\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)\)\strut
+\end{minipage} & \begin{minipage}[b]{0.30\columnwidth}\raggedright
+\(\tau_{i}\sim iid N(0,\sigma_{\tau}^2)\)\strut
+\end{minipage} & \begin{minipage}[b]{0.30\columnwidth}\raggedright
+\(\beta_{j}\sim iid N(0,\sigma_{\beta}^2)\)\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.30\columnwidth}\raggedright
+\(\sum_{k=1}^3\gamma_{k(i)}=0\)\strut
+\end{minipage} & \begin{minipage}[t]{0.30\columnwidth}\raggedright
+\((\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)\)\strut
+\end{minipage} & \begin{minipage}[t]{0.30\columnwidth}\raggedright
+\((\beta\gamma)_{jk(i)}\sim iid N(0,\frac{3-1}{3}\sigma_{\beta\gamma}^2)\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
 
 \(\varepsilon_{l(ijk)}\), \(\tau_{i}\), \(\beta_{j}\),
-\((\tau\beta)_{ij}\), and \((\beta\gamma)_{jk(i)}\) are independent.
+\((\tau\beta)_{ij}\), and \((\beta\gamma)_{jk(i)}\) are independent. For
+restricted model, \(\sum_{k=1}^3(\beta\gamma)_{jk(i)}=0\)
 
 \textcolor[rgb]{0.7,0.7,0.7}{Produce the corrected ANOVA table with Source, df, SS, MS, EMS, F value along with numerator and denominator df, and p value for each test.}
 
@@ -629,9 +683,9 @@ Assumptions: \(\varepsilon_{(ij)k}\sim iid N(0,\sigma^2)\);
 \(\tau_i\sim iid N(0,\sigma_{\tau}^2)\); \(\sum_{j=1}^b\beta_j(i)=0\);
 \(\varepsilon_{(ij)k}\), \(\tau_{i}\) are independent.
 
-\(\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}^2\)
-\(\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}\)
-\(\bar y_{ij.}=\frac1n\sum_{i=1}^a\sum_{j=1}^by_{ijk}\)
+\(\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}\);
+\(\bar y_{.j.}=\frac1{an}\sum_{i=1}^a\sum_{k=1}^ny_{ijk}\);
+\(\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}\);
 \(\bar y_{...}=\frac{1}{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}\)
 
 (a).
@@ -647,12 +701,15 @@ Derive For \(i=1,…,a\), \(j=1,…,b\),
 \(\frac{\partial SSE}{\partial \tau_i}=2\sum_j^b\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_{j(i)})(-1)=0\)
 
 For \(\sum_j^b\hat\beta_{j(i)}=0\),
+\(\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}\),
 
-\[\sum_j^b\sum_k^ny_{ijk}=bn\hat\mu+bn\hat\tau_i+n\sum_j^b\hat\beta_{j(i)}=bn\bar y_{i..}\implies \hat\mu+\hat\tau_i=\bar y_{i..}\]
+\(\sum_j^b\sum_k^ny_{ijk}=bn\hat\mu+bn\hat\tau_i+n\sum_j^b\hat\beta_{j(i)}=bn\bar y_{i..}\implies \hat\mu+\hat\tau_i=\bar y_{i..}\)
 
 \(\frac{\partial SSE}{\partial \beta_{j(i)}}=2\sum_k^n(y_{ijk}-\hat\mu-\hat\tau_i-\hat\beta_{j(i)})(-1)=0\)
 
-\[\sum_k^ny_{ijk}=n\hat\mu+n\hat\tau_i+n\hat\beta_{j(i)}=n\bar y_{ij.}\implies \hat\mu+\hat\tau_i+\hat\beta_{j(i)}=\bar y_{ij.}\]
+For \(\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}\),
+
+\(\sum_k^ny_{ijk}=n\hat\mu+n\hat\tau_i+n\hat\beta_{j(i)}=n\bar y_{ij.}\implies \hat\mu+\hat\tau_i+\hat\beta_{j(i)}=\bar y_{ij.}\)
 
 \[\implies \hat\beta_{j(i)}=\bar y_{ij.}-\bar y_{i..}\]
 
@@ -662,9 +719,9 @@ For \(\sum_j^b\hat\beta_{j(i)}=0\),
 
 For \(\sum_j^b\hat\beta_{j(i)}=0\),
 
-\[\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b \sum_{j=1}^b\beta_{j(i)}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=\mu+\tau_{i}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\]
+\(\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b \sum_{j=1}^b\beta_{j(i)}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=\mu+\tau_{i}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\)
 
-\[\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}\]
+\(\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}\)
 
 \[\bar y_{ij.}-\bar y_{i..}=\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\]
 
@@ -675,22 +732,22 @@ For B has fixed effect, \(E[\beta_{j(i)}]=\beta_{j(i)}\),
 For \(\varepsilon_{(ij)k}\sim iid N(0,\sigma^2)\),
 \(E[\varepsilon_{(ij)k}]=0\), \(V[\varepsilon_{(ij)k}]=\sigma^2\)
 
-\[E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]=\beta_{j(i)}\]
+\(E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]=\beta_{j(i)}\)
 
-\[Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]\]
+\(Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]\)
 
-\[=Var[\beta_{j(i)}]+Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+2Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]\]
+\(=Var[\beta_{j(i)}]+Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+2Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]\)
 
-\[=0+\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+0\]
+\(=0+\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+0\)
 
 \[=\frac1n\sigma^2+\frac{\sigma^2}{bn}-\frac{2\sigma^2}{bn}=\frac{(b-1)\sigma^2}{bn}\]
 
 For
-\(MS_{B(A)}=SS_{B(A)}/df_{B(A)}=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2\)
+\(MS_{B(A)}=SS_{B(A)}/df_{B(A)}=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\hat\beta_{j(i)}^2=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2\)
 
 \[E(MS_{B(A)})=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..})^2]=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{Var[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2\right\}\]
 
-\[=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{\beta_{j(i)}^2+\frac{(b-1)\sigma^2}{bn}\right\}=\sigma^2+\frac{bn}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\beta_{j(i)}^2\]
+\[=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{\beta_{j(i)}^2+\frac{(b-1)\sigma^2}{bn}\right\}=\sigma^2+\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\beta_{j(i)}^2\]
 
 \hypertarget{question-3}{%
 \subsubsection{Question 3}\label{question-3}}
@@ -712,38 +769,11 @@ For
 \includegraphics[width=0.33\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-4-2}
 \includegraphics[width=0.33\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-4-3}
 
-The above plots show that:
-
-The average purity of a chemical compound synthesized from source 2 and
-3 are higher than that from source 1.
-
-There is not much difference in the average purity between sources 2 and
-3.
-
-Not all the lines are parallel in the interaction plot. Therefore, in
-the model, there is the interaction effect of source level and
-technicians nested in the lab. The Tables show the same thing with the
-numerical summaries for each factor level and their combinations.
-
-\begin{table}[H]
-\centering\begingroup\fontsize{8}{10}\selectfont
-
-\begin{tabular}{lrrrrr>{\columncolor[HTML]{EAFAF1}}rrrr}
-\toprule
-Source & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
-\midrule
-1 & 8 & 10.25 & 13.0 & 15.00 & 17 & 12.72222 & 2.803476 & 18 & 0\\
-2 & 8 & 20.00 & 21.5 & 24.75 & 30 & 21.38889 & 5.326282 & 18 & 0\\
-3 & 12 & 18.00 & 20.0 & 22.75 & 29 & 20.27778 & 4.599304 & 18 & 0\\
-\bottomrule
-\end{tabular}
-\endgroup{}
-\end{table}
-
-The average purity analysed in Lab 1 is lower than that from Lab 2.
-
-There is not much difference in the average purity of sources 3 between
-lab 1 and 2.
+The above plots show that: The average purity analysed in Lab 1 is lower
+than that from Lab 2. There is not much difference in the average purity
+among technicians. The average purity of a chemical compound synthesized
+from source 2 and 3 are higher than that from source 1. There is not
+much difference in the average purity between sources 2 and 3.
 
 \begin{table}[H]
 \centering\begingroup\fontsize{8}{10}\selectfont
@@ -764,6 +794,44 @@ Lab & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
 
 \begin{tabular}{lrrrrr>{\columncolor[HTML]{EAFAF1}}rrrr}
 \toprule
+Technician & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
+\midrule
+1 & 8 & 13.25 & 17 & 21.75 & 26 & 17.33333 & 5.718906 & 18 & 0\\
+2 & 8 & 13.00 & 18 & 21.75 & 29 & 17.88889 & 6.057459 & 18 & 0\\
+3 & 10 & 16.00 & 18 & 21.75 & 30 & 19.16667 & 5.762454 & 18 & 0\\
+\bottomrule
+\end{tabular}
+\endgroup{}
+\end{table}
+
+\begin{table}[H]
+\centering\begingroup\fontsize{8}{10}\selectfont
+
+\begin{tabular}{lrrrrr>{\columncolor[HTML]{EAFAF1}}rrrr}
+\toprule
+Source & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
+\midrule
+1 & 8 & 10.25 & 13.0 & 15.00 & 17 & 12.72222 & 2.803476 & 18 & 0\\
+2 & 8 & 20.00 & 21.5 & 24.75 & 30 & 21.38889 & 5.326282 & 18 & 0\\
+3 & 12 & 18.00 & 20.0 & 22.75 & 29 & 20.27778 & 4.599304 & 18 & 0\\
+\bottomrule
+\end{tabular}
+\endgroup{}
+\end{table}
+
+There is not much difference in the average purity of sources 3 between
+lab 1 and 2.
+
+Not all the lines are parallel in the interaction plot. Therefore, in
+the model, there is the interaction effect of source level and
+technicians nested in the lab. The Tables show the same thing with the
+numerical summaries for each factor level and their combinations.
+
+\begin{table}[H]
+\centering\begingroup\fontsize{8}{10}\selectfont
+
+\begin{tabular}{lrrrrr>{\columncolor[HTML]{EAFAF1}}rrrr}
+\toprule
 Lab.Source & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
 \midrule
 1.1 & 8 & 10 & 11 & 14 & 15 & 11.55556 & 2.505549 & 9 & 0\\
@@ -773,23 +841,6 @@ Lab.Source & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
 1.3 & 16 & 18 & 20 & 22 & 26 & 20.33333 & 3.500000 & 9 & 0\\
 \addlinespace
 2.3 & 12 & 18 & 20 & 23 & 29 & 20.22222 & 5.717906 & 9 & 0\\
-\bottomrule
-\end{tabular}
-\endgroup{}
-\end{table}
-
-There is not much difference in the average purity among technicians.
-
-\begin{table}[H]
-\centering\begingroup\fontsize{8}{10}\selectfont
-
-\begin{tabular}{lrrrrr>{\columncolor[HTML]{EAFAF1}}rrrr}
-\toprule
-Technician & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
-\midrule
-1 & 8 & 13.25 & 17 & 21.75 & 26 & 17.33333 & 5.718906 & 18 & 0\\
-2 & 8 & 13.00 & 18 & 21.75 & 29 & 17.88889 & 6.057459 & 18 & 0\\
-3 & 10 & 16.00 & 18 & 21.75 & 30 & 19.16667 & 5.762454 & 18 & 0\\
 \bottomrule
 \end{tabular}
 \endgroup{}
@@ -818,7 +869,7 @@ Technician.Source & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
 \end{table}
 
 This is a neseted and crossed design. Three fixed sources apply on all
-random selected technicians are nested in fixed labs.
+random selected technicians nested in fixed labs.
 
 \[y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{j(i)k}+\varepsilon_{(ijk)l}\]
 
@@ -844,41 +895,41 @@ level of sources and \(j^{th}\) level of technicians nested in
 \(j^{th}\) level of technicians nested in \(i^{th}\) level of labs when
 \(k^{th}\) level of sources is applied;
 
-\(\varepsilon_{l(ijk)}\) is random error for the \(l^{th}\) replication
+\(\varepsilon_{(ijk)l}\) is random error for the \(l^{th}\) replication
 for \(j^{th}\) level of technicians nested in \(i^{th}\) level of labs
 when \(k^{th}\) level of sources is applied.
 
-Assumptions: Ususally, the nunber of technican are limited. Thus, I tend
-to believe that this is an unrestricted mode. We cannot expect the
-summation of randem effects are zero.
+Assumptions: Usually, the technicians in a lab are skillful. From the
+above plots, the technicians' performances are stable. The covariance
+between two observations from the same level of the random factor can be
+either positive or negative. Thus we assume this is an
+\textbf{restricted model}. \(\varepsilon_{(ijk)l}\), \(\beta_{j(i)}\),
+and \((\beta\gamma)_{j(i)k}\) are independent.
 
 \begin{longtable}[]{@{}llll@{}}
 \toprule
-\begin{minipage}[b]{0.22\columnwidth}\raggedright
-\(\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)\)\strut
-\end{minipage} & \begin{minipage}[b]{0.22\columnwidth}\raggedright
+\begin{minipage}[b]{0.19\columnwidth}\raggedright
+\(\varepsilon_{(ijk)l}\sim iid N(0,\sigma^2)\)\strut
+\end{minipage} & \begin{minipage}[b]{0.19\columnwidth}\raggedright
 \(\sum_{i=1}^2\tau_{i}=0\)\strut
-\end{minipage} & \begin{minipage}[b]{0.22\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{0.19\columnwidth}\raggedright
 \(\sum_{k=1}^3\gamma_{k}=0\)\strut
-\end{minipage} & \begin{minipage}[b]{0.22\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{0.32\columnwidth}\raggedright
 \(\beta_{j(i)}\sim iid N(0,\sigma_{\beta}^2)\)\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
-\begin{minipage}[t]{0.22\columnwidth}\raggedright
+\begin{minipage}[t]{0.19\columnwidth}\raggedright
 \(\sum_{i=1}^2(\tau\gamma)_{ik}=0\)\strut
-\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedright
 \(\sum_{k=1}^3(\tau\gamma)_{ik}=0\)\strut
-\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright
+\end{minipage} & \begin{minipage}[t]{0.19\columnwidth}\raggedright
 \(\sum_{i=1}^2(\beta\gamma)_{j(i)k}=0\)\strut
-\end{minipage} & \begin{minipage}[t]{0.22\columnwidth}\raggedright
-\(\sum_{k=1}^3(\beta\gamma)_{jk(i)}=0\)\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+\((\beta\gamma)_{j(i)k}\sim iid N(0,\frac{2-1}{2}\sigma_{\beta\gamma}^2)\)\strut
 \end{minipage}\tabularnewline
 \bottomrule
 \end{longtable}
-
-\(\varepsilon_{l(ijk)}\), \(\beta_{j(i)}\), and
-\((\beta\gamma)_{jk(i)}\) are independent.
 
 \begin{longtable}[]{@{}cccccc@{}}
 \caption{Analysis of Variance Table}\tabularnewline
@@ -941,19 +992,6 @@ Pr(\textgreater{}F)\strut
 0.0001783\strut
 \end{minipage}\tabularnewline
 \begin{minipage}[t]{0.35\columnwidth}\centering
-\textbf{Lab\_f:Technician\_r}\strut
-\end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\centering
-4\strut
-\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\centering
-39.63\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
-9.907\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
-0.5\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\centering
-0.7358\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.35\columnwidth}\centering
 \textbf{Lab\_f:Source\_f}\strut
 \end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\centering
 2\strut
@@ -965,6 +1003,19 @@ Pr(\textgreater{}F)\strut
 1.875\strut
 \end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\centering
 0.2148\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.35\columnwidth}\centering
+\textbf{Lab\_f:Technician\_r}\strut
+\end{minipage} & \begin{minipage}[t]{0.05\columnwidth}\centering
+4\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\centering
+39.63\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+9.907\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0.5\strut
+\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\centering
+0.7358\strut
 \end{minipage}\tabularnewline
 \begin{minipage}[t]{0.35\columnwidth}\centering
 \textbf{Lab\_f:Source\_f:Technician\_r}\strut
@@ -995,148 +1046,122 @@ NA\strut
 \bottomrule
 \end{longtable}
 
-The ANOVA table shows that the average purity of a chemical compound
-synthesized from three sources are differnet at 0.05 significance level
-(p-value=0.0001783). As the main effects of sources shown in the above
-tables, the average purity from source 1 is lowest (12.72222). The the
-average purity from source 2 and 3 are 21.38889 and 20.27778
-respectively.
+The ANOVA table shows that only sources have significant effects on the
+average purity of a chemical compound synthesized at 0.05 significance
+level (p-value=0.0001783).
+
+\begin{longtable}[]{@{}lllll@{}}
+\toprule
+\begin{minipage}[b]{0.25\columnwidth}\raggedright
+Groups Name\strut
+\end{minipage} & \begin{minipage}[b]{0.13\columnwidth}\raggedright
+\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+Variance\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+Std.Dev.\strut
+\end{minipage} & \begin{minipage}[b]{0.28\columnwidth}\raggedright
+\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.25\columnwidth}\raggedright
+Source:Lab:Technician\strut
+\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.00\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.000\strut
+\end{minipage} & \begin{minipage}[t]{0.28\columnwidth}\raggedright
+\(\sigma^2_{\beta\gamma}=0\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.25\columnwidth}\raggedright
+Lab:Technician\strut
+\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.00\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.000\strut
+\end{minipage} & \begin{minipage}[t]{0.28\columnwidth}\raggedright
+\(\sigma^2_{\beta}=0\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.25\columnwidth}\raggedright
+Residual\strut
+\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+17.87\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+4.227\strut
+\end{minipage} & \begin{minipage}[t]{0.28\columnwidth}\raggedright
+\(\sigma^2=17.87\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}clll@{}}
+\toprule
+\begin{minipage}[b]{0.21\columnwidth}\centering
+~\strut
+\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\raggedright
+2.5 \%\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+97.5 \%\strut
+\end{minipage} & \begin{minipage}[b]{0.48\columnwidth}\raggedright
+\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.21\columnwidth}\centering
+\textbf{.sig01}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedright
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+1.539\strut
+\end{minipage} & \begin{minipage}[t]{0.48\columnwidth}\raggedright
+\(CI_{\sigma^2_{\beta\gamma}}:(0,1.539^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.21\columnwidth}\centering
+\textbf{.sig02}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedright
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+1.603\strut
+\end{minipage} & \begin{minipage}[t]{0.48\columnwidth}\raggedright
+\(CI_{\sigma^2_{\beta}}:(0,1.603^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.21\columnwidth}\centering
+\textbf{.sigma}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\raggedright
+3.337\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+4.873\strut
+\end{minipage} & \begin{minipage}[t]{0.48\columnwidth}\raggedright
+\(CI_{\sigma^2}:(3.337^2,4.873^2)\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
 
 The results of variance components and condidence intervals show that
 none of the effects related with technician has significant variance on
-average value of Hardness at 0.05 significance level. The variance of
-technicians nested in labs is zero. The variance of interaction effect
-between sources and technicians nested in labs is zero too. Their
-confidence intervals are both {[}\(0,1.589^2\){]} at 0.05 significance
-level.
+average value of purity at 0.05 significance level. The variance of
+interaction effect between sources and technicians nested in labs is
+zero with confidence intervals (\(0,1.539^2\)) at 0.05 significance
+level. The variance of technicians nested in labs is zero with
+confidence intervals (\(0,1.603^2\)) at 0.05 significance level.
 
-\begin{longtable}[]{@{}llll@{}}
-\toprule
-\begin{minipage}[b]{0.21\columnwidth}\raggedright
-Groups\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
-Name\strut
-\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright
-Variance\strut
-\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright
-Std.Dev.\strut
-\end{minipage}\tabularnewline
-\midrule
-\endhead
-\begin{minipage}[t]{0.21\columnwidth}\raggedright
-Lab.Technician\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-(Intercept)\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-0.00\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-0.000\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.21\columnwidth}\raggedright
-Lab.Technician.1\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-(Intercept)\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-0.00\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-0.000\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.21\columnwidth}\raggedright
-Residual\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-17.87\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
-4.227\strut
-\end{minipage}\tabularnewline
-\bottomrule
-\end{longtable}
+\textbf{Conclusion:} As the main effects of sources shown in the above
+tables, the average purity is different with sources. The average purity
+from source 1 is lowest (12.72222). The the average purity from source 2
+and 3 are 21.38889 and 20.27778 respectively. The selections of labs and
+technicians don't change this result.
 
-Computing profile confidence intervals \ldots{}
-
-\begin{longtable}[]{@{}ccc@{}}
-\toprule
-\begin{minipage}[b]{0.24\columnwidth}\centering
-~\strut
-\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-2.5 \%\strut
-\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\centering
-97.5 \%\strut
-\end{minipage}\tabularnewline
-\midrule
-\endhead
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sig01}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-1.589\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sig02}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-0\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-1.589\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sigma}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-3.337\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-4.873\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{(Intercept)}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-8.905\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-14.21\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{Lab2}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
--1.415\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-6.082\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{Source2}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-3.807\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-11.3\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{Source3}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-5.029\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-12.53\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{Lab2:Source2}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
--3.079\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-7.523\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{Lab2:Source3}\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
--7.745\strut
-\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\centering
-2.857\strut
-\end{minipage}\tabularnewline
-\bottomrule
-\end{longtable}
-
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-13-1}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-13-2}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-13-3}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-13-4}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-13-5}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-12-1}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-12-2}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-12-3}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-12-4}
 
 In the plots of residuals versus predicted value of purity, there is no
 significant pattern on this plot besides that more values occur when the
@@ -1156,6 +1181,34 @@ about normal. These plots show no violation of normal distribution
 assumption of residuals.
 
 \textcolor[rgb]{0.7,0.7,0.7}{Report your code and/or output at the end of the analysis.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{favstats}\NormalTok{(Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Source, }\DataTypeTok{data =}\NormalTok{ fe_table_chem)}
+\KeywordTok{favstats}\NormalTok{(Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Lab, }\DataTypeTok{data =}\NormalTok{ fe_table_chem)}
+\KeywordTok{favstats}\NormalTok{(Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Lab }\OperatorTok{+}\StringTok{ }\NormalTok{Source, }\DataTypeTok{data =}\NormalTok{ fe_table_chem)}
+\KeywordTok{favstats}\NormalTok{(Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Technician, }\DataTypeTok{data =}\NormalTok{ fe_table_chem)}
+\KeywordTok{favstats}\NormalTok{(Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Technician }\OperatorTok{+}\StringTok{ }\NormalTok{Source, }\DataTypeTok{data =}\NormalTok{ fe_table_chem)}
+\NormalTok{fe_table_chem}\OperatorTok{$}\NormalTok{Lab_f <-}\StringTok{ }\KeywordTok{as.fixed}\NormalTok{(fe_table_chem}\OperatorTok{$}\NormalTok{Lab)}
+\NormalTok{fe_table_chem}\OperatorTok{$}\NormalTok{Technician_r <-}\StringTok{ }\KeywordTok{as.random}\NormalTok{(fe_table_chem}\OperatorTok{$}\NormalTok{Technician)}
+\NormalTok{fe_table_chem}\OperatorTok{$}\NormalTok{Source_f <-}\StringTok{ }\KeywordTok{as.fixed}\NormalTok{(fe_table_chem}\OperatorTok{$}\NormalTok{Source)}
+\NormalTok{fe_model_chem1 <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Lab_f }\OperatorTok{*}\StringTok{ }\NormalTok{Source_f }\OperatorTok{+}\StringTok{ }\NormalTok{Technician_r }\OperatorTok{%in%}\StringTok{ }
+\StringTok{    }\NormalTok{Lab_f }\OperatorTok{+}\StringTok{ }\NormalTok{Source_f }\OperatorTok{*}\StringTok{ }\NormalTok{Technician_r }\OperatorTok{%in%}\StringTok{ }\NormalTok{Lab_f, }\DataTypeTok{data =}\NormalTok{ fe_table_chem)}
+\KeywordTok{gad}\NormalTok{(fe_model_chem1)}
+
+\NormalTok{fe_model_chem2 <-}\StringTok{ }\KeywordTok{lmer}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ Purity }\OperatorTok{~}\StringTok{ }\NormalTok{Lab }\OperatorTok{*}\StringTok{ }\NormalTok{Source }\OperatorTok{+}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{Lab}\OperatorTok{:}\NormalTok{Technician) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{Source}\OperatorTok{:}\NormalTok{Lab}\OperatorTok{:}\NormalTok{Technician), }\DataTypeTok{data =}\NormalTok{ fe_table_chem, }\DataTypeTok{REML =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(fe_model_chem2)}
+\KeywordTok{confint}\NormalTok{(fe_model_chem2)}
+
+\NormalTok{fe_residual_chem <-}\StringTok{ }\KeywordTok{rstudent}\NormalTok{(fe_model_chem2)}
+\KeywordTok{plot}\NormalTok{(fe_residual_chem)}
+\KeywordTok{plot}\NormalTok{(fe_model_chem2)}
+\KeywordTok{qqnorm}\NormalTok{(fe_residual_chem)}
+\KeywordTok{qqline}\NormalTok{(fe_residual_chem)}
+\KeywordTok{hist}\NormalTok{(fe_residual_chem)}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{question-4}{%
 \subsubsection{Question 4}\label{question-4}}
@@ -1179,7 +1232,8 @@ assumption of residuals.
 The above plots show that: There is not much difference in the average
 force of the cookie from different days or form different fat. The
 tables show the same thing with the numerical summaries for each factor
-level and their combinations.
+level and their combinations. The average force of the cookie are higher
+when the temperature is higher.
 
 \begin{table}[H]
 \centering\begingroup\fontsize{8}{10}\selectfont
@@ -1212,9 +1266,6 @@ fat & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
 \end{tabular}
 \endgroup{}
 \end{table}
-
-The average force of the cookie are higher when the temperature is
-higher.
 
 \begin{table}[H]
 \centering\begingroup\fontsize{8}{10}\selectfont
@@ -1317,10 +1368,10 @@ temp.day & min & Q1 & median & Q3 & max & mean & sd & n & missing\\
 \endgroup{}
 \end{table}
 
-This is a simple Split-Plot design model (day is whole-plot factor and
+This is a simple Split-Plot design model (fat is whole-plot factor and
 temperature is split-plot factor)
 
-\[y_{ijkl}=\mu+\tau_i+\beta_{j}+(\tau\beta)_{ij}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{jk}+(\tau\beta\gamma)_{ijk}+\varepsilon_{ijk}\]
+\[y_{ijk}=\mu+\tau_i+\beta_{j}+(\tau\beta)_{ij}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{jk}+(\tau\beta\gamma)_{ijk}+\varepsilon_{ijk}\]
 
 for \(i=1,2,3,4\); \(j=1,2,3\); \(k=1,2,3,4\)
 
@@ -1329,15 +1380,16 @@ for \(i=1,2,3,4\); \(j=1,2,3\); \(k=1,2,3,4\)
 \(\tau_i\) is the effect of \(i^{th}\) replication of days;
 
 \(\beta_{j}\) is the main effect of \(j^{th}\) level of temperature
-(effect of whole-plot factor);
+(effect of split-plot factor);
 
 \((\tau\beta)_{ij}\) is the interaction effect of \(i^{th}\) replication
-and \(j^{th}\) level of temperature (whole-plot error);
+and \(j^{th}\) level of temperature;
 
-\(\gamma_{k}\) is the main effect of \(k^{th}\) level of fat;
+\(\gamma_{k}\) is the main effect of \(k^{th}\) level of fat (effect of
+whole-plot factor);
 
 \((\tau\gamma)_{ik}\) is the interaction effect of \(i^{th}\) replicatin
-and \(k^{th}\) level of fat;
+and \(k^{th}\) level of fat(whole-plot error);
 
 \((\beta\gamma)_{jk}\) is the interaction effect of \(j^{th}\) level of
 temperature and \(k^{th}\) level of fat;
@@ -1349,18 +1401,20 @@ replicatin, \(j^{th}\) level of temperature and \(k^{th}\) level of fat
 \(y_{ijk}\) is response value for the \(i^{th}\) replication when
 \(j^{th}\) level of temperature and \(k^{th}\) level of fat are applied;
 
-\(\varepsilon_{l(ijk)}\) is random error for the \(i^{th}\) replication
+\(\varepsilon_{ijk}\) is random error for the \(i^{th}\) replication
 when \(j^{th}\) level of temperature and \(k^{th}\) level of fat are
 applied.
 
-Assumptions: I tend to believe that, for an experienced baker, the
-selection of temperature is deliberate. There are numerous days for
-choosing. Thus, this is a restricted model.
+Assumptions: For an experienced baker, he/she will try to let the recipe
+and temperature are accurate in each day. the covariance between two
+observations from the same level of the random factor can be either
+positive or negative. Thus, we assume this is a \textbf{restricted
+model}.
 
 \begin{longtable}[]{@{}lll@{}}
 \toprule
 \begin{minipage}[b]{0.23\columnwidth}\raggedright
-\(\varepsilon_{l(ijk)}\sim iid N(0,\sigma^2)\)\strut
+\(\varepsilon_{ijk}\sim iid N(0,\sigma^2)\)\strut
 \end{minipage} & \begin{minipage}[b]{0.23\columnwidth}\raggedright
 \(\tau_i\sim iid N(0,\sigma_{\tau}^2)\)\strut
 \end{minipage} & \begin{minipage}[b]{0.46\columnwidth}\raggedright
@@ -1534,111 +1588,132 @@ NA\strut
 \bottomrule
 \end{longtable}
 
-Random effects:
+The results show the interaction effect of day and fat is not
+significant at 0.05 significance level (P-value=0.5082).
 
-\begin{longtable}[]{@{}llll@{}}
+The interaction effect of day and temperature is significant at 0.05
+significance level (P-value=\(6.251\times{10}^{-08}\)).
+
+The interaction effect of temperature and fat is not significant at 0.05
+significance level (P-value=0.05113).
+
+\begin{longtable}[]{@{}lllll@{}}
 \toprule
-\begin{minipage}[b]{0.11\columnwidth}\raggedright
+\begin{minipage}[b]{0.10\columnwidth}\raggedright
 Groups\strut
-\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\raggedright
-Name\strut
-\end{minipage} & \begin{minipage}[b]{0.12\columnwidth}\raggedright
-Variance\strut
-\end{minipage} & \begin{minipage}[b]{0.14\columnwidth}\raggedright
-Std.Dev.\strut
-\end{minipage}\tabularnewline
-\midrule
-\endhead
-\begin{minipage}[t]{0.11\columnwidth}\raggedright
-day:fat\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-(Intercept)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-1.697e-15\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright
-4.120e-08\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.11\columnwidth}\raggedright
-day:temp\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-(Intercept)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-6.252e-01\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright
-7.907e-01\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.11\columnwidth}\raggedright
-day\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-(Intercept)\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-4.055e-01\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright
-6.368e-01\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.11\columnwidth}\raggedright
-Residual\strut
-\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\raggedright
-\strut
-\end{minipage} & \begin{minipage}[t]{0.12\columnwidth}\raggedright
-9.856e-02\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright
-3.140e-01\strut
-\end{minipage}\tabularnewline
-\bottomrule
-\end{longtable}
-
-\begin{longtable}[]{@{}ccl@{}}
-\toprule
-\begin{minipage}[b]{0.24\columnwidth}\centering
-~\strut
-\end{minipage} & \begin{minipage}[b]{0.13\columnwidth}\centering
-2.5 \%\strut
 \end{minipage} & \begin{minipage}[b]{0.13\columnwidth}\raggedright
-97.5 \%\strut
+Name\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright
+Variance\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright
+Std.Dev.\strut
+\end{minipage} & \begin{minipage}[b]{0.40\columnwidth}\raggedright
+\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sig01}\strut
-\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\centering
-0\strut
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+day:fat\strut
 \end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
-0.1906\strut
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+1.697e-15\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+4.120e-08\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2_{\tau\gamma}=0\)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sig02}\strut
-\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\centering
-0.4371\strut
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+day:temp\strut
 \end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
-1.242\strut
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+6.252e-01\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+7.907e-01\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2_{\tau\beta}=0.6252\)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sig03}\strut
-\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\centering
-0\strut
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+day\strut
 \end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
-1.626\strut
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+4.055e-01\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+6.368e-01\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2_{\tau}=0.4055\)\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{.sigma}\strut
-\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\centering
-0.2116\strut
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+Residual\strut
 \end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
-0.3492\strut
-\end{minipage}\tabularnewline
-\begin{minipage}[t]{0.24\columnwidth}\centering
-\textbf{(Intercept)}\strut
-\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\centering
-6.414\strut
-\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
-8.436\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+9.856e-02\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+3.140e-01\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2=0.9856\)\strut
 \end{minipage}\tabularnewline
 \bottomrule
 \end{longtable}
 
-The results show the interaction term of days and fat is negligible. I
-use it to compute error and set a new model.
+\begin{longtable}[]{@{}ccll@{}}
+\toprule
+\begin{minipage}[b]{0.19\columnwidth}\centering
+~\strut
+\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\centering
+2.5 \%\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+97.5 \%\strut
+\end{minipage} & \begin{minipage}[b]{0.49\columnwidth}\raggedright
+\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sig01}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.1906\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2_{\tau\gamma}}:(0,0.1906^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sig02}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0.4371\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+1.242\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2_{\tau\beta}}:(0.4371^2,1.242^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sig03}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+1.626\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2_{\tau}}:(0,1.626^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sigma}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0.2116\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.3492\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2}:(0.2116^2,0.3492^2)\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+The results of variance components show the variance of interaction term
+of days and fat is negligible and hence dropping interaction term of
+days and fat.
 
 \begin{longtable}[]{@{}cccccc@{}}
 \caption{Analysis of Variance Table}\tabularnewline
@@ -1755,14 +1830,110 @@ NA\strut
 \bottomrule
 \end{longtable}
 
-The ANOVA table shows that there is a significant interaction effect
-from the day and temperature, on average amount of force (g)
-(p-value=\(4.298\times10^{-10}\)). This means that the effect of day and
-effect of temperature on the force are not independent. Similarly, there
-is a significant interaction effect from the fat and temperature, on
-average amount of force (g) (p-value=0.03544). This means that the
-effect of fat and effect of temperature on the force are not
-independent. Hence, the simple effects must be tested.
+The ANOVA table of new model shows that there is a significant
+interaction effect from the day and temperature, on average amount of
+force (g) (p-value=\(4.298\times10^{-10}\)). Similarly, there is a
+significant interaction effect from the fat and temperature, on average
+amount of force (g) (p-value=0.03544).
+
+This means that the effects of day v.s.temperature and fat
+v.s.temperature on the force are not independent. Hence, the simple
+effects must be tested. The variances and confidence intervals don't
+change.
+
+\begin{longtable}[]{@{}lllll@{}}
+\toprule
+\begin{minipage}[b]{0.10\columnwidth}\raggedright
+Groups\strut
+\end{minipage} & \begin{minipage}[b]{0.13\columnwidth}\raggedright
+Name\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright
+Variance\strut
+\end{minipage} & \begin{minipage}[b]{0.11\columnwidth}\raggedright
+Std.Dev.\strut
+\end{minipage} & \begin{minipage}[b]{0.40\columnwidth}\raggedright
+\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+day:temp\strut
+\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+0.62520\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+0.7907\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2_{\tau\beta}=0.6252\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+day\strut
+\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+(Intercept)\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+0.40554\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+0.6368\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2_{\tau}=0.40554\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.10\columnwidth}\raggedright
+Residual\strut
+\end{minipage} & \begin{minipage}[t]{0.13\columnwidth}\raggedright
+\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+0.09856\strut
+\end{minipage} & \begin{minipage}[t]{0.11\columnwidth}\raggedright
+0.3140\strut
+\end{minipage} & \begin{minipage}[t]{0.40\columnwidth}\raggedright
+\(\hat\sigma^2=0.9856\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{longtable}[]{@{}ccll@{}}
+\toprule
+\begin{minipage}[b]{0.19\columnwidth}\centering
+~\strut
+\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\centering
+2.5 \%\strut
+\end{minipage} & \begin{minipage}[b]{0.09\columnwidth}\raggedright
+97.5 \%\strut
+\end{minipage} & \begin{minipage}[b]{0.49\columnwidth}\raggedright
+\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sig02}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0.4371\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+1.242\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2_{\tau\beta}}:(0.4371^2,1.242^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sig03}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+1.626\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2_{\tau}}:(0,1.626^2)\)\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.19\columnwidth}\centering
+\textbf{.sigma}\strut
+\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
+0.2116\strut
+\end{minipage} & \begin{minipage}[t]{0.09\columnwidth}\raggedright
+0.3492\strut
+\end{minipage} & \begin{minipage}[t]{0.49\columnwidth}\raggedright
+\(CI_{\sigma^2}:(0.2116^2,0.3492^2)\)\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
 
 Since there are several simple effects comparison tests, the Tukey's
 adjustment was used to compute p value to reduce the experimentwise
@@ -1872,7 +2043,6 @@ fat & temp & contrast & estimate & SE & df & t.ratio & p.value\\
 \hline
 . & 400 & 6 - 8 & 0.375 & 0.2219964 & 27.000000 & 1.6892165 & 0.7088627\\
 \hline
-\multicolumn{8}{l}{\textsuperscript{*} Adjusted by Tukey's Method}\\
 \end{tabular}
 \endgroup{}
 \end{table}
@@ -1944,22 +2114,29 @@ day\_r & temp\_f & contrast & estimate & SE & df & t.ratio & p.value\\
 \hline
 . & 400 & 3 - 4 & 0.325 & 0.2219964 & 27 & 1.4639876 & 0.8314608\\
 \hline
-\multicolumn{8}{l}{\textsuperscript{*} Adjusted by Tukey's Method}\\
 \end{tabular}
 \endgroup{}
 \end{table}
 
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-24-1}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-24-2}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-24-3}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-24-4}
-\includegraphics[width=0.2\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-24-5}
+\textbf{Conclusion:} Choosing a higher temperature for a given amount of
+fat can get a harder texture of the surface. In most of the cases,
+changing fat for a given temperature doesn't change the texture.
+
+For a given temperature, almost all of the amount of fat cannot change
+the texture but different days don't give consistent results. If the
+baker wants to examine the texture for a specific temperature, he/she
+should check what other factors in different days may affect the results
+and redo the experiment.
+
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-23-1}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-23-2}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-23-3}
+\includegraphics[width=0.25\linewidth]{fe_stat566_bak_files/figure-latex/unnamed-chunk-23-4}
 
 In the plots of residuals versus predicted value of purity, there is no
-significant pattern on this plot besides that more values occur when the
-predicted value is higher. Therefore, the fitted model is good enough to
-describe the relationship between the mean value of purity and the labs,
-technician, and sources.
+significant pattern on this plot. Therefore, the fitted model is good
+enough to describe the relationship between the mean value of focre and
+the days, temperature, and fats.
 
 The residuals in this plot are almost symmetrically distributed about
 zero and hence zero mean assumption is not violated. Further, the
@@ -1972,43 +2149,50 @@ bottom left and the histogram of residuals shown at the top right is
 about normal. These plots show no violation of normal distribution
 assumption of residuals.
 
-\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{favstats}\NormalTok{(force }\OperatorTok{~}\StringTok{ }\NormalTok{day, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{favstats}\NormalTok{(force }\OperatorTok{~}\StringTok{ }\NormalTok{fat, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{favstats}\NormalTok{(force }\OperatorTok{~}\StringTok{ }\NormalTok{temp, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{favstats}\NormalTok{(force }\OperatorTok{~}\StringTok{ }\NormalTok{day }\OperatorTok{+}\StringTok{ }\NormalTok{fat, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{favstats}\NormalTok{(force }\OperatorTok{~}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{fat, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{favstats}\NormalTok{(force }\OperatorTok{~}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{day, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
 
-For \(\sum_j^b\hat\beta_{j(i)}=0\),
+\NormalTok{fe_table_cookie}\OperatorTok{$}\NormalTok{day_r <-}\StringTok{ }\KeywordTok{as.random}\NormalTok{(fe_table_cookie}\OperatorTok{$}\NormalTok{day)}
+\NormalTok{fe_table_cookie}\OperatorTok{$}\NormalTok{temp_f <-}\StringTok{ }\KeywordTok{as.fixed}\NormalTok{(fe_table_cookie}\OperatorTok{$}\NormalTok{temp)}
+\NormalTok{fe_table_cookie}\OperatorTok{$}\NormalTok{fat_f <-}\StringTok{ }\KeywordTok{as.fixed}\NormalTok{(fe_table_cookie}\OperatorTok{$}\NormalTok{fat)}
+\NormalTok{fe_model_cookie1 <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ force }\OperatorTok{~}\StringTok{ }\NormalTok{day_r }\OperatorTok{+}\StringTok{ }\NormalTok{fat_f }\OperatorTok{+}\StringTok{ }\NormalTok{fat_f }\OperatorTok{%in%}\StringTok{ }\NormalTok{day_r }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{temp_f }\OperatorTok{%in%}\StringTok{ }\NormalTok{day_r }\OperatorTok{+}\StringTok{ }\NormalTok{temp_f }\OperatorTok{+}\StringTok{ }\NormalTok{temp_f}\OperatorTok{:}\NormalTok{fat_f, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{gad}\NormalTok{(fe_model_cookie1)}
 
-\[\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\frac1b \sum_{j=1}^b\beta_{j(i)}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}=\mu+\tau_{i}+\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\]
+\NormalTok{fe_model_cookie2 <-}\StringTok{ }\KeywordTok{lmer}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ force }\OperatorTok{~}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{day) }\OperatorTok{+}\StringTok{ }\NormalTok{fat }\OperatorTok{+}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{day}\OperatorTok{:}\NormalTok{fat) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{day}\OperatorTok{:}\NormalTok{temp) }\OperatorTok{+}\StringTok{ }\NormalTok{temp}\OperatorTok{:}\NormalTok{fat, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie, }\DataTypeTok{REML =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(fe_model_cookie2)}
+\KeywordTok{confint}\NormalTok{(fe_model_cookie2)}
 
-\[\bar y_{ij.}=\frac1{n}\sum_{k=1}^ny_{ijk}=\mu+\tau_{i}+\beta_j+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}\]
+\NormalTok{fe_model_cookie3 <-}\StringTok{ }\KeywordTok{aov}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ force }\OperatorTok{~}\StringTok{ }\NormalTok{day_r }\OperatorTok{+}\StringTok{ }\NormalTok{fat_f }\OperatorTok{+}\StringTok{ }\NormalTok{temp_f }\OperatorTok{+}\StringTok{ }\NormalTok{temp_f }\OperatorTok{%in%}\StringTok{ }
+\StringTok{    }\NormalTok{day_r }\OperatorTok{+}\StringTok{ }\NormalTok{temp_f}\OperatorTok{:}\NormalTok{fat_f, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie)}
+\KeywordTok{gad}\NormalTok{(fe_model_cookie3)}
+\NormalTok{fe_model_cookie4 <-}\StringTok{ }\KeywordTok{lmer}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ force }\OperatorTok{~}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{day) }\OperatorTok{+}\StringTok{ }\NormalTok{fat }\OperatorTok{+}\StringTok{ }\NormalTok{temp }\OperatorTok{+}\StringTok{ }\NormalTok{(}\DecValTok{1} \OperatorTok{|}\StringTok{ }\NormalTok{day}\OperatorTok{:}\NormalTok{temp) }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{temp }\OperatorTok{*}\StringTok{ }\NormalTok{fat, }\DataTypeTok{data =}\NormalTok{ fe_table_cookie, }\DataTypeTok{REML =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(fe_model_cookie4)}
+\KeywordTok{confint}\NormalTok{(fe_model_cookie4)}
 
-\[\bar y_{ij.}-\bar y_{i..}=\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}\]
+\NormalTok{temp_fat <-}\StringTok{ }\KeywordTok{pairs}\NormalTok{(}\KeywordTok{lsmeans}\NormalTok{(fe_model_cookie4, }\OperatorTok{~}\NormalTok{temp }\OperatorTok{|}\StringTok{ }\NormalTok{fat))}
+\NormalTok{fat_temp <-}\StringTok{ }\KeywordTok{pairs}\NormalTok{(}\KeywordTok{lsmeans}\NormalTok{(fe_model_cookie4, }\OperatorTok{~}\NormalTok{fat }\OperatorTok{|}\StringTok{ }\NormalTok{temp))}
+\KeywordTok{test}\NormalTok{(}\KeywordTok{rbind}\NormalTok{(temp_fat, fat_temp), }\DataTypeTok{adjust =} \StringTok{"tukey"}\NormalTok{)}
+\NormalTok{temp_day <-}\StringTok{ }\KeywordTok{pairs}\NormalTok{(}\KeywordTok{lsmeans}\NormalTok{(fe_model_cookie3, }\OperatorTok{~}\NormalTok{temp_f }\OperatorTok{|}\StringTok{ }\NormalTok{day_r))}
+\NormalTok{day_temp <-}\StringTok{ }\KeywordTok{pairs}\NormalTok{(}\KeywordTok{lsmeans}\NormalTok{(fe_model_cookie3, }\OperatorTok{~}\NormalTok{day_r }\OperatorTok{|}\StringTok{ }\NormalTok{temp_f))}
+\KeywordTok{test}\NormalTok{(}\KeywordTok{rbind}\NormalTok{(temp_day, day_temp), }\DataTypeTok{adjust =} \StringTok{"tukey"}\NormalTok{)}
 
-For B nested in the random factor A,
-\(\beta_j(i)\sim iid\ N(0,\sigma_\beta^2)\), \(E[\beta_{j(i)}]=0\),
-\(V[\beta_{j(i)}]=\sigma_\beta^2\)
-
-For \(\tau_{i}\) and \(\varepsilon_{(ij)k}\) are independent,
-\(\beta_{j(i)}\) and \(\varepsilon_{(ij)k}\) are independent.
-\(Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]=0\)
-
-For \(\varepsilon_{(ij)k}\sim iid N(0,\sigma^2)\),
-\(E[\varepsilon_{(ij)k}]=0\), \(V[\varepsilon_{(ij)k}]=\sigma^2\)
-
-\[E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]=0\]
-
-\[Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{j(i)}+\frac1{n}\sum_{k=1}^n\varepsilon_{(ij)k}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{(ij)k}]\]
-
-\[=Var[\beta_{j(i)}]+Var[\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+2Cov[\beta_{j(i)},\frac1{n}\sum_{k=1}^n\varepsilon_{ijk}-\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]\]
-
-\[=\sigma_\beta^2+\frac1{n^2}\sum_{k=1}^nVar[\varepsilon_{ijk}]+\frac{1}{b^2n^2}\sum_{j=1}^b\sum_{k=1}^nVar[\varepsilon_{ijk}]-\frac{2}{bn^2}Cov[\sum_{k=1}^n\varepsilon_{ijk},\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk}]+0\]
-
-\[=\sigma_\beta^2+\frac1n\sigma^2+\frac{\sigma^2}{bn}-\frac{2\sigma^2}{bn}=\sigma_\beta^2+\frac{(b-1)\sigma^2}{bn}\]
-
-For
-\(MS_{B(A)}=SS_{B(A)}/df_{B(A)}=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2\)
-
-\[E(MS_{B(A)})=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..})^2]=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{Var[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2\right\}\]
-
-\[=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\left\{\sigma_\beta^2+\frac{(b-1)\sigma^2}{bn}\right\}=\sigma^2+\frac{bn}{b-1}\sigma_\beta^2\]
+\NormalTok{fe_residual_cookie <-}\StringTok{ }\KeywordTok{rstudent}\NormalTok{(fe_model_cookie4)}
+\KeywordTok{plot}\NormalTok{(fe_residual_cookie)}
+\KeywordTok{plot}\NormalTok{(fe_model_cookie4)}
+\KeywordTok{qqnorm}\NormalTok{(fe_residual_cookie)}
+\KeywordTok{qqline}\NormalTok{(fe_residual_cookie)}
+\KeywordTok{hist}\NormalTok{(fe_residual_cookie)}
+\end{Highlighting}
+\end{Shaded}
 
 
 \end{document}
