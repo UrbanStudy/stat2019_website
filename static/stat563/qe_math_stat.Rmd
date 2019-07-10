@@ -1,12 +1,12 @@
 ---
 title: ''
 fontfamily: mathpazo
-fontsize: 6pt
+fontsize: 10pt
 geometry: margin=0mm
 linestretch: 0.1
 classoption:
 - twocolumn
-- Portrait
+- portrait
 pagenumbering: FALSE
 whitespace: none
 output:
@@ -23,15 +23,13 @@ output:
     number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
+    - \usepackage{lscape}
+    - \newcommand{\blandscape}{\begin{landscape}}
+    - \newcommand{\elandscape}{\end{landscape}} 
 ---
 
 
-```{r setup, include=F}
-knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
-options(width = 2000)
-options(repos="https://cran.rstudio.com")
 
-```
 
 # 
 
@@ -3612,79 +3610,39 @@ Example 8.3.29 (One-sided normal p-value)
 
 # References
 
+\newpage
+\onecolumn
 
-\begin{tabular}{llllllllll}
-\textbf{Distribution} & \textbf{CDF} & \textbf{P(X=x),f(x)} & \textbf{$\mu$} & \textbf{$EX^2$} & \textbf{Var} & \textbf{MGF} & \textbf{M'(t)} & \textbf{M''(t)} & \textbf{$M^n(t)$}\\
-\hline 
+\fontsize{8pt}{12pt}
 
-$Bern(p) $ & $ $ & $p^xq^{1-x},x\in\{1,0\}$ & $p$ & $p$ & $pq$ & $pe^t+q$ \\
-\hline
 
-$Bino(n,p)$ & $I_{1-p}(n-x,x+1)$ & $ \binom{n}{x}p^x q^{n-x}; x \in \{0,1..n\}$ & $np$ & $\mu(\mu+q)$ & $\mu q$ & $(pe^t+q)^n$ \\
-\hline
 
-$Geom(p)$ & $1-q^x    $ & $pq^{x-1},x\in 1,2,..$ & $\frac1p  $ & $\frac{p+2q}{p^2} $ & $\frac{q}{p^2}$ & $\frac{pe^t}{1-qe^t},t<-\ln{q}$ \\
-           & $1-q^{x+1}$ & $pq^x,x\in 0,1,..    $ & $\frac{q}p$ & $\frac{q^2+q}{p^2}$ & $\frac{q}{p^2}$ & $\frac{p}{1-qe^t}, qe^t<1     $ & $\frac{pqe^t}{(1-qe^t)^2}$ & $\frac{2pqe^t}{(1-qe^t)^3}-M'(t)$ \\
-\hline
+|   $D$   |$E;V;EX^2$|$f(x);F(x)$|$MLE;T;I$|$M_x(t);M'(t);M''(t);M^n(t)$|
+|   -    |     ---  |   ---   |    --   | ---- |
+|$Bern(p)$|$p$;$p$;$pq$|$p^xq^{1-x},x=1,0$|$\bar X$;$\sum x_i\sim Bino(np)$;$n/\theta(\theta-1)$|$pe^t+q$|
+|$Bino(n,p)$|$np$;$np(np+q)$;$npq$|$\binom{n}{x}p^x q^{n-x}$,$x=0,1..n$;$I_{1-p}(n-x,x+1)$||$(pe^t+q)^n$|
+|$Geom(p)$|$1/p$;${(p+2q)}/{p^2}$;$q/p^2$|$pq^{x-1}$,$x=1,2,..$;$1-q^x$|$1/\bar X$;$\sum x_i$;|$\frac{pe^t}{1-qe^t},t<-\ln{q}$;$\frac{pqe^t}{(1-qe^t)^2}$;$\frac{2pqe^t}{(1-qe^t)^3}-M'(t)$|
+|$NBino(r,p)$|$r/p$; ;$rq/p^2$|$\binom{x-1}{r-1}p^rq^{x-r}$,$x=r,r+1..$||$(\frac{pe^t}{1-qe^t})^r$|
+|$HGeom(N,m,k)$|$\frac{km}N$; ;$\mu\frac{(N-m)(N-k)}{N(N-1)}$|${\binom{m}{x}\binom{N-m}{k-x}}/{\binom{N}{k}}$|
+|$Pois(\mu)$|$\mu$;$\mu$;$\mu^2+\mu$|$\frac{\mu^x}{x!}e^{-\mu}$,$x=0,1..$;$e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$|$\bar X$;$\sum x_i$;$n/\mu$|$e^{\mu(e^t-1)}$;$\mu e^tM(t)$;$\mu e^t(1+\mu e^t)M(t)$|
+|$Unif(n)$|$\frac{n+1}2$;$\frac{(n+1)(2n+1)}{6}$;$\frac{(n^2-1)}{12}$|$\frac{1}n$,$x=1,2..n$||$\sum_{i=1}^n{e^{ti}}/n$|
+|$Unif(a,b)$|$\frac{a+b}{2}$; ;$\frac{(b-a)^2}{12}$|$frac{1}{b-a}$,$x\in(a,b)$;$\frac{x-a}{b-a}$||$\frac{e^{tb}-e^{ta}}{t(b-a)}$|
+|$Norm(\mu,\sigma^2)$|$\mu$;$\mu^2+\sigma^2$;$\sigma^2$|$\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$||$e^{\mu t +\frac{\sigma^2t^2}2}$; $(\mu+\sigma^2t)M(t)$;$[(\mu+\sigma^2t)^2+\sigma^2]M(t)$|
+|$SNorm(0,1)$|$0$;$1$;$1$|$\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$||$e^{\frac{t^2}2}$|
+|$LNorm(\mu,\sigma^2)$|$e^{\mu+\frac{\sigma^2}2}$;$e^{2\mu+2\sigma^2}$;$E^2X(e^{\sigma^2}-1)$|$\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$||$e^{n\mu+n^2\sigma^2/2}$|
+|$Cauchy(\theta,\sigma^2)$||$\frac{1}{\pi\sigma}\frac1{1+(\frac{x-\theta}{\sigma})^2}$|||
+|$DExpo(\mu,\sigma^2)$|$\mu$;$\mu^2+2\sigma^2$;$2\sigma^2$|$\frac{1}{2\pi\sigma} e^{-|\frac{x-\mu}{\sigma}|}$||$\frac{e^{\mu t}}{1-\sigma^2t^2}$|
+|$Expo(\beta)$|$\beta$; ;$\beta^2$|$\frac1{\beta} e^{-\frac{x}\beta},x \in (0,\infty)$;$1-e^{-\lambda x}$|$1/\bar X$;$\sum x_i$;|$\frac{\lambda}{\lambda-t},t<\lambda$,$\frac{1}{1-\beta t}$;$\beta(1-\beta t)^{-2}$;$2\beta^2(1-\beta t)^{-3}$|
+|$Gamm(\alpha,\beta)$|$\alpha\beta$; ;$\alpha\beta^2$;|$\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}$||$(\frac{1}{1-\beta t})^a, t <\frac1\beta$|
+|$Beta(a,b)$|$\frac{a}{a+b}$;$\frac{a(a+1)}{(a+b)(a+b+1)}$;$\frac{ab}{(a+b)^2(a+b+1)}$|$\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1}$||$B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$,$x\in(0,1)$;$\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$|
+|$\chi_p^2$|$p$;$2p+p^2$;$2p$|$\frac{x^{\frac{p}2-1}}{\Gamma \frac{p}2 2^{\frac{p}2}}e^{-\frac{x}2}$|;$\sum\ln x_i$;|$(1-2t)^{-p/2}, t<\frac12$|
+|$t_p$|$0,p>1$; ;$\frac{p}{p-2},p>2$|$\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}(1+\frac{x^2}{p})^{-\frac{p+1}2}$
+|$F$|$\frac{q}{q-2},q>2$;;$2(\frac{q}{q-2})^2\frac{p+q-2}{p(q-4)},q>4$|$\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}\frac{x^{\frac{p}2-1}}{(1+\frac{p}qx)^{\frac{p+q}2}}$,$x>0$|||
+|$Arcsine$|$\frac{1}2$; ;$\frac{1}8$|$\frac{1}{\pi\sqrt{x(1-x)}}$,$x\in[0,1]$;$\frac{1}{\pi\arcsin\sqrt x}$||$Beta(\frac{1}2,\frac{1}2)$|
+|$Dirichlet$|$\frac{a_i}{\sum_ka_k}$$\sum_{i=1}^kx_i=1$;;$\frac{a_i(a_0-a_i)}{a_0^2(a_0+1)}$|$\frac1{B(a)}\Pi_{i=1}^kx_i^{a_i-1}$,$x\in(0,1)$,$B(a)=\frac{\Pi_{i=1}^k\Gamma(a_i)}{\Gamma(\sum_{i=1}^ka_i)}$||$Cov(X_i,X_j)=\frac{-a_ia_j}{a_0^2(a_0+1)}$,$a_0=\sum_{i=1}^ka_i$|
 
-$NBino(r,p)$ & $ $ & $\binom{x-1}{r-1}p^rq^{x-r},x\in r,r+1..$ & $\frac{r}p $ & $ $ & $\frac{rq}{p^2}$ & $(\frac{pe^t}{1-qe^t})^r$\\
-             & $ $ & $\binom{x+r-1}{r-1}p^rq^x, x \in 0,1..  $ & $\frac{rq}p$ & $ $ & $\frac{rq}{p^2}$ & $(\frac{p}{1-qe^t})^r, qe^t<1$\\
-\hline
 
-$HGeom(N,m,k)$ & $ $ & $\frac{\binom{m}{x}\binom{N-m}{k-x}}{\binom{N}{k}}$ & $\frac{km}{N}     $ & $ $ & $\mu\frac{(N-m)(N-k)}{N(N-1)}$ \\
-$HGeom(w,b,k)$ & $ $ & $\frac{\binom{w}{x}\binom{b}{k-x}}{\binom{w+b}{k}}$ & $\frac{kw}{w+b}$ & $ $ & $\mu\frac{b(w+b-k)}{(w+b)(w+b-1)}$   \\
-\hline
+\begin{landscape}
 
-$Pois(\mu)$ & $e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$ & $\frac{\mu^x}{x!}e^{-\mu},x \in 0,1..$ & $\mu$ & $\mu^2+\mu$ & $\mu$ & $e^{\mu(e^t-1)}$ & $\mu e^tM(t)$ & $\mu e^t(1+\mu e^t)M(t)$ \\
-\hline
 
-$Unif(n)  $ & $               $ & $ \frac{1}n,x \in 1,2..n   $ & $\frac{n+1}2  $ & $\frac{(n+1)(2n+1)}{6}$ & $\frac{(n^2-1)}{12}$ &  $\frac{\sum_{i=1}^n{e^{ti}}}n$\\
-\hline
-\hline
-
-$Unif(a,b)$ & $\frac{x-a}{b-a}$ & $ \frac{1}{b-a},x \in(a,b) $ & $\frac{a+b}{2}$ & $ $& $\frac{(b-a)^2}{12}$ &  $\frac{e^{tb}-e^{ta}}{t(b-a)}$\\
-\hline
-
-$Norm(\mu,\sigma^2)$ & $ $ & $\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$ & $\mu$ & $\mu^2+\sigma^2$ & $\sigma^2$ & $e^{\mu t +\frac{\sigma^2t^2}2}$ & $(\mu+\sigma^2t)M(t)$ & $[(\mu+\sigma^2t)^2+\sigma^2]M(t) $\\
-\hline
-
-$SNorm(0, 1)        $ & $ $ & $\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$ & $0$ & $1$ & $1$ & $e^{\frac{t^2}2}$ \\
-\hline
-
-$LNorm(\mu,\sigma^2)$ & $ $ & $\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$ & $e^{\mu+\frac{\sigma^2}2}$ & $e^{2\mu+2\sigma^2}$ & $\theta^2(e^{\sigma^2}-1)$ & $\times$\\
-\hline
-
-$Cauchy(\theta,\sigma^2)$ & $ $ & $\frac{1}{\pi\sigma}\frac1{1+(\frac{x-\theta}{\sigma})^2}$ & $\times$ & $\times$ & $\times$ & $ $ \\
-\hline
-
-$DExpo(\mu,\sigma^2)$ & $ $ & $\frac{1}{2\pi\sigma} e^{-|\frac{x-\mu}{\sigma}|}$ & $\mu$ & $\mu^2+2\sigma^2$ & $2\sigma^2$ & $\frac{e^{\mu t}}{1-\sigma^2t^2}$ \\
-\hline
-
-$Expo(\lambda)$ & $1-e^{-\lambda x}$ & $\lambda e^{-\lambda x},x \in (0,\infty)$ & $\frac{1}{\lambda}$ & $ $ & $\frac{1}{\lambda^2}$ & $\frac{\lambda}{\lambda - t}, t < \lambda$\\
-$Expo(\beta)  $ & $                $ & $\frac1{\beta} e^{-\frac{x}\beta}$ & $\beta$ & $ $ & $\beta^2$ & $\frac{1}{1-\beta t}$ & $\beta(1-\beta t)^{-2}$ & $2\beta^2(1-\beta t)^{-3}$\\
-\hline
-
-$Gammma(a, \lambda)$ & $ $ & $\frac{\lambda^a}{\Gamma(a)}x^{a-1}e^{-\lambda x},x \in (0,\infty)$ & $\frac{a}{\lambda}$  & $\frac{a}{\lambda^2}$ & $\left(\frac{\lambda}{\lambda - t}\right)^a, t < \lambda$\\
-$Gammma(\alpha,\beta)$ & $ $ & $\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}$ & $\alpha\beta$  & $\alpha\beta^2$ & $\left(\frac{1}{1-\beta t}\right)^a, t <\frac1\beta$\\
-\hline
-
-$Beta(a, b)$ & $ $ & $\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1} $ & $\frac{a}{a+b}$ & $ $  & $\frac{\mu(1-\mu)}{(a+b+1)}$ & $ $ & $ $ & $ $ & $\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$  \\
-$B(\alpha,\beta)=$ & $ $ & $\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)},x\in(0,1)$ & $ $  & $\frac{a(a+1)}{(a+b)(a+b+1)}$ & $\frac{ab}{(a+b)^2(a+b+1)}$ \\
-\hline
-
-$\chi_p^2$ & $ $ & $\frac{x^{\frac{p}2-1}}{\Gamma \frac{p}2 2^{\frac{p}2}}e^{-\frac{x}2}$ & $p$ & $2p+p^2$ & $2p$ & $(1-2t)^{-p/2}, t<\frac12$\\
-\hline
-
-$t_p$ & $ $ & $\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}\left (1+\frac{x^2}{p}\right)^{-\frac{p+1}2}$ & $0,p>1$ & $ $ & $\frac{p}{p-2},p>2$ & $\times$\\
-\hline
-
-$F$ & $x>0$ & $\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}\frac{x^{\frac{p}2-1}}{(1+\frac{p}qx)^{\frac{p+q}2}}$ & $\frac{q}{q-2}$ & $q>2$ & $2(\frac{q}{q-2})^2\frac{p+q-2}{p(q-4)}$ & $q>4$\\
-\hline
-
-Arcsine & $\frac{1}{\pi \arcsin\sqrt x}$ & $\frac{1}{\pi\sqrt{x(1-x)}},x\in[0,1]$ & $\frac{1}2$ & $ $ & $\frac{1}8$ & & & & $Beta(\frac{1}2,\frac{1}2)$\\
-\hline
-
-Dirichlet & $B(a)=\frac{\Pi_{i=1}^k\Gamma(a_i)}{\Gamma(\sum_{i=1}^ka_i)}$ & $\frac1{B(a)}\Pi_{i=1}^kx_i^{a_i-1},x\in(0,1)$ & $\frac{a_i}{\sum_ka_k}$ & $\sum_{i=1}^kx_i=1$ & $\frac{a_i(a_0-a_i)}{a_0^2(a_0+1)}$ & $Cov(X_i,X_j)=$ & $\frac{-a_ia_j}{a_0^2(a_0+1)}$ & $a_0=\sum_{i=1}^ka_i$ & \\
-\hline
-
-\end{tabular}
+\end{landscape}
