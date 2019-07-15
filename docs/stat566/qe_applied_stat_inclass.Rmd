@@ -45,6 +45,7 @@ Fountain*, Crain
 You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 2 blocks. You may assume that 4-way and higher interactions are not important.
 
 Show all of the following:
+
  - all of your generators (make sure that your resolution is at least III)
  - he 16 runs to conduct
  - the alias structure
@@ -53,6 +54,7 @@ Show all of the following:
  - the Source and DF columns of the ANOVA table
 
 ### 2015F2
+[2017F1][]
 
 A company is comparing two different methods of processing their raw material. They begin with 8 batches of material, which are randomly assigned to one of the two processes. The quality of the final product is measured on a 50-point scale. There is some concern that the outside temperature on each day might have an effect on the product (and the effect might be different for the two processes), and so it is recorded so that it can be taken into account. The following table shows and ordered pair for each batch, consisting of the quality measurement and the temperature.
 
@@ -69,6 +71,7 @@ b) Write the matrix form of the appropriate model. Show the contents and dimensi
 c) Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
 ### 2015F3
+[2016S3][] [2017F2][]
 
 a) Explain the difference between fixed and random effects in an experimental design. Give an example to illustrate your explanation.
 
@@ -84,13 +87,14 @@ Fountain, Tableman*
 
 ### 2016S1
 
-You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 2 blocks. You may assume that 4-way and higher interactions are not important.
+You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 4 blocks. You may assume that 4-way and higher interactions are not important.
 
 Show all of the following:
+
  - all of your generators (make sure that your resolution is at least III)
- - he 16 runs to conduct
+ - the 16 runs to conduct
  - the alias structure
- - the eight runs to be done on each day
+ - the four runs to be done on each day
  - the effects to be confounded with blocks
  - the Source and DF columns of the ANOVA table
 
@@ -134,6 +138,7 @@ Answer the following from the above information:
 (d) Calculate the F-statistic for testing $H_0:\beta_2=\beta_4=0$.
 
 ### 2016S3
+[2017F2][]
 
 a) Explain the difference between fixed and random effects in an experimental design. Give an example to illustrate your explanation.
 
@@ -146,9 +151,7 @@ Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$
 
 ### 2016S5
 
-In the multiple regression model with $p-1$ independent variables $X_j$, let the $n\times p$ matrix X denote
-the design matrix which contains the column of 1’s to fit the intercept term and has full rank. Let H
-denote the hat matrix. Let $h_{ii}$ denote the $i_{th}$ diagonal element of H. Prove that $0\le h_{ii}\le1$.
+In the multiple regression model with $p-1$ independent variables $X_j$, let the $n\times p$ matrix $\mathbf{X}$ denote the design matrix which contains the column of 1’s to fit the intercept term and has full rank. Let $\mathbf{H}$ denote the hat matrix. Let $h_{ii}$ denote the $i_{th}$ diagonal element of $\mathbf{H}$. Prove that $0\le h_{ii}\le1$.
 
 ## 2016F
 Jong Sung Kim*, Brad Crain
@@ -205,7 +208,7 @@ Information II: model:$y = x_2 x_1$;
 
 (e) Give an unbiased estimate of the variance of $\hat\beta_1-\hat\beta_2$.
 
-(f) Obtain MS(Pure Error). Hint: Pure Error can be found exactly the same way as we did for simple linear regression model. That is, group according to different combinations of levels from X1 and X2. First compute SS(Pure Error), and then divide it by degrees of freedom.
+(f) Obtain MS(Pure Error). Hint: Pure Error can be found exactly the same way as we did for simple linear regression model. That is, group according to different combinations of levels from $X_1$ and $X_2$. First compute SS(Pure Error), and then divide it by degrees of freedom.
 
 (g) Perform a test for lack-of-fit at the .05 level of significance. Note: If you are unable to answer part (f), use MS(Pure Error) = 7.5. This is not the correct answer to (f), but if you use it in this part of the problem, you will receive full credit on this part, provided your answer is otherwise correct.
 
@@ -269,11 +272,9 @@ The following is part of the SAS output from a simple linear regression model: $
 
 Prior to 1985, Meily Lin had observed that some colors of birthday balloons seem to be harder to inflate than others. She ran this experiment to determine whether balloons of different colors are similar in terms of the time taken for inflation to a diameter of 7 inches. Four colors were selected from a single manufacturer. An assistant blew up the balloons and the experimenter recorded the times (to the nearest 1/10 second) with a stop watch. This experiment was replicated 4 times, and the data including the order are displayed in the SAS code below, where color 1 = pink, 2 = yellow, 3 = orange, and 4 = blue.
 
-data balloon;
+>data balloon;
 input runorder color inftime @@;
-
 cards;
-
 1 1 22.4 2 3 24.6 3 1 20.3 4 4 19.8 5 3 24.3 6 2 22.2 7 2 28.5 8 2 25.7
 9 3 20.2 10 1 19.6 11 2 28.8 12 4 24.0 13 4 17.1 14 4 19.3 15 3 24.2 16
 1 15.8 17 2 18.3 18 1 17.5 19 4 18.7 20 3 22.9 21 1 16.3 22 4 14.0 23 4
@@ -287,17 +288,12 @@ b. What kind of model would be appropriate for the above experiment?
 c. Read the following <Program I>. If we had assumed that there is an equal slope linear relationship between the inflation time and the run order for each color, how can we test the assumption? How would you adjust the following program?
 Why?
 
-<Program I>
+><Program I>
 proc glm data=balloon;
-
 class color; /* color: 1 = pink, 2 = yellow, 3 = orange, 4 = blue */
-
 model inftime = color runorder;
-
 estimate 'pink vs. orange' color -1 0 1 0;
-
 lsmeans color/pdiff;
-
 run;
 
 d. Based on the following output from <Program I>, one can apply a Bonferroni multiple comparison test with level .05. Which are significantly different and which are not?
@@ -318,6 +314,12 @@ Brad Crain, Jong Sung Kim*
 ### 2017SR1
 A company is comparing two different methods of processing their raw material. They begin with 8 batches of material, which are randomly assigned to one of the two processes. The quality of the finalproduct is measured on a 50-point scale. There is some concern that the outside temperature on each day might have an effect on the product (and the effect might be different for the two processes), and so it is recorded so that it can be taken into account. The following table shows and orderedpair for each batch, consisting of the quality measurement and the temperature.
 
+ --------- -------------- --------------
+ Process 1 (45,81)(40,68) (41,77)(41,61)
+          
+ Process 2 (42,59)(37,62) (41,83)(35,70)
+ ---------------------------------------
+
 a) Write an appropriate model for the situation described above. Hint: there are 8 observations, and you will need to use at least one indicator variable.
 
 b) Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.
@@ -331,7 +333,7 @@ with the additional restrictions that $\beta_1=1$ and $\beta_2=\beta_0/2$. Find 
 
 ### 2017SD1
 
-Given a educational material evaluation experiment where there are three possible blocking factors [R,C,G], each with six levels [R1::6;C1::6;G1::6]:
+Given a educational material evaluation experiment where there are three possible blocking factors [R,C,G], each with six levels $[R_{1..6};C_{1..6};G_{1..6}]$:
 
 1. Write out the model equation of the Latin Square design if the blocking factors R and C are used, and G is disregarded.
 
@@ -365,6 +367,12 @@ Robert Fountain*, Daniel Taylor-Rodriguez
 ### 2017F1
 
 A company has developed two specialized training workshops for their employees. Each of the 12 employees is randomly assigned to one of the two workshops. The company would like to develop a model that could be used to predict each employee’s performance score (a number from 0 to 100) based on their attendance at the workshops. The previous year’s performance score is also available for use as a predictor. The following table shows and ordered pair for each employee, consisting of the current performance score and the previous year’s score.
+
+ --------- -------------- -------------- --------------
+ WorkshopA (70,58)(70,62) (68,60)(72,65) (72,66)(72,62)
+          
+ WorkshopB (75,60)(74,62) (72,60)(71,60) (73,61)(73,65)
+ ------------------------------------------------------
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the two workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
@@ -427,6 +435,12 @@ Robert Fountain*, Daniel Taylor-Rodriguez
 
 ### 2018S1
 A company has developed three specialized training workshops for their employees. Each of the 12 employees is randomly assigned to one of the three workshops. The company would like to develop a model that could be used to predict each employee’s performance score (a number from 0 to 100) based on their attendance at the workshops. The previous year’s performance score is also available for use as a predictor. The following table shows and ordered pair for each employee, consisting of the current performance score and the previous year’s score.
+
+ --------- -------------- -------------- --------------
+ WorkshopA (70,58)(70,62) (68,60)(72,65) (72,66)(72,62)
+          
+ WorkshopB (75,60)(74,62) (72,60)(71,60) (73,61)(73,65)
+ ------------------------------------------------------
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the three workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
@@ -512,8 +526,17 @@ e) Compute 95% simultaneous two-sided confidence intervals for the intercept and
 
 ### 2018F2
 
-City planners are evaluating the effectiveness of a new “intelligent” traffic control system in reducing the amount of time motorists must spend on city streets. A total of 24 simulations are run: 4 simulations for each of the 6 combinations of control system (old or
-new) and traffic intensity (light, moderate, or heavy). All simulations use different random seeds, the combinations are run in a completely random order, and the median travel time (minutes) is recorded for each simulation. For each combination, the following table gives the average and sample standard deviation of the median travel times from the 4 simulations assigned that combination:
+City planners are evaluating the effectiveness of a new “intelligent” traffic control system in reducing the amount of time motorists must spend on city streets. A total of 24 simulations are run: 4 simulations for each of the 6 combinations of control system (old or new) and traffic intensity (light, moderate, or heavy). All simulations use different random seeds, the combinations are run in a completely random order, and the median travel time (minutes) is recorded for each simulation. For each combination, the following table gives the average and sample standard deviation of the median travel times from the 4 simulations assigned that combination:
+
+ ------------------------------------------------------------------
+                            Old System           New System
+ ------------------------------ -------- ----- ----- -------- -----                       
+                          light Moderate Heavy light Moderate Heavy
+                          
+ Sample Mean               13    14       15    5     8        17
+
+ Sample Standard Deviation 1     2.5      3.5   2.5   2        3.5
+ ------------------------------------------------------------------
 
 a) Write a (univariate) linear model equation of the usual full form for data from this experiment, with median travel time as the response. Explain each term and specify any conditions it satisfies. What crucial assumption are you making about the error variances?
 
@@ -525,6 +548,23 @@ d) Form a two-sided 95% confidence interval for the difference in median travel 
 
 ### 2018F3
 Consider the linear mixed model
+$y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}$, $i=1,..,a$ $j=1,..,b$ $k=1,..,n$ $\sum_{i=1}^a\alpha_i=0$, $\beta_{ij}\sim N(0,\sigma_{\beta}^2)$, $\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)$
+
+with all $\beta_{ij}$’s and $\varepsilon_{ij}$’s independent, where $a\ge2$, $b\ge2$, and $n\ge2$. The parameters $\mu$, $\alpha_i$, $\sigma_{\beta}^2$, and $\sigma_{\varepsilon}^2$ are assumed to be unknown. Adopt the following notation:
+$\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}$ $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$ $\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$
+
+a) In terms of the parameters, find the correlations between (i) $y_{111}$ and $y_{112}$, (ii) $y_{111}$ and $y_{121}$, and (iii) $y_{111}$ and $y_{211}$.
+
+b) For any given value of $i$, specify the joint distribution of $\bar y_{i1.},..\bar y_{ib.}$.
+
+c) In terms of the data, write a formula for the usual unbiased estimator of $\alpha_1-\alpha_2$. What is the exact distribution of this estimator?
+
+d) Show that
+$E[\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)$
+
+Justify all important steps. (Hint: Your answer to part (b) might be useful.)
+
+e) In terms of the data, write a formula for the usual unbiased (ANOVA) estimate of $\sigma_{\beta}^2$. (Define all new notation, if you use any)
 
 ### 2018F4
 
@@ -568,12 +608,32 @@ Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$
 A manufacturer wishes to know if operator (A), material (B), and heat (C) affect the outcome of the product being produced. All of the machines being used operate at the same four heat settings. Five operators are randomly chosen. There are fifteen varieties of material that can be used, and three of these are assigned to each of the five operators. For each operator, that means that there are 12 combinations of heat and material that can be used. The operator produces two replications of each of these, for a total of $5\times3\times4\times2=120$ observations.
 Incorrectly treating all main effects as fixed and all combinations of factors as crossed, the statistician produces the ANOVA table shown below.
 
+ ---------------------------------
+ Source SS  df  MS  F    pval<0.05
+ ------ --- --- --- ---- ---------
+ A      34  4   8.5 3.70 *
+ B      12  2   6.0 2.61
+ C      24  3   8.0 3.48 *
+ AB     32  8   4.0 1.74
+ AC     30  12  2.5 1.09
+ BC     18  6   3.0 1.30
+ ABC    36  24  1.5 0.65
+ Error  138 60  2.3
+ Total  324 119
+ ---------------------------------
+
 Produce the corrected ANOVA table, including the expected mean squares and the correct F statistics.
 If an exact F test is not available, construct an approximate F statistic (for which you need not compute the degrees of freedom).
 
 ### 2019S3
 
 A company has developed two possible manufacturing processes. They will produce 5 items with each process, in a completely random order. Then they will measure the quality (Y) of each item on a 100-point scale. They suspect that the relative humidity during production might affect the outcome, so they also record it (X). They would like to develop a model that could be used to predict the outcome quality based on the process, with the relative humidity as a covariate. The following table shows and ordered pair for each item, consisting of the quality score and the humidity measurement.
+
+ --------- -------------- -------------- -------
+ Process A (70,38)(70,55) (68,40)(72,45) (72,36)
+          
+ Process B (75,30)(74,42) (72,30)(71,30) (73,41)
+ -----------------------------------------------
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the two processes. Hint: there are 10 observations, and you will need to use at least one indicator variable.
 
