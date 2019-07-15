@@ -2,7 +2,7 @@
 title: ''
 fontfamily: mathpazo
 fontsize: 10pt
-geometry: margin=0mm
+geometry: margin=3mm
 linestretch: 0.1
 classoption:
 - twocolumn
@@ -10,6 +10,9 @@ classoption:
 pagenumbering: FALSE
 whitespace: none
 output:
+  pdf_document:
+    toc: FALSE
+    number_sections: FALSE
   html_document:
     toc: yes
     toc_depth: 3
@@ -18,9 +21,6 @@ output:
       smooth_scroll: yes
     bibliography: bib_math_stat.bib
     csl: index-for-stat.csl
-  pdf_document:
-    toc: FALSE
-    number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
     - \usepackage{lscape}
@@ -39,30 +39,31 @@ header-includes:
 
 Suppose $X\sim Poisson(\lambda)$.
 
-A) Find $E[X]$
+A) Find $E[X]$ $=\lambda$
 
-B) Find $E[X(X-1)]$
+B) Find $E[X(X-1)]$ $VX+EX^2-EX$
 
-C) Find $E[X(X-1)(X-2)]$
+C) Find $E[X(X-1)(X-2)]$ $EX^3-3EX^2+2EX$
 
 ### 2000F2
 
 Suppose X1 and X2 are independent random variables with $X_1\sim Poisson(\lambda_1),X_2\sim Poisson(\lambda_2)$. Prove that $X_1+X_2\sim Poisson(\lambda_1+\lambda_2)$.
 
+$M(t)=e^{\lambda(e^t-1)}$ [3.2]
 
 ### 2000F3
 [2003F6][]
 
 Suppose $X\sim Binomial(n,p)$.
 
-A) Find $E[X]$.
+A) Find $E[X]$. $np$
 
-B) Find $E[X(X-1)]$.
+B) Find $E[X(X-1)]$. $EX^2-EX=npq+n^2p^2-np$
 
-C) Find $E[X(n-X)]$.
+C) Find $E[X(n-X)]$. $n(np)-EX=npq-npq+n^2p^2$
 
 ### 2000F4
-[@Bino] [@unbias] [@CRLB] [@MVUE] [@suff]
+[unbias][7.3.1] [CRLB][7.3.2] [UMVUE][7.3.2] [suff][8.2.1]
 
 Suppose $X\sim Binomial(n,p)$
 
@@ -76,7 +77,7 @@ D) Is the estimator you found in part (c) an efficient estimator? Why or why not
 
 
 ### 2000F5
-[@SNorm] [@Norm] [@MGF]
+[3.E]
 
 A) Let $Z\sim N(0, 1)$. Find $E[Z^k]$ for $k=0,1,2,3,4$.
 
@@ -86,10 +87,12 @@ B) Let $X\sim N(\mu,\sigma^2)$. Find $E[X^k]$ for $k=0,1,2,3$.
 
 A) What is the numerical value of $\sum_{k=0}^6\binom{6}{k}$?
 
+Pascal's Triangle sums $2^6$
+
 B) What is the numerical value of $\sum_{k=0}^6(-1)^k\binom{6}{k}$?
 
 ### 2000F7
-[@Bino] [@UMP]
+[UMP][8.3.2]
 
 In genetic applications the truncated Binomial distribution has been used for
 a model. We say X has a truncated binomial distribution if: 
@@ -101,7 +104,7 @@ $H_0:\theta=\theta_0$ against $H_1:\theta=\theta_1$, with $\theta_0<\theta_1$.
 B) Will this test be UMP (uniformly most powerful) for testing $H_0:\theta\le\theta_0$ against $H_1:\theta>\theta_0$?
 
 ### 2000F8
-[@MLE] [@suff] [@MVUE] 
+[MLE](#MLE) [suff][8.2.1] [UMVUE][7.3.2] 
 
 Suppose $X_1,X_2,..,X_n$ is a random sample from a distribution with density $f(x,\alpha,\beta)=\frac1{\beta}e^{-\frac{x-\alpha}\beta}$, where $x\ge\alpha;\alpha\in\mathbb R;\beta>0$. Define $\hat\alpha=\min(X_i)$, and $\beta=\bar X-\min(X_i)$.
 
@@ -112,7 +115,7 @@ B) Show that $\hat\alpha,\hat\beta$ are sufficient for $\alpha,\beta$.
 C) Using the fact that the above estimators are complete, find the MVUE’s of $\alpha,\beta$.
 
 ### 2000F9
-[@BayesE]
+[BayesE](#BayesE)
 
 Let $X_1,X_2,..,X_n$ be a random sample from $f(x|\theta)=\theta(1-\theta)^x$, with $x=0,1,2,..$ Let $g(\theta)=1$ when $0<\theta<1$ be a uniform prior distribution for $\Theta$.
 
@@ -132,7 +135,7 @@ An urn contains 6 red and 3 blue balls. One ball is selected at random and repla
 Let $X$ be a continuous random variable with PDF $f(x)=1-|x|$, with $-1<x<1$. Let $Y=X^2$. Find the PDF of $Y$.
 
 ### 2003S3
-[2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [@joint] [@marg]
+[2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][]
 
 Let $X$ and $Y$ be continuous random variables with joint PDF $f(x,y)=8xy$, with $0\le x\le y\le1$, and zero elsewhere. Let $W=XY$. Find the PDF of $W$.
 
@@ -146,7 +149,6 @@ B) The probability that the total time required in (a) is over 95 minutes? Set u
 
 
 ### 2003S5
-[@Pois] [@Bino] [@indep]
 
 Suppose that $X\sim Poisson(\theta)$ and $(Y|X=x)\sim Binomial(x,p)$.
 
@@ -155,7 +157,7 @@ A) Find the distribution of $Y$.
 B) Show that $Y$ and $X-Y$ are independent.
 
 ### 2003S6
-[@MGF] [@LimD] [@mean] [@Var]
+[@MGF] [LimD](#LimD) [@mean] [@Var]
 
 The MGF of a random variable $X$ is of the form: $M(t)=\frac{e^t+e^{-t}}2$.
 
@@ -166,7 +168,7 @@ B) Find the MGF of the sample mean $\bar X$.
 C) What is the limiting distribution of $\sqrt{n}\bar X$? Why?
 
 ### 2003S7
-[2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [@MOM] [@MLE] [@effi] [@CRLB]
+[2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [MOM][7.2.1] [MLE](#MLE) [@effi] [CRLB][7.3.2]
 
 Let X be a random variable with PDF $f(x)=\frac1\theta x^{-\frac1\theta-1}$,where $x>1$(and 0 elsewhere),$\theta>0$ Based on a sample of size n,
 
@@ -179,18 +181,17 @@ C) Find the Cramer-Rao lower bound for the variance of an unbiased estimator of 
 D) Find the efficiency of the maximum likelihood estimator of $\theta$.
 
 ### 2003S8
-2010SB3
-2010FB3[@Norm] [@MVUE]
+[2007F1B][] [2010SB3] [2010FB3][] [MLE](#MLE)  [UMVUE][7.3.2]
 
 Let $X_1,X_2,..,X_n$ denote a random sample from a distribution that is $N(0,\theta)$. Find the unbiased minimum variance estimator of $\theta^2$.
 
 ### 2003S9
-[2003S9][] [2007F5B][] [2015S4B][] [2018S3B][] [2019SB3][] [@SPower] [@power] [@UMP]
+[2003S9][] [2007F5B][] [2015S4B][] [2018S3B][] [2019SB3][] [SPower](#SPower) [power](#power) [UMP][8.3.2]
 
 Let $X_1,X_2,..,X_n$ be a random sample from a distribution with PDF $f(x)=\theta x^{\theta-1}, x>1$ (and 0 elsewhere). Find the best critical region for testing $H_0:\theta=1$ against $H_1:\theta=2$.
 
 ### 2003S10
-[2008F6][] [2016F5][] [@Norm] [@indep] [@Basu] 
+[2008F6][] [2016F5][] [Basu](#Basu) 
 
 Let $Y_n$ be the $n{th}$ order stat of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.
 
@@ -210,7 +211,7 @@ C) Find the PDF of $Z$, given $X=x$.
 D) Find the PDF of $X$, given $Z=z$.
 
 ### 2003F2
-[@Var] [@Cov] [@Cor]
+[@Var] [@Cov] [Cor](#Cor)
 
 Suppose $X_1$ has variance $\sigma^2=4$, $X_2$ has variance $\sigma^2=3$, and $Cov(X_1,X_2)=-2$. If $U=X_1+2X_2$ and $V= 3X_1+4X_2$,
 
@@ -227,7 +228,7 @@ a Find the CDF and PDF of $Y$.
 b Find $E[Y]$ and $Var[Y]$.
 
 ### 2003F4
-[@Pois] [@MLE] [@CRLB] [@suff]
+[@Pois] [MLE](#MLE) [CRLB][7.3.2] [suff][8.2.1]
 
 Suppose $X_1,X_2,..,X_n$ iid $Poisson(\theta)$ random variables with common marginal PDF $f(x)=\frac{\theta^xe^{-\theta}}{x!},x=0,1,2,..$
 
@@ -241,7 +242,7 @@ d Does the MLE achieve the CRLB?
 
 
 ### 2003F5
-[@Bino] [@Norm] [@Pois] [@comp]
+[@Bino] [@Norm] [@Pois] [comp](#comp)
 
 a Show that the $Binomial(n,p)$, $0\le p\le1$ family of PDFs is complete. $f(x)=\frac{n!}{x!(n-x)!}p^x(1-p)^{n-x}$
 
@@ -273,7 +274,7 @@ A) Find $\alpha$, the probability of a Type-I error.
 B) Find $\beta$, the probability of a Type-II error.
 
 ### 2003F8
-[2014SA2][] [2015F2][] [2017FA3][]  [@Expo] [@Basu] [@indep]
+[2014SA2][] [2015F2][] [2017FA3][]  [Expo](#Expo) [Basu](#Basu)
 
 Let random variables X and Y have joint PDF $f(x,y)=e^{-x-y}$ for $x>0,y>0$, and zero otherwise. Define $U=\frac{X}{X+Y}$ and $V =X+Y$.
 
@@ -284,7 +285,7 @@ B) Show that $U$ and $V$ are independent.
 C) Find the PDF of $U$.
 
 ### 2003F9
-[2011F6][] [2017S6][] [@Pois] [@UMP]
+[2011F6][] [2017S6][] [@Pois] [UMP][8.3.2]
 
 Suppose $X_1,X_2,..,X_n$ are iid $Poisson(\theta)$ random variables with common marginal PDF $f(x)=\frac{\theta^xe^{-\theta}}{x!}$ for $x = 0,1,2,..$
 
@@ -328,7 +329,7 @@ $R=(X_1^2+ X_2^2)/(X_1^2+ X_2^2+X_3^2+ X_4^2+X_5^2)$
 (b) Does $5R/2$ have an F-distribution with 2 and 5 degrees of freedom? Explain.
 
 ### 2004F6
-[@Bino] [@Var] [@unbias] 
+[@Bino] [@Var] [unbias][7.3.1] 
 
 Let Y be $binomial(n,p)$.
 
@@ -348,7 +349,7 @@ Let$\bar X=\frac{\sum_{i=1}^{n}X_{i}}{n}$ and $S^2=\frac{\sum_{i=1}^{n}(X_{i}-\b
 Determine $E(S^2|\bar X)$. State your argument clearly.
 
 ### 2004F8
-[2007F4B][] [2013FB4][] [2015S3B][] [2018S1B][] [2019SB2][] [@Laplace] [@MLE]
+[2007F4B][] [2013FB4][] [2015S3B][] [2018S1B][] [2019SB2][] [Laplace](#Laplace) [MLE](#MLE) [median](#median)  [7.E.13][]
 
 Suppose the $X_1,X_2,..,X_n$ form a random sample from a population
 with density function
@@ -356,7 +357,7 @@ $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty, -\infty<\theta<\infty$
 Find the M.L.E. of $\theta$.
 
 ### 2004F9
-[2003S9][] [2007F5B][] [2015S4B][] [2018S3B][] [2019SB3][] [@SPower] [@power] [@UMP]
+[2003S9][] [2007F5B][] [2015S4B][] [2018S3B][] [2019SB3][] [SPower](#SPower) [power](#power) [UMP][8.3.2]
 
 Suppose $Y$ is a random variable of size 1 from a population with density function
 $f(y|\theta)=\begin{cases}\theta y^{\theta-1}& 0\le y\le1\\0& o.w.\end{cases}$, where $\theta>0$
@@ -385,7 +386,7 @@ $f(x)=\begin{cases}2(1-x)&0<x<1\\0& o.w.\end{cases}$
 Suppose a tack is selected at random from this box and this tack is then tossed three times independently. Determine the probability the tack will land with its point up on all three tosses.
 
 ### 2004F12
-[2010SB4][] [2010FB4][] [2011S6][] [2015F5][] [2018S4B][] [@Expo] [@LRT] [@HypoT]
+[2010SB4][] [2010FB4][] [2011S6][] [2015F5][] [2018S4B][] [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT)
 
 Let $T_1,T_2,..,T_n$ be a random sample with density function
 $f(t|\theta)=\frac1\theta\exp(-t/\theta)$ for $0<t<\infty$ and $0<\theta<\infty$, $f(t|\theta)=0$ elsewhere.
@@ -425,7 +426,7 @@ Let X be a rv with finite mean $\mu$, finite variance $\sigma^2$, and assume $E(
 (b) $E[(\frac{X-\mu}{\sigma})^4]\ge1$.
 
 ### 2005S4
-[@MGF] [@Cor] [@joint]
+[@MGF] [Cor](#Cor) [@joint]
 
 Let X andY have joint mgf
 $M(t_1,t_2)=E(e^{t_1X + t_2Y})=e^{t_1^2+t_1t_2+2t_@^2}$
@@ -436,7 +437,7 @@ $-\infty<t_1,t_2<\infty$
 (b) (5) Find the correlation between $X$ and $Y$; that is, $\rho(X, Y)$.
 
 ### 2005S5
-[@suff]
+[suff][8.2.1]
 
 Let the rv's $X_1,X_2,..,X_n$ form a random sample from a distribution with pdf denoted by $f(x|\theta)$. The unknown value of $\theta$ belongs to some parameter space $\Omega$; that is, $\theta\in\Omega\subset\mathbb R$. Define what we
 mean when we say $T=T(X_1,X_2,..,X_n)$ is a sufficient statistic for the parameter $\theta$. That is, state the definition of a sufficient statistic for $\theta$.
@@ -471,7 +472,7 @@ median is the $k^{th}$ order statistic, denoted by $Y_k$.
 
 
 ### 2005S9
-[2013FB5][] [2018FB4][] [@Unif] [@MLE] [@suff]
+[2013FB5][] [2018FB4][] [@Unif] [MLE](#MLE) [suff][8.2.1]
 
 Suppose $X_1,X_2,..,X_n$ form a random sample from a uniform distribution over the interval $(\theta,\theta+1)$, where the value of the parameter $\theta$ is unknown $-\infty<theta<\infty$. The joint pdf $f_n(\underline{x}|\theta)$ of the random sample is expressed as follows:
 $f_n(\underline{x}|\theta)=\begin{cases}1&\theta\le x_i\le\theta+1\\0& o.w.\end{cases}$
@@ -487,29 +488,29 @@ $f_n(\underline{x}|\theta)=\begin{cases}1&\theta\le x_i\le\theta+1\\0& o.w.\end{
 ## 2007F
 
 ### 2007F1A
-[2008S4A] [2013FB1] [@Norm] [@MLE] [@suff] [@consi] [@unbias]
+[2008S4A] [2013FB1] [MLE](#MLE) [suff][8.2.1] [consi][10.1.1] [unbias][7.3.1]
 
 Let $Y_1,Y_2,..,Y_{n}$ be a random sample from $N(\mu,\sigma^2)$ distribution and let $X_1,X_2,..,X_{m}$ be an independent random sample from $N(2\mu,\sigma^2)$ distribution.
 
-(a) Find minimal sufficient statistics for $(\mu,\sigma^2)$
+(a) What is the distribution of $\frac{\sum_{i=1}^m(X_i-\bar X)^2}{\sigma^2}$
 
-(b) Find maximum likelihood estimators of $\mu$ and $\sigma^2$
-
-(c) Show that
+(b) Show that
 $\hat\sigma^2=\frac{\sum_{i=1}^m(X_i-\bar X)^2+\sum_{j=1}^n(Y_j-\bar Y)^2}{m+n-2}$
 is unbiased and consistent for estimating $\sigma^2$
 
+$P(\hat\sigma^2-\sigma^2)=0$
+
+$E[\hat\sigma^2]=\sigma^2$
+
 ### 2007F2A
-[2008S5A][] [2009FA1][] [2014F4A][] [2015S2A][] [2019SA2][]
+[2008S5A][] [2009FA1][] [2014F4A][] **[2015S2A][]** [2019SA2][]
 
 Suppose $Y_1$ and $Y_2$ are i.i.d. random variables and the p.d.f. of each of them is as follows:
-
 $f(x)=\begin{cases}10e^{-10x}& x>0\\0& o.w.\end{cases}$
-
 Find the p.d.f. of $X=Y_1-Y_2$.
 
 ### 2007F3A
-[2003S3][] [2004F11][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][]
 
 Suppose $Y_1$ and $Y_2$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}2&0\le y1\le y2\le 1\\0& o.w.\end{cases}$
@@ -520,18 +521,20 @@ $f(y_1,y_2)=\begin{cases}2&0\le y1\le y2\le 1\\0& o.w.\end{cases}$
 
 (c) Find $P(Y_1\le3/4|Y_2>1/3)$
 
+$f(w)=w,w<1, E[w]=2/3$
+$f(w)=2-w,w>1, E[w]=1/3$
+
 ### 2007F4A
-[2015S4A][] [@CDF]
+[2015S4A][]
 
 (a) Let $X$ be a continuous type random variable with cumulative distribution function $F(x)$. Find the distribution of the random variable $Y=\ln(1-F(X))$:
 
 (b) Prove that for any $y\ge c$, the function $G_c(y)=P[X\le y|X\ge c]$ has the properties of a distribution function.
 
 ### 2007F5A
-[2013FB2][] [2014F1B][] [2015S1B][] [@CDF] [@MLE]
+[2013FB2][] [2014F1B][] [2015S1B][] [MLE](#MLE)
 
 Let $X_1,X_2,..,X_n$ be a random sample from a distribution with cumulative distribution function
-
 $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{cases}$
 
 (a) Find $\hat\theta$, the mle of $\theta$.
@@ -541,23 +544,21 @@ $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{c
 (c) Prove that $\hat\theta$ is consistent for $\theta$.
 
 ### 2007F1B
-[2010SB3] [2010FB3][] [@Norm] [@MLE]  [@UMVUE]
+[2003S8][] [2010SB3] [2010FB3][] [MLE](#MLE)  [UMVUE][7.3.2]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size $m$ from $N(\theta,1)$ distribution. Find MLE and UMVUE of $\theta^2$.
 
 ### 2007F2B
-[2014F5B][] [2017FB2][] [@Unif] [@HypoT] [@power]
+[2014F5B][] [2017FB2][] [@Unif] [HypoT](#HypoT) [power](#power)
 
 Let $Y_1,Y_2,..,Y_{10}$ be a random sample from uniform distribution over $(0,\theta)$.
 For testing $H_0:\theta=0$ against the alternative $H_a:\theta>1$, a reasonable test is to reject $H_0$ if $X_{(n)}=\max\{X_1,X_2,..,X_{10}\}\ge C$. Find $C$ so that type I error probability is .05. Also find the power of the above test at $\theta=1.5$.
 
 ### 2007F3B
-[2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2015S2B][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
+[2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2015S2B][] [2018S2B][] [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_n$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -567,26 +568,20 @@ for which the parameter $\theta>0$ is unknown.
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
 ### 2007F4B
-[2004F8][] [2013FB4][] [2015S3B][] [2018S1B][] [2019SB2][] [@Laplace] [@MLE]
+[2004F8][] [2013FB4][] [2015S3B][] [2018S1B][] [2019SB2][] [Laplace](#Laplace) [MLE](#MLE) [median](#median)  [7.E.13][]
 
 Let $X_1,X_2,..,X_9$ be a random sample of size 9 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
-
 where $-\infty<\theta<\infty$ is unknown.
-
 Find the m.l.e. of $\theta$ and find its bias.
 
 ### 2007F5B
-[2003S9][] [2004F9][] [2015S4B][] [2018S3B][] [2019SB3][] [@SPower] [@power] [@UMP]
+[2003S9][] [2004F9][] [2015S4B][] [2018S3B][] [2019SB3][] [SPower](#SPower) [power](#power) [UMP][8.3.2]
 
 Suppose $X_1,X_2,..,X_n$ is a random sample from a distribution with pdf
-
 $f(x,\theta)=\begin{cases}\theta x^{\theta-1}& 0<x<1\\0& o.w.\end{cases}$
-
 Suppose that the value of $\theta$ is unknown and it is desired to test the following hypotheses :
-
 $H_0:\theta=1\quad H_1 :\theta>1$
-
 Derive the UMP test of size $\alpha$ and obtain the null distribution of your test statistic.
 
 ## 2008S
@@ -597,7 +592,7 @@ Derive the UMP test of size $\alpha$ and obtain the null distribution of your te
 A box contains 2 red balls, 2 white balls, and 3 blue balls. If 5 balls are selected at random without replacement, what is the probability that only one color is missing from the selection?
 
 ### 2008S2A
-[2003S3][] [2004F11][] [2007F3A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][]
 
 Let $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}c(1-y_2)&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
@@ -609,12 +604,12 @@ $f(y_1,y_2)=\begin{cases}c(1-y_2)&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
 (c) Find $P(Y_2\le1/2|Y_1\le3/4)$
 
 ### 2008S3A
-[2008F1][] [2016F4][] [@Unif] [@CDF] [@PDF]
+[2008F1][] [2016F4][]
 
 Let $(Y_1,Y_2)$ denote a random sample of size $n=2$ from the uniform distribution on the interval $(0, 1)$. Find the probability density and cumulative distribution functions of $U=Y_1+Y_2$..
 
 ### 2008S4A
-[2007F1A][] [2013FB1][] [@Norm] [@unbias] [@consi]
+[2007F1A][] [2013FB1][] [@Norm] [unbias][7.3.1] [consi][10.1.1]
 
 Let $Y_1,Y_2,..,Y_{n}$ be a random sample of size $n$ from a normal population with mean $\mu$ and variance $\sigma^2$. Assuming $n=2k$ for some integer $k$, one possible estimator for $\sigma^2$ is given by:
 $\hat\sigma^2=\frac1{2k}\sum_{i=1}^k(Y_{2i}-Y_{2i-1})^2$
@@ -636,7 +631,7 @@ $f(y)=\begin{cases}\frac1{300}e^{-\frac1{300}y}& y>0\\0& o.w.\end{cases}$
 Find the probability that the equipment will operate for at least 300 hours without failure?
 
 ### 2008S1B
-[2009FA4][] [2015F1][] [@Unif] [@mean] [@Var] [@suff] [@UMVUE] 
+[2009FA4][] [2015F1][] [suff][8.2.1] [UMVUE][7.3.2] 
 
 Let $X_1,X_2,..,X_{n}$ be a random sample of size $n$ from a uniform distribution over the interval $[-\theta/2,\theta/2], \theta>0$ being unknown.
 
@@ -645,7 +640,7 @@ Let $X_1,X_2,..,X_{n}$ be a random sample of size $n$ from a uniform distributio
 (b) Find the UMVU estimator of $\theta$.
 
 ### 2008S2B
-[2014F2B][] [@Pois] [@FishI]
+[2014F2B][] [@Pois] [FishI][7.3.2]
 
 Let $X_1,X_2,..,X_{n}$ be a random sample from Poisson distribution with parameter $\lambda(>0)$.
 
@@ -654,7 +649,7 @@ Let $X_1,X_2,..,X_{n}$ be a random sample from Poisson distribution with paramet
 (b) Suppose we want to estimate $P[X_1=0]=e^{-\lambda}$. Find a lower bound on the variance of any unbiased estimator of this parametric function.
 
 ### 2008S3B
-[@consi]
+[consi][10.1.1]
 
 Let $X_1,X_2,..,X_{n}$ be a random sample from a distribution with probability density function
 $f_{\theta_1}(x)=\begin{cases}\frac1{\theta_1} e^{-\frac{x}{\theta_1}}& x>0\\0& o.w.\end{cases}$
@@ -673,7 +668,7 @@ $f_{\theta_2}(x)=\begin{cases}\frac1{\theta_2} e^{-\frac{x}{\theta_2}}& x>0\\0& 
 Let $X_1,X_2,..,X_{10}$ be independent random variables such that $X$, has $U(0,i\theta)$ distribution for $i= 1,2,..,10$. Based on these 10 observations, find the maximum likelihood estimator of $\theta$ and find its bias.
 
 ### 2008S5B
-[2017FB3][] [@Norm] [@MLR] [@UMP] [@power] [@HypoT]
+[2017FB3][] [MLR][8.3.2] [UMP][8.3.2] [power](#power) [HypoT](#HypoT)
 
 Let $X_1,X_2,..,X_m$ be a random sample of size m from $N(\theta,1)$ distribution and let $Y_1,..,Y_m$ be an independent random sample of size $m$ from $N(3\theta,1)$.
 
@@ -698,19 +693,19 @@ Let $Y_1$ and $Y_2$ be a random sample of size 2 from $Uniform(0,1)$. Find the c
 Only 5 in 1000 adults are afflicted with a rare disease for which a diagnostic test has been developed. The test is such that when an individual actually has the disease, a positive result will occur 99% of the time, whereas an individual without the disease will show a positive result only 2% of the time. If a randomly selected individual is tested and the result is positive, what is the probability that the individual has the disease? A man committed a suicide in a week after learning from his doctor that he has a terminal cancer. What do you think of his reaction based on your answer to this problem?
 
 ### 2008F3
-[2016F3][] [@Cheb]
+[2016F3][] [Cheb][3.6.1]
 
 If X is a random variable such that $E[X]=3$ and $E[X^2]=13$, determine a lower bound for
 the probability $P(-2<X<8)$. (Hint: Use a famous inequality.)
 
 ### 2008F4
-[@LimD]
+[LimD](#LimD)
 
 Let $Y_1$ be the minimum of a random sample of size n from a distribution that has p.d.f.
 $f(x)=e^{-(x-\theta)},\theta<x<\infty$, zero elsewhere. Let $Z_n= n(Y_1-\theta)$. Determine the limiting distribution of $Z_n$. (Hint: Determine the p.d.f. of Y, and then apply the change of variable technique.)
 
 ### 2008F5
-[2003S7][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [@MOM] [@MLE] [@MSE] [@CRLB]
+[2003S7][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [MOM][7.2.1] [MLE](#MLE) [MSE][7.3.1] [CRLB][7.3.2]
 
 Let $X_1,X_2,..,X_n$$\sim$i.i.d.$f(x;\theta)=\theta(x+1)^{-\theta-1},\ x>0,\theta>2$
 
@@ -727,14 +722,14 @@ e. Find the efficiency of $\hat\theta_{U}$.
 f. Construct the most powerful test of $H_0:\theta=3$ vs. $H_1:\theta=4$.
 
 ### 2008F6
-[2003S10][] [2016F5][] [@Norm] [@indep] [@Basu] 
+[2003S10][] [2016F5][] [Basu](#Basu) 
 
 Let $Y_n$ be the $n^{th}$ order statistic of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.
 
 562-2
 
 ### 2008F7
-[2016F6][] [@Expo] [@BayesE]
+[2016F6][] [Expo](#Expo) [BayesE](#BayesE)
 
 Suppose that $X_1,X_2,..,X_n$ i.i.d. $Exponential(\theta)$, i.e. $f(x;\theta)=\theta e^{-\theta x},x>0$. Also assume that the prior distribution of $\theta$ is $h(\theta)=\lambda e^{-\lambda\theta},\theta>0$. Find the Bayes estimator of $\theta$, assuming squared error loss.
 
@@ -742,41 +737,37 @@ Suppose that $X_1,X_2,..,X_n$ i.i.d. $Exponential(\theta)$, i.e. $f(x;\theta)=\t
 unkown, Fountain
 
 ### 2009SA1
-[@joint] [@marg]
 
 Suppose random variables X and Y have a joint probability mass function
 $p(x,y)=\begin{cases}\frac{x+y+1}{30}& x,y=0,1,2,..,x+y\le3\\0& o.w.\end{cases}$
 Determine the marginal probability mass function of Y.
 
 ### 2009SA2
-[@Pois]
 
 Suppose a random variable $X$ has a probability mass function $p(x)=\frac{e^{-\mu}\mu^x}{x!},x=0,1,2,..$,zero, elsewhere. Find the values of $\mu$, so that $x=1$ is the unique mode.
 
 ### 2009SA3
-[@Pois]
 
 Let $X_1,X_2,..,X_n$ be the independent $Poisson(m_i)$ random variables. Show that $Y=\sum_{i=1}^n X_i$ has $Poisson(\sum_{i=1}^n m_i)$.
 
 ### 2009SA4
-[@Cor] [@Cheb]
+[Cor](#Cor) [Cheb][3.6.1]
 
 Let $\sigma_1^2=\sigma_2^2=\sigma^2$ be the common variance, $\rho$ the correlation coefficient, $\mu_1$ and $\mu_2$ the means of $X_1$ and $X_2$ , respectively. Show that
 
 $P[|(X_1-\mu_1)+(X_2-\mu_2)|\ge k\sigma]\le\frac{2(1+p)}{k^2}$
 
 ### 2009SA5
-[@Expo]
+[Expo](#Expo)
 
 Let Xn have a probability density function
 $f(x;n)=\begin{cases}ne^{-nx}& 0<x<\infty\\0& o.w.\end{cases}$
 Find the limiting distribution of $Y_n=X_n/n$.
 
 ### 2009SB1
-[2003S7][] [2008F5][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [@MOM] [@MLE] [@MSE] [@CRLB]
+[2003S7][] [2008F5][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [MOM][7.2.1] [MLE](#MLE) [MSE][7.3.1] [CRLB][7.3.2]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from the following distribution:
-
 $f(x;\theta)=(\theta+1)x^\theta,\ 0\le x\le 1,\theta>-1$
 
 (a) Find $\hat\theta_{MOM}$, the method of moments estimator for $\theta$.
@@ -790,13 +781,16 @@ $f(x;\theta)=(\theta+1)x^\theta,\ 0\le x\le 1,\theta>-1$
 (e) Construct the most powerful test of $H_0:\theta=0$ vs. $H_1:\theta=1$, showing as much detail as possible.
 
 ### 2009SB2
-[2004F5][] [@Norm] [@indep]
+[2004F5][]
  
 Let $X_1,X_2,..,X_5$ be a random sample of size 5 from the normal distribution $N(0,\sigma^2)$. Prove
 that $R=(X_1^2+ X_2^2)/(X_1^2+ X_2^2+X_3^2+ X_4^2+X_5^2)$ and $D=X_1^2+ X_2^2+X_3^2+ X_4^2+X_5^2$ are independent.
 
+$R=\frac{\chi_2^2}{\chi_2^2+\chi_3^2}=Beta(2/2,2/3)$
+$D=\chi_5^2$
+
 ### 2009SB3
-[@Pois] [@Gamma] [@BayesE]
+[BayesE](#BayesE)
 
 Suppose thfrt $X_1,X_2,..,X_{n}$ have i.i.d. $Poisson(\theta)$. Also assume that the prior distribution
 of is e is $Gamma(\alpha,\beta)$. Find the Bayes estimator of $\theta$, assuming squared-error loss.
@@ -816,7 +810,7 @@ $f(y)=\begin{cases}\frac1{200}e^{-\frac1{200}y}& y>0\\0& o.w.\end{cases}$
 (c) Four of these components operate independently in a piece of equipment. The equipment fails if at least three of the components fail. Find the probability that the equipment will operate for at least 400 hours without failure?
 
 ### 2009FA2
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][]
 
 Suppose $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}c&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
@@ -828,17 +822,21 @@ $f(y_1,y_2)=\begin{cases}c&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
 (c) Find $P(Y_1\le1|Y_2>1)$
 
 ### 2009FA3
-[2015S5B][] [2019SA4][] [@MOM] [@Pois]
+[2015S5A][] [2019SA4][] [3.2]
 
 Let $Y_1,Y_2,..,Y_{12}$ be a random sample from a Poisson distribution with mean $\lambda$.
 
 (a) (4 Ppts) Use the method of moment generating functions to find the distribution of $S_{12}=\sum^{12}_{i=1} Y_i$.
 
+$M_X(t)=e^{\lambda(e^t-1)}$
+$M_{\sum x}(t)=e^{n\lambda(e^t-1)}$
+
 (b) (6 pts) Let $S_4=\sum_{i=1}^4Y_i$ Find the conditional distribution of $S_4$ given $S_{12}=s$.
 
+$f(S_{12})=\frac{e^{12\lambda}(12\lambda)^{y_i}}{\sum y_i}$
 
 ### 2009FA4
-[2008S1B][] [2015F1][] [@Unif] [@PDF] [@mean] [@Var] [@consi]
+[2008S1B][] [2015F1][] [@Unif] [@PDF] [@mean] [@Var] [consi][10.1.1]
 
 Suppose $X_1,X_2,..,X_{n}$ is a random sample from a unform distribution over $[1,\theta]$, where $\theta>1$. Let $Y_{n}=\max\{X_1,X_2,..,X_{n}\}$
 
@@ -856,8 +854,8 @@ Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution $N(\mu,\sigma
 Solve these two equations. Round up if n is not an integer. Hint: $z_{.05}=1.645$ and $z_{.1}=1.28$
 
 ### 2009FB2
-[@MLE] [@LRT]
-[3.E.23] [8.E.5] [@Pareto]
+[MLE](#MLE) [LRT](#LRT)
+[3.E.23] [8.E.5] [Pareto][3.E.23]
 
 The Pareto distribution is a frequently used model in study of incomes and has the distribution function
 $F(x;\theta_1,\theta_2)=\begin{cases}1-(\theta_1/x)^{\theta_2}& \theta_1<x\\0& o.w.\end{cases}$
@@ -867,12 +865,20 @@ where $\theta_1>0$ and $\theta_2>0$.
 
 $f(x|\theta_1,\theta_2)=\frac{\theta_2\theta_1^{\theta_2}}{x^{\theta_2+1}}$
 
+$\hat\theta_1=X_{(1)}$,
+$\hat\theta_2=\frac{n}{\sum\ln(X_i/X_{(1)})}$
+
 (b) (3 pts) Find the likelihood ratio test for testing $H_0:\theta_1=1$ against $H_1:\theta_1\neq1$.
+
+Under $H_0$
+$\Lambda=$
 
 (c) (3 pts) Using $\alpha=.05$, find out the critical value for your test. Hint: $\chi^2_{1,.025}= 5.024$;$\chi^2_{1,.05}= 3.841$; $\chi^2_{1,.975}=.001$; $\chi^2_{1,.95}=.004$; $\chi^2_{2,.025}=7.378$; $\chi^2_{2,.05}= 5.991$; $\chi^2_{2,.975}=.051$;$\chi^2_{2,.95}=.103$
 
+
+
 ### 2009FB3
-[@UMVUE] [@Expo] [@indep]
+[UMVUE][7.3.2] [Expo](#Expo) [Basu][6.2.4]
 
 Let $X_1,X_2$ denote a random sample of size $n=2$ from a distribution with pdf
 $f(x;\theta)=\begin{cases}\frac1\theta e^{-\frac{x}\theta}& 0<x<\infty\\0& o.w.\end{cases}$
@@ -880,24 +886,24 @@ where $0<\theta<\infty$ is an unknown parameter.
 
 (a) (5 pts) Show that $Y_1=X_1+X_2$ is independent of $X_1/X_2$.
 
+$Y_1\sim 2,\theta$ is complete
+
 (b) (5 pts) Find the UMVUE of $\theta^2$
 
 ### 2009FB4
 [2003S7][] [2008F5][] [2009SB1][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from a probability density function
-
 $f(x;\theta)=\begin{cases}(\theta+1)x^\theta& 0<x<1\\0& o.w.\end{cases}$
-
 where $\theta>-1$ is an unknown parameter.
 
-(a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
+(a) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
 
-(b) (2 pts) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$.
+(b) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$.
 
-(c) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
+(c) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
 
-(d) (2 pts) What is the asymptotic distribution of $\hat\theta$?
+(d) What is the asymptotic distribution of $\hat\theta$?
 
 
 ## 2010S
@@ -908,23 +914,29 @@ where $\theta>-1$ is an unknown parameter.
 Only 1 in 1000 adults is afflicted with a rare disease for which a diagnostic test has been developed. The test is such that when an individual actually has the disease, a positive result will occur 99% of the time, whereas an individual without the disease will show a positive result only 2% of the time (false positive). If a randomly selected individual is tested and the result is positive, what is the probability that the individual has the disease?
 
 ### 2010SA2
+[2.E.22]
 
 Let $X_1$ and $X_2$ be a random sample of size 2 from the following pdf
-
 $f(x,\beta)=\begin{cases} \frac1{2\beta^3}x^2e^{-x/\beta}& x\ge0\\0& o.w.\end{cases}$
+
+$Gamma(3,\beta)$ [3.3.14]
 
 (a) Compute the expected value of $X_1/X_2$
 
+$E[X_1]E[\frac1{X_2}]=3/2$
+
 (b) Compute the variance of $X_1/X_2$
 
+$Var[X_1\cdot\frac1{X_2}]=15/4$
+
 ### 2010SA3
-[2011S4][] [2018FA4][] [@Pois] [@LimD]
+[2011S4][] [2018FA4][] [@Pois] [LimD](#LimD)
 
 Let $X_1,X_2,..,X_n$ be a random sample from $Poisson(\mu)$. Derive the limiting distribution of
 $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 
 ### 2010SA4
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1 ][]
 
 Let $X$ and $Y$ have the following joint pdf:
 $f(x,y) =\begin{cases}6(y-x)& 0<x<y<1\\0& o.w.\end{cases}$
@@ -935,12 +947,10 @@ Define $Z=(X+Y)=2$ and $W=Y$, respectively.
 (b) Find the marginal pdf of Z.
 
 ### 2010SB1
-[2007F3B][] [2010FB1][] [2011S5][] [2013FB3][] [2015S2B][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
+[2007F3B][] [2010FB1][] [2011S5][] [2013FB3][] [2015S2B][] [2018S2B][] [Expo](#Expo) [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_{20}$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -951,16 +961,15 @@ for which the parameter $\theta>0$ is unknown.
 
 
 ### 2010SB2
-[@power]
+[power](#power)
 
 Let $f_1(x)=\begin{cases}1&0<x\le1\\0& o.w.\end{cases}$
 and
 $f_2(x)=\begin{cases}4x&0<x\le1/2\\4(1-x)& 1/2<x\le1\\0& o.w.\end{cases}$
-
 Based on a single observation $X$, derive the most powerful level $\alpha=0.1$ test for testing $H_0:X\sim f_1$ against the alternative $H_2:X\sim f_2$. Also find the power of your test.
 
 ### 2010SB3
-[2007F1B] [2010FB3][] [@Norm] [@MLE]  [@UMVUE]
+[2003S8][] [2007F1B][] [2010SB3] [2010FB3][] [MLE](#MLE)  [UMVUE][7.3.2]
 
 Let $X_1,X_2,..,X_n$ be a random sample from $N(1,\sigma^2)$ distribution.
 
@@ -971,7 +980,7 @@ Let $X_1,X_2,..,X_n$ be a random sample from $N(1,\sigma^2)$ distribution.
 (c) Is it a UMVUE of $\sigma^2$? Justify your answer.
 
 ### 2010SB4
-[2004F12][] [2010FB4][] [2011S6][] [2015F5][] [2018S4B][] [@Expo] [@LRT] [@HypoT]
+[2004F12][] [2010FB4][] [2011S6][] [2015F5][] [2018S4B][] [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT)
 
 Let $X_1,X_2,..,X_{m}$ be a random sample from the exponential distribution with mean $\theta_1$ and let $Y_1,Y_2,..,Y_{n}$ be an independent random sample from another exponential distribution with mean $\theta_2$. 
 
@@ -983,34 +992,36 @@ $\sum Y_i$ to $\chi^2$ random variables).
 ## 2010F
 
 ### 2010FA1
-[2013FA2] [@Unif] [@mean] [@Cov] [@Cor]
+[2013FA2] [@Unif] [@mean] [@Cov] [Cor](#Cor)
 
 Suppose $X$ is $uniform[0,1]$. Assume Y, given $X=x$, is $uniform[0,x]$ Find the joint pdf of $X$ and $Y$. Find the mean and variance of $X$ and $Y$. Find the covariance and correlation of $X$ and Y.
 
+E[XY]=1/6 ?indep
+
+$EX=1/2$, $Var[X]=1/12$
+
+$EY=1/4$, $Var[Y]=7/144$
+
+$Cov(x,y)=1/24$, $Cor(x,y)=\sqrt{3/7}$
+
 ### 2010FA2 
-[2013FA3] [@Unif] [@mean] [@LimD]
+[2013FA3] [@Unif] [@mean] [LimD](#LimD)
 
 Let $X_1,X_2,..,X_{n}$ be iid uniform[0,1] random variables, and define $Y_1=\min{X_1,X_2,..,X_{n}}$. Find the cdf of $Y_1$. Suppose $W_1=nY_1$. Note that $0<Y_1<1$, but $0<W_1<n$. Find the limiting distribution of $W_1$ as $n\to\infty$. 
 
 
 ### 2010FA3
-[@Norm] [@mean] [@Var]
-
 Suppose $X$ is $N(\mu,\sigma^2)$. Define $Y=e^X$. Find the mean and variance of $Y$.
 
 ### 2010FA4
-[@Pois] [@MGF]
-
 Assume that $X_i$ is $Poisson(\mu_i),i=1,..,n$. If the $X_i$'s are independent, use moment generating
 functions to show that $\sum_{i=1}^n X_i$ is also Poisson. Do you think $\sum_{i=1}^n iX_i$ is Poisson?
 
 ### 2010FB1
-[2007F3B][] [2010SB1][] [2011S5][] [2013FB3][] [2015S2B][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
+[2007F3B][] [2010SB1][] [2011S5][] [2013FB3][] [2015S2B][] [2018S2B][] [Expo](#Expo) [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_{20}$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -1020,11 +1031,10 @@ for which the parameter $\theta>0$ is unknown.
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
 ### 2010FB2
-[2015F4] [@Beta] [@HypoT] [@power]
+[2015F4] [HypoT](#HypoT) [power](#power)
 
 Let X1 be a random sample of size $n=1$ from the Beta distribution with pdf
 $f(x|\theta)=\begin{cases}\frac{\Gamma(2\theta)}{\Gamma(\theta)\Gamma(\theta)}x^{\theta-1}(1-x)^{\theta-1}&0<x<1\\0&o.w.\end{cases}$
-
 Suppose a researcher is interested in testing $H_0:\theta=1$ against $H_1:\theta=2$. The researcher decides to reject $H_0$ in favor of $H_1$ if $X_1<2/3$.
 
 (a) Find the size of the test
@@ -1032,18 +1042,22 @@ Suppose a researcher is interested in testing $H_0:\theta=1$ against $H_1:\theta
 (b) Compute the power of the test at $\theta=2$.
 
 ### 2010FB3
-[2007F1B] [2010SB3][] [@Norm] [@MLE]  [@UMVUE]
+[2003S8][] [2007F1B] [2010SB3][] [MLE](#MLE)  [UMVUE][7.3.2]
 
 Let $X_1,X_2,..,X_n$ be a random sample from $N(1,\sigma^2)$ distribution.
 
-(a) Find the MLE of $\sigma^2$
+(a) Find the MLE of $\sigma^2$ 
+$=\frac{\sum(x_i-1)^2}{n}$
 
 (b) Is it an unbiased estimator of $\sigma^2$? Justify your answer.
+$E[\frac{\sum(x_i-1)^2}{n}]\neq\sigma^2$
 
 (c) Is it a UMVUE of $\sigma^2$? Justify your answer.
 
+$\sum(x_i-1)^2$ is suff
+
 ### 2010FB4
-[2004F12][] [2010SB4][] [2011S6][] [2015F5][] [2018S4B][] [@Expo] [@LRT] [@HypoT]
+[2004F12][] [2010SB4][] [2011S6][] **[2015F5][]** [2018S4B][] [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT)
 
 Let $X_1,X_2,..,X_{m}$ be a random sample from the exponential distribution with mean $\theta_1$ and let $Y_1,Y_2,..,Y_{n}$ be an independent random sample from another exponential distribution with mean $\theta_2$. 
 
@@ -1055,16 +1069,15 @@ $\sum Y_i$ to $\chi^2$ random variables).
 ## 2011S
 
 ### 2011S1
-[@Cor] [@Cov] [@Var]
+[Cor](#Cor) [Cov](#Cov) [Var](Var)
 
 Let $U$ and $V$ be r.v.'s such that $Var(U+V)=30$ and $Var(U-V)=10$.
 
-(a) Find $Cov(U,V)$.
+(a) Find $Cov(U,V)$.=5
 
-(b) If additionally, we know $Var(U)=Var(V)$, find the correlation of $U$ and $V$.
+(b) If additionally, we know $Var(U)=Var(V)$, find the correlation of $U$ and $V$.=1/2
 
 ### 2011S2
-[@Unif]
 
 Let $X_1,X_2,..,X_{n}$, be iid $Uniform[0,\theta]$ r.v. 's.
 
@@ -1077,7 +1090,7 @@ Let $X_1,X_2,..,X_{n}$, be iid $Uniform[0,\theta]$ r.v. 's.
 (d) Find the minimum variance unbiased estimator of $\theta^2$
 
 ### 2011S3 
-[@Unif] [@Weib] [@trans] 
+[Weib][3.3]
 
 Let $f(x)=2xe^{-x^2},0<x<\infty$, and zero elsewhere.
 
@@ -1088,18 +1101,16 @@ Let $f(x)=2xe^{-x^2},0<x<\infty$, and zero elsewhere.
 (c) If $X$ has pdx $f(x)$, find $E(X^2)$.
 
 ### 2011S4
-[2010SA3][] [2018FA4][] [@Pois] [@LimD]
+[2010SA3][] [2018FA4][] [@Pois] [LimD](#LimD)
 
 Let $X_1,X_2,..,X_n$ be a random sample from $Poisson(\mu)$. Derive the limiting distribution of
 $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 
 ### 2011S5
-[2007F3B][] [2010SB1][] [2010FB1][] [2013FB3][] [2015S2B][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
+[2007F3B][] [2010SB1][] [2010FB1][] [2013FB3][] [2015S2B][] [2018S2B][] [Expo](#Expo) [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_{20}$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -1109,7 +1120,7 @@ for which the parameter $\theta>0$ is unknown.
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
 ### 2011S6
-[2004F12][] [2010SB4][] [2010FB4][] [2015F5][] [2018S4B][] [@Expo] [@LRT] [@HypoT]
+[2004F12][] [2010SB4][] [2010FB4][] [2015F5][] [2018S4B][] [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT)
 
 Let $X_1,X_2,..,X_{m}$ be a random sample from the exponential distribution with mean $\theta_1$ and let $Y_1,Y_2,..,Y_{n}$ be an independent random sample from another exponential distribution with mean $\theta_2$. 
 
@@ -1121,12 +1132,11 @@ $\sum Y_i$ to $\chi^2$ random variables).
 ## 2011F
 
 ### 2011F1
-[@Norm] [@mean]
 
 Let $X$ be a $N(0,\sigma^2)$ random variable. Find $E(X^4)$.
 
 ### 2011F2
-[@Gamma]
+[Dirichle][4.E.40]
 
 Let $(X,Y)$ have bivariate density $f(x,y)=\frac{\Gamma(\alpha+\beta+\gamma)}{\Gamma(\alpha)\Gamma(\beta)\Gamma(\gamma)}x^{\alpha-1}y^{\beta-1}(1-x-y)^{\gamma-1},0<x<1,0<yx<1,0<x+y<1$ for parameters $\alpha>0,\beta>0,\gamma>0$. Determine
 
@@ -1137,17 +1147,17 @@ Let $(X,Y)$ have bivariate density $f(x,y)=\frac{\Gamma(\alpha+\beta+\gamma)}{\G
 (c) the marginal density of $X$.
 
 ### 2011F3
-[@Unif] [@Weib] [@trans] 
+[Weib][3.3]
 
 Determine the transformation $g$ that will make $X=g(U)$ have the Weibull density $f(x)=2xe^{-x^2},x>0$, where $U$ is a $unifonn(0,1)$ random variable.
 
 ### 2011F4
-[@Norm] [@t] [@MGF]
+[t][5.3.2]
 
 Suppose $X_1,X_2,..,X_{n}$ is a random sample of $N(\mu,\sigma^2)$ random variables. Find the moment generating function $M(t)=E(e^{tT}),t\in\mathbb R$, where $T=\frac{\bar X-\mu}{S/\sqrt{n}}$ is the usual t-statistic.
 
 ### 2011F5
-[@Norm] [@Cor] [@Cov] [@Var]
+[@Norm] [Cor](#Cor) [@Cov] [@Var]
 
 Suppose $X_1,X_2,..,X_{n}$ is a random sample of $N(\mu,\sigma^2)$ random variables.
 
@@ -1158,13 +1168,13 @@ Suppose $X_1,X_2,..,X_{n}$ is a random sample of $N(\mu,\sigma^2)$ random variab
 (c) Compute the covariance of $X_1$ and $\bar X$.
 
 ### 2011F6
-[2003F9][] [2011F6][] [@Pois] [@UMP] [@HypoT]
+[2003F9][] [2011F6][] [@Pois] [UMP][8.3.2] [HypoT](#HypoT)
 
 Let $X_1,X_2,X_3$ be iid $Poisson(\lambda)$ random variables. Find a UMP (uniformly most powerful)
 test of $H_0:\lambda\ge1$ versus $H_1:\lambda<1$ at a level $\alpha$ near .05.
 
 ### 2011F7
-[@Pois] [@MLE] [@MSE]
+[@Pois] [MLE](#MLE) [MSE][7.3.1]
 
 Let $X_1,..,X_{n}$ be lid $Poisson(\lambda)$ random variables.
 
@@ -1175,15 +1185,13 @@ Let $X_1,..,X_{n}$ be lid $Poisson(\lambda)$ random variables.
 (c) Compute the MSE (mean-squared error) for the MLE as a function of $\lambda$,
 
 ### 2011F8
-[@Bino] [@CRLB] [@MLE]
+[@Bino] [CRLB][7.3.2] [MLE](#MLE)
 
 Let $X$ have tbe binomial distribution $bin(n,p)$. Find the Cramer-Rao lower bound on the variance of an unbiased estimator for $p$, and compare it to the variance of the MLE for $p$.
 
 ## 2013S
 
 ### 2013S1
-
- [@Norm][]
 
 Let $X_1,X_2,..,X_{n}$ be iid $N(\mu,\sigma^2)$ random variables. If we have convergence in distribution $\sqrt{n}(S^2-\sigma^2)\to N(0,2\sigma^4)$ for the sample variance $S^2$, use it to get a normal approximation for the distribution of $S$.
 
@@ -1197,7 +1205,7 @@ Let $(X,Y)$ have bivariate density $f(x,y)=e^{-x},0<y<x$. Determine
 (b) the conditional density of $Y$ given $X=x$.
 
 ### 2013S3
-[@Pois] [@MLE] [@MOM]
+[@Pois] [MLE](#MLE) [MOM][7.2.1]
 
 Let X have the $Poisson(\lambda)$ distribution. Find the Cramer-Rao lower bound on the variance of an unbiased estimator for $\lambda$ and compare it to the variance of the Method of Moments estimator for $\lambda$. 
 
@@ -1206,13 +1214,12 @@ Let X have the $Poisson(\lambda)$ distribution. Find the Cramer-Rao lower bound 
 Find a transformation $g$ that will make $X=g(U)$ have the $\chi^2(2)$ density where $U$ is a $uniform(0,1)$ random variable (useful for the Box-Mueller method of simulating standard normal random variables). 
 
 ### 2013S5
-[@Norm] [@MLE]
+[MLE](#MLE)
 
 Suppose $X_1,X_2,..,X_{n}$ is a random sample of $N(\mu,\sigma^2)$ random variables. Find the
 mean-squared error of the MLE for $\sigma^2$ and the mean-squared error of its best unbiased estimator. 
 
 ### 2013S6
-[@Norm]
 
 Suppose $X_1,X_2,..,X_{n}$ is a random sample of $N(\mu,\sigma^2)$ random variables.
 
@@ -1221,12 +1228,12 @@ Suppose $X_1,X_2,..,X_{n}$ is a random sample of $N(\mu,\sigma^2)$ random variab
 (b) Compute the covariance of $X_1-\bar X$ and $X$.
 
 ### 2013S7
-[@Bino] [@UMP] 
+[UMP][8.3.2] 
 
 Let $X_1,X_2$ be two iid $bin(5,p)$ random variables. Find a UMP (uniformly most powerful) test of $H_0: p\le 0.5$ versus $H_1: p>.5$ at a level $\alpha$ near .01.
 
 ### 2013S8
-[@Gamma] [@MLE]
+[MLE](#MLE)
 
 Let $X_1,X_2,..,X_{n}$ be iid $Gamma(\alpha=1,\beta)$ random variables. Find the expectation of
 the MLE $1/\bar X$ for the rate $\lambda=1/\beta$ and say whether it is greater than or less than $\lambda$
@@ -1247,7 +1254,7 @@ Assume an urn contains R red and B blue marbles. Marbles are drawn from the urn,
 (d) What is the probability that the first ai:td last marbles are red?
 
 ### 2013FA2
-[2010FA1] [@Unif] [@mean] 
+[2010FA1]
 
 Let $X$ be a $uniform[0,1]$ random variable. Let $Y$, given $X$, be $uniform[0,X]$.
 
@@ -1259,7 +1266,7 @@ Let $X$ be a $uniform[0,1]$ random variable. Let $Y$, given $X$, be $uniform[0,X
 
 
 ### 2013FA3
-[2010FA2] [@Unif] [@mean] [@asym]
+[2010FA2]
 
 Suppose $U_1,U_2,..,U_n$ are iid $uniform[0,\theta]$ random variables, where $0<\theta<\infty$. Let $W_n=n\times\min\{U_1,U_2,..,U_n\}$, so that $0\le W_n\le n\times\theta$.
 Let $H_n(w)=P(W_n\le w)$ be the cdf of $W_n$, and let $h_n(w)$ be the pdf of $W_n$
@@ -1273,7 +1280,6 @@ Let $H_n(w)=P(W_n\le w)$ be the cdf of $W_n$, and let $h_n(w)$ be the pdf of $W_
 (d) What is the mean, $E(W_n)$, of $W_n$?
 
 ### 2013FA4
-[@Bino]
 
 Suppose $X$ has a negative binomial distribution, with pdf.
 $P(X=x)=\binom{x-1}{r-1})p^rq^{x-r},x=r,r+1,r+2,...$,
@@ -1292,7 +1298,7 @@ Let X and Y be two continuous type independent random variables with distributio
 (b) the pdf of $W=\min\{F(X),G(Y)\}$.
 
 ### 2013FB1
-[2007F1A] [2008S4A] [@Norm] [@MLE] [@suff] [@consi] [@unbias]
+[2007F1A] [2008S4A] [@Norm] [MLE](#MLE) [suff][8.2.1] [consi][10.1.1] [unbias][7.3.1]
 
 Let $Y_1,Y_2,..,Y_{n}$ be a random sample from $N(\mu,\sigma^2)$ distribution and let $X_1,X_2,..,X_{m}$ be an independent random sample from $N(2\mu,\sigma^2)$ distribution.
 
@@ -1305,10 +1311,9 @@ $\hat\sigma^2=\frac{\sum_{i=1}^m(X_i-\bar X)^2+\sum_{j=1}^n(Y_j-\bar Y)^2}{m+n-2
 is unbiased and consistent for estimating $\sigma^2$
 
 ### 2013FB2
-[2007F5A][] [2014F1B][] [2015S1B][] [@CDF] [@MLE]
+[2007F5A][] [2014F1B][] [2015S1B][] [@CDF] [MLE](#MLE)
 
 Let $X_1,X_2,..,X_n$ be a random sample from a distribution with cumulative distribution function
-
 $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{cases}$
 
 (a) Find $\hat\theta$, the mle of $\theta$.
@@ -1318,12 +1323,10 @@ $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{c
 (c) Prove that $\hat\theta$ is consistent for $\theta$.
 
 ### 2013FB3
-[2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2015S2B][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
+[2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2015S2B][] [2018S2B][] [Expo](#Expo) [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_n$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -1333,17 +1336,21 @@ for which the parameter $\theta>0$ is unknown.
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
 ### 2013FB4
-[2004F8][] [2007F4B][] [2015S3B][] [2018S1B][] [2019SB2][] [@Laplace] [@MLE] [@suff]
+[2004F8][] [2007F4B][] [2015S3B][] [2018S1B][] [2019SB2][] [Laplace](#Laplace) [MLE](#MLE) [suff][8.2.1] [median](#median)  [7.E.13][]
 
 Let $X_1,X_2,..,X_9$ be a random sample of size 9 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
-
 where $-\infty<\theta<\infty$ is unknown.
-
 Find the m.l.e. of $\theta$ and find its bias. Is the m.l.e. a sufficient statistic?
 
+$L(\theta|X)$, $\hat\theta=\underset{1\le i\le n}{median} X_i$
+
+
+
+$ARE[\hat\theta,\bar X_n]=2$
+
 ### 2013FB5
-[2018FB4] [@Unif] [@HypoT]
+[2018FB4] [@Unif] [HypoT](#HypoT)
 
 Let $X_1$ and $X_2$ be two independent random variables each having uniform distribution on the interval $(\theta,\theta+1)$. For testing $H_0:\theta=0$ against $H_a:\theta> 0$, we have two competing tests :
 
@@ -1358,24 +1365,34 @@ Find the value of c so that the Test 2 has the same value of Type I error probab
 Crain, Kochar
 
 ### 2014SA1
-[@Pois]
 
-Let $X$ given $\lambda$ be $Poissou(\lambda)$. Suppose $\lambda$ is a random variable whkh has Poisson distribution with parameter $\mu$. Find $E[X]$ and $Var[X]$.
+Let $X$ given $\lambda$ be $Poissou(\lambda)$. Suppose $\lambda$ is a random variable which has Poisson distribution with parameter $\mu$. Find $E[X]$ and $Var[X]$.
+
+$E[X]=\mu$, $Var[X]=2\mu$
 
 ### 2014SA2
-[2003F8][] [2015F2][] [2017FA3][]  [@Expo] [@Basu] [@indep]
+[2003F8][] [2015F2][] [2017FA3][]  [Expo](#Expo) [Basu](#Basu)
 
 Assume that $X_1$ and $X_2$ have joint pdf $f(x_1,x_2)=exp(-x_1 ).exp(-x_2)$ for $0\le x_1,x_2<\infty$ and zero elsewhere. Define $Y_1=X_1/(X_1+X_2)$, $Y_2=X_1+X_2$ Use Basu's theorem to demonstrate that $Y_1$ and $Y_2$ are independent. Identify the marginal pdfs of $Y_1$ and $Y_2$ Find $E[X_1^3/(X_1+X_2)^2]$
 
+$Y_1\sim Beta(1,1)$, $Y_2\sim Gamma(y_2,1)$
+
+$E[X_1^3/(X_1+X_2)^2]=E[Y_1^3Y_2]=1/4\cdot2=1/2$
+
 ### 2014SA3
-[2005S8][] [2014SA5][] [2015S3A][] [2016S3][] [@SNorm] [@mean]
+[2005S8][] [2014SA5][] [2015S3A][] [2016S3][]
 
 Suppose $Z$ is a standard normal random variable with cdf $\Phi(.)$. Evaluate $E[\Phi(Z)]$ and $E[\Phi^{2}(Z)]$.
 
+$E[\Phi(Z)]=1/2$
+$E[\Phi^{2}(Z)]=1/3$
+
 ### 2014SA4
-[@Unif] [@mean]
+[2015F3][] [LimD](#LimD)
 
 Let $U_1,U_2,..,U_n$ be iid $uniform[0,1]$ random variables. Let $0\le Y_1<Y_2<..<Y_n$ be the corresponding order statistics, ie, $Y_k$ is the $k^{th}$ smallest of the $U_i$ What is the joint pdf of $Y_1,Y_2,..,Y_n$? Find the marginal pdf of $Y_k$, where $1\le k\le n$. Find the mean and variance of $Y_k$.
+
+$\sim Beta(k,n-k+1)$
 
 ### 2014SA5
 [2005S8][] [2014SA3][] [2015S3A][] [2016S3][] [@SNorm] [@mean]
@@ -1383,7 +1400,7 @@ Let $U_1,U_2,..,U_n$ be iid $uniform[0,1]$ random variables. Let $0\le Y_1<Y_2<.
 Assume that $Z$ is a standard normal or $N(0,1)$ random variable. Find a formula for $E[Z^k]$ where $k$ is a positive integer.
 
 ### 2014SB1
-[@Expo] [@CDF]
+[Expo](#Expo) [liftime]
 
 The lifetime (in hours) X of an electronic component is tt random variable with cumulative distribution functionfundion
 
@@ -1391,9 +1408,15 @@ $F(y)=\begin{cases}1-e^{-y/5}& y>0\\0& o.w.\end{cases}$
 
 (a) What is the probability that a randomly selected component will operate for at least 10 hours?
 
-(b) What is the probability that the lifetime of a randmnly selected component wi11 exceed its mean lifetime by more than two standard deviations?
+$1/e^2$
+
+(b) What is the probability that the lifetime of a randmnly selected component will exceed its mean lifetime by more than two standard deviations?
+
+$P(Y>5+2\times5)$
 
 (c) Three of these components operate independently in a piece of equipment. The equipment fails if at least two of the components fail. Find the probability that the equipment will operate for at least 10 hours without failure?
+
+$Bino(p=1-e^{-2})$
 
 ### 2014SB2
 [2008S4B] [@Unif]
@@ -1401,12 +1424,12 @@ $F(y)=\begin{cases}1-e^{-y/5}& y>0\\0& o.w.\end{cases}$
 Let $X_1,X_2,..,X_{10}$ be random variables denoting 10 independent bids for an item that is for sale. Suppose that each $X_i$ is uniformly distributed on the interval $[\theta-50,\theta+50]$, where $\theta>100$. The seller sells to the highest bidder, how much can he expect to earn on the sale? 
 
 ### 2014SB3
-[2014F4B] [@Norm] [@MLE]
+[2014F4B] [MLE](#MLE)
 
 Let $X_1,X_2,..,X_{n}$ be a random sample from a normal distribution, $N(\mu,\sigma^2)$, where $-\infty<\mu<+\infty$ and $\sigma>0$. Find the MLE of $\mu/\sigma$ and find itsexpected value.
 
 ### 2014SB4
-[@Beta] [@CRLB]
+[@Beta] [CRLB][7.3.2]
 
 Suppose $X_1,X_2,..,X_{n}$ is a random sample from a population with probability mass function
 
@@ -1417,7 +1440,7 @@ $p_\theta(X=x)=\theta^{x}(1-\theta)^{1-x},x=0,1; 0<\theta<1$
 (h) Find the the Cramer-Rao lower bound for the variance of any unbiased estimator of $\theta(1-\theta)$.
 
 ### 2014SB5
-[@Bino] [@Unif] [@BayesE] [@MLE]
+[@Bino] [@Unif] [BayesE](#BayesE) [MLE](#MLE)
 
 Suppose X has Binomial distribution with pararneters $n$ and $\theta, 0<\theta<1$.
 
@@ -1443,13 +1466,17 @@ Repeat a sequence of i.i.d. Bernoulli trials until you observe the frst success,
 (e) Derive the moment generating function (M.G.F.) of Y . Remember to state the interval over which this M.G.F. exists.
 
 ### 2014F2A
-[2008F2] [2010SA1][]
+[2008F2] [2010SA1][] [561-fe6]
 
 One percent of all individuals in a certain population are carriers of a particular disease. A diagnostic test for this disease has a 90% detection rate for carriers and a 5% detection rates for noncarriers. Suppose the test is applied independently to two different blood samples from the same randomly selected individual.
 
 (a) What is the probability that both tests yield the same result?
 
+0.9495
+
 (b) If both tests are positive, what is the probability that the selected individual is a carrier?
+
+2/13
 
 ### 2014F3A
 [2013S2][]
@@ -1480,10 +1507,9 @@ Let $Z_1,Z_2,..$ be a sequence of random variables random variables; and suppose
 Show that $\lim_{n\to\infty}E(Z_n)=\infty$ but $Z_n\overset{p}\to0$ as $n\to\infty$
 
 ### 2014F1B
-[2007F5A][] [2013FB2][] [2015S1B][] [@CDF] [@MLE] [@CI]
+[2007F5A][] [2013FB2][] [2015S1B][] [@CDF] [MLE](#MLE) [@CI]
 
 Let $X_1,X_2,..,X_n$ be a random sample from a distribution with cumulative distribution function
-
 $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{cases}$
 
 (a) Find the MLE $\hat\theta$ of $\theta$.
@@ -1493,7 +1519,7 @@ $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{c
 (c) Find a 95% confidence interval for $\theta$ when $n=6$.
 
 ### 2014F2B
-[2008S2B] [@Pois] [@FishI]
+[2008S2B] [@Pois] [FishI][7.3.2]
 
 Let $X_1,X_2,..,X_{n}$ denote a random sample from a Poisson distribution with mean $\theta,\theta>0$.
 
@@ -1502,7 +1528,7 @@ Let $X_1,X_2,..,X_{n}$ denote a random sample from a Poisson distribution with m
 (b) Suppose we want to estimate $m(\theta)=P(X_1=0)=e^{-\theta}$. Find a lower bound on the variance of any unbiased estimator of the parametric function $m(\theta)$.
 
 ### 2014F3B
-[@UMP] [@HypoT] [@power]
+[UMP][8.3.2] [HypoT](#HypoT) [power](#power)
 
 Let $\theta$ be a parameter with space $\Omega=\{0; 1\}$. Let $X$ be a discrete random variable taking on values 1,2,3,or 4. Let the probability funtion of $X$ be given by the following table:
 
@@ -1515,12 +1541,12 @@ $\theta_1$&$2/9,2/9,2/9,1/3$\\
 Find the UMP size 1/8 and 1/4 tests to test $H_0:\theta=0$ against $H_A:\theta=1$. Also find the powers of these two tests.
 
 ### 2014F4B
-[2014SB3] [@Norm] [@MLE]
+[2014SB3] [@Norm] [MLE](#MLE)
 
 Let $X_1,X_2,..,X_{n}$ be a random sample from a normal distribution, $N(\mu,\sigma^2)$, where $-\infty<\mu<+\infty$ and $\sigma>0$. Find the MLE of $\mu/\sigma$ and find itsexpected value.
 
 ### 2014F5B
-[2007F2B][] [2017FB2][] [@Expo] [@suff] [6.E.30]
+[2007F2B][] [2017FB2][] [Expo](#Expo) [suff][8.2.1] [6.E.30] [562-fe]
 
 Let $X_1,X_2,..,X_{n}$ denote a random sample from exponential distribution
 with pdf,
@@ -1535,7 +1561,7 @@ $f(x,\mu)=\begin{cases}e^{-(x-\mu)}& \mu<x<\infty\\0& e.w.\end{cases}$
 Tableman, Kochar
 
 ### 2015S1Aa
-[2005S3][] [Jesen's Inequality p190]
+[2005S3][] [CLT] [Jesen's Inequality](#Jens)
 
 Let X be a random variable with finite mean $\mu$, finite variance $\sigma^2$,
 and assume $E(X^8)<\infty$. Prove or disprove:
@@ -1545,27 +1571,24 @@ i. $E[(\frac{X-\mu}{\sigma})^2]\ge1$.
 ii. $E[(\frac{X-\mu}{\sigma})^4]\ge1$.
 
 ### 2015S1Ab
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2016S5][] [2016F8][] [2018FA1][] [2019SA1][]
 
 Suppose a box contains a large number of tacks, and the probability $X$ that a particular tack will land with its point up when it is tossed varies from tack to tack in accordance with the following pdf:
-
 $f(x)=\begin{cases}2(1-x)&0<x<1\\0& o.w.\end{cases}$
-
 Suppose a tack is selected at random from this box and this tack is then tossed three times independently. Determine the probability the tack will land with its point up on all three tosses.
 
-<span style="color:red"> 
-$E[X^3]=\int_0^1y^3f(y)dy=1/10$
+$P_Y(A|X=x)=x^3$
 
-$E^3[X]=(\int_0^1xf(x)dx)^3=1/27$
+$P_Y(A)=\int_0^1x^3f(x)dx$
+
+$E[X^3]=\int_0^1y^3f(y)dy=1/10$
 
 
 ### 2015S2A
-[2007F2A][] [2008S5A][] [2009FA1][] [2014F4A][] [2019SA2][]
+[2007F2A][] [2008S5A][] [2009FA1][] [2014F4A][] [2019SA2][] [Laplace](#Laplace) [Double Expo]
 
 Suppose $Y_1$ and $Y_2$ are i.i.d. random variables and the p.d.f. of each of them is as follows:
-
 $f(x)=\begin{cases}10e^{-10x}& x>0\\0& o.w.\end{cases}$
-
 Find the p.d.f. of $X=Y_1-Y_2$.
 
 $f(y_1,y_2)$
@@ -1574,26 +1597,22 @@ $f(x,w)$
 
 $f(x)=5e^{-10|x|}$  pdf exist for $x>0$
 
-[@Laplace] [Double Expo]
-
-
 
 ### 2015S3A
-[2005S8][] [2014SA3][] [2014SA5][] [2016S3][] [@SNorm] [@mean]
 
 First,let $\Phi(.)$ and $\phi(.)$ denote the standard normal cdf and pdf respectively. Then, let $X_1,..,X_n$ denotes a random sample from a normal distribution with means $\theta$ and variance $\sigma^2$, and let $F(.)$ and $f(.)$ denote the common cdf and pdf of the r.s. respectively. Assume the sample size $n$ is odd; that is, $n=2k-1$; $k=1,2,3,..$ In this situation, the sample
 median is the $k^{th}$ order statistic, denoted by $Y_k$.
 
 (a) (5) Let $g(y)$ denote the pdf of the sample median $Y_k$. Derive $g(y)$. You may use the symbols $F(.)$ and $f(.)$.
 
-(b) (5) Determine the $E(Y_k|\bar X)$, where $\bar X$ is the sample mean of the above random sample. Justify your answer.
+$g_{Y_k}(y)=$
 
-[7.3.23 p347]
+(b) (5) Determine the $E(Y_k|\bar X)$, where $\bar X$ is the sample mean of the above random sample. Justify your answer. [Lehm-Sche](#Lehm-Sche)
 
  $E(Y_k|\bar X)=\bar X$
 
 ### 2015S4A
-[2007F4A][] [@CDF] [@cdfP]
+[2007F4A][] [cdfP](#cdfP)
 
 (a) Let X be a continuous type random variable with cumulative distribution function $F(x)$. Find the distribution of the random variable $Y=-\ln(1-F(X))$:
 
@@ -1602,20 +1621,21 @@ $1-e^{-y}$
 (b) Prove that for any $y\ge c$, the function $G_c(y)=P[X\le y|X\ge c]$
 
 ### 2015S5A
-[@Pois] [@cond]
+[2009FA3][] [2019SA4] [MGF](#MGF)
 
 Suppose X and Y are independent Poisson random variables with parameters $\lambda$ and $2\lambda$, respectively.
 
 (a) Find the distribution of $X+Y$.$Pois(3\lambda)$
 
-trans or MGF p158
 
 (b) Find $E[X|X+Y=5]$.
 
-$P(x|x+y=5)=\frac{P(x)P(y=5-x)}{P(x+y=5)}$
+$P(x|x+y=5)=\frac{P(x)P(y=5-x)}{P(x+y=5)}\sim Bino(5,1/3)$
+
+$E[x|x+y=5]=np=5/3$
 
 ### 2015S1B
-[2007F5A][] [2013FB2][] [2014F1B][] [@CDF] [@MLE]
+[2007F5A][] [2013FB2][] [2014F1B][] [MLE](#MLE)
 
 Let $X_1,X_2,..,X_n$ be a random sample from a distribution with cumulative distribution function
 
@@ -1623,26 +1643,27 @@ $F(x)=\begin{cases}0&x<0\\(\frac{x}\theta)^2& 0\le x<\theta\\1& x\ge\theta\end{c
 
 (a) Find $\hat\theta$, the mle of $\theta$. 
 
-$X_{(n)}$ 
+$L(\theta)=2^n\theta^{-2n}\prod x_i I_{(0,\theta)}(x_i)$
+$=2^n\theta^{-2n}\prod x_i I_{(-\infty,\theta)}(x_{(n)})I_{(0,\infty)}(x_{(1)})$
+
+$L(\theta)$ is maximized by making $\theta$ as small as possible
+
+$\hat\theta=X_{(n)}$ 
 
 (b) Find $E[\hat\theta]$.
 
-$EX_{(1)}=\frac{14n}{3\theta^2}(\frac{\theta^2-1}{\theta^2})^{n-1}$
-
 $EX_{(n)}=\frac{2n}{2n+1}\theta$
 
-(c) Prove that $\hat\theta$ is consistent for $\theta$.
+(c) Prove that $\hat\theta$ is consistent for $\theta$. [Cheb](#Cheb)
 
 $\lim\to0$, Bias$\to0$
 
 
 ### 2015S2B
-[2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2018S2B][] [@Expo] [@FishI] [@CRLB]
+[2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2018S2B][] [Expo](#Expo) [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_n$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -1653,24 +1674,25 @@ $\frac{n}{\theta^2}$
 
 $0.9=\int_0^{g(\theta)}f(x,\theta)$
 
+
+
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
-$Var\ge\frac{g'(\theta)^2}{I_{\theta}}$
+$\frac{g'(\theta)^2}{I_{\theta}}=\frac{(\ln10)^2}{n\theta^2}$
 
 ### 2015S3B
-[2004F8][] [2007F4B][] [2013FB4][] [2018S1B][] [2019SB2][] [@Laplace] [@MLE]
-[7.E.13][]
+[2004F8][] [2007F4B][] [2013FB4][] [2018S1B][] [2019SB2][] [Laplace](#Laplace) [MLE](#MLE) [median](#median)  [7.E.13][]
 
 Let $X_1,X_2,..,X_9$ be a random sample of size 9 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
-
 where $-\infty<\theta<\infty$ is unknown.
-
 Find the m.l.e. of $\theta$ and find its bias.
 
+$\hat\theta_{MLE}=X_{(5)}$
+
 ### 2015S4B
-[2003S9][] [2004F9][] [2007F5B][] [2018S3B][] [2019SB3][] [@SPower] [@power] [@UMP]
-[Ex 7.11]
+[2003S9][] [2004F9][] [2007F5B][] [2018S3B][] [2019SB3][] [SPower](#SPower) [power](#power) [UMP][8.3.2]
+[7.E.11][] [563-me]
 
 
 Suppose $Y$ is a random variable (sample size = 1) from a population with density function
@@ -1685,13 +1707,15 @@ $\alpha=P_{\theta_1}(T<t_0)$
 $f_1/f_0c_0$ reject
 
 ### 2015S5B
-[2009FA3][] [2019SA4][] [@FishI] [@CI]
+[2009FA3][] [2019SA4][] [FishI][7.3.2] [CI](#CI) [median](#median)
 
 Let $X_1,X_2,..,X_{5}$ denote a random sample size $n=5$ from a continuous distribution with cdf $F(.)$ with median $\theta$. Let $S(\theta)=$ the number of $\{X_i's>\theta\}$. We can express this as 
 $S(\theta)=\sum_{i=1}^5I(X_i>\theta)$;
 where I(.) is an indicator variable.
 
 (a) State explicitly the distribution of $S(\theta)$.
+
+$S(\theta)\sim Bino(5,2/5)$
 
 (b) Sketch the graph of $S(\theta)$ as a function of $\theta$. Then describe the graph in words.
 
@@ -1702,36 +1726,42 @@ where I(.) is an indicator variable.
 ## 2015F 
 
 ### 2015F1
-[2008S1B][] [2009FA4][] [@Unif] [@mean] [@Var] [@suff] [@UMVUE] 
+[2008S1B][] [2009FA4][] [suff][8.2.1] [UMVUE][7.3.2] [Lehm-Sche](#Lehm-Sche)
 
 Let $X_1,X_2,..,X_{n}$ be iid continuous uniform r.v.'s over $[0,\theta]$, where $0 <\theta<\infty$. Let $Y_{n}=\max\{X_1,X_2,..,X_{n}\}$
 
 (a) (5 pts) Find $E[Y_n]$.
 
-$f(x)$, $F(x)$, $f_{Y_{(n)}}(x)$, $n\theta/(n-1)$
+$f(x)$, $F(x)$, $f_{Y_{(n)}}(x)$, $n\theta/(n+1)$
 
 (b) (5 pts) Find $Var[Y_n]$.
 
-(c) (5 pts) Show that $Y_n$ is a sufficient statistic for $\theta$.
+$\theta^2(\frac{n}{n+2}-\frac{n^2}{(n+1)^2})$
 
-(d) (5 pts) Assuming $Y_n$ is a complete sufficient statistic for $\theta$, find the UMVUE of $\theta$.
+(c) (5 pts) Show that $Y_n$ is a sufficient statistic for $\theta$. [6.2.8]
 
-7.3.23
+(d) (5 pts) Assuming $Y_n$ is a complete sufficient statistic for $\theta$, find the UMVUE of $\theta$. [6.2.23]
+
+$E[\frac{n+1}{n}Y_n]=$
 
 (e) (5 pts) Assuming $Y_n$ is a complete sufficient statistic for $\theta$, find the UMVUE of $\theta^2$.
 
+$E[\frac{n+1}{n}Y_n^2]=\theta^2$
+
 ### 2015F2
-[2003F8][] [2014SA2][] [2017FA3][]  [@Expo] [@Basu] [@indep]
+[2003F8][] [2014SA2][] [2017FA3][]  [Expo](#Expo) [Basu](#Basu)
 
 Suppose $X_1$ and $X_2$ are iid exponential with parameter = 1.
 
 (a) (5 pts) Find the pdf of $Y_1=X_1/(X_1+X_2)$.
 
-[@trans] $Expo(1)\sim Gamma(1,1)$
+$J=Y_2$
 
-$\frac{G(\alpha_1,\beta)}{G(\alpha_1,\beta)+G(\alpha_2,\beta)}\sim Beta(\alpha_1,\alpha_2)$
+$Expo(1)\sim Gamma(1,1)$
 
-(b) (5 pts) Find the pdf of $Y_2=X_1+X_2$.
+$Y_1=\frac{G(\alpha_1,\beta)}{G(\alpha_1,\beta)+G(\alpha_2,\beta)}\sim Beta(\alpha_1,\alpha_2)$
+
+(b) (5 pts) Find the pdf of $Y_2=X_1+X_2$. [5.2.9] [5.E.6]
 
 $f_{Y_2}(y_2)$
 
@@ -1739,8 +1769,12 @@ $f_{Y_2}(y_2)$
 
 $f(y_1,y_2)=f(y_1)f(y_2)$
 
+$Y_1$ [ancillary](#ancillary)
+
+$Y_1$ [comp](#comp)
+
 ### 2015F3
-[@Unif] [@LimD]
+[2014SA4][] [LimD](#LimD)
 
 Let $X_1,X_2,..,X_{n}$ be iid $uniform[0,1]$ rv's. Let $0\le Y_1\le Y_2\le..\le Y_n\le1$ be the
 corresponding order statistics.
@@ -1753,41 +1787,64 @@ $f(x)$, $F(x)$, $f_{Y_{(n)}}(x)$
 
 (c) (5 pts) Find $Var[Y_k]$.
 
-(d) (5 pts) What is the limiting distribution of $W_1=nY_1$?
-
-[MaxU 5.5.11](#Max-Unif)
 
 
-(e) (5 pts) What is the limiting distribution of $W_n=n(1-Y_n)$?
-
-p236
+(d) (5 pts) What is the limiting distribution of $W_1=nY_1$? [MaxU 5.5.11](#Max-Unif)
 
 
 
+
+(e) (5 pts) What is the limiting distribution of $W_n=n(1-Y_n)$? [DeltaM](#DeltaM)
+
+$f(Y_1)=n[1-y_1]^{n-1}$
+
+$W_1=ny_1$
+
+$f(W)=f(w/n)|\frac{dy}{dw}|=n(1-w/n)^{n-1}\frac1{n}$
+
+$f(Y_n)=n[F_Y]^{n-1}=ny^{n-1}$
+
+$W_n=n(1-y_n)$, $Y_n=1-w/n$
+
+$f(W_n)=f(1-w/n)|\frac{dy}{dw}|=n(1-w/n)^{n-1}\frac1{n}$
 
 ### 2015F4
-[2010FB2] [@Beta] [@HypoT] [@power]
+[2010FB2] [HypoT](#HypoT) [power](#power)
 
 Let X1 be a random sample of size $n=1$ from the Beta distribution with pdf
 $f(x|\theta)=\begin{cases}\frac{\Gamma(2\theta)}{\Gamma(\theta)\Gamma(\theta)}x^{\theta-1}(1-x)^{\theta-1}&0<x<1\\0&o.w.\end{cases}$
-
 Suppose a researcher is interested in testing $H_0:\theta=1$ against $H_1:\theta=2$. The researcher decides to reject $H_0$ in favor of $H_1$ if $X_1<2/3$.
+
+$Beta(\theta,\theta)$
 
 (a) (5 pts) Find the size of the test
 
 (b) (5 pts) Compute the power of the test at $\theta=2$.
 
+$\alpha=P_{\theta_01}(x_1<2/3)=1-\int_0^{2/3}=2/3$
+
+power$=1-P_{\theta_1}(x_1<2/3)=1-\int_0^{2/3}=7/27$
+
 ### 2015F5
-[2004F12][] [2010SB4][] [2010FB4][] [2011S6][] [2018S4B][] [@Expo] [@LRT] [@HypoT]
+[2004F12][] [2010SB4][] [2010FB4][] [2011S6][] [2018S4B][] [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT) [9.E.4]
 
 Let $X_1,X_2,..,X_{m}$ be a random sample from the exponential distribution with mean $\theta_1$ and let $Y_1,Y_2,..,Y_{n}$ be an independent random sample from another exponential distribution with mean $\theta_2$. Find the likelihood ratio test for testing $H0:\theta_1=\theta_2$ vs $H_a:\theta_1\neq\theta_2$
 
+LRT $==\frac{\bar x^m}{\theta_2^n}e^{-n(\bar y/\theta_2+1)}$
+
+Let $T=\frac{\sum x_i}{\sum x_i+\sum y_i}$
+
+$\Lambda=\frac{(m+n)^{m+n}}{m^mn^n}T^m(1-T)^n\sim Beta(m+1,n+1)$
+
+$\hat\theta_{MLE}=\frac{\sum x_i+\sum y_i}{m+n}$;
+$\hat\theta_{1}=\frac{\sum x_i}{m}$;
+$\hat\theta_{2}=\frac{\sum y_i}{n}$
 ## 2016S
 
 Crain, Kim
 
 ### 2016S1
-[@Pois] [@MVUE]
+[UMVUE][7.3.2]
 
 Let $X_1,X_2,..,X_n$ be iid (independent, identically distributed) Poisson random variables with parameter $\lambda>0$.
 
@@ -1796,9 +1853,8 @@ Let $X_1,X_2,..,X_n$ be iid (independent, identically distributed) Poisson rando
 $T=\sum x_i\sim Pois(n\lambda)$, $\bar X$
 
 (b) Find the MVUE (Minimum Variance Unbiased Estimator) of $\lambda$.
-[6.2.2][6.2.21]
 
- $\bar X/n$
+ $\bar X$
 
 (c) Find the MVUE of $\lambda^2$:
 
@@ -1806,42 +1862,41 @@ $T=\sum x_i\sim Pois(n\lambda)$, $\bar X$
 
 (d) Find the MVUE of $e^{-\lambda}$.
 
- $X_1=0$
+Let $T(x_i)=\begin{cases}1&X_1=0\\0&X_1\neq0\end{cases}$
 
-$E(T|y)=(\frac{n-1}{n})^y$
+$E(T|y)=\frac{P(x_i=0)P(\sum x_i=y)}{P(\sum x_i=y)}=(\frac{n-1}{n})^y$
 
-
-
-(e) Find the MVUE of $P(X_i=1)=\lambda^1e^{-\lambda}/1!$:
-
-7.3.23 p347
+(e) Find the MVUE of $P(X_i=1)=\lambda^1e^{-\lambda}/1!$: [Lehm-Sche](#Lehm-Sche)
 
 $X_1=1$
 
-$E(T|y)= \sim Bino(y,1/n)$
+$E(T|y)=\frac{P(x_i=1)P(\sum x_i=y-1)}{P(\sum x_i=y)} \sim Bino(y,1/n)$
 
 (f) Find the MVUE of $P(X_i=k)=\lambda^ke^{-\lambda}/k!$:
 
  $X_1=k$
 
-$E(T|y)= \sim Bino(y,1/n)$
+$E(T|y)=\frac{P(x_i=k)P(\sum x_i=y-k)}{P(\sum x_i=y)} \sim Bino(y,1/n)$
 
 ### 2016S2
-[2017FB1][] [@Bino] [@MVUE] [Bino+MLE 7.2.9]
+[2017FB1][] [Binomial MLE]
 
 Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y)$ of $Y$,
 
 (a) What is the MVUE of $p$?
 
-$y/n$
+$E[y/n]=np/n=p$
+
 
 (b) What is the MVUE of $p^2$?
 
-$\frac{y^2-y}{n^2-n}$
+$E[y^2]=np+p^2(n^2-n)$
+
+$E[\frac{y^2-y}{n^2-n}]=p^2$
 
 (c) What is the MVUE of $pq=p(1-p)$?
 
-$\frac{y^2-y}{n^2-n}-\frac{y}n$
+$\frac{y}n-\frac{y^2-y}{n^2-n}$
 
 (d) <span style="color:red"> What is the MVUE of $P(Y=k)=\binom{n}{k}p^k(1-p)^{n-k}$?</span>
 
@@ -1863,20 +1918,22 @@ $\Phi^n |_{-\infty}^{\infty}=1$
 
 (d) Find $E[Z^4]$. =3
 
-$E(Z^{2k})=\frac{(2k)!}{2^KK!}$, k=1,2,..
+$E(Z^{2k})=\frac{(2k)!}{2^KK!}, k=1,2,..$
+
+$Z^2\sim\chi_1^2$,$E[Z^2]=1$,$V[Z^2]=2$
+
+$E[(Z^2)^2]=V+E^2=2+1$
 
 (e) Find $E[Z^5]$ =0
 
 $E(Z^{2k+1})=0$
 
 ### 2016S4
-[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][]
-[Ex 3.17]
+[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] **[2016F7][]** [2017FB4][] [2018FB2][] [2019SB4][]
+[3.E.17][]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from a probability density function
-
 $f(x;\theta)=\begin{cases}(\theta+1)x^\theta& 0<x<1\\0& o.w.\end{cases}$
-
 where $\theta>-1$ is an unknown parameter.
 
 (a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
@@ -1896,12 +1953,11 @@ $\frac{(\theta+1)^2}{n}$
 
 
 ### 2016S5
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016F8][] [2018FA1][] [2019SA1 ][] [@joint] [@marg] [@trans]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2010SA4][] [2015S1Ab][] [2016F8][] [2018FA1][] [2019SA1 ][]
 
 Let $X$ and $Y$ have the following joint pdf:
 $f(x,y) =\begin{cases}6(y-x)& 0<x<y<1\\0& o.w.\end{cases}$
 Define $Z=(X+Y)/2$ and $W=Y$, respectively.
-
 
 (a) Find the joint pdf of Z and W.
 
@@ -1911,21 +1967,16 @@ $f_{Z,W}(z,w)=24(w-z)$, $0<2z<2w<1+w$, $0<w/2<z<w<1$
 
 (b) Find the marginal pdf of Z.
 
-<span style="color:red"> 
-$f_{Z}(z)=\int_{2z}^{1}24(w-z)dw=24z-12$
+$f_{Z}(z)=\int_{z}^{2z}24(w-z)dw=12z^2, 1/2<z<1$
 
-<span style="color:red"> 
-$f_{Z}(z)=\int_{z}^{2z}24(w-z)dw=12z^2$
-
-<span style="color:red"> 
-$f_{Z}(z)=\int_{z}^{1}24(w-z)dw=12(z-1)^2$ </span> 
+$f_{Z}(z)=\int_{z}^{1}24(w-z)dw=12(z-1)^2, 0<z<1/2$
 
 ## 2016F
 
 Fountain, Ian Dinwoodie
 
 ### 2016F1
-[@Norm] [5.E.10]
+[5.3.1][] [5.E.10][] [562-HW2]
 
 Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution with mean $\mu$ and variance $\sigma^2$.
 Let $S_k^2=\frac1k\sum_{i=1}^n(X_i-\bar X)^2$ be an estimator of $\sigma^2$. Find the value of $k$ that minimizes the mean squared error of the estimator. =n+1
@@ -1939,9 +1990,11 @@ $\frac{\partial MSE}{\partial k}=0$
 $\hat\theta=S_{n+1}^2$
 
 ### 2016F2
-[@MGF] [561-me2]
+[Geom](#Geom) [561-me2]
 
 The moment generating function of a particular random variable is $M_X(t)=\frac{e^t}{4-3e^t}$. Find the coefficient of variation ($CV=\sigma/\mu$) of this distribution. $=\sqrt3/2$
+
+$Geom(1/4),EX=4, VarX=12$
 
 $M'_X(t)$ 
 
@@ -1953,11 +2006,9 @@ $EX^2=M''_X(0)=28$
 
 
 ### 2016F3
-[2008F3][] [@Cheb]
+[2008F3][] [Cheb](#Cheb)
 
 If X is a random variable such that $E[X]=2$ and $E[X^2]=13$, determine a lower bound for the probability $P(-4<X<8)$. (Hint: Use a famous inequality.) 
-
-Chebyshev Inequality p122
 
 $\sigma=3, t=2$
 
@@ -1968,76 +2019,92 @@ $P(-4<x<8)\ge3/4$
 
 Let $Y_1$ and $Y_2$ be a random sample of size 2 from $Uniform(0,1)$. Find the cumulative distribution and probability density functions of $U=Y_1+Y_2$.
 
-$f_u(u)=\begin{cases}&0\le\mu\le1\\&1\le\mu\le2\end{cases}$
+$j=1$
 
-$F_u(u)=\begin{cases}&0\le\mu\le1\\&1\le\mu\le2\end{cases}$
+
+$f_u(u)=\begin{cases}\int_0^u=u &0\le u\le1\\\int_{u-1}^1=2-u&1\le u\le2\\0&o.w.\end{cases}$
+
+$F_u(u)=\begin{cases}\int_0^u=u^2/2&0\le u\le1\\\int_{1}^u=2u-u^2/2-3/2&1\le u\le2\\0&o.w.\end{cases}$
 
 ### 2016F5
-[2003S10][] [2008F6][] [@Norm] [@indep] [@Basu] 
+[2003S10][] [2008F6][] [Basu](#Basu) [562-me2] [Ancillary](#ancillary)
 
 Let $Y_n$ be the $n^{th}$ order statistic of a random sample of size n from the normal distribution $N(\theta,\sigma^2)$. Prove that $Y_n-\bar Y$ and $\bar Y$ are independent.
 
-[562-me2] [Ancillary p284]
 
 ### 2016F6
-[2008F7][] [@Expo] [@BayesE]
+[2008F7][] [Expo](#Expo) [BayesE](#BayesE) [562-fe3]
 
 Suppose that $X_1,X_2,..,X_n$ i.i.d. $Exponential(\theta)$, i.e. $f(x;\theta)=\theta e^{-\theta x},x>0$. Also assume that the prior distribution of $\theta$ is $h(\theta)=\lambda e^{-\lambda\theta},\theta>0$. Find the Bayes estimator of $\theta$, assuming squared error loss.
 
-$f(\bar X|\theta)$
+$f(\vec X|\theta)$
 
-$\pi(\theta|\bar X)\propto f(\bar X|\theta)\pi(\theta)$
+$\pi(\theta|\vec X)\propto f(\vec X|\theta)\pi(\theta)$
 
+$E[\pi(\theta|\vec x)]=\alpha\beta=\frac{n+1}{\lambda+\sum x_i}$
+
+$E[\theta]=\frac{1}{\lambda}$
+
+$\hat\theta_{MLE}=\frac{1}{\bar X}$
 
 ### 2016F7
-[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2017FB4][] [2018FB2][] [2019SB4][] [@UMP] [@MOM]
+[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2017FB4][] [2018FB2][] [2019SB4][]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from the following distribution:
 $f(x;\theta)=(\theta+1)x^\theta,\ 0\le x\le 1$
 where $\theta>-1$ is an unknown parameter.
 
-$\sim Beta(\theta+1,1)$
+$x^{\theta+1-1}(1-x)^{1-1}\sim Beta(\theta+1,1)$
 
+(a) Find the method of moments estimator for $\theta$. [MOM][7.2.1]
 
-(a) Find the method of moments estimator for $\theta$.
+$Beta(\alpha+n,\beta)$
 
-p312, p107 [3.3.18]
+$E[X^n]=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$
 
-$E[X^n]=\frac{\Gamma(\alpha+n)\Gamma\beta+n)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$
+$E[X^1]=\bar X=\frac{\alpha}{\alpha+\beta}=\frac{\theta+1}{\theta+2}$
 
-$E[X^1]=\bar X=\frac{\theta+1}{\theta+2}$
+$\hat\theta_{MOM}=\frac{2\bar X-1}{1-\bar X}$
 
-$\theta_{MOM}=\frac{2\bar X-1}{1-\bar X}$
+(b) Find the maximum likelihood estimator for $\theta$. [MLE](#MLE)
 
-(b) Find the maximum likelihood estimator for $\theta$.
+$\hat\theta=\frac{n}{-\sum\ln x}-1$
 
-p315
-
-
-(c) Determine if your MLE is unbiased.
+(c) Determine if your MLE is unbiased.  [unbias][7.3.1]
 
 Bias$=E[\hat\theta]-\theta$
 
-(d) Find the asymptotic variance of your MLE in part (b), as $n\to\infty$.
+(d) Find the asymptotic variance of your MLE in part (b), as $n\to\infty$. [asymV](#asymV)
 
-[asymptotic variance 10.1.9] [Definition 10.1.7; Example 10.1.8 Limiting variances]
+$Var[\frac{n}{-\sum\ln x}-1]=\frac{n^2(\theta+1)^2}{(n-1)^2(n-2)}$
 
-$\sqrt{n}[\tau(\hat\theta)-\tau(\theta)]\to n(0,\frac{[\tau'(\theta)]^2}{I(\theta)})$
+$\lim Var[\hat\theta]=0$
 
-(e) Find the Cramer-Rao lower bound on the variance of an unbiased estimator of $\theta$.
+$\sqrt{n}[\tau(\hat\theta)-\tau(\theta)]\to n(0,\frac{[\tau'(\theta)]^2}{I(\theta)})=n(0,(\theta+1)^2)$
+
+(e) Find the Cramer-Rao lower bound on the variance of an unbiased estimator of $\theta$. [CRLB][7.3.2]
 
 $(\theta+1)^2/n$
 
-(f) Identify the sufficient statistic for $\theta$.
+(f) Identify the sufficient statistic for $\theta$. [suff][8.2.1]
 
 Expo family
 
+$T(x)=\prod x_i$ is suff
+
 (g) Suppose you've taken a sample of size $n=10$. Determine the UMP test of the null hypothesis $\theta=.5$ vs. the alternative $\theta>0.5$.
 
-Step 1 suff; Step 2 Expo has MLR; Step 3 $T\le t_0$ is UMP
+Step 1 suff; Step 2 Expo has MLR; Step 3 $T>t_0$ is UMP
+
+$Gamma(10,\frac{1}{0.5+1})$
+
+$1-\alpha=P_{\theta_0}(T\le t_0)=\int_{-\infty}^{t_0}$
+
+$\alpha=P(T>t_0)=\int_{t_0}^{-\infty}$
+
 
 ### 2016F8
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2018FA1][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2018FA1][] [2019SA1][]
 
 Let $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}c(1-y_2)&0\le y1\le y2\le 1\\0& o.w.\end{cases}$
@@ -2048,9 +2115,9 @@ $\int_0^1\int_0^{y_2}c(1-y_2)dy_1dy_2=1$
 
 (b) Find the marginal density functions of $Y_1$ and $Y_2$.
 
-$f_{Y_1}(y_1)=$
+$f_{Y_1}(y_1)=3(y_1-1)=\int_{y_1}^1$
 
-$f_{Y_2}(y_2)=$
+$f_{Y_2}(y_2)=6(y_2-y_2^2)=\int_0^{y_2}$
 
 (c) Find $P(Y_1\le1/2|Y_2\le3/4)$ =25/27
 
@@ -2065,6 +2132,7 @@ $P(Y_2\le3/4)=27/32$
 Ian Dinwoodie, Robert Fountain
 
 ### 2017S1
+[3.E.20][]
 
 Let $\Theta$ be a real-valued random variable with density $f\Theta(\theta) = \frac1{\sqrt{2\pi}}e^{-\theta^2/2},\theta\in\mathbb R$, and let Y have
 conditional density $f(y|\theta) = \frac1{\sqrt{2\pi}}e^{-(y-\theta)^2/2},y\in\mathbb R$. Determine
@@ -2073,20 +2141,25 @@ conditional density $f(y|\theta) = \frac1{\sqrt{2\pi}}e^{-(y-\theta)^2/2},y\in\m
 
 $f(y,\theta)$
 
-$f(\theta|Y=y)$
+$f(\theta|Y=y)\sim N(\frac{y}2,\frac12)$
 
 (b) the marginal density of $Y$. (3 pts) 
 
-$f(y)\sim N(\frac{y}2,\frac12)$ 
+$f(y)=\frac1{2\pi}e^{-y^2/4}\sim N(0,2)$ 
 
 ### 2017S2
-[@trans] [@SNorm] [@Cauchy] [Example 4.3.6 Distribution of the ratio of normal variables]
+[Example 4.3.6 Distribution of the ratio of normal variables](#Cauchy) [4.E.28]
 
 If $Z_1,Z_2$ are independent standard normal random variables, find the density of $Z_1/Z_2$.
 
+$J=v$
+
+$f(u,v)$
+
+$f(u)$
 
 ### 2017S3
-[@MGF] [@Expo]
+[Expo](#Expo) [5.2.7 mgf of the sample mean]
 
 Suppose $X_1,X_2,..,X_n$ is a random sample of $Exp(1)$ @Expo random variables. Find the moment generating function $M(t)=E(e^{tX_{(1)}}), t\in\mathbb R$, where $X_{(1)}$ is the minimum. (5 pts)
 
@@ -2095,7 +2168,7 @@ $f_{X_{1}}(x)\sim Expo(1/n)$
 MGF= $\frac1{1-\beta t}=\frac1{1-t/n}$
 
 ### 2017S4
-p625
+[Example 5.2.8 Distribution of the mean]
 
 Let $X=e^Z$ be a lognormal random variable, $Z\sim N(0,1)$. Find its skewness $E(X-\mu)^3/\sigma^3$.
 
@@ -2106,27 +2179,30 @@ $E[X^2]=$
 $E[X^3]=$
 
 ### 2017S5
-[@Norm] [@MLE] [@Cor]
+[MLE](#MLE) [Cor](#Cor)
 
 Suppose $X_1,X_2,..,X_n$ is a random sample of $N(\mu,\sigma^2)$ random variables.
 
 (a) Find the expectation of the MLE for $\sigma^2$. (3 pts)
-p214
 
 $\hat\sigma^2=\frac{\sum(x_i-\mu)^2}{n}$
 
-$\frac{n-1}{n}S^2=\hat\sigma^2$
+$E[\frac{n-1}{n}S^2]=\frac{n-1}{n}\sigma^2$
 
 (b) Compute the correlation of $\bar X$ and $X_n$. (2 pts)
-p169
 
 $\sigma^2/n$
 
+$f(\bar X,X_n)=$
+
+$Cor(\bar X,X_n)=E[\bar XX_n]-\mu_{\bar X}\mu_{X_n}$
+
+$1-\rho^2=\frac1{n}$, $\rho=\sqrt{1-\frac1{n}}$
+
 ### 2017S6
-[2003F9][] [2011F6][] [@Pois] [@UMP]
+[2003F9][] [2011F6][] [@Pois] [UMP][8.3.2]
 
 Let $X_1,X_2,X_3,...$ be i.i.d. $Poisson(\lambda)$ random variables. Find a UMP (uniformly most powerful) test of $H_0:\lambda\le1$ versus $H_1:\lambda>1$ at a level $\alpha$ near .05. (5 pts)
-[p391]
 
 Step1 suff $T=\sum x_i\sim Pois(n\lambda)$
 
@@ -2135,16 +2211,18 @@ Step2 $T\sim Pois$ Expo family has MLR
 Step3 $T>t_0$ is UMP test at $\alpha=P_{\theta_0}(T>t_0)=0.05$
 
 ### 2017S7
-[@Var] [@Beta] [@Bino]
+[2019SA3][] [Beta-Bino]
 
 Suppose that $(P,X)$ is a pair of random variables with $P\sim Beta(1/2, 1/2)$ and then $X_{|P=p}\sim bin(n,p)$. Find the variance of X. 
 
-$E[P]$, $E[P^2]$, $Var[P]$
+$E[P]=1/2$, $E[P^2]=3/8$, $Var[P]=1/8$
 
 $Var[X|P]=n(n+1)/8$
 
+$E[Var(X|P)]+Var[E(X|P)]=E[np(1-p)]+Var[np]=n/2-3n/8+n^2/8$
+
 ### 2017S8
-[@CRLB]
+[CRLB][7.3.2]
 
 Let $X_1,X_2,..,X_n$ be a random sample of $N(\mu,\sigma^2)$ random variables. Find the Cramer-Rao
 lower bound  on the variance of an unbiased estimator for $\sigma^2$. (Assume $\mu$ is known.)
@@ -2156,38 +2234,46 @@ $2\sigma^4/n$
 Kim, Kochar
 
 ### 2017FA1
-[2018S3A][]
+[2018S3A][] [4.E.6][]
 
 Suppose Xenophon and Yves meet for lunch, and Xenophon arrives at time X
 uniformly from 1 to 2 P.M., and Yves arrives independently at time Y with the same distribution. Find the distribution of $|Y-X|$ and its expectation, that is, the expected waiting time of either party.
 
-
-
 ### 2017FA2
-[@Expo]
+[2010SA3][] [2011S4][] [2018FA4][] [DeltaM](#DeltaM) [LimD](#LimD)
 
 Let $X_1,X_2,..,X_n$ be i.i.d. $Exp(\lambda)$ random variables with rate parameter $\lambda$ and density
 $f(x)=\lambda e^{-\lambda x}, x>0$, with $\sigma^2=1/\lambda^2$. We are thinking about using the estimator $\bar X^2$ for the variance. Find the limiting distribution of
 $\sqrt{n}(\bar X_n^2-1/\lambda^2)$
+Let  be a random sample from $Poisson(\mu)$. Derive the limiting distribution of $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 
-Let  be a random sample from $Poisson(\mu)$ @Pois. Derive the limiting distribution of
-$\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
+MLE $1/\lambda=\bar X$
+
+MLE $1/\lambda^2=\bar X^2$
 
 ### 2017FA3
-[2003F8][] [2014SA2][] [2015F2][] [@Expo] [@Basu] [@indep]
+[2003F8][] [2014SA2][] [2015F2][] [Expo](#Expo) [Basu](#Basu)
 
-If X and Y are independent $Exp(1)$ random variables, and the density of the ratio $X/(X+Y)$.
+If X and Y are independent $Exp(1)$ random variables, and the density of the ratio $X/(X+Y)$. $=1\sim Beta(1,1)$
 
 ### 2017FA4
-[@Expo] [@trans]
+[median](#median)
 
 Let $F$ be the cdf of an exponential random variable with median 10 and let $G$ be
 that of an independent exponential random variable Y with median 5. Find the distribution
 of $V=F(X)+G(Y)$.
 
+$m=\frac{\ln2}{\lambda}$
+
+$F=$
+
+$G=$
+
+$f_V(v)=\int_0^v$
+
 
 ### 2017FB1
-[2016S2][] [@Bino]
+**[2016S2][]** [@Bino]
 
 Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y)$ of $Y$,
 
@@ -2200,12 +2286,11 @@ Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y
 (d) What is the MVUE of $P(Y=k)=\binom{n}{k}p^k(1-p)^{n-k}$?
 
 ### 2017FB2
-[2007F2B][] [2014F5B][] [@Expo]
+[2007F2B][] [2014F5B][] [power](#power)
 
 Let $X_1,X_2,..,X_{10}$ be a random sample from an exponential distribution with location
 parameter $\theta$ with pdf
 $f(x;\theta)=\begin{cases}e^{-(x-\theta)}& \theta<x<\infty\\0& e.w.\end{cases}$
-
 where $-\infty<\theta<\infty$is an unknown parameter. For testing the null hypothesis $H_0:\theta=0$
 vs the alterative $H_1:\theta>0$, a reasonable test is to reject the null hypothesis if $X_{(1)}=\min\{X_1,X_2,..,X_{10}\}\ge C$. Find $C$ so that the size of the test is 0.05. Also find the power of this test at $\theta=1$. Is this test unbiased?
 
@@ -2214,16 +2299,18 @@ $\alpha=P_{\theta_0}(x_{(1)}\ge c)$, $c=$
 $\beta=P_{\theta_1}(x_{(1)}\ge c)$
 
 ### 2017FB3
-[2008S5B][] [@Norm] [@MLR] [@UMP] [@power] [@HypoT]
+[2008S5B][] [HypoT](#HypoT)
 
 Let $X_1,X_2,..,X_{m}$ be a random sample of size m from $N(\theta,1)$ distribution and
 let $Y_1,..,Y_m$ be an independent random sample of size $m$ from $N(3\theta,1)$.
 
-(a) Show that the joint distribution of X's and Y's has @MLR (monotone likelihood ratio) property.
+(a) Show that the joint distribution of X's and Y's has MLR (monotone likelihood ratio) property. [MLR][8.3.2] 
 
-(b) Find the UMP test of size $\alpha$ for testing $H_0:\theta\le0$ vs $H_1:\theta>0$.
+(b) Find the UMP test of size $\alpha$ for testing $H_0:\theta\le0$ vs $H_1:\theta>0$. [UMP][8.3.2]
 
-(c) Find an expression of the power function of the UMP test.
+'sign'
+
+(c) Find an expression of the power function of the UMP test. [power](#power)
 
 ### 2017FB4
 [2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2018FB2][] [2019SB4][]
@@ -2249,64 +2336,69 @@ where $\theta>-1$ is an unknown parameter.
 Kochar, Kim
 
 ### 2018S1A
-[@CDF][@trans][@Expo] [@lifetime]
-[Ex1.55]
+[lifetime](#lifetime) [1.E.55][] [561-HW2]
 
-An electric device has lifetime denoted by $T$. The device has value $V=5$ if it fails before time t = 3; otherwise, it has value $V = 2T$. Find the cdf of $V$ , if $T$ has pdf
-
+An electric device has lifetime denoted by $T$. The device has value $V=5$ if it fails before time t=3; otherwise, it has value $V=2T$. Find the cdf of $V$ , if $T$ has pdf
 $f_T(t)=\frac1{1.5}e^{-\frac1{1.5}t}, t>0$
 
+$\begin{cases} 0& -\infty<v<0 \\\int_0^3=1-e^{-2}  & 0\le v<6 \\ \int_0^{v/2}=1-e^{-w/3} &6\le v\end{cases}$
+
+
 ### 2018S2A
-[@trans][2.E.7]
+[2.E.7][]
 
 Let $X$ have pdf 
 $fX(x)=\frac29(x+1), -1\le x\le2$ 
 Find the pdf of $Y=X^2$.
 
-<span style="color:red"> different answer $\begin{cases}&1\le y\le4\\& 0\le y\le1\end{cases}$ </span>
+$\begin{cases}\frac{1}{9}+\frac{1}{9\sqrt y}&1\le y\le4,1\le x\le2\\\frac{2}{9\sqrt y}& 0\le y\le1,-1\le x\le1\end{cases}$
+
+<span style="color:red"> different answer </span> 
 
 ### 2018S3A
-[2017FA1][] 
+[2017FA1][] [4.E.6][]
 
 Suppose Xenophon and Yves meet for lunch, and Xenophon arrives at time X
 uniformly from 1 to 2 P.M., and Yves arrives independently at time Y with the same distribution. Find the distribution of $|Y-X|$ and its expectation, that is, the expected waiting time of either party.
 
+$\frac12+x-\frac{x^2}2$
+
 ### 2018S4A
-[@trans][@indep][@Norm][@MGF]
-[4.E.27]
+[4.E.27][] [4.E.24][] [Facto](#Facto)
+
 Let $X\sim N(\mu,\sigma^2)$ and $Y\sim N(\gamma,\sigma^2)$. Suppose that X and Y are independent. Deine $U=X+Y$ and $V=X-Y$.
 
 (a) Show that U and V are independent.
-
-[4.E.24] [@Facto]
 
 $|J|=1/2$
 
 $f_{U,V}(u,v)=$
 
-(b) Find the distribution of each of them.
-
-From Th [4.2.14]
+(b) Find the distribution of each of them. [indep-1](#indep-1)
 
 $U\sim n(\mu+\gamma,2\sigma^2)$, $V\sim n(\mu-\gamma,2\sigma^2)$
 
 ### 2018S1B
-[2004F8][] [2007F4B][] [2013FB4][] [2019SB2][] [@Laplace] [@MLE]
+[2004F8][] [2007F4B][] [2013FB4][] [2015S3B][] [2019SB2][] [Laplace](#Laplace) [MLE](#MLE) [median](#median)  [7.E.13][]
 
-Let $X_1,X_2,..,X_1$ be a random sample of size 11 from a distribution with pdf
+Let $X_1,X_2,..,X_{11}$ be a random sample of size 11 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
 where $-\infty<\theta<\infty$ is unknown.
 Find the m.l.e. of $\theta$ and find its bias.
 
+$L(\theta|x)$
+
+n even
+
+n odd
+
 $\theta$= sample median unbiased
 
 ### 2018S2B
-[2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2015S2B][] [@Expo] [@FishI] [@CRLB]
+[2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] **[2015S2B][]** [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
 
 Let $X_1,X_2,..,X_n$ be a random sample from exponential distribution with p.d.f.
-
 $f(x,\theta)=\begin{cases}\theta e^{-\theta x}& x\ge0\\0& o.w.\end{cases}$
-
 for which the parameter $\theta>0$ is unknown.
 
 (a) Find the Fisher information $I(\theta)$ about $\theta$ in the sample.
@@ -2316,24 +2408,20 @@ for which the parameter $\theta>0$ is unknown.
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
 ### 2018S3B
-[2003S9][] [2004F9][] [2007F5B][] [2015S4B][] [2019SB3][] [@SPower] [@power] [@UMP] [@HypoT]
+[2003S9][] [2004F9][] [2007F5B][] **[2015S4B][]** [2019SB3][] [SPower](#SPower) [power](#power) [UMP][8.3.2] [HypoT](#HypoT)
 
 Let $X_1,X_2,..,X_n$ be a random sample from a a distribution with pdf
 
 $f(x;\theta)=\begin{cases}\theta x^{\theta-1}& 0<x<1\\0& o.w.\end{cases}$
-
 $H_0:\theta=1\quad H_1 :\theta>1$
-
 Derive the UMP test of size $\alpha$ and obtain the null distribution of your test statistic.
 
 ### 2018S4B
-[2004F12][] [2010SB4][] [2010FB4][] [2011S6][] [2015F5][] [@Expo] [@LRT] [@HypoT] [@power] [@HypoT]
+[2004F12][] [2010SB4][] [2010FB4][] [2011S6][] **[2015F5][]** [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT) [power](#power)
 
 The life time of an electronic component has exponential distribution with mean $\mu$.
 10 such components are put on test at the same time and the experiment is terminated when all of them fail and the times of their failure, $X_1,X_2,..,X_n$ are noted. Based on this information, derive the likelihood ratio test LRT at the level $\alpha= 05$ of the null hypothesis $H_0:\mu=5$ against the alternative $H_1:\mu\neq5$. Also find an expression for the power function of this test.
-
 $T=\sim x_i$, $\frac{2T}{\theta}\sim\chi^2_{2n}$
-
 reject $T>t_0$ two-side rejection region.
 
 ## 2018F
@@ -2341,7 +2429,7 @@ reject $T>t_0$ two-side rejection region.
 Kochar, Bruno
 
 ### 2018FA1
-[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2019SA1 ][] [@joint] [@marg]
+[2003S3][] [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2019SA1 ][]
 
 Suppose $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}C&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
@@ -2350,17 +2438,17 @@ $f(y_1,y_2)=\begin{cases}C&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
 
 (b) Find the marginal density functions of $Y_1$ and $Y_2$ and check whether they are independent.
 
-$f_{Y_1}=2-2y_1$
+$f_{Y_1}=2-2y_1$;
 $f_{Y_2}=2y_2$ dependent
 
-(c) Find $E[Y_1+Y_2]$ =1
+(c) Find $E[Y_1+Y_2]$. =1
 
-(d) Find $P(Y_1\le3/4|Y_1>1/3)$ 495/576 55/64
+(d) Find $P(Y_1\le3/4|Y_1>1/3)$ 55/64
 
 ### 2018FA2
-[@CDF] [range]
+[Expo](#Expo)
 
-Let $X_1,X_2,..,X_n$ be a random sample from an  exponential distribution [@Expo] with mean 5.
+Let $X_1,X_2,..,X_n$ be a random sample from an  exponential distribution with mean 5.
 
 $X_{(r)}=(n-j):(n-1)$
 
@@ -2370,7 +2458,7 @@ pdf $X_{(n)}-X_{(1)}$
 
 CDF $=\int pdf$
 
-(b) Find the expected value [@mean]of the sample range. Example 5.4.5
+(b) Find the expected value of the sample range. [Example 5.4.5](#range)
 
 $E[X_{(r)}]=\sum_{j=1}^{n-1}\frac1{(n-1)-j+1}$
 
@@ -2392,9 +2480,9 @@ $\alpha+\beta/3$
 $E[Y]=E(E[Y|X])$
 
 ### 2018FA4
-[2010SA3][] [2011S4][] [@Pois] [@LimD]
+[2010SA3][] [2011S4][] [2017FA2][] [DeltaM](#DeltaM) [LimD](#LimD)
 
-Let $X_1,X_2,..,X_n$ be a random sample from $Poisson(\mu)$. Derive the limiting distribution of
+Let $X_1,X_2,..,X_n$ be a random sample from $Pois(\mu)$. Derive the limiting distribution of
 $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 
 $\sqrt{n}(\bar X_n-\mu)\to n(0,\frac1{I(\mu)})$
@@ -2404,46 +2492,41 @@ Delta Method
 $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})\to n(0,\frac{[(e^{-\mu})']^2}{I(\mu)})$
 
 ### 2018FB1
-[@LRT]
+[LRT](#LRT) [asymD](#asymD)
 
 (4+6 pts) Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution with mean 120 and unknown variance $\sigma^2$. Derive the likelihood ratio test for testing the null hypothesis $H_0:\sigma^2=4$ against the alternative $H_1:\sigma^2\neq4$. Also fnd the exact as well as the asymptotic null distributions of your test statistic.
 
 
 ### 2018FB2
-[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2019SB4][]
+[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] **[2016F7][]** [2017FB4][] [2019SB4][]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from a probability density function
-
 $f(x;\theta)=\begin{cases}(\theta+1)x^\theta& 0<x<1\\0& o.w.\end{cases}$
-
 where $\theta>-1$ is an unknown parameter.
 
-(a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
+(a) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
 
-(b) (2 pts) What is the asymptotic distribution of $\hat\theta$?
+(b) What is the asymptotic distribution of $\hat\theta$?
 
-(c) (2 pts) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$.
+(c) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$.
 
-(d) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
+(d) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
 
 ### 2018FB3
-[@UMVUE] [@Norm] [@FishI]
+[UMVUE][7.3.2] [FishI][7.3.2] [perc](#perc)
 
-Let $X_1,X_2,..,X_n$ be a random sample from $N(\mu,\sigma^2)$ distribution. Find a lower bound on the variance of any unbiased estimator of the 95th percentile of this distribution based on the Information Inequality. Also compare this bound to the variance of the uniformly minimum variance unbiased estimator .
+Let $X_1,X_2,..,X_n$ be a random sample from $N(\mu,\sigma^2)$ distribution. Find a lower bound on the variance of any unbiased estimator of the 95th percentile of this distribution based on the Information Inequality. Also compare this bound to the variance of the uniformly minimum variance unbiased estimator.
 
 $\hat\tau=\bar x+1.645s$
 
 ### 2018FB4
-[2013FB5] [@Unif] [@HypoT]
-[Example 6.2.15] [6.E.10]
+[2013FB5] [HypoT](#HypoT) [Min-Suff](#Min-Suff)
+[6.E.10] [8.E.33]
 
 Let $X_1$ and $X_2$ be two independent random variables each having uniform distribution
-on the interval $(\theta,\theta+1)$. For testing $H_0:\theta=0$ against $H_a:\theta> 0$, we have two competing tests :
-
+on the interval $(\theta,\theta+1)$. For testing $H_0:\theta=0$ against $H_a:\theta> 0$, we have two competing tests:
 1. Test 1 : Reject $H_0 if X_1>0.95$
-
 2. Test 2 : Reject $H_0 if X_1+X_2>c$.
-
 Find the value of c so that the Test 2 has the same value of Type I error probability as Test 1.
 
 $\alpha=P(x_1>0.95)=P(x_1+x_2>c)$
@@ -2456,30 +2539,34 @@ find pdf of $x_1+x_2$ (example of textbook)
 Kochar, Bruno
 
 ### 2019SA1 
-[2003S3][]  [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][] [@joint] [@marg]
-
+[2003S3][]  [2004F11][] [2007F3A][] [2008S2A][] [2009FA2][] [2010SA4][] [2015S1Ab][] [2016S5][] [2016F8][] [2018FA1][]
 Suppose X and Y have the joint pdf
-
 $f(x;y) =\begin{cases}Cxy& 0\le x\le 2, 0\le y\le 2, x + y\le 2\\0& o.w.\end{cases}$
 
-(a) (4 pts) Find the value of C;
+(a) Find the value of C;
 
-(b) (4 pts) Find the marginal densities of X and Y and check whether they are independent or not;
+$\int_0^2\int_0^{2-x}$, $c=3/2$
 
-(c) (2 pts) Compute $P(X<Y)$;
+(b) Find the marginal densities of X and Y and check whether they are independent or not;
+
+(c)Compute $P(X<Y)$;
 
 ### 2019SA2
-[2007F2A][] [2008S5A][] [2009FA1][] [2014F4A][] [2015S2A][]
+[2007F2A][] [2008S5A][] [2009FA1][] [2014F4A][] [2015S2A][] [Expo](#Expo)
 
 Suppose $Y_1$ and $Y_2$ are i.i.d. random variables and the p.d.f. of each of them is as follows:
-
 $f(y)=\begin{cases}\theta e^{-\theta y}& y\ge0\\0& o.w.\end{cases}$
-
 with $\theta>0$.
-
 Find the p.d.f. of $X=Y_1-Y_2$.
 
+$J=1$, $f(y_1,y_2)$
+
+$f(x,w)$
+
+$f_X(x)$ [Laplace](#Laplace)
+
 ### 2019SA3 
+[2017S7][] [Beta-Bino]
 
 Let $\theta$ be Beta distributed, $\theta\sim Beta(1,1)$. Let $N_1$ be Binomial given $\theta$, that is $N_1\sim Bin(n,\theta)$ given $\theta$.
 
@@ -2488,13 +2575,13 @@ Let $\theta$ be Beta distributed, $\theta\sim Beta(1,1)$. Let $N_1$ be Binomial 
 (b) (6 pts) Compute $p(N_1=n_1)$ for $n_1=0...n$.
 
 ### 2019SA4 
-[2009FA3][] [2015S5B][] [@MOM]
+[2009FA3][] [2015S5A][] [Pois-Bino]
 
 Let $X_1,X_2,..,X_{10}$ be a random sample from a Poisson distribution with mean $\lambda$.
 
-(a) (4 Ppts) Use the method of moment generating functions to find the distribution of $S_{10}=\sum^{10}_{i=1} X_i$.
+(a) (4 Ppts) Use the method of moment generating functions to find the distribution of $S_{10}=\sum^{10}_{i=1} X_i$. [MOM][7.2.1]
 
-(b) (6 pts) Let $S_4=\sum_{i=1}^4X_i$ Find the conditional distribution of $S_4$ given $S_{10}=s$, for $s>0$. This distribution belongs to a family of distributions that you know. Which family? which parameters?
+(b) (6 pts) Let $S_4=\sum_{i=1}^4X_i$ Find the conditional distribution of $S_4$ given $S_{10}=s$, for $s>0$. This distribution belongs to a family of distributions that you know. Which family? which parameters? [F](#F)
 
 ### 2019SB1
 [2009FB1][]
@@ -2503,45 +2590,36 @@ Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution $N(\mu,\sigma
 Solve these two equations. Round up if n is not an integer. Hint: $z_{.05}=1.645$ and $z_{.1}=1.28$
 
 ### 2019SB2 
-[2004F8][] [2007F4B][] [2013FB4][] [2015S3B][] [2018S1B][] [Laplace](#Laplace) [MLE](#MLE)
-[7.E.13][]
+[2004F8][] [2007F4B][] [2013FB4][] [2015S3B][] [2018S1B][] [Laplace](#Laplace) [MLE](#MLE) [median](#median) [7.E.13][]
 
 Let $X_1,X_2,..,X_9$ be a random sample of size 9 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
-
 where $-\infty<\theta<\infty$ is unknown.
-
 Find the m.l.e. of $\theta$ and find its bias.
 
 ### 2019SB3 
-[2003S9][] [2004F9][] [2007F5B][] [2015S4B][] [2018S3B][] [SPower](#SPower) [power](#power) [UMP](#UMP)
+[2003S9][] [2004F9][] [2007F5B][] [2015S4B][] [2018S3B][]
 
 Suppose $X_1,X_2,..,X_n$ is a random sample from a distribution with pdf
-
-$f(x,\theta)=\begin{cases}\theta x^{\theta-1}& 0<x<1\\0& o.w.\end{cases}$
-
-Suppose that the value of $\theta$ is unknown and it is desired to test the following hypotheses :
-
+$f(x,\theta)=\begin{cases}\theta x^{\theta-1}& 0<x<1\\0& o.w.\end{cases}$ [SPower](#SPower)
+Suppose that the value of $\theta$ is unknown and it is desired to test the following hypotheses:
 $H_0:\theta=1\quad H_1 :\theta>1$
-
-Derive the UMP test of size $\alpha$ and obtain the null distribution of your test statistic.
+Derive the UMP test of size $\alpha$ and obtain the null distribution of your test statistic. [UMP][8.3.2]
 
 ### 2019SB4 
-[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][]
+[2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] **[2016F7][]** [2017FB4][] [2018FB2][]
 
 Let $X_1,X_2,..,X_n$ be a random sample of size n from a probability density function
-
 $f(x;\theta)=\begin{cases}(\theta+1)x^\theta& 0<x<1\\0& o.w.\end{cases}$
-
 where $\theta>-1$ is an unknown parameter.
 
-(a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$.
+(a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$. [MLE](#MLE)
 
-(b) (2 pts) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$.
+(b) (2 pts) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$. [unbias][7.3.1]
 
-(c) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$.
+(c) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$. [CRLB][7.3.2]
 
-(d) (2 pts) What is the asymptotic distribution of $\hat\theta$?
+(d) (2 pts) What is the asymptotic distribution of $\hat\theta$? [asymD](#asymD)
 
 
 # 1. Probability Theory
@@ -2553,99 +2631,116 @@ where $\theta>-1$ is an unknown parameter.
 ### 1.2.4 Enumerating Outcomes
 ## 1.3 Conditional Probability and Independence
 ## 1.4 Random Variables
-## 1.5 Distribution Functions
+## 1.5 Distribution Functions {#CDF} {#cdfP}
 
-#### 1.5.1 Cumulative distribution function {#CDF} 
+1.5.1 Cumulative distribution function
 $F_X(x)=P_X(X\le x)$ 
 
-#### 1.5.3 three conditions of c.d.f. {#cdfP}
+1.5.3 three conditions of c.d.f.
 
+## 1.6 Density and Mass Functions {#PDF} 
 
-## 1.6 Density and Mass Functions
-
-#### 1.6.1 probability density function {#PDF} 
+1.6.1 probability density function
 $F_X(x)=P_X(X= x)$
 
 # 2. Transformations and Expectations
 ## 2.1 Distributions o f Functions of a Random Variable
-## 2.2 Expected Values
+## 2.2 Expected Values {#mean} 
 
-#### 2.2.1 expected value {#mean} 
+2.2.1 expected value
 $Eg(X)=\sum_{-\infty}^\infty g(x)f_X(x)dx$
 
-## 2.3 Moments and Moment Generating Functions
+## 2.3 Moments and Moment Generating Functions {#Var} {#MGF}
 
-#### 2.3.2 variance {#Var} 
+2.3.2 variance
 $Var[X]=E(X-EX)^2$
 
-#### 2.3.6 moment generating function {#MGF}
+2.3.6 moment generating function
+
+
 
 ## 2.4 Differentiating Under an Integral Sign
 
 # 3. Common Families of Distributions
 ## 3.1 Introduction
-## 3.2 Discrete Distributions
+## 3.2 Discrete Distributions {#Bern} {#Bino} {#Pois} {#failtime} {#Geom}
 
-#### 3.2.1 Bernoulli distribution (p) {#Bern}
+3.2.1 Bernoulli distribution (p)
 
-#### 3.2.2 Binomial distribution (n,p) {#Bino}
+3.2.2 Binomial distribution (n,p)
 
-#### 3.2.5 Poisson distribution $\lambda$ {#Pois}
+3.2.5 Poisson distribution $\lambda$
 
-#### 3.2.7 Failure times {#failtime}
+$M_X(t)=e^{\lambda(e^t-1)}$
+$M_{\sum x}(t)=e^{n\lambda(e^t-1)}$
 
-#### 3.2.11 Geometric Distribution {#Geom}
+3.2.7 Failure times
 
-## 3.3 Continuous Distributions
+3.2.11 Geometric Distribution
 
-#### 3.3.1 Uniform distribution (a,b) {#Unif}
+## 3.3 Continuous Distributions {#Unif} {#Gamma} {#Expo} {#Weib} {#Norm} {#SNorm} {#Beta} {#LNorm} {#Laplace} {#SPower}
+3.3.1 Uniform distribution (a,b)
 
-#### 3.3.6 Gamma Distribution {#Gamma}
+3.3.6 Gamma Distribution
 
-#### 3.3.11 Exponential distribution {#Expo}
+3.3.11 Exponential distribution
 
-#### 3.3.12 Weibull distribution {#Weib}
+3.3.12 Weibull distribution
 
-#### 3.3.13 Normal distribution {#Norm}
+3.3.13 Normal distribution
 
-#### Standard Normal distribution {#SNorm}
+Standard Normal distribution
 
-#### 3.3.16 Beta distribution {#Beta}
+3.3.16 Beta distribution
 $B(\alpha,\beta)=\frac{Gamma(\alpha)+Gamma(\beta)}{\Gamma(\alpha+\beta)}$, $EX^n=\frac{B(\alpha+n,\beta)}{B(\alpha,\beta)}=\frac{Gamma(\alpha+n)+Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)Gamma(\alpha)}$, $EX=\frac{\alpha} {\alpha+\beta}$, $VarX=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$ 
 
-#### 3.3.19 Cauchy Distribution {#Cauchy}
+3.3.19 Cauchy Distribution [Cauchy](#Cauchy)
 
-#### 3.3.21 Lognormal Distribution {#LNorm}
+3.3.21 Lognormal Distribution
 
-#### 3.3.22 Laplace/Double Exponential distribution    {#Laplace}
+3.3.22 Laplace/Double Exponential distribution   
 
-#### Standard Power distribution   {#SPower}
+Standard Power distribution  
 
 ## 3.4 Exponential Families
 ## 3.5 Location and Scale Families
 ## 3.6 Inequalities and Identities
-### 3.6.1 Probability Inequalities
+### 3.6.1 
+Probability Inequalities {#Cheb}
 
-#### Chebychev inequality {#Cheb}
+Chebychev inequality
 
 ### 3.6.2 Identities
  
 ## 3.E
 
-#### 3.E.23 Pareto distribution {#Pareto}
+$E(Z^{2k})=\frac{(2k)!}{2^KK!}, k=1,2,..$
 
-#### 3.E.17 $E[X^k]=\frac{\beta^k\Gamma(k+\alpha)}{\Gamma(\alpha)}$ {#GammaE}
+$E(Z^{2k+1})=0$
+
+### 3.E.17
+
+$E[X^k]=\frac{\beta^k\Gamma(k+\alpha)}{\Gamma(\alpha)}$ [561-HW5]
+
+### 3.E.20
+
+folded normal
+
+### 3.E.23 {#Pareto}
+
+Pareto distribution
 
 # 4. Multiple Random Variables
-## 4.1 Joint and Marginal Distributions
+## 4.1 Joint and Marginal Distributions {#marg} {#joint}
 
-#### 4.1.3 marginal probability density functions {#marg}
+4.1.3 marginal probability density functions
+
 4.1.6 $f_X(x)=\sum\limits_{y\in\mathbf{R}}f_{X,Y}(x,y)=\int_{-\infty}^{\infty}f(x,y)dy$ 
 
-#### 4.1.10 joint pdf {#joint}
+4.1.10 joint pdf
 $E[g(X,Y)]=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} g(x,y)f(x,y)dxdy$
 
-## 4.2 Conditional D istributions and Independence
+## 4.2 Conditional Distributions and Independence {#cond} {#indep-1}
 
 4.2.1 $f(x|y)=P(X=x|Y=y)=\frac{f(x,y)}{f_Y(y)}$ 
 
@@ -2653,29 +2748,29 @@ $E[g(X,Y)]=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} g(x,y)f(x,y)dxdy$
 $E[g(X)h(Y)|y]=h(Y)E[g(X)|y]$
 $E[XY]=E[X]E[Y]=E[g(x)]E[h(y)]$
 
-#### 4.2.4 Calculating conditional pdfs {#cond}
+4.2.4 Calculating conditional pdfs
 $V[X|Y]=E[(X-E[X|Y])^2|Y]=\sum\limits_x [x-E[X|Y]^2 f(x|y)=E[X^2|y]-(E[X|y])^2$
 $\sigma_{ax+b} =|a|\sigma_{x}$
 
-#### 4.2.5 independent {#indep-1}
+4.2.5 independent
 $f(x,y)=f_X(x)f_Y(y)$ 
 
-4.2.7 $\perp\!\!\!\perp$ $f(x,y)=g(x)h(y)$ 
+4.2.7 $\perp$ $f(x,y)=g(x)h(y)$ 
 
-$U\sim Geom(\frac12),u=1,2..$ $V\sim NBin(2,\frac12),v=2,3..$ $\{(u,v):u=1,2,..;v=u+1,u+2,..\}$ $U\not\!\perp\!\!\!\perp V$
+$U\sim Geom(\frac12),u=1,2..$ $V\sim NBin(2,\frac12),v=2,3..$ $\{(u,v):u=1,2,..;v=u+1,u+2,..\}$ $U\not\perp V$
 
 4.2.10 $P(X\le x,Y\le y)=P(X\le x)P(Y\le y)$ 
 
 4.2.12 $M_Z(t)=M_X(t)M_Y(t)$
 
-4.2.14$X\sim n(\mu,\sigma^2)$, $\perp\!\!\!\perp Y\sim n(\gamma,\tau^2)$
+4.2.14 $X\sim n(\mu,\sigma^2)$, $\perp Y\sim n(\gamma,\tau^2)$
 $X+Y\sim n(\mu+\gamma,\sigma^2+\tau^2)$
 
-4.3.5 $X\perp\!\!\!\perp Y$, $g(X)\perp\!\!\!\perp h(Y)$
+4.3.5 $X\perp Y$, $g(X)\perp h(Y)$
 
 $F(x,y)=P(X\le x, Y\le y)=\int_{-\infty}^{y}\int_{-\infty}^{x}f(s,t)dsdt$ $F_{X,Y}(x,y)=F_X(x)F_Y(y)$
 
-## 4.3 Bivariate Transformations {#trans}
+## 4.3 Bivariate Transformations {#trans} {#indep-2} {#Cauchy}
 
 **Example 4.3.1 (Distribution of the sum of Poisson variables)** 
 
@@ -2690,19 +2785,19 @@ $J=\begin{vmatrix}\frac{\partial x}{\partial u} & \frac{\partial x}{\partial v} 
 **Example 4.3.3 (Distribution of the product of beta variables)** Let $X\sim Beta(\alpha,\beta)$ and $Y\sim Beta(\alpha+\beta,\gamma)$ be independent random variables. The joint pdf of $(X,Y)\sim n(\alpha,\beta+\gamma)$
 
 $X\sim Beta(\alpha,\beta)$, $Y\sim Beta(\alpha+\beta,\gamma)$
-$X\perp\!\!\!\perp Y$, $U=XY$, $f_U(u)\sim n(\alpha,\beta+\gamma)$
+$X\perp Y$, $U=XY$, $f_U(u)\sim n(\alpha,\beta+\gamma)$
 
 **Example 4.3.4 (Sum and difference of normal variables)**: 
 
-$X\sim n(0,1)$, $Y\sim n(0,1)$, $X\perp\!\!\!\perp Y$,
+$X\sim n(0,1)$, $Y\sim n(0,1)$, $X\perp Y$,
 $X-Y\sim n(0,2)$, $X-Y\sim n(0,2)$
 
-#### **Theorem 4.3.5** {#indep-2} 
-Let X and Y be independent random variables. Let $g(x)$ be a function only of a; and $h(y)$ be a function only of y. Then the random variables $U=g(X)\perp\!\!\!\perp V=h(Y)$.
+**Theorem 4.3.5**
+Let X and Y be independent random variables. Let $g(x)$ be a function only of a; and $h(y)$ be a function only of y. Then the random variables $U=g(X)\perp V=h(Y)$.
 $=\sum_{i=1}^kf_{X,Y}(h_{1i}(u,v),\ h_{2i}(u,v))|J_i|$ 
 
 **Example 4.3.6 (Distribution of the ratio of normal variables)**
-$X\perp\!\!\!\perp Y$,$U=\frac{X}Y\sim Cauchy(0,\mu)$ $V=|Y|$
+$X\perp Y$,$U=\frac{X}Y\sim Cauchy(0,\mu)$ $V=|Y|$
 
 ## 4.4 Hierarchical Models and Mixture Distributions
 
@@ -2747,14 +2842,15 @@ $V[aX+b]=a^2\sigma^2$
 Beta-Bin $V[X]=V[E(X|P)]+E[V(X|P)]$
 $=\frac{n^2\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}+\frac{n\alpha\beta}{(\alpha+\beta)(\alpha+\beta+1)}=\frac{n\alpha\beta(\alpha+\beta+n)}{(\alpha+\beta)^2(\alpha+\beta+1)}$
 
-## 4.5 Covariance and Correlation
+## 4.5 Covariance and Correlation {#Cov} {#Cor} {#bNorm}
 
-#### **Definition 4.5.1** {#Cov} 
+**Definition 4.5.1**
 The covariance of X and Y is the number defined by
 $Cov(X,Y)=E((X-\mu_X)(Y-\mu_Y))=\sigma_{XY}$
 
 $Cov(aX,bY)=abCov(X,Y)$ $Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)$ $Cov(X,c)=0$
-#### **Definition 4.5.2** {#Cor} 
+
+**Definition 4.5.2**
 The correlation of X and Y is the number defined by 
 $\rho_{XY}=\frac{\sigma_{XY}}{\sigma_X\sigma_Y}$ 
 $Cor(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$
@@ -2768,7 +2864,7 @@ $Cov(aX,bY)=abCov(X,Y)\quad (1)$
 $Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)\quad (2)$
 $Cov(X,c)=0\quad (3)$
 
-$$Cov(X,X)=E[X^2]-\mu_X^2$$
+$Cov(X,X)=E[X^2]-\mu_X^2$
 
 **Example 4.5.4 (Correlation-I)** 
 
@@ -2791,7 +2887,7 @@ $Var(aX+bY)=a^2VarX+b^2VarY$
 **Example 4.5.9 (Correlation-III)**
 
 
-#### **Definition 4.5.10** bivariate normal pdf 
+**Definition 4.5.10** bivariate normal pdf 
 with $\mu_X,\mu_Y,\sigma_X^2,\sigma_Y^2, \rho$
 
 $f(x,y)=(2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2})^{-1}\exp(-\frac{1}{2(1-\rho^2)}[(\frac{x-\mu_X}{\sigma_X})^2-2\rho(\frac{x-\mu_X}{\sigma_X})(\frac{y-\mu_Y}{\sigma_Y})+(\frac{y-\mu_Y}{\sigma_Y})^2])$
@@ -2822,7 +2918,6 @@ $E[g(X)|y]=E[g(X)]$
 $M_Z(t)=(M_X(t))^n$
 
 Example 4.6.8 (Mgf of a sum of gamma variables)
-
 $X_1,..X_n\sim Gamma(\alpha,\beta)$, $X_1+..X_n\sim Gamma(\alpha_1+..\alpha_n,\beta)$ $\bar X\sim Gamma(\sum\alpha,\beta/n)$ indep
 
 Corollary 4.6.9
@@ -2840,14 +2935,13 @@ Corollary 4.6.10
 ### 4.7.1 Numerical Inequalities
 
 **Theorem 4.7.3 (Cauchy-Schwarz Inequality)** For any two random variables X and Y,
-
-$$|EXY|\le E|XY|\le(E|X|^2)^{\frac12}(E|X|^2)^{\frac12}$$
+$|EXY|\le E|XY|\le(E|X|^2)^{\frac12}(E|X|^2)^{\frac12}$
 
 **Example 4.7.4 (Covariance inequality)**
 
 Theorem 4.7.5 (Minkowski's Inequality)
 
-### 4.7.2 Functional Inequalities
+### 4.7.2 Functional Inequalities {#Jens}
 
 Definition 4.7.6 convex
 
@@ -2855,8 +2949,8 @@ Definition 4.7.6 convex
 
 **Example 4.7.8 (An inequality for means)** Jensen's Inequality can be used to prove an inequality between three different kinds of means. If $a_1,..,a_n$ are positive numbers, define
 
-arithmetic mean $a_A=\frac1n(a_1+a_2+..+a_n)$
-geometric mean $a_G=[a_1a_2\cdots a_n]^{\frac1n}$
+arithmetic mean $a_A=\frac1n(a_1+a_2+..+a_n)$;
+geometric mean $a_G=[a_1a_2\cdots a_n]^{\frac1n}$;
 harmonic mean $a_H=\frac{1}{\frac1n(\frac1{a_1}+\frac1{a_2}+..+\frac1{a_n})}$
 
 An inequality relating these means is $a_H\le a_G\le a_A$
@@ -2871,10 +2965,13 @@ $E(g(X)h(X))\ge(Eg(X))(Eh(X))$
 
 
 
-### 4.E
+### 4.E {#Dirichlet}
 
-#### 4.E.40 Dirichlet distribution {#Dirichlet}
-$f(x,y)=Cx^{a-1}y^{b-1}(1-x-y)^{c-1}$
+4.E.40 Dirichlet distribution
+$f(x,y)=Cx^{a-1}y^{b-1}(1-x-y)^{c-1}$; $0<x<1$, $0<y<1$, $0<y<1-x<1$;
+$c=\frac{\Gamma(a+b+c)}{\Gamma(a)\Gamma(b)\Gamma(c)}$;
+$X,Y\sim Beta, Y/(1-x)\sim Beta(b,c)$;
+$E(XY)=\frac{ab}{(a+b+c+1)(a+b+c)}$
 
 # 5. Properties of a Random Sample {#samp}
 
@@ -2882,7 +2979,7 @@ $f(x,y)=Cx^{a-1}y^{b-1}(1-x-y)^{c-1}$
 
 **Definition 5.1.1** The random variables $X_1,..,X_n$ are called a random sample of size n from the population $f(x)$ if $X_1,..,X_n$ are mutually independent random variables and the marginal pdf or pmf of each $X_i$ is the same function $f(x)$. Alternatively, $X_1,..,X_n$ are called independent and identically distributed random variables with pdf or pmf $f(x)$. This is commonly abbreviated to $iid$ random variables.
 
-$$f(x_1,..,x_n) =f(x_1)\cdots f(x_n)=\prod_{i=1}^nf(x_i)$$
+$f(x_1,..,x_n) =f(x_1)\cdots f(x_n)=\prod_{i=1}^nf(x_i)$
 
 ## 5.2 Sums of Random Variables from a Random Sample
 
@@ -2890,16 +2987,13 @@ $$f(x_1,..,x_n) =f(x_1)\cdots f(x_n)=\prod_{i=1}^nf(x_i)$$
 the sample space of ($X_1,..,X_n$). Then the random variable or random vector $Y=T(X_1,..,X_n)$ is called a statistic. The probability distribution of a statistic Y
 is called the sampling distribution of Y.
 
-`2019.01.15``p.9`
 
 **Definition 5.2.2** The sample mean is the arithmetic average of the values in a random sample. It is usually denoted by
-
-$$\bar X=\frac{X_1+..+X_n}{n}=\frac1n\sum_{i=1}^nX_i$$
-
+$\bar X=\frac{X_1+..+X_n}{n}=\frac1n\sum_{i=1}^nX_i$
 
 **Definition 5.2.3** The sample variance is the statistic defined by
+$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}(\sum_{i=1}^nX_i^2-n\bar X^2)$
 
-$$S^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2=\frac1{n-1}(\sum_{i=1}^nX_i^2-n\bar X^2)$$
 The sample standard deviation is the statistic defined by $S=\sqrt{S^2}$
 
  
@@ -2924,23 +3018,24 @@ $E\bar X=\mu$;
 $Var\bar X=\frac{\sigma^2}n$;
 $ES^2=\sigma^2$
 
-**Theorem 5.2.7** 
+**Theorem 5.2.7 mgf of the sample mean** 
 $M_{\bar X}(t)=[M_X(\frac{t}n)]^n$
 
 **Example 5.2.8 (Distribution of the mean)** Let $X_1,..,X_n$ be a random sample from a $n(\mu,\sigma^2)$ population. Then the mgf of the sample mean is
 
-$$M_{\bar X}(t)=\left[e^{\mu\frac{t}n+\frac{\sigma^2{(\frac{t}n)}^2}2}\right]^n=e^{\mu t+\frac{(\frac{\sigma^2}{n})t^2}2}$$
+$M_{\bar X}(t)=\left[e^{\mu\frac{t}n+\frac{\sigma^2{(\frac{t}n)}^2}2}\right]^n=e^{\mu t+\frac{(\frac{\sigma^2}{n})t^2}2}$
 
 Thus, $\bar X$ has a $n(\mu,\frac{\sigma^2}n)$ distribution.
 
 Another simple example is given by a $Gamma(\alpha,\beta)$ random sample (4.6.8). Here, we can also easily derive the distribution of  the sample mean. The mgf of the sample mean is
 
-$$M_{\bar X}(t)=\left[\left(\frac1{1-\beta(\frac{t}n)}\right)^{a}\right]^n=\left(\frac1{1-\beta(\frac{t}n)}\right)^{na}$$
+$M_{\bar X}(t)=\left[\left(\frac1{1-\beta(\frac{t}n)}\right)^{a}\right]^n=\left(\frac1{1-\beta(\frac{t}n)}\right)^{na}$
 
 which we recognize as the mgf of a $gGamma(n\alpha,\beta/n)$, the distribution of $\bar X$.
 
-$$\mu_{\bar X}=n\alpha\cdot\frac\beta n=\alpha\beta=\mu$$
-$$\sigma^2_{\bar X}=n\alpha\cdot(\frac\beta n)^2=\frac{\alpha\beta^2}n=\frac{\sigma^2}n$$
+$\mu_{\bar X}=n\alpha\cdot\frac\beta n=\alpha\beta=\mu$
+
+$\sigma^2_{\bar X}=n\alpha\cdot(\frac\beta n)^2=\frac{\alpha\beta^2}n=\frac{\sigma^2}n$
 
 **Theorem 5.2.9 Convolution formula** If X and Y are independent continuous random variables with pdfs $f_X(x)$ and $f_Y(y)$, then the pdf of $Z=X+Y$ is
 $f_Z(z) =\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$
@@ -2962,22 +3057,20 @@ Example 5.2.12 (Sum of Bernoulli random variables)
 
 ### 5.3.1 Properties of the Sample Mean and Variance
 
-**Theorem 5.3.1** Let $X_1,..,X_n$ be a random sample from a $n (\mu,\sigma^2)$ distribution, and let $\bar X=(1/n)\sum_{i=1}^nX_i$ and $S^2=[1/(n-1)]\sum_{i=1}^n(X_i-\bar X)^2$ Then
+**Theorem [5.3.1]** Let $X_1,..,X_n$ be a random sample from a $n (\mu,\sigma^2)$ distribution, and let $\bar X=(1/n)\sum_{i=1}^nX_i$ and $S^2=[1/(n-1)]\sum_{i=1}^n(X_i-\bar X)^2$ Then
 
-$\bar X\perp\!\!\!\perp\sigma^2$
-
-$\bar X\sim n(\mu,\sigma^2/n)$
-
+$\bar X\perp\sigma^2$;
+$\bar X\sim n(\mu,\sigma^2/n)$;
 $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$
 
-$$f_{\chi^2}(x)=\frac{x^{\frac{p}2-1}}{\Gamma \frac{p}2 2^{\frac{p}2}}e^{-\frac{x}2}, x>0$$
+$f_{\chi^2}(x)=\frac{1}{\Gamma \frac{p}2 2^{\frac{p}2}}x^{\frac{p}2-1}e^{-\frac{x}2}, x>0$
 
 
 $nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2$
 
 $\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}$
 
-### 5.3.2 The Derived Distributions: Student's t and Snedecor's F
+### 5.3.2 The Derived Distributions: Student's t and Snedecor's F {#T} {#F}
 
 $X\sim n(\mu,\sigma^2)$
 $\frac{x-\mu}{\sigma},\frac{\bar x-\mu}{\sigma/\sqrt{n}}\sim n(0,1)$
@@ -2994,22 +3087,20 @@ $\chi^2_{p}\sim Gamma(\frac{p}2,2)$
 $X_1,..X_n\sim \chi^2_{p_i}$, $X_1+..X_n\sim \chi^2_{p_1+..p_n}$
 $U\sim \chi^2_{m}$,$V\sim \chi^2_{n}$, $U+V\sim \chi^2_{m+n}$
 
-#### **Definition 5.3.4** {#T}
-
-$$f_{T}(x)=\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}\left (1+\frac{x^2}{p}\right)^{-\frac{p+1}2},-\infty<x<\infty$$
+**Definition 5.3.4**
+$f_{T}(x)=\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}\left (1+\frac{x^2}{p}\right)^{-\frac{p+1}2},-\infty<x<\infty$
 
 5.3.5 $X_i\sim n(\mu_X,\sigma_X^2)$, 
 $Y_j\sim n(\mu_Y,\sigma_Y^2)$, 
-$X_1..X_n\perp\!\!\!\perp Y_1..Y_m$, 
+$X_1..X_n\perp Y_1..Y_m$, 
 $\frac{S_X^2}{\sigma_X^2}\sim \chi^2$
 $\frac{S_X^2/\sigma_X^2}{S_Y^2/\sigma_Y^2} \sim F$ 
 
 $V\chi^2_{n-1}=V[\frac{(n-1)S^2}{\sigma^2}]=\frac{(n-1)^2}{\sigma^4}Var[S^2]=2(n-1)\implies Var[S^2]=\frac{2\sigma^4}{n-1}$
 
 
-#### **Definition 5.3.6** {#F}
-
-$$f_{F}(x)=\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}\frac{x^{\frac{p}2-1}}{(1+\frac{p}qx)^{\frac{p+q}2}}, x>0$$
+**Definition 5.3.6**
+$f_{F}(x)=\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}\frac{x^{\frac{p}2-1}}{(1+\frac{p}qx)^{\frac{p+q}2}}, x>0$
 
 **Theorem 5.3.8**
 
@@ -3019,22 +3110,24 @@ $X\sim T_(q)$, $X^2 \sim F_(1,q)$
 
 $X\sim F_(p,q)$, $\frac{\frac{p}{q}X}{1+\frac{p}{q}X} \sim Beta(\frac{p}2,\frac{q}2)$
 
-## 5.4 Order Statistics {#order}
+## 5.4 Order Statistics {#order} {#range} {#median} {#perc}
+
+Definition 5.4.1 The order statistics
 
 **Definition 5.4.2** The notation $\{b\}$, when appearing in a subscript, is defined to be the number $b$ rounded to the nearest integer in the usual way. More precisely, if $i$ is an integer and $i-.5\le b<i+.5$, then $\{b\}=i$.
 
 **Theorem 5.4.3** Let $X_1,..,X_n$ be a random sample from a discrete distribution with pmf $f_X(x_i)=P_i$, where $x1<x2<..$ are the possible values of $X$ in ascending order.
 
 Let $X_{(1)},..,X_{(n)}$ denote the order statistics from the sample. Then
+$P(X_{(j)}\le X_i)=\sum^n_{k=j}\binom{n}{k}P^k_i(1-P_i)^{n-k}$
 
-$$P(X_{(j)}\le X_i)=\sum^n_{k=j}\binom{n}{k}P^k_i(1-P_i)^{n-k}$$
-$$P(X_{(j)}=X_i)=\sum^n_{k=j}\binom{n}{k}[P^k_i(1-P_i)^{n-k}-P^k_{i-1}(1-P_{i-1})^{n-k}]$$
+$P(X_{(j)}=X_i)=\sum^n_{k=j}\binom{n}{k}[P^k_i(1-P_i)^{n-k}-P^k_{i-1}(1-P_{i-1})^{n-k}]$
 
 **Theorem 5.4.4** `2019.01.29``p.9` Let $X_{(1)},..,X_{(n)}$ denote the order statistics of a random sample, $X_1,..,X_n$ from a continuous population with cdf $Fx (x)$ and pdf $f_X(x)$. Then the pdf of $X_{(n)}$ is
 
-$$(5.4.4)\quad f_{X_{(j)}}(x)=\frac{n!f_X(x)}{(j-1)!(n-j)!}[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$$
+$(5.4.4)\quad f_{X_{(j)}}(x)=\frac{n!f_X(x)}{(j-1)!(n-j)!}[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$
 
-$$f_{K}(x)=\frac{n!f(x)}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}$$
+$f_{K}(x)=\frac{n!f(x)}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}$
 
 **Example 5.4.5 (Uniform order statistic pdf)** Let $X_{(1)},..,X_{(n)}$ be iid $Unif(0,1)$ , so $f_X(x)=1$ for $x\in(0,1)$ and $F_X(x)=x$ for $x\in(0,1)$. Using (5.4.4), we see that the pdf of the $j^{th}$ order statistic is
 
@@ -3054,15 +3147,13 @@ $f_{X_{(i)},X_{(j)}}(u,v)=\frac{n!f_X(u)f_X(v)}{(i-1)!(j-1-i)!(n-j)!}[F_X(u)]^{i
 
 **Definition 5.5.1** A sequence of random variables, $X_1,X_2,..$, $\underrightarrow{\mathcal{P}}$ $X$ if, for every $\varepsilon>0$,
 
-$$\begin{cases}\lim_{n\to\infty}P(|X_n-X|\ge\epsilon)=0\\\lim_{n\to\infty}P(|X_n-X|<\epsilon)=1\end{cases}$$
+$\begin{cases}\lim_{n\to\infty}P(|X_n-X|\ge\epsilon)=0\\\lim_{n\to\infty}P(|X_n-X|<\epsilon)=1\end{cases}$
 
 **Theorem 5.5.2 (Weak Law of Large Numbers)** Let $X_1,X_2,..$ be iid random variables with $EX_i=\mu$ and $Var Xi =\sigma^2<\infty$. Define $\bar X_n=\frac1n\sum_{i=1}^nX_i$ Then, for every $\epsilon>0$
-
-$$\lim_{n\to\infty}P(|\bar X_n-\mu|<\epsilon)=1$$
+$\lim_{n\to\infty}P(|\bar X_n-\mu|<\epsilon)=1$
 that is, $\bar X_n$ converges in probability to $\mu$.
 
 **Example 5.5.3 (Consistency of $S^2$)** Suppose we have a sequence$X_1,X_2,..$ of iid random variables with $EX_i=\mu$ and $Var Xi =\sigma^2<\infty$. If we define $S_n^2=\frac1{n-1}\sum_{i=1}^n(X_i-\bar X)^2$
-
 a sufficient condition that $VarS^2_n$ converges in probability to $\sigma^2$ is that $VarS^2_n\to0$ as $n\to\infty$
 
 **Theorem 5.5.4** Suppose that $X_1, X2,..$ converges in probability to a random variable X and that h is a continuous function. Then $h(X_1),h(X2),..$ converges in probability to $h(X)$.
@@ -3072,7 +3163,7 @@ a sufficient condition that $VarS^2_n$ converges in probability to $\sigma^2$ is
 ### 5.5.2 Almost Sure Convergence
 
 **Definition 5.5.6** A sequence of random variables, $X_1,X_2,..$, converges almost surely to a random variable $X$ if, for every $\epsilon>0$,
-$$P(\lim_{n\to\infty}|X_n-X|<\epsilon)=1$$
+$P(\lim_{n\to\infty}|X_n-X|<\epsilon)=1$
 
 **Example 5.5.7 (Almost sure convergence)**
 
@@ -3080,16 +3171,16 @@ $$P(\lim_{n\to\infty}|X_n-X|<\epsilon)=1$$
 
 **Theorem 5.5.9 (Strong Law of Large Numbers)** Let $X_1,X_2,..$, be iid random variables with $EX_i=\mu$ and $Var Xi =\sigma^2<\infty$, and define $\bar X_n=\frac1n\sum_{i=1}^nX_i$.
 Then, for every $\epsilon>0$,
-$$P(\lim_{n\to\infty}|\bar X_n-\mu|<\epsilon)=1$$
+$P(\lim_{n\to\infty}|\bar X_n-\mu|<\epsilon)=1$
 that is, $\bar X_n$ converges almost surely to $\mu$
 
-### 5.5.3 Convergence in Distribution
+### 5.5.3 Convergence in Distribution {#Max-Unif} {#CLT}
 
 **Definition 5.5.10** A sequence of random variables, $X_1,X_2,..$, _converges in distribution_ to a random variable $X$ if
-$$\lim_{n\to\infty}F_{X_n}(x)=F_X(x)$$
+$\lim_{n\to\infty}F_{X_n}(x)=F_X(x)$
 at all points $x$ where $F_X(x)$ is continuous.
 
-#### **Example 5.5.11 (Maximum of uniforms)** {#Max-Unif}
+**Example 5.5.11 (Maximum of uniforms)** 
 
 $P(|y_{(n)}-1|\ge\varepsilon)=(1-\varepsilon)^n$
 
@@ -3101,7 +3192,7 @@ $P(y_{(n)}\le1-t/n)=P(n(1-y_n)\ge t)\to 1-e^{-t}$
 
 **Theorem 5.5.13** 
 
-#### **Theorem 5.5.14 (Central Limit Theorem)** {#CLT}
+**Theorem 5.5.14 (Central Limit Theorem)**
 
 $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\overset{D}{\to}N(0,1)$
 
@@ -3112,10 +3203,9 @@ $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\overset{D}{\to}N(0,1)$
 **Theorem 5.5.17 (Slutsky's Theorem)** If $X_n\to X$ in distribution and $Y_n\to a$, a constant, in probability, then
 
  a. $Y_nX_n\to aX$ in distribution
-
  b. $X_n+Y_n\to X+a$ in distribution
 
-### 5.5.4 The Delta Method
+### 5.5.4 The Delta Method {#DeltaM}
 
 **Example 5.5.19 (Estimating the odds)**
 
@@ -3139,9 +3229,9 @@ $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\overset{D}{\to}N(0,1)$
 
 ## 5.6 Generating a Random Sample
 
-### 5.6.1 Direct Methods
+### 5.6.1 Direct Methods {#lifetime}
 
-#### **Example 5.6.1 (Exponential lifetime)** {#lifetime}
+**Example 5.6.1 (Exponential lifetime)** 
 
 **Example 5.6.2 (Continuation of Example 5.6.1)**
 
@@ -3149,10 +3239,13 @@ $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\overset{D}{\to}N(0,1)$
 
 The relationship between the exponential and other distributions allows the quick generation of many random variables. For example, if $U_j$ are iid $uniform(0,1)$ random variables, then 
 
-$$Y_j=-\lambda\ln(u_j)\sim Expo(\lambda)$$
-$$Y=-2\sum_{j=1}^\nu\ln U_j\sim \chi^2_{2\nu}$$
-$$Y=-\beta\sum_{j=1}^\alpha\ln U_j\sim Gama(\alpha,\beta)$$
-$$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$$
+$Y_j=-\lambda\ln(u_j)\sim Expo(\lambda)$
+
+$Y=-2\sum_{j=1}^\nu\ln U_j\sim \chi^2_{2\nu}$
+
+$Y=-\beta\sum_{j=1}^\alpha\ln U_j\sim Gama(\alpha,\beta)$
+
+$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$
 
 **Example 5.6.5 (Binomial random variable generation)**
 
@@ -3172,7 +3265,7 @@ $$Y=\frac{\sum_{j=1}^a\ln U_j}{\sum_{j=1}^{a+b}\ln U_j}\sim Beta(a,b)$$
 
 ## 6.2 The Sufficiency Principle
 
-### 6.2.1 Sufficient Statistics {#suff}
+### 6.2.1 Sufficient Statistics {#suff} {#Facto} 
 
 **Definition 6.2.1** A satistic $T(\mathbf{X})$ is a sufficient statistic for $\theta$ if the conditional distribution of the sample $\mathbf{X}$ given the value of $T(\mathbf{X})$ does not depend on $\theta$.
 
@@ -3190,7 +3283,7 @@ $f(\mathbf{x}|\theta)=\prod_{i=1}^nf(x_i)=\prod_{i=1}^nf(x_{(i)})$
 
 where $x_{(1)}\le x_{(2)}\le...\le x_{(n)}$ are the order statistics.
 
-#### **Theorem 6.2.6 (Factorization Theorem)** {#Facto} 
+**Theorem 6.2.6 (Factorization Theorem)**
 
 Let $f(\mathbf{x}|\theta)$ denote the joint pdf or
 pmf of a sample $\mathbf{X}$. A statistic $T(\mathbf{X})$ is a sufficient statistic for $\theta$ if and only if there exist functions $g(x|\theta)$ and $h(\mathbf{x})$ such that, for all sample points $\mathbf{x}$ and all parameter points $\theta$,
@@ -3201,19 +3294,29 @@ $f(\mathbf{x}|\theta)= g(T(\mathbf{x})|\theta)h(\mathbf{x})$
 
 **Example 6.2.9 (Normal sufficient statistic, both parameters unknown)**
 
-### 6.2.2 Minimal Sufficient Statistics
+Theorem 6.2.10 exponential family $T=\sum X_i$ is a sufficient statistic for $\theta$.
+
+### 6.2.2 Minimal Sufficient Statistics {#Min-Suff}
 
 **Definition 6.2.11** A sufficient statistic $T(\mathbf{X})$ is called a minimal sufficient statistic if, for any other sufficient statistic $T'(\mathbf{X})$, $T(\mathbf{x})$ is a function of $T'(\mathbf{X})$.
 
 **Definition 6.2.13** Let $f(x|\theta)$, be the pmf or pdf of a sample $\mathbf{X}$. Suppose there exists a function $T'(\mathbf{x})$ such that, for every two sample points x and y, the ratio $\frac{f(x|\theta)}{f(y|\theta)}$ is constant as a function of $\theta$ if and only if $T(\mathbf{x})=T(\mathbf{y})$, then $T(\mathbf{x})$ is a minimal sufficient statistic for $\theta$.
 
+Example 6.2.15 (Uniform minimal sufficient statistic)
+
 ### 6.2.3 Ancillary Statistics {#ancillary}
 
 **Definition 6.2.16** A satistic $S(\mathbf{X})$ whose distribution does not depend on the parameter $\theta$ is called an ancillary statistic.
 
-### 6.2.4 Sufficient, Ancillary, and Complete Statistics
+Example 6.2.18 (Location family ancillary statistic)
 
-#### **Definition 6.2.21** {#comp} 
+$R=X_{(n)}-X_{(1)}$ is an ancillary statistic.
+
+Example 6.2.19 (Scale family ancillary statistic)
+
+### 6.2.4 Sufficient, Ancillary, and Complete Statistics {#comp} {#Basu} 
+
+**Definition 6.2.21** the (n-1) values $X_1/X_n, . . . , X_{n-1}/X_n$ is an ancillary statistic.
 
 Let $f(x|\theta)$ be a family of pdfs or pmfs for a statistic $T(\vec X)$. The family of probability distributions is called complete if $E_\theta[g(T)]=0, \forall\theta$ implies $P_\theta(g(T)=0)=1$ for all $\theta$. Equivalently, $T(\vec X)$ is called a _complete statistic_.
 
@@ -3221,7 +3324,7 @@ Let $f(x|\theta)$ be a family of pdfs or pmfs for a statistic $T(\vec X)$. The f
 
 **Example 6.2.23 (Uniform complete sufficient statistic)**
 
-#### **Theorem 6.2.24 (Basu's Theorem)** {#Basu} 
+**Theorem 6.2.24 (Basu's Theorem)**
 
 If $T(\mathbf{X})$ is a complete and minimal sufficient statistic, then $T(\mathbf{X})$ is independent of every ancillary statistic.
 
@@ -3268,11 +3371,17 @@ is also a minimal sufficient statistic.
 
 **Example 6.4.6 (Normal location invariance)**
 
+### 6.E.10
+
+6.E.10 Show that the minimal sufficient statistic for the $Unif(\theta,\theta+1)$ , found in [Example 6.2.15], is not complete. [8.E.33] [562-HW5]
+
+
 # 7. Point Estimation
 
 ## 7.2 Methods of Finding Estimators
 
-### 7.2.1 Method of Moments {#MOM}
+### 7.2.1 
+Method of Moments {#MOM}
 
 $f(\mathbf{x}|\theta)=$. Thus, $X\sim Beta(\theta,1)$, $\mu'_1=E[X]=$
 
@@ -3320,7 +3429,8 @@ A useful property of maximum likelihood estimators is what has come to be known 
 
 **Example 7.2.13 (Continuation of Example 7.2.2)**
 
-### 7.2.3 Bayes Estimators {#BayesE}
+### 7.2.3 
+Bayes Estimators {#BayesE}
 
 In the Bayesian approach $\theta$ is considered to be a quantity whose variation can be described by a probability distribution (called the _prior distribution_). This is a subjective distribution, based on the experimenter's belief, and is formulated before the data are seen (hence the name prior distribution). A sample is then taken from a population indexed by $\theta$ and the prior distribution is updated with this sample information. The updated prior is called the _posterior distribution_. This updating is done with the use of Bayes' Rule (seen in Chapter 1), hence the name Bayesian statistics.
 
@@ -3349,62 +3459,56 @@ $f(\theta|x)\sim N(\frac{\tau^2x+\sigma^2\mu}{\tau^2+\sigma^2},\frac{\sigma^2\ta
 **Example 7.2.19 ( Conclusion or Example 7.2.17)**
 
 **Theorem 7.2.20 (Monotonic EM sequence)** The sequence {$\hat\theta_{(r)}$} defined by 7.2.20 satisfies
-
-$$L\left(\hat\theta^{(r+1)}|y\right)\ge L\left(\hat\theta^{(r)}|y\right)$$
+$L\left(\hat\theta^{(r+1)}|y\right)\ge L\left(\hat\theta^{(r)}|y\right)$
 
 ## 7.3 Methods of Evaluating Estimators
-
-### 7.3.1 Mean Squared Error {#MSE}
+### 7.3.1 
+Mean Squared Error {#MSE} {#bias} {#unbias} 
 
 **Definition 7.3.1** The mean squared error (MSE) of an estimator $W$ of a parameter $\theta$ is the function of $\theta$ defined by $E_{\theta}(W-\theta)^2$.
 
 $E_{\theta}(W-\theta)^2=Var_{\theta}W+(E_{\theta}W-\theta)^2=Var_{\theta}W+(Bias_{\theta}W)^2$
 
-#### **Definition 7.3.2** {#bias} {#unbias} 
+**Definition 7.3.2**
 The _bias_ of a point estimator $W$ of a parameter $\theta$ is the difference between the expected value of $W$ and  $\theta$; that is, $Bias_{\theta}W=E_{\theta}W-\theta$. An estimator whose bias is identically (in a) equal to 0 is called _unbiased_ and satisfies $E_{\theta}W=\theta$ for all $\theta$.
 
 For an unbiased estimator we have
-$$E_{\theta}(W-\theta)^2=Var_{\theta}W$$
+$E_{\theta}(W-\theta)^2=Var_{\theta}W$
 and so, if an estimator is unbiased, its MSE is equal to its variance.
 
 **Example 7.3.3 (Normal MSE)** Let $X_1,..,X_n\sim iid\ n(\mu,\sigma^2)$. The statistics $\bar X$ and $\sigma^2$ are both unbiased estimators since
 
-$$E\bar X=\mu,\quad ES^2=\sigma^2, \forall\mu \text{ and } \sigma^2$$
+$E\bar X=\mu,\quad ES^2=\sigma^2, \forall\mu \text{ and } \sigma^2$
 
-$$E(\bar X-\mu)^2=Var\bar X=\frac{\sigma^2}{n},\quad E(S^2-\sigma^2)^2=VarS^2=\frac{2\sigma^4}{n-1}$$
+$E(\bar X-\mu)^2=Var\bar X=\frac{\sigma^2}{n},\quad E(S^2-\sigma^2)^2=VarS^2=\frac{2\sigma^4}{n-1}$
 
 **Example 7.3.4 (Continuation of Example 7.3.3)** An alternative estimator for $\sigma^2$ is the maximum likelihood estimator  $\hat\sigma^2=\frac1n\sum_{i=1}^n(X_i-\bar X)^2=\frac{n-1}nS^2$. It is straightforward to calculate
-
-$$E\hat\sigma^2=E\left(\frac{n-1}nS^2\right)=\frac{n-1}n\sigma^2$$
-
+$E\hat\sigma^2=E\left(\frac{n-1}nS^2\right)=\frac{n-1}n\sigma^2$
 so $\sigma^2$ is a biased estimator of $\hat\sigma^2$. The variance of $\hat\sigma^2$ can also be calculated as
-
-$$Var\hat\sigma^2=Var\left(\frac{n-1}nS^2\right)=\left(\frac{n-1}n\right)^2VarS^2=\frac{2(n-1)}{n^2}\sigma^4$$
+$Var\hat\sigma^2=Var\left(\frac{n-1}nS^2\right)=\left(\frac{n-1}n\right)^2VarS^2=\frac{2(n-1)}{n^2}\sigma^4$
 and, hence, its MSE is given by
-
-$$E(\hat\sigma^2-\sigma^2)^2=\frac{2(n-1)}{n^2}\sigma^4+\left(\frac{n-1}n\sigma^2-\sigma^2\right)^2=\frac{2n-1}{n^2}\sigma^4$$
+$E(\hat\sigma^2-\sigma^2)^2=\frac{2(n-1)}{n^2}\sigma^4+\left(\frac{n-1}n\sigma^2-\sigma^2\right)^2=\frac{2n-1}{n^2}\sigma^4$
 We thus have
-$$E(\hat\sigma^2-\sigma^2)^2=\frac{2n-1}{n^2}\sigma^4<\frac{2\sigma^4}{n-1}=E(S^2-\sigma^2)^2$$
+$E(\hat\sigma^2-\sigma^2)^2=\frac{2n-1}{n^2}\sigma^4<\frac{2\sigma^4}{n-1}=E(S^2-\sigma^2)^2$
 
 showing that $\hat\sigma^2$ has smaller MSE than $S^2$ Thus, by trading off variance for bias, the MSE is improved.
 
 **Example 7.3.5 (MSE of binomial Bayes estimator)**
  
 **Example 7.3.6 (MSE o f equivariant estimators)** Let $X_1,..,X_n$ be iid $f(x-\theta)$. For an estimator $W(X_1,..,X_n)$ to satisfy $W(g_a(x))=g_a(W(x))$, we must have 
-
-$$(7.3.2)\quad W(x_1,..,x_n)+a=W(x_1+a,..,x_n+a)$$
+$(7.3.2)\quad W(x_1,..,x_n)+a=W(x_1+a,..,x_n+a)$
 which specifies the equivariant estimators with.respect to the group of transformations defined by $\mathcal{G}=\{g_a(\vec x):-\infty<a<\infty\}$, where $g_a(x_1,..,x_n)=(x_1+a,..,x_n+a)$. For these estimators we have
+$(7.3.3)\quad E_\theta(W(X_1,..,X_n)-\theta)^2=\idotsint^\infty_{-\infty}(W(u_1,..,u_n))^2\prod^n_{i=1}f(u_i)du_i$
 
-$$(7.3.3)\quad E_\theta(W(X_1,..,X_n)-\theta)^2=\idotsint^\infty_{-\infty}(W(u_1,..,u_n))^2\prod^n_{i=1}f(u_i)du_i$$
+### 7.3.2 
+Best Unbiased Estimators {#UMVUE} {#CRLB}  {#FishI} 
 
-### 7.3.2 Best Unbiased Estimators
-
-#### **Definition 7.3.7** {#UMVUE} 
+**Definition 7.3.7**
 An estimator $W^*$ is a best unbiased estimator of $\tau(\theta)$ if it satisfies $E_\theta{W^*}=\tau(\theta)$ for all $\theta$ and, for any other estimator $W$ with $E_\theta{W}=\tau(\theta)$, we have Vare $Var_\theta{W^*}<Var_\theta{W}$ for all $\theta$. $W^*$ is also called a _uniform minimum variance unbiased estimator_ (UMVUE) of $\tau(\theta)$.
 
 **Example 7.3.8 (Poisson unbiased estimation)**
 
-#### **Theorem 7.3.9 (Cramer-Rao Inequality)** {#CRLB} 
+**Theorem 7.3.9 (Cramer-Rao Inequality)**
 Let $X_1,..,X_n$ be a sample with pdf $f(\vec x|\theta)$, and let $W(\vec X)=W(X_1,..,X_n)$ be any estimator satisfying
 
 $\frac{d}{d\theta}E_\theta W(\vec X)=\int_{\mathcal{X}}\frac{\partial}{\partial\theta}\left[W(\vec x)f(\vec x|\theta)\right]d\vec x,\quad Var_\theta W(\vec X)<\infty$
@@ -3415,7 +3519,7 @@ $Var_\theta W(\vec X)\ge\frac{(\frac{d}{d\theta}E_\theta W(\vec X))^2}{E_\theta\
 
 $Var_\theta W(\vec X)\ge\frac{(\frac{d}{d\theta}E_\theta W(\vec X))^2}{nE_\theta\left[(\frac{\partial}{\partial\theta}\ln f(X|\theta))^2\right]}$
 
-#### **Lemma 7.3.11 Fisher information** {#FishI} 
+**Lemma 7.3.11 Fisher information**
 If $f(x|\theta)$ satisfies
 $\frac{d}{d\theta}E_\theta\left[\frac{\partial}{\partial\theta}\ln f(X|\theta)\right]=\int\frac{\partial}{\partial\theta}\left(\left[\frac{\partial}{\partial\theta}\ln f(x|\theta)\right]f(x|\theta)\right)dx$
 (true for an exponential family), then
@@ -3432,12 +3536,12 @@ $E_\theta\left[(\frac{\partial}{\partial\theta}\ln f(X|\theta))^2\right]=-E_\the
 
 **Example 7.3.16 (Continuation of Example 7.3.14)**
 
-### 7.3.3 Sufficiency and Unbiasedness
+### 7.3.3 Sufficiency and Unbiasedness {#Rao-Bla} {#Lehm-Sche} 
 
-#### **Theorem 7.3. 17 (Rao-Blackwell)** {#Rao-Bla}
+**Theorem 7.3. 17 (Rao-Blackwell)**
 Let $W$ be any unbiased estimator of $\tau(\theta)$, and let $T$ be a sufficient statistic for $\theta$. Define $\phi(T)=E[W|T]$. Then $E_{\theta}\phi(T)=\tau(\theta)$ and $Var_{\theta}\phi(T)\le Var_{\theta}(W)$ for all $\theta$; that is, $\phi(T)$ is a uniformly better unbiased estimator of $\tau(\theta)$.
  
-#### **Theorem 7.3.23 Lehmann-Scheffe** {#Lehm-Sche} 
+**Theorem 7.3.23 Lehmann-Scheffe**
 Let $T$ be a complete sufficient statistic for a parameter $\theta$, and let $\phi(T)$ be any estimator based only on $T$. Then $\phi(T)$ is the unique best unbiased estimator of its expected value.
 
 ### 7.3.4 Loss Function Optimality
@@ -3471,16 +3575,21 @@ where $c$ is a positive constant. As the constant $c$ varies, the loss function 
 
 **Example 7.3.30 (Binomial Bayes estimates)**
 
+### 7.E.13
+
+7.E.13 $X_1,X_2,..,X_n$ be a sample from a population with double exponential pdf, Find the MLE of $\theta$.
+
 # 8. Hypothesis Testing
 
-## 8.1 Introduction
+## 8.1 Introduction {#HypoT}
 
-#### **Definition 8.1.3 Hypothesis Test** {#HypoT}
+**Definition 8.1.3 Hypothesis Test** 
 
 ## 8.2 Methods of Finding Tests
-### 8.2.1 Likelihood Ratio Tests
+### 8.2.1 
+Likelihood Ratio Tests {#LRT} {#suff-LRT}
 
-#### **Definition 8.2.1 The likelihood ratio test** {#LRT} 
+**Definition 8.2.1 The likelihood ratio test** 
 
 \begin{multicols}{2}
 
@@ -3496,38 +3605,39 @@ Example 8.2.2 (Normal LRT)
 
 Example 8.2.3 (Exponential LRT)
 
-#### Theorem 8.2.4 {#suff-LRT}
+Theorem 8.2.4 
 
 **Example 8.2.5 (LRT and sufficiency)** 
 
 Example 8.2.6 (Normal LRT with unknown variance)
 
-### 8.2.2 Bayesian Tests {#BayesT}
+### 8.2.2 Bayesian Tests {#BayesT} {#Norm-Bayes}
 
-#### **Example 8.2.7 (Normal Bayesian test)** {#Norm-Bayes}
+**Example 8.2.7 (Normal Bayesian test)** 
 
 ### 8.2.3 Union-Intersection and Intersection- Union Tests
 
 ## 8.3 Methods o f Evaluating Tests
-### 8.3.1 Error Probabilities and the Power Function
+### 8.3.1 Error Probabilities and the Power Function {#power}
 
-#### **Definition 8.3.1 power function** {#power}
+**Definition 8.3.1 power function** 
 
 Example 8.3.2 (Binomial power function)
 
 Example 8.3.3 (Normal power function)
 
-Definition 8.3.5
+Definition 8.3.5 size $\alpha$ test
 
-Definition 8.3.6
+Definition 8.3.6 level $\alpha$ test
 
 Example 8.3.7 (Size of LRT)
 
-### 8.3.2 Most Powerful Tests
+### 8.3.2 
+Most Powerful Tests {#UMP} {#Neym-Pear} {#MLR} {#Kar-Rub} 
 
-#### **Definition 8.3.11 uniformly most powerful**   {#UMP}
+**Definition 8.3.11 uniformly most powerful**   
 
-#### **Theorem 8.3.12 (Neyman-Pearson Lemma)** {#Neym-Pear}
+**Theorem 8.3.12 (Neyman-Pearson Lemma)**
 
 **Corollary 8.3.13** Consider the hypothesis problem posed in **Theorem 8.3.12**. Suppose $T(\vec X)$ is a sufficient statistic for $\theta$ and $g(t|\theta_i)$ is the pdf or pmf of $T$ corresponding to $\theta_i,i=0,1$. Then any test based on $T$ with rejection region $S$ (a subset of the sample space of T) is a UMP level a test if it satisfies 
 $t\in S\ \text{ if }\ g(t|\theta_1)>kg(t|\theta)$
@@ -3539,9 +3649,9 @@ Example 8.3.14 (UMP binomial test)
 
 Example 8.3.15 (UMP normal test)
 
-#### Definition 8.3.16 monotone likelihood ratio {#MLR}
+Definition 8.3.16 monotone likelihood ratio
 
-#### **Theorem 8.3.17 (Karlin-Rubin)** {#Kar-Rub} 
+**Theorem 8.3.17 (Karlin-Rubin)** 
 Consider testing $H_0:\theta\le\theta_0$ versus $H_1:\theta>\theta_0$. Suppose that T is a sufficient statistic for $\theta$ and the family of pdfs or pmfs $\{g(t|\theta):\theta\in\Theta\}$ of $T$ has an MLR. Then for any $t_0$, the test that rejects $H_0$ if and only if $T>t_0$ is a UMP level $\alpha$ test, where $\alpha= P_{\theta_0}(T>t_0)$.
 
 
@@ -3563,11 +3673,15 @@ Example 8.3.29 (One-sided normal p-value)
 
 ### 8.3.5 Loss Function Optimality
 
+### 8.E.33 
+
+Let $X_1,X_2,..,X_n$ be a random sample from the $Unif(\theta,\theta+1)$ distribution [563-HW3]
+
 # 9. Interval Estimation
 
-## 9.1 Introduction
+## 9.1 Introduction {#CI}
 
-#### **Definition 9.1.5 confidence coefficient; confidence interval** {#CI}
+**Definition 9.1.5 confidence coefficient; confidence interval** 
 
 ## 9.2 Methods of Finding Interval Estimators
 
@@ -3577,11 +3691,12 @@ Example 8.3.29 (One-sided normal p-value)
 
 # 10. Asymptotic Evaluations
 ## 10.1 Point Estimation
-### 10.1.1 Consistency
+### 10.1.1 
+Consistency {#consi-Seq-E} {#consi} {#consi-MLE}
 
-#### **Definition 10.1.1 (consistent sequence of estimators)**  {#consi-Seq-E}
+**Definition 10.1.1 (consistent sequence of estimators)** 
 
-#### **Example 10.1.2 (Consistency of $\bar X$)** {#consi-M}
+**Example 10.1.2 (Consistency of $\bar X$)**
 
 **Theorem 10.1.3**
 
@@ -3589,19 +3704,19 @@ Example 8.3.29 (One-sided normal p-value)
 
 **Theorem 10.1.5**
 
-#### **Theorem 10. 1 .6 (Consistency of MLEs)** {#consi-MLE}
+**Theorem 10. 1 .6 (Consistency of MLEs)**
 
-### 10.1.2 Efficiency
+### 10.1.2 Efficiency {#LimD} {#asymV} {#effi} {#asymE} {#asymD}
 
 **Definition 10.1.7**
 
-#### **Example 10.1.8 (Limiting variances)** {#LimD}
+**Example 10.1.8 (Limiting variances)**
 
-#### **Definition 10.1.9 asymptotic variance** {#asymV}
+**Definition 10.1.9 asymptotic variance**
 
-#### **Definition 10.1.11** {#effi}
+**Definition 10.1.11**
 
-#### **Theorem 10.1.12 (Asymptotic efficiency of MLEs)** {#asymE}
+**Theorem 10.1.12 (Asymptotic efficiency of MLEs)**
 
 
 
@@ -3626,7 +3741,7 @@ Example 8.3.29 (One-sided normal p-value)
 |$HGeom(N,m,k)$|$\frac{km}N$; ;$\mu\frac{(N-m)(N-k)}{N(N-1)}$|${\binom{m}{x}\binom{N-m}{k-x}}/{\binom{N}{k}}$|
 |$Pois(\mu)$|$\mu$;$\mu$;$\mu^2+\mu$|$\frac{\mu^x}{x!}e^{-\mu}$,$x=0,1..$;$e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$|$\bar X$;$\sum x_i$;$n/\mu$|$e^{\mu(e^t-1)}$;$\mu e^tM(t)$;$\mu e^t(1+\mu e^t)M(t)$|
 |$Unif(n)$|$\frac{n+1}2$;$\frac{(n+1)(2n+1)}{6}$;$\frac{(n^2-1)}{12}$|$\frac{1}n$,$x=1,2..n$||$\sum_{i=1}^n{e^{ti}}/n$|
-|$Unif(a,b)$|$\frac{a+b}{2}$; ;$\frac{(b-a)^2}{12}$|$frac{1}{b-a}$,$x\in(a,b)$;$\frac{x-a}{b-a}$||$\frac{e^{tb}-e^{ta}}{t(b-a)}$|
+|$Unif(a,b)$|$\frac{a+b}{2}$; ;$\frac{(b-a)^2}{12}$|$\frac{1}{b-a}$,$x\in(a,b)$;$\frac{x-a}{b-a}$||$\frac{e^{tb}-e^{ta}}{t(b-a)}$|
 |$Norm(\mu,\sigma^2)$|$\mu$;$\mu^2+\sigma^2$;$\sigma^2$|$\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$||$e^{\mu t +\frac{\sigma^2t^2}2}$; $(\mu+\sigma^2t)M(t)$;$[(\mu+\sigma^2t)^2+\sigma^2]M(t)$|
 |$SNorm(0,1)$|$0$;$1$;$1$|$\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$||$e^{\frac{t^2}2}$|
 |$LNorm(\mu,\sigma^2)$|$e^{\mu+\frac{\sigma^2}2}$;$e^{2\mu+2\sigma^2}$;$E^2X(e^{\sigma^2}-1)$|$\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$||$e^{n\mu+n^2\sigma^2/2}$|
