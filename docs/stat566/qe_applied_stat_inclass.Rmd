@@ -160,9 +160,9 @@ Jong Sung Kim*, Brad Crain
 
 The data for this question consist of 12 measurements on each of 2 quantitative regressor variables $x_1$ and $x_2$ and on a dependent variable y. The data are displayed below:
 
- -------------
- Obs x1 x2 y
  --- -- -- ---
+ Obs x1 x2 y
+
  1   3   1 5
  
  2   3   2 5
@@ -192,7 +192,74 @@ The model to be fit to the data is $Y =\beta_0+\beta_1x_{1}+\beta_2X_{2}+\vareps
 
 Information I: model: $y = x_1 x_2$;
 
+Analysis of Variance
+
+ ------ ------------
+ Source SumofSquares  
+ 
+ Model  
+ 
+ Error  703.87576
+ 
+ Total  
+ -------------------
+ 
+ -------------- -------- -------- ------
+ Root MSE       8.84355  R-Square 0.9680
+ 
+ Dependent Mean 52.66667 Adj R-Sq 0.9609
+ 
+ Coeff Var      16.79156
+ ---------------------------------------
+ 
+Parameter Estimates
+
+ --------- -- ----------------- ---------
+ Variable  DF ParameterEstimate Type I SS
+ Intercept 1  -10.44655         33285
+ x1        1  8.15560           20647
+ x2        1  -9.56119          663.87250
+ ----------------------------------------
+ 
+ Covariance of Estimates
+ 
+ --------- ------------ ------------ ------------
+ Variable   Intercept   x1           x2
+ Intercept  54.81211821 -1.510773883 -16.5305567
+ x1        -1.510773883 0.2483463917 -0.496692783
+ x2        -16.5305567  -0.496692783 10.7694378
+ ------------------------------------------------
+ 
 Information II: model:$y = x_2 x_1$;
+
+Analysis of Variance
+
+ ------ ------------
+ Source SumofSquares  
+ 
+ Model  
+ 
+ Error  703.87576
+ 
+ Total  
+ -------------------
+ 
+ -------------- -------- -------- ------
+ Root MSE       8.84355  R-Square 0.9680
+ 
+ Dependent Mean 52.66667 Adj R-Sq 0.9609
+ 
+ Coeff Var      16.79156
+ ---------------------------------------
+ 
+Parameter Estimates
+
+ --------- -- ----------------- ---------
+ Variable  DF ParameterEstimate Type I SS
+ Intercept 1  -10.44655         33285
+ x2        1  -9.56119          364.50000
+ x1        1  8.15560           20946
+ ---------------------------------------- 
 
 (a) Do a hypothesis test, at the .01 level of significance, of $H_0:\beta_1=\beta_2=0$ vs. $H1$: At least one of $\beta_1$ or $\beta_2\neq0$.
 
@@ -262,24 +329,166 @@ Last row:
 
 The following is part of the SAS output from a simple linear regression model: $y_i=\beta_0+\beta x_i+\varepsilon_i$, where $i=1,..,13$, and $y_i$ and $x_i$ are the ith punter’s average punting distance and right leg strength, respectively. Each punter punted 10 times and the average distance was measured. In addition, measure of right leg strength (lb lifted) was taken via a weight lifting test.
 
+ --- ---- --------
+ Obs rleg distance
+ 
+ 1   170  162.50
+ 
+ 2   140  144.00
+ 
+ 3   180  147.50
+ 
+ 4   160  163.50
+ 
+ 5   170  192.00
+ 
+ 6   150  171.75
+ 
+ 7   170  162.00
+ 
+ 8   110  104.83
+ 
+ 9   120  105.67
+ 
+ 10  130  117.58
+ 
+ 11  120  140.25
+ 
+ 12  140  150.17
+ 
+ 13  160  165.17
+ -----------------
+
+Dependent Variable: distance X'X Inverse, Parameter Estimates, and SSE
+
+ --------- ------------ ------------ ------------
+ Variable  Intercept    rleg         distance
+ 
+ Intercept 3.5777777778 -0.023703704 14.906962963
+ 
+ rleg      -0.023703704 0.0001604938 0.9026716049
+ 
+ distance  14.906962963 0.9026716049 3025.6604973
+ ------------------------------------------------
+
+Analysis of Variance
+
+ ------ -- ------------ ---------- ------ ------
+ Source DF SumofSquares MeanSquare FValue Pr>F
+ 
+ Model  1  5076.93063   5076.93063 18.46  0.0013
+ 
+ Error  11 3025.66050   275.06005
+ 
+ Total  12 8102.59112
+ ------------------------------------------------
+ 
+ -------------- --------- -------- ------
+ Root MSE       16.58493  R-Square 0.6266
+ 
+ Dependent Mean 148.22462 Adj R-Sq 0.5926
+ 
+ Coeff Var      11.18906
+ ----------------------------------------
+ 
+ Parameter Estimates
+ -------------------------------------
+ Variable  DF ParameterEstimate Pr>|t|
+
+ Intercept 1  14.90696          0.6439
+
+ rleg      1  0.90267           0.0013
+ -------------------------------------
+ 
+Output Statistics
+
+ --- -------- --------- ----------- -------- --------
+     Dep Var  Predicted Std Error
+     
+ Obs distance Value     MeanPredict 95% CL   Mean
+ 
+ 1   162.5000
+ 
+ 2   144.0000 141.2810  4.8755      130.5501 152.0119
+ 
+ 3   147.5000 177.3879  8.1998      159.3402 195.4355
+ 
+ 4   163.5000 159.3344  5.2769      147.7201 170.9488
+ 
+ 5   192.0000
+ 
+ 6   171.7500 150.3077  4.6253      140.1274 160.4880
+ 
+ 7   162.0000
+ 
+ 8   104.8300 114.2008  9.1584       94.0433 134.3583
+ 
+ 9   105.6700 123.2276  7.4170      106.9028 139.5523
+ 
+ 10  117.5800 132.2543  5.9141      119.2374 145.2712
+ 
+ 11  140.2500 123.2276  7.4170      106.9028 139.5523
+ 
+ 12  150.1700 141.2810  4.8755      130.5501 152.0119
+ 
+ 13  165.1700 159.3344  5.2769      147.7201 170.9488
+ ----------------------------------------------------
+ 
+ Output Statistics
+
+ --- -------- -------- --------
+ Obs 95% CL   Predict  Residual
+ 
+ 1
+ 
+ 2   103.2332 179.3288 2.7190
+ 
+ 3   136.6668 218.1089 -29.8879
+ 
+ 4   121.0281 197.6408 4.1656
+ 
+ 5
+ 
+ 6   112.4115 188.2039 21.4423
+ 
+ 7
+ 
+ 8   72.5018  155.8999 -9.3708
+ 
+ 9   83.2403  163.2148 -17.5576
+ 
+ 10  93.4996  171.0089 -14.6743
+ 
+ 11  83.2403  163.2148 17.0224
+ 
+ 12  103.2332 179.3288 8.8890
+ 
+ 13  121.0281 197.6408 5.8356
+ ------------------------------ 
+ 
+ 
+ 
 (a) Find the three residual values at x = 170.
 
 (b) Compute a 95% confidence interval for the mean response at x = 170. Hint:Compute the variance of the estimate of the mean response at x = 170.
 
 (c) Compute a 95% prediction interval on a new response observation at x = 170. Hint: You can use part of the expression in (b).
 
+
 ### 2016F4
 
 Prior to 1985, Meily Lin had observed that some colors of birthday balloons seem to be harder to inflate than others. She ran this experiment to determine whether balloons of different colors are similar in terms of the time taken for inflation to a diameter of 7 inches. Four colors were selected from a single manufacturer. An assistant blew up the balloons and the experimenter recorded the times (to the nearest 1/10 second) with a stop watch. This experiment was replicated 4 times, and the data including the order are displayed in the SAS code below, where color 1 = pink, 2 = yellow, 3 = orange, and 4 = blue.
 
->data balloon;
-input runorder color inftime @@;
-cards;
+```{r eval=FALSE, include=T}
+# data balloon;
+# input runorder color inftime @@;
+# cards;
 1 1 22.4 2 3 24.6 3 1 20.3 4 4 19.8 5 3 24.3 6 2 22.2 7 2 28.5 8 2 25.7
 9 3 20.2 10 1 19.6 11 2 28.8 12 4 24.0 13 4 17.1 14 4 19.3 15 3 24.2 16
 1 15.8 17 2 18.3 18 1 17.5 19 4 18.7 20 3 22.9 21 1 16.3 22 4 14.0 23 4
 16.6 24 2 18.1 25 2 18.9 26 4 16.0 27 2 20.1 28 3 22.5 29 3 16.0 30 1
 19.3 31 1 15.9 32 3 20.3
+```
 
 a. Why or why not do we need to record the run order in the model?
 
@@ -288,15 +497,42 @@ b. What kind of model would be appropriate for the above experiment?
 c. Read the following <Program I>. If we had assumed that there is an equal slope linear relationship between the inflation time and the run order for each color, how can we test the assumption? How would you adjust the following program?
 Why?
 
-><Program I>
+```{r eval=FALSE, include=T}
+<Program I>
 proc glm data=balloon;
 class color; /* color: 1 = pink, 2 = yellow, 3 = orange, 4 = blue */
 model inftime = color runorder;
 estimate 'pink vs. orange' color -1 0 1 0;
 lsmeans color/pdiff;
 run;
+```
 
 d. Based on the following output from <Program I>, one can apply a Bonferroni multiple comparison test with level .05. Which are significantly different and which are not?
+
+The GLM Procedure; Least Squares Means
+
+ ----- ---------- ------
+       inftime    LSMEAN
+ color LSMEAN     Number
+ 1     18.3341795 1
+ 2     22.3883782 2
+ 3     22.0882820 3
+ 4     18.2141603 4
+ -----------------------
+ 
+Least Squares Means for effect color Pr > |t| for H0: LSMean(i)=LSMean(j) Dependent Variable: inftime
+
+ --- ------ ------ ------ ------
+ i/j 1      2      3      4
+
+ 1          0.0043 0.0076 0.9271
+
+ 2   0.0043        0.8195 0.0034
+
+ 3   0.0076 0.8195        0.0060
+
+ 4   0.9271 0.0034 0.0060
+ -------------------------------
 
 ### 2016F5
 
@@ -312,6 +548,8 @@ c. Show that the smallest balanced incomplete block design has 15 observations p
 Brad Crain, Jong Sung Kim*
 
 ### 2017SR1
+[2018S1][]
+
 A company is comparing two different methods of processing their raw material. They begin with 8 batches of material, which are randomly assigned to one of the two processes. The quality of the finalproduct is measured on a 50-point scale. There is some concern that the outside temperature on each day might have an effect on the product (and the effect might be different for the two processes), and so it is recorded so that it can be taken into account. The following table shows and orderedpair for each batch, consisting of the quality measurement and the temperature.
 
  --------- -------------- --------------
@@ -365,6 +603,7 @@ Given a Blocked $2^{6-2}$ design with Factors [A,B,C,D,E,F],Generators E=ABC, F=
 Robert Fountain*, Daniel Taylor-Rodriguez
 
 ### 2017F1
+[2018S1][]
 
 A company has developed two specialized training workshops for their employees. Each of the 12 employees is randomly assigned to one of the two workshops. The company would like to develop a model that could be used to predict each employee’s performance score (a number from 0 to 100) based on their attendance at the workshops. The previous year’s performance score is also available for use as a predictor. The following table shows and ordered pair for each employee, consisting of the current performance score and the previous year’s score.
 
@@ -405,9 +644,9 @@ $SSR(X_5 | X_1 X_2 X_3 X_4)=26$
 
 The model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i3}+\beta_5X_{i5}+\varepsilon_i$ was also fit to the same data and the following ANOVA was calculated:
 
- ------------------
- Source          SS
  -------------- ---
+ Source          SS
+
  Regression     214
 
  Residual Error 489
@@ -434,13 +673,16 @@ Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$
 Robert Fountain*, Daniel Taylor-Rodriguez
 
 ### 2018S1
+
 A company has developed three specialized training workshops for their employees. Each of the 12 employees is randomly assigned to one of the three workshops. The company would like to develop a model that could be used to predict each employee’s performance score (a number from 0 to 100) based on their attendance at the workshops. The previous year’s performance score is also available for use as a predictor. The following table shows and ordered pair for each employee, consisting of the current performance score and the previous year’s score.
 
- --------- -------------- -------------- --------------
- WorkshopA (70,58)(70,62) (68,60)(72,65) (72,66)(72,62)
+ --------- -------------- --------------
+ WorkshopA (70,58)(70,62) (68,60)(72,65)
           
- WorkshopB (75,60)(74,62) (72,60)(71,60) (73,61)(73,65)
- ------------------------------------------------------
+ WorkshopB (75,60)(74,62) (72,60)(71,60)
+ 
+ WorkshopC (72,66)(72,62) (73,61)(73,65)
+ ---------------------------------------
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the three workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
@@ -528,15 +770,15 @@ e) Compute 95% simultaneous two-sided confidence intervals for the intercept and
 
 City planners are evaluating the effectiveness of a new “intelligent” traffic control system in reducing the amount of time motorists must spend on city streets. A total of 24 simulations are run: 4 simulations for each of the 6 combinations of control system (old or new) and traffic intensity (light, moderate, or heavy). All simulations use different random seeds, the combinations are run in a completely random order, and the median travel time (minutes) is recorded for each simulation. For each combination, the following table gives the average and sample standard deviation of the median travel times from the 4 simulations assigned that combination:
 
- ------------------------------------------------------------------
-                            Old System           New System
- ------------------------------ -------- ----- ----- -------- -----                       
-                          light Moderate Heavy light Moderate Heavy
+ -------------------------------------------------------------------
+                             Old System           New System
+ ------------------------- ----- -------- ----- ----- -------- -----                     
+                           light Moderate Heavy light Moderate Heavy
                           
  Sample Mean               13    14       15    5     8        17
 
  Sample Standard Deviation 1     2.5      3.5   2.5   2        3.5
- ------------------------------------------------------------------
+ -------------------------------------------------------------------
 
 a) Write a (univariate) linear model equation of the usual full form for data from this experiment, with median travel time as the response. Explain each term and specify any conditions it satisfies. What crucial assumption are you making about the error variances?
 
@@ -548,10 +790,10 @@ d) Form a two-sided 95% confidence interval for the difference in median travel 
 
 ### 2018F3
 Consider the linear mixed model
-$y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}$, $i=1,..,a$ $j=1,..,b$ $k=1,..,n$ $\sum_{i=1}^a\alpha_i=0$, $\beta_{ij}\sim N(0,\sigma_{\beta}^2)$, $\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)$
+$y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}$, $i=1,..,a$ $j=1,..,b$ $k=1,..,n$, $\sum_{i=1}^a\alpha_i=0$, $\beta_{ij}\sim N(0,\sigma_{\beta}^2)$, $\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)$
 
 with all $\beta_{ij}$’s and $\varepsilon_{ij}$’s independent, where $a\ge2$, $b\ge2$, and $n\ge2$. The parameters $\mu$, $\alpha_i$, $\sigma_{\beta}^2$, and $\sigma_{\varepsilon}^2$ are assumed to be unknown. Adopt the following notation:
-$\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}$ $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$ $\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$
+$\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}$, $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$, $\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}$
 
 a) In terms of the parameters, find the correlations between (i) $y_{111}$ and $y_{112}$, (ii) $y_{111}$ and $y_{121}$, and (iii) $y_{111}$ and $y_{211}$.
 
@@ -612,13 +854,21 @@ Incorrectly treating all main effects as fixed and all combinations of factors a
  Source SS  df  MS  F    pval<0.05
  ------ --- --- --- ---- ---------
  A      34  4   8.5 3.70 *
+ 
  B      12  2   6.0 2.61
+ 
  C      24  3   8.0 3.48 *
+ 
  AB     32  8   4.0 1.74
+ 
  AC     30  12  2.5 1.09
+ 
  BC     18  6   3.0 1.30
+ 
  ABC    36  24  1.5 0.65
+ 
  Error  138 60  2.3
+ 
  Total  324 119
  ---------------------------------
 
