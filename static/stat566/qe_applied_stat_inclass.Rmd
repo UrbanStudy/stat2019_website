@@ -9,15 +9,15 @@ classoption:
 pagenumbering: FALSE
 whitespace: none
 output:
+  pdf_document:
+    toc: FALSE
+    number_sections: FALSE
   html_document:
     toc: yes
     toc_depth: 3
     toc_float:
       collapsed: yes
       smooth_scroll: yes
-  pdf_document:
-    toc: FALSE
-    number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
     - \usepackage{lscape}
@@ -54,7 +54,7 @@ $\hat\beta_2=\frac{\sum_{i=1}^nx_i^2y_i\sum_{i=1}^n(1+x_i)^2-\sum_{i=1}^n(1+x_i)
 ## 2015F 
 
 ### 2015F1
-[2016S1][] [566-HW2-6]
+[2016S1][] [566-HW2-6] [8.3 The One-Quarter Fraction of the 2k Design p.344] 
 
 You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 2 blocks. You may assume that 4-way and higher interactions are not important.
 
@@ -115,9 +115,9 @@ ABD=CDE=ACF=BEF; ACD=BDE=ABF=CEF
  
  - the eight runs to be done on each day
  
-Day1: (1), bef, bc, abce, adef, abd, cde, bcdf
+Day1: abd, acf, bef, cde, abf, acd, bde, cef 
 
-Day2: ae, abf, cef, acf, df, bde, acd, abcdef 
+Day2: (1), abce, adef, bcdf, ae, bc, df, abcdef
  
  - the effects to be confounded with blocks
  
@@ -136,7 +136,7 @@ AB=CE, AC=BE, AD=EF, AE=BC=DF, AF=DE, BD=CF, BF=CD, ABC=CDE=ACF
 
 
 ### 2015F2
-[2017F1][]
+[2017F1][] [Example 8.2 The Tool Life Data]
 
 A company is comparing two different methods of processing their raw material. They begin with 8 batches of material, which are randomly assigned to one of the two processes. The quality of the final product is measured on a 50-point scale. There is some concern that the outside temperature on each day might have an effect on the product (and the effect might be different for the two processes), and so it is recorded so that it can be taken into account. The following table shows and ordered pair for each batch, consisting of the quality measurement and the temperature.
 
@@ -159,13 +159,18 @@ $$\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{
 
 c) Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
-$H_0: \beta_1=\gamma_1$, $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i$
+To test the hypothesis that the two regression lines are identical $(H_0:\gamma_0=\gamma_1=0)$,
 
-$$\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{bmatrix} 1&81&0&0\\1&68&0&0\\1&77&0&0\\1&61&0&0\\1&59&1&59\\1&62&1&62\\1&83&1&83\\1&70&1&70\end{bmatrix}_{8\times3} 
+To test the hypothesis that the two lines have different intercepts and a common slope $(H_0:\gamma_1=0)$,
+
+$H_0: \gamma_1=0$, $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i$
+
+$$\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{bmatrix} 1&81&0\\1&68&0\\1&77&0\\1&61&0\\1&59&1\\1&62&1\\1&83&1\\1&70&1\end{bmatrix}_{8\times3}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\end{bmatrix}_{8\times1}$$
 
-$\frac{8-3}{8-4}$
+$\frac{2}{8-4}$
+
 
 
 ### 2015F3
@@ -182,7 +187,7 @@ Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$
 
 Let $SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)^2=\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)^2$
 
-$\frac{\partial SSE}{\partial\beta_0}=\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)(-2x_i^2)\overset{set}{=}0$;
+$\frac{\partial SSE}{\partial\beta_0}=2\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)(-2x_i^2)\overset{set}{=}0$;
 $\hat\beta_0=\frac{\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}$
 $\hat\beta_2=\frac{2\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}$
 
@@ -190,6 +195,8 @@ $\hat\beta_2=\frac{2\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}$
 Fountain, Tableman*
 
 ### 2016S1
+[7.6 Confouding the 2k Factorial Design in Four Blocks]
+
 
 You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 4 blocks. You may assume that 4-way and higher interactions are not important.
 
@@ -312,11 +319,27 @@ Answer the following from the above information:
 
 (a) Calculate the F-statistic for testing the hypothesis $(H_0)$ that $X_3$, $X_4$, and $X_5$ have no significant effect on the response $Y$.
 
+$SSR(X_3,X_4,X_5)=SSR(X_1,X_2,X_3,X_4,X_5)-SSR(X_1,X_2,X_3,X_4,X_5)=29+41+26=96$
+
+$F_{\nu_1=3,\nu_2=71}(\frac{96}{607})$, $F_{\nu_1=3,\nu_2=50}(2.70)=0.05$, $F_{\nu_1=3,\nu_2=100}(2.61)=0.05$
+
+
 (b) Calculate $R^2$ for the model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i2}\varepsilon_i$
 
-(c) Calculate the $R^2_{adj}$ for the model in part (b).
+$R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}=\frac{271}{703}$
 
-(d) Calculate the F-statistic for testing $H_0:\beta_2=\beta_4=0$.
+(c) Describe the meaning or interpretation of the statistic $R^2$ calculated in part (b).
+
+$R^2$ is the coefficient of determination, is the proportion of variation explained by the regressor x. Values of $R^2$ that are close to 1 imply that most of the variability in y is explained by the regression model
+
+(d) Calculate the $R^2_{adj}$ for the model in part (b).
+
+$R^2_{adj}=1-\frac{SSE/(n-p)}{SST/(n-1)}=1-\frac{(703-271)/72}{703/74}=0.3684211$
+
+(e) Calculate the F-statistic for testing $H_0:\beta_2=\beta_4=0$.
+
+$F_{\nu_1=3,\nu_2=71}(\frac{214}{489})$, $F_{\nu_1=3,\nu_2=50}(2.70)=0.05$, $F_{\nu_1=3,\nu_2=100}(2.61)=0.05$
+
 
 ### 2016S3
 [2017F2][]
@@ -329,6 +352,13 @@ b) Explain the difference between crossed and nested effects in an experimental 
 [2019S1][]
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_1=1$, $\beta_2=\beta_0$. Find the least-squares estimators of the coefficients.
+
+Let $SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-x_i-\beta_0x_i^2)^2$
+
+$\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-x_i-\beta_0-\beta_0x_i^2)(-1-x_i^2)\overset{set}{=}0$;
+$\hat\beta_0=\hat\beta_2=\frac{\sum_{i=1}^n(1+x_i^2)(y_i-x_i)}{\sum_{i=1}^n(1+x_i^2)^2}$
+
+
 
 ### 2016S5
 
@@ -453,15 +483,34 @@ Parameter Estimates
 
 (a) Do a hypothesis test, at the .01 level of significance, of $H_0:\beta_1=\beta_2=0$ vs. $H1$: At least one of $\beta_1$ or $\beta_2\neq0$.
 
+$F\frac{(20647+663.87250)/2}{703.87576/9}=136.244$
+
+F(0.01,2,9)=8.02
+
+
+
+
 (b) What is the value of $R^2$?
+
+0.9680
 
 (c) Do the following two hypothesis tests, each at the .05 level of significance:
 
   i. $H_0:\beta_1=0$ vs. $H_1: \beta_1\neq0$
+
+$F=\frac{(20647-703.87576)/1}{78.20842}=255$; 
+
+$F(0.05,1,9)=5.12$
   
   ii. $H_0:\beta_2=0$ vs. $H_1: \beta_2\neq0$
+  
+$F=\frac{(663.8725-703.87576)/1}{78.20842}=-?$
 
 (d) Obtain a 99% confidence interval for $\beta_1$.
+
+$\hat\beta_1\pm t_{\frac{\alpha}{2},n-k-1}se(\hat\beta_1)$, $se(\hat\beta_1)=\sqrt{MSE\cdot C_{22}}$
+
+$8.1556-t(0.005,9)8.84355\sqrt{0.2483463917}, 8.1556+3.25\times4.407127$;
 
 (e) Give an unbiased estimate of the variance of $\hat\beta_1-\hat\beta_2$.
 
@@ -789,6 +838,7 @@ add one dummy to form
 2-3
 
 ### 2017SD2
+[8.3 The One-Quarter Fraction of the 2k Design p.344] [7.7 table 7.9]
 
 Given a Blocked $2^{6-2}$ design with Factors [A,B,C,D,E,F],Generators E=ABC, F=BCD and Defining Contrasts AB, CD
 
@@ -798,7 +848,7 @@ Given a Blocked $2^{6-2}$ design with Factors [A,B,C,D,E,F],Generators E=ABC, F=
 
 2. What is the Defining Relationship in this design?
 
-I=ABCE=BCDF=ADEF
+generating relations I=ABCE=BCDF=ADEF
 
 3. What is the Resolution of this Design?
 
@@ -808,7 +858,7 @@ IV
 
 AE=BC=ABCDEF=DF
 
-5. Show the effect on two-way interactions that include A, if you augment by folding on A
+5. Show the effect on two-way interactions that include A, if you augment by **folding** on A [8.5.2]
 
 I=-ABCE=BCDF=-ADEF
 
@@ -869,8 +919,14 @@ b) Explain the difference between crossed and nested effects in an experimental 
 
  https://www.theanalysisfactor.com/the-difference-between-crossed-and-nested-factors/ 
 
+Two factors are crossed when every category of one factor co-occurs in the design with every category of the other factor. In other words, there is at least one observation in every combination of categories for the two factors.
+
+A factor is nested within another factor when each category of the first factor co-occurs with only one category of the other. In other words, an observation has to be within one category of Factor 2 in order to have a specific category of Factor 1. All combinations of categories are not represented.
+
+If two factors are crossed, you can calculate an interaction. If they are nested, you cannot because you do not have every combination of one factor along with every combination of the other.
+
 ### 2017F3
-[2018S3][]
+[2018S3][] [2016S2][]
 
 The multiple linear regression model $y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i$
 was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into
@@ -931,10 +987,33 @@ A company has developed three specialized training workshops for their employees
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the three workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
+WorkshopA: $y_i=\beta_0+\beta_1x_i+\varepsilon_i$,$1\le i\le4$;
+
+WorkshopB: $y_i=\gamma_0+\gamma_1x_i+\varepsilon_i$,$5\le i\le8$;
+
+WorkshopC: $y_i=\gamma_0+\gamma_1x_i+\varepsilon_i$,$9\le i\le12$;
+
+Let $w_{1i}=\begin{cases}1& 1\le i\le4\\0& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{2i}=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{3i}=\begin{cases}0& 1\le i\le4\\0& 5\le i\le8\\1&9\le i\le12\end{cases}$
+
+overall $y_i=w_{1i}(\beta_0+\beta_1x_i)+w_{2i}(\gamma_0+\gamma_1x_i)+w_{3i}(\delta_0+\delta_1x_i)+\varepsilon_i$
+
 b) Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.
+
+$$\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&58&0&0&0&0\\1&62&0&0&0&0\\1&60&0&0&0&0\\1&65&0&0&0&0\\0&0&1&60&0&0\\0&0&1&62&0&0\\0&0&1&60&0&0\\0&0&1&60&0&0\\0&0&0&0&1&66\\0&0&0&0&1&62\\0&0&0&0&1&61\\0&0&0&0&1&65\end{bmatrix}_{12\times6}\times
+\begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \\ \delta_0 \\ \delta_1\end{bmatrix}_{6\times1}
++\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\\\varepsilon_{11}\\\varepsilon_{12}\end{bmatrix}_{12\times1}$$
 
 c) Suppose that you wish to test for equality of the three slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
+$H_0: \gamma_1=\delta_1=0$, $y_i=w_{1i}\beta_0+\beta_1x_i+w_{2i}\gamma_0+w_{3i}\delta_0+\varepsilon_i$, 
+
+$w_{1i}=\begin{cases}1& 1\le i\le4\\0& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{2i}=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{3i}=\begin{cases}0& 1\le i\le4\\0& 5\le i\le8\\1&9\le i\le12\end{cases}$
+
+$$\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&58&0&0\\1&62&0&0\\1&60&0&0\\1&65&0&0\\0&60&1&0\\0&62&1&0\\0&60&1&0\\0&60&1&0\\0&66&0&1\\0&62&0&1\\0&61&0&1\\0&65&0&1\end{bmatrix}_{12\times4}\times
+\begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \delta_0 \end{bmatrix}_{4\times1}
++\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\\\varepsilon_{11}\\\varepsilon_{12}\end{bmatrix}_{12\times1}$$
+
+$\frac{3}{12-6}$
 
 ### 2018S2
 
@@ -1008,6 +1087,8 @@ c) Create an abbreviated ANOVA table that has two columns: one column that lists
 
 
 ### 2018S3
+[2017F3][] [2016S2][]
+
 
 The multiple linear regression model $y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i$
 was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into
@@ -1051,6 +1132,12 @@ Answer the following from the above information:
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_1=0$, $\beta_0=2\beta_2$. Find the least-squares estimators of $\beta_0$, $\beta_1$, and $\beta_2$.
 
+Let $SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)^2=\sum_{i=1}^n(y_i-2\beta_2-\beta_2x_i^2)^2$
+
+$\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-2\beta_2-\beta_2x_i^2)(-2-x_i^2)\overset{set}{=}0$;
+$\hat\beta_2=\frac{\sum_{i=1}^n(2+x_i^2)y_i}{\sum_{i=1}^n(2+x_i^2)^2}$
+$\hat\beta_0=\frac{2\sum_{i=1}^n(2+x_i^2)y_i}{\sum_{i=1}^n(2+x_i^2)^2}$
+
 ## 2018F
 Robert Fountain*, Daniel Taylor-Rodriguez
 
@@ -1073,6 +1160,8 @@ d) Perform a two-sided test for whether or not height and weight are related (as
 e) Compute 95% simultaneous two-sided confidence intervals for the intercept andslope parameters, using the Bonferroni method.
 
 ### 2018F2
+[565-HW1]
+
 
 City planners are evaluating the effectiveness of a new “intelligent” traffic control system in reducing the amount of time motorists must spend on city streets. A total of 24 simulations are run: 4 simulations for each of the 6 combinations of control system (old or new) and traffic intensity (light, moderate, or heavy). All simulations use different random seeds, the combinations are run in a completely random order, and the median travel time (minutes) is recorded for each simulation. For each combination, the following table gives the average and sample standard deviation of the median travel times from the 4 simulations assigned that combination:
 
@@ -1088,13 +1177,45 @@ City planners are evaluating the effectiveness of a new “intelligent” traffi
 
 a) Write a (univariate) linear model equation of the usual full form for data from this experiment, with median travel time as the response. Explain each term and specify any conditions it satisfies. What crucial assumption are you making about the error variances?
 
+$y_i=\beta_0+\beta_1x_{1i}+\beta_2x_{2i}+\beta_3x_{3i}+\varepsilon_i$, $x_{1i}=\begin{cases}1&i=1,2,3\\0&i=4,5,6 \end{cases}$, $x_{2i}=\begin{cases}1&i=2,5\\0&i=1,3,4,6 \end{cases}$, $x_{3i}=\begin{cases}1&i=3,6\\0&i=1,2,4,5 \end{cases}$
+
+1. The relationship between the response y and the regressors is linear.
+2. The error term $\varepsilon$ has zero mean.
+3. The error term $\varepsilon$ has constant variance $\sigma^2$.
+4. The errors are uncorrelated.
+5. The errors are normally distribute.
+
 b) Produce an ANOVA table with all appropriate sources of variation, including the (corrected) total. Include sums of squares, degrees of freedom, and appropriate mean squares.
+
+ ----------------------
+ Source of Var SS  df MS
+ ------------- --- -- --
+ Model         416 3  138.6
+
+ Error             20
+
+ Total             23
+ ----------------------
+
+$SS_{Trt}=4\sum_1^6(\bar y_{i.}-\bar y_{..})^2=4\sum_1^6(\bar y_{i.}-12)^2=416$
+
+```{r}
+mean_all <- (13+14+15+5+8+17)/6
+SS_trt <- 4*((13-mean_all)^2+(14-mean_all)^2+(15-mean_all)^2+(5-mean_all)^2+(8-mean_all)^2+(17-mean_all)^2)
+```
+
 
 c) Test whether your model in part (a) may be reduced to a model in which the effects of system and traffic intensity are purely additive. Remember to state the null and alternative hypotheses. Use $\alpha=0.05$.
 
+$H_0: \beta_2=\beta_3=0$
+
 d) Form a two-sided 95% confidence interval for the difference in median travel time between the new system and the old system under moderate traffic conditions.
 
+$y_i=\beta_0+\beta_1x_{1i}++\varepsilon_i$, $x_{1i}=\begin{cases}1&i=2\\0&i=5 \end{cases}$
+
 ### 2018F3
+[564-HW3-3]
+
 Consider the linear mixed model
 $y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}$, $i=1,..,a$ $j=1,..,b$ $k=1,..,n$, $\sum_{i=1}^a\alpha_i=0$, $\beta_{ij}\sim N(0,\sigma_{\beta}^2)$, $\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)$
 
@@ -1103,7 +1224,11 @@ $\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}$, $\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\
 
 a) In terms of the parameters, find the correlations between (i) $y_{111}$ and $y_{112}$, (ii) $y_{111}$ and $y_{121}$, and (iii) $y_{111}$ and $y_{211}$.
 
-b) For any given value of $i$, specify the joint distribution of $\bar y_{i1.},..\bar y_{ib.}$.
+$Cor(y_{111},y_{112})=\frac{Cov(y_{111},y_{112})}{se(y_{111})se(y_{112})}=\frac{MSE\cdot C_{12}}{\sqrt{MSE\cdot C_{11}MSE\cdot C_{12}}}$
+
+b) For any given value of $i$, specify the **joint** distribution of $\bar y_{i1.},..\bar y_{ib.}$.
+
+[3.4.3]
 
 c) In terms of the data, write a formula for the usual unbiased estimator of $\alpha_1-\alpha_2$. What is the exact distribution of this estimator?
 
@@ -1116,7 +1241,7 @@ e) In terms of the data, write a formula for the usual unbiased (ANOVA) estimate
 
 ### 2018F4
 
-Consider a randomized complete block design with 12 blocks and a single treatment factor having 3 levels. Let $X_{ij}$ denote the response measured for an experimental unit in block $j$ that receives treatment $i$ for $i=1,2,3$ and $j=1,..,12$. Suppose there is also a
+Consider a randomized complete **block design** with 12 blocks and a single treatment factor having 3 levels. Let $X_{ij}$ denote the response measured for an experimental unit in block $j$ that receives treatment $i$ for $i=1,2,3$ and $j=1,..,12$. Suppose there is also a
 covariate whose value $X_{ij}$ is measured for each experimental unit.
 
 The following four models are fit to the data (using least squares), with the resulting residual (error) sums of squares as specified:
@@ -1259,10 +1384,10 @@ $$\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1
 
 c) Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
-$H_0: \beta_1=\gamma_1$, $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i$
+$H_0: \gamma_1=0$, $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i$
 
-$$\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&70&0\\1&70&0\\1&68&0\\1&72&0\\1&72&0\\1&75&1\\1&74&1\\1&72&1\\1&71&1\\1&73&1\\\end{bmatrix}_{10\times3} 
+$$\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&70&0\\1&70&0\\1&68&0\\1&72&0\\1&72&0\\1&75&1\\1&74&1\\1&72&1\\1&71&1\\1&73&1\\\end{bmatrix}_{10\times3}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\end{bmatrix}_{10\times1}$$
 
-$\frac{10-3}{10-4}$
+$\frac{2}{10-4}$
