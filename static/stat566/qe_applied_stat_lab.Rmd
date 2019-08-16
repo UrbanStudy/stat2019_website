@@ -38,16 +38,76 @@ Fountain*, Crain
 ## 2015F 
 
 ### 2015F1
-[2017S1][]
+[2017SR1][]
 
 Find the best model for predicting Y based on X1 and X2. Y is the amount of profit that a company makes in a month. X1 is the number of months that the company has been in business. X2 is the amount spent on advertising.
 
 Consider as predictors all possible linear and quadratic terms ($X1, X1^2, X2, X2^2$, and $X1X2$). Consider possible transformations of Y. Include all appropriate diagnostics. When you have found your “best” model, predict a new Y when X1 = 20 and X2 = \$1,500, giving a 95% prediction interval. The data set, shown below, appears in “Profits.xlsx”.
 
+```{r, out.width='50%'}
+table_2015f1 <- readxl::read_xlsx("qe_lab/Profits_2015f.xlsx")
+str(table_2015f1)
+library(ggplot2)
+ggplot(table_2015f1,aes(X2,Y, color=X1))+labs(x="advertising",y="profit",color="month")+geom_point()+theme_light()
+```
+
+```{r, out.width='25%',fig.show='hold'}
+model_2015f1_1 <- lm(Y^2~X1+X2,table_2015f1)
+summary(model_2015f1_1)
+anova(model_2015f1_1)
+plot(model_2015f1_1)
+```
+
+
+```{r, out.width='25%',fig.show='hold'}
+model_2015f1_2 <- lm(Y^2~X1*X2,table_2015f1)
+summary(model_2015f1_2)
+anova(model_2015f1_2)
+plot(model_2015f1_2)
+```
+
+```{r}
+sqrt(predict(model_2015f1_1, newdata=data.frame(X1 = 20 ,X2 =1500), interval="prediction", level=0.95 ))
+sqrt(predict(model_2015f1_2, newdata=data.frame(X1 = 20 ,X2 =1500), interval="prediction", level=0.95 ))
+```
+
+
 ### 2015F2
+[2018F2][]
+
 A replicated fractional factorial design is used to investigate the effect of five factors on the free height of leaf springs used in an automotive application. The factors are (A) furnace temperature, (B) heating time, (C) transfer time, (D) hold down time, and (E) quench oil temperature. There are 3 observations at each setting.
 
 Write out the alias structure for this design. What is the resolution of this design? Analyze the data. What factors influence the mean free height? The data set appears in the file “Springs.xlsx”.
+
+```{r}
+table_2015f2 <- readxl::read_xlsx("qe_lab/Springs_2015f.xlsx")
+library(tidyverse)
+table_2015f2 <- gather(table_2015f2,'Height','...7','...8',key = "1",value = "height" )[,-6]
+str(table_2015f2)
+```
+
+```{r,eval=F}
+library(devtools)
+devtools::install_github("tidyverse/tidyr",force=T)
+
+pivot_longer(table_2015f2,-A,-B,-C,-D,values_to = "Height")
+```
+
+I=ABCD, AB=CD, AC=BD, AD=BC;
+A=BCD, B=ACD, C=ABD, D=ABC;
+III
+
+```{r,message=F, out.width='50%',fig.show='hold'}
+model_2015f2 <- aov(height~A*B*C*D, table_2015f2)
+model_2015f2$coefficients
+library(daewr)
+halfnorm(model_2015f2$coefficients[2:8],alpha=1)
+summary(model_2015f2)
+
+library(gghalfnorm)
+gghalfnorm(x =model_2015f2$coefficients[2:8],labs = names(model_2015f2$coef) , nlab = 8)+ ggplot2::theme_light()
+
+```
 
 ## 2016S
 Fountain, Tableman*
@@ -641,21 +701,33 @@ ggplot(table_2018f1, aes(X2, Y, color=X1))+geom_point()+labs(y="Profit",x="Spent
 ggplot(table_2018f1, aes(X1, Y, color=X2))+geom_point()+labs(y="Profit",x="the number of months", color="spend")+theme_light()
 ```
 
-```{r, out.width='50%', fig.show='hold'}
-model_2018f1 <- lm(Y~X1/X2, table_2018f1)
-summary(model_2018f1)
-library(olsrr)
-ols_regress(model_2018f1)
-car::Anova(model_2018f1)
-car::vif(model_2018f1)
-anova(model_2018f1)
-plot(model_2018f1)
-
+```{r, out.width='25%', fig.show='hold'}
+model_2018f1_1 <- lm(Y^2~X1/X2, table_2018f1)
+summary(model_2018f1_1)
+# library(olsrr)
+# ols_regress(model_2018f1_1)
+# car::Anova(model_2018f1_1)
+# car::vif(model_2018f1_1)
+anova(model_2018f1_1)
+plot(model_2018f1_1)
 ```
 
+```{r, out.width='25%', fig.show='hold'}
+model_2018f1_2 <- lm(-log(Y)~X1/X2, table_2018f1)
+summary(model_2018f1_2)
+anova(model_2018f1_2)
+plot(model_2018f1_2)
+```
+
+```{r, out.width='25%', fig.show='hold'}
+model_2018f1_3 <- lm(Y^(-0.01)~X1/X2, table_2018f1)
+summary(model_2018f1_3)
+anova(model_2018f1_3)
+plot(model_2018f1_3)
+```
 
 ```{r}
-predict(model_2018f1, newdata = data.frame(X1=20,X2=1900), interval = "prediction", level=0.95)
+predict(model_2018f1_1, newdata = data.frame(X1=20,X2=1900), interval = "prediction", level=0.95)
 ```
 
 
@@ -691,8 +763,7 @@ model_2018f2_2 <- aov(Heights~A+B, table_2018f2)
 summary(model_2018f2_2)
 
 library(gghalfnorm)
-gghalfnorm(x = table_2018f2$Heights, nlab = 3)+ ggplot2::theme_light()
-
+gghalfnorm(x =model_2018f2$coefficients[2:8],labs = names(model_2018f2$coef) , nlab = 5)+ ggplot2::theme_light()
 
 ```
 
@@ -750,6 +821,16 @@ ggmatrix(
 )
 ```
 
+```{r, eval=FALSE, out.width='25%',fig.show='hold'}
+model_2019s1 <- lm(log(y)~ x1*x2*x3*A*B,table_2019s1_250)
+car::vif(model_2019s1)
+summary(model_2019s1)
+library(olsrr)
+# ols_plot_diagnostics(model_2019s1_1)
+ols_step_both_aic(model_2019s1)
+
+```
+
 ```{r echo=FALSE, fig.height=6, fig.width=8}
 model_2019s1_1 <- step(lm(y ~ ., data = table_2019s1_250), trace = FALSE)
 summary(model_2019s1_1)
@@ -760,14 +841,6 @@ plot(model_2019s1_1$fit,rstudent(model_2019s1_1))
 ggnostic(model_2019s1_1, mapping = aes(color = A))
 ```
 
-```{r, eval=FALSE, out.width='25%',fig.show='hold'}
-library(olsrr)
-# ols_plot_diagnostics(model_2019s1_1)
-ols_step_both_aic(model_2019s1_1)
-
-ols_step_both_p(lm(table_2019s1_250,formula=log(y)~ x1+x2+x3+A+B))
-
-```
 
 ```{r, echo=FALSE, out.width='25%',fig.show='hold'}
 model_2019s1_2 <- lm(table_2019s1_250,formula=log(y)~ x2+A+B)
