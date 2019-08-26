@@ -9,15 +9,15 @@ classoption:
 pagenumbering: FALSE
 whitespace: none
 output:
-  pdf_document:
-    toc: FALSE
-    number_sections: FALSE
   html_document:
     toc: yes
     toc_depth: 3
     toc_float:
       collapsed: yes
       smooth_scroll: yes
+  pdf_document:
+    toc: FALSE
+    number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
     - \usepackage{lscape}
@@ -148,7 +148,7 @@ A company is comparing two different methods of processing their raw material. T
 
 a) Write an appropriate model for the situation described above. Hint: there are 8 observations, and you will need to use at least one indicator variable.
 
-Process 1: $y_i=\beta_0+\beta_1x_i+\varepsilon_i$; Process 2: $y_i=\gamma_0+\gamma_1x_i+\varepsilon_i$;
+Process 1: $y_i=\beta_0+\beta_1x_i+\varepsilon_i$; Process 2: $y_i=\beta_0+\gamma_0+(\beta_1+\gamma_1)x_i+\varepsilon_i$;
 Let $w_i=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\end{cases}$, overall $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+w_i\gamma_1x_i+\varepsilon_i$
 
 b) Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.
@@ -160,8 +160,7 @@ $$\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{
 c) Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
 To test the hypothesis that the two regression lines are identical $(H_0:\gamma_0=\gamma_1=0)$,
-
-To test the hypothesis that the two lines have different intercepts and a common slope $(H_0:\gamma_1=0)$,
+To test the hypothesis that the two lines have different intercepts and a common slope $(H_0:\gamma_0=0)$,
 
 $H_0: \gamma_1=0$, $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i$
 
@@ -169,7 +168,11 @@ $$\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\end{bmatrix}_{8\times1}$$
 
-$\frac{2}{8-4}$
+$\begin{bmatrix} 0&0&0&1\end{bmatrix}\begin{bmatrix} \beta_0\\\beta_1\\\gamma_0\\\gamma_1\end{bmatrix}=0$, $Rank(T)=1$
+
+$dfE_{Full}=n-(k+1)=8-(3+1)=4$, $dfE_{Reduced}=n-Rank(T)=8-1=7$
+
+$F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=7-4=3$, $df_{deno}=4$
 
 
 
@@ -315,16 +318,26 @@ Answer the following from the above information:
 
 (a) Calculate the F-statistic for testing the hypothesis $(H_0)$ that $X_3$, $X_4$, and $X_5$ have no significant effect on the response $Y$.
 
-$H_0: X_3=X_4=X_5=0$
+$H_0: X_3=X_4=X_5=0$; $Rank(T)=3$; $SST=703$; 
 
-$SSR(X_3,X_4,X_5)=SSR(X_1,X_2,X_3,X_4,X_5)-SSR(X_1,X_2,X_3,X_4,X_5)=29+41+26=96$
+$SSR_{Full}=\sum_{i=1}^5 SSR=367$; 
+$SSE_{Full}=SST-SSR_{Full}=703-367=336$; 
+$dfE_{Full}=n-(k+1)=75-(5+1)=69$;
 
-$F_{\nu_1=3,\nu_2=71}(\frac{96}{607})$, $F_{\nu_1=3,\nu_2=50}(2.70)=0.05$, $F_{\nu_1=3,\nu_2=100}(2.61)=0.05$
+$SSR_{Red}=SSR(X_3,X_4,X_5|X_1,X_2)=\sum_{i=3}^5SSR=29+41+26=96$;
+$SSE_{Red}=SST-SSR_{Red}=703-96=607$;
+$dfE_{Reduced}=n-Rank(T)=75-3=72$
+
+$F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}=\frac{(607-336)/(72-69)}{336/69}$,
+
+$F_{\nu_1=3,\nu_2=69}(18.5506)$, $F_{\nu_1=3,\nu_2=50}(2.70)=0.05$, $F_{\nu_1=3,\nu_2=100}(2.61)=0.05$
 
 
-(b) Calculate $R^2$ for the model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i2}\varepsilon_i$
+(b) Calculate $R^2$ for the model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i2}+\varepsilon_i$
 
-$R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}=\frac{271}{703}$
+$SSR=SSR_{X_1}+SSR_{X_2}=SSR_{Full}-SSR_{Red}=SSE_{Reduced}-SSE_{Full}=271$
+
+$R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}=\frac{271}{703}=0.3855$
 
 (c) Describe the meaning or interpretation of the statistic $R^2$ calculated in part (b).
 
@@ -336,7 +349,12 @@ $R^2_{adj}=1-\frac{SSE/(n-p)}{SST/(n-1)}=1-\frac{(703-271)/72}{703/74}=0.3684211
 
 (e) Calculate the F-statistic for testing $H_0:\beta_2=\beta_4=0$.
 
-$F_{\nu_1=3,\nu_2=71}(\frac{214}{489})$, $F_{\nu_1=3,\nu_2=50}(2.70)=0.05$, $F_{\nu_1=3,\nu_2=100}(2.61)=0.05$
+$SSE_{Red}=489$; $Rank(T)=2$;
+$dfE_{Reduced}=n-Rank(T)=75-2=73$, 
+
+$F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}=\frac{(489-336)/(73-69)}{336/69}$,
+
+$F_{\nu_1=4,\nu_2=69}(7.8549)$, $F_{\nu_1=4,\nu_2=60}(2.53)=0.05$, $F_{\nu_1=4,\nu_2=120}(2.45)=0.05$
 
 
 ### 2016S3
@@ -369,33 +387,33 @@ Jong Sung Kim*, Brad Crain
 
 The data for this question consist of 12 measurements on each of 2 quantitative regressor variables $x_1$ and $x_2$ and on a dependent variable y. The data are displayed below:
 
- --- -- -- ---
- Obs x1 x2 y
+ --- -- -- --- - --         ------
+ Obs x1 x2 y   m $\bar y_i$ $(y_{ij}-\bar y_i)^2$
 
- 1   3   1 5
+ 1   3   1 5   1 5          0
  
- 2   3   2 5
+ 2   3   2 5   2 4          1
  
- 3   3   2 3
+ 3   3   2 3   2 4          1
  
- 4   7   1 23
+ 4   7   1 23  3 23         0
  
- 5   7   3 19
+ 5   7   3 19  4 19         0
  
- 6   12  1 75
+ 6   12  1 75  5 78         9
  
- 7   12  1 81
+ 7   12  1 81  5 78         9
  
- 8   12  2 67
+ 8   12  2 67  6 67         0
  
- 9   12  3 51
+ 9   12  3 51  7 49         4
  
- 10  12  3 47
+ 10  12  3 47  7 49         4
  
- 11  19  2 135
+ 11  19  2 135 8 135        0
  
- 12  19  3 121
- -------------
+ 12  19  3 121 9 121        0
+ --------------------------------
  
 The model to be fit to the data is $Y =\beta_0+\beta_1x_{1}+\beta_2X_{2}+\varepsilon_i$. What follows is partially incomplete SAS output. Although the output is incomplete, there is enough information given that you can answer the questions that follow with a minimal amount of calculation. Note that Type I SS is the same as Seq SS.
 
@@ -403,15 +421,15 @@ Information I: model: $y = x_1 x_2$;
 
 Analysis of Variance
 
- ---    ------
- Source SumofSquares  
+ ---    -- --         ---
+ Source df SS         MS
  
- Model  
+ Model  2  21292.2369 10646.1185
  
- Error  703.87576
+ Error  9  703.87576  78.2084
  
- Total  
- -------------
+ Total  11 21996
+ -------------------------------
  
  -------------- -------- -------- ------
  Root MSE       8.84355  R-Square 0.9680
@@ -481,11 +499,15 @@ Parameter Estimates
 
 (a) Do a hypothesis test, at the .01 level of significance, of $H_0:\beta_1=\beta_2=0$ vs. $H1$: At least one of $\beta_1$ or $\beta_2\neq0$.
 
-$F\frac{(20647+663.87250)/2}{703.87576/9}=136.244$
+$dfR=2$,$dfT=12-1$,$dfE=11-9=2$;
 
-F(0.01,2,9)=8.02
+$SSE=703.87576$, $MSE=\frac{703.87576}9=8.84355^2=78.2084$;
 
+$R^2=1-\frac{SSE}{SST}=0.9680$, $SST=\frac{703.87576}{1-0.9680}=21996.1125$
 
+$F=\frac{MSR}{MSE}=\frac{(SST-SSE)/dfR}{MSR}=\frac{(21996.1125-703.87576)/2}{78.2084}=136.125$
+
+$F(0.01,2,9)=8.02$
 
 
 (b) What is the value of $R^2$?
@@ -496,7 +518,7 @@ F(0.01,2,9)=8.02
 
   i. $H_0:\beta_1=0$ vs. $H_1: \beta_1\neq0$
 
-$F=\frac{(20647-703.87576)/1}{78.20842}=255$; 
+$F=\frac{(20647-703.87576)/(10-9)}{78.20842}=255$; 
 
 $F(0.05,1,9)=5.12$
   
@@ -512,9 +534,31 @@ $8.1556-t(0.005,9)8.84355\sqrt{0.2483463917}, 8.1556+3.25\times4.407127$;
 
 (e) Give an unbiased estimate of the variance of $\hat\beta_1-\hat\beta_2$.
 
+$Var(\hat\beta_1-\hat\beta_2)=Var(\hat\beta_1)+Var(\hat\beta_2)-Cov(\hat\beta_1,\hat\beta_2)=0.2483+10.7694-2(-0.49669)=12.01108$
+
 (f) Obtain MS(Pure Error). Hint: Pure Error can be found exactly the same way as we did for simple linear regression model. That is, group according to different combinations of levels from $X_1$ and $X_2$. First compute SS(Pure Error), and then divide it by degrees of freedom.
 
-(g) Perform a test for lack-of-fit at the .05 level of significance. Note: If you are unable to answer part (f), use MS(Pure Error) = 7.5. This is not the correct answer to (f), but if you use it in this part of the problem, you will receive full credit on this part, provided your answer is otherwise correct.
+$SS_{PE}=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2=28$
+
+$df_{PE}=n-m=12-9=3$
+
+$MS_{PE}=28/3$
+
+(g) Perform a test for lack-of-fit at the .05 level of significance. Note: If you are unable to answer part (f), use MS(Pure Error) = 7.5. This is not the correct answer to (f), but if you use it in this part of the problem, you will receive full credit on this part, provided your answer is otherwise correct. [4.5]
+
+$SSE=SS_{LOF}+SS_{PE}$,
+$\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\hat y_i)^2=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2+\sum_{i=1}^mn_i(y_{ij}-\hat y_i)^2$
+
+$H_0$: There is no lack of fit, the model is appropriate;
+$H_1$: There is a lack of fit, the model is not appropriate;
+
+$SS_{LOF}=SSE-SS_{PE}=703.87576-28=675.8758$
+
+$df_{LOF}=dfE-df_{PE}=m-3=6$
+
+$F=\frac{SS_{LOF}/df_{LOF}}{MS_{PE}}=\frac{675.87576/6}{28/3}=12.06921$
+
+$F(0.05,6,3)=8.94$. Reject $H_0$ at the .05 level of significance.
 
 ### 2016F2
 
@@ -548,19 +592,19 @@ The model to be fit to the data is $Y_i=\beta_0+\beta_1x_{1i}+\beta_2X_{2i}+\bet
 
 (a) What are the first and last rows of the X-matrix (assuming that the data are entered in the same order in which they are displayed above)?
 
-First row:
+First row: $1, X_{1i}, X_{2i}, X_{2i}^2, 1, X_{1i}, X_{2i}, X_{2i}^2$, $1,3.54,17,289,1,3.54,17,289$
 
-Last row:
+Last row: $1, X_{1i}, X_{2i}, X_{2i}^2, 0, 0, 0, 0$, $1,3.54,17,289,0,0,0,0$
 
 (b) For each of the following objectives, give the appropriate null hypothesis.
 
-  i. It is desired to know whether the slope coefficient on $x_1$ is the same for both groups.
+  i. It is desired to know whether the slope coefficient on $x_1$ is the same for both groups.$\beta_5=0$
   
-  ii. It is desired to know whether the entire regression models for the two groups are identical.
+  ii. It is desired to know whether the entire regression models for the two groups are identical.$\beta_4=\beta_5=\beta_6=\beta_7=0$
 
-  iii. It is desired to know whether a quadratic term in $x_2$ is needed by both groups.
+  iii. It is desired to know whether a quadratic term in $x_2$ is needed by both groups.$\beta_3=\beta_7=0$
 
-  iv. It is desired to know whether the slope coefficients on $x_1$ and $x_2$ for the first group are equal.
+  iv. It is desired to know whether the slope coefficients on $x_1$ and $x_2$ for the first group are equal.$\beta_1+\beta_5=\beta_2+\beta_6$
 
 ### 2016F3
 
@@ -693,10 +737,21 @@ se_y_new <- sqrt(275.06005*(1+1/13+(170-bar_x)^2/S_xx))
  
 (a) Find the three residual values at x = 170.
 
+$\hat y=14.90696+0.90267*170=168.3609$;$162.5-168.3609=-5.8609$,$192-168.3609=23.6391$,$162-168.3609=-6.3609$
+
 (b) Compute a 95% confidence interval for the mean response at x = 170. Hint:Compute the variance of the estimate of the mean response at x = 170.
+
+$\bar x=147.6923$,$S_{XX}=\sum_{i=1}^{13}(x_i-\bar x)^2=6230.769$
+
+$se(y_0)=\sqrt{MSE(\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=\sqrt{275.06005(\frac1{13}+\frac{(170-147.6923)^2}{6230.769})}=6.567093$
+
+$\hat y\pm t_{n-2,0.025}se(y_0)=168.3609\pm2.200985*6.567093$, $(153.9068,182.815)$
 
 (c) Compute a 95% prediction interval on a new response observation at x = 170. Hint: You can use part of the expression in (b).
 
+$se(y_0)=\sqrt{MSE(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=17.83779$
+
+$168.3609\pm2.200985*17.83779$, $(129.1002,207.6216)$
 
 ### 2016F4
 
@@ -761,14 +816,27 @@ Least Squares Means for effect color Pr > |t| for H0: LSMean(i)=LSMean(j) Depend
  -------------------------------
 
 ### 2016F5
+[BIBD]
 
 Consider an experiment to compare 7 treatments in block of size 5. Taking all possible combinations of five treatments from seven gives a balanced incomplete block design with each treatment level occurring 15 times. Hint: Figure out $p, t, k, r, \lambda$ and their relationships.
 
+$a=7$,$k=5$,$r=15$, replications of each pair $\lambda=\frac{r(k-1)}{a-1}=10$
+
 a. How many blocks does the design have?
+
+$b=\frac{ar}{k}=21$
 
 b. Show that the number of times each treatment level occurs must be a multiple of five for a balanced incomplete block design with 7 treatments and blocks of size 5 to exist.
 
+$r=\frac{bk}{a}=\frac57b$
+
 c. Show that the smallest balanced incomplete block design has 15 observations per treatment.
+
+$\lambda=\frac{(k-1)}{a-1}r=\frac{k(k-1)}{a(a-1)}b=\frac{10}{21}b$
+
+$b=21$ is the smallest positive integer to make $\lambda\in\mathbf{N^+}$
+
+$\lambda=\frac{10}{21}*21=\frac{4}{6}r$, $r=15$ is the smallest munber of observations per treatment for a BIBD with $a=7$, $k=5$.
 
 ## 2017S
 Brad Crain, Jong Sung Kim*
@@ -952,6 +1020,11 @@ Answer the following from the above information:
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_0=1$, $\beta_1-\beta_2=0$. Find the least-squares estimators of the regression coefficients.
 
+Let $SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-1-\beta_1x_i-\beta_1x_i^2)^2$
+
+$\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-1-\beta_1x_i-\beta_1x_i^2)(-x_i-x_i^2)\overset{set}{=}0$;
+$\hat\beta_1=\hat\beta_2=\frac{\sum_{i=1}^n(1+x_i^2)(y_i-1)}{\sum_{i=1}^n(x_i+x_i^2)^2}$
+
 ## 2018S
 Robert Fountain*, Daniel Taylor-Rodriguez
 
@@ -970,33 +1043,35 @@ A company has developed three specialized training workshops for their employees
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the three workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
+Let $w_{1i}=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{2i}=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\\1&9\le i\le12\end{cases}$
+
+overall $y_i=\beta_0+\beta_1x_i+w_{1i}(\gamma_0+\gamma_1x_i)+w_{2i}(\delta_0+\delta_1x_i)+\varepsilon_i$
+
 WorkshopA: $y_i=\beta_0+\beta_1x_i+\varepsilon_i$,$1\le i\le4$;
 
-WorkshopB: $y_i=\gamma_0+\gamma_1x_i+\varepsilon_i$,$5\le i\le8$;
+WorkshopB: $y_i=\beta_0+\gamma_0+(\beta_1+\gamma_1)x_i+\varepsilon_i$,$5\le i\le8$;
 
-WorkshopC: $y_i=\gamma_0+\gamma_1x_i+\varepsilon_i$,$9\le i\le12$;
-
-Let $w_{1i}=\begin{cases}1& 1\le i\le4\\0& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{2i}=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{3i}=\begin{cases}0& 1\le i\le4\\0& 5\le i\le8\\1&9\le i\le12\end{cases}$
-
-overall $y_i=w_{1i}(\beta_0+\beta_1x_i)+w_{2i}(\gamma_0+\gamma_1x_i)+w_{3i}(\delta_0+\delta_1x_i)+\varepsilon_i$
+WorkshopC: $y_i=\beta_0+\delta_0+(\beta_1+\delta_1)x_i+\varepsilon_i$,$9\le i\le12$;
 
 b) Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.
 
-$$\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&58&0&0&0&0\\1&62&0&0&0&0\\1&60&0&0&0&0\\1&65&0&0&0&0\\0&0&1&60&0&0\\0&0&1&62&0&0\\0&0&1&60&0&0\\0&0&1&60&0&0\\0&0&0&0&1&66\\0&0&0&0&1&62\\0&0&0&0&1&61\\0&0&0&0&1&65\end{bmatrix}_{12\times6}\times
+$$\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&58&0&0&0&0\\1&62&0&0&0&0\\1&60&0&0&0&0\\1&65&0&0&0&0\\1&60&1&60&0&0\\1&62&1&62&0&0\\1&60&1&60&0&0\\1&60&1&60&0&0\\1&66&0&0&1&66\\1&62&0&0&1&62\\1&61&0&0&1&61\\1&65&0&0&1&65\end{bmatrix}_{12\times6}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \\ \delta_0 \\ \delta_1\end{bmatrix}_{6\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\\\varepsilon_{11}\\\varepsilon_{12}\end{bmatrix}_{12\times1}$$
 
 c) Suppose that you wish to test for equality of the three slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
-$H_0: \gamma_1=\delta_1=0$, $y_i=w_{1i}\beta_0+\beta_1x_i+w_{2i}\gamma_0+w_{3i}\delta_0+\varepsilon_i$, 
+$H_0: \gamma_1=\delta_1=0$, $y_i=\beta_0+\beta_1x_i+w_{1i}\gamma_0+w_{2i}\delta_0+\varepsilon_i$
 
-$w_{1i}=\begin{cases}1& 1\le i\le4\\0& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{2i}=\begin{cases}0& 1\le i\le4\\1& 5\le i\le8\\0&9\le i\le12\end{cases}$, $w_{3i}=\begin{cases}0& 1\le i\le4\\0& 5\le i\le8\\1&9\le i\le12\end{cases}$
-
-$$\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&58&0&0\\1&62&0&0\\1&60&0&0\\1&65&0&0\\0&60&1&0\\0&62&1&0\\0&60&1&0\\0&60&1&0\\0&66&0&1\\0&62&0&1\\0&61&0&1\\0&65&0&1\end{bmatrix}_{12\times4}\times
+$$\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&58&0&0\\1&62&0&0\\1&60&0&0\\1&65&0&0\\1&60&1&0\\1&62&1&0\\1&60&1&0\\1&60&1&0\\1&66&0&1\\1&62&0&1\\1&61&0&1\\1&65&0&1\end{bmatrix}_{12\times4}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \delta_0 \end{bmatrix}_{4\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\\\varepsilon_{11}\\\varepsilon_{12}\end{bmatrix}_{12\times1}$$
 
-$\frac{3}{12-6}$
+$\begin{bmatrix} 0&0&0&1&0&-1\\0&0&0&0&0&1\end{bmatrix}\begin{bmatrix}\beta_0\\\beta_1\\\gamma_0\\\gamma_1\\\delta_0\\\delta_1\end{bmatrix}=\begin{bmatrix}0\\0\end{bmatrix}$, $Rank(T)=2$
+
+$dfE_{Full}=n-(k+1)=12-(5+1)=6$, $dfE_{Reduced}=n-Rank(T)=12-2=10$
+
+$F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=10-6=4$, $df_{deno}=6$
 
 ### 2018S2
 
@@ -1071,7 +1146,6 @@ c) Create an abbreviated ANOVA table that has two columns: one column that lists
 
 ### 2018S3
 [2017F3][] [2016S2][]
-
 
 The multiple linear regression model $y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i$
 was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into
@@ -1355,12 +1429,12 @@ A company has developed two possible manufacturing processes. They will produce 
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the two processes. Hint: there are 10 observations, and you will need to use at least one indicator variable.
 
-Process A: $y_i=\beta_0+\beta_1x_i+\varepsilon_i$; Process B: $y_i=\gamma_0+\gamma_1x_i+\varepsilon_i$;
+Process A: $y_i=\beta_0+\beta_1x_i+\varepsilon_i$; Process B: $y_i=\beta_0+\gamma_0+(\beta_1+\gamma_1)x_i+\varepsilon_i$;
 Let $w_i=\begin{cases}0& 1\le i\le6\\1& 6\le i\le10\end{cases}$, overall $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+w_i\gamma_1x_i+\varepsilon_i$
 
 b) Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.
 
-$$\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&70&0&0\\1&70&0&0\\1&68&0&0\\1&72&0&0\\1&72&0&0\\1&75&1&75\\1&74&1&74\\1&72&1&72\\1&71&1&71\\1&73&1&73\\\end{bmatrix}_{10\times4} 
+$$\begin{bmatrix} 70\\70\\68\\72\\72\\75\\74\\72\\71\\73\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&38&0&0\\1&55&0&0\\1&40&0&0\\1&45&0&0\\1&36&0&0\\1&30&1&30\\1&42&1&42\\1&30&1&30\\1&30&1&30\\1&41&1&41\\\end{bmatrix}_{10\times4} 
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \end{bmatrix}_{4\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\end{bmatrix}_{10\times1}$$
 
@@ -1369,8 +1443,12 @@ c) Suppose that you wish to test for equality of the two slopes. Write the matri
 
 $H_0: \gamma_1=0$, $y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i$
 
-$$\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&70&0\\1&70&0\\1&68&0\\1&72&0\\1&72&0\\1&75&1\\1&74&1\\1&72&1\\1&71&1\\1&73&1\\\end{bmatrix}_{10\times3}\times
+$$\begin{bmatrix} 70\\70\\68\\72\\72\\75\\74\\72\\71\\73\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&38&0\\1&55&0\\1&40&0\\1&45&0\\1&36&0\\1&30&1\\1&42&1\\1&30&1\\1&30&1\\1&41&1\\\end{bmatrix}_{10\times3}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\end{bmatrix}_{10\times1}$$
 
-$\frac{2}{10-4}$
+$\begin{bmatrix} 0&0&0&1\end{bmatrix}_{10\times4}\begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \end{bmatrix}_{4\times1}=0$, $Rank(T)=1$
+
+$dfE_{Full}=n-(k+1)=10-(3+1)=6$, $dfE_{Reduced}=n-Rank(T)=10-1=9$
+
+$F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=9-6=3$, $df_{deno}=6$

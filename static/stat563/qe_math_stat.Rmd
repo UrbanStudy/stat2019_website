@@ -2416,19 +2416,22 @@ Kochar, Kim
 An electric device has lifetime denoted by $T$. The device has value $V=5$ if it fails before time t=3; otherwise, it has value $V=2T$. Find the cdf of $V$ , if $T$ has pdf
 $f_T(t)=\frac1{1.5}e^{-\frac1{1.5}t}, t>0$
 
-$\begin{cases} 0& -\infty<v<0 \\\int_0^3=1-e^{-2}  & 0\le v<6 \\ \int_0^{v/2}=1-e^{-w/3} &6\le v\end{cases}$
+$P(V=5)=P(t<3)=\int_0^3$, $P(V\le v)=P(2T<v)=P(T<v/2)=\int_0^{v/2}$;
+$\begin{cases} 0& v<5 \\\int_0^3=1-e^{-2}  & 5\le v<6 \\ \int_0^{v/2}=1-e^{-v/3} &6\le v\end{cases}$
 
 
 ### 2018S2A
 [2.E.7][]
 
 Let $X$ have pdf 
-$fX(x)=\frac29(x+1), -1\le x\le2$ 
+$f_X(x)=\frac29(x+1), -1\le x\le2$ 
 Find the pdf of $Y=X^2$.
 
-$\begin{cases}\frac{1}{9}+\frac{1}{9\sqrt y}&1\le y\le4,1\le x\le2\\\frac{2}{9\sqrt y}& 0\le y\le1,-1\le x\le1\end{cases}$
+$P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)$;
 
-<span style="color:red"> different answer </span> 
+$F_X(x)=\begin{cases}\int_1^{\sqrt y}f(x)dx=[\frac{x^2}{9}+\frac{2x}{9}]_1^{\sqrt y}=\frac{y}{9}+\frac{2\sqrt y}{9}-\frac13&1\le y\le4\\\int_{-\sqrt y}^{\sqrt y}f(x)dx=[\frac{x^2}{9}+\frac{2x}{9}]_{-\sqrt y}^{\sqrt y}=\frac{4\sqrt y}{9}& 0\le y\le1\end{cases}$
+
+$f_Y(y)=\begin{cases}\frac{1}{9}+\frac{1}{9\sqrt y}&1\le y\le4\\\frac{2}{9\sqrt y}& 0\le y\le1\end{cases}$
 
 ### 2018S3A
 [2017FA1][] [4.E.6][]
@@ -2436,7 +2439,9 @@ $\begin{cases}\frac{1}{9}+\frac{1}{9\sqrt y}&1\le y\le4,1\le x\le2\\\frac{2}{9\s
 Suppose Xenophon and Yves meet for lunch, and Xenophon arrives at time X
 uniformly from 1 to 2 P.M., and Yves arrives independently at time Y with the same distribution. Find the distribution of $|Y-X|$ and its expectation, that is, the expected waiting time of either party.
 
-$\frac12+x-\frac{x^2}2$
+$F_U(u)=P(U\le u)=1-P(U\ge u)=1-\int_1^{2-u}\int_{x+u}^21dydx=\frac12+u-\frac{u^2}2$, $0<u<1$
+
+$f_U(u)=1-u$; $E[U]=\int_0^1u(1-u)du=[\frac{u^2}2-\frac{u^3}3]_0^1=\frac16$
 
 ### 2018S4A
 [4.E.27][] [4.E.24][] [Facto](#Facto) [4.2.14]
@@ -2496,8 +2501,9 @@ Derive the UMP test of size $\alpha$ and obtain the null distribution of your te
 
 The life time of an electronic component has exponential distribution with mean $\mu$.
 10 such components are put on test at the same time and the experiment is terminated when all of them fail and the times of their failure, $X_1,X_2,..,X_n$ are noted. Based on this information, derive the likelihood ratio test LRT at the level $\alpha= 05$ of the null hypothesis $H_0:\mu=5$ against the alternative $H_1:\mu\neq5$. Also find an expression for the power function of this test.
-$T=\sim x_i$, $\frac{2T}{\theta}\sim\chi^2_{2n}$
-reject $T>t_0$ two-side rejection region.
+$T=\sum x_i$, $\frac{2T}{\mu}\sim\chi^2_{20}$;
+$P(\frac{2T}{5}\le \chi^2_{20,0.95}=10.85)=0.05$;
+Power function $P(reject H_0|\mu_1)=P(\frac{2T}{\mu_1}\le \frac{5\chi^2_{20,0.95}}{\mu_1})$
 
 ## 2018F
 
@@ -2550,9 +2556,8 @@ $E[P]=30-3EX-EX^2$ =9
 $E(Y|X=x)=\alpha+\beta x^2$
 Find $E[Y]$. p164-7(190-3)
 
-$\alpha+\beta/3$
+$E[Y]=E(E[Y|X])=\alpha+\beta EX^2=\alpha+\beta/3$
 
-$E[Y]=E(E[Y|X])$
 
 ### 2018FA4
 [2010SA3][] [2011S4][] [2017FA2][] [DeltaM](#DeltaM) [LimD](#LimD)
@@ -2655,16 +2660,26 @@ Let $\theta$ be Beta distributed, $\theta\sim Beta(1,1)$. Let $N_1$ be Binomial 
 
 (a) (4 pts) Compute $p(\theta|N_1=n_1)$ and $E[\theta|N_1=n_1]$
 
-(b) (6 pts) Compute $p(N_1=n_1)$ for $n_1=0...n$.
+(b) (6 pts) Compute $P(N_1=n_1)$ for $n_1=0...n$.
 
 ### 2019SA4 
-[2009FA3][] [2015S5A][] [Pois-Bino]
+[2009FA3][] [2015S5A][] [Pois-Bino][]
 
 Let $X_1,X_2,..,X_{10}$ be a random sample from a Poisson distribution with mean $\lambda$.
 
-(a) (4 Ppts) Use the method of moment generating functions to find the distribution of $S_{10}=\sum^{10}_{i=1} X_i$. [MOM][7.2.1]
+(a) (4 pts) Use the method of moment generating functions to find the distribution of $S_{10}=\sum^{10}_{i=1} X_i$. 
 
-(b) (6 pts) Let $S_4=\sum_{i=1}^4X_i$ Find the conditional distribution of $S_4$ given $S_{10}=s$, for $s>0$. This distribution belongs to a family of distributions that you know. Which family? which parameters? [F](#F)
+$M_{S_{10}}(t)=\prod_{i=1}^{10}M_X(t)=[e^{\lambda(e^t-1)}]^{10}=e^{10\lambda(e^t-1)}$, $S_{10}\sim Pois(10\lambda)$
+
+(b) (6 pts) Let $S_4=\sum_{i=1}^4X_i$ Find the conditional distribution of $S_4$ given $S_{10}=s$, for $s>0$. This distribution belongs to a family of distributions that you know. Which family? which parameters? 
+
+$S_{10}=s=S_{4}+S_{6}$, 
+$P(S_{4}|S_{10}=s)=\frac{P(S_{4},S_{6}=s-S_{10})}{P(S_{10}=s)}$
+
+$=\frac{\frac{(4\lambda)^{S_{4}}e^{-4\lambda}}{S_{4}!}\cdot\frac{(6\lambda)^{(s-S_{4})}e^{-6\lambda}}{(s-S_{4})!}}{\frac{(10\lambda)^{s}e^{-10\lambda}}{s!}}$
+$=\frac{s!}{S_{4}!(s-S_{4})!}\cdot(\frac25)^{S_{4}}(1-\frac25)^{s-S_{4}}\sim Bino(s,\frac25)$
+
+
 
 ### 2019SB1
 [2009FB1][]
@@ -2673,18 +2688,21 @@ Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution $N(\mu,\sigma
 Solve these two equations. Round up if n is not an integer. Hint: $z_{.05}=1.645$ and $z_{.1}=1.28$
 
 ### 2019SB2 
-[2004F8][] [2007F4B][] [2013FB4][] [2015S3B][] [2018S1B][] [Laplace](#Laplace) [MLE](#MLE) [median](#median) [7.E.13][]
+[2004F8][] [2007F4B][] [2013FB4][] [2015S3B][] [2018S1B][] [Laplace](#Laplace) [median](#median) [7.E.13][]
 
 Let $X_1,X_2,..,X_9$ be a random sample of size 9 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
 where $-\infty<\theta<\infty$ is unknown.
 Find the m.l.e. of $\theta$ and find its bias.
 
+$\hat\theta_{MLE}=X_{(5)}$,
+$Bias=0$
+
 ### 2019SB3 
 [2003S9][] [2004F9][] [2007F5B][] [2015S4B][] [2018S3B][]
 
 Suppose $X_1,X_2,..,X_n$ is a random sample from a distribution with pdf
-$f(x,\theta)=\begin{cases}\theta x^{\theta-1}& 0<x<1\\0& o.w.\end{cases}$ [SPower](#SPower)
+$f(x,\theta)=\begin{cases}\theta x^{\theta-1}& 0<x<1\\0& o.w.\end{cases}$
 Suppose that the value of $\theta$ is unknown and it is desired to test the following hypotheses:
 $H_0:\theta=1\quad H_1 :\theta>1$
 Derive the UMP test of size $\alpha$ and obtain the null distribution of your test statistic. [UMP][8.3.2]
@@ -2698,12 +2716,19 @@ where $\theta>-1$ is an unknown parameter.
 
 (a) (3 pts) Find $\hat\theta$, the maximum likelihood estimator of $\theta$. [MLE](#MLE)
 
+$\hat\theta_{MLE}=\frac{n}{-\sum\ln x_i}-1$
+
 (b) (2 pts) Using $\hat\theta$, create an unbiased estimator $\hat\theta_U$ of $\theta$. [unbias][7.3.1]
+
+$\hat\theta_{U}=\frac{n-1}{-\sum\ln x_i}-1$
 
 (c) (3 pts) Find the Cramer-Rao lower bound for an unbiased estimator of $\theta$. [CRLB][7.3.2]
 
+$Var(\hat\theta_U)\ge\frac1{nI_\theta}=\frac{(\theta+1)^2}n$
+
 (d) (2 pts) What is the asymptotic distribution of $\hat\theta$? [asymD](#asymD)
 
+$\sqrt{n}(\hat\theta-\theta)=N(0,(\theta+1)^2)$
 
 # 1. Probability Theory
 ## 1.1 Set Theory
@@ -2775,7 +2800,7 @@ $Y~Bino$,$X~NBin(r,p)$,$F_x(r-1)=1-F_y(n-r)$
 
 Negative Bino(r,p): 
 
-n trials until r(successes)  $P(X=n)={n-1\choose r-1}p^r(1-p)^{n-r}$;$P(X\le n)=\sum_{i=r}^n{{i-1}\choose{r-1}}p^r(1-p)^{i-r}$
+n trials until r(successes)  $P(X=n)={n-1\choose r-1}p^r(1-p)^{n-r}$;$P(X\le n)=\sum_{i=r}^n{i-1\choose r-1}p^r(1-p)^{i-r}$
 
 x(failures) before r(successes) $P(X=x)={{x+r-1}\choose{x}}p^rq^{x}$;$P(X\le x)=\sum_{i=0}^x{{i+r-1}\choose{i}}p^rq^{i}$; $M_X(t)=(\frac{p}{1-qe^t})^r,t<\ln q$$
 
@@ -3885,6 +3910,8 @@ Consistency {#consi-Seq-E} {#consi} {#consi-MLE}
 
 **Definition 10.1.7**
 
+2019-4-2 asymptotically unbiased $\lim\limits_{n\to\infty}Bias(\hat\theta)=0$
+
 **Example 10.1.8 (Limiting variances)**
 
 **Definition 10.1.9 asymptotic variance**
@@ -3892,7 +3919,11 @@ Consistency {#consi-Seq-E} {#consi} {#consi-MLE}
 **Definition 10.1.11**
 
 **Theorem 10.1.12 (Asymptotic efficiency of MLEs)**
+$\lim\limits_{n\to\infty}\frac{CRLB}{Var(\hat\theta)}$
 
+
+**Definition 10.1.16 ARE** the asymptotic relative efficiency
+$\lim\limits_{n\to\infty}\frac{Var(\hat\theta_2)}{Var(\hat\theta_1)}$
 
 ## 10.3 Hypothesis Testing
 ### 10.3.1 Asymptotic Distribution of LRTs

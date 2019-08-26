@@ -1858,7 +1858,7 @@ div.tocify {
 <ol style="list-style-type: lower-alpha">
 <li>Write an appropriate model for the situation described above. Hint: there are 8 observations, and you will need to use at least one indicator variable.</li>
 </ol>
-<p>Process 1: <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\varepsilon_i\)</span>; Process 2: <span class="math inline">\(y_i=\gamma_0+\gamma_1x_i+\varepsilon_i\)</span>; Let <span class="math inline">\(w_i=\begin{cases}0&amp; 1\le i\le4\\1&amp; 5\le i\le8\end{cases}\)</span>, overall <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_i\gamma_0+w_i\gamma_1x_i+\varepsilon_i\)</span></p>
+<p>Process 1: <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\varepsilon_i\)</span>; Process 2: <span class="math inline">\(y_i=\beta_0+\gamma_0+(\beta_1+\gamma_1)x_i+\varepsilon_i\)</span>; Let <span class="math inline">\(w_i=\begin{cases}0&amp; 1\le i\le4\\1&amp; 5\le i\le8\end{cases}\)</span>, overall <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_i\gamma_0+w_i\gamma_1x_i+\varepsilon_i\)</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.</li>
 </ol>
@@ -1868,13 +1868,14 @@ div.tocify {
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?</li>
 </ol>
-<p>To test the hypothesis that the two regression lines are identical <span class="math inline">\((H_0:\gamma_0=\gamma_1=0)\)</span>,</p>
-<p>To test the hypothesis that the two lines have different intercepts and a common slope <span class="math inline">\((H_0:\gamma_1=0)\)</span>,</p>
+<p>To test the hypothesis that the two regression lines are identical <span class="math inline">\((H_0:\gamma_0=\gamma_1=0)\)</span>, To test the hypothesis that the two lines have different intercepts and a common slope <span class="math inline">\((H_0:\gamma_0=0)\)</span>,</p>
 <p><span class="math inline">\(H_0: \gamma_1=0\)</span>, <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i\)</span></p>
 <p><span class="math display">\[\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{bmatrix} 1&amp;81&amp;0\\1&amp;68&amp;0\\1&amp;77&amp;0\\1&amp;61&amp;0\\1&amp;59&amp;1\\1&amp;62&amp;1\\1&amp;83&amp;1\\1&amp;70&amp;1\end{bmatrix}_{8\times3}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\end{bmatrix}_{8\times1}\]</span></p>
-<p><span class="math inline">\(\frac{3}{8-4}\)</span></p>
+<p><span class="math inline">\(\begin{bmatrix} 0&amp;0&amp;0&amp;1\end{bmatrix}\begin{bmatrix} \beta_0\\\beta_1\\\gamma_0\\\gamma_1\end{bmatrix}=0\)</span>, <span class="math inline">\(Rank(T)=1\)</span></p>
+<p><span class="math inline">\(dfE_{Full}=n-(k+1)=8-(3+1)=4\)</span>, <span class="math inline">\(dfE_{Reduced}=n-Rank(T)=8-1=7\)</span></p>
+<p><span class="math inline">\(F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}\)</span>, <span class="math inline">\(df_{nume}=7-4=3\)</span>, <span class="math inline">\(df_{deno}=4\)</span></p>
 </div>
 <div id="f3" class="section level3">
 <h3>2015F3</h3>
@@ -1889,7 +1890,7 @@ div.tocify {
 <p><a href="#s1-2">2019S1</a></p>
 <p>Assume the model <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i\)</span>, <span class="math inline">\(i=1,..,n\)</span> with the additional restrictions that <span class="math inline">\(\beta_1=0\)</span>, <span class="math inline">\(\beta_0=2\beta_2\)</span>. Find the least-squares estimators of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span>.</p>
 <p>Let <span class="math inline">\(SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)^2=\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)^2\)</span></p>
-<p><span class="math inline">\(\frac{\partial SSE}{\partial\beta_0}=\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)(-2x_i^2)\overset{set}{=}0\)</span>; <span class="math inline">\(\hat\beta_0=\frac{\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}\)</span> <span class="math inline">\(\hat\beta_2=\frac{2\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}\)</span></p>
+<p><span class="math inline">\(\frac{\partial SSE}{\partial\beta_0}=2\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)(-2x_i^2)\overset{set}{=}0\)</span>; <span class="math inline">\(\hat\beta_0=\frac{\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}\)</span> <span class="math inline">\(\hat\beta_2=\frac{2\sum_{i=1}^nx_i^2y_i}{\sum_{i=1}^nx_i^2+2\sum_{i=1}^nx_i^4}\)</span></p>
 </div>
 </div>
 <div id="s-1" class="section level2">
@@ -2202,11 +2203,7 @@ div.tocify {
 <h3>2016S2</h3>
 <p><a href="#f3-2">2017F3</a> <a href="#s3-1">2018S3</a></p>
 <p>The multiple linear regression model <span class="math inline">\(y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i\)</span> was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into the following:</p>
-<p><span class="math inline">\(SSR(X_1)=108\)</span></p>
-<p><span class="math inline">\(SSR(X_2 | X_1)=163\)</span></p>
-<p><span class="math inline">\(SSR(X_3 | X_1 X_2)=29\)</span></p>
-<p><span class="math inline">\(SSR(X_4 | X_1 X_2 X_3)=41\)</span></p>
-<p><span class="math inline">\(SSR(X_5 | X_1 X_2 X_3 X_4)=26\)</span></p>
+<p><span class="math inline">\(SSR(X_1)=108\)</span>; <span class="math inline">\(SSR(X_2 | X_1)=163\)</span>; <span class="math inline">\(SSR(X_3 | X_1 X_2)=29\)</span>; <span class="math inline">\(SSR(X_4 | X_1 X_2 X_3)=41\)</span>; <span class="math inline">\(SSR(X_5 | X_1 X_2 X_3 X_4)=26\)</span></p>
 <p>The model <span class="math inline">\(y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i3}+\beta_5X_{i5}+\varepsilon_i\)</span> was also fit to the same data and the following ANOVA was calculated:</p>
 <table style="width:26%;">
 <colgroup>
@@ -2234,11 +2231,32 @@ div.tocify {
 </table>
 <p>Answer the following from the above information:</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>Calculate the F-statistic for testing the hypothesis <span class="math inline">\((H_0)\)</span> that <span class="math inline">\(X_3\)</span>, <span class="math inline">\(X_4\)</span>, and <span class="math inline">\(X_5\)</span> have no significant effect on the response <span class="math inline">\(Y\)</span>.</p></li>
-<li><p>Calculate <span class="math inline">\(R^2\)</span> for the model <span class="math inline">\(y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i2}\varepsilon_i\)</span></p></li>
-<li><p>Calculate the <span class="math inline">\(R^2_{adj}\)</span> for the model in part (b).</p></li>
-<li><p>Calculate the F-statistic for testing <span class="math inline">\(H_0:\beta_2=\beta_4=0\)</span>.</p></li>
+<li>Calculate the F-statistic for testing the hypothesis <span class="math inline">\((H_0)\)</span> that <span class="math inline">\(X_3\)</span>, <span class="math inline">\(X_4\)</span>, and <span class="math inline">\(X_5\)</span> have no significant effect on the response <span class="math inline">\(Y\)</span>.</li>
 </ol>
+<p><span class="math inline">\(H_0: X_3=X_4=X_5=0\)</span>; <span class="math inline">\(Rank(T)=3\)</span>; <span class="math inline">\(SST=703\)</span>;</p>
+<p><span class="math inline">\(SSR_{Full}=\sum_{i=1}^5 SSR=367\)</span>; <span class="math inline">\(SSE_{Full}=SST-SSR_{Full}=703-367=336\)</span>; <span class="math inline">\(dfE_{Full}=n-(k+1)=75-(5+1)=69\)</span>;</p>
+<p><span class="math inline">\(SSR_{Red}=SSR(X_3,X_4,X_5|X_1,X_2)=\sum_{i=3}^5SSR=29+41+26=96\)</span>; <span class="math inline">\(SSE_{Red}=SST-SSR_{Red}=703-96=607\)</span>; <span class="math inline">\(dfE_{Reduced}=n-Rank(T)=75-3=72\)</span></p>
+<p><span class="math inline">\(F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}=\frac{(607-336)/(72-69)}{336/69}\)</span>,</p>
+<p><span class="math inline">\(F_{\nu_1=3,\nu_2=69}(18.5506)\)</span>, <span class="math inline">\(F_{\nu_1=3,\nu_2=50}(2.70)=0.05\)</span>, <span class="math inline">\(F_{\nu_1=3,\nu_2=100}(2.61)=0.05\)</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Calculate <span class="math inline">\(R^2\)</span> for the model <span class="math inline">\(y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i2}+\varepsilon_i\)</span></li>
+</ol>
+<p><span class="math inline">\(SSR=SSR_{X_1}+SSR_{X_2}=SSR_{Full}-SSR_{Red}=SSE_{Reduced}-SSE_{Full}=271\)</span></p>
+<p><span class="math inline">\(R^2=\frac{SSR}{SST}=1-\frac{SSE}{SST}=\frac{271}{703}=0.3855\)</span></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Describe the meaning or interpretation of the statistic <span class="math inline">\(R^2\)</span> calculated in part (b).</li>
+</ol>
+<p><span class="math inline">\(R^2\)</span> is the coefficient of determination, is the proportion of variation explained by the regressor x. Values of <span class="math inline">\(R^2\)</span> that are close to 1 imply that most of the variability in y is explained by the regression model</p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Calculate the <span class="math inline">\(R^2_{adj}\)</span> for the model in part (b).</li>
+</ol>
+<p><span class="math inline">\(R^2_{adj}=1-\frac{SSE/(n-p)}{SST/(n-1)}=1-\frac{(703-271)/72}{703/74}=0.3684211\)</span></p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Calculate the F-statistic for testing <span class="math inline">\(H_0:\beta_2=\beta_4=0\)</span>.</li>
+</ol>
+<p><span class="math inline">\(SSE_{Red}=489\)</span>; <span class="math inline">\(Rank(T)=2\)</span>; <span class="math inline">\(dfE_{Reduced}=n-Rank(T)=75-2=73\)</span>,</p>
+<p><span class="math inline">\(F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}=\frac{(489-336)/(73-69)}{336/69}\)</span>,</p>
+<p><span class="math inline">\(F_{\nu_1=4,\nu_2=69}(7.8549)\)</span>, <span class="math inline">\(F_{\nu_1=4,\nu_2=60}(2.53)=0.05\)</span>, <span class="math inline">\(F_{\nu_1=4,\nu_2=120}(2.45)=0.05\)</span></p>
 </div>
 <div id="s3" class="section level3">
 <h3>2016S3</h3>
@@ -2252,6 +2270,8 @@ div.tocify {
 <h3>2016S4</h3>
 <p><a href="#s1-2">2019S1</a></p>
 <p>Assume the model <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i\)</span>, <span class="math inline">\(i=1,..,n\)</span> with the additional restrictions that <span class="math inline">\(\beta_1=1\)</span>, <span class="math inline">\(\beta_2=\beta_0\)</span>. Find the least-squares estimators of the coefficients.</p>
+<p>Let <span class="math inline">\(SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-x_i-\beta_0x_i^2)^2\)</span></p>
+<p><span class="math inline">\(\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-x_i-\beta_0-\beta_0x_i^2)(-1-x_i^2)\overset{set}{=}0\)</span>; <span class="math inline">\(\hat\beta_0=\hat\beta_2=\frac{\sum_{i=1}^n(1+x_i^2)(y_i-x_i)}{\sum_{i=1}^n(1+x_i^2)^2}\)</span></p>
 </div>
 <div id="s5" class="section level3">
 <h3>2016S5</h3>
@@ -2264,12 +2284,15 @@ div.tocify {
 <div id="f1-1" class="section level3">
 <h3>2016F1</h3>
 <p>The data for this question consist of 12 measurements on each of 2 quantitative regressor variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and on a dependent variable y. The data are displayed below:</p>
-<table style="width:19%;">
+<table style="width:47%;">
 <colgroup>
 <col width="5%"></col>
 <col width="4%"></col>
 <col width="4%"></col>
 <col width="5%"></col>
+<col width="2%"></col>
+<col width="15%"></col>
+<col width="9%"></col>
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -2277,105 +2300,154 @@ div.tocify {
 <td>x1</td>
 <td>x2</td>
 <td align="left">y</td>
+<td>m</td>
+<td><span class="math inline">\(\bar y_i\)</span></td>
+<td><span class="math inline">\((y_{ij}-\bar y_i)^2\)</span></td>
 </tr>
 <tr class="even">
 <td>1</td>
 <td>3</td>
 <td>1</td>
 <td align="left">5</td>
+<td>1</td>
+<td>5</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td>2</td>
 <td>3</td>
 <td>2</td>
 <td align="left">5</td>
+<td>2</td>
+<td>4</td>
+<td>1</td>
 </tr>
 <tr class="even">
 <td>3</td>
 <td>3</td>
 <td>2</td>
 <td align="left">3</td>
+<td>2</td>
+<td>4</td>
+<td>1</td>
 </tr>
 <tr class="odd">
 <td>4</td>
 <td>7</td>
 <td>1</td>
 <td align="left">23</td>
+<td>3</td>
+<td>23</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td>5</td>
 <td>7</td>
 <td>3</td>
 <td align="left">19</td>
+<td>4</td>
+<td>19</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td>6</td>
 <td>12</td>
 <td>1</td>
 <td align="left">75</td>
+<td>5</td>
+<td>78</td>
+<td>9</td>
 </tr>
 <tr class="even">
 <td>7</td>
 <td>12</td>
 <td>1</td>
 <td align="left">81</td>
+<td>5</td>
+<td>78</td>
+<td>9</td>
 </tr>
 <tr class="odd">
 <td>8</td>
 <td>12</td>
 <td>2</td>
 <td align="left">67</td>
+<td>6</td>
+<td>67</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td>9</td>
 <td>12</td>
 <td>3</td>
 <td align="left">51</td>
+<td>7</td>
+<td>49</td>
+<td>4</td>
 </tr>
 <tr class="odd">
 <td>10</td>
 <td>12</td>
 <td>3</td>
 <td align="left">47</td>
+<td>7</td>
+<td>49</td>
+<td>4</td>
 </tr>
 <tr class="even">
 <td>11</td>
 <td>19</td>
 <td>2</td>
 <td align="left">135</td>
+<td>8</td>
+<td>135</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td>12</td>
 <td>19</td>
 <td>3</td>
 <td align="left">121</td>
+<td>9</td>
+<td>121</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
 <p>The model to be fit to the data is <span class="math inline">\(Y =\beta_0+\beta_1x_{1}+\beta_2X_{2}+\varepsilon_i\)</span>. What follows is partially incomplete SAS output. Although the output is incomplete, there is enough information given that you can answer the questions that follow with a minimal amount of calculation. Note that Type I SS is the same as Seq SS.</p>
 <p>Information I: model: <span class="math inline">\(y = x_1 x_2\)</span>;</p>
 <p>Analysis of Variance</p>
-<table style="width:19%;">
+<table style="width:35%;">
 <colgroup>
 <col width="9%"></col>
-<col width="9%"></col>
+<col width="4%"></col>
+<col width="15%"></col>
+<col width="5%"></col>
 </colgroup>
 <tbody>
 <tr class="odd">
 <td>Source</td>
-<td>SumofSquares</td>
+<td>df</td>
+<td>SS</td>
+<td align="left">MS</td>
 </tr>
 <tr class="even">
 <td>Model</td>
-<td></td>
+<td>2</td>
+<td>21292.2369</td>
+<td align="left">10646.1185</td>
 </tr>
 <tr class="odd">
 <td>Error</td>
+<td>9</td>
 <td>703.87576</td>
+<td align="left">78.2084</td>
 </tr>
 <tr class="even">
 <td>Total</td>
-<td></td>
+<td>11</td>
+<td>21996</td>
+<td align="left"></td>
 </tr>
 </tbody>
 </table>
@@ -2567,20 +2639,53 @@ div.tocify {
 </tbody>
 </table>
 <ol style="list-style-type: lower-alpha">
-<li><p>Do a hypothesis test, at the .01 level of significance, of <span class="math inline">\(H_0:\beta_1=\beta_2=0\)</span> vs. <span class="math inline">\(H1\)</span>: At least one of <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(\beta_2\neq0\)</span>.</p></li>
-<li><p>What is the value of <span class="math inline">\(R^2\)</span>?</p></li>
-<li><p>Do the following two hypothesis tests, each at the .05 level of significance:</p></li>
+<li>Do a hypothesis test, at the .01 level of significance, of <span class="math inline">\(H_0:\beta_1=\beta_2=0\)</span> vs. <span class="math inline">\(H1\)</span>: At least one of <span class="math inline">\(\beta_1\)</span> or <span class="math inline">\(\beta_2\neq0\)</span>.</li>
+</ol>
+<p><span class="math inline">\(dfR=2\)</span>,<span class="math inline">\(dfT=12-1\)</span>,<span class="math inline">\(dfE=11-9=2\)</span>;</p>
+<p><span class="math inline">\(SSE=703.87576\)</span>, <span class="math inline">\(MSE=\frac{703.87576}9=8.84355^2=78.2084\)</span>;</p>
+<p><span class="math inline">\(R^2=1-\frac{SSE}{SST}=0.9680\)</span>, <span class="math inline">\(SST=\frac{703.87576}{1-0.9680}=21996.1125\)</span></p>
+<p><span class="math inline">\(F=\frac{MSR}{MSE}=\frac{(SST-SSE)/dfR}{MSR}=\frac{(21996.1125-703.87576)/2}{78.2084}=136.125\)</span></p>
+<p><span class="math inline">\(F(0.01,2,9)=8.02\)</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>What is the value of <span class="math inline">\(R^2\)</span>?</li>
+</ol>
+<p>0.9680</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Do the following two hypothesis tests, each at the .05 level of significance:</li>
 </ol>
 <ol style="list-style-type: lower-roman">
-<li><p><span class="math inline">\(H_0:\beta_1=0\)</span> vs. <span class="math inline">\(H_1: \beta_1\neq0\)</span></p></li>
-<li><p><span class="math inline">\(H_0:\beta_2=0\)</span> vs. <span class="math inline">\(H_1: \beta_2\neq0\)</span></p></li>
+<li><span class="math inline">\(H_0:\beta_1=0\)</span> vs. <span class="math inline">\(H_1: \beta_1\neq0\)</span></li>
 </ol>
+<p><span class="math inline">\(F=\frac{(20647-703.87576)/(10-9)}{78.20842}=255\)</span>;</p>
+<p><span class="math inline">\(F(0.05,1,9)=5.12\)</span></p>
+<ol start="2" style="list-style-type: lower-roman">
+<li><span class="math inline">\(H_0:\beta_2=0\)</span> vs. <span class="math inline">\(H_1: \beta_2\neq0\)</span></li>
+</ol>
+<p><span class="math inline">\(F=\frac{(663.8725-703.87576)/1}{78.20842}=-?\)</span></p>
 <ol start="4" style="list-style-type: lower-alpha">
-<li><p>Obtain a 99% confidence interval for <span class="math inline">\(\beta_1\)</span>.</p></li>
-<li><p>Give an unbiased estimate of the variance of <span class="math inline">\(\hat\beta_1-\hat\beta_2\)</span>.</p></li>
-<li><p>Obtain MS(Pure Error). Hint: Pure Error can be found exactly the same way as we did for simple linear regression model. That is, group according to different combinations of levels from <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. First compute SS(Pure Error), and then divide it by degrees of freedom.</p></li>
-<li><p>Perform a test for lack-of-fit at the .05 level of significance. Note: If you are unable to answer part (f), use MS(Pure Error) = 7.5. This is not the correct answer to (f), but if you use it in this part of the problem, you will receive full credit on this part, provided your answer is otherwise correct.</p></li>
+<li>Obtain a 99% confidence interval for <span class="math inline">\(\beta_1\)</span>.</li>
 </ol>
+<p><span class="math inline">\(\hat\beta_1\pm t_{\frac{\alpha}{2},n-k-1}se(\hat\beta_1)\)</span>, <span class="math inline">\(se(\hat\beta_1)=\sqrt{MSE\cdot C_{22}}\)</span></p>
+<p><span class="math inline">\(8.1556-t(0.005,9)8.84355\sqrt{0.2483463917}, 8.1556+3.25\times4.407127\)</span>;</p>
+<ol start="5" style="list-style-type: lower-alpha">
+<li>Give an unbiased estimate of the variance of <span class="math inline">\(\hat\beta_1-\hat\beta_2\)</span>.</li>
+</ol>
+<p><span class="math inline">\(Var(\hat\beta_1-\hat\beta_2)=Var(\hat\beta_1)+Var(\hat\beta_2)-Cov(\hat\beta_1,\hat\beta_2)=0.2483+10.7694-2(-0.49669)=12.01108\)</span></p>
+<ol start="6" style="list-style-type: lower-alpha">
+<li>Obtain MS(Pure Error). Hint: Pure Error can be found exactly the same way as we did for simple linear regression model. That is, group according to different combinations of levels from <span class="math inline">\(X_1\)</span> and <span class="math inline">\(X_2\)</span>. First compute SS(Pure Error), and then divide it by degrees of freedom.</li>
+</ol>
+<p><span class="math inline">\(SS_{PE}=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2=28\)</span></p>
+<p><span class="math inline">\(df_{PE}=n-m=12-9=3\)</span></p>
+<p><span class="math inline">\(MS_{PE}=28/3\)</span></p>
+<ol start="7" style="list-style-type: lower-alpha">
+<li>Perform a test for lack-of-fit at the .05 level of significance. Note: If you are unable to answer part (f), use MS(Pure Error) = 7.5. This is not the correct answer to (f), but if you use it in this part of the problem, you will receive full credit on this part, provided your answer is otherwise correct. [4.5]</li>
+</ol>
+<p><span class="math inline">\(SSE=SS_{LOF}+SS_{PE}\)</span>, <span class="math inline">\(\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\hat y_i)^2=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2+\sum_{i=1}^mn_i(y_{ij}-\hat y_i)^2\)</span></p>
+<p><span class="math inline">\(H_0\)</span>: There is no lack of fit, the model is appropriate; <span class="math inline">\(H_1\)</span>: There is a lack of fit, the model is not appropriate;</p>
+<p><span class="math inline">\(SS_{LOF}=SSE-SS_{PE}=703.87576-28=675.8758\)</span></p>
+<p><span class="math inline">\(df_{LOF}=dfE-df_{PE}=m-3=6\)</span></p>
+<p><span class="math inline">\(F=\frac{SS_{LOF}/df_{LOF}}{MS_{PE}}=\frac{675.87576/6}{28/3}=12.06921\)</span></p>
+<p><span class="math inline">\(F(0.05,6,3)=8.94\)</span>. Reject <span class="math inline">\(H_0\)</span> at the .05 level of significance.</p>
 </div>
 <div id="f2-1" class="section level3">
 <h3>2016F2</h3>
@@ -2677,16 +2782,16 @@ div.tocify {
 <ol style="list-style-type: lower-alpha">
 <li>What are the first and last rows of the X-matrix (assuming that the data are entered in the same order in which they are displayed above)?</li>
 </ol>
-<p>First row:</p>
-<p>Last row:</p>
+<p>First row: <span class="math inline">\(1, X_{1i}, X_{2i}, X_{2i}^2, 1, X_{1i}, X_{2i}, X_{2i}^2\)</span>, <span class="math inline">\(1,3.54,17,289,1,3.54,17,289\)</span></p>
+<p>Last row: <span class="math inline">\(1, X_{1i}, X_{2i}, X_{2i}^2, 0, 0, 0, 0\)</span>, <span class="math inline">\(1,3.54,17,289,0,0,0,0\)</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>For each of the following objectives, give the appropriate null hypothesis.</li>
 </ol>
 <ol style="list-style-type: lower-roman">
-<li><p>It is desired to know whether the slope coefficient on <span class="math inline">\(x_1\)</span> is the same for both groups.</p></li>
-<li><p>It is desired to know whether the entire regression models for the two groups are identical.</p></li>
-<li><p>It is desired to know whether a quadratic term in <span class="math inline">\(x_2\)</span> is needed by both groups.</p></li>
-<li><p>It is desired to know whether the slope coefficients on <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> for the first group are equal.</p></li>
+<li><p>It is desired to know whether the slope coefficient on <span class="math inline">\(x_1\)</span> is the same for both groups.<span class="math inline">\(\beta_5=0\)</span></p></li>
+<li><p>It is desired to know whether the entire regression models for the two groups are identical.<span class="math inline">\(\beta_4=\beta_5=\beta_6=\beta_7=0\)</span></p></li>
+<li><p>It is desired to know whether a quadratic term in <span class="math inline">\(x_2\)</span> is needed by both groups.<span class="math inline">\(\beta_3=\beta_7=0\)</span></p></li>
+<li><p>It is desired to know whether the slope coefficients on <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> for the first group are equal.<span class="math inline">\(\beta_1+\beta_5=\beta_2+\beta_6\)</span></p></li>
 </ol>
 </div>
 <div id="f3-1" class="section level3">
@@ -2909,14 +3014,17 @@ div.tocify {
 </tbody>
 </table>
 <p>Output Statistics</p>
-<table style="width:74%;">
+<table style="width:99%;">
 <colgroup>
-<col width="5%"></col>
+<col width="4%"></col>
+<col width="11%"></col>
 <col width="12%"></col>
-<col width="13%"></col>
-<col width="16%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
+<col width="14%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
+<col width="11%"></col>
 </colgroup>
 <tbody>
 <tr class="odd">
@@ -2924,6 +3032,9 @@ div.tocify {
 <td align="left">Dep Var</td>
 <td>Predicted</td>
 <td align="left">Std Error</td>
+<td align="center">95% CL</td>
+<td></td>
+<td align="left">95% CL</td>
 <td></td>
 <td></td>
 </tr>
@@ -2932,12 +3043,18 @@ div.tocify {
 <td align="left">distance</td>
 <td>Value</td>
 <td align="left">MeanPredict</td>
-<td>95% CL</td>
-<td>Mean</td>
+<td align="center">Mean</td>
+<td></td>
+<td align="left">Predict</td>
+<td></td>
+<td>Residual</td>
 </tr>
 <tr class="odd">
 <td>1</td>
 <td align="left">162.5000</td>
+<td></td>
+<td align="left"></td>
+<td align="center"></td>
 <td></td>
 <td align="left"></td>
 <td></td>
@@ -2948,28 +3065,40 @@ div.tocify {
 <td align="left">144.0000</td>
 <td>141.2810</td>
 <td align="left">4.8755</td>
-<td>130.5501</td>
+<td align="center">130.5501</td>
 <td>152.0119</td>
+<td align="left">103.2332</td>
+<td>179.3288</td>
+<td>2.7190</td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td align="left">147.5000</td>
 <td>177.3879</td>
 <td align="left">8.1998</td>
-<td>159.3402</td>
+<td align="center">159.3402</td>
 <td>195.4355</td>
+<td align="left">136.6668</td>
+<td>218.1089</td>
+<td>-29.8879</td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td align="left">163.5000</td>
 <td>159.3344</td>
 <td align="left">5.2769</td>
-<td>147.7201</td>
+<td align="center">147.7201</td>
 <td>170.9488</td>
+<td align="left">121.0281</td>
+<td>197.6408</td>
+<td>4.1656</td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td align="left">192.0000</td>
+<td></td>
+<td align="left"></td>
+<td align="center"></td>
 <td></td>
 <td align="left"></td>
 <td></td>
@@ -2980,12 +3109,18 @@ div.tocify {
 <td align="left">171.7500</td>
 <td>150.3077</td>
 <td align="left">4.6253</td>
-<td>140.1274</td>
+<td align="center">140.1274</td>
 <td>160.4880</td>
+<td align="left">112.4115</td>
+<td>188.2039</td>
+<td>21.4423</td>
 </tr>
 <tr class="odd">
 <td>7</td>
 <td align="left">162.0000</td>
+<td></td>
+<td align="left"></td>
+<td align="center"></td>
 <td></td>
 <td align="left"></td>
 <td></td>
@@ -2996,151 +3131,97 @@ div.tocify {
 <td align="left">104.8300</td>
 <td>114.2008</td>
 <td align="left">9.1584</td>
-<td>94.0433</td>
+<td align="center">94.0433</td>
 <td>134.3583</td>
+<td align="left">72.5018</td>
+<td>155.8999</td>
+<td>-9.3708</td>
 </tr>
 <tr class="odd">
 <td>9</td>
 <td align="left">105.6700</td>
 <td>123.2276</td>
 <td align="left">7.4170</td>
-<td>106.9028</td>
+<td align="center">106.9028</td>
 <td>139.5523</td>
+<td align="left">83.2403</td>
+<td>163.2148</td>
+<td>-17.5576</td>
 </tr>
 <tr class="even">
 <td>10</td>
 <td align="left">117.5800</td>
 <td>132.2543</td>
 <td align="left">5.9141</td>
-<td>119.2374</td>
+<td align="center">119.2374</td>
 <td>145.2712</td>
+<td align="left">93.4996</td>
+<td>171.0089</td>
+<td>-14.6743</td>
 </tr>
 <tr class="odd">
 <td>11</td>
 <td align="left">140.2500</td>
 <td>123.2276</td>
 <td align="left">7.4170</td>
-<td>106.9028</td>
+<td align="center">106.9028</td>
 <td>139.5523</td>
+<td align="left">83.2403</td>
+<td>163.2148</td>
+<td>17.0224</td>
 </tr>
 <tr class="even">
 <td>12</td>
 <td align="left">150.1700</td>
 <td>141.2810</td>
 <td align="left">4.8755</td>
-<td>130.5501</td>
+<td align="center">130.5501</td>
 <td>152.0119</td>
+<td align="left">103.2332</td>
+<td>179.3288</td>
+<td>8.8890</td>
 </tr>
 <tr class="odd">
 <td>13</td>
 <td align="left">165.1700</td>
 <td>159.3344</td>
 <td align="left">5.2769</td>
-<td>147.7201</td>
+<td align="center">147.7201</td>
 <td>170.9488</td>
-</tr>
-</tbody>
-</table>
-<p>Output Statistics</p>
-<table style="width:43%;">
-<colgroup>
-<col width="5%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
-<col width="12%"></col>
-</colgroup>
-<tbody>
-<tr class="odd">
-<td>Obs</td>
-<td align="left">95% CL</td>
-<td align="left">Predict</td>
-<td>Residual</td>
-</tr>
-<tr class="even">
-<td>1</td>
-<td align="left"></td>
-<td align="left"></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>2</td>
-<td align="left">103.2332</td>
-<td align="left">179.3288</td>
-<td>2.7190</td>
-</tr>
-<tr class="even">
-<td>3</td>
-<td align="left">136.6668</td>
-<td align="left">218.1089</td>
-<td>-29.8879</td>
-</tr>
-<tr class="odd">
-<td>4</td>
 <td align="left">121.0281</td>
-<td align="left">197.6408</td>
-<td>4.1656</td>
-</tr>
-<tr class="even">
-<td>5</td>
-<td align="left"></td>
-<td align="left"></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>6</td>
-<td align="left">112.4115</td>
-<td align="left">188.2039</td>
-<td>21.4423</td>
-</tr>
-<tr class="even">
-<td>7</td>
-<td align="left"></td>
-<td align="left"></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>8</td>
-<td align="left">72.5018</td>
-<td align="left">155.8999</td>
-<td>-9.3708</td>
-</tr>
-<tr class="even">
-<td>9</td>
-<td align="left">83.2403</td>
-<td align="left">163.2148</td>
-<td>-17.5576</td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td align="left">93.4996</td>
-<td align="left">171.0089</td>
-<td>-14.6743</td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td align="left">83.2403</td>
-<td align="left">163.2148</td>
-<td>17.0224</td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td align="left">103.2332</td>
-<td align="left">179.3288</td>
-<td>8.8890</td>
-</tr>
-<tr class="even">
-<td>13</td>
-<td align="left">121.0281</td>
-<td align="left">197.6408</td>
+<td>197.6408</td>
 <td>5.8356</td>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>x &lt;- c(170,140,180,160,170,150,170,110,120,130,120,140,160)
+y &lt;- c(162.50,144.00,147.50,163.50,192.00,171.75,162.00,104.83,105.67,117.58,140.25,150.17,165.17)
+bar_x &lt;- mean(x)
+S_xx &lt;- var(x)*(13-1)
+sum((x-mean(x))^2)</code></pre>
+<pre><code>## [1] 6230.769</code></pre>
+<pre class="r"><code>hat_y &lt;- 14.90696+0.90267*170
+
+qt(0.025,11,lower.tail = F,log.p = F)</code></pre>
+<pre><code>## [1] 2.200985</code></pre>
+<pre class="r"><code>se_y_mean &lt;- sqrt(275.06005*(1/13+(170-bar_x)^2/S_xx))
+
+se_y_new &lt;- sqrt(275.06005*(1+1/13+(170-bar_x)^2/S_xx))</code></pre>
 <ol style="list-style-type: lower-alpha">
-<li><p>Find the three residual values at x = 170.</p></li>
-<li><p>Compute a 95% confidence interval for the mean response at x = 170. Hint:Compute the variance of the estimate of the mean response at x = 170.</p></li>
-<li><p>Compute a 95% prediction interval on a new response observation at x = 170. Hint: You can use part of the expression in (b).</p></li>
+<li>Find the three residual values at x = 170.</li>
 </ol>
+<p><span class="math inline">\(\hat y=14.90696+0.90267*170=168.3609\)</span>;<span class="math inline">\(162.5-168.3609=-5.8609\)</span>,<span class="math inline">\(192-168.3609=23.6391\)</span>,<span class="math inline">\(162-168.3609=-6.3609\)</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Compute a 95% confidence interval for the mean response at x = 170. Hint:Compute the variance of the estimate of the mean response at x = 170.</li>
+</ol>
+<p><span class="math inline">\(\bar x=147.6923\)</span>,<span class="math inline">\(S_{XX}=\sum_{i=1}^{13}(x_i-\bar x)^2=6230.769\)</span></p>
+<p><span class="math inline">\(se(y_0)=\sqrt{MSE(\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=\sqrt{275.06005(\frac1{13}+\frac{(170-147.6923)^2}{6230.769})}=6.567093\)</span></p>
+<p><span class="math inline">\(\hat y\pm t_{n-2,0.025}se(y_0)=168.3609\pm2.200985*6.567093\)</span>, <span class="math inline">\((153.9068,182.815)\)</span></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Compute a 95% prediction interval on a new response observation at x = 170. Hint: You can use part of the expression in (b).</li>
+</ol>
+<p><span class="math inline">\(se(y_0)=\sqrt{MSE(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=17.83779\)</span></p>
+<p><span class="math inline">\(168.3609\pm2.200985*17.83779\)</span>, <span class="math inline">\((129.1002,207.6216)\)</span></p>
 </div>
 <div id="f4-1" class="section level3">
 <h3>2016F4</h3>
@@ -3253,12 +3334,23 @@ run;</code></pre>
 </div>
 <div id="f5" class="section level3">
 <h3>2016F5</h3>
+<p>[BIBD]</p>
 <p>Consider an experiment to compare 7 treatments in block of size 5. Taking all possible combinations of five treatments from seven gives a balanced incomplete block design with each treatment level occurring 15 times. Hint: Figure out <span class="math inline">\(p, t, k, r, \lambda\)</span> and their relationships.</p>
+<p><span class="math inline">\(a=7\)</span>,<span class="math inline">\(k=5\)</span>,<span class="math inline">\(r=15\)</span>, replications of each pair <span class="math inline">\(\lambda=\frac{r(k-1)}{a-1}=10\)</span></p>
 <ol style="list-style-type: lower-alpha">
-<li><p>How many blocks does the design have?</p></li>
-<li><p>Show that the number of times each treatment level occurs must be a multiple of five for a balanced incomplete block design with 7 treatments and blocks of size 5 to exist.</p></li>
-<li><p>Show that the smallest balanced incomplete block design has 15 observations per treatment.</p></li>
+<li>How many blocks does the design have?</li>
 </ol>
+<p><span class="math inline">\(b=\frac{ar}{k}=21\)</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Show that the number of times each treatment level occurs must be a multiple of five for a balanced incomplete block design with 7 treatments and blocks of size 5 to exist.</li>
+</ol>
+<p><span class="math inline">\(r=\frac{bk}{a}=\frac57b\)</span></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Show that the smallest balanced incomplete block design has 15 observations per treatment.</li>
+</ol>
+<p><span class="math inline">\(\lambda=\frac{(k-1)}{a-1}r=\frac{k(k-1)}{a(a-1)}b=\frac{10}{21}b\)</span></p>
+<p><span class="math inline">\(b=21\)</span> is the smallest positive integer to make <span class="math inline">\(\lambda\in\mathbf{N^+}\)</span></p>
+<p><span class="math inline">\(\lambda=\frac{10}{21}*21=\frac{4}{6}r\)</span>, <span class="math inline">\(r=15\)</span> is the smallest munber of observations per treatment for a BIBD with <span class="math inline">\(a=7\)</span>, <span class="math inline">\(k=5\)</span>.</p>
 </div>
 </div>
 <div id="s-2" class="section level2">
@@ -3412,7 +3504,7 @@ run;</code></pre>
 </div>
 <div id="f3-2" class="section level3">
 <h3>2017F3</h3>
-<p><a href="#s3-1">2018S3</a></p>
+<p><a href="#s3-1">2018S3</a> <a href="#s2">2016S2</a></p>
 <p>The multiple linear regression model <span class="math inline">\(y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i\)</span> was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into the following:</p>
 <p><span class="math inline">\(SSR(X_1)=108\)</span></p>
 <p><span class="math inline">\(SSR(X_2 | X_1)=163\)</span></p>
@@ -3456,6 +3548,8 @@ run;</code></pre>
 <h3>2017F4</h3>
 <p><a href="#s1-2">2019S1</a></p>
 <p>Assume the model <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i\)</span>, <span class="math inline">\(i=1,..,n\)</span> with the additional restrictions that <span class="math inline">\(\beta_0=1\)</span>, <span class="math inline">\(\beta_1-\beta_2=0\)</span>. Find the least-squares estimators of the regression coefficients.</p>
+<p>Let <span class="math inline">\(SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-1-\beta_1x_i-\beta_1x_i^2)^2\)</span></p>
+<p><span class="math inline">\(\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-1-\beta_1x_i-\beta_1x_i^2)(-x_i-x_i^2)\overset{set}{=}0\)</span>; <span class="math inline">\(\hat\beta_1=\hat\beta_2=\frac{\sum_{i=1}^n(1+x_i^2)(y_i-1)}{\sum_{i=1}^n(x_i+x_i^2)^2}\)</span></p>
 </div>
 </div>
 <div id="s-3" class="section level2">
@@ -3492,25 +3586,27 @@ run;</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the three workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.</li>
 </ol>
+<p>Let <span class="math inline">\(w_{1i}=\begin{cases}0&amp; 1\le i\le4\\1&amp; 5\le i\le8\\0&amp;9\le i\le12\end{cases}\)</span>, <span class="math inline">\(w_{2i}=\begin{cases}0&amp; 1\le i\le4\\1&amp; 5\le i\le8\\1&amp;9\le i\le12\end{cases}\)</span></p>
+<p>overall <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_{1i}(\gamma_0+\gamma_1x_i)+w_{2i}(\delta_0+\delta_1x_i)+\varepsilon_i\)</span></p>
 <p>WorkshopA: <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\varepsilon_i\)</span>,<span class="math inline">\(1\le i\le4\)</span>;</p>
-<p>WorkshopB: <span class="math inline">\(y_i=\gamma_0+\gamma_1x_i+\varepsilon_i\)</span>,<span class="math inline">\(5\le i\le8\)</span>;</p>
-<p>WorkshopC: <span class="math inline">\(y_i=\gamma_0+\gamma_1x_i+\varepsilon_i\)</span>,<span class="math inline">\(9\le i\le12\)</span>;</p>
-<p>Let <span class="math inline">\(w_{1i}=\begin{cases}1&amp; 1\le i\le4\\0&amp; 5\le i\le8\\0&amp;9\le i\le12\end{cases}\)</span>, <span class="math inline">\(w_{2i}=\begin{cases}0&amp; 1\le i\le4\\1&amp; 5\le i\le8\\0&amp;9\le i\le12\end{cases}\)</span>, <span class="math inline">\(w_{3i}=\begin{cases}0&amp; 1\le i\le4\\0&amp; 5\le i\le8\\1&amp;9\le i\le12\end{cases}\)</span></p>
-<p>overall <span class="math inline">\(y_i=w_{1i}(\beta_0+\beta_1x_i)+w_{2i}(\gamma_0+\gamma_1x_i)+w_{3i}(\delta_0+\delta_1x_i)+\varepsilon_i\)</span></p>
+<p>WorkshopB: <span class="math inline">\(y_i=\beta_0+\gamma_0+(\beta_1+\gamma_1)x_i+\varepsilon_i\)</span>,<span class="math inline">\(5\le i\le8\)</span>;</p>
+<p>WorkshopC: <span class="math inline">\(y_i=\beta_0+\delta_0+(\beta_1+\delta_1)x_i+\varepsilon_i\)</span>,<span class="math inline">\(9\le i\le12\)</span>;</p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.</li>
 </ol>
-<p><span class="math display">\[\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&amp;58&amp;0&amp;0&amp;0&amp;0\\1&amp;62&amp;0&amp;0&amp;0&amp;0\\1&amp;60&amp;0&amp;0&amp;0&amp;0\\1&amp;65&amp;0&amp;0&amp;0&amp;0\\0&amp;0&amp;1&amp;60&amp;0&amp;0\\0&amp;0&amp;1&amp;62&amp;0&amp;0\\0&amp;0&amp;1&amp;60&amp;0&amp;0\\0&amp;0&amp;1&amp;60&amp;0&amp;0\\0&amp;0&amp;0&amp;0&amp;1&amp;66\\0&amp;0&amp;0&amp;0&amp;1&amp;62\\0&amp;0&amp;0&amp;0&amp;1&amp;61\\0&amp;0&amp;0&amp;0&amp;1&amp;65\end{bmatrix}_{12\times6}\times
+<p><span class="math display">\[\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&amp;58&amp;0&amp;0&amp;0&amp;0\\1&amp;62&amp;0&amp;0&amp;0&amp;0\\1&amp;60&amp;0&amp;0&amp;0&amp;0\\1&amp;65&amp;0&amp;0&amp;0&amp;0\\1&amp;60&amp;1&amp;60&amp;0&amp;0\\1&amp;62&amp;1&amp;62&amp;0&amp;0\\1&amp;60&amp;1&amp;60&amp;0&amp;0\\1&amp;60&amp;1&amp;60&amp;0&amp;0\\1&amp;66&amp;0&amp;0&amp;1&amp;66\\1&amp;62&amp;0&amp;0&amp;1&amp;62\\1&amp;61&amp;0&amp;0&amp;1&amp;61\\1&amp;65&amp;0&amp;0&amp;1&amp;65\end{bmatrix}_{12\times6}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \\ \delta_0 \\ \delta_1\end{bmatrix}_{6\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\\\varepsilon_{11}\\\varepsilon_{12}\end{bmatrix}_{12\times1}\]</span></p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Suppose that you wish to test for equality of the three slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?</li>
 </ol>
-<p><span class="math inline">\(H_0: \gamma_1=\delta_1=0\)</span>, <span class="math inline">\(y_i=w_{1i}\beta_0+\beta_1x_i+w_{2i}\gamma_0+w_{3i}\delta_0+\varepsilon_i\)</span>,</p>
-<p><span class="math inline">\(w_{1i}=\begin{cases}1&amp; 1\le i\le4\\0&amp; 5\le i\le8\\0&amp;9\le i\le12\end{cases}\)</span>, <span class="math inline">\(w_{2i}=\begin{cases}0&amp; 1\le i\le4\\1&amp; 5\le i\le8\\0&amp;9\le i\le12\end{cases}\)</span>, <span class="math inline">\(w_{3i}=\begin{cases}0&amp; 1\le i\le4\\0&amp; 5\le i\le8\\1&amp;9\le i\le12\end{cases}\)</span></p>
-<p><span class="math display">\[\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&amp;58&amp;0&amp;0\\1&amp;62&amp;0&amp;0\\1&amp;60&amp;0&amp;0\\1&amp;65&amp;0&amp;0\\0&amp;60&amp;1&amp;0\\0&amp;62&amp;1&amp;0\\0&amp;60&amp;1&amp;0\\0&amp;60&amp;1&amp;0\\0&amp;66&amp;0&amp;1\\0&amp;62&amp;0&amp;1\\0&amp;61&amp;0&amp;1\\0&amp;65&amp;0&amp;1\end{bmatrix}_{12\times4}\times
+<p><span class="math inline">\(H_0: \gamma_1=\delta_1=0\)</span>, <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_{1i}\gamma_0+w_{2i}\delta_0+\varepsilon_i\)</span></p>
+<p><span class="math display">\[\begin{bmatrix} 70\\70\\68\\72\\75\\74\\72\\71\\72\\72\\73\\73\end{bmatrix}_{12\times1}=\begin{bmatrix} 1&amp;58&amp;0&amp;0\\1&amp;62&amp;0&amp;0\\1&amp;60&amp;0&amp;0\\1&amp;65&amp;0&amp;0\\1&amp;60&amp;1&amp;0\\1&amp;62&amp;1&amp;0\\1&amp;60&amp;1&amp;0\\1&amp;60&amp;1&amp;0\\1&amp;66&amp;0&amp;1\\1&amp;62&amp;0&amp;1\\1&amp;61&amp;0&amp;1\\1&amp;65&amp;0&amp;1\end{bmatrix}_{12\times4}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \delta_0 \end{bmatrix}_{4\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\\\varepsilon_{11}\\\varepsilon_{12}\end{bmatrix}_{12\times1}\]</span></p>
+<p><span class="math inline">\(\begin{bmatrix} 0&amp;0&amp;0&amp;1&amp;0&amp;-1\\0&amp;0&amp;0&amp;0&amp;0&amp;1\end{bmatrix}\begin{bmatrix}\beta_0\\\beta_1\\\gamma_0\\\gamma_1\\\delta_0\\\delta_1\end{bmatrix}=\begin{bmatrix}0\\0\end{bmatrix}\)</span>, <span class="math inline">\(Rank(T)=2\)</span></p>
+<p><span class="math inline">\(dfE_{Full}=n-(k+1)=12-(5+1)=6\)</span>, <span class="math inline">\(dfE_{Reduced}=n-Rank(T)=12-2=10\)</span></p>
+<p><span class="math inline">\(F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}\)</span>, <span class="math inline">\(df_{nume}=10-6=4\)</span>, <span class="math inline">\(df_{deno}=6\)</span></p>
 </div>
 <div id="s2-1" class="section level3">
 <h3>2018S2</h3>
@@ -3776,6 +3872,7 @@ run;</code></pre>
 </div>
 <div id="s3-1" class="section level3">
 <h3>2018S3</h3>
+<p><a href="#f3-2">2017F3</a> <a href="#s2">2016S2</a></p>
 <p>The multiple linear regression model <span class="math inline">\(y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i\)</span> was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into the following:</p>
 <p><span class="math inline">\(SSR(X_1)=108\)</span></p>
 <p><span class="math inline">\(SSR(X_2 | X_1)=163\)</span></p>
@@ -3819,6 +3916,8 @@ run;</code></pre>
 <h3>2018S4</h3>
 <p><a href="#s1-2">2019S1</a></p>
 <p>Assume the model <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i\)</span>, <span class="math inline">\(i=1,..,n\)</span> with the additional restrictions that <span class="math inline">\(\beta_1=0\)</span>, <span class="math inline">\(\beta_0=2\beta_2\)</span>. Find the least-squares estimators of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, and <span class="math inline">\(\beta_2\)</span>.</p>
+<p>Let <span class="math inline">\(SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)^2=\sum_{i=1}^n(y_i-2\beta_2-\beta_2x_i^2)^2\)</span></p>
+<p><span class="math inline">\(\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-2\beta_2-\beta_2x_i^2)(-2-x_i^2)\overset{set}{=}0\)</span>; <span class="math inline">\(\hat\beta_2=\frac{\sum_{i=1}^n(2+x_i^2)y_i}{\sum_{i=1}^n(2+x_i^2)^2}\)</span> <span class="math inline">\(\hat\beta_0=\frac{2\sum_{i=1}^n(2+x_i^2)y_i}{\sum_{i=1}^n(2+x_i^2)^2}\)</span></p>
 </div>
 </div>
 <div id="f-3" class="section level2">
@@ -3839,6 +3938,7 @@ run;</code></pre>
 </div>
 <div id="f2-3" class="section level3">
 <h3>2018F2</h3>
+<p>[565-HW1]</p>
 <p>City planners are evaluating the effectiveness of a new “intelligent” traffic control system in reducing the amount of time motorists must spend on city streets. A total of 24 simulations are run: 4 simulations for each of the 6 combinations of control system (old or new) and traffic intensity (light, moderate, or heavy). All simulations use different random seeds, the combinations are run in a completely random order, and the median travel time (minutes) is recorded for each simulation. For each combination, the following table gives the average and sample standard deviation of the median travel times from the 4 simulations assigned that combination:</p>
 <table style="width:89%;">
 <colgroup>
@@ -3890,19 +3990,81 @@ run;</code></pre>
 </tbody>
 </table>
 <ol style="list-style-type: lower-alpha">
-<li><p>Write a (univariate) linear model equation of the usual full form for data from this experiment, with median travel time as the response. Explain each term and specify any conditions it satisfies. What crucial assumption are you making about the error variances?</p></li>
-<li><p>Produce an ANOVA table with all appropriate sources of variation, including the (corrected) total. Include sums of squares, degrees of freedom, and appropriate mean squares.</p></li>
-<li><p>Test whether your model in part (a) may be reduced to a model in which the effects of system and traffic intensity are purely additive. Remember to state the null and alternative hypotheses. Use <span class="math inline">\(\alpha=0.05\)</span>.</p></li>
-<li><p>Form a two-sided 95% confidence interval for the difference in median travel time between the new system and the old system under moderate traffic conditions.</p></li>
+<li>Write a (univariate) linear model equation of the usual full form for data from this experiment, with median travel time as the response. Explain each term and specify any conditions it satisfies. What crucial assumption are you making about the error variances?</li>
 </ol>
+<p><span class="math inline">\(y_i=\beta_0+\beta_1x_{1i}+\beta_2x_{2i}+\beta_3x_{3i}+\varepsilon_i\)</span>, <span class="math inline">\(x_{1i}=\begin{cases}1&amp;i=1,2,3\\0&amp;i=4,5,6 \end{cases}\)</span>, <span class="math inline">\(x_{2i}=\begin{cases}1&amp;i=2,5\\0&amp;i=1,3,4,6 \end{cases}\)</span>, <span class="math inline">\(x_{3i}=\begin{cases}1&amp;i=3,6\\0&amp;i=1,2,4,5 \end{cases}\)</span></p>
+<ol style="list-style-type: decimal">
+<li>The relationship between the response y and the regressors is linear.</li>
+<li>The error term <span class="math inline">\(\varepsilon\)</span> has zero mean.</li>
+<li>The error term <span class="math inline">\(\varepsilon\)</span> has constant variance <span class="math inline">\(\sigma^2\)</span>.</li>
+<li>The errors are uncorrelated.</li>
+<li>The errors are normally distribute.</li>
+</ol>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>Produce an ANOVA table with all appropriate sources of variation, including the (corrected) total. Include sums of squares, degrees of freedom, and appropriate mean squares.</li>
+</ol>
+<table style="width:33%;">
+<colgroup>
+<col width="19%"></col>
+<col width="5%"></col>
+<col width="4%"></col>
+<col width="4%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source of Var</th>
+<th align="left">SS</th>
+<th>df</th>
+<th>MS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model</td>
+<td align="left">416</td>
+<td>3</td>
+<td>138.6</td>
+</tr>
+<tr class="even">
+<td>Error</td>
+<td align="left"></td>
+<td>20</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td align="left"></td>
+<td>23</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(SS_{Trt}=4\sum_1^6(\bar y_{i.}-\bar y_{..})^2=4\sum_1^6(\bar y_{i.}-12)^2=416\)</span></p>
+<pre class="r"><code>mean_all &lt;- (13+14+15+5+8+17)/6
+SS_trt &lt;- 4*((13-mean_all)^2+(14-mean_all)^2+(15-mean_all)^2+(5-mean_all)^2+(8-mean_all)^2+(17-mean_all)^2)</code></pre>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>Test whether your model in part (a) may be reduced to a model in which the effects of system and traffic intensity are purely additive. Remember to state the null and alternative hypotheses. Use <span class="math inline">\(\alpha=0.05\)</span>.</li>
+</ol>
+<p><span class="math inline">\(H_0: \beta_2=\beta_3=0\)</span></p>
+<ol start="4" style="list-style-type: lower-alpha">
+<li>Form a two-sided 95% confidence interval for the difference in median travel time between the new system and the old system under moderate traffic conditions.</li>
+</ol>
+<p><span class="math inline">\(y_i=\beta_0+\beta_1x_{1i}++\varepsilon_i\)</span>, <span class="math inline">\(x_{1i}=\begin{cases}1&amp;i=2\\0&amp;i=5 \end{cases}\)</span></p>
 </div>
 <div id="f3-3" class="section level3">
 <h3>2018F3</h3>
+<p>[564-HW3-3]</p>
 <p>Consider the linear mixed model <span class="math inline">\(y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}\)</span>, <span class="math inline">\(i=1,..,a\)</span> <span class="math inline">\(j=1,..,b\)</span> <span class="math inline">\(k=1,..,n\)</span>, <span class="math inline">\(\sum_{i=1}^a\alpha_i=0\)</span>, <span class="math inline">\(\beta_{ij}\sim N(0,\sigma_{\beta}^2)\)</span>, <span class="math inline">\(\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)\)</span></p>
 <p>with all <span class="math inline">\(\beta_{ij}\)</span>’s and <span class="math inline">\(\varepsilon_{ij}\)</span>’s independent, where <span class="math inline">\(a\ge2\)</span>, <span class="math inline">\(b\ge2\)</span>, and <span class="math inline">\(n\ge2\)</span>. The parameters <span class="math inline">\(\mu\)</span>, <span class="math inline">\(\alpha_i\)</span>, <span class="math inline">\(\sigma_{\beta}^2\)</span>, and <span class="math inline">\(\sigma_{\varepsilon}^2\)</span> are assumed to be unknown. Adopt the following notation: <span class="math inline">\(\bar y_{ij.}=\frac1n\sum_{k=1}^ny_{ijk}\)</span>, <span class="math inline">\(\bar y_{i..}=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}\)</span>, <span class="math inline">\(\bar y_{...}=\frac1{abn}\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^ny_{ijk}\)</span></p>
 <ol style="list-style-type: lower-alpha">
-<li><p>In terms of the parameters, find the correlations between (i) <span class="math inline">\(y_{111}\)</span> and <span class="math inline">\(y_{112}\)</span>, (ii) <span class="math inline">\(y_{111}\)</span> and <span class="math inline">\(y_{121}\)</span>, and (iii) <span class="math inline">\(y_{111}\)</span> and <span class="math inline">\(y_{211}\)</span>.</p></li>
-<li><p>For any given value of <span class="math inline">\(i\)</span>, specify the joint distribution of <span class="math inline">\(\bar y_{i1.},..\bar y_{ib.}\)</span>.</p></li>
+<li>In terms of the parameters, find the correlations between (i) <span class="math inline">\(y_{111}\)</span> and <span class="math inline">\(y_{112}\)</span>, (ii) <span class="math inline">\(y_{111}\)</span> and <span class="math inline">\(y_{121}\)</span>, and (iii) <span class="math inline">\(y_{111}\)</span> and <span class="math inline">\(y_{211}\)</span>.</li>
+</ol>
+<p><span class="math inline">\(Cor(y_{111},y_{112})=\frac{Cov(y_{111},y_{112})}{se(y_{111})se(y_{112})}=\frac{MSE\cdot C_{12}}{\sqrt{MSE\cdot C_{11}MSE\cdot C_{12}}}\)</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>For any given value of <span class="math inline">\(i\)</span>, specify the <strong>joint</strong> distribution of <span class="math inline">\(\bar y_{i1.},..\bar y_{ib.}\)</span>.</li>
+</ol>
+<p>[3.4.3]</p>
+<ol start="3" style="list-style-type: lower-alpha">
 <li><p>In terms of the data, write a formula for the usual unbiased estimator of <span class="math inline">\(\alpha_1-\alpha_2\)</span>. What is the exact distribution of this estimator?</p></li>
 <li><p>Show that <span class="math inline">\(E[\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{...})^2]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)\)</span></p></li>
 </ol>
@@ -3913,7 +4075,7 @@ run;</code></pre>
 </div>
 <div id="f4-3" class="section level3">
 <h3>2018F4</h3>
-<p>Consider a randomized complete block design with 12 blocks and a single treatment factor having 3 levels. Let <span class="math inline">\(X_{ij}\)</span> denote the response measured for an experimental unit in block <span class="math inline">\(j\)</span> that receives treatment <span class="math inline">\(i\)</span> for <span class="math inline">\(i=1,2,3\)</span> and <span class="math inline">\(j=1,..,12\)</span>. Suppose there is also a covariate whose value <span class="math inline">\(X_{ij}\)</span> is measured for each experimental unit.</p>
+<p>Consider a randomized complete <strong>block design</strong> with 12 blocks and a single treatment factor having 3 levels. Let <span class="math inline">\(X_{ij}\)</span> denote the response measured for an experimental unit in block <span class="math inline">\(j\)</span> that receives treatment <span class="math inline">\(i\)</span> for <span class="math inline">\(i=1,2,3\)</span> and <span class="math inline">\(j=1,..,12\)</span>. Suppose there is also a covariate whose value <span class="math inline">\(X_{ij}\)</span> is measured for each experimental unit.</p>
 <p>The following four models are fit to the data (using least squares), with the resulting residual (error) sums of squares as specified:</p>
 <p>Model 1: <span class="math inline">\(Y_{ij}=\mu+\gamma_j+\varepsilon_{ij}\)</span> <span class="math inline">\(SS(Res)=660\)</span></p>
 <p>Model 2: <span class="math inline">\(Y_{ij}=\mu+\alpha_i+\gamma_j+\varepsilon_{ij}\)</span> <span class="math inline">\(SS(Res)=550\)</span></p>
@@ -4222,21 +4384,23 @@ run;</code></pre>
 <ol style="list-style-type: lower-alpha">
 <li>Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the two processes. Hint: there are 10 observations, and you will need to use at least one indicator variable.</li>
 </ol>
-<p>Process A: <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\varepsilon_i\)</span>; Process B: <span class="math inline">\(y_i=\gamma_0+\gamma_1x_i+\varepsilon_i\)</span>; Let <span class="math inline">\(w_i=\begin{cases}0&amp; 1\le i\le6\\1&amp; 6\le i\le10\end{cases}\)</span>, overall <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_i\gamma_0+w_i\gamma_1x_i+\varepsilon_i\)</span></p>
+<p>Process A: <span class="math inline">\(y_i=\beta_0+\beta_1x_i+\varepsilon_i\)</span>; Process B: <span class="math inline">\(y_i=\beta_0+\gamma_0+(\beta_1+\gamma_1)x_i+\varepsilon_i\)</span>; Let <span class="math inline">\(w_i=\begin{cases}0&amp; 1\le i\le6\\1&amp; 6\le i\le10\end{cases}\)</span>, overall <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_i\gamma_0+w_i\gamma_1x_i+\varepsilon_i\)</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Write the matrix form of the appropriate model. Show the contents and dimensions of all matrices.</li>
 </ol>
-<p><span class="math display">\[\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&amp;70&amp;0&amp;0\\1&amp;70&amp;0&amp;0\\1&amp;68&amp;0&amp;0\\1&amp;72&amp;0&amp;0\\1&amp;72&amp;0&amp;0\\1&amp;75&amp;1&amp;75\\1&amp;74&amp;1&amp;74\\1&amp;72&amp;1&amp;72\\1&amp;71&amp;1&amp;71\\1&amp;73&amp;1&amp;73\\\end{bmatrix}_{10\times4} 
+<p><span class="math display">\[\begin{bmatrix} 70\\70\\68\\72\\72\\75\\74\\72\\71\\73\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&amp;38&amp;0&amp;0\\1&amp;55&amp;0&amp;0\\1&amp;40&amp;0&amp;0\\1&amp;45&amp;0&amp;0\\1&amp;36&amp;0&amp;0\\1&amp;30&amp;1&amp;30\\1&amp;42&amp;1&amp;42\\1&amp;30&amp;1&amp;30\\1&amp;30&amp;1&amp;30\\1&amp;41&amp;1&amp;41\\\end{bmatrix}_{10\times4} 
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \end{bmatrix}_{4\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\end{bmatrix}_{10\times1}\]</span></p>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?</li>
 </ol>
 <p><span class="math inline">\(H_0: \gamma_1=0\)</span>, <span class="math inline">\(y_i=\beta_0+\beta_1x_i+w_i\gamma_0+\varepsilon_i\)</span></p>
-<p><span class="math display">\[\begin{bmatrix} 38\\55\\40\\45\\36\\30\\42\\30\\30\\41\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&amp;70&amp;0\\1&amp;70&amp;0\\1&amp;68&amp;0\\1&amp;72&amp;0\\1&amp;72&amp;0\\1&amp;75&amp;1\\1&amp;74&amp;1\\1&amp;72&amp;1\\1&amp;71&amp;1\\1&amp;73&amp;1\\\end{bmatrix}_{10\times3}\times
+<p><span class="math display">\[\begin{bmatrix} 70\\70\\68\\72\\72\\75\\74\\72\\71\\73\end{bmatrix}_{10\times1}=\begin{bmatrix} 1&amp;38&amp;0\\1&amp;55&amp;0\\1&amp;40&amp;0\\1&amp;45&amp;0\\1&amp;36&amp;0\\1&amp;30&amp;1\\1&amp;42&amp;1\\1&amp;30&amp;1\\1&amp;30&amp;1\\1&amp;41&amp;1\\\end{bmatrix}_{10\times3}\times
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\\\varepsilon_9\\\varepsilon_{10}\end{bmatrix}_{10\times1}\]</span></p>
-<p><span class="math inline">\(\frac{3}{10-4}\)</span></p>
+<p><span class="math inline">\(\begin{bmatrix} 0&amp;0&amp;0&amp;1\end{bmatrix}_{10\times4}\begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0 \\ \gamma_1 \end{bmatrix}_{4\times1}=0\)</span>, <span class="math inline">\(Rank(T)=1\)</span></p>
+<p><span class="math inline">\(dfE_{Full}=n-(k+1)=10-(3+1)=6\)</span>, <span class="math inline">\(dfE_{Reduced}=n-Rank(T)=10-1=9\)</span></p>
+<p><span class="math inline">\(F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}\)</span>, <span class="math inline">\(df_{nume}=9-6=3\)</span>, <span class="math inline">\(df_{deno}=6\)</span></p>
 </div>
 </div>
 </div>
