@@ -28,9 +28,7 @@ header-includes:
     - \setlength\tabcolsep{0.1pt}
     - \setlength\lineskip{0pt}
     - \setlength\parskip{0pt}
-
-
-
+    - \usepackage[fleqn]{mathtools}
 ---
 
 
@@ -723,17 +721,26 @@ Let $Y_1$ and $Y_2$ be a random sample of size 2 from $Uniform(0,1)$. Find the c
 
 Only 5 in 1000 adults are afflicted with a rare disease for which a diagnostic test has been developed. The test is such that when an individual actually has the disease, a positive result will occur 99% of the time, whereas an individual without the disease will show a positive result only 2% of the time. If a randomly selected individual is tested and the result is positive, what is the probability that the individual has the disease? A man committed a suicide in a week after learning from his doctor that he has a terminal cancer. What do you think of his reaction based on your answer to this problem?
 
+$\frac{5*0.99}{5*0.99+995*0.02}=0.1991952$ There is only 19.9% probability that the indicdual has the disease.
+
 ### 2008F3
 [2016F3][] [Cheb][3.6.1]
 
 If X is a random variable such that $E[X]=3$ and $E[X^2]=13$, determine a lower bound for
 the probability $P(-2<X<8)$. (Hint: Use a famous inequality.)
 
+$\mu=3$, $\sigma=2$, $t=\frac52$,$P(-2<x<8)=1-\frac4{25}=\frac{21}{25}$
+
+
 ### 2008F4
-[LimD](#LimD)
+[2017FB2][]
 
 Let $Y_1$ be the minimum of a random sample of size n from a distribution that has p.d.f.
 $f(x)=e^{-(x-\theta)},\theta<x<\infty$, zero elsewhere. Let $Z_n= n(Y_1-\theta)$. Determine the limiting distribution of $Z_n$. (Hint: Determine the p.d.f. of Y, and then apply the change of variable technique.)
+
+$X_{(1)}=ne^{-n(x-\theta)}$
+
+$Y_{(1)}=\frac{Z_n}{n}-\theta$, $\frac{dy_1}{dz_n}=\frac1n$, $g(z_n)=e^{-z_n}\sim Expo(1)$
 
 ### 2008F5
 [2003S7][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2017FB4][] [2018FB2][] [2019SB4][] [MOM][7.2.1] [MLE](#MLE) [MSE][7.3.1] [CRLB][7.3.2]
@@ -742,15 +749,38 @@ Let $X_1,X_2,..,X_n$$\sim$i.i.d.$f(x;\theta)=\theta(x+1)^{-\theta-1},\ x>0,\thet
 
 a. Find $\hat\theta_{MOM}$, the method of moments estimator of $\theta$.
 
+$EX=\int_0^\infty x\theta(x+1)^{-\theta-1}dx=\frac1{\theta+1}$, $\hat\theta_{MOM}=\frac{1}{\bar X}+1$
+
 b. Find $\hat\theta_{MLE}$, the maximum likelihood estimator of $\theta$.
+
+ $\hat\theta_{MLE}=\frac{n}{\sum\ln(x+1)}$
 
 c. Find the MSE (mean squared error) of $\hat\theta_{MLE}$.
 
+Let $y=\ln(x+1)$, $x=e^y-1$, $\frac{dx}{dy}=e^y$, $Y=\theta e^{-\theta y}\sim Expo{\theta}, Gamma(1,\frac1\theta)$
+
+$E[\hat\theta_{MLE}]=\frac{n\theta}{n-1}$, $Bias=\frac{\theta}{n-1}$
+
+$E[\hat\theta_{MLE}^2]=\frac{n^2\theta^2}{(n-1)(n-2)}$, $V[\hat\theta_{MLE}]=\frac{n^2\theta^2}{(n-1)^2(n-2)}$
+
+$MSE=\frac{n^2\theta^2}{(n-1)^2(n-2)}+(\frac{\theta}{n-1})^2=\frac{n+1}{(n-1)^2}\theta^2$
+
 d. Using $\hat\theta_{MLE}$, create an unbiased estimator $\hat\theta_{U}$.
+
+$\hat\theta_{U}=\frac{n-1}{\sum\ln(x+1)}$
 
 e. Find the efficiency of $\hat\theta_{U}$.
 
+$CRLB=\frac{\theta^2}{n}$
+
+$\lim\limits_{n\to\infty}\frac{CRLB}{V\hat\theta_{U}}=\lim\limits_{n\to\infty}\frac{\theta^2/n}{\theta^2/(n-2)}=\lim\limits_{n\to\infty}\frac{n-2}{n}=1$
+
 f. Construct the most powerful test of $H_0:\theta=3$ vs. $H_1:\theta=4$.
+
+$\theta_0<\theta_1$, By Neyman-Pearson, RR is $R=\{\vec x:\Lambda\in C\}$, $\Lambda\nearrow$ has MLR, by Lehmann-Scheffe
+
+$P_{H_0}(6\sum\ln(x+1)<\chi^2_{2n,\alpha})=\alpha$ is UMP for testing $\theta$
+
 
 ### 2008F6
 [2003S10][] [2016F5][] [Basu](#Basu) 
@@ -1489,9 +1519,9 @@ Suppose X has Binomial distribution with pararneters $n$ and $\theta, 0<\theta<1
 
 (a) Find the Bayes estimator of $\theta$ when the prior distribution is uniform on the interval $(0,1)$ and the loss function is square error loss function.
 
-$\pi(\theta)\sim Unif(0,1)$; $f(x|\theta)={n\choose{x}}\theta^x(1-\theta)^{n-x}$
+$\pi(\theta)\sim Unif(0,1)$; $f(x|\theta)=\binom{n}{x}\theta^x(1-\theta)^{n-x}$
 
-$\pi(\theta|x)=\frac{f(x|\theta)\pi(\theta)}{f(x)}\propto\frac{{n\choose{x}}\theta^x(1-\theta)^{n-x}}{\int_0^1f(x|\theta)d\theta}\propto\frac{(n+1)!}{x!(n-x)!}\theta^x(1-\theta)^{n-x}\sim Beta(x+1,n-x+1)$
+$\pi(\theta|x)=\frac{f(x|\theta)\pi(\theta)}{f(x)}\propto\frac{\binom{n}{x}\theta^x(1-\theta)^{n-x}}{\int_0^1f(x|\theta)d\theta}\propto\frac{(n+1)!}{x!(n-x)!}\theta^x(1-\theta)^{n-x}\sim Beta(x+1,n-x+1)$
 
 $\hat\theta=\frac{\alpha}{\alpha+\beta}=\frac{x+1}{n+2}$
 
@@ -1630,20 +1660,18 @@ Ancillary $S^2$ and minimal suffi $X_{(1)}$ are indep
 Tableman, Kochar
 
 ### 2015S1Aa
-[2005S3][] [CLT] [Jesen's Inequality](#Jens)
+[2005S3][] [5.E.34] [CLT][5.5.3] [Jensen's Inequality][4.7.1]
 
 Let X be a random variable with finite mean $\mu$, finite variance $\sigma^2$,
 and assume $E(X^8)<\infty$. Prove or disprove:
 
-Let $z=\frac{X-\mu}{\sigma}$, $E[Z]=0$, $V[Z]=1$
+Let $z=\frac{X-\mu}{\sigma}$, $E[Z]=\frac{E[X]-\mu}{\sigma}=0$, $V[Z]=\frac{V[X]}{\sigma^2}=1$
 
-i. $E[(\frac{X-\mu}{\sigma})^2]\ge1$.
+i. $E[(\frac{X-\mu}{\sigma})^2]\ge1$. $E[Z^2]=V[Z]+E[Z]^2=1$
 
-$E[Z^2]=V[Z]+E[Z]^2=1$
+ii. $E[(\frac{X-\mu}{\sigma})^4]\ge1$. $E[(Z^2)^2]=V[Z^2]+E[Z^2]^2=V[Z^2]+1\ge1$
 
-ii. $E[(\frac{X-\mu}{\sigma})^4]\ge1$.
-
-$E[(Z^2)^2]=V[Z^2]+E[Z^2]^2=V[Z^2]+1\ge1$
+Or by Jensen, Convex function $E[(Z^2)^2]\ge E^2[Z^2]$,
 
 ### 2015S1Ab
 [2004F11][]
@@ -1682,34 +1710,41 @@ median is the $k^{th}$ order statistic, denoted by $Y_k$.
 
 (a) (5) Let $g(y)$ denote the pdf of the sample median $Y_k$. Derive $g(y)$. You may use the symbols $F(.)$ and $f(.)$.
 
-$g_{Y_k}(y)=$
+$g_{Y_k}(y)=\frac{(2k-1)!}f(.){[(k-1)!]^2}[F(.)]^{k-1}[1-F(.)]^{n-k}$
 
 (b) (5) Determine the $E(Y_k|\bar X)$, where $\bar X$ is the sample mean of the above random sample. Justify your answer. [Lehm-Sche](#Lehm-Sche)
 
- $E(Y_k|\bar X)=\bar X$
+ $E(Y_k)=E[E(Y_k|\bar X)]=\bar X$
 
 ### 2015S4A
 [2007F4A][] [cdfP](#cdfP)
 
 (a) Let X be a continuous type random variable with cumulative distribution function $F(x)$. Find the distribution of the random variable $Y=-\ln(1-F(X))$:
 
-$1-e^{-y}$
+$F=1-e^{-y}\sim Expo(1)$
 
-(b) Prove that for any $y\ge c$, the function $G_c(y)=P[X\le y|X\ge c]$
+(b) Prove that for any $y\ge c$, the function $G_c(y)=P[X\le y|X\ge c]$ has the properties of a distribution function.
+
+$P(X\le y|X\ge c)=\frac{P(X\le y,X\ge c)}{P(X\ge c)}=\frac{P(c\le X\le y)}{1-P(X\le c)}=\frac{F(y)-F(c)}{1-F(c)}$
+
+$F(y)\in[0,1]$ $G_c(y)$is non-decreasing and right-continuous,
+
+$\lim\limits_{y\to c}G_c(y)=\frac{F(c)-F(c)}{1-F(c)}=0$; 
+$\lim\limits_{x\to\infty}G_c(y)=\frac{1-F(c)}{1-F(c)}=1$
 
 ### 2015S5A
 [2009FA3][] [2019SA4] [MGF](#MGF) [Pois] [Bino]
 
 Suppose X and Y are independent Poisson random variables with parameters $\lambda$ and $2\lambda$, respectively.
 
-(a) Find the distribution of $X+Y$.$Pois(3\lambda)$
+(a) Find the distribution of $X+Y$.$Pois(3\lambda)$ moment
 
+$M_X(t)M_Y(t)=e^{\lambda(e^t-1)}e^{2\lambda(e^t-1)}=e^{3\lambda(e^t-1)}$
 
 (b) Find $E[X|X+Y=5]$.
 
-$P(x|x+y=5)=\frac{P(x)P(y=5-x)}{P(x+y=5)}\sim Bino(5,1/3)$
-
-$E[x|x+y=5]=np=5/3$
+$P(x|x+y=5)=\frac{P(x)P(y=5-x)}{P(x+y=5)}\sim Bino(5,\frac13)$;
+$E[x|x+y=5]=np=\frac53$
 
 ### 2015S1B
 [2007F5A][] [2013FB2][] [2014F1B][] [MLE](#MLE)
@@ -1724,17 +1759,21 @@ $L(\theta)=2^n\theta^{-2n}\prod x_i I_{(0,\theta)}(x_i)$
 $=2^n\theta^{-2n}\prod x_i I_{(-\infty,\theta)}(x_{(n)})I_{(0,\infty)}(x_{(1)})$
 
 $L(\theta)$ is maximized by making $\theta$ as small as possible. 
-Given $\theta\ge x$, $\hat\theta=X_{(n)}$ 
+Given $\theta\ge x$, $\hat\theta=X_{(n)}=nf(x)[F(x)]^{n-1}=\frac{2n}{\theta^n}x^{2n-1}$ 
 
 (b) Find $E[\hat\theta]$.
 
-$EX_{(n)}=\frac{2n}{2n+1}\theta$
+$X_{(n)}\sim Beta(2n,1)$, $EX_{(n)}=\frac{2n}{2n+1}\theta$;
 
-(c) Prove that $\hat\theta$ is consistent for $\theta$. [Cheb](#Cheb)
+Or $=\int_0^\theta xf_{X_{(n)}}(x)dx$
 
-$\lim\to0$, Bias$\to0$
+(c) Prove that $\hat\theta$ is consistent for $\theta$. [Efficiency][10.1.1]
 
-$\lim\limits_{n\to\infty}E[T]=\mu$, $\lim\limits_{n\to\infty}V[T]=0$
+Bias$=EX_{(n)}-\theta$, $\lim\limits_{n\to\infty}[EX_{(n)}-\theta]=0$, 
+
+$\lim\limits_{n\to\infty}V[X_{(n)}]=\lim\limits_{n\to\infty}\frac{n}{(2n+1)^2(n+1)}\theta^2=0$
+
+$\lim\limits_{n\to\infty}P(X_{(n)}-\theta)\ge\varepsilon)=0$
 
 ### 2015S2B
 [2007F3B][] [2010SB1][] [2010FB1][] [2011S5][] [2013FB3][] [2018S2B][] [Expo](#Expo) [FishI][7.3.2] [CRLB][7.3.2] [perc](#perc)
@@ -1749,7 +1788,7 @@ $\frac{1}{\theta^2}$
 
 (b) Find the 90th percentile of this distribution as a function of $\theta$ and call it $g(\theta)$.
 
-$0.9=\int_0^{g(\theta)}f(x,\theta)$, $g(\theta)=\frac{\ln10}\theta$
+$0.9=\int_0^{g(\theta)}f(x,\theta)dx$, $g(\theta)=\frac{\ln10}\theta$
 
 (c) Find the Cramer-Rao lower bound on the variance of any unbiased estimator of $g(\theta)$.
 
@@ -1757,7 +1796,7 @@ $\frac{g'(\theta)^2}{I_{\theta}}=\frac{(\ln10)^2}{n\theta^2}$
 
 ### 2015S3B
 [2004F8][] [2007F4B][] [2013FB4][] [2018S1B][] [2019SB2][] [Laplace](#Laplace) [median](#median)  [7.E.13][]
-
+[2019.2.26p.3]
 Let $X_1,X_2,..,X_9$ be a random sample of size 9 from a distribution with pdf
 $f(x,\theta) =\frac12e^{-|x-\theta|}, -\infty<x<\infty$;
 where $-\infty<\theta<\infty$ is unknown.
@@ -1785,13 +1824,12 @@ $f(y|\theta)=\begin{cases}\theta y^{\theta-1}& 0<x<1,\theta>0\\0& o.w.\end{cases
 
 (a) Sketch the power function of the test of the rejection: $Y>0.5$.
 
-$1-\alpha=P_{\theta_1}(Y<0.5)=1-\int_0^{0.5}\theta y^{\theta-1}dy=1-\left.y^\theta\right|_0^{0.5}$
+$1-\alpha=P_{\theta_1}(Y>0.5)=1-\int_0^{0.5}\theta y^{\theta-1}dy=1-\left.y^\theta\right|_0^{0.5}=1-0.5^\theta$
 
 (b) Based on the single observation $Y$ , find the uniformly most powerful test of size $\alpha$ for testing $H_0:\theta=1$ against $H_A :\theta>1$.
 
-$\Lambda=\frac{L(\theta_0)}{L(\theta_1)}=\theta_1^{-1}e^{-(\theta_1-1)\ln y}\le C$ 
-$L(\theta)$ has MLR for the property of Expo family.
-$T=-\ln y$ free of $\theta$ is Sufficient stat. $y\sim Beta(\theta,1)$, $-\ln y\sim Expo(\theta)$; (Under $\theta_0=1$,$-\sum\ln y\sim Gamma(n,1)$,$-2\sum\ln y\sim Gamma(n,1),\chi^2_{2n}$)
+$\Lambda=\frac{L(\theta_0)}{L(\theta_1)}=\theta_1^{-1}e^{-(\theta_1-1)\ln y}$ 
+ Expo family, $T=-\ln y$ has MLR, free of $\theta$ is Sufficient stat. $y\sim Beta(\theta,1)$, $-\ln y\sim Expo(\theta)$; (Under $\theta_0=1$,$-\sum\ln y\sim Gamma(n,1)$,$-2\sum\ln y\sim Gamma(n,2),\chi^2_{2n}$)
 $\theta_1>1$,$\theta_1-1>0$, $\Lambda$ is a monotone decreasing function of T.
 $P_{H_0}(-\ln y\le C)=\alpha$ is UMP by Karlin-Rubin Theorem.
 
@@ -1809,14 +1847,26 @@ $X_1,X_2,..,X_{5}\sim Unif(0,1)$, median $\theta=\frac12$;
 The probability distribution of the number of successes in a sequence of $n=5$ independent experiments is Binomial distribution.
 The probability of success $p=\frac25$, 
 
-$S(\theta)={5\choose x}(\frac25)^x(\frac35)^{5-x}\sim Bino(5,2/5)$;
+$S(\theta)=\binom{5}{x}(\frac25)^x(\frac35)^{5-x}\sim Bino(5,2/5)$;
 $E[S]=np=2$
 
 (b) Sketch the graph of $S(\theta)$ as a function of $\theta$. Then describe the graph in words.
-$\max S(\theta)={5\choose 2}(\frac25)^2(\frac35)^{3}=0.3456$
+$\max S(\theta)=\binom{5}{2}(\frac25)^2(\frac35)^{3}=0.3456$
 (c) Find a confidence interval for $\theta$ with confidence coefficient close to 0.95.
 
+$P(\sum_{i=1}^5I(X_i>\theta)=\frac12$,
 
+$P(S(\theta)=k)=\binom{5}{k}(P(X_i>\theta))^k(1-P(X_i>\theta))^{5-k}$
+
+$S(\theta)\sim Bino(5,\frac12)$ free of $\theta$, is a constant for theta
+
+Let $k_{\frac{\alpha}2}$ denote the upper $\frac{\alpha}2$ percentile of $S(\theta)$,
+
+$\sum_{k_{1-\frac{\alpha}2}}^n\binom{n}{k}(\frac12)^n=\frac{\alpha}2$
+
+$P(n-k_{\frac{\alpha}2}\le S(\theta)\le k_{\frac{\alpha}2})=1-\alpha$
+
+$P(X_{n-\frac{\alpha}2+1}\le \theta\le X_{k_{\frac{\alpha}2}})=1-\alpha$
 
 ## 2015F 
 
@@ -1827,7 +1877,7 @@ Let $X_1,X_2,..,X_{n}$ be iid continuous uniform r.v.'s over $[0,\theta]$, where
 
 (a) (5 pts) Find $E[Y_n]$.
 
-$f(x)=\frac1\theta$, $F(x)=\frac{x}\theta$, $f_{Y_{n}}(x)=\frac{n}{\theta}(\frac{x}\theta)^{n-1}$
+$f(x)=\frac1\theta$, $F(x)=\frac{x}\theta$, $f_{Y_{n}}(x)=\frac{n}{\theta}(\frac{x}\theta)^{n-1}\sim Beta(n,1)$
 
 $E[Y_{n}]=\int_0^\theta xY_ndx=\frac{n\theta}{n+1}$; 
 
@@ -1875,7 +1925,7 @@ $g(y_2)=\int_0^{1}y_2e^{-y_2}dy_1=[y_1y_2e^{-y_2}]_0^{1}=y_2e^{-y_2}$
 $f(y_1,y_2)=f(y_1)f(y_2)$
 
 ### 2015F3
-[2014SA4][] [LimD](#LimD)
+[2014SA4][] [LimD](#LimD) [order][5.4]
 
 Let $X_1,X_2,..,X_{n}$ be iid $uniform[0,1]$ rv's. Let $0\le Y_1\le Y_2\le..\le Y_n\le1$ be the
 corresponding order statistics.
@@ -1909,7 +1959,7 @@ $P(W_n<y)=P(n(1-Y_n)<y)=1-P(Y_n<1-\frac{y}n)=1-\int_0^{1-\frac{y}n}Y_ndy_n=1-(1-
 $\lim\limits_{x\to\infty}P(W_n<y)=1-e^{-y}\sim Expo(1)$
 
 $f(y_n)=n[F_Y]^{n-1}=ny^{n-1}$;
-$W_n=n(1-Y_n)$, $Y_n=1-w/n$
+$W_n=n(1-Y_n)$, $Y_n=1-\frac{w}n$
 $f(w_n)=f(1-\frac{w}n)|\frac{dy}{dw}|=n(1-\frac{w}n)^{n-1}\frac1{n}$
 
 ### 2015F4
@@ -1965,8 +2015,8 @@ $\frac{\prod f(x|\lambda)}{g(t)}=\frac{n^{-t}t!}{\prod(x_i!)}$ is free of $\lamb
 
 By definition 6.2.21, $E[g(t)]=\sum g(t)\frac{(n\lambda)^te^{-n\lambda}}{t!}$. $\forall\lambda$ iff $g(t)=0$, $E[g(t)]=0$, T is complete sufficient stat.
 
-By property of exponential familiy, $f(x|\vec\theta)=h(x)c(\vec \theta)e^{\sum^k_{j=1}W(\vec \theta_j)t_j(x)}=\frac{1}{\prod(x!)}e^{\sum x_i\ln(n\lambda)-n\lambda}$. 
-Then the statistic $T(x)=\sum x_i$ is complete as long as the parameter space $\lambda$ contains an open set in in $\Bbb R^k$.
+By property of exponential familiy, $f(x|\vec\theta)=h(x)c(\vec \theta)e^{\sum^k_{j=1}W_j(\vec \theta)t_j(x)}=\frac{1}{\prod(x!)}e^{\sum x_i\ln(n\lambda)-n\lambda}$. 
+Then the statistic $T(x)=\sum x_i$ is complete as long as the parameter space $\lambda$ contains an open set in in $\mathbb R^k$.
 
 (b) Find the MVUE (Minimum Variance Unbiased Estimator) of $\lambda$.[Lehm-Sche][7.3.3]
 
@@ -1991,7 +2041,7 @@ $E(\delta|t)=\frac{P(x_i=1)P(\sum_{i=2}^n x_i=t-1)}{P(\sum_{i=1}^n x_i=t)}=\frac
 (f) Find the MVUE of $P(X_i=k)=\lambda^ke^{-\lambda}/k!$:
 
 Let $\delta(x_i)=\begin{cases}1&X_1=k\\0&X_1\neq k\end{cases}$, 
-$E(\delta|t)=\frac{P(x_i=1)P(\sum_{i=2}^n x_i=t-k)}{P(\sum_{i=1}^n x_i=t)}=\frac{t!}{k!(n-k)!}\frac{(n-1)^{t-k}}{n^t} \sim Bino(t,\frac1n),x=k$
+$E(\delta|t)=\frac{P(x_i=k)P(\sum_{i=2}^n x_i=t-k)}{P(\sum_{i=1}^n x_i=t)}=\frac{t!}{k!(n-k)!}\frac{(n-1)^{t-k}}{n^t} \sim Bino(t,\frac1n),x=k$
 
 ### 2016S2
 [2017FB1][] [6.2.1][] [Factorization](#Fact) [Bino]
@@ -2000,7 +2050,7 @@ Let $Y$ be $Binomial(n,p)$, with $n$ known and $p$ unknown. Among functions $u(Y
 
 (a) What is the MVUE of $p$?
 
-$f(y)={n\choose y}p^x(1-p)^{n-y}=\frac{1}{y!(n-y)!}\cdot n!(1-p)^n\cdot e^{y\ln(\frac{p}{1-p})}=h(y)c(p)e^{w(p)t(y)}$ is Expo familiy.
+$f(y)=\binom{n}{y}p^x(1-p)^{n-y}=\frac{1}{y!(n-y)!}\cdot n!(1-p)^n\cdot e^{y\ln(\frac{p}{1-p})}=h(y)c(p)e^{w(p)t(y)}$ is Expo familiy.
 $w(p)=\ln(\frac{p}{1-p})$ contains an open set. $t(y)=y$ is complete sufficient statistic for $p$
 
 $E[\frac{Y}n]=np/n=p$
@@ -2012,7 +2062,7 @@ $E[\frac{Y^2-Y}{n^2-n}]=p^2$
 
 (c) What is the MVUE of $pq=p(1-p)$?
 
-$E[\frac{Y}n-\frac{Y^2-Y}{n^2-n}]=\frac{Y(n-Y)}{n(n-1)}$
+$E[\frac{Y}n-\frac{Y^2-Y}{n^2-n}]=E[\frac{Y(n-Y)}{n(n-1)}]$
 
 (d) What is the MVUE of $P(Y=k)=\binom{n}{k}p^k(1-p)^{n-k}$?
 
@@ -2092,11 +2142,15 @@ Fountain, Ian Dinwoodie
 [5.3.1][] [5.E.10][] [562-HW2]
 
 Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution with mean $\mu$ and variance $\sigma^2$.
-Let $S_k^2=\frac1k\sum_{i=1}^n(X_i-\bar X)^2$ be an estimator of $\sigma^2$. Find the value of $k$ that minimizes the mean squared error of the estimator. =n+1
+Let $S_k^2=\frac1k\sum_{i=1}^n(X_i-\bar X)^2$ be an estimator of $\sigma^2$. Find the value of $k$ that minimizes the mean squared error of the estimator. 
 
-$W=S_k^2=\frac{n-1}{k}S^2$, $E[W]$, $Var[W]$, $Bias$, $MSE$;
-$\frac{\partial MSE}{\partial k}\overset{set}=0$
-
+$W=S_k^2=\frac{n-1}{k}S^2$;
+$E[W]=\frac{n-1}{k}ES^2=\frac{n-1}{k}\sigma^2$;
+$V[W]=\frac{(n-1)^2}{k^2}VS^2=\frac{(n-1)^2}{k^2}\frac{2\sigma^4}{n-1}$;
+$Bias=E[W]-\sigma^2=\frac{n-1-k}{k}\sigma^2$;
+$MSE=V[W]+Bias^2=\frac{2(n-1)}{k^2}\sigma^4+(\frac{n-1}{k}-1)^2\sigma^4$;
+$\frac{\partial MSE}{\partial k}=\sigma^4[\frac{-4(n-1)}{k^3}+\frac{-(n-1)^2}{k^3}-\frac{2(n-1)}{k^2}]\overset{set}=0$;
+$k=n+1$
 
 ### 2016F2
 [Geom](#Geom) [561-me2]
@@ -2106,12 +2160,12 @@ The moment generating function of a particular random variable is $M_X(t)=\frac{
 $Geom(1/4)$; $EX=1/p=4$; $VarX=(1-p)/p^2=12$;
 $\sigma/\mu=\sqrt{12}/4=\sqrt3/2$ 
 
-$EX=M'_X(0)=4$;
-$EX^2=M''_X(0)=28$ 
+$EX=M'_X(0)=\frac{e^t(4-3e^t)-e^t(-3e^t)}{(4-3e^t)^2}=\frac{1+3}{1}=4$;
+$EX^2=M''_X(0)=\frac{4e^t(4-3e^t)^2-4e^t(-3e^t)2(4-3e^t)}{(4-3e^t)^4}=\frac{4+24}{1}=28$ 
 
 
 ### 2016F3
-[2008F3][] [3.6.1][] [Cheb](#Cheb)
+[2008F3][] [Cheb][3.6.1]
 
 If X is a random variable such that $E[X]=2$ and $E[X^2]=13$, determine a lower bound for the probability $P(-4<X<8)$. (Hint: Use a famous inequality.) 
 
@@ -2140,7 +2194,7 @@ Suffi, $\frac{\prod f(y|\theta)}{g(\bar Y|\theta)}$ is better than Factorization
 
 Compl, $E[g(\bar Y)]=0$
 
-Ancillary, $g_a(\vec y)=(y_1+a,..,y_n+a,)$, $[Y_n-\bar Y](g_a(\vec y))=Y_n+a-\frac\sum n(Y_i+a)=Y_n-\bar Y$
+Ancillary, $g_a(\vec y)=(y_1+a,..,y_n+a,)$, $[Y_n-\bar Y](g_a(\vec y))=Y_n+a-\frac{\sum(Y_i+a)}n=Y_n-\bar Y$
 
 
 ### 2016F6
@@ -2150,7 +2204,7 @@ Suppose that $X_1,X_2,..,X_n$ i.i.d. $Expo(\theta)$, i.e. $f(x;\theta)=\theta e^
 
 $\pi(\theta|\vec x)=\frac{g(\vec x|\theta)}{m(\vec x)}=\frac{f(\vec x|\theta)h(\theta)}{\int g(\vec x|\theta)d\theta}$
 
-$\pi(\theta|\vec x)\propto L(\theta)h(\theta)\sim Beta(n+1,\frac{1}{\lambda+\sum x_i})$
+$\pi(\theta|\vec x)\propto L(\theta)h(\theta)\sim Gamma(n+1,\frac{1}{\lambda+\sum x_i})$
 
 If $\mathcal{L}_\theta(\hat\theta)=(\hat\theta-\theta)^2$, Posterior risk $E[\mathcal{L}_\theta(\hat\theta|\vec x)]$ is minimized when $\hat\theta=E[\theta|\vec x]$ (posterior mean)
 
@@ -2173,6 +2227,8 @@ $x^{\theta+1-1}(1-x)^{1-1}\sim Beta(\theta+1,1)$, $-\ln x^\sim Expo(\theta+1)$, 
 $Beta(\alpha+n,\beta)$,
 $E[X^n]=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$,
 $E[X^1]=\bar X=\frac{\alpha}{\alpha+\beta}=\frac{\theta+1}{\theta+2}$
+
+Or $E[X]=\int_0^1x(\theta+1)x^\theta dx=\frac{\theta+1}{\theta+2}$
 
 $\hat\theta_{MOM}=\frac{2\bar X-1}{1-\bar X}$
 
@@ -2201,7 +2257,7 @@ $Var[w]\ge(\theta+1)^2/n$
 Expo family, joint pdf $\prod f(x|\theta)=(\theta+1)^n(\prod x_i)^\theta\cdot1$,$h(x)$ is free of $\theta$,
 $T(x)=\prod x_i$ is suff (by Factorization)
 
-(g) Suppose you've taken a sample of size $n=10$. Determine the UMP test of the null hypothesis $\theta=.5$ vs. the alternative $\theta>0.5$. [Neym-Pear][8.3.2]
+(g) Suppose you've taken a sample of size $n=10$. Determine the UMP test of the null hypothesis $\theta=.5$ vs. the alternative $\theta>0.5$. [Karlin-Rubin][8.3.2]
 
 $\Lambda=\frac{L(\theta_0)}{L(\theta_1)}\le C$ has MLR, T suff, $(\prod x_i)^{0.5-\theta_1}\le C'$,
 $0.5-\theta_1<0$, $-\sum\ln x_i\le C''$, $P(-\sum\ln x_i\le C'')=\alpha$ is UMP.
@@ -2274,8 +2330,9 @@ $=\frac{1}{\pi(u^2+1)}\int_{0}^{\infty}e^{-\frac{u^2+1}{2}v^2}d[(u^2+1)v^2]$
 Suppose $X_1,X_2,..,X_n$ is a random sample of $Exp(1)$ random variables. Find the moment generating function $M(t)=E(e^{tX_{(1)}}), t\in\mathbb R$, where $X_{(1)}$ is the minimum. (5 pts)
 
 $f_{X_{1}}(x)=ne^{-x}[1-(1-e^{-x})]^{n-1}=ne^{-nx}\sim Expo(\lambda=n,\beta=\frac1n)$
+MGF= $\frac1{1-\beta t}=\frac1{1-t/n}$ 
 
-MGF= $\frac1{1-\beta t}=\frac1{1-t/n}$ or $E[e^{tX_{(1)}}]=\int_0^\infty e^{tx}ne^{-nx}dx=\frac{n}{n-t}\int_0^\infty(n-t)e^{-(n-t)x}dx$
+Or $E[e^{tX_{(1)}}]=\int_0^\infty e^{tx}ne^{-nx}dx=\frac{n}{n-t}\int_0^\infty(n-t)e^{-(n-t)x}dx$
 
 ### 2017S4
 [Example 5.2.8 Distribution of the mean]
@@ -2318,13 +2375,16 @@ $(1-\rho^2)\sigma^2=\frac{\sigma^2}{n}$
 
 Let $X_1,X_2,X_3,...$ be i.i.d. $Poisson(\lambda)$ random variables. Find a UMP (uniformly most powerful) test of $H_0:\lambda\le1$ versus $H_1:\lambda>1$ at a level $\alpha$ near .05. (5 pts)
 
-$\Lambda=\frac{L(\lambda_0)}{L(\lambda_1)}=(\frac{\lambda_0}{\lambda_1})^{\sum x_i}e^{n(\lambda_1-\lambda_)0}$
+$\lambda_0<\lambda_1$, by Neyman-Pearson, Reject $H_0$ if
 
-Expo family $T=\sum x_i$is Suffi; $L(\lambda)$ has MLR; $\Lambda$ is a monotone function of T
+$\Lambda=\frac{L(\lambda_0)}{L(\lambda_1)}=(\frac{\lambda_0}{\lambda_1})^{\sum x_i}e^{n(\lambda_1-\lambda_0)}<C$
 
-$T>C$ is UMP test at $\alpha=P_{\theta_0}(T>C)=0.05$
+Expo family $T=\sum x_i$is Suffi; $\Lambda$ has $\searrow$ MLR in T, is a monotone decreasing function of T, 
 
-Under $H_0$, $T=\sum x_i\sim Pois(n)$
+then $T>C$ is UMP test at $\alpha=P_{\theta_0}(T>C)=0.05$
+
+
+Under $H_0$, set $\lambda=1$to $\max\Lambda$, $T=\sum x_i\sim Pois(n)$. When $C=4$, $P_{\theta_0}(T>4)<0.05$
 
 
 ### 2017S7
@@ -2332,7 +2392,7 @@ Under $H_0$, $T=\sum x_i\sim Pois(n)$
 
 Suppose that $(P,X)$ is a pair of random variables with $P\sim Beta(\frac12,\frac12)$ and then $X_{|P=p}\sim bin(n,p)$. Find the variance of X.
 
-$E[X]=\frac{n\alpha}{\alpha+\beta}=\frac{n}2$; $V[X]=\frac{n\alpha\beta(\alpha+\beta+n)}{(\alpha+\beta)^2(\alpha+\beta+1)}=n(n+1)/8$
+$E[X]=\frac{n\alpha}{\alpha+\beta}=\frac{n}2$; $V[X]=\frac{n\alpha\beta(\alpha+\beta+n)}{(\alpha+\beta)^2(\alpha+\beta+1)}=\frac{n(n+1)}8$
 
 $E[P]=\frac12$, $E[P^2]=\frac38$, $Var[P]=\frac18$
 
@@ -2344,7 +2404,8 @@ $E[Var(X|P)]+Var[E(X|P)]=E[np(1-p)]+Var[np]=\frac{n}2-\frac{3n}8+\frac{n^2}8$
 Let $X_1,X_2,..,X_n$ be a random sample of $N(\mu,\sigma^2)$ random variables. Find the Cramer-Rao
 lower bound  on the variance of an unbiased estimator for $\sigma^2$. (Assume $\mu$ is known.)
 
-$2\sigma^4/n$
+$I_{\sigma^2}=\frac1{2\sigma^4}$;
+$Var[\hat\sigma_U^2]\ge\frac{2\sigma^4}n$
 
 ## 2017F
 
@@ -2356,20 +2417,31 @@ Kim, Kochar
 Suppose Xenophon and Yves meet for lunch, and Xenophon arrives at time X
 uniformly from 1 to 2 P.M., and Yves arrives independently at time Y with the same distribution. Find the distribution of $|Y-X|$ and its expectation, that is, the expected waiting time of either party.
 
-When $Y>X$,$0<x<y<1$, $U=Y-X$, $V=X$, $|J|=1$, $g(u,v)=1$, $0<v<u+v<1$, $0<v<1-u$,
-$g(u)=1-u$, $0<u<1$; Same with $Y<X$;
-$E[U]=\int_0^1u(1-u)du=1/6$
+Let$U=Y-X$, $V=X$,$0<x<y<1$; $|J|=1$, $g(u,v)=1$, $0<v<u+v<1$, $0<v<1-u$,
+$f(u)=1-u$, $0<u<1$;
+
+$P(|U|\le u)=P(U\le u)-P(U\le -u)$, $f_{|U|}(u)=F'_{|U|}(|u|)=F'_U(u)-F'_U(-u)=f_U(u)-f_U(u)(-1)=2f_U(u)$, 
+
+$f_{|U|}(u)=2(1-u)$; $E[|U|]=\int_0^1u2(1-u)du=[u^2-\frac{2u^3}3]_0^1=\frac13$
+
+
 
 ### 2017FA2
-[2010SA3][] [2011S4][] [2018FA4][] [DeltaM](#DeltaM) [LimD](#LimD)
+[2010SA3][] [2011S4][] [2018FA4][] [DeltaM][5.5.4]
 
 Let $X_1,X_2,..,X_n$ be i.i.d. $Exp(\lambda)$ random variables with rate parameter $\lambda$ and density
 $f(x)=\lambda e^{-\lambda x}, x>0$, with $\sigma^2=1/\lambda^2$. We are thinking about using the estimator $\bar X^2$ for the variance. Find the limiting distribution of
 $\sqrt{n}(\bar X_n^2-1/\lambda^2)$
 Let  be a random sample from $Poisson(\mu)$. Derive the limiting distribution of $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 
-MLE $1/\lambda=\bar X$;
-MLE $1/\lambda^2=\bar X^2$
+$\sigma^2=\frac1{I_{\mu}}=\frac1{\lambda^2}$,
+
+By CLT $\sqrt n(\bar X_n-\frac1{\lambda})\overset{D}{\to}N(0,\frac1{\lambda^2})$,
+
+let $g(\bar X_n)=\bar X_n^2$, $g(\lambda)=(\frac1{\lambda})^2$, $g'(\lambda)=\frac2{\lambda}\neq0$
+
+$\sqrt{n}(\bar X_n^2-(\frac1{\lambda})^2)\to n(0,\sigma^2g'(\lambda)^2)=n(0,\frac4{\lambda^4})$
+
 
 ### 2017FA3
 [2003F8][] [2014SA2][] **[2015F2][]** [Expo](#Expo)
@@ -2419,9 +2491,19 @@ $f(x;\theta)=\begin{cases}e^{-(x-\theta)}& \theta<x<\infty\\0& e.w.\end{cases}$
 where $-\infty<\theta<\infty$is an unknown parameter. For testing the null hypothesis $H_0:\theta=0$
 vs the alterative $H_1:\theta>0$, a reasonable test is to reject the null hypothesis if $X_{(1)}=\min\{X_1,X_2,..,X_{10}\}\ge C$. Find $C$ so that the size of the test is 0.05. Also find the power of this test at $\theta=1$. Is this test unbiased?
 
-$\alpha=P_{\theta_0}(x_{(1)}\ge c)$, $c=$
+Let $Y=X-\theta$, $X=Y+\theta$, $\frac{dy}{dx}=1$,
+$f_Y(y)=f_x(x)|1|=e^{-y}\sim Expo(1)$;
 
-$\beta=P_{\theta_1}(x_{(1)}\ge c)$
+$Y_{(1)}=ne^{-ny}\sim Expo(10), Gamma(1,\frac1{10})$; $20Y_{(1)}\sim \chi^2_2$
+
+$P_{H_0}(X_{(1)}\ge C)=P_{H_0}(Y_{(1)}+0\ge C)=P_{H_0}(20Y_{(1)}\ge 20C)\overset{set}=0.05$, 
+$20C=5.991$, $C=0.29955$
+
+$\beta=P_{H_1}(X_{(1)}\ge 0.29955)=P_{H_1}(Y_{(1)}+1\ge 0.29955)=P_{H_1}(Y_{(1)}\ge -0.70045)=1$, 
+
+the power function minimized at the null value means unbiasedness.
+
+
 
 ### 2017FB3
 [2008S5B][] [HypoT](#HypoT)
@@ -2431,10 +2513,26 @@ let $Y_1,..,Y_m$ be an independent random sample of size $m$ from $N(3\theta,1)$
 
 (a) Show that the joint distribution of X's and Y's has MLR (monotone likelihood ratio) property. [MLR][8.3.2] 
 
+Let $\theta_0<\theta_1$,
+
+$\Lambda=\frac{L(\theta_0)}{L(\theta_1)}=e^{(\theta_0-\theta_1)(\sum x+3\sum y)-10m(\theta_0^2-\theta_1^2)}<C$ 
+
+It is a monotone $\searrow$ function of $\sum x+3\sum y$, then $f(x,y)$ has MLR.
+
 (b) Find the UMP test of size $\alpha$ for testing $H_0:\theta\le0$ vs $H_1:\theta>0$. [UMP][8.3.2]
-'sign'
+
+$\bar X\sim n(\theta,\frac1m)$,$3\bar Y\sim n(3\theta,\frac9m)$, $\bar X+3\bar Y\sim n(10\theta,\frac{10}m)$
+
+By C.L.T, under $H_0$, $\sqrt{\frac{m}{10}}(\bar X+3\bar Y-10\theta)\overset{\mathcal{D}}\to n(0,1)$
+
+
+$P_{\theta_0}(\sqrt{\frac{m}{10}}(\bar X+3\bar Y-10\theta_0>Z_{\alpha})=\alpha$ is the UMP test of size $\alpha$
 
 (c) Find an expression of the power function of the UMP test. [power](#power)
+
+$\beta=P_{\theta_1}(\sqrt{\frac{m}{10}}(\bar X+3\bar Y-10\theta_1>Z_{\alpha}-(\theta_1-\theta_0)\sqrt{10m}$
+
+$=P_{\theta_1}(Z>Z_{\alpha}-\delta\sqrt{10m})$ where $\delta=\theta_1-\theta_0$
 
 ### 2017FB4
 [2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] [2016F7][] [2018FB2][] [2019SB4][]
@@ -2476,21 +2574,15 @@ Let $X$ have pdf
 $f_X(x)=\frac29(x+1), -1\le x\le2$ 
 Find the pdf of $Y=X^2$.
 
-$P(Y\le y)=P(X^2\le y)=P(-\sqrt y\le X\le\sqrt y)$;
-
-$F_X(x)=\begin{cases}\int_1^{\sqrt y}f(x)dx=[\frac{x^2}{9}+\frac{2x}{9}]_1^{\sqrt y}=\frac{y}{9}+\frac{2\sqrt y}{9}-\frac13&1\le y\le4\\\int_{-\sqrt y}^{\sqrt y}f(x)dx=[\frac{x^2}{9}+\frac{2x}{9}]_{-\sqrt y}^{\sqrt y}=\frac{4\sqrt y}{9}& 0\le y\le1\end{cases}$
+$P(Y\le y)=P(X^2\le y)=\begin{cases}P(1\le X\le\sqrt y)=\int_1^{\sqrt y}f(x)dx=[\frac{x^2}{9}+\frac{2x}{9}]_1^{\sqrt y}=\frac{y}{9}+\frac{2\sqrt y}{9}-\frac13&x\ge1\\P(-\sqrt y\le X\le\sqrt y)=\int_{-\sqrt y}^{\sqrt y}f(x)dx=[\frac{x^2}{9}+\frac{2x}{9}]_{-\sqrt y}^{\sqrt y}=\frac{4\sqrt y}{9}& |x|\le1\end{cases}$
 
 $f_Y(y)=\begin{cases}\frac{1}{9}+\frac{1}{9\sqrt y}&1\le y\le4\\\frac{2}{9\sqrt y}& 0\le y\le1\end{cases}$
 
 ### 2018S3A
-[2017FA1][] [4.E.6][]
+**[2017FA1][]** [4.E.6][]
 
 Suppose Xenophon and Yves meet for lunch, and Xenophon arrives at time X
 uniformly from 1 to 2 P.M., and Yves arrives independently at time Y with the same distribution. Find the distribution of $|Y-X|$ and its expectation, that is, the expected waiting time of either party.
-
-$F_U(u)=P(U\le u)=1-P(U\ge u)=1-\int_1^{2-u}\int_{x+u}^21dydx=\frac12+u-\frac{u^2}2$, $0<u<1$
-
-$f_U(u)=1-u$; $E[U]=\int_0^1u(1-u)du=[\frac{u^2}2-\frac{u^3}3]_0^1=\frac16$
 
 ### 2018S4A
 [4.E.27][] [4.E.24][] [Facto](#Facto) [4.2.14]
@@ -2503,9 +2595,21 @@ $x=\frac{u+v}2$,$y=\frac{u-v}2$,$|J|=1/2$
 
 $f_{U,V}(u,v)=\frac{1}{\sqrt{2\pi2\sigma^2}}e^{\frac{1}{2\sigma^2}}[u-(\mu+\gamma)]^2\frac{1}{\sqrt{2\pi2\sigma^2}}e^{\frac{1}{2\sigma^2}}[u-(\mu-\gamma)]^2$
 
+Or $Cov(u,v)=Cov(X+Y,X-Y)=Cov(X,X)-Cov(Y,Y)=V[X]-V[Y]=0$
+
 (b) Find the distribution of each of them. 
 
-$U\sim n(\mu+\gamma,2\sigma^2)$, $V\sim n(\mu-\gamma,2\sigma^2)$; Or $M_U(t)=M_X(t)\cdot M_Y(t)$, $M_V(t)=M_X(t)\cdot M_Y(-t)$
+$U\sim n(\mu+\gamma,2\sigma^2)$, $V\sim n(\mu-\gamma,2\sigma^2)$; 
+
+Or $M_U(t)=M_X(t)\cdot M_Y(t)$, $M_V(t)=M_X(t)\cdot M_Y(-t)$
+
+Or linear combinations of X and Y will also be normally distributed.
+
+$E[U]=E[X]+E[Y]=\mu+\gamma$,
+$E[V]=E[X]-E[Y]=\mu-\gamma$,
+$V[U]=V[X]+V[Y]=2\sigma^2$,
+$U\sim N(\mu+\gamma,2\sigma^2)$ and $V\sim N(\mu-\gamma,2\sigma^2)$
+
 
 ### 2018S1B
 [2004F8][] [2007F4B][] [2013FB4][] **[2015S3B][]** [2019SB2][] [Laplace](#Laplace) [7.E.13][]
@@ -2544,9 +2648,20 @@ Derive the UMP test of size $\alpha$ and obtain the null distribution of your te
 
 The life time of an electronic component has exponential distribution with mean $\mu$.
 10 such components are put on test at the same time and the experiment is terminated when all of them fail and the times of their failure, $X_1,X_2,..,X_n$ are noted. Based on this information, derive the likelihood ratio test LRT at the level $\alpha= 05$ of the null hypothesis $H_0:\mu=5$ against the alternative $H_1:\mu\neq5$. Also find an expression for the power function of this test.
-$T=\sum x_i$, $\frac{2}{\mu}T\sim\chi^2_{20}$;
-$P_{H_0}(\frac{2}{5}T\le \chi^2_{20,0.95}=10.85)=0.05$;
-Power function $P(reject H_0|\mu_1)=P_{H_1}(\frac{2T}{\mu_1}\le \frac{5\chi^2_{20,0.95}}{\mu_1})$
+
+$\Lambda=\frac{L(\mu_0)}{L(\mu_1)}=(\frac{\mu_1}5)^ne^{(\frac1{\mu_1}-\frac15)\sum x_i}\le c$
+
+If $\mu_1<5$,$\Lambda\nearrow$, $\sum x_i\le c'$;
+
+If $\mu_1>5$,$\Lambda\searrow$, $\sum x_i\ge c'$;
+
+$T=\sum x_i\sim Gamma(10,\mu)$, $\frac{2}{\mu}T\sim\chi^2_{20}$;
+
+$P_{H_0}(\frac{2}{5}T\le \chi^2_{20,0.975}=9.59)+P_{H_0}(\frac{2}{5}T\ge \chi^2_{20,0.025}=34.2)=0.05$;
+
+Power function 
+
+$P(reject H_0|\mu_1)=P_{H_1}(\frac{2T}{\mu_1}\le \frac{5\chi^2_{20,0.975}}{\mu_1})+P_{H_1}(\frac{2T}{\mu_1}\ge \frac{5\chi^2_{20,0.025}}{\mu_1})$
 
 ## 2018F
 
@@ -2559,38 +2674,38 @@ Suppose $(Y_1,Y_2)$ have the joint pdf
 $f(y_1,y_2)=\begin{cases}C&0\le y_1\le y_2\le 1\\0& o.w.\end{cases}$
 
 (a) Find the value of c. =2
-
+$\int_0^1\int_0^{y_2}$
 (b) Find the marginal density functions of $Y_1$ and $Y_2$ and check whether they are independent.
 
 $f_{Y_1}=2-2y_1$;
 $f_{Y_2}=2y_2$ dependent
 
-(c) Find $E[Y_1+Y_2]$. =1
+(c) Find $E[Y_1+Y_2]$.$E[Y_1]+[Y_2]=\int_0^1y_1(2-2y_1)dy_1+\int_0^1y_2(2y_2)dy_2=\frac13+\frac12=1$
 
-(d) Find $P(Y_1\le3/4|Y_1>1/3)$ 55/64
+(d) Find $P(Y_1\le3/4|Y_1>1/3)$ $=\frac{\int_{1/3}^{3/4}}{1-\int_0^{1/3}}=\frac{55}{64}$
+
 
 ### 2018FA2
-[Expo](#Expo)
+[Expo][] [Example 5.4.5 Range][5.4]
 
 Let $X_1,X_2,..,X_n$ be a random sample from an  exponential distribution with mean 5.
 
-the memoryless property of the exponential distribution, the difference between $Y_{(n)}$ and $Y_{(1)}$ is independent of the actual value of $Y_{(1)}$. So to find the distribution of$ R=Y_{(n)}−Y_{(1)}$ we can operate under the assumption that $Y_{(1)}=0$.
+the memoryless property of the exponential distribution, the difference between $Y_{(n)}$ and $Y_{(1)}$ is independent of the actual value of $Y_{(1)}$. So to find the distribution of $R=Y_{(n)}-Y_{(1)}$ we can operate under the assumption that $Y_{(1)}=0$.
 
-Then $P(R<r)$ is the probability that the remaining $n−1$ sample observations all fall in the range $(0,r)$. This is because (under the assumption that the smallest observation is 0), $R<r$ means that the largest observation must be smaller than r. In order for that to happen, all $n−1$ of the remaining sample observations must be smaller than r.
+Then $P(R<r)$ is the probability that the remaining $n-1$ sample observations all fall in the range $(0,r)$. This is because (under the assumption that the smallest observation is 0), $R<r$ means that the largest observation must be smaller than r. In order for that to happen, all $n-1$ of the remaining sample observations must be smaller than r.
 
-https://math.stackexchange.com/questions/246202/sample-range-and-order-statistics
 
-(a) Find the CDF of the sample range.
+(a) Find the [CDF of the sample range](https://math.stackexchange.com/questions/246202/sample-range-and-order-statistics)
 
-$Y_{(n)}=n e^{-y_n}(1 - e^{y_n})^{n-1}$
+$Y_{(n)}=ne^{-y_n}(1-e^{y_n})^{n-1}$
 
-P(n-1 independent sample observations are all smaller than r) $P(R<r)=(\int_0^r e^{-x}dx)^{n-1}= (1-e^{-r})^{n-1}.$
+P(n-1 independent sample observations are all smaller than r) $P(R<r)=(\int_0^r e^{-x}dx)^{n-1}=(1-e^{-r})^{n-1}$
 
-$f_R(r) = (n-1)(1-e^{-r})^{n-2} e^{-r}$
+$f_R(r)=(n-1)(1-e^{-r})^{n-2}e^{-r}$
 
-(b) Find the expected value of the sample range. [Example 5.4.5](#range)
+(b) Find the [expected value of the sample range](https://www.datasciencecentral.com/profiles/blogs/a-beautiful-result-in-probability-theory)
 
-$X_{(n)}=n e^{-y_n}(1 - e^{y_n})^{n-1}$
+$X_{(n)}=ne^{-y_n}(1-e^{y_n})^{n-1}$
 
 $E[R_{n}]=\frac1\lambda\sum_{k=1}^{n-1}\frac1{k}$;$V[R_{n}]=\frac1{\lambda^2}\sum_{k=1}^{n-1}\frac1{k}$
 
@@ -2613,16 +2728,18 @@ $E[Y]=E(E[Y|X])=\alpha+\beta EX^2=\alpha+\beta/3$
 
 
 ### 2018FA4
-[2010SA3][] [2011S4][] [2017FA2][] [DeltaM](#DeltaM) [LimD](#LimD)
+[2010SA3][] [2011S4][] [2017FA2][] [DeltaM][5.5.4]
 
 Let $X_1,X_2,..,X_n$ be a random sample from $Pois(\mu)$. Derive the limiting distribution of
 $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})$.
 
-$\sqrt{n}(\bar X_n-\mu)\to n(0,\frac1{I(\mu)})$
+$\sigma^2=\frac1{I_{\mu}}=\mu$,
 
-Delta Method
+By CLT $\sqrt n(\bar X_n-\mu)\overset{D}{\to}N(0,\mu)$,
 
-$\sqrt{n}(e^{-\bar X_n}-e^{-\mu})\to n(0,\frac{[(e^{-\mu})']^2}{I(\mu)})$
+let $g(\bar X_n)=e^{-\bar X_n}$, $g(\mu)=e^{-\mu}$, $g'(\mu)=-e^{-\mu}\neq0$
+
+$\sqrt{n}(e^{-\bar X_n}-e^{-\mu})\to n(0,\frac{[(e^{-\mu})']^2}{I(\mu)})=n(0,\mu e^{-2\mu}))$
 
 ### 2018FB1
 [LRT](#LRT) [asymD](#asymD) [8.2.2] [8.2.6]
@@ -2650,10 +2767,32 @@ where $\theta>-1$ is an unknown parameter.
 
 Let $X_1,X_2,..,X_n$ be a random sample from $N(\mu,\sigma^2)$ distribution. Find a lower bound on the variance of any unbiased estimator of the 95th percentile of this distribution based on the Information Inequality. Also compare this bound to the variance of the uniformly minimum variance unbiased estimator.
 
-$\hat\tau=\bar x+1.645s$
+$\bar X$ and $S^2$ are unbiased estimator of $\mu$ and $\sigma^2$.
+
+$\bar X$ and $S^2$ are complete sufficient statistic for $\mu$ and $\sigma^2$.
+
+$I_{\mu}=\frac1{\sigma^2}$, $V[\hat\mu]\ge\frac{1}{n/\sigma^2}=\frac{\sigma^2}{n}$;
+
+$I_{\sigma^2}=\frac{1}{2\sigma^4}$, $V[\hat\sigma^2]\ge\frac{1}{n/2\sigma^4}=\frac{2\sigma^4}{n}$;
+
+
+$\frac{X_{(95)}-\mu}{\sigma}=Z_{(95)}=1.645$; 
+
+$X_{(95)}=\mu+1.645\sigma$;
+
+$\frac{d}{d\mu}X_{(95)}=1$; $V[\hat\mu_{(95)}]\ge\frac{1}{n/\sigma^2}=\frac{\sigma^2}{n}$
+
+$\frac{d}{d\sigma}X_{(95)}=1.645$; $V[\hat\sigma^2_{(95)}]\ge\frac{1.645^2}{n/2\sigma^4}=\frac{1.645^2\cdot2\sigma^4}{n}>\frac{2\sigma^4}{n}$
+
+The result shows that $\hat\mu_{(95)}$ is UMVUE but $\hat\sigma^2_{(95)}$ cannot attain the CRLB.
+
 
 there is no UMVUE of $\sigma^2$. 
 $S^2$ is unbiased but not minimized. MLE $\sigma^2$ is minimized but biased. CRLB is between two of them. they are ARE.
+
+[a reference](https://math.stackexchange.com/questions/2062129/derive-the-cramer-rao-lower-bound-for-variances-of-unbiased-estimators-of-a-99th)
+
+$\hat X_{0.95}=\bar x+1.645S$;
 
 ### 2018FB4
 [2013FB5] [2016F4][] [2017FA4][] [Unif+Unif]
@@ -2665,12 +2804,14 @@ on the interval $(\theta,\theta+1)$. For testing $H_0:\theta=0$ against $H_a:\th
 2. Test 2 : Reject $H_0 if X_1+X_2>c$.
 Find the value of c so that the Test 2 has the same value of Type I error probability as Test 1.
 
-$1-\alpha=P_{\theta_0}(T\le t_0)=\int_{-\infty}^{t_0}$;
-$\alpha=P(T>t_0)=\int_{t_0}^{\infty}$
+$f(z)=f(x_1+x_2)=z,z<1;2-z,z>1$
 
-$\alpha=P(x_1>0.95)=P(x_1+x_2>c)$
+$\alpha=P_{H_0}(x_1+x_2>c)=P_{H_0}(x_1>0.95)$;
 
-find pdf of $x_1+x_2$ (example of textbook)
+$\int_{c}^{2}f(z)dz=\int_{0.95}^{1}f(x)dx=0.05$
+
+$\frac{c^2}2-2c+2=0.05$; $c=\frac{2}{1}\pm\sqrt{2^2-4\cdot\frac12\cdot1.95}$, choose $2-0.3162278=1.683772$
+
 
 
 ## 2019S
@@ -2721,9 +2862,18 @@ $f_X(x)=\int_0^\infty\theta^2e^{-\theta(x+2w)}dw=\frac\theta2e^{-\theta|x|}$ [La
 
 Let $\theta$ be Beta distributed, $\theta\sim Beta(1,1)$. Let $N_1$ be Binomial given $\theta$, that is $N_1\sim Bin(n,\theta)$ given $\theta$.
 
+$P(\theta,n_1)=P(n_1|\theta)P(\theta)=P(\theta|n_1)P(n_1)$
+
 (a) (4 pts) Compute $p(\theta|N_1=n_1)$ and $E[\theta|N_1=n_1]$
 
+$P(\theta|n_1)=\frac{P(\theta,n_1)}{P(n_1)}=\frac{\Gamma(n+2)}{\Gamma(n_1+1)\Gamma(n-n_1+1)}\theta^{n_1+1-1}(1-\theta)^{n-n_1+1-1}$
+
+$E[\theta|N_1=n_1]=\frac{n_1+1}{n+2}$
+
 (b) (6 pts) Compute $P(N_1=n_1)$ for $n_1=0...n$.
+
+$P(n_1)=\int_0^1P(\theta,n_1)d\theta=\frac{1}{n+1}\int_0^1\frac{\Gamma(n+2)}{\Gamma(n_1+1)\Gamma(n-n_1+1)}\theta^{n_1+1-1}(1-\theta)^{n-n_1+1-1}d\theta=\frac{1}{n+1}$
+
 
 ### 2019SA4 
 [2009FA3][] [2015S5A][] [Pois-Bino][]
@@ -2749,6 +2899,8 @@ $=\frac{s!}{S_{4}!(s-S_{4})!}\cdot(\frac25)^{S_{4}}(1-\frac25)^{s-S_{4}}\sim Bin
 
 Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution $N(\mu,\sigma^2=25)$. Reject $H_0:\mu=50$ and accept $H_1:\mu=55$ if $\bar X_n\ge c$. Find the two equations in n and c that you would solve to get $P(\bar X_n\ge c|\mu)=K(\mu)$ to be equal to $K(50)=0.05$ and $K(55)=0.90$.
 Solve these two equations. Round up if n is not an integer. Hint: $z_{.05}=1.645$ and $z_{.1}=1.28$
+
+$n=[\frac{(Z_\alpha+Z_\beta)\sigma}{\delta=\mu_1-\mu_0}]^2=[\frac{(1.645+1.28)5}{55-50}]^2=8.56\approx9$
 
 ### 2019SB2 
 [2004F8][] [2007F4B][] [2013FB4][] **[2015S3B][]** [2018S1B][] [Laplace](#Laplace) [7.E.13][]
@@ -2789,6 +2941,9 @@ $Var(\hat\theta_U)\ge\frac1{nI_\theta}=\frac{(\theta+1)^2}n$
 (d) (2 pts) What is the asymptotic distribution of $\hat\theta$? [asymD](#asymD)
 
 $\sqrt{n}(\hat\theta-\theta)=N(0,(\theta+1)^2)$
+
+
+\pagebreak
 
 # 1. Probability Theory
 ## 1.1 Set Theory
@@ -2860,9 +3015,9 @@ $Y~Bino$,$X~NBin(r,p)$,$F_x(r-1)=1-F_y(n-r)$
 
 Negative Bino(r,p): 
 
-n trials until r(successes)  $P(X=n)={n-1\choose r-1}p^r(1-p)^{n-r}$;$P(X\le n)=\sum_{i=r}^n{i-1\choose r-1}p^r(1-p)^{i-r}$
+n trials until r(successes)  $P(X=n)=\binom{n-1}{r-1}p^r(1-p)^{n-r}$;$P(X\le n)=\sum_{i=r}^n\binom{i-1}{r-1}p^r(1-p)^{i-r}$
 
-x(failures) before r(successes) $P(X=x)={x+r-1\choose x}p^rq^{x}$;$P(X\le x)=\sum_{i=0}^x{{i+r-1}\choose{i}}p^rq^{i}$; $M_X(t)=(\frac{p}{1-qe^t})^r,t<\ln q$$
+x(failures) before r(successes) $P(X=x)=\binom{x+r-1}{x}p^rq^{x}$;$P(X\le x)=\sum_{i=0}^x\binom{i+r-1}{i}p^rq^{i}$; $M_X(t)=(\frac{p}{1-qe^t})^r,t<\ln q$$
 
 
 3.2.5 Poisson distribution $\lambda$
@@ -2926,7 +3081,10 @@ X be a r.v. g(x) be a nonnegative fn. $\forall r>0$
 **Example 3.6.2 (Illustrating Chebychev)** $P(|x-\mu|<t\sigma)\ge1-\frac1{t^2}$
 
 ### 3.6.2 Identities
- 
+
+**Lemma 3.6.5 (Stein's Lemma)** Let $X\sim n(\theta,\sigma^2)$, and let g be a differentiable function satisfying $E[g'(X)]<\infty$. Then
+$E[g(X)(X-\theta)]=\sigma^2E[g'(X)]$
+
 ## 3.E
 
 $E(Z^{2k})=\frac{(2k)!}{2^KK!}, k=1,2,..$
@@ -3050,11 +3208,14 @@ Pois-Gamma $Y|\Lambda\sim Pois(\Lambda)$,
 $\Lambda\sim Gamma(\alpha,\beta)$, 
 $Y\sim NBin(\alpha,\frac1{1+p\beta})$ 
 
-Example 4.4.6 (Beta-binomial hierarchy) [2019.2.28][7.2.3]
+Example 4.4.6 (Beta-binomial hierarchy) [2019.2.28][7.2.3] {#Beta-Bino}
 
 $X|P\sim Bin(n,P)$, 
-$P\sim Gamma(\alpha,\beta)$, 
+$P\sim Beta(\alpha,\beta)$, 
 $EX=E[E(X|P)]=E[nP]=n\frac{\alpha}{\alpha+\beta}$
+
+$N_1|\theta\sim Bin(n,\theta)$,
+$\theta\sim Beta(1,1)$, $N_1\sim Unif(0,n+1)$, $\theta|N_1\sim Beta(n_1+1,n-n_1+1)$
 
 **Theorem 4.4.7 (Conditional variance identity)** For any two random varibles X and Y,
 $V[X]=\sigma_{x}^2=E(X^2)-[E(X)]^2=E[V(X|Y)]+V[E(X|Y)]$
@@ -3070,7 +3231,6 @@ $=\frac{n^2\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}+\frac{n\alpha\beta}{(\
 The covariance of X and Y is the number defined by
 $Cov(X,Y)=E((X-\mu_X)(Y-\mu_Y))=\sigma_{XY}$
 
-$Cov(aX,bY)=abCov(X,Y)$ $Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)$ $Cov(X,c)=0$
 
 **Definition 4.5.2**
 The correlation of X and Y is the number defined by 
@@ -3085,6 +3245,7 @@ Properties of $Cov(x,y)$
 $Cov(aX,bY)=abCov(X,Y)\quad (1)$
 $Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)\quad (2)$
 $Cov(X,c)=0\quad (3)$
+$X\perp Y$,$Cov(X+Y,X-Y)=Cov(X,X)-Cov(Y,Y)=V[X]-V[Y]$
 
 $Cov(X,X)=E[X^2]-\mu_X^2$
 
@@ -3154,12 +3315,17 @@ Corollary 4.6.10
 
 ## 4.7 Inequalities
 
-### 4.7.1 Numerical Inequalities
+### 4.7.1 
+Numerical Inequalities {#Jensen}
 
 **Theorem 4.7.3 (Cauchy-Schwarz Inequality)** For any two random variables X and Y,
-$|EXY|\le E|XY|\le(E|X|^2)^{\frac12}(E|X|^2)^{\frac12}$
+$|EXY|\le E|XY|\le(E|X|^2)^{\frac12}(E|Y|^2)^{\frac12}$
 
 **Example 4.7.4 (Covariance inequality)**
+
+$|E(X-\mu_X)(Y-\mu_Y)|\le(E|X-\mu_X|^2)^{\frac12}(E|Y-\mu_Y|^2)^{\frac12}$
+
+$Cov(X,Y)\le \sigma^2_X\sigma^2_Y$
 
 Theorem 4.7.5 (Minkowski's Inequality)
 
@@ -3168,6 +3334,8 @@ Theorem 4.7.5 (Minkowski's Inequality)
 Definition 4.7.6 convex
 
 **Theorem 4.7.7 (Jensen's Inequality)**
+
+Convex function $Eg(X)\ge g(EX)$
 
 **Example 4.7.8 (An inequality for means)** Jensen's Inequality can be used to prove an inequality between three different kinds of means. If $a_1,..,a_n$ are positive numbers, define
 
@@ -3179,7 +3347,7 @@ An inequality relating these means is $a_H\le a_G\le a_A$
 
 **Theorem 4.7.9 (Covariance Inequality)**
 
-  a. If $g(x)$ is a nondecreasing function and h(x)$ is a nonincreasing junction, then
+  a. If $g(x)$ is a nondecreasing function and $h(x)$ is a nonincreasing junction, then
 $E(g(X)h(X))\le(Eg(X))(Eh(X))$
 
   b. If $g(x)$ and $h(x)$ are either both nondecreasing or both nonincreasing, then
@@ -3354,7 +3522,7 @@ $P(X_{(j)}=X_i)=\sum^n_{k=j}\binom{n}{k}[P^k_i(1-P_i)^{n-k}-P^k_{i-1}(1-P_{i-1})
 
 $(5.4.4)\quad f_{X_{(j)}}(x)=\frac{n!f_X(x)}{(j-1)!(n-j)!}[F_X(x)]^{j-1}[1-F_X(x)]^{n-j}$
 
-$f_{K}(x)=\frac{n!f(x)}{(j-1)!(n-j)!}K[F_X(x)]^{k-1}[1-F_X(x)]^{n-k}$
+$f_{k}(x)=k\binom{n}{k}[F(x)]^{k-1}[1-F(x)]^{n-k}$
 
 **Example 5.4.5 (Uniform order statistic pdf)** Let $X_{(1)},..,X_{(n)}$ be iid $Unif(0,1)$ , so $f_X(x)=1$ for $x\in(0,1)$ and $F_X(x)=x$ for $x\in(0,1)$. Using (5.4.4), we see that the pdf of the $j^{th}$ order statistic is
 
@@ -3401,7 +3569,8 @@ Then, for every $\epsilon>0$,
 $P(\lim_{n\to\infty}|\bar X_n-\mu|<\epsilon)=1$
 that is, $\bar X_n$ converges almost surely to $\mu$
 
-### 5.5.3 Convergence in Distribution {#Max-Unif} {#CLT}
+### 5.5.3 
+Convergence in Distribution {#Max-Unif} {#CLT}
 
 **Definition 5.5.10** A sequence of random variables, $X_1,X_2,..$, _converges in distribution_ to a random variable $X$ if
 $\lim_{n\to\infty}F_{X_n}(x)=F_X(x)$
@@ -3427,12 +3596,15 @@ $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\overset{D}{\to}N(0,1)$
 
 **Example 5.5.16 (Normal approximation to the negative binomial)**
 
+$\frac{\sqrt n(\bar X_n-\mu)}{S_n}\overset{D}{\to}N(0,1)$
+
 **Theorem 5.5.17 (Slutsky's Theorem)** If $X_n\to X$ in distribution and $Y_n\to a$, a constant, in probability, then
 
  a. $Y_nX_n\to aX$ in distribution
  b. $X_n+Y_n\to X+a$ in distribution
 
-### 5.5.4 The Delta Method {#DeltaM}
+### 5.5.4 
+The Delta Method {#DeltaM}
 
 **Example 5.5.19 (Estimating the odds)**
 
@@ -3444,11 +3616,27 @@ $\frac{\sqrt n(\bar X_n-\mu)}{\sigma}\overset{D}{\to}N(0,1)$
 
 **Example 5.5.23 (Approximate mean and variance)**
 
-**Theorem 5 .5.24 (Delta Method)**
+$g(\mu)=\frac1{\mu}$, $E_\mu(\frac1{X})\approx\frac1{\mu}$, $Var_\mu(\frac1{X})\approx(\frac1{\mu})^4Var_\mu(X)$
+
+**Theorem 5.5.24 (Delta Method)**
+$\sqrt n(Y_n-\theta)\overset{D}{\to}N(0,\sigma^2)$,
+$g'(\theta)\neq0$,
+
+$\sqrt n[g(Y_n)-g(\theta)]\overset{D}{\to}N(0,\sigma^2[g'(\theta)]^2)$
 
 **Example 5.5.25 (Continuation of Example 5.5.23)**
 
+$\sqrt n(\frac1{\bar X}-\frac1{\mu})\overset{D}{\to}N(0,(\frac1{\mu})^4Var_\mu[X_1])$
+
+$\widehat Var[\frac1{\bar X}]\approx(\frac1{\bar X})^4S^2$,
+
+$\frac{\sqrt n(\frac1{\bar X}-\frac1{\mu})}{(\frac1{\bar X})^2S}\overset{D}{\to}N(0,1)$
+
 **Theorem 5.5.26 (Second-order Delta Method)**
+
+$g'(\theta)=0$,
+
+$\sqrt n[g(Y_n)-g(\theta)]\overset{D}{\to}\sigma^2\frac{g''(\theta)}2\chi^2_1)$
 
 **Example 5.5.27 (Moments of a ratio estimator)**
 
@@ -3561,8 +3749,8 @@ If $T(\mathbf{X})$ is a complete and minimal sufficient statistic, then $T(\math
 
 **Theorem 6.2.25 (Complete statistics in the exponential family)**
 Let $X_1,..,X_n$ be iid observations from an exponential family with pdf or pmf of the form
-$f(x|\vec\theta)=h(x)c(\vec \theta)e^{\sum^k_{j=1}W(\vec \theta_j)t_j(x)}$,
-where $\vec\theta=\theta_1,..\theta_k$. Then the statistic $T(X)=(\sum_{i=1}^nt_1(X_i),..,\sum_{i=1}^nt_k(X_i))$ is complete as long as the parameter space $\Theta$ contains an open set in $\Bbb R^k$.
+$f(x|\vec\theta)=h(x)c(\vec \theta)e^{\sum^k_{j=1}W_j(\vec \theta)t_j(x)}$,
+where $\vec\theta=\theta_1,..\theta_k$. Then the statistic $T(X)=(\sum_{i=1}^nt_1(X_i),..,\sum_{i=1}^nt_k(X_i))$ is complete as long as the parameter space $\Theta$ contains an open set in $\mathbb R^k$.
 
 **Example 6.2.26 (Using Basu's Theorem-I)**
 
@@ -3992,11 +4180,17 @@ Consistency {#consi-Seq-E} {#consi} {#consi-MLE}
 
 **Theorem 10.1.3**
 
+$\lim\limits_{n\to\infty}Var_\theta[W_n]=0$, $\lim\limits_{n\to\infty}Bias_\theta[W_n]=0$,
+
+$W_n$ is a consistent sequence of estimators of $\theta$
+
 **Example 10.1.4 (Contin 10.1.2)**
 
 **Theorem 10.1.5**
 
 **Theorem 10. 1 .6 (Consistency of MLEs)**
+
+$\lim\limits_{n\to\infty}P(\tau(\hat\theta)-\tau(\theta)\ge\varepsilon)=0$
 
 ### 10.1.2 Efficiency {#LimD} {#asymV} {#effi} {#asymE} {#asymD}
 
@@ -4013,6 +4207,7 @@ Consistency {#consi-Seq-E} {#consi} {#consi-MLE}
 **Theorem 10.1.12 (Asymptotic efficiency of MLEs)**
 $\lim\limits_{n\to\infty}\frac{CRLB}{Var(\hat\theta)}$
 
+$\sqrt n[\tau(\hat\theta)-\tau(\theta)]\overset{L}{\to}N(0,\nu(\theta))$, $\nu(\theta)$ is CRLB
 
 **Definition 10.1.16 ARE** the asymptotic relative efficiency
 $\lim\limits_{n\to\infty}\frac{Var(\hat\theta_2)}{Var(\hat\theta_1)}$
@@ -4040,84 +4235,8 @@ Example 10.3.4 (Multinomial LRT)
 
 $\sqrt{n}(\hat\theta_{MLE}-\theta)\overset{D}\to N(0,\frac1{I_\theta})$
 
-###
-
-$(\frac{u}v)'=\frac{u'v-uv'}{v^2}$;
-
-$(uv)'=u'v-uv'$, $\int{u}dv=uv-\int vdu$;
-
-$(a^x)'=a^xln(a)$,$\int{a^x\ln{a}}=a^x$;
-
-$(e^{ax})'=ae^{ax}$,$\int{e^{au}}=\frac1ae^{au}$;
-
-$\int xe^{x}dx=xe^{x}-\int e^{x}dx=xe^{x}-e^{x}$
-
-$(x\ln{x}-x)'=\ln{x}$, $\int{\ln u}=u\ln u-u$;
-
-$(x^n)'=nx^{n-1}$, $\int{x^n}=\frac{x^{n+1}}{n+1}$;
-
-$(\ln x)'=\frac1x$, $\int\frac1{ax+b}=\frac{1}a\ln|ax+b|$;
-
-$\lim\limits_{n\to\infty}(1\pm\frac{a}n)^n=e^{\pm a}$, $\sum_{n=0}^\infty\frac{(tx)^n}{n!}=e^{tx}$;
-
-$\Gamma(n)=(n-1)!=(n-1)\Gamma(n-1)$, $\Gamma(1/2)=\sqrt\pi$, $\Gamma(-1/2)=-2\Gamma(1/2)$, $\Gamma(0)=\Gamma(-1)=\infty$;
-
-$\Gamma(t) = \int_0^\infty x^{t-1}e^{-x}dx$, $\int_0^1 x^{a-1}(1-x)^{b-1}dx = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$;
-
-$\sum_{n=0}^{\infty}{ar^n}=\frac{a}{1-r}, |r|<1$; $\sum_{k=0}^{n-1}{ar^n}=\frac{a(1-r^n)}{1-r}$;
 
 
 
-\begin{tabular}{ l|l }
-Finite                                    & Binomial \\
-$\sum_{k=1}^n k=\frac{n(n+1)}{2}$         & $\sum_{k=0}^n \binom{n}{k} = 2^n$ \\
-$\sum_{k=1}^n (2k-1)=n^2$                 & $\sum_{k=0}^n \binom{r+k}{k}=\binom{r+n+1}{n}$ \\
-$\sum_{k=1}^n k^2=\frac{n(n+1)(2n+1)}{6}$ & $\sum_{k=0}^n \binom{k}{m}=\binom{n+1}{m+1}$ \\
-$\sum_{k=1}^n k^3=(\frac{n(n+1)}{2})^2$   & $\sum_{k=0}^r \binom{m}{k}\binom{n}{r-k}=\binom{m+n}{r}$ \\
-$\sum_{k=0}^n c^k=\frac{c^{n+1}-1}{c-1}$  & $\sum_{k=0}^n \binom{n}{k}a^{n-k}b^k = (a+b)^n$
-\end{tabular}
-
+#
 ![](UnivariateDistribution.png){ width=50% }
-
-# References
-
-\newpage
-\onecolumn
-\setlength\tabcolsep{0.1pt}
-\setlength\lineskip{0pt}
-\setlength\parskip{0pt}
-\fontsize{6pt}{0pt}
-\scriptsize
-
-\begin{tabular}{ l|p{0.18\linewidth}|l|p{0.2\linewidth}|p{0.2\linewidth} }
-   $D$   &$E;EX^2;V$&$f(x);F(x),P(X\le x)$&$MLE;T;I$&$M_x(t);M'(t);M''(t);M^n(t)$\\\hline
-$Bern(p)$&$p$;$p$;$pq$&$p^xq^{1-x},x=1,0$&$\bar X$;$\sum x_i\sim Bino(n,p)$;$1/pq$&$pe^t+q$\\\hline
-$Bino(n,p)$&$np$;$np(np+q)$;$npq$&$\binom{n}{x}p^x q^{n-x}$,$x=0,1..n$;&$\bar X$or$k\ge X_{(n)}$;$\sum x_i\sim Bino(n,p)$;$1/pq$&$(pe^t+q)^n$\\\hline
-$Geom(p)$&$1/p$;${(p+2q)}/{p^2}$;$q/p^2$&$pq^{x-1}$,$x=1,2,..$;$1-q^x$&$1/\bar X$;$\sum x_i$;&$\frac{pe^t}{1-qe^t},t<-\ln{q}$;$\frac{pqe^t}{(1-qe^t)^2}$;$\frac{2pqe^t}{(1-qe^t)^3}-M'(t)$\\\hline
-$NBino(r,p)$&$r/p$; ;$rq/p^2$&$\binom{x-1}{r-1}p^rq^{x-r}$,$x=r,r+1..$&$\bar X$;$\sum x_i$&$(\frac{pe^t}{1-qe^t})^r,t<\ln q$\\\hline
-$HGeom(N,m,k)$&$\frac{km}N$; ;$\mu\frac{(N-m)(N-k)}{N(N-1)}$&${\binom{m}{x}\binom{N-m}{k-x}}/{\binom{N}{k}}$\\\hline
-$Pois(\mu)$&$\mu$;$\mu$;$\mu^2+\mu$&$\frac{\mu^x}{x!}e^{-\mu}$,$x=0,1..$;$e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$&$\bar X$;$\sum x_i$;$1/\mu$&$e^{\mu(e^t-1)}$;$\mu e^tM(t)$;$\mu e^t(1+\mu e^t)M(t)$\\\hline
-$Unif(n)$&$\frac{n+1}2$;$\frac{(n+1)(2n+1)}{6}$;$\frac{n^2-1}{12}$&$\frac{1}n$,$x=1,2..n$,$n=b-a+1$;$\frac{x-a+1}n$&;$X_n$Comp&$\frac1n\sum_{i=1}^n{e^{ti}}$,$\frac{e^{at}-e^{(b+1)t}}{n(1-e^t)}$\\\hline
-$Unif(a,b)$&$\frac{a+b}{2}$; ;$\frac{(b-a)^2}{12}$&$\frac{1}{b-a}$,$x\in(a,b)$;$\frac{x-a}{b-a}$&$\min{x_{(1)},x_{(n)}}$;R ancillary&$\frac{e^{tb}-e^{ta}}{t(b-a)}$\\\hline
-$Norm(\mu,\sigma^2)$&$\mu$;$\mu^2+\sigma^2$;$\sigma^2$&$\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$&&$e^{\mu t +\frac{\sigma^2t^2}2}$; $(\mu+\sigma^2t)M(t)$;$[(\mu+\sigma^2t)^2+\sigma^2]M(t)$\\\hline
-$SNorm(0,1)$&$0$;$1$;$1$&$\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$&&$e^{\frac{t^2}2}$\\\hline
-$LNorm(\mu,\sigma^2)$&$e^{\mu+\frac{\sigma^2}2}$;$e^{2\mu+2\sigma^2}$;$E^2X(e^{\sigma^2}-1)$&$\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$&$\hat\mu=\frac1n\sum\ln x_i$,$\hat\sigma^2=\frac1n\sum\ln(x_i-\hat\mu)^2$&$EX^n=e^{n\mu+n^2\sigma^2/2}$\\\hline
-$Cauchy(\theta,\sigma^2)$&&$\frac{1}{\pi\sigma}\frac1{1+(\frac{x-\theta}{\sigma})^2}$&&\\\hline
-$DExpo(\mu,\sigma^2)$&$\mu$;$\mu^2+2\sigma^2$;$2\sigma^2$&$\frac{1}{2\sigma} e^{-|\frac{x-\mu}{\sigma}|}$&$\hat\mu=median$,$\hat\sigma=\frac1n\sum|x_i|$&$\frac{e^{\mu t}}{1-\sigma^2t^2}$\\\hline
-$Expo(\beta)$&$\beta$; ;$\beta^2$&$\frac1{\beta} e^{-\frac{x}\beta},x \in (0,\infty)$;$1-e^{-\lambda x}$&$1/\bar X$;$\sum x_i$;&$\frac{\lambda}{\lambda-t},t<\lambda$,$\frac{1}{1-\beta t}$;$\beta(1-\beta t)^{-2}$;$2\beta^2(1-\beta t)^{-3}$\\\hline
-$Gamm(\alpha,\beta)$&$\alpha\beta$; ;$\alpha\beta^2$;&$\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}$&$\prod x_i$,$\sum x_i$&$(\frac{1}{1-\beta t})^a, t <\frac1\beta$;$EX^n=\frac{\beta^n\Gamma(\alpha+n)}{\Gamma\alpha}$\\\hline
-$Beta(a,b)$&$\frac{a}{a+b}$;$\frac{a(a+1)}{(a+b)(a+b+1)}$;$\frac{ab}{(a+b)^2(a+b+1)}$&$\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1}$&&$B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$,$x\in(0,1)$;$\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$\\\hline
-$\chi_p^2$&$p$;$2p+p^2$;$2p$&$\frac{1}{\Gamma \frac{p}2 2^{\frac{p}2}}x^{\frac{p}2-1}e^{-\frac{x}2}$&;$\sum\ln x_i$;&$(1-2t)^{-p/2}, t<\frac12$\\\hline
-$t_p$&$0,p>1$; ;$\frac{p}{p-2},p>2$&$\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}(1+\frac{x^2}{p})^{-\frac{p+1}2}$
-$F$&$\frac{q}{q-2},q>2$;;$2(\frac{q}{q-2})^2\frac{p+q-2}{p(q-4)},q>4$&$\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}\frac{x^{\frac{p}2-1}}{(1+\frac{p}qx)^{\frac{p+q}2}}$,$x>0$\\\hline
-$Arcsine$&$\frac{1}2$; ;$\frac{1}8$&$\frac{1}{\pi\sqrt{x(1-x)}}$,$x\in[0,1]$;$\frac{1}{\pi\arcsin\sqrt x}$&&$Beta(\frac{1}2,\frac{1}2)$\\\hline
-$Dirichlet$&$\frac{a_i}{\sum_ka_k}$$\sum_{i=1}^kx_i=1$;;$\frac{a_i(a_0-a_i)}{a_0^2(a_0+1)}$&$\frac1{B(a)}\Pi_{i=1}^kx_i^{a_i-1}$,$x\in(0,1)$,$B(a)=\frac{\Pi_{i=1}^k\Gamma(a_i)}{\Gamma(\sum_{i=1}^ka_i)}$&&$Cov(X_i,X_j)=\frac{-a_ia_j}{a_0^2(a_0+1)}$,$a_0=\sum_{i=1}^ka_i$\\\hline
-$Weibull(\gamma,\beta)$&\shortstack{$\beta^{1/\gamma}\Gamma(1+1/\gamma)$;;\\$\beta^{2/\gamma}[\Gamma(1+2/\gamma)-\Gamma^2(1+1/\gamma)]$}&$\frac\gamma\beta x^{\gamma-1}e^{-\frac{x^\gamma}\beta}$;$1-e^{-(\frac{x}\beta)^\gamma}$&$x^\gamma$,$\sum x^\gamma$,$\sum\ln x$&;;$\beta^{\frac{n}\gamma}\Gamma(1+\frac{n}\gamma)$\\\hline
-
-$Pareto(\alpha,\beta)$&$\frac{\beta\alpha}{\beta-1}$,$\beta>1$;;$\frac{\beta\alpha^2}{(\beta-1)^2(\beta-2)}$,$\beta>2$&$\frac{\beta\alpha^\beta}{x^{\beta+1}}$;$1-(\frac{\alpha}{x})^\beta$,$x\ge\alpha$&\shortstack{$\hat\alpha=\min x_i$,$\hat\beta=\frac{n}{\sum\ln(x_i/x_{(1)})}$;\\$\sum x_i$comp/suff;$1/\beta^2$}&
-\end{tabular}
-
-
-
-\begin{landscape}
-\end{landscape}
