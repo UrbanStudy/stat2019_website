@@ -2,186 +2,341 @@
 title: ''
 fontfamily: mathpazo
 fontsize: 10pt
-geometry: margin=3mm
-linestretch: 0.1
-classoption:
-- twocolumn
-pagenumbering: FALSE
-whitespace: none
 output:
   pdf_document:
-    toc: FALSE
-    number_sections: FALSE
+    number_sections: no
+    toc: no
 header-includes:
-    - \usepackage{booktabs}
-    - \usepackage{tabularx}
-    - \usepackage[fleqn]{mathtools}
-    - \setlength\tabcolsep{0.0pt}
-    - \setlength\lineskip{0pt}
-    - \setlength\parskip{0pt}
-
-
-    
+- \usepackage{booktabs}
+- \usepackage{tabularx}
+- \usepackage[fleqn]{mathtools}
+- \setlength\tabcolsep{0.0pt}
+- \setlength\lineskip{0pt}
+- \setlength\parskip{0pt}
+linestretch: 0.1
+geometry: margin=3mm
+pagenumbering: no
+classoption: twocolumn
+whitespace: none
 ---
 
 \fontsize{6pt}{0pt}
 
 \footnotesize
 
-small,scriptsize,tiny,p0.5linewidth
 
-##### Simple linear
+
+\textbf{ Simple linear}
+
+SST,$\sum(y_i-\bar y)^2$=SSE,$\sum(y_i-\hat y)^2$+SSR,$\sum(\hat y-\bar y)^2$,$\hat\beta_1^2S_{xx}$,$\hat\beta_1S_{xy}$
+
+E[]: $\beta_1^2S_{xx}+(n-1)\sigma^2$=$(n-2)\sigma^2+\sigma^2+\hat\beta_1^2S_{xx}$
 
 $S_{xx}\sum_{i=1}^{10}(x_i-\bar x)^2=472$,$S_{yy}=\sum_{i=1}^{10}(y_i-\bar y)^2=731$, $S_{xy}\sum_{i=1}^{10}(x_i-\bar x)(y_i-\bar y)=274$
 
-$\hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{274}{472}=0.5805$;
-$\hat\beta_0=\bar y-\hat\beta_1\bar x=\bar y-0.5805\bar x$
+$\hat\beta_1=\frac{S_{xy}}{S_{xx}}=\frac{274}{472}=0.5805=\sum c_iy_i=r\frac{SD_x}{SD_x}=\frac{\sigma^2}{(n-1)S_x^2}$;
+$\hat\beta_0=\bar y-\hat\beta_1\bar x$
 
 $\hat\sigma^2=\frac{SSE}{n-2}=\frac18(S_{yy}-\frac{S^2_{xy}}{S_{xx}})=\frac18(731-\frac{274^2}{472})=71.4926$
 
 $\hat\beta_1\sim N(\beta_1,\frac{\hat\sigma^2}{S_{xx}})$;$\hat\beta_0\sim N(\beta_0,\hat\sigma^2[\frac1n+\frac{\bar x^2}{S_{xx}}])$;
 
-$Var(\hat\beta_1)=\frac{71.4926}{472}=0.1515$;
+$Var(\hat\beta_0)=\frac{71.4926}{472}=0.1515$;
 $Var(\hat\beta_1)=71.4926(\frac1{10}+\frac{\bar x^2}{472})$
 
 $H_0: \hat\beta_1=0$;
-$t_0=\frac{\hat\beta_1-0}{\sqrt{Var(\hat\beta_1)}}=\frac{0.5805085}{\sqrt{0.1514673}}=1.491589<t_{\frac{0.05}{2},n-2}=2.31$Fail to reject 
+$t_0=\frac{\hat\beta_1-0}{\sqrt{Var(\hat\beta_1)}}=\frac{0.5805}{\sqrt{0.1515}}=1.4916<t_{\frac{0.05}{2},n-2}=2.31$Fail to reject 
 
-$\hat\beta_1\pm t_{\frac{0.05}{k+1},n-2}se(\hat\beta_1)=0.5805085\pm2.31\sqrt{0.1514673}$, $(-0.3185158,1.479533)$
+$\hat\beta_1\pm t_{\frac{0.05}{k+1},n-2}se(\hat\beta_1)=0.5805\pm2.31\sqrt{0.1515}$, $(-0.3185,1.4795)$
+
+\dotfill
 
 $\hat y=\hat\beta_0+\hat\beta_1x_0=168.3609$;$\bar x=147.6923$,$S_{XX}=\sum_{i=1}^{13}(x_i-\bar x)^2=6230.769$
 
-Confidence interval:
-$se(y_0)=\sqrt{MSE(\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=\sqrt{275.06005(\frac1{13}+\frac{(170-147.6923)^2}{6230.769})}=6.567093$
+CI
+$se(y_0)=\sqrt{MSE(\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=\sqrt{275.06005(\frac1{13}+\frac{(170-147.6923)^2}{6230.769})}=6.5671$
 
-$\hat y\pm t_{n-2,0.025}se(y_0)=168.3609\pm2.200985*6.567093$, $(153.9068,182.815)$
+$\hat y\pm t_{n-2,0.025}se(y_0)=168.3609\pm2.200985*6.5671$, $(153.9068,182.815)$
 
-Prediction interval:
-$se(y_0)=\sqrt{MSE(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=17.83779$;
-$168.3609\pm2.200985*17.83779$; $(129.1002,207.6216)$
+PI
+$se(y_0)=\sqrt{MSE(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}$;
+$168.3609\pm2.2*17.8378$; $(129.1002,207.6216)$
 
 
 
-##### Multi linear
+\textbf{ Multi linear}
 
-- least-squares estimators
-
+least-squares estimators
 $SSE=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)^2$
 
-$\frac{\partial SSE}{\partial\beta_{0,1,2}}=2\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)(-1,-x_i,-x_i^2)\overset{set}{=}0$
+$\frac{\partial SSE}{\partial\beta_{0,1,2}}=2\sum_{i=1}^n(y_i-\hat\beta_0-\hat\beta_1x_i-\hat\beta_2x_i^2)(-1,-x_i,-x_i^2)\overset{set}{=}0$
 
-- Regression with indicator
+Regression with indicator\dotfill
 
 $y_i=\beta_0+\beta_1x_i+\beta_2w_i+\beta_3w_ix_i+\varepsilon_i$, $w_i=\begin{cases}0& 1\le i\le\frac{n}2\\1& \frac{n}2+1\le i\le n\end{cases}$
 
-$\mathbf{Y_{n\times1}}=\mathbf{X_{n\times (k+1)}}\mathbf{\beta_{(k+1)\times1}}+\mathbf{\varepsilon_{n\times1}}$
+$\mathbf{Y_{n\times1}}=\mathbf{X_{n\times (k+1)}}\boldsymbol{\beta_{(k+1)\times1}}+\boldsymbol{\varepsilon_{n\times1}}$
 
 equality of slopes $H_0:\beta_3=0$, $k=3$,$r=1$ 
 
 $dfE_{Ful}=n-(k+1)$,$dfE_{Red}-dfE_{Ful}=r$
 
-- Partitioned regression
+Partitioned regression\dotfill
 
-\begin{tabular}{ l|l|l|l|l|l }
-(df)&$SS_{F}$              &$-SS_{3,4,5}$ &$SS_{1,2}$ &$-SS_{2,4}$ &$SS_{1,3,5}$\\
-R   &$\sum\limits_{i=1}^5=367(5)$ & $-\sum\limits_{i=3}^5$ & $\sum\limits_{i=1}^2=271(2)$ &-153(2) &214(3)\\
-E   &T-R=336(69)           &   +96(3)        & 432(72)               &+153(2) &489(71)\\
+\begin{tabular}{ l|l|l|l||l|l| }
+(df)&$SS_{F}$&$-3,4,5$ &$SS_{1,2}$ &$-2,4$ &$SS_{1,3,5}$\\
+R   &367(5) & -96(3) & 271(2) &-153(2) &214(3)\\
+E   &336(69)& +96(3) & 432(72)&+153(2) &489(71)\\
 T   &  703(74)
 \end{tabular}
+\begin{tabular}{ |l|l|l|l|l||l|l|l|l }
+  & df &$SS_F$ & $-\alpha$ & $SS_{\beta\gamma}$ & $-\beta$ & $SS_{\alpha\gamma}$ & $-\alpha$ & $SS_{\gamma}$\\
+
+$\alpha$&2 &110 &-110 & 0   &      & 110 & -110 & 0\\
+ 
+$\gamma$&11&160 &     & 160 &      & 160 &      & 160\\
+
+$\beta$&   &250 &-10  & 240 & -250 & 0   &      & 0\\
+
+E      &22 &300 &+120 & 420 & +250 & 550 & +110 & 660\\
+ 
+T      &35 &820
+
+\end{tabular}
+
 
 $H_0: \beta_3=\beta_4=\beta_5=0$; $r=3$; $H_0':\beta_2=\beta_4=0$; $r=2$;
 
 $F_{p,3,69}=\frac{96/3}{336/69}=6.5714$;$F'=\frac{153/2}{336/69}=15.7098$
+
 $p<0.05$ reject $H_0$ at 0.05 level of significance
 
-$R^2=\frac{SSR}{SST}=\frac{271}{703}=0.3855$ coefficient of determination is the proportion of variation explained by the regressor x
+$R^2=\frac{SSR}{SST}=\frac{271}{703}$; $R^2_{adj}=1-\frac{SSE/dfE}{SST/dfT}=1-\frac{432/72}{703/74}$; $R^2_{pre}=1-\frac{PRESS}{SST}$
 
-$R^2_{adj}=1-\frac{SSE/dfE}{SST/dfT}=1-\frac{432/72}{703/74}=0.3684$
+coefficient of determination is the proportion of variation explained by regressor x
 
-CI: $\hat\beta_1\pm t_{\frac{\alpha}{2},n-k-1}se(\hat\beta_1)$, $se(\hat\beta_1)=\sqrt{MSE\cdot C_{22}}$;
-$8.1556\pm t(0.005,9)\sqrt{8.84355*0.2483463917}$, $8.1556\pm3.25\times4.407127$;$(-6.1653,22.4765)$
+|r|=$\sqrt{R^2}=\frac{S_xy}{\sqrt{S_xxS_yy}}=\frac{Cov(x,y)}{\sqrt{VXVY}}=\frac{Cov(\hat\beta_1,\hat\beta_0)}{se\hat\beta_1se\hat\beta_0}$
 
-unbiased estimate of the variance 
-$Var(\hat\beta_1-\hat\beta_2)=Var(\hat\beta_1)+Var(\hat\beta_2)-Cov(\hat\beta_1,\hat\beta_2)=0.2483+10.7694-2(-0.4967)=12.0111$
+CI: $\hat\beta_1\pm t_{\frac{\alpha}{2},n-k-1}se(\hat\beta_1)$, $se(\hat\beta_1)=\sqrt{MSE\cdot C_{22}}$; Bonferroni:$t_{\frac{\alpha}{2(k+1)}}$, Scheffe $\sqrt{2F_\alpha}$
 
-- Lack of fit $H_0$: There is no lack of fit, the model is appropriate;
+$8.1556\pm t(0.005,9)\sqrt{8.8436*0.2483}$, $8.1556\pm3.25\times4.4071$;$(-6.1653,22.4765)$
 
-$SS_{PE}=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2=28$; 
+
+
+$V(\hat\beta_1-\hat\beta_2)=V(\hat\beta_1)+V(\hat\beta_2)-2Cov(\hat\beta_1,\hat\beta_2)=MSE(C_{22}+C_{33}-2C_{23})$
+
+$=78.20842[0.2483+10.7694-2(-0.49669)]=939.3676$ unbia est of var
+
+Lack of fit $H_0$: There is no lack of fit, the model is appropriate\dotfill
+
+$\sum^m\sum\limits_{j=1}^{n_i}(y_{ij}-\hat y_i)^2(SSE)=\sum^m\sum\limits_{j=1}^{n_i}(y_{ij}-\bar y_i)^2(SS_{PE})+\sum^mn_i(y_{ij}-\hat y_i)^2(SS_{LOF})$
+
+$SS_{PE}=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2=28$; $SS_{LOF}=703.87576-28=675.8758$;
+
 $df_{PE}=n-m=12-9=3$; 
-$MS_{PE}=28/3$
+$MS_{PE}=28/3$; 
+$df_{LOF}=dfE-df_{PE}=m-(k+1)=6$
 
-$SSE=SS_{LOF}+SS_{PE}$,
-$\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\hat y_i)^2=\sum_{i=1}^m\sum_{j=1}^{n_i}(y_{ij}-\bar y_i)^2+\sum_{i=1}^mn_i(y_{ij}-\hat y_i)^2$
-
-$SS_{LOF}=SSE-SS_{PE}=703.87576-28=675.8758$; 
-$df_{LOF}=dfE-df_{PE}=m-2=7$
 
 $F=\frac{SS_{LOF}/df_{LOF}}{MS_{PE}}=\frac{675.87576/7}{28/3}=10.34504>F(0.05,6,3)=8.94$. Reject
 
-##### CRD
+\textbf{ CRD}
 
-$y_{ijkl}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$, 
-$i=1,2$; $j=1,2,3$; $k=1,2,3,4$; $l=1,2,[a=2,b=3,n=4]$ where $\mu$ overall mean
-
-$\tau_i$ is fixed main effect of $i^{th}$ level of  Factor A;
-
-$\beta_j$ is fixed main effect of $j^{th}$ level of Factor B;
-
-$(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of Factor A and $j^{th}$ level of Factor B;
-
-$\varepsilon_{ijkl}$ is random error for the $k^{th}$ replicate EU when $i^{th}$ level of Factor A and $j^{th}$ level of Factor B are applied;
-$y_{ijkl}$ is response for the;
-
-Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$ (constant variance, zero mean, independent); $\sum_i^2\tau_i=0$; $\sum_j^3\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^3(\tau\beta)_{ij}=0$
+$\mathbf{A_{f,r}}$
+$y_{ij}=\mu+\tau_i+\varepsilon_{ij}$;$\varepsilon_{ij}\sim iid N(0,\sigma^2)$; f $\sum_{i=1}^a\tau_i=0$; r$\tau_{i}\sim iid N(0,\sigma_\tau^2)$
 
 \begin{tabular}{l|l|l|l|l|l|l}
-term &i(f) &j(f) &k(r) & df & SS & EMS\\\hline
-A$\tau_{i}$f &0&b&n&a-1&$bn\sum^a(\bar y_{i..}-\bar y_{...})^2$;$\frac{\sum^ay_{i..}^2}{bn}-\frac{y_{...}^2}{abn}$;96;96&$\sigma^2+\frac{b\sum\tau_i^2}{a-1}$\\\hline
+    & SS   &      df     & MS  & F & EMS & EMS$_r$ \\\hline
+Trt&$n\sum^a(\bar y_{i.}-\bar y_{..})^2$&a-1&$\frac{SS_{Trt}}{a-1}$&$\frac{MS_{Trt}}{MS_E}$& $\sigma^2+\frac{n\sum\tau^2}{a-1}$ & $\sigma^2+n\sigma^2_{\tau}$\\
 
-B$\beta_{ij}$f &a&0&n&b-1&$an\sum^b(\bar y_{.j.}-\bar y_{...})^2$;$\frac{\sum^by_{.j.}^2}{an}-\frac{y_{...}^2}{abn}$;208;104&$\sigma^2+\frac{a\sum\beta_j^2}{b-1}$\\\hline
+E  &$\sum^a\sum^n(y_{ij} - \bar y_{i.})^2$     &a(n-1)& $\frac{SS_E}{N-a}$ & & $\sigma^2$ \\
 
-\shortstack{AB\\$(\tau\beta)_{ij}$f} &0&0&n&(a-1)(b-1)&\shortstack{$n\sum^a\sum^b(y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2$;112;56\\$n\sum\sum y_{ij.}^2-\frac{1}{abn}y_{...}^2-SS_A-SS_B$}&$\sigma^2+\frac{\sum\sum(\tau\beta)_{ij}}{(a-1)(b-1)}$\\\hline
-
-E$\varepsilon_{ijk}$r&1&1&1&ab(n-1)&$SST-\sum SS$;$(n-1)\sum^a\sum^bS_{ij}^2$;126;7&$\sigma^2$\\\hline
-
-Total& & & &abn-1&$\sum\sum\sum(y_{ijk}-\bar y_{...})^2$$\sum\sum\sum y_{ijk}^2-\frac{y_{...}^2}{abn};542$
+T  &$\sum^a\sum^n(y_{ij}-\bar y_{..})^2$&an-1\\ \hline
 \end{tabular}
 
-$H_0:(\tau\beta)_{ij}=0\forall i,j$; $F_{p,2,18}\frac{MS_{AB}}{MSE}=\frac{56}7=8$; $F_{0.05,2,8}=3.55$. There is enough evidence to reject $H_0$. The model may not be reduced, as the interaction effects is significant at 5% significance level.
+$\hat\sigma^2=MSE=\frac{SSE}{N-a}$; $\hat\sigma_{\tau}^2=\frac{MS_{Trt}-MSE}n$
 
-$\bar y_{12.}-\bar y_{22.}\pm t_{\frac\alpha2,18}\sqrt{\frac{2MSE}n}=14-8\pm2.1\sqrt{\frac{2*7}4}=6\pm3.9287$;$[2.0713,9.9287]$
+$y_{ij}\sim n(\mu+\tau_i,\sigma^2)$;$\bar y_{i.}\sim n(\mu+\tau_i,\frac{\sigma^2}n)$;$\bar y_{i.}-\bar y_{j.}\sim n(\mu_i-\mu_j,\frac{2\sigma^2}n)$
+
+$E[y_{ij}-\bar y_{i.}]=V[]=\frac{n-1}n\sigma^2$
+
+\dotfill
+
+CI of 
+$\mu_i$: $\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n}}$; unbalanved $\bar y_{i.}\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_E}{n_i}}$
+
+$\mu_i-\mu_j$: $\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{\frac{2MS_E}{n}}$; unbalanved $\bar y_{i.}-\bar y_{j.}\pm t_{\frac{\alpha}2}\sqrt{MS_E(\frac{1}{n_i}+\frac{1}{n_j})}$
+
+$\sigma^2$: $\frac{SSE}{\chi^2_{\alpha/2,df_E}}, \frac{SSE}{\chi^2_{1-\alpha/2,df_E}}$
+$\Gamma$: $\sum_{i=1}^ac_i\bar y_i\pm t_{\frac{\alpha}2}\sqrt{\frac{MS_{E}}n\sum_{i=1}^ac_i^2}$
+$\frac{MS_{Trt}}{MS_E}\cdot\frac{\sigma^2}{n\sigma_{\tau}^2+\sigma^2}\sim F_{a-1,N-a}$
+
+CI of prop of var $\frac{\sigma^2}{\sigma_{\tau}^2+\sigma^2}$:
+$\frac{L}{1+L},\frac{U}{1+U}$;
+$L=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{\alpha/2}}-1\right)$;
+$U=\frac1n\left(\frac{MS_{Trt}}{MS_EF_{1-\alpha/2}}-1\right)$
 
 
-##### Latin Square
+\dotfill
+
+$H_0: \beta_1=2\beta_3,\beta_2=\beta_3,\beta_5=0$
+
+$\mathbf{T}=\begin{bmatrix} 0 & 1 & 0 & -2 & 0 & 0& 0 \\ 0 & 0 & 1 & -1 & 0 & 0 & 0\\ 0 & 0 & 0 & 0 & 0 & 1 & 0 \end{bmatrix}_{3\times7} \mathbf{\beta}=\begin{bmatrix} \beta_0 \\ \vdots \\ \beta_6 \end{bmatrix}_{7\times1}\mathbf{C}=\begin{bmatrix} 0 \\ 0 \\ 0\end{bmatrix}_{3\times1} rank(T)=3$
+
+\textbf{contrast}
+$\Gamma=\sum_{i=1}^ac_i\mu_i$,$C=\sum_{i=1}^ac_i\bar y_i$;$\sum_{i=1}^ac_i=0$;Orthogonal $\sum_{i=1}^ac_id_i=0$
+
+$SS_C=\frac{(\sum_{i=1}^ac_i\bar y_i)^2}{\frac{1}n\sum_{i=1}^ac_i^2}$,$\sum_1^{a-1} SS_C=SS_{Trt}$;
+$V[\sum^{a}_{i=1}c_iy_{i.}]=\sigma^2\sum^{a}_{i=1}n_ic_i^2$
+
+\begin{tabular}{l|l|l|l|l|l|l}
+$\hat\tau_1+\hat\tau_2+\hat\tau_3$=0  & $\hat\mu$=13.8 &(a) & Contrast  &(b)& $\hat\mu$=8.4&$\hat\tau_3$=0\\
+
+$\hat\mu+\hat\tau_1=\bar y_{1.}$=10.8 & $\hat\tau_1$=-3.0 & 10.8 &$\mu+\tau_1$  &10.8& $\hat\tau_1$=2.4& $\hat\mu+\hat\tau_1=\bar y_{1.}$=10.8  \\
+
+$\hat\mu+\hat\tau_2=\bar y_{2.}$=22.2 & $\hat\tau_2$=8.4 & -9.0  &$2\tau_1-\tau_2-\tau_3$&-9.0& $\hat\tau_2$=13.8& $\hat\mu+\hat\tau_2=\bar y_{2.}$=22.2 \\
+
+$\hat\mu+\hat\tau_3=\bar y_{3.}$=8.4  & $\hat\tau_3$=-5.4 & 19.2&$\mu+\tau_1+\tau_2$    &24.6& $\hat\tau_3$=0& $\hat\mu+\hat\tau_3=\bar y_{3.}$=8.4 \\
+\end{tabular}
+
+\begin{tabular}{l|l|l|l|l|l|l}
+$H_{C0,D0}$; $\sum_{i=1}^3c_id_i$=0 & C,D$\sum_{i=1}^ac_i,d_i\bar y_{i.}$ & $F_{1,12}$ & ${SS_{C,D}}/{MS_E}$\\
+
+$\mu_1-2\mu_2+\mu_3=0$&$\bar y_{1.}-2\bar y_{2.}+\bar y_{3.}$ & ${C^2}/{\frac{MS_E}n\sum_{i=1}^ac_i^2}$&${(-25.2)^2}/{\frac{16.9}56}$\\
+
+$\mu_1-\mu_3=0$ & $\bar y_{1.}-\bar y_{3.}$ & ${D^2}/{\frac{MS_E}n\sum_{i=1}^ad_i^2}$&${2.4^2}/{\frac{16.9}52}$\\
+\end{tabular}
+
+
+
+
+
+\textbf{ RCBD}
+
+$\mathbf{Trt_f+Blk_f}$
+
+$y_{ij}=\mu+\tau_{i}+\beta_j+\varepsilon_{ij}$, for $\varepsilon_{ij}\sim iid N(0,\sigma^2),i=1,..,a,j=1,..,b$
+
+f: $\sum_{i=1}^a\tau_i=0, \sum_{j=1}^b\beta_j=0$; 
+r: $\beta_{j}\sim iid N(0,\sigma_\beta^2)$
+
+\begin{tabular}{l|l|l|l|l|l|l}
+Trt&$b\sum^a(\bar y_{i.}-\bar y_{..})^2$&a-1&$\frac{SS_{Trt}}{a-1}$&$\frac{MS_{Trt}}{MS_E}$& $\sigma^2+\frac{b\sum^a\tau^2}{a-1}$ & $\sigma^2+b\sigma^2_{\tau}$\\
+
+Blk&$a\sum^b(\bar y_{.j}-\bar y_{..})^2$&b-1&$\frac{SS_{Blk}}{b-1}$&$\frac{MS_{Blk}}{MS_E}$& $\sigma^2+\frac{a\sum^b\tau^2}{b-1}$ & $\sigma^2+a\sigma^2_{\tau}$\\
+E  &T-Trt-Blk &(a-1)(b-1)& $\frac{SS_E}{df_E}$& $\sigma^2$\\
+T  &$\sum^a\sum^b(y_{ij}-\bar y_{..})^2$&ab-1\\ \hline
+\end{tabular}
+
+Missing Values:
+Exact(partial) method $F_0=\frac{(SSE_{red}-SSE_{ful})/r}{MSE_{ful}}=\frac{1403.7-921.5}{184.30*(a-1)}$;
+
+Apporximation method $\hat x=\frac{ay'_{1.}+by'_{.1}-y'_{..}}{(a-1)(b-1)}$,$F_{adj}=\frac{MS_{Trt}}{SSE/dfE_{adj}}=\frac{162.08}{921.5/(6-1)}$
+
+
+
+\textbf{ Latin Square}
 
 $y_{ijk}=\mu+\tau_i+\alpha_j+\beta_k+\varepsilon_{ijk}$, $i,j,k=1,..,6$; where $\mu$ overall mean
 
 $\tau_i$ is effect of $i^{th}$ treatment; 
 $\alpha_j$ is effect of $j^{th}$ block of factor R; 
 $\beta_k$ effect of $k^{th}$ block of factor C;
-
 $\varepsilon_{ijkl}$ is random error when $i^{th}$ treatment is applied at $j^{th}$ block of factor R and $k^{th}$ block of factor C; $y_{ijkl}$ is response ;
 
-Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$. Further assumptions would be based on whether the treatment and blocking factors are random or fixed.
+Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$;$\sum\alpha=0$;$\sum\beta=0$; Indep
 
 The Latin-Squre design can only use 2 blocking factors, as we distribute the levels of the treatment factor on a table with rows of one blocking factor (each row is fore one block) and columns of the other blocking factor (each column is one block)
 
-You can test three blocking factors by turning the Latin-square design into a Graeco-Latin square design, which allows to add a Greek letter to each entry in the table, where each Greek letter stands for a block of the factor G.
+To test three blocking factors by turning the Latin-square design into a Graeco-Latin square design, which allows to add a Greek letter to each entry in the table, where each Greek letter stands for a block of the factor G.
+
+Graeco-Latin square: $y_{ijkl}=\mu+\theta_i+\tau_j+\omega_k+\psi_l+\varepsilon_{ijkl}$;$i,j,k,l=1,2,..,p$
+where $y_{ijk}$ is the observation in row i and column l for Latin letter j and Greek letter k, $\theta_i$ is the effect of the ith row, $\tau_j$ is the effect of Latin letter treatment j, $\omega_k$ is the effect of Greek letter treatment k, $\psi_l$ is the effect of column l, and $\varepsilon_{ijkl}\sim iid N(0,\sigma^2)$ is a random error component. Only two of the four subscripts are necessary to completely identify an observation.
+
+
+\begin{tabular}{l|l|l|}
+LSD& SS   &      df\\
+Trt&$p\sum^p_{i=1}(\bar y_{i..}-\bar y_{...})^2$&p-1\\
+Row&$p\sum^p_{j=1}(\bar y_{.j.}-\bar y_{...})^2$&p-1\\
+Col&$p\sum^p_{k=1}(\bar y_{..k}-\bar y_{...})^2$&p-1\\
+E  &$SS_T-SS_{.}$ &(p-1)(p-2)\\
+T  &$\sum^p\sum^p\sum^p(y_{ijk}-\bar y_{..})^2$&$p^2-1$\\ \hline
+\end{tabular}
+\begin{tabular}{l|l|l}
+Grae& SS   &      df\\
+Trt1&$b\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&p-1\\
+Trt2&$b\sum^a_{i=1}(\bar y_{i.}-\bar y_{..})^2$&p-1\\
+Row&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&p-1\\
+Col&$a\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&p-1\\
+E &$SS_T-SS_{.}$ &(p-1)(p-3)\\
+T &$\sum^p\sum^p(y_{ijkl}-\bar y_{..})^2$&$p^2-1$\\ \hline
+\end{tabular}
+\begin{tabular}{l|l|l|l|}
+df  & Case1 & Case2 & Case3 \\
+Trt&p-1&p-1&p-1\\
+Row&p-1&n(p-1)&n(p-1)\\
+Col&p-1&p-1&n(p-1)\\
+Rep&n-1&n-1&n-1\\
+E  &(p-1)(np+n-3)&(p-1)(np-2)&(p-1)(np-n-1)\\
+T  &$np^2-1$ & $np^2-1$ & $np^2-1$\\ \hline
+\end{tabular}
+\begin{tabular}{l|l|l|l}
+A$\alpha$ & B$\beta$ & C$\gamma$ & D$\delta$\\
+
+B$\delta$ & A$\gamma$ & D$\beta$ & C$\alpha$\\
+
+C$\beta$ & D$\alpha$ & A$\delta$ & B$\gamma$\\
+
+D$\gamma$ & C$\delta$ & B$\alpha$ & A$\beta$
+\end{tabular}
 
 Relative Efficiency 
-$\frac{(df_{E(LS)}+1)(df_{E(CRD)}+3)}{(df_{E(LS)}+3)(df_{E(CRD)}+1)}=2.3$
+$\frac{(df_{E(LS)}+1)(df_{E(CRD)}+3)MS_{CRD}}{(df_{E(LS)}+3)(df_{E(CRD)}+1)MS_{LS}}=2.3$
 
-$df_{E(LS)}=(p-1)(p-2)=20$,$(df_{E(GS)}=(p-1)(p-3)=15$, $df_{E(CRD)}=a(n-1)$
-
-##### BIBD
-
-Trt$a=7$,Rep$r=15$, Blk$b=21$,Size$k=5$, $ar=bk=105$, replications of each pair$\lambda=\frac{(k-1)}{a-1}r=\frac{k(k-1)}{a(a-1)}b=10$
-
-$\lambda=\frac{2}{3}r\in\mathbf{N^+}$the smallest number of observations per treatment is a multiple of 3 and 5
+$df_{E(LS)}=(p-1)(p-2)$=20,$df_{E(GS)}=(p-1)(p-3)$=15, $df_{E(CRD)}$=a(n-1)=7.2,32
 
 
 
-##### Factorial model
+\textbf{ BIBD}
+
+$y_{ij}=\mu+\tau_{i}+\beta_j+\varepsilon_{ij}$;$i=1,..,a,j=1,..,b$;
+$y_{i.}=\sum_jy_{ij}$,$\bar y_{.j}=\frac1k\sum_iy_{ij}=\frac{y_{.j}}k$;
+
+$Q_i=(y_{i.}-\sum_{j=1}^bn_{ij}\bar y_{.j})$ where $n_{ij}=\begin{cases}1& i^{th} \text{ trt appears in } j^{th}\text{ blk}\\0&\text{o.w.}\end{cases}$
+
+\begin{tabular}{l|l|l|l}
+  & SS   &      df& Rep$r=15$\\
+Trt&$\frac{k}{\lambda a}\sum^aQ_i^2=\frac{k}{\lambda a}\sum^a(y_{i.}-\sum^bn_{ij}\bar y_{.j})^2$&a-1&Trt$a=7$\\
+Blk&$k\sum^b_{j=1}(\bar y_{.j}-\bar y_{..})^2$&b-1&Blk$b=\binom{7}{5}=21$\\
+E  &T-Trt$_{adj}$-Blk &N-a-b+1&Size$k=5$\\
+T  &$\sum^a_{i=1}\sum^b_{j=1}(y_{ij}-\bar y_{..})^2$&N-1 & $N=ar=bk=105$\\
+\end{tabular}
+
+replications of each pair$\lambda=\frac{(k-1)}{a-1}r=\frac{k(k-1)}{a(a-1)}b=10=\frac{2}{3}r\in\mathbf{N^+}$
+
+the smallest number of observations per treatment is a multiple of 3 and 5
+
+
+
+
+\textbf{ Fixed v.s. random; crossed v.s. nested}
+
+(a)Fixed effects are constant across individuals, random effects vary. 
+Effects are fixed if they are interesting in themselves or random if there is interest in the underlying population.
+When a sample exhausts the population, the corresponding variable is fixed; when the sample is a small part of the population the corresponding variable is random.
+If an effect is assumed to be a realized value of a random variable, it is called a random effect.
+
+**Example**: A lab want to test the quality of products. There are only two specific test machines. Each machine assigned two operators who randomly sellected from a large amont of operators. Each poerator test the products in three specific temperature. In this test, the factor mathine and temperature have fixed effects. The factor operator has random effects.
+
+(b)Two factors are crossed when every category of one factor co-occurs in the design with every category of the other factor. There is at least one observation in every combination of categories for the two factors.
+
+A factor is nested within another factor when each category of the first factor co-occurs with only one category of the other. An observation has to be within one category of Factor 2 in order to have a specific category of Factor 1. All combinations of categories are not represented.
+
+You can calculate an interaction between two crossed factors. If they are nested, you cannot because you do not have every combination of one factor along with every combination of the other.
+
+In **Example** (a), Three temperature are applied on each machine. Thus, temperature and machine have crossed effect. The operators were assigned to each machine are different. The operators are nested in the levels of factor machine. Thus, the effects of the factor operator are nested effect.
+
+\textbf{ Factorial model}
 
 $k$ factors,$p$ generators; $2^p$ blocks/fraction;$2^{k-p}$Run, Blk size;
 
@@ -193,9 +348,7 @@ AD+,ABC-,BCD-;(1),bc,abd,acd;ABC+BCD+;b,c,ad,abcd
 
 AD-,ABC-,BCD+;ab,ac,bcd,d;ABC+BCD-;a,abc,bd,cd
 
-
-ANOVA-df: T$=2^kn-1$;Blk$=2^p-1$;E$=2^k(n-1)$;others=1
-
+I=ABCDF=ABDEG=CEFG;CE=FG,CF=EG,CG=EF minimum aberration
 
 \begin{tabular}{ l|l|l|l|l|l }
 $2^{k-p}$      &$2^k$&$2^{p}$&$2^{k-p}$&Generator\\
@@ -204,35 +357,143 @@ $2^{4-1}_{IV}$ &16 &2 &8 &  D=ABC\\
 $2^{5-1}_{V}$  &32 &2 &16&  E=ABCD\\
 $2^{5-2}_{III}$&32 &4 & 8&  D=AB;E=AC\\
 $2^{6-1}_{VI}$ &64 &2 &32&  F=ABCDE\\
-$2^{6-2}_{IV}$ &64 &4 &16&  E=ABC;F=BCD & A-F;AB;AC;AD;(AE);AF;BD;BF;(ABD);(ACD)\\
-$2^{6-3}_{III}$&64 &8 &8 &  D=AB;E=AC;F=BC\\
+$2^{6-2}_{IV}$ &64 &4 &16&  {\scriptsize E=ABC;F=BCD} \\
+$2^{6-3}_{III}$&64 &8 &8 &  {\scriptsize D=AB;E=AC;F=BC}\\
 $2^{7-1}_{VII}$&128&2 &64&  G=ABCDEF\\
-$2^{7-2}_{IV}$ &128&4 &32&  F=ABCD;G=ABDE & I=ABCDF=ABDEG=CEFG;CE=FG,CF=EG,CG=EF minimum aberration\\
-$2^{7-3}_{IV}$ &128&8 &16&  E=ABC;F=BCD;G=ACD & $2^p-p-1=4$ generalized interactions\\
-$2^{7-4}_{III}$&128&16&8 &  D=AB;E=AC;F=BC;G=ABC
+$2^{7-2}_{IV}$ &128&4 &32&  {\scriptsize F=ABCD;G=ABDE} \\
+$2^{7-3}_{IV}$ &128&8 &16&  {\tiny E=ABC;F=BCD;G=ACD} \\
+$2^{7-4}_{III}$&128&16&8 &  {\tiny D=AB;E=AC;F=BC;G=ABC}
+\end{tabular}
+\begin{tabular}{ c|c|c|c|c|c|c|c|l|l }
+A & B & C & D & E & F &{\tiny ABF}&{\tiny ABD}& Run\\
+- & - & - & - & - & - & -   & -   & (1) &{\scriptsize I=ABCE=BCDF=ADEF}\\
++ & - & - & - & + & - & +   & +   & ae  &{\scriptsize A = BCE = DEF = ABCDF}\\
+- & + & - & - & + & + & -   & +   & bef &{\scriptsize B = ACE = CDF = ABDEF}\\
++ & + & - & - & - & + & +   & -   & abf &{\scriptsize C = ABE = BDF = ACDEF}\\
+- & - & + & - & + & + & +   & -   & cef &{\scriptsize D = BCF = AEF = ABCDE}\\
++ & - & + & - & - & + & -   & +   & acf &{\scriptsize E = ABC = ADF = BCDEF}\\
+- & + & + & - & - & - & +   & +   & bc  &{\scriptsize F = BCD = ADE = ABCEF}\\
++ & + & + & - & + & - & -   & -   & abce&{\scriptsize BF = CD = ACEF = ABDE}\\
+- & - & - & + & - & + & +   & +   & df  &{\scriptsize AB = CE = ACDF = BDEF}\\
++ & - & - & + & + & + & -   & -   & adef&{\scriptsize AC = BE = ABDF = CDEF}\\
+- & + & - & + & + & - & +   & -   & bde &{\scriptsize AD = EF = BCDE = ABCF}\\
++ & + & - & + & - & - & -   & +   & abd &{\scriptsize AE = BC = DF = ABCDEF}\\
+- & - & + & + & + & - & -   & +   & cde &{\scriptsize AF = DE = BCEF = ABCD}\\
++ & - & + & + & - & - & +   & -   & acd &{\scriptsize BD = CF = ACDE = ABEF}\\
+- & + & + & + & - & + & -   & -   & bcdf&{\scriptsize ABD = CDE = ACF = BEF}\\
++ & + & + & + & + & + & +   & +   & abcdef&{\scriptsize ACD = BDE = ABF = CEF}
+\end{tabular}
+
+ANOVA-df: T$=2^kn-1$;Blk$=2^p-1$;E$=2^k(n-1)$;others=1
+
+$SS_{Block}=\frac1{2^3}C_{ABC}^2=SS_{ABC}$;
+$SS_{AB}=\frac{n}4C_{AB}^2=\frac{n}4(\bar y_{(1)}-\bar y_a-\bar y_b+\bar y_{ab})^2$
+
+\hrulefill
+
+$\mathbf{A_f\times B_f}$
+$y_{ijkl}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$, 
+
+$i=1,2$; $j=1,2,3$; $k=1,2,3,4$; $l=1,2,[a=2,b=3,n=4]$ where $\mu$ overall mean
+
+$\tau_i$ is fixed main effect of $i^{th}$ level of  Factor A;
+$\beta_j$ $j^{th}$ B;
+
+$(\tau\beta)_{ij}$ is fixed interaction effect of $i^{th}$ level of Factor A and $j^{th}$ level of Factor B;
+
+$\varepsilon_{ijkl}$ is random error for the $k^{th}$ replicate EU when $i^{th}$ level of Factor A and $j^{th}$ level of Factor B are applied;
+$y_{ijkl}$ is response for the;
+
+Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$ (constant variance, zero mean, independent); $\sum_i^2\tau_i=0$; $\sum_j^3\beta_j=0$; $\sum_i^2(\tau\beta)_{ij}=0$; $\sum_j^3(\tau\beta)_{ij}=0$;indep
+
+\begin{tabular}{l|l|l|l|l|l|l|l}
+term &i(f) &j(f) &k(r) & df & SS & MS & EMS\\\hline
+A$\tau_{i}$f &0&b&n&a-1&$bn\sum^a(\bar y_{i..}-\bar y_{...})^2$;$\frac{\sum^ay_{i..}^2}{bn}-\frac{y_{...}^2}{abn}$;96&96&$\sigma^2+\frac{bn\sum\tau_i^2}{a-1}$\\\hline
+
+B$\beta_{j}$f &a&0&n&b-1&$an\sum^b(\bar y_{.j.}-\bar y_{...})^2$;$\frac{\sum^by_{.j.}^2}{an}-\frac{y_{...}^2}{abn}$;208&104&$\sigma^2+\frac{an\sum\beta_j^2}{b-1}$\\\hline
+
+\shortstack{AB\\$(\tau\beta)_{ij}$f} &0&0&n&(a-1)(b-1)&\shortstack{$n\sum^a\sum^b(y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2$;112\\$n\sum\sum y_{ij.}^2-\frac{1}{abn}y_{...}^2-SS_A-SS_B$}&56&$\sigma^2+\frac{n\sum\sum(\tau\beta)_{ij}}{(a-1)(b-1)}$\\\hline
+
+E$\varepsilon_{ijk}$r&1&1&1&ab(n-1),18&$SST-\sum SS$;$(n-1)\sum^a\sum^bS_{ij}^2$;126&7&$\sigma^2$\\\hline
+
+Total& & & &abn-1,23&$\sum\sum\sum(y_{ijk}-\bar y_{...})^2$$\sum\sum\sum y_{ijk}^2-\frac{y_{...}^2}{abn};542$\\\hline
+
+
+if Blk& & & 1&n-1& $df_E$=(ab-1)(n-1);$\frac{\sum^ny_{..k}^2}{ab}-\frac{y_{...}^2}{abn}$ & &$\sigma^2+ab\sigma_{\delta}^2$\\\hline
+
+
+\end{tabular}
+
+$H_0:(\tau\beta)_{ij}=0\forall i,j$; $F_{p,2,18}\frac{MS_{AB}}{MSE}=\frac{56}7=8$; $F_{0.05,2,8}=3.55$. There is enough evidence to reject $H_0$. The model may not be reduced, as the interaction effects is significant at 5% significance level.
+
+$\bar y_{12.}-\bar y_{22.}\pm t_{\frac\alpha2,18}\sqrt{\frac{2MSE}n}=14-8\pm2.1\sqrt{\frac{2*7}4}=6\pm3.9287$;$[2.0713,9.9287]$
+
+
+$E[SS_A]=bn\sum_{i=1}^aE[(\bar y_{i..}-\bar y_{...})^2]=bn\sum_{i=1}^a(E[]^2+V[])=bn\sum_{i=1}^a\tau_i^2+(a-1)\sigma^2$
+
+\dotfill
+
+$\mathbf{A_r\times B_r+A_r\times C_r}$ $y_{ijk}=\mu+\tau_i+\beta_j+\gamma_k+(\tau\beta)_{ij}+(\tau\gamma)_{ik}+\varepsilon_{ijk}$
+
+iid $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\tau_{i}\sim iid N(0,\sigma_\tau^2)$; $\beta_{j}\sim iid N(0,\sigma_\beta^2)$; $\gamma_{k}\sim iid N(0,\sigma_\gamma^2)$; 
+$(\tau\beta)_{ij}\sim iid N(0,\sigma_{\tau\beta}^2)$; $(\tau\gamma)_{ik}\sim iid N(0,\sigma_{\tau\gamma}^2)$; indep
+
+\begin{tabular}{ l|l|l|l|l|l|l|l }
+& i & j & k & df &  SS | EMS & F\\
+
+$\tau_{i}$&1&b&c&a-1&$\sigma^2+b\sigma^2_{\tau\gamma}+c\sigma^2_{\tau\beta}+bc\sigma^2_{\tau}$ | $\frac1{bc}\sum_{i=1}^ay_{i..}^2-\frac{1}{abc}y_{...}^2$&A/(AB+AC-E)\\
+
+$\beta_{j}$&a&1&c&b-1&$\sigma^2+c\sigma^2_{\tau\beta}+ac\sigma^2_{\beta}$ | $\frac1{ac}\sum_{j=1}^by_{.j.}^2-\frac{1}{abc}y_{...}^2$&$MS_{B}/MS_{AB}$\\
+
+$\gamma_{k}$&a&b&1&c-1&$\sigma^2+b\sigma^2_{\tau\gamma}+ab\sigma^2_{\gamma}$ | $\frac1{ab}\sum_{k=1}^cy_{..k}^2-\frac{1}{abc}y_{...}^2$&C/AC\\
+
+$(\tau\beta)_{ij}$&1&1&c&(a-1)(b-1)&$\sigma^2+c\sigma^2_{\tau\beta}$ | $\frac{\sum^a\sum^by_{ij.}^2}c-\frac{\sum^ay_{i..}^2}{bc}-\frac{\sum^by_{.j.}^2}{ac}+\frac{y_{...}^2}{abc}$&AB/E\\
+
+$(\tau\gamma)_{ik}$&1&b&1&(a-1)(c-1)&$\sigma^2+b\sigma^2_{\tau\gamma}$ | $\frac{\sum^a\sum^cy_{i.k}^2}b-\frac{\sum^ay_{i..}^2}{bc}-\frac{\sum^cy_{..k}^2}{ab}+\frac{y_{...}^2}{abc}$&AC/E\\
+
+$\varepsilon_{ijk}$&1&1&1&a(b-1)(c-1)&$\sigma^2$ | $\sum^a\sum^b\sum^cy_{ijk}^2-\frac{\sum^a\sum^by_{ij.}^2}c-\frac{\sum^a\sum^cy_{i.k}^2}b+\frac{\sum^ay_{i..}^2}{bc}$&\\
+
+Total& & & &$abc-1$&$\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^cy_{ijk}^2-\frac{1}{abc}y_{...}^2$\\\hline
+
+\end{tabular}
+
+$F_{df_n,df_d}=\frac{MS'}{MS''}$; $df_n=df_c$;$df_d=\frac{(AC+BC+ABC)^2}{\frac{AC^2}{df_{AC}}+\frac{BC^2}{df_{BC}}+\frac{ABC^2}{df_{ABC}}}$
+
+
+\textbf{ Mixed model}
+
+$\mathbf{A_f\times B_r}$:$y_{ijk}=\mu+\tau_i+\beta_j+(\tau\beta)_{ij}+\varepsilon_{ijk}$
+
+iid$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_{i=1}^a\tau_{i}=0$; $\sum_{i=1}^a(\tau\beta)_{ij}=0$ (restricted model); $\beta_{j}\sim iid N(0,\sigma_\beta^2)$; 
+$(\tau\beta)_{ij}\sim iid N(0,\frac{a-1}{a}\sigma^2_{\tau\beta})$
+
+$E(SS_{AB})=E[\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(\widehat{\tau\beta})_{ij}^2]=n\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..}-\bar y_{.j.}+\bar y_{...})^2]$=
+
+$V[\sum^a\sum^b\sum^n(\widehat{\tau\beta})_{ij}^2]$+0=$(a-1)(b-1)(n\sigma^2_{\tau\beta}+\sigma^2)$
+=$n\sum^a\sum^b(\bar y_{ij.}-\bar y_{...})^2-SS_A-SS_B$
+
+
+\textbf{ Nested model}
+
+\begin{tabular}{ l|l|l|l|l|l|l|l|l }
+ &i &j &k & df & EMS $B_r$in$A_f$ & F & $B_f$in$A_f$ & $B_r$in$A_r$ \\\hline
+$\alpha_{i}$f &0&b&n&a-1&$\sigma_{\varepsilon}^2+n\sigma^2_{\beta}+\frac{bn\sum^a\alpha_{i}^2}{a-1}$&A/AB&$\sigma_{\varepsilon}^2+\frac{bn\sum^a\alpha_{i}^2}{a-1}$&$\sigma_{\varepsilon}^2+n\sigma^2_{\beta}+bn\sigma^2_{\alpha}$\\\hline
+
+$\beta_{ij}$r &0&1&n&a(b-1)&$\sigma_{\varepsilon}^2+n\sigma^2_{\beta}$&AB/E&$\sigma_{\varepsilon}^2+\frac{n\sum^a\sum^b\beta_{ij}^2}{a(b-1)}$&$\sigma_{\varepsilon}^2+n\sigma^2_{\beta}$\\\hline
+
+$\varepsilon_{ijk}$r&1&1&1&ab(n-1)&$\sigma_{\varepsilon}^2$& &$\sigma_{\varepsilon}^2$&$\sigma_{\varepsilon}^2$\\\hline
+
+T& & & &abn-1\\\hline
+\end{tabular}
+
+\begin{tabular}{ l|l|l|l }
+$\varepsilon_{(ijk)l}\sim iid N(0,\sigma^2)$&$\sum_{i=1}^2\tau_{i}=0$&$\sum_{k=1}^3\gamma_{k}=0$&$\beta_{j(i)}\sim iid N(0,\sigma_{\beta}^2)$\\
+
+$\sum_{i=1}^2(\tau\gamma)_{ik}=0$&$\sum_{k=1}^3(\tau\gamma)_{ik}=0$&$\sum_{i=1}^2(\beta\gamma)_{j(i)k}=0$&$(\beta\gamma)_{j(i)k}\sim iid N(0,\frac{2-1}{2}\sigma_{\beta\gamma}^2)$
 \end{tabular}
 
 
-##### Fixed v.s. random; crossed v.s. nested
-
-(a)Fixed effects are constant across individuals, random effects vary. 
-Effects are fixed if they are interesting in themselves or random if there is interest in the underlying population.
-When a sample exhausts the population, the corresponding variable is fixed; when the sample is a small part of the population the corresponding variable is random.
-If an effect is assumed to be a realized value of a random variable, it is called a random effect.
-Fixed effects are estimated using least squares and random effects are estimated with shrinkage.
-
-**Example**: A lab want to test the quality of products. There are only two test machines. Each machine assigned two operators who randomly sellected from a large amont of operators. Each poerator test the products in three specific temperature. In this test, the factor mathine and temperature have fixed effects. The factor operator has random effects.
-
-(b)Two factors are crossed when every category of one factor co-occurs in the design with every category of the other factor. There is at least one observation in every combination of categories for the two factors.
-
-A factor is nested within another factor when each category of the first factor co-occurs with only one category of the other. An observation has to be within one category of Factor 2 in order to have a specific category of Factor 1. All combinations of categories are not represented.
-
-You can calculate an interaction between two crossed factors. If they are nested, you cannot because you do not have every combination of one factor along with every combination of the other.
-
-In **Example** (a), Three temperature are applied on each machine. Thus, temperature and machine have crossed effect. The operators were assigned to each machine are different. The operators are nested in the levels of factor machine. Thus, the effects of the factor operator are nested effect.
-
-##### Mixed model
-
+$\mathbf{B_r}$-in-$\mathbf{A_f}$
 $y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}$; $\sum_{i=1}^a\alpha_i=0$, $\beta_{ij}\sim N(0,\sigma_{\beta}^2)$, $\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)$
 
 $Cov(y_{111},y_{112})=Cov(\beta_{11}+\varepsilon_{111},\beta_{11}+\varepsilon_{112})=Var(\beta_{11})+Cov(\varepsilon_{111},\varepsilon_{112})=\sigma^2_{\beta}$
@@ -241,28 +502,40 @@ $Cov(y_{111},y_{121})=Cov(\beta_{11}+\varepsilon_{111},\beta_{12}+\varepsilon_{1
 
 $Cov(y_{111},y_{211})=Cov(\beta_{11}+\varepsilon_{111},\beta_{21}+\varepsilon_{211})=Cov(\beta_{11},\beta_{21})+Cov(\varepsilon_{111},\varepsilon_{211})=0$
 
-$Var(y_{111})=\sigma^2_{\beta}+\sigma_{\varepsilon}^2=Var(y_{112})$; $Cor(y_{111},y_{112})=\frac{\sigma^2_{\beta}}{\sigma^2_{\beta}+\sigma_{\varepsilon}^2}$
+$Var(y_{111})=\sigma^2_{\beta}+\sigma_{\varepsilon}^2=Var(y_{112})$; 
+
+$Cor(y_{111},y_{112})=\frac{\sigma^2_{\beta}}{\sigma^2_{\beta}+\sigma_{\varepsilon}^2}$
 $Cor(y_{111},y_{121})=Cor(y_{111},y_{211})=0$
 
 A linear combination of normal distributed random variables and constants are normal distributed.
 
 $E[\bar y_{ij.}]=E[\frac1n\sum_{k=1}^ny_{ijk}]=\frac{\sum_{k=1}^n}nE[\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}]=\mu+\alpha_i,\forall i=1,..,a;j=1,..,b$
 
-$Var[\bar y_{ij.}]=Var[\frac1n\sum_{k=1}^ny_{ijk}]=\frac{\sum_{k=1}^n}{n^2}Var[\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}]=\frac1n(\sigma^2_{\beta}+\sigma_{\varepsilon}^2),\forall i=1,..,a;j=1,..,b$
+$Var[\bar y_{ij.}]=Var[\frac1n\sum_{k=1}^ny_{ijk}]=\frac{\sum_{k=1}^n}{n^2}Var[\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}]=\frac1n(\sigma^2_{\beta}+\sigma_{\varepsilon}^2),\forall i$
 
 $f(\bar y_{i1.},..\bar y_{ib.})=\prod_{j=1}^bf(\bar y_{ij.})=(2\pi\frac{\sigma^2_{\beta}+\sigma_{\varepsilon}^2}n)^{-\frac{b}2}\exp[\frac{-n}{2(\sigma^2_{\beta}+\sigma_{\varepsilon}^2)}\sum_{j=1}^b(\bar y_{ij.}-\mu-\alpha_i)^2]$
 
+\dotfill
+
 $\hat\alpha_1-\hat\alpha_2\sim N(\alpha_1-\alpha_2,\frac2{b}\sigma^2_{\beta}+\frac2{bn}\sigma_{\varepsilon}^2)$
 
-$\frac{\partial SSE}{\partial\alpha_i}=2\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\mu-\alpha_i-\beta_{ij})(-1)\overset{set}{=}0$;
-$\hat\alpha_i=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}-\mu-\frac1{b}\sum_{j=1}^b\beta_{ij}=\bar y_{i..}-\mu$
+$SSE=\sum^a\sum\limits_{j=1}^b\sum\limits_{k=1}^n(y_{ijk}-\mu-\alpha_i-\beta_{ij})^2$;
+$\frac{\partial SSE}{\partial\alpha_i}=2\sum\limits_{j=1}^b\sum\limits_{k=1}^n(y_{ijk}-\mu-\alpha_i-\beta_{ij})(-1)\overset{set}{=}0$;
 
-$\hat\alpha_1-\hat\alpha_2=\bar y_{1..}-\mu-(\bar y_{2..}-\mu)=\frac{\sum_{j=1}^b\sum_{k=1}^n(y_{1jk}-y_{2jk})}{bn}=\frac{\sum_{j=1}^b\sum_{k=1}^n(\alpha_1-\alpha_2+\beta_{1j}-\beta_{2j}+\varepsilon_{1jk}-\varepsilon_{2jk})}{bn}=\alpha_1-\alpha_2+\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}$
+$\hat\alpha_i=\frac{\sum_{j=1}^b\sum_{k=1}^ny_{ijk}}{bn}-\mu-\frac{\sum_{j=1}^b\beta_{ij}}{b}=\bar y_{i..}-\mu$
 
-$Var[\hat\alpha_1-\hat\alpha_2]=Var[\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}]=\frac{\sum_{j=1}^{b}}{b^2}(Var[\beta_{1.}]+Var[\beta_{2.}])+\frac{\sum_{j=1}^b\sum_{k=1}^n}{b^2n^2}(Var[\varepsilon_{1..}]+Var[\varepsilon_{2..}])=\frac2{b}\sigma^2_{\beta}+\frac2{bn}\sigma_{\varepsilon}^2$
+$\hat\alpha_1-\hat\alpha_2=\bar y_{1..}-\mu-(\bar y_{2..}-\mu)=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n(y_{1jk}-y_{2jk})$
+
+$=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n(\alpha_1-\alpha_2+\beta_{1j}-\beta_{2j}+\varepsilon_{1jk}-\varepsilon_{2jk})=\alpha_1-\alpha_2+\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}$
 
 $E[\hat\alpha_1-\hat\alpha_2]=\alpha_1-\alpha_2$; 
-$SSE=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\mu-\alpha_i-\beta_{ij})^2$
+
+$Var[\hat\alpha_1-\hat\alpha_2]=Var[\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}]$
+
+$=\frac1{b^2}\sum_{j=1}^{b}(Var[\beta_{1.}]+Var[\beta_{2.}])+\frac1{b^2n^2}\sum_{j=1}^b\sum_{k=1}^n(Var[\varepsilon_{1..}]+Var[\varepsilon_{2..}])=\frac{2}{b}\sigma^2_{\beta}+\frac{2}{bn}\sigma_{\varepsilon}^2$
+
+\dotfill
+
 
 $\bar y_{ij.}-\bar y_{i..}=\mu+\alpha_i+\beta_{ij}+\bar\varepsilon_{ij.}-(\mu+\alpha_i+\bar\beta_{i.}+\bar\varepsilon_{i..})=\beta_{ij}-\bar\beta_{i.}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}$
 
@@ -270,36 +543,99 @@ $E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{ij}-\bar\beta_{i.}+\bar\varepsilon_{ij.}-
 
 $Cov(\beta_{ij},\bar\beta_{i.})=\frac{1}{b}Cov(\beta_{ij},\sum_{j=1}^b\beta_{ij})=\frac1b[1\cdot\sigma_{\beta}^2+(b-1)\cdot0]$
 
-$Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})=Cov(\frac{1}{n}\sum_{k=1}^n\varepsilon_{ijk},\frac{1}{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk})=\frac{1}{b}\frac{\sum_{k=1}^n}{n^2}Cov(\varepsilon_{ijk},\sum_{j=1}^b\varepsilon_{ijk})=\frac{1}{bn}\sigma_{\varepsilon}^2$
+$Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})=Cov(\frac{1}{n}\sum_{k=1}^n\varepsilon_{ijk},\frac{1}{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk})=\frac{\sum_{k=1}^nCov(\varepsilon_{ijk},\sum_{j=1}^b\varepsilon_{ijk})}{bn^2}=\frac{\sigma_{\varepsilon}^2}{bn}$
 
 $Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{ij}-\bar\beta_{i.}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]=Var[\beta_{ij}-\bar\beta_{i.}]+Var[\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]$
+
 $=Var[\beta_{ij}]+Var[\bar\beta_{i.}]-2Cov(\beta_{ij},\bar\beta_{i.})+Var[\bar\varepsilon_{ij.}]+Var[\bar\varepsilon_{i..}]-2Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})$
+
 $=\sigma_{\beta}^2+\frac{1}{b}\sigma_{\beta}^2-\frac2b\sigma_{\beta}^2+\frac{1}{n}\sigma_{\varepsilon}^2+\frac{1}{bn}\sigma_{\varepsilon}^2-\frac{2}{bn}\sigma_{\varepsilon}^2=\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)$
 
 $E[\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2]=\sum_{i=1}^a\sum_{j=1}^b(Var[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2)$
-$\sum_{i=1}^a\sum_{j=1}^b[\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)+0]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)$
 
-\begin{tabular}{ l|l|l|l|l|l|l }
-term &i(f) &j(r) &k(r) & df & EMS & F\\
-$\alpha_{i}$f &0&b&n&a-1&$\frac{bn}{a-1}\sum_{i=1}^a\alpha_{i}+n\sigma^2_{\beta}+\sigma_{\varepsilon}^2$&$\frac{MS_{A}}{MS_{AB}}$\\
-$\beta_{ij}$r &0&1&n&a(b-1)&$n\sigma^2_{\beta}+\sigma_{\varepsilon}^2$&$\frac{MS_{AB}}{MS_{E}}$\\
-$\varepsilon_{ijk}$r&1&1&1&ab(n-1)&$\sigma_{\varepsilon}^2$\\
-Total& & & &abn-1\\
-\end{tabular}
-
-$\hat\sigma^2=\frac{MS_{AB}-MS_{E}}n$; $E[\hat\sigma^2]=\frac1n(n\sigma^2_{\beta}+\sigma_{\varepsilon}^2-\sigma_{\varepsilon}^2)=\sigma^2_{\beta}$
+$=\sum_{i=1}^a\sum_{j=1}^b[\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)+0]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)$
 
 
-##### Nested model
+
+$\hat\sigma^2_{\beta}=\frac{MS_{AB}-MS_{E}}n$; $E[\hat\sigma^2]=\frac1n(n\sigma^2_{\beta}+\sigma_{\varepsilon}^2-\sigma_{\varepsilon}^2)=\sigma^2_{\beta}$
+
+
+$E(MS_{B_f(A_f)})=\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^bE[(\bar y_{ij.}-\bar y_{i..})^2]=\sigma^2+\frac{n}{a(b-1)}\sum_{i=1}^a\sum_{j=1}^b\beta_{j(i)}^2$
+
+
+\hrulefill
+
+Nested-Three-stages $\mathbf{C_r}$-in-$\mathbf{B_r}$-in-$\mathbf{A_f}$ $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k(ij)}+\varepsilon_{(ijk)l}$
+
+$\varepsilon_{ijkl}\sim iid\ N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\beta_{j(i)}\sim iid\ N(0,\sigma_{\beta}^2)$ ; $\gamma_{k(ij)}\sim iid\ N(0,\sigma_{\gamma}^2)$
 
 \begin{tabular}{ l|l|l|l|l|l|l|l }
-term &i(f) &j(r) &k(f) &l(r) & df & EMS & F\\
-A$\tau_{i}$f&0&b&c&n&a-1&$\frac{bcn\sum_{i=1}^{a}\tau_i^2}{a-1}+cn\sigma^2_{\beta}+\sigma^2$&$\frac{MS_{A}}{MS_{B(A)}}$\\
-B(A)$\beta_{j(i)}$r&1&1&c&n&a(b-1)&$cn\sigma^2_{\beta}+\sigma^2$&$\frac{MS_{B(A)}}{MS_{E}}$\\
-C$(\gamma)_{k}$f&a&b&0&n&c-1&$\frac{abn\sum_{k=1}^{c}\gamma_k^2}{c-1}+bn\sigma^2_{\gamma}+n\sigma^2_{\gamma\beta}+\sigma^2$&$\frac{MS_{C}}{MS_{CB(A)}}$\\
-AC$(\tau\gamma)_{ik}$f&0&b&0&n&(a-1)(c-1)&$\frac{bn\sum_{i=1}^{a}\sum_{k=1}^{c}(\tau\gamma)_{ik}^2}{(a-1)(c-1)}+n\sigma^2_{\gamma\beta}+\sigma^2$&$\frac{MS_{AC}}{MS_{CB(A)}}$\\
-CB(A)$(\gamma\beta)_{kj(i)}$r&1&1&0&n&a(b-1)(c-1)&$n\sigma^2_{\gamma\beta}+\sigma^2$&$\frac{MS_{CB(A)}}{MS_{E}}$\\
-E$\varepsilon_{(ijk)l}$&1&1&1&1&abc(n-1)&$\sigma^2$\\
-T& & & & &abcn-1
+& i & j & k & l & df &  SS | EMS & F\\\hline
+
+A$_f\tau_{i}$&0&b&c&n&a-1&$\sigma^2+n\sigma^2_{\gamma}+cn\sigma^2_{\beta}+\frac{bcn\sum^a\tau_i^2}{a-1}$ | $\frac{\sum^ay_{i...}^2}{bcn}-\frac{y_{....}^2}{abcn}$ &A/B(A)\\\hline
+
+B(A)$_r$$\beta_{j(i)}$&1&1&c&n&a(b-1)&$\sigma^2+n\sigma^2_{\gamma}+cn\sigma^2_{\beta}$ |$\frac{\sum^a\sum^by_{ij..}^2}{cn}-\frac{\sum^ay_{i...}^2}{bcn}$ &B(A)/C(A(B))\\\hline
+
+C(B(A))$r$$\gamma_{k(ji)}$&1&1&1&n&ab(c-1)&$\sigma^2+n\sigma^2_{\gamma}$ | $\frac1{n}{\sum^a\sum^b\sum^cy_{ijk.}^2}-\frac1{cn}{\sum^a\sum^by_{ij..}^2}$ &C(A(B))/E\\\hline
+
+$\varepsilon_{(ijk)l}$&1&1&1&1&abc(n-1)&$\sigma^2$ | $\sum^a\sum^b\sum^c\sum^ny_{ijkl}^2-\frac1n\sum^a\sum^b\sum^cy_{ijk.}^2$\\\hline
+T& & & & &abcn-1&$\sum^a\sum^b\sum^c\sum^ny_{ijkl}^2-\frac{1}{abcn}y_{....}^2$\\\hline
 \end{tabular}
+
+Nested-Factorial Factors $\mathbf{B_r}$-in-$\mathbf{A_f\times C_f}$
+\begin{tabular}{ l|l|l|l|l|l|l|l }
+ &i &j &k &l & df & EMS & F\\\hline
+A$_f\tau_{i}$&0&b&c&n&a-1&$\sigma^2+cn\sigma^2_{\beta}+\frac{bcn\sum_{i=1}^{a}\tau_i^2}{a-1}$&$MS_{A}$/B(A)\\\hline
+
+B(A)$_r$$\beta_{j(i)}$&1&1&c&n&a(b-1)&$\sigma^2+cn\sigma^2_{\beta}$&B(A)/E\\\hline
+
+C$_f(\gamma)_{k}$&a&b&0&n&c-1&$\sigma^2+n\sigma^2_{\gamma\beta}+\frac{abn\sum^{c}\gamma_k^2}{c-1}$&C/CB(A)\\\hline
+
+AC$_f$$(\tau\gamma)_{ik}$&0&b&0&n&(a-1)(c-1)&$\sigma^2+n\sigma^2_{\gamma\beta}+\frac{bn\sum^{a}\sum^{c}(\tau\gamma)_{ik}^2}{(a-1)(c-1)}$&AC/CB(A)\\\hline
+
+CB(A)$_r$$(\gamma\beta)_{kj(i)}$&1&1&0&n&a(b-1)(c-1)&$\sigma^2+n\sigma^2_{\gamma\beta}$&CB(A)/E\\\hline
+$\varepsilon_{(ijk)l}$&1&1&1&1&abc(n-1)&$\sigma^2$\\\hline
+T& & & & &abcn-1\\\hline
+\end{tabular}
+
+
+\textbf{ Split-Plot}
+
+$\mathbf{Run_r\times A_f\times B_f}$
+$y_{ijkl}=\mu+\tau_i+\beta_{j}+(\tau\beta)_{ij}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{jk}+(\tau\beta\gamma)_{ijk}+\varepsilon_{ijk}$;
+i=1,2,..,r;j=1,2,..,a;k=1,2,..,b
+
+\begin{tabular}{ l|l|l }
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$&$\tau_i\sim iid N(0,\sigma_{\tau}^2)$\\
+
+$\sum_{j=1}^3\beta_{j}=0$&$\sum_{j=1}^3(\tau\beta)_{ij}=0$&$(\tau\beta)_{ij}\sim iid N(0,\frac{3-1}{3}\sigma_{\tau\beta}^2)$\\
+
+$\sum_{k=1}^4\gamma_{k}=0$&$\sum_{k=1}^4(\tau\gamma)_{ik}=0$&$(\tau\gamma)_{ik}\sim iid N(0,\frac{4-1}{4}\sigma_{\tau\gamma}^2)$\\
+
+$\sum_{j=1}^3(\beta\gamma)_{jk}=0$&$\sum_{k=1}^4(\beta\gamma)_{jk}=0$\\
+
+$\sum_{j=1}^3(\tau\beta\gamma)_{ijk}=0$&$\sum_{k=1}^4(\tau\beta\gamma)_{ijk}=0$&$(\tau\beta\gamma)_{ijk}\sim iid N(0,\frac{(3-1)(4-1)}{3\times4}\sigma_{\tau\beta\gamma}^2)$
+\end{tabular}
+
+\begin{tabular}{ l|l|l|l|l|l|l|l }
+ &i &j &k & df & EMS & F\\\hline
+$R_r\tau_{i}$&1&a&b&r-1&$\sigma^2+ab\sigma^2_{\tau}$&${MS_{R}}/{MS_{E}}$\\\hline
+
+$A_f$$\beta_{j}$&r&0&b&a-1&$\sigma^2+b\sigma^2_{\tau\beta}+\frac{rb\sum^{a}\beta_j^2}{a-1}$&A/RA\\\hline
+
+$RA_r(\tau\beta)_{ij}$&1&0&b&(r-1)(a-1)&$\sigma^2+b\sigma^2_{\tau\beta}$=E(Whole-plot error)&RA/E\\\hline
+
+$B_f$$(\gamma)_{k}$&r&a&0&b-1&$\sigma^2+a\sigma^2_{\tau\gamma}+\frac{ra\sum^{b}\gamma_k^2}{b-1}$&B/RB\\\hline
+
+$RB_r$$(\tau\gamma)_{ik}$&1&a&0&(r-1)(b-1)&$\sigma^2+a\sigma^2_{\tau\gamma}$&RB/E\\\hline
+
+$AB_f$$(\beta\gamma)_{jk}$&r&0&0&(a-1)(b-1)&$\sigma^2+\sigma^2_{\tau\beta\gamma}+\frac{r\sum^{a}\sum^{b}(\beta\gamma)_{jk}^2}{(a-1)(b-1)}$&AB/RAB\\\hline
+
+$RAB_r$$(\tau\beta\gamma)_{ijk}$&1&0&0&(r-1)(a-1)(c-1)&$\sigma^2+\sigma^2_{\tau\beta\gamma}$&RAB/E\\\hline
+
+$\varepsilon_{(ijk)h}$& & & &0&$\sigma^2$not estimatable\\\hline
+
+\end{tabular}
+
+
 

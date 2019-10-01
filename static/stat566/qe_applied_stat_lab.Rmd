@@ -9,15 +9,15 @@ classoption:
 pagenumbering: FALSE
 whitespace: none
 output:
+  pdf_document:
+    toc: FALSE
+    number_sections: FALSE
   html_document:
     toc: yes
     toc_depth: 3
     toc_float:
       collapsed: yes
       smooth_scroll: yes
-  pdf_document:
-    toc: FALSE
-    number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
     - \usepackage{lscape}
@@ -38,7 +38,7 @@ Fountain*, Crain
 ## 2015F 
 
 ### 2015F1
-[2017SR1][]
+[2017SR1][] X1,X2 linear regression
 
 Find the best model for predicting Y based on X1 and X2. Y is the amount of profit that a company makes in a month. X1 is the number of months that the company has been in business. X2 is the amount spent on advertising.
 
@@ -73,7 +73,7 @@ sqrt(predict(model_2015f1_2, newdata=data.frame(X1 = 20 ,X2 =1500), interval="pr
 
 
 ### 2015F2
-[2018F2][]
+[2018F2][] 5k1p Fractional Factorial Design
 
 A replicated fractional factorial design is used to investigate the effect of five factors on the free height of leaf springs used in an automotive application. The factors are (A) furnace temperature, (B) heating time, (C) transfer time, (D) hold down time, and (E) quench oil temperature. There are 3 observations at each setting.
 
@@ -84,28 +84,53 @@ table_2015f2 <- readxl::read_xlsx("qe_lab/Springs_2015f.xlsx")
 library(tidyverse)
 table_2015f2 <- gather(table_2015f2,'Height','...7','...8',key = "1",value = "height" )[,-6]
 str(table_2015f2)
+kableExtra::kable(table_2015f2)
 ```
 
 ```{r,eval=F}
 library(devtools)
 devtools::install_github("tidyverse/tidyr",force=T)
-
 pivot_longer(table_2015f2,-A,-B,-C,-D,values_to = "Height")
 ```
 
-I=ABCD, AB=CD, AC=BD, AD=BC;
-A=BCD, B=ACD, C=ABD, D=ABC;
-III
+I=ABCD;
+
+A=BCD;
+B=ACD;
+C=ABD;
+D=ABC;
+E=ABCDE;
+
+AB=CD;
+AC=BD;
+AD=BC;
+AE=BCDE;
+BE=ACDE;
+CE=ABDE;
+DE=ABCE;
+
+ABE=CDE;
+BCE=ADE;
+BDE=ACE;
+
+I=ABCD confounded
+
+Resolution=IV
 
 ```{r,message=F, out.width='50%',fig.show='hold'}
-model_2015f2 <- aov(height~A*B*C*D, table_2015f2)
-model_2015f2$coefficients
+model_2015f2_1 <- aov(height~A*B*C*D*E, table_2015f2)
+summary(model_2015f2_1)
+
 library(daewr)
-halfnorm(model_2015f2$coefficients[2:8],alpha=1)
-summary(model_2015f2)
+halfnorm(coef(model_2015f2_1)[2:16],alpha=0.05)
+
 
 library(gghalfnorm)
-gghalfnorm(x =model_2015f2$coefficients[2:8],labs = names(model_2015f2$coef) , nlab = 8)+ ggplot2::theme_light()
+gghalfnorm(x =coef(model_2015f2_1)[2:16],labs = names(coef(model_2015f2_1)[2:16]) , nlab = 5)+ ggplot2::theme_light()
+
+model_2015f2_2 <- lm(height~A+B*E+D, table_2015f2)
+summary(model_2015f2_2)
+anova(model_2015f2_2)
 
 ```
 
@@ -127,13 +152,15 @@ table_2016s1$male <- factor(table_2016s1$male, labels=c("female","male"))
 str(table_2016s1)
 ```
 
-```{r, message=F, out.width='50%',fig.show='hold'}
+```{r fig.show='hold', message=FALSE, warning=F, out.width='50%'}
 library(ggpubr)
 ggline(table_2016s1,"height","weight",add = c("mean","jitter"),color = "age" )
 ggline(table_2016s1,"height","weight",add = c("mean","jitter"),color = "male",shape = "male" )
 ```
 
 ```{r, eval=F, include=T}
+library(GGally)
+ggpairs(table_2016s1)
 model_2016s1 <- lm(weight~height*male*age, table_2016s1)
 olsrr::ols_step_both_aic(model_2016s1)
 ```
@@ -167,30 +194,38 @@ table_2016s2$power <- as.factor(rep(c(rep("power1",3),rep("power2",3)),9) )
 str(table_2016s2)
 ```
 
-```{r, out.width='50%',fig.show='hold'}
+```{r,message=F, out.width='50%',fig.show='hold'}
 library(ggpubr)
 ggline(table_2016s2,"machine","y",add = c("mean","jitter"),color = "station",shape = "station")
 ggline(table_2016s2,"machine","y",add = c("mean","jitter"),color = "power",shape = "power")
 ```
 
-```{r}
-model_2016s2 <- lm(y~machine*station*power, table_2016s2)
+```{r,message=F}
+model_2016s2 <- aov(y~machine*power*station, table_2016s2)
 summary(model_2016s2)
 anova(model_2016s2)
 ```
 
-```{r, out.width='25%',fig.show='hold'}
-model_2016s2_1 <- lm(y~power:machine:station, table_2016s2)
-summary(model_2016s2_1)
+```{r,message=F}
+library(lme4)
+model_2016s2_1 <-lmer(y~machine*station+(1|machine:power)+(1|machine:power:station),table_2016s2)
+summary(model_2016s2_1)$varcor
 anova(model_2016s2_1)
-plot(model_2016s2_1)
+pf(anova(model_2016s2_1)$'F value',df1=anova(model_2016s2_1)$'Df',df2=c(3,6,6), lower.tail = F)
+confint(model_2016s2_1)
+
+library(GAD)
+table_2016s2$machine_f <- as.fixed(table_2016s2$machine)
+table_2016s2$station_f <- as.fixed(table_2016s2$station)
+table_2016s2$power_r <- as.random(table_2016s2$power)
+model_2016s2_2 <- aov(y~machine_f*station_f+power_r%in%machine_f+power_r%in%machine_f*station_f, table_2016s2)
+gad(model_2016s2_2)
 ```
 
-```{r}
-model_2016s2_2 <- lm(y~machine+power+station, table_2016s2)
-summary(model_2016s2_2)
-anova(model_2016s2_2)
+```{r, out.width='25%',fig.show='hold'}
+plot(model_2016s2_2)
 ```
+
 
 
 ## 2016F
@@ -267,7 +302,7 @@ Five water samples are selected from each creek. Each sample is divided into two
  
 a. Write down an appropriate model with assumptions (including normality).
 
-Two-stage nested design
+One-stage nested design
 
 $y=\mu+\tau_i+\beta_{j(i)}+\varepsilon_{k(ij)}$, $i=1,2,3$;$j=1,2,3,4,5$;$k=1,2$
 
@@ -278,7 +313,7 @@ c. Perform the F-test comparing the creeks using a .05 level.
 d. Perform a Tukey multiple comparison on the creeks using a .05 level.
 
 
-```{r,echo=F, message=F}
+```{r,echo=T, message=F}
 creek1 <- c(5.2, 5.4, 5.6, 5.7, 5.4, 5.4, 5.6, 5.5, 5.8, 5.5)
 creek2 <- c(5.1, 5.3, 5.1, 5.0, 5.3, 5.2, 5.0, 5.0, 4.9, 5.1)
 creek3 <- c(5.9, 5.8, 5.8, 5.8, 5.7, 5.8, 5.8, 5.9, 5.9, 5.9)
@@ -290,7 +325,7 @@ table_2016f2$rep <- as.factor(rep(c("rep1","rep2"),15))
 str(table_2016f2)
 ```
 
-```{r,echo=F,message=F,out.width='50%',fig.show='hold'}
+```{r,echo=T,message=F,out.width='50%',fig.show='hold'}
 library(ggpubr)
 ggline(table_2016f2,"creek","oxygen", add = c("mean","jitter"),color = "sample",shape = "sample")
 ggline(table_2016f2,"sample","oxygen", add = c("mean","jitter"),color = "creek",shape = "creek")
@@ -298,25 +333,21 @@ ggline(table_2016f2,"sample","oxygen", add = c("mean","jitter"),color = "creek",
 ```
 
 
-```{r,message=F, echo=FALSE, out.width='25%',fig.show='hold'}
+```{r,message=F, echo=T, out.width='25%',fig.show='hold'}
 model_2016f2_1 <- lm(oxygen~creek/sample,table_2016f2)
-summary(model_2016f2_1)
 anova(model_2016f2_1)
-car::vif(model_2016f2_1)
-plot(model_2016f2_1)
 ```
 
-```{r echo=FALSE, out.width='25%',fig.show='hold'}
+```{r echo=T, out.width='25%',fig.show='hold'}
 library(lme4)
 model_2016f2_2 <- lmer(oxygen~creek+(1|creek:sample),table_2016f2)
 summary(model_2016f2_2)
 anova(model_2016f2_2)
 pf(anova(model_2016f2_2)$'F value',df1=anova(model_2016f2_2)$'Df',df2=12, lower.tail = F)
 confint(model_2016f2_2)
-plot(model_2016f2_2)
 ```
 
-```{r echo=FALSE, out.width='25%',fig.show='hold'}
+```{r echo=T, out.width='25%',fig.show='hold'}
 library(GAD)
 table_2016f2$creek_f <- as.fixed(table_2016f2$creek)
 table_2016f2$sample_r <- as.random(table_2016f2$sample)
@@ -327,15 +358,19 @@ plot(model_2016f2_3)
 
 ```{r, message=F}
 library(emmeans)
+library(kableExtra)
+kable(test(lsmeans(model_2016f2_2,~creek,adjust=c("tukey"))))
+kable(pairs(lsmeans(model_2016f2_2,~creek,adjust=c("tukey"))))
+kable(TukeyHSD(model_2016f2_3,conf.level=0.95)$creek_f)
+```
+
+```{r eval=FALSE, message=FALSE, include=T}
+# for reference
 cre_sam <- pairs(lsmeans(model_2016f2_1,~creek|sample))
 sam_cre <- pairs(lsmeans(model_2016f2_1,~sample|creek))
 
-library(kableExtra)
 kable(test(rbind(cre_sam,sam_cre),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(2),bold =T)%>%row_spec(c(2),background ="#EAFAF1")
-```
 
-```{r, message=F}
-TukeyHSD(model_2016f2_3,conf.level=0.95)
 
 cre_sam <- pairs(lsmeans(model_2016f2_3,~creek_f|sample_r))
 sam_cre <- pairs(lsmeans(model_2016f2_3,~sample_r|creek_f))
@@ -393,8 +428,18 @@ Review the data provided in ’NBalance.xlsx’. Note, there were nine distinct 
 
 1. Which design was used, include the required parameters of the experimental design $[t; b; k; r;\lambda]$
 
-$y=t+b+k+r+\lambda+\varepsilon$
-Latin Square? BIBD?
+BIBD
+
+$y=\mu+\tau_i+\beta_j+\varepsilon_{ij}+\varepsilon$
+Treatment(Rations)$a=9$,
+
+Replication$r=3$,
+
+Block(animals)$b=3$,
+
+Block size $k=9$ 
+
+$\lambda=3$
 
 2. An appropriate ANOVA
 
@@ -415,14 +460,8 @@ str(table_2017sd1)
 ```{r, message=F, out.width='33%', fig.show='hold'}
 library(ggpubr)
 ggline(table_2017sd1, "Animal","Nitrogen", add = c("mean","jitter"),color = "Ration",shape = "Ration")
-ggline(table_2017sd1, "Block","Nitrogen", add = c("mean","jitter"),color = "Ration",shape = "Ration")
-
-ggline(table_2017sd1, "Animal","Nitrogen", add = c("mean","jitter"),color = "Block",shape = "Block")
-ggline(table_2017sd1, "Ration","Nitrogen", add = c("mean","jitter"),color = "Block",shape = "Block")
 
 ggline(table_2017sd1, "Ration","Nitrogen", add = c("mean","jitter"),color = "Animal",shape = "Animal")
-ggline(table_2017sd1, "Block","Nitrogen", add = c("mean","jitter"),color = "Animal",shape = "Animal")
-
 ```
 
 ```{r}
@@ -456,7 +495,7 @@ table_2017f1$male <- factor(table_2017f1$male, labels = c("female", "male"))
 str(table_2017f1)
 ```
 
-```{r, message=F, out.width='33%', fig.show='hold' }
+```{r, message=F,warning=F, out.width='33%', fig.show='hold' }
 library(ggplot2)
 ggplot(table_2017f1, aes(height,weight,color=age,shape=male))+geom_point()+theme_light()
 
@@ -524,39 +563,30 @@ ggplot(table_2017f2, aes(power,y,fill=station))+geom_boxplot()+facet_wrap(.~mach
 
 ```{r, message=F}
 model_2017f2 <- lm(y~power*station*machine, table_2017f2)
-library(olsrr)
-# ols_step_both_aic(model_2017f2)
-# ols_step_both_p(model_2017f2)
-model_2017f2_2 <- lm(y~machine+power:machine+power:station:machine, table_2017f2)
-summary(model_2017f2_2)
-anova(model_2017f2_2)
+summary(model_2017f2)
+anova(model_2017f2)
 ```
+
+```{r,message=F}
+library(lme4)
+model_2017f2_1 <-lmer(y~machine*station+(1|machine:power)+(1|machine:power:station),table_2017f2)
+summary(model_2017f2_1)$varcor
+anova(model_2016s2_1)
+pf(anova(model_2017f2_1)$'F value',df1=anova(model_2017f2_1)$'Df',df2=c(3,6,6), lower.tail = F)
+pander::pander(confint(model_2017f2_1)[1:4,1:2])
+
+library(GAD)
+table_2017f2$machine_f <- as.fixed(table_2017f2$machine)
+table_2017f2$station_f <- as.fixed(table_2017f2$station)
+table_2017f2$power_r <- as.random(table_2017f2$power)
+model_2017f2_2 <- aov(y~machine_f*station_f+power_r%in%machine_f+power_r%in%machine_f*station_f, table_2017f2)
+gad(model_2017f2_2)
+```
+
 
 ```{r, echo=F, fig.show='hold', out.width='25%'}
 plot(model_2017f2_2)
 ```
-
-
-
-```{r, eval=F, message=F}
-# When some factors are random 
-library(GAD)
-table_2019s2$Run_r <- as.random(table_2019s2$Run)
-table_2019s2$Trt_f <- as.fixed(table_2019s2$Trt)
-table_2019s2$Rev_f <- as.fixed(table_2019s2$Rev)
-model_2019s2_1 <- aov(formula = Shrink ~ Run_r+Trt_f + Trt_f%in%Run_r+ Rev_f%in%Run_r + Rev_f + Trt_f:Rev_f, data=table_2019s2)
-pander::pander(gad(model_2019s2_1))
-```
-
-```{r, eval=F, message=F, warning=F, collapse=T}
-# When some factors are random 
-library("lme4")
-model_2017f2_3 <- lmer(formula = y ~ (1|machine) + station + power+ (1|machine:station) + (1|machine:station:power), data=table_2017f2 , REML = TRUE)
-summary(model_2017f2_3)$varcor
-pander::pander(confint(model_2019s2_2)[1:4,1:2])
-```
-
-
 
 ## 2018S
 Robert Fountain*, Daniel Taylor-Rodriguez
@@ -752,18 +782,17 @@ str(table_2018f2)
 kableExtra::kable(table_2018f2)
 ```
 
-```{r}
-model_2018f2 <- aov(Heights~A*B*C*D, table_2018f2)
-model_2018f2$coefficients
+```{r, out.width='50%',fig.show='hold'}
+model_2018f2_1 <- aov(Heights~A*B*C*D, table_2018f2)
+summary(model_2018f2_1)
 library(daewr)
-halfnorm(model_2018f2$coefficients[2:8],alpha=1)
-summary(model_2018f2)
-
-model_2018f2_2 <- aov(Heights~A+B, table_2018f2)
-summary(model_2018f2_2)
+halfnorm(coef(model_2018f2_1)[2:8],alpha=0.4)
 
 library(gghalfnorm)
-gghalfnorm(x =model_2018f2$coefficients[2:8],labs = names(model_2018f2$coef) , nlab = 5)+ ggplot2::theme_light()
+gghalfnorm(x =coef(model_2018f2_1)[2:8],labs = names(coef(model_2018f2_1)[2:8]) , nlab = 4)+ ggplot2::theme_light()
+
+model_2018f2_2 <- lm(Heights~A+B, table_2018f2)
+summary(model_2018f2_2)
 
 ```
 
@@ -927,14 +956,10 @@ Do a full analysis and report your findings for the experiment above (data in �
 
 ```{r}
 table_2019s2 <- readxl::read_xlsx("~/qushen26/stat2019_website/static/stat566/qe_lab/WoolShrink.xlsx")
-str(table_2019s2)
-library(dplyr)
-dplyr::glimpse(table_2019s2)
 table_2019s2$Run <- factor(table_2019s2$Run,labels=c("Day1","Day2","Day3","Day4"))
 table_2019s2$Trt <- factor(table_2019s2$Trt,labels=c("untreated","15 Sec","4Min","15Min"))
 table_2019s2$Rev <- as.factor(table_2019s2$Rev)
 str(table_2019s2)
-dplyr::glimpse(table_2019s2)
 ```
 
 ```{r, echo=FALSE, out.width='33%',fig.show='hold'}

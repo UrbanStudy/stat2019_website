@@ -1977,7 +1977,7 @@ $\alpha=P_{\theta_0}(x_1<2/3)=\int_0^{2/3}f(x|\theta_0)=2/3$
 
 (b) (5 pts) Compute the power of the test at $\theta=2$.
 
-power$=1-P_{\theta_1}(x_1<2/3)=1-\int_0^{2/3}f(x|\theta_1)=7/27$
+power$=P_{\theta_1}(x_1<2/3)=1-\int_0^{2/3}f(x|\theta_1)=20/27$
 
 ### 2015F5
 [2004F12][] [2010SB4][] [2010FB4][] [2011S6][] [2018S4B][] [Expo](#Expo) [LRT](#LRT) [HypoT](#HypoT) [9.E.4]
@@ -2183,7 +2183,7 @@ $f_U(u)=\begin{cases}\int_0^u=u &0\le u\le1\\\int_{u-1}^1=2-u&1\le u\le2\\0&o.w.
 
 $F_U(1)=\frac12$, $\int_{1}^u=2u-\frac{u^2}2-\frac32$
 
-$F_U(u)=\begin{cases}\int_0^u=\frac{u^2}2&0\le u\le1\\2u-\frac{u^2}2-1&1\le u\le2\\0&o.w.\end{cases}$
+$F_U(u)=\begin{cases}0&u<0\\\int_0^u=\frac{u^2}2&0\le u\le1\\2u-\frac{u^2}2-1&1\le u\le2\\1&u>2\end{cases}$
 
 ### 2016F5
 [2003S10][] [2008F6][] [Basu](#Basu) [562-me2]
@@ -2746,6 +2746,14 @@ $\sqrt{n}(e^{-\bar X_n}-e^{-\mu})\to n(0,\frac{[(e^{-\mu})']^2}{I(\mu)})=n(0,\mu
 
 (4+6 pts) Let $X_1,X_2,..,X_n$ be a random sample from a normal distribution with mean 120 and unknown variance $\sigma^2$. Derive the likelihood ratio test for testing the null hypothesis $H_0:\sigma^2=4$ against the alternative $H_1:\sigma^2\neq4$. Also fnd the exact as well as the asymptotic null distributions of your test statistic.
 
+$L(\sigma^2)=(2\pi\sigma^2)^{-\frac{n}2}e^{\frac1{2\sigma^2}\sum(x-120)^2}$
+
+$\Lambda=(\frac{\sigma_1^2}4)^{\frac{n}2}e^{(\frac1{2\sigma^2}-\frac18)\sum(x-120)^2}\le c$
+
+$T=\sum(x-120)^2$ suffi, $\sigma^2<4$ MLR $\Lambda\nearrow T\le c$, $\sigma^2>4$ MLR $\Lambda\searrow T\ge c$ 
+
+Under $H_0$, $\frac{T}{4}\sim\chi^2_n$
+
 
 ### 2018FB2
 [2003S7][] [2008F5][] [2009SB1][] [2009FB4][] [2016S4][] **[2016F7][]** [2017FB4][] [2019SB4][]
@@ -2868,6 +2876,7 @@ $P(\theta,n_1)=P(n_1|\theta)P(\theta)=P(\theta|n_1)P(n_1)$
 
 $P(\theta|n_1)=\frac{P(\theta,n_1)}{P(n_1)}=\frac{\Gamma(n+2)}{\Gamma(n_1+1)\Gamma(n-n_1+1)}\theta^{n_1+1-1}(1-\theta)^{n-n_1+1-1}$
 
+$\sim Beta(\alpha+x,\beta+n+x)$; 
 $E[\theta|N_1=n_1]=\frac{n_1+1}{n+2}$
 
 (b) (6 pts) Compute $P(N_1=n_1)$ for $n_1=0...n$.
@@ -3161,10 +3170,9 @@ $f_{U,V}(u,v)=f_{X,Y}(h_1(u,v),h_2(u,v))|J|$
 $u=g_1(x,y)$,$x=h_1(u,v)$,$v=g_2(x,y)$,$y=h_2(u,v)$
 $J=\begin{vmatrix}\frac{\partial x}{\partial u} & \frac{\partial x}{\partial v} \\ \frac{\partial y}{\partial u} & \frac{\partial y}{\partial v} \end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial y}{\partial u}\frac{\partial x}{\partial v}$
 
-**Example 4.3.3 (Distribution of the product of beta variables)** Let $X\sim Beta(\alpha,\beta)$ and $Y\sim Beta(\alpha+\beta,\gamma)$ be independent random variables. The joint pdf of $(X,Y)\sim n(\alpha,\beta+\gamma)$
+**Example 4.3.3 (Distribution of the product of beta variables)** Let $X\sim Beta(\alpha,\beta)$ and $Y\sim Beta(\alpha+\beta,\gamma)$ be independent random variables. The joint pdf of $(X,Y)
 
-$X\sim Beta(\alpha,\beta)$, $Y\sim Beta(\alpha+\beta,\gamma)$
-$X\perp Y$, $U=XY$, $f_U(u)\sim n(\alpha,\beta+\gamma)$
+$U=XY$, $f_U(u)\sim Beta(\alpha,\beta+\gamma)$
 
 **Example 4.3.4 (Sum and difference of normal variables)**: 
 
@@ -3421,7 +3429,7 @@ Another simple example is given by a $Gamma(\alpha,\beta)$ random sample (4.6.8)
 
 $M_{\bar X}(t)=\left[\left(\frac1{1-\beta(\frac{t}n)}\right)^{a}\right]^n=\left(\frac1{1-\beta(\frac{t}n)}\right)^{na}$
 
-which we recognize as the mgf of a $gGamma(n\alpha,\beta/n)$, the distribution of $\bar X$.
+which we recognize as the mgf of a $Gamma(n\alpha,\beta/n)$, the distribution of $\bar X$.
 
 $\mu_{\bar X}=n\alpha\cdot\frac\beta n=\alpha\beta=\mu$
 
@@ -3461,7 +3469,7 @@ $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$
 $f_{\chi^2}(x)=\frac{1}{\Gamma \frac{p}2 2^{\frac{p}2}}x^{\frac{p}2-1}e^{-\frac{x}2}, x>0$
 
 
-$nS^2_{n+1}=(n-1)S_n^2+(\frac{n}{n+1})(X_{n+1}-\bar X_n)^2$
+$kS^2_{k+1}=(n-1)S_k^2+\frac{k}{k+1}(X_{k+1}-\bar X_k)^2$
 
 $\bar X_{n+1}=\frac{\sum_{i=1}^{n+1}X_{i}}{n+1}=\frac{\sum_{i=1}^{n}X_{i}+X_{n+1}}{n+1}=\frac{n\bar X_{n}+X_{n+1}}{n+1}$
 
@@ -3499,9 +3507,9 @@ $f_{F}(x)=\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{
 
 **Theorem 5.3.8**
 
-$X\sim F_(p,q)$, $\frac{1}X \sim F_(q,p)$;
+$X\sim F_{(p,q)}$, $\frac{1}X \sim F_{(q,p)}$;
 
-$X\sim T_(q)$, $X^2 \sim F_(1,q)$
+$X\sim T_{(q)}$, $X^2 \sim F_(1,q)$
 
 $X\sim F_(p,q)$, $\frac{\frac{p}{q}X}{1+\frac{p}{q}X} \sim Beta(\frac{p}2,\frac{q}2)$
 
