@@ -1,5 +1,5 @@
 ---
-title: " R for Bayesian"
+title: "Bayesian by R"
 output:
   html_document:
     toc: true
@@ -16,6 +16,9 @@ output:
 4. Looping using *for* and *while*
 5. Writing and using your own R functions
 
+https://bookdown.org/csgillespie/efficientR/
+
+https://r4ds.had.co.nz/
 
 # {.tabset .tabset-fade .tabset-pills}
 
@@ -291,8 +294,23 @@ Instrument C:		3.0,	3.1,	3.0,	3.1,	3.0,	3.0,	2.9,	2.9,	2.9,	3.0
 
 a. Create objects named A, B, and C with the given data above. (use the c() function)
 
+```{r echo=F,collapse=T}
+A<- c(5.1,	5.4,	4.9,	5.6,	5.5,	4.8,	4.0,	4.3,	4.4,	4.3)
+B<- c(5.0,	5.0,	5.0,	5.0,	5.0,	5.0,	5.1,	5.0,	4.9,	4.9)
+C<- c(3.0,	3.1,	3.0,	3.1,	3.0,	3.0,	2.9,	2.9,	2.9,	3.0)
+A
+B
+C
+```
 
 b. Create a histogram for each data set using hist() function.
+
+```{r,echo=F, out.width='33%', fig.show='hold'}
+hist(A, nclass=10)
+hist(B, nclass=10)
+hist(C, nclass=10)
+```
+
 
 c. Comment on the shape of each histogram.
 
@@ -300,10 +318,35 @@ d. Based on each histogram, identify an approximate value (a model) that represe
 
 e. Create a function called "mysummary" that computes the median (using median() function), mean (using mean() function), and standard deviation (using sd() function) for the columns of any data frame.
 
+```{r}
+mysummary <- function(x){
+  
+  median <- median(x)
+  mean <- mean(x)
+  standard_deviation <- sd(x)
+  
+  return(c(median, mean, standard_deviation))
+}
+```
+
 
 f. Make a data frame named "Weights" that contains A, B, and C, name the columns Inst1, Inst2 and Inst3, respectively.
+
+```{r echo=F}
+weights <- data.frame(Inst1=A,Inst2=B,Inst3=C)
+# weights <- tidyr::gather(data.frame(Inst1=A,Inst2=B,Inst3=C), instrument,value)
+str(weights)
+```
 
 
 g. Use the function "mysummary" created above to calculate the mean,median and standard deviations for all the columns in.  Save these values to the data frame
 
+```{r echo=F,message=F}
+# weights[,c(median,mean,standard_deviation)] <- mysummary(weights[,2])
+weights[c("median","mean","standard_deviation"),] <- c(mysummary(weights[,1]),mysummary(weights[,2]),mysummary(weights[,3]))
+library(tidyverse)
+library(kableExtra)
+kable(weights)%>%row_spec(c(11:13),background ="#EAFAF1")
+
+```
 
