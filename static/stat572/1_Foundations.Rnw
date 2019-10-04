@@ -258,10 +258,10 @@ The idea of using probability to represent our state of information can be forma
 \eenum
 
 \bit
-\item \emph{Induction} is the process of reasoning from specific cases to a general principle.
-\item The statistical endeavor relies induction, where \emph{the data} (the specific case) is used to identify a plausible \emph{data-generating mechanism} (the general principle).
+\item \emph{Induction} is the process of reasoning from \textcolor{blue}{specific cases} to a \textcolor{orange}{ general principle}.
+\item The statistical endeavor relies induction, where  \textcolor{blue}{\emph{the data}} (the specific case) is used to identify a plausible \textcolor{orange}{\emph{data-generating mechanism}} (the general principle).
 \item Data is unknown and uncertain.  
-\item In statistics, we assume that data is produced by a specific data-generating mechanism that depends on some unknown parameters (say $\btheta$).
+\item In statistics, we assume that data is produced by a specific data-generating mechanism that depends on some unknown and uncertain parameters.
 % \item A probabilistic model is assumed  to describe pre-experimental uncertainty in the data, where the only unknown are the model parameters
 \eit
 
@@ -296,7 +296,7 @@ $$\bmat
 
 Flipping a coin is the most common example used to characterize a random event with two possible outcomes.
 \bit
-\item How random is this event? If the coin is fair, is it always the case that $\Pr(\text{heads})=0.5$?
+\item Is this event really random? 
 \item This very simple physical system is fully determined by the initial conditions observed when the coin is being tossed.
 \item For example, does it matter if the toss is always made starting with heads up?
 \item What are the sources of randomness?
@@ -308,8 +308,6 @@ Flipping a coin is the most common example used to characterize a random event w
 
 \item Can you determine if the coin is fair? How would you go about it?
 
-\item What can you say if all your tosses landed on tails?
-
 \item If I told you that half of my coins (assume that I have an extremely large number of them) are biased towards heads, how can you incorporate this information into your inferential procedure?
 \eit
 
@@ -319,8 +317,26 @@ Let's formalize the general coin-flipping  problem:
 
 \item Suppose the $Y_i$'s are i.i.d. (independent and identically distributed), with probability of heads equal to $\theta$. 
 
-\item If $\theta$ is known, this becomes a probabilistic model characterizing the distribution of $Y_{1:n}=(Y_1,\ldots,Y_n)$, which allows us to study properties of $Y_{1:n}$ under this distribution.  This is a probabilistic problem.
+\item If $\theta$ is known, this becomes a probabilistic data-generating mechanism characterizing the distribution of $Y_{1:n}=(Y_1,\ldots,Y_n)$, which allows us to study properties of $Y_{1:n}$ under this distribution.  This is a probabilistic problem.
 \item Conversely, statistics serves an \emph{inversion purpose}, looking to extract information about $\theta$ (the cause / generating mechanism) from $Y_{1:n}$ (the consequence).
+\eit
+
+From the frequentist perspective
+
+\bit
+\item We could estimate $\theta$ as the proportion of heads based on realizations of $Y_{1:n}$.
+
+\item How do we quantify our uncertainty about being correct? 
+
+\item We can estimate confidence intervals for the proportion, but
+\eit
+
+Some questions that might arise...
+\bit
+\item From experience we know that $\theta$ is far from 0 and 1; however, when the number of tosses $n$ is small there is a non-trivial probability that tosses land either all on heads or  all on tails.
+
+\item What can you say if all your tosses landed on tails?
+
 \eit
 
 
@@ -329,18 +345,6 @@ Let's formalize the general coin-flipping  problem:
 Diaconis et al. (2007) argue that the coin flip is slightly more likely to land the same way it started,  they found that, if the coin starts on heads, then $P(heads)=0.51$. 
 \esh
 
-Ok, so if we observe data {\bf \emph{how can we verify the findings from Diaconis et al. (i.e., if the coin starts in heads then tosses are biased towards heads)?}}
-\bit
-\item We could estimate $\theta$ as the proportion of heads based on realizations of $Y_{1:n}$. 
-
-\item Is $\theta$ close to 0.5? But... how close is \emph{close}?
-
-\item How do we quantify our uncertainty about being correct?
-
-\item From experience we know that $\theta$ is far from 0 and 1; however, when the number of tosses $n$ is small there is a non-trivial probability that tosses land either all on heads or  all on tails.  
-
-\item How can we incorporate this prior knowledge about $\theta$ into the modeling problem?
-\eit
 
 \pagebreak
 
@@ -508,7 +512,7 @@ legend("topright",lty=rep(1,4),lwd=2,
 
 \pagebreak
 
-\bexa Suppose we choose $a = 1$ and $b = 1$ (so the prior for $\btheta$ is uniform).
+\bexa Suppose we choose $a = 1$ and $b = 1$ (so the prior for $\btheta$ is uniform). Whys is this a bad prior for this problem?
 
 \bit
 \item Let $n=9$ and generate iid samples $Y_1,\ldots,Y_n\sim \text{Bernoulli}(\theta)$ to obtain realizations $y_{1:n}$ of $Y_{1:n}$.  Assume a uniform prior for $\theta$.
@@ -675,7 +679,7 @@ Note that the above expression implies that $Y^\star\given Y_{1:n}=y_{1:n}\sim \
 
 \subsubsection{Decision Theoretic Objects}
 
-In a few pages we go into some detail regarding the Bayesian approach to decision theory, there we will introduce the remaining recipes (i.e., loss ($\ell(s,a)$ and $\rho(a,x)$) and risk ($R(\theta,\delta)$ and $r(\delta)$) functions), so we skip those for now.
+We won't touch on these for now, but if we have time we will come back to this topic.
 
 
 \section{Example: Estimating the Probability of a Rare Event}
