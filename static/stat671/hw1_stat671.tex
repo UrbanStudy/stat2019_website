@@ -1,0 +1,175 @@
+\documentclass[12pt]{article}
+\setlength{\textwidth}{7in} \setlength{\textheight}{9.8in}
+\setlength{\topmargin}{-1in} \setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+%
+% No page numbering.
+\pagestyle{empty}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{amssymb}
+%\usepackage{algpseudocode}
+\begin{document}
+\thispagestyle{empty}
+%\includegraphics{../../../psulogo_horiz_bw.eps}\hfill\includegraphics{../../../deptlogo}
+\vspace{10pt}
+\begin{center}
+{\large\bf STAT 671}    \\*[5pt] {\Large Statistical Learning I}
+\\*[12pt] {\large Fall 2019}
+\\ {\large Homework 1}
+\\ {\large Due October 14$^{th}$ at the beginning of class}
+\end{center}
+\vspace{1cm}
+\noindent
+
+<<echo=T,fig.height=5,fig.width=5,fig.align='center'>>=
+
+
+@
+
+\section{A simple classifier}
+\begin{enumerate}
+\item Finish the derivation of the simple classifier provided in class. 
+
+We know 
+
+$g(x)=<C_+-C_-,X-C>=<C_+,X>-<C_-,X>-<C_+,C>+<C_-,C>$
+
+For 
+
+$<C_+,X>=<\frac1{n_{+}}\sum\limits_{l\in I_+}^nx_i,x>$
+
+$<C_-,X>=<\frac1{n_{-}}\sum\limits_{l\in I_-}^nx_i,x>$
+
+$<C_+,C>=<C_+,\frac12C_+>+<C_+,\frac12C_->=\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>+\frac12<C_+,C_->$
+
+$<C_-,C>=<C_-,\frac12C_+>+<C_-,\frac12C_->=\frac12<C_+,C_->+\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>$
+
+$\Longrightarrow$
+$g(x)=\sum_{l=1}^n\alpha_i<x_i,x>+b$
+
+Where
+
+$b=\frac12\left[\frac1{n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>-\frac1{n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>\right]$
+
+$\alpha_i=\frac{1}{n_{+}}$ when $y_i=+1$; $\alpha_i=-\frac{1}{n_{-}}$ when $y_i=-1$
+
+
+\item A code in R for this classifier is provided in D2L. Modify this code, or write your own in the language of your choice such that you can compute a classifier for the Iris data.  The Iris dataset is described and is also available at \url{ https://en.wikipedia.org/wiki/Iris_flower_data_set}. Create a classifier for the labels \lq\lq{}I. setosa\rq\rq{} versus \lq\lq{}I. versicolor\rq\rq{} using 80\% of the data. 
+compute the classification error using the 20\% remaining. Then, repeat the same thing for the labels \lq\lq{}I. virginica\rq\rq{} versus \lq\lq{}I. versicolor\rq\rq{}. Report your results in a clear and concise form. 
+\end{enumerate}
+
+<<echo=T,fig.height=5,fig.width=5,fig.align='center'>>=
+rm(list=ls())
+set.seed(0.1)
+@
+
+A few kernel functions
+
+<<echo=T,fig.height=5,fig.width=5,fig.align='center'>>=
+k1 <- function(x,y){
+  sum(x*y)}
+
+k2 <- function(x,y){
+  sum(x*y)+1}
+k3 <- function(x,y){
+  (1+sum(x*y))^2}
+d<-4
+k4 <- function(x,y){
+  (1+sum(x*y))^d}
+sigma<-1
+k5 <- function(x,y){
+ exp(-sum((x-y)^2)/(2*sigma^2))}
+kappa<-1
+theta<-1
+k6 <- function(x,y){
+  tanh(kappa*sum(x*y)+theta)}
+k <- function(x,y){
+  k1(x,y)}
+@
+
+ generate some data in 2d
+
+<<echo=T,fig.height=5,fig.width=5,fig.align='center'>>=
+n.p=10
+n.m=10
+n=n.p+n.m
+library(mvtnorm)
+x.p=rmvnorm(n=n.p,mean=c(2,2),sigma=diag(rep(1,2)))
+x.m=rmvnorm(n=n.m,mean=c(1,1),sigma=diag(rep(2,2)))
+%x.m=rmvnorm(n=n.m,mean=c(1,1),sigma=diag(rep(10,2)))
+y = c(rep(1,n.p),rep(-1,n.m))
+x=rbind(x.p,x.m)
+ %plot(x,col=y+rep(3,n),pch=16)
+ %points(x=colMeans(x.p)[1],y=colMeans(x.p)[2],col=4,pch=5)
+ %points(x=colMeans(x.m)[1],y=colMeans(x.m)[2],col=2,pch=5)
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %% compute the classifier %%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+k.mm=outer(1:n.m,1:n.m,Vectorize(function(i,j) k(x.m[i,],x.m[j,])))
+k.pp=outer(1:n.p,1:n.p,Vectorize(function(i,j) k(x.p[i,],x.p[j,])))
+b=(sum(k.mm)/(n.m*n.m)-sum(k.pp)/(n.p*n.p))/2
+alpha=c(rep(1/n.p,n.p),rep(-1/n.m,n.m))
+@
+
+
+\begin{figure}[h]
+<<echo=F, message=F, warning=F, fig.width=9, fig.height=4, fig.align='center'>>=
+g.n=50
+x.min=min(x)
+x.max=max(x)
+y.hat=matrix(NA,nrow=g.n,ncol=g.n)
+g=seq(from=x.min,to=x.max,length.out=g.n)
+for (i in (1:g.n)){
+  for (j in (1:g.n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)+b
+  }
+}
+contour(x=g,y=g,z=y.hat,asp=1)
+points(x.p,col=4,pch=16)
+points(x.m,col=2,pch=16)
+
+@
+\caption{evaluate the classifier over a grid }
+\label{fig:classifier}
+\end{figure}
+
+
+
+ \section{Perceptron}
+Consider a training set $\{(x_1,y_1),\ldots,(x_n,y_n)\}$, with $x_i \in \mathbb{R}^d$ and $y_i \in {-1,1}$. The perceptron is one of the oldest algorithm in machine learning. Historical notes are provide at \url{https://en.wikipedia.org/wiki/Perceptron}. 
+The perceptron is a linear classifier $f(x)=w^Tx$ where $w \in \mathbb{R}^d$. 
+The algorithm for computing w is as follows: 
+%\begin{algorithmic}
+%\State Init: $w \leftarrow y_1x_1$
+%\For{$i=2 \ldots n$}
+%\If{$y_i w^Tx_i < 0$} $w \leftarrow w + y_ix_i$
+%\EndIf
+%\EndFor
+%\end{algorithmic}
+\begin{enumerate}
+\item Write the kernalized perceptron algorithm. Hint: assume that the kernalized perceptron classifier can be written as 
+$$f(x) =\sum_{i=1}^n \alpha_i <\phi(x_i),\phi(x)>$$
+for some function $\phi$ and that the algorithm above corresponds to the situation when  $\phi$ is the identity function and $<.,.>$ is the usual  inner product in $\mathbb{R}^d$. Initialize with $\alpha_1=\ldots=\alpha_n=0$. Provide a pseudo-code.     
+\item Write the code for data in 2 dimensions, similarly than for the simple classifier. Show 3 examples using 3 different kernels. 
+\end{enumerate}
+\section{Kernels over $\mathcal{X}=\mathbb{R}^2$}
+Let $x=(x_1,x_2) \in \mathbb{R}^2$ and $y=(y_1,y_2) \in \mathbb{R}^2$,
+\begin{enumerate}
+\item Let 
+$$\phi(x)=(x_1^2,\sqrt{2}x_1x_2,x_2^2)$$
+Verify that $\phi(x)^T\phi(y) = (x^Ty)^2$
+\item Find a function $\phi(x)$:$\mathbb{R}^2 \mapsto \mathbb{R}^6$ such that for any $(x,y)$, $\phi(x)^T\phi(y) = (x^Ty+1)^2$
+\item Find a function $\phi(x)$:$\mathbb{R}^2 \mapsto \mathbb{R}^9$ such that for any $(x,y)$, $\phi(x)^T\phi(y) = (x^Ty+1)^2$
+\item Verify that $$K(x,y)=(1+x^Ty)^d$$ for $d=1,2\ldots$ is a positive definite kernel
+\item Can you find a function $\phi$:$\mathbb{R}^2 \mapsto H$, where $H$ is an inner product space such that for any $(x,y)$, $<\phi(x),\phi(y)>_H = x^Ty -1$? 
+\end{enumerate}
+
+
+
+\end{document}

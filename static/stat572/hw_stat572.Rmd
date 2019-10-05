@@ -147,18 +147,88 @@ $= E(\boldsymbol{\theta}^2| y_{1:n})-2E(\boldsymbol{\theta}| y_{1:n})(c-0.5) +(c
 
 $\frac{d}{d\hat{\theta}}\rho(\hat{\theta},y_{1:n})=-2E(\boldsymbol{\theta}|y_{1:n})+2\hat{\theta}=0$
 
-$\hat{\theta}=\delta(y_{1:n}) =E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{42}=c-0.5\implies c=\frac{23}{42}$
+$\hat{\theta}=\delta(y_{1:n}) =E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{42}=c-0.5\implies \hat c=\frac{23}{42}$
 
 
 (c). Graphically compare $l(\theta,\hat c)$ and $l(\theta,\bar y)$ as $\theta$ ranges from 0 to 1.
 
-```{r}
+```{r echo=F,fig.height=5,fig.width=5,fig.align='center'}
+
+n <- 20
+a <- 2
+b <- 20
+y <- 0 
+
+lossfn <- function(theta,c){
+  
+  loss <- (theta-c+0.5)^2
+
+}
+
+theta.values <- seq(0,1,by=0.005)
+loss.values <- lossfn(theta.values,23/42)
+
+plot(x=theta.values,loss.values,type="l",ylim=c(0,2), 
+     main="",xlab=expression(theta),ylab=expression(l(theta,c)))
+lines(x=theta.values,loss.values,type="l",ylim=c(0,2),ylab="",xaxt="n",yaxt="n",col="cornflowerblue")
+text(x=0.7,0.6,labels=expression(paste("c=",hat(c))),cex=1,col="cornflowerblue")
+lines(x=theta.values,lossfn(theta.values,0),type="l",ylim=c(0,2),#range(c(prior,post)),
+     ylab="",xaxt="n",yaxt="n",col="orange")
+text(x=0.5,1.2,labels=expression(paste("c=",bar(y))),cex=1,col="orange")
 
 ```
 
 
+
 (d). Compare the outcome from the Bayesian decision procedure to the procedures that choose (i) $c=\bar y$ and (ii) $c=0.1$ constant (i.e., setting it to the prior mean). This comparison can be done by observing the optimal quantity $c$ derived from each of the decision procedures considered while varying the value of $y$ (the number of infected cases).
 
+```{r echo=F,fig.height=5,fig.width=5,fig.align='center'}
+n <- 20
+a <- 2
+b <- 20
+yvec <- 0:20 
+c.fixed <- 0.1
+c.argminvec <- NA
+
+
+for(y in yvec){
+  rhofn <- function(c){
+    
+    ff <- function(theta){
+      db <- dbeta(theta,shape1=(a+y),shape2=(b+n-y))
+      (theta-c+0.5)^2 * db
+    }
+    
+    res <- integrate(ff, lower=0, upper=1)
+    res$value
+  }
+  
+
+  vrhofn <- Vectorize(rhofn, vectorize.args = "c")
+  c.values <- seq(0,1,by=0.005)
+  rho.values <- vrhofn(c.values)
+  #value of c that minimizes the posterior expected loss
+  (c.argminvec[y+1] <- c.values[which(rho.values==min(rho.values))])
+}
+
+plot(x = yvec,
+     y = c.argminvec,
+     ylim=c(0,1),
+     xlab = "observed number of cases",
+     ylab = "optimal c",
+     type = "o",
+     lwd = 2,
+     pch=20,
+     col="orange")
+lines(x = yvec, y = yvec/n,col="blue",lwd=2)
+points(x = yvec, y = yvec/n,col="blue",pch=20)
+lines(x = yvec, y = rep(c.fixed,(n+1)),col="darkgreen",lwd=2)
+points(x = yvec, y = rep(c.fixed,(n+1)),col="darkgreen",pch=20)
+#add legend to plot
+legend("topleft",legend=c("Bayes",expression(bar(y)),"c=0.1"),
+       col=c("orange","blue","darkgreen"),
+       lty=rep(1,3),pch=rep(20,3),bty="n",ncol=1)
+```
 
 
 

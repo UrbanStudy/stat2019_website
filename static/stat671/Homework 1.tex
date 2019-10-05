@@ -1,0 +1,68 @@
+% Fact sheet for MATH 300, for Fall 2014.
+%
+\documentclass[12pt]{article}
+% Nice page size.
+\setlength{\textwidth}{7in} \setlength{\textheight}{9.8in}
+\setlength{\topmargin}{-1in} \setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+%
+% No page numbering.
+\pagestyle{empty}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{algpseudocode}
+\begin{document}
+\thispagestyle{empty}
+\includegraphics{../../../psulogo_horiz_bw.eps}\hfill\includegraphics{../../../deptlogo}
+\vspace{10pt}
+\begin{center}
+{\large\bf STAT 671}    \\*[5pt] {\Large Statistical Learning I}
+\\*[12pt] {\large Fall 2019}
+\\ {\large Homework 1}
+\\ {\large Due October 14$^{th}$ at the beginning of class}
+\end{center}
+\vspace{1cm}
+\noindent
+
+\section{A simple classifier}
+\begin{enumerate}
+\item Finish the derivation of the simple classifier provided in class. 
+\item A code in R for this classifier is provided in D2L. Modify this code, or write your own in the language of your choice such that you can compute a classifier for the Iris data.  The Iris dataset is described and is also available at \url{ https://en.wikipedia.org/wiki/Iris_flower_data_set}. Create a classifier for the labels \lq\lq{}I. setosa\rq\rq{} versus \lq\lq{}I. versicolor\rq\rq{} using 80\% of the data. 
+compute the classification error using the 20\% remaining. Then, repeat the same thing for the labels \lq\lq{}I. virginica\rq\rq{} versus \lq\lq{}I. versicolor\rq\rq{}. Report your results in a clear and concise form. 
+\end{enumerate}
+ \section{Perceptron}
+Consider a training set $\{(x_1,y_1),\ldots,(x_n,y_n)\}$, with $x_i \in \mathbb{R}^d$ and $y_i \in {-1,1}$. The perceptron is one of the oldest algorithm in machine learning. Historical notes are provide at \url{https://en.wikipedia.org/wiki/Perceptron}. 
+The perceptron is a linear classifier $f(x)=w^Tx$ where $w \in \mathbb{R}^d$. 
+The algorithm for computing w is as follows: 
+\begin{algorithmic}
+\State Init: $w \leftarrow y_1x_1$
+\For{$i=2 \ldots n$}
+\If{$y_i w^Tx_i < 0$} $w \leftarrow w + y_ix_i$
+\EndIf
+\EndFor
+\end{algorithmic}
+\begin{enumerate}
+\item Write the kernalized perceptron algorithm. Hint: assume that the kernalized perceptron classifier can be written as 
+$$f(x) =\sum_{i=1}^n \alpha_i <\phi(x_i),\phi(x)>$$
+for some function $\phi$ and that the algorithm above corresponds to the situation when  $\phi$ is the identity function and $<.,.>$ is the usual  inner product in $\mathbb{R}^d$. Initialize with $\alpha_1=\ldots=\alpha_n=0$. Provide a pseudo-code.     
+\item Write the code for data in 2 dimensions, similarly than for the simple classifier. Show 3 examples using 3 different kernels. 
+\end{enumerate}
+\section{Kernels over $\mathcal{X}=\mathbb{R}^2$}
+Let $x=(x_1,x_2) \in \mathbb{R}^2$ and $y=(y_1,y_2) \in \mathbb{R}^2$,
+\begin{enumerate}
+\item Let 
+$$\phi(x)=(x_1^2,\sqrt{2}x_1x_2,x_2^2)$$
+Verify that $\phi(x)^T\phi(y) = (x^Ty)^2$
+\item Find a function $\phi(x)$:$\mathbb{R}^2 \mapsto \mathbb{R}^6$ such that for any $(x,y)$, $\phi(x)^T\phi(y) = (x^Ty+1)^2$
+\item Find a function $\phi(x)$:$\mathbb{R}^2 \mapsto \mathbb{R}^9$ such that for any $(x,y)$, $\phi(x)^T\phi(y) = (x^Ty+1)^2$
+\item Verify that $$K(x,y)=(1+x^Ty)^d$$ for $d=1,2\ldots$ is a positive definite kernel
+\item Can you find a function $\phi$:$\mathbb{R}^2 \mapsto H$, where $H$ is an inner product space such that for any $(x,y)$, $<\phi(x),\phi(y)>_H = x^Ty -1$? 
+\end{enumerate}
+
+
+
+\end{document}

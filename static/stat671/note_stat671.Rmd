@@ -30,8 +30,7 @@ header-includes:
 \setlength\tabcolsep{0.1pt}
 \setlength\lineskip{0pt}
 \setlength\parskip{0pt}
-#\fontsize{8pt}{0pt}
-#\footnotesize
+
 \setlength{\columnseprule}{0.1pt}
 
 
@@ -70,6 +69,163 @@ $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 
 
 
+
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+library(datasets)
+data(iris)
+iris_setosa <- iris[iris$Species=="setosa",]
+iris_versicolor <- iris[iris$Species=="versicolor",]
+
+iris_test<- rbind(iris_setosa[41:50,],iris_versicolor[41:50,])
+
+iris_train_setosa<- iris_setosa[1:40,]
+
+iris_train_versicolor<- iris_versicolor[1:40,]
+
+
+
+k <- function(x,y){return(x %*% t(y))}
+
+classifier <- function(test,train_po,train_ne){
+
+  
+  for(i in 1:nrow(train_po)){
+    a_po = 1/nrow(train_po)*sum(k(as.matrix(test),train_po[i,c(-5)]))
+  }
+  for(i in 1:nrow(train_ne)){
+    a_ne = 1/nrow(train_ne)*sum(k(as.matrix(test),train_ne[i,c(-5)]))
+  }
+  
+  for(i in 1:(nrow(train_po)-1)){
+    for (j in (i+1):nrow(train_po)){
+      b_po = -0.5*(1/nrow(train_po)^2)*sum(k(as.matrix(train_po[i,c(-5)]),train_po[j,c(-5)]))
+    }
+  }
+  for(i in 1:(nrow(train_ne)-1)){
+    for (j in (i+1):nrow(train_ne)){
+      b_ne = 0.5*(1/nrow(train_ne)^2)*sum(k(as.matrix(train_ne[i,c(-5)]),train_ne[j,c(-5)]))
+    }
+  }
+  
+  class = a_po+a_ne+b_po+b_ne
+  return(ifelse(class>=0,"setosa", "versicolor"))
+}
+
+for (i in 1:20){
+classifier(iris_test[i,c(-5)],iris_train_setosa,iris_train_versicolor)
+}
+
+
+
+g.n=50
+x.min=min(x)
+x.max=max(x)
+y.hat=matrix(NA,nrow=g.n,ncol=g.n)
+g=seq(from=x.min,to=x.max,length.out=g.n)
+for (i in (1:g.n)){
+  for (j in (1:g.n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) k(iris_test[i,c(-5)],u)))
+    y.hat[i,j]=sum(k.x*alpha)+b
+  }
+}
+contour(x=g,y=g,z=y.hat,asp=1)
+points(x.p,col=4,pch=16)
+points(x.m,col=2,pch=16)
+
+library(plotly)
+
+p <- plot_ly(x = g, y = g, z = y.hat) %>% add_surface()
+
+
+```
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+str(iris)
+summary(iris)
+
+library(ggplot2)
+GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3))+theme_light()
+```
+
+
+```{r}
+rm(list=ls())
+set.seed(0.1)
+k1 = function(x,y)
+  return(sum(x*y))
+
+k2 = function(x,y)
+  return(sum(x*y)+1)
+k3 = function(x,y)
+  return((1+sum(x*y))^2)
+d=4
+k4 = function(x,y)
+  return((1+sum(x*y))^d)
+sigma=1
+k5 = function(x,y)
+  return(exp(-sum((x-y)^2)/(2*sigma^2)))
+kappa=1
+theta=1
+k6 = function(x,y)
+  return(tanh(kappa*sum(x*y)+theta))
+k = function(x,y)
+  return(k1(x,y))
+```
+
+
+```{r}
+
+n.p=10
+n.m=10
+n=n.p+n.m
+library(mvtnorm)
+x.p=rmvnorm(n=n.p,mean=c(2,2),sigma=diag(rep(1,2)))
+x.m=rmvnorm(n=n.m,mean=c(1,1),sigma=diag(rep(2,2)))
+y = c(rep(1,n.p),rep(-1,n.m))
+x=rbind(x.p,x.m)
+```
+
+
+
+```{r}
+k.mm=outer(1:n.m,1:n.m,Vectorize(function(i,j) k(x.m[i,],x.m[j,])))
+k.pp=outer(1:n.p,1:n.p,Vectorize(function(i,j) k(x.p[i,],x.p[j,])))
+b=(sum(k.mm)/(n.m*n.m)-sum(k.pp)/(n.p*n.p))/2
+alpha=c(rep(1/n.p,n.p),rep(-1/n.m,n.m))
+```
+
+
+```{r}
+g.n=50
+x.min=min(x)
+x.max=max(x)
+y.hat=matrix(NA,nrow=g.n,ncol=g.n)
+g=seq(from=x.min,to=x.max,length.out=g.n)
+for (i in (1:g.n)){
+  for (j in (1:g.n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)+b
+  }
+}
+contour(x=g,y=g,z=y.hat,asp=1)
+points(x.p,col=4,pch=16)
+points(x.m,col=2,pch=16)
+
+library(plotly)
+kd <- with(MASS::geyser, MASS::kde2d(duration, waiting, n = 50))
+str(kd)
+p <- plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% add_surface()
+plot_ly(z = y.hat) %>% add_surface()
+
+```
+
+
+
+#\fontsize{8pt}{0pt}
+#\footnotesize
 \begin{multicols}{2}
 \end{multicols}
 
@@ -79,4 +235,5 @@ $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 #\begin{tabular}{ l|c|c }
 #&A&B&{\tiny AB}&C&{\tiny AC}&{\tiny BC}&{\tiny \shortstack{AB\\C}}&D&{\tiny AD}&{\tiny BD}&{\tiny \shortstack{AB\\D}}&{\tiny CD}&{\tiny \shortstack{AC\\D}}&{\tiny \shortstack{BC\\D}}&{\tiny \shortstack{AB\\CD}}\\
 #\end{tabular}
+
 
