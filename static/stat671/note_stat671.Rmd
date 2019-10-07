@@ -70,7 +70,7 @@ $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 
 - Import the iris data
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 rm(list=ls())
 library(datasets)
 data(iris)
@@ -78,7 +78,7 @@ iris <- iris[1:100,]
 iris$class <- NA
 ```
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 library(ggplot2)
 GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3),
         columns=c("Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"))+theme_light()
@@ -86,7 +86,7 @@ GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3),
 
 - Define the train and test sets
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 
 iris_setosa <- iris[iris$Species=="setosa",]
 iris_versicolor <- iris[iris$Species=="versicolor",]
@@ -102,7 +102,7 @@ iris_train_versicolor<- iris_versicolor[1:40,]
 
 - Define a kernel function and classifier
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 k <- function(x,y){return(x %*% t(y))}
 classifier <- function(test,train_po,train_ne){
   
@@ -135,14 +135,14 @@ iris_test[i,6] <- classifier(iris_test[i,1:4],iris_train_setosa[,1:4],iris_train
 
 - define a 3D grid
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 kd <- with(iris_test, MASS::kde2d(iris_train$Petal.Length,iris_train$Petal.Width, n = 20))
 kd <- MASS::kde2d(iris_train$Petal.Length,iris_train$Petal.Width, n = 20)
 ```
 
 - Plot the test and 3D grid
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 library(plotly)
 plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z, opacity=0.95)%>%add_markers( x = ~iris_test$Petal.Length, y = ~iris_test$Petal.Width, z = ~iris_test$class-2, color = ~iris_test$Species,size =10, symbol=iris_test$Species, symbols = c('circle-open','cross'))
 ```
@@ -156,7 +156,7 @@ plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z)%>%add_markers( x = ~iris$Petal.Le
 
 - Another kernel function and another way of computing the classifier
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 
 k = function(x,y)  return(sum(x*y)+1)
 
@@ -173,7 +173,7 @@ z.zero=matrix(0,nrow=20,ncol=20)
 
 - Define a grid 
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 g.n=20
 x.min=min(iris_test[,3:4])
 x.max=max(iris_test[,3:4])
@@ -190,7 +190,7 @@ for (i in (1:g.n)){
 
 - Plot the test and grid
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T)%>%
   add_markers( x = iris_test$Petal.Length, y = iris_test$Petal.Width, z = iris_test$class, 
                color =iris_test$Species, size=1,
@@ -203,7 +203,7 @@ plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T)%>%
 
 - Evaluate the classifier
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%'}
 iris_test$evaluate=ifelse(iris_test$class>0,"setosa","versicolor")
 length(which(iris_test$Spicies==iris_test$evaluate))/20
 ```
