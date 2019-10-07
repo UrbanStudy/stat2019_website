@@ -68,160 +68,146 @@ $b=\frac12\left[\frac1{n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>-\frac1{n_{+
 $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 
 
-
-
+- Import the iris data
 
 ```{r,echo=F,message=F,warning=F,out.width='100%'}
+rm(list=ls())
 library(datasets)
 data(iris)
+iris <- iris[1:100,]
+iris$class <- NA
+```
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+library(ggplot2)
+GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3),
+        columns=c("Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"))+theme_light()
+```
+
+- Define the train and test sets
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+
 iris_setosa <- iris[iris$Species=="setosa",]
 iris_versicolor <- iris[iris$Species=="versicolor",]
 
 iris_test<- rbind(iris_setosa[41:50,],iris_versicolor[41:50,])
 
+iris_train<- rbind(iris_setosa[1:40,],iris_versicolor[1:40,])
+
 iris_train_setosa<- iris_setosa[1:40,]
 
 iris_train_versicolor<- iris_versicolor[1:40,]
+```
 
+- Define a kernel function and classifier
 
-
+```{r,echo=F,message=F,warning=F,out.width='100%'}
 k <- function(x,y){return(x %*% t(y))}
-
 classifier <- function(test,train_po,train_ne){
-
   
   for(i in 1:nrow(train_po)){
-    a_po = 1/nrow(train_po)*sum(k(as.matrix(test),train_po[i,c(-5)]))
+    a_po = 1/nrow(train_po)*sum(k(as.matrix(test),train_po[i,]))
   }
   for(i in 1:nrow(train_ne)){
-    a_ne = 1/nrow(train_ne)*sum(k(as.matrix(test),train_ne[i,c(-5)]))
+    a_ne = 1/nrow(train_ne)*sum(k(as.matrix(test),train_ne[i,]))
   }
   
   for(i in 1:(nrow(train_po)-1)){
     for (j in (i+1):nrow(train_po)){
-      b_po = -0.5*(1/nrow(train_po)^2)*sum(k(as.matrix(train_po[i,c(-5)]),train_po[j,c(-5)]))
+      b_po = -0.5*(1/nrow(train_po)^2)*sum(k(as.matrix(train_po[i,]),train_po[j,]))
     }
   }
   for(i in 1:(nrow(train_ne)-1)){
     for (j in (i+1):nrow(train_ne)){
-      b_ne = 0.5*(1/nrow(train_ne)^2)*sum(k(as.matrix(train_ne[i,c(-5)]),train_ne[j,c(-5)]))
+      b_ne = 0.5*(1/nrow(train_ne)^2)*sum(k(as.matrix(train_ne[i,]),train_ne[j,]))
     }
   }
   
   class = a_po+a_ne+b_po+b_ne
-  return(ifelse(class>=0,"setosa", "versicolor"))
+  return(class)
 }
 
 for (i in 1:20){
-classifier(iris_test[i,c(-5)],iris_train_setosa,iris_train_versicolor)
+iris_test[i,6] <- classifier(iris_test[i,1:4],iris_train_setosa[,1:4],iris_train_versicolor[,1:4])
 }
-
-
-
-g.n=50
-x.min=min(x)
-x.max=max(x)
-y.hat=matrix(NA,nrow=g.n,ncol=g.n)
-g=seq(from=x.min,to=x.max,length.out=g.n)
-for (i in (1:g.n)){
-  for (j in (1:g.n)){
-    u=c(g[i],g[j])
-    k.x=outer(1:n,1,Vectorize(function(i,j) k(iris_test[i,c(-5)],u)))
-    y.hat[i,j]=sum(k.x*alpha)+b
-  }
-}
-contour(x=g,y=g,z=y.hat,asp=1)
-points(x.p,col=4,pch=16)
-points(x.m,col=2,pch=16)
-
-library(plotly)
-
-p <- plot_ly(x = g, y = g, z = y.hat) %>% add_surface()
-
-
 ```
+
+- define a 3D grid
 
 ```{r,echo=F,message=F,warning=F,out.width='100%'}
-str(iris)
-summary(iris)
-
-library(ggplot2)
-GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3))+theme_light()
+kd <- with(iris_test, MASS::kde2d(iris_train$Petal.Length,iris_train$Petal.Width, n = 20))
+kd <- MASS::kde2d(iris_train$Petal.Length,iris_train$Petal.Width, n = 20)
 ```
 
+- Plot the test and 3D grid
 
-```{r}
-rm(list=ls())
-set.seed(0.1)
-k1 = function(x,y)
-  return(sum(x*y))
-
-k2 = function(x,y)
-  return(sum(x*y)+1)
-k3 = function(x,y)
-  return((1+sum(x*y))^2)
-d=4
-k4 = function(x,y)
-  return((1+sum(x*y))^d)
-sigma=1
-k5 = function(x,y)
-  return(exp(-sum((x-y)^2)/(2*sigma^2)))
-kappa=1
-theta=1
-k6 = function(x,y)
-  return(tanh(kappa*sum(x*y)+theta))
-k = function(x,y)
-  return(k1(x,y))
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+library(plotly)
+plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z, opacity=0.95)%>%add_markers( x = ~iris_test$Petal.Length, y = ~iris_test$Petal.Width, z = ~iris_test$class-2, color = ~iris_test$Species,size =10, symbol=iris_test$Species, symbols = c('circle-open','cross'))
 ```
 
-
-```{r}
-
-n.p=10
-n.m=10
-n=n.p+n.m
-library(mvtnorm)
-x.p=rmvnorm(n=n.p,mean=c(2,2),sigma=diag(rep(1,2)))
-x.m=rmvnorm(n=n.m,mean=c(1,1),sigma=diag(rep(2,2)))
-y = c(rep(1,n.p),rep(-1,n.m))
-x=rbind(x.p,x.m)
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+for (i in 1:100){
+iris[i,6] <- classifier(iris[i,1:4],iris_train_setosa[,1:4],iris_train_versicolor[,1:4])
+}
+plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z)%>%add_markers( x = ~iris$Petal.Length, y = ~iris$Petal.Width, z = ~iris$class-2, color = ~iris$Species,size =1 )
 ```
 
+- Another kernel function and another way of computing the classifier
 
+```{r,echo=F,message=F,warning=F,out.width='100%'}
 
-```{r}
-k.mm=outer(1:n.m,1:n.m,Vectorize(function(i,j) k(x.m[i,],x.m[j,])))
-k.pp=outer(1:n.p,1:n.p,Vectorize(function(i,j) k(x.p[i,],x.p[j,])))
-b=(sum(k.mm)/(n.m*n.m)-sum(k.pp)/(n.p*n.p))/2
-alpha=c(rep(1/n.p,n.p),rep(-1/n.m,n.m))
+k = function(x,y)  return(sum(x*y)+1)
+
+k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_setosa[i,1:4],iris_train_setosa[j,1:4])))
+k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_versicolor[i,1:4],iris_train_versicolor[j,1:4])))
+b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
+alpha=ifelse(iris_train$Species=="setosa",1/40,-1/40)
+
+k.x=outer(1:80,1:20,Vectorize(function(i,j) k(iris_train[i,1:4],iris_test[j,1:4])))
+iris_test[,6]=(t(k.x)%*%alpha+b)
+
+z.zero=matrix(0,nrow=20,ncol=20)
 ```
 
+- Define a grid 
 
-```{r}
-g.n=50
-x.min=min(x)
-x.max=max(x)
-y.hat=matrix(NA,nrow=g.n,ncol=g.n)
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+g.n=20
+x.min=min(iris_test[,3:4])
+x.max=max(iris_test[,3:4])
+z.hat=matrix(NA,nrow=g.n,ncol=g.n)
 g=seq(from=x.min,to=x.max,length.out=g.n)
 for (i in (1:g.n)){
   for (j in (1:g.n)){
-    u=c(g[i],g[j])
-    k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
-    y.hat[i,j]=sum(k.x*alpha)+b
+    u=c(0,0,g[i],g[j])
+    k.x=outer(1:80,1,Vectorize(function(i,j) k(as.matrix(iris_train[i,1:4]),u)))
+    z.hat[i,j]=sum(k.x*alpha)+b
   }
 }
-contour(x=g,y=g,z=y.hat,asp=1)
-points(x.p,col=4,pch=16)
-points(x.m,col=2,pch=16)
-
-library(plotly)
-kd <- with(MASS::geyser, MASS::kde2d(duration, waiting, n = 50))
-str(kd)
-p <- plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% add_surface()
-plot_ly(z = y.hat) %>% add_surface()
-
 ```
 
+- Plot the test and grid
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T)%>%
+  add_markers( x = iris_test$Petal.Length, y = iris_test$Petal.Width, z = iris_test$class, 
+               color =iris_test$Species, size=1,
+               symbol=iris_test$Species, symbols = c('circle-open','cross'),
+               opacity = 1)%>%
+  layout(scene = list(xaxis = list(title = 'Petal.Length'),
+                     yaxis = list(title = 'Petal.Width'),
+                     zaxis = list(title = 'Class')))
+```
+
+- Evaluate the classifier
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+iris_test$evaluate=ifelse(iris_test$class>0,"setosa","versicolor")
+length(which(iris_test$Spicies==iris_test$evaluate))/20
+```
+Error rate = 0%
 
 
 #\fontsize{8pt}{0pt}
@@ -229,11 +215,8 @@ plot_ly(z = y.hat) %>% add_surface()
 \begin{multicols}{2}
 \end{multicols}
 
-
-
-
 #\begin{tabular}{ l|c|c }
 #&A&B&{\tiny AB}&C&{\tiny AC}&{\tiny BC}&{\tiny \shortstack{AB\\C}}&D&{\tiny AD}&{\tiny BD}&{\tiny \shortstack{AB\\D}}&{\tiny CD}&{\tiny \shortstack{AC\\D}}&{\tiny \shortstack{BC\\D}}&{\tiny \shortstack{AB\\CD}}\\
 #\end{tabular}
 
-
+f
