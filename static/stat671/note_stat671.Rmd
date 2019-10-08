@@ -1,16 +1,16 @@
 ---
 title: ''
-fontfamily: mathpazo
-fontsize: 12pt
+# fontfamily: mathpazo
+fontsize: 10pt
 geometry: margin=3mm
-linestretch: 0.1
+#linestretch: 0.1
 classoption:
 - portrait
-pagenumbering: FALSE
-whitespace: none
+pagenumbering: TRUE
+#whitespace: none
 output:
   html_document:
-    toc: yes
+    toc: FALSE
     toc_depth: 3
     toc_float:
       collapsed: yes
@@ -20,18 +20,12 @@ output:
     number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
-    - \usepackage{booktabs}
-    - \usepackage{tabularx}
+    - \usepackage{multirow}
+    - \usepackage{caption}
     - \setlength\tabcolsep{0.1pt}
     - \setlength\lineskip{0pt}
     - \setlength\parskip{0pt}
 ---
-
-\setlength\tabcolsep{0.1pt}
-\setlength\lineskip{0pt}
-\setlength\parskip{0pt}
-
-\setlength{\columnseprule}{0.1pt}
 
 
 # 
@@ -67,6 +61,8 @@ $b=\frac12\left[\frac1{n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>-\frac1{n_{+
 
 $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 
+\fontsize{10pt}{0pt}
+\footnotesize
 
 - Import the iris data
 
@@ -74,11 +70,9 @@ $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 rm(list=ls())
 library(datasets)
 data(iris)
-iris <- iris[1:100,]
-iris$class <- NA
 ```
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%',fig.align='center'}
 library(ggplot2)
 GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3),
         columns=c("Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"))+theme_light()
@@ -87,22 +81,28 @@ GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3),
 - Define the train and test sets
 
 ```{r,echo=T,message=F,warning=F,out.width='100%'}
-
+iris$class <- NA
 iris_setosa <- iris[iris$Species=="setosa",]
 iris_versicolor <- iris[iris$Species=="versicolor",]
+iris_virginica <- iris[iris$Species=="virginica",]
 
-iris_test<- rbind(iris_setosa[41:50,],iris_versicolor[41:50,])
+iris_train_se<- iris_setosa[1:40,]
+iris_train_ve<- iris_versicolor[1:40,]
+iris_train_vi<- iris_virginica[1:40,]
 
-iris_train<- rbind(iris_setosa[1:40,],iris_versicolor[1:40,])
+iris_test_se<- iris_setosa[41:50,]
+iris_test_ve<- iris_versicolor[41:50,]
+iris_test_vi<- iris_virginica[41:50,]
 
-iris_train_setosa<- iris_setosa[1:40,]
-
-iris_train_versicolor<- iris_versicolor[1:40,]
+iris_train_se.ve<- rbind(iris_train_se,iris_train_ve)
+iris_train_ve.vi<- rbind(iris_train_ve,iris_train_vi)
+iris_test_se.ve<- rbind(iris_test_se,iris_test_ve)
+iris_test_ve.vi<- rbind(iris_test_ve,iris_test_vi)
 ```
 
-- Define a kernel function and classifier
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+# Define a kernel function and classifier
 k <- function(x,y){return(x %*% t(y))}
 classifier <- function(test,train_po,train_ne){
   
@@ -129,94 +129,131 @@ classifier <- function(test,train_po,train_ne){
 }
 
 for (i in 1:20){
-iris_test[i,6] <- classifier(iris_test[i,1:4],iris_train_setosa[,1:4],iris_train_versicolor[,1:4])
+iris_test_se.ve[i,6] <- classifier(iris_test_se.ve[i,1:4],iris_train_se[,1:4],iris_train_ve[,1:4])
 }
 ```
 
-- define a 3D grid
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-kd <- with(iris_test, MASS::kde2d(iris_train$Petal.Length,iris_train$Petal.Width, n = 20))
-kd <- MASS::kde2d(iris_train$Petal.Length,iris_train$Petal.Width, n = 20)
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+# define a 3D grid
+kd <- with(iris_test_se.ve, MASS::kde2d(iris_train_se.ve$Petal.Length,iris_train_se.ve$Petal.Width, n = 20))
+kd <- MASS::kde2d(iris_train_se.ve$Petal.Length,iris_train_se.ve$Petal.Width, n = 20)
 ```
 
-- Plot the test and 3D grid
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+# Plot the test and 3D grid
 library(plotly)
-plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z, opacity=0.95)%>%add_markers( x = ~iris_test$Petal.Length, y = ~iris_test$Petal.Width, z = ~iris_test$class-2, color = ~iris_test$Species,size =10, symbol=iris_test$Species, symbols = c('circle-open','cross'))
+plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z, opacity=0.95)%>%add_markers( x = ~iris_test_se.ve$Petal.Length, y = ~iris_test_se.ve$Petal.Width, z = ~iris_test_se.ve$class-2, color = ~iris_test_se.ve$Species,size =10, symbol=iris_test_se.ve$Species, symbols = c('circle-open','cross'))
 ```
 
 ```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
 for (i in 1:100){
-iris[i,6] <- classifier(iris[i,1:4],iris_train_setosa[,1:4],iris_train_versicolor[,1:4])
+iris[i,6] <- classifier(iris[i,1:4],iris_train_se.ve_setosa[,1:4],iris_train_se.ve_versicolor[,1:4])
 }
 plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z)%>%add_markers( x = ~iris$Petal.Length, y = ~iris$Petal.Width, z = ~iris$class-2, color = ~iris$Species,size =1 )
 ```
 
-- Another kernel function and another way of computing the classifier
+- Define the kernel function and Computing the classifier
 
 ```{r,echo=T,message=F,warning=F,out.width='100%'}
-
 k = function(x,y)  return(sum(x*y)+1)
-
-k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_setosa[i,1:4],iris_train_setosa[j,1:4])))
-k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_versicolor[i,1:4],iris_train_versicolor[j,1:4])))
+k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_se[i,1:4],iris_train_se[j,1:4])))
+k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_ve[i,1:4],iris_train_ve[j,1:4])))
 b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
-alpha=ifelse(iris_train$Species=="setosa",1/40,-1/40)
+alpha=ifelse(iris_train_se.ve$Species=="setosa",1/40,-1/40)
 
-k.x=outer(1:80,1:20,Vectorize(function(i,j) k(iris_train[i,1:4],iris_test[j,1:4])))
-iris_test[,6]=(t(k.x)%*%alpha+b)
+k.x=outer(1:80,1:20,Vectorize(function(i,j) k(iris_train_se.ve[i,1:4],iris_test_se.ve[j,1:4])))
+iris_test_se.ve[,6]=(t(k.x)%*%alpha+b)
 
-z.zero=matrix(0,nrow=20,ncol=20)
 ```
 
-- Define a grid 
-
 ```{r,echo=T,message=F,warning=F,out.width='100%'}
+k = function(x,y)  return(sum(x*y)+1)
+k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_vi[i,1:4],iris_train_vi[j,1:4])))
+k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_ve[i,1:4],iris_train_ve[j,1:4])))
+b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
+alpha=ifelse(iris_train_ve.vi$Species=="virginica",1/40,-1/40)
+
+k.x=outer(1:80,1:20,Vectorize(function(i,j) k(iris_train_ve.vi[i,1:4],iris_test_ve.vi[j,1:4])))
+iris_test_ve.vi[,6]=(t(k.x)%*%alpha+b)
+
+```
+
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+# Define a grid 
 g.n=20
-x.min=min(iris_test[,3:4])
-x.max=max(iris_test[,3:4])
+x.min=min(iris_test_se.ve[,3:4])
+x.max=max(iris_test_se.ve[,3:4])
 z.hat=matrix(NA,nrow=g.n,ncol=g.n)
 g=seq(from=x.min,to=x.max,length.out=g.n)
 for (i in (1:g.n)){
   for (j in (1:g.n)){
     u=c(0,0,g[i],g[j])
-    k.x=outer(1:80,1,Vectorize(function(i,j) k(as.matrix(iris_train[i,1:4]),u)))
+    k.x=outer(1:80,1,Vectorize(function(i,j) k(as.matrix(iris_train_se.ve[i,1:4]),u)))
     z.hat[i,j]=sum(k.x*alpha)+b
   }
 }
 ```
 
-- Plot the test and grid
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T)%>%
-  add_markers( x = iris_test$Petal.Length, y = iris_test$Petal.Width, z = iris_test$class, 
-               color =iris_test$Species, size=1,
-               symbol=iris_test$Species, symbols = c('circle-open','cross'),
+
+```{r,echo=F,message=F,warning=F,out.width='100%',dev='pdf'}
+# Plot the test and grid
+z.zero=matrix(0,nrow=20,ncol=20)
+library(plotly)
+p <- plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T )%>%
+  add_markers( x = iris_test_se.ve$Petal.Length, y = iris_test_se.ve$Petal.Width, z = iris_test_se.ve$class, 
+               color =iris_test_se.ve$Species, size=1,
+               symbol=iris_test_se.ve$Species, symbols = c('circle-open','cross'),
                opacity = 1)%>%
   layout(scene = list(xaxis = list(title = 'Petal.Length'),
                      yaxis = list(title = 'Petal.Width'),
                      zaxis = list(title = 'Class')))
+
 ```
 
 - Evaluate the classifier
 
 ```{r,echo=T,message=F,warning=F,out.width='100%'}
-iris_test$evaluate=ifelse(iris_test$class>0,"setosa","versicolor")
-length(which(iris_test$Spicies==iris_test$evaluate))/20
+iris_test_se.ve$evaluate=ifelse(iris_test_se.ve$class>0,"setosa","versicolor")
+1-length(which(iris_test_se.ve$Species==iris_test_se.ve$evaluate))/20
+
+iris_test_ve.vi$evaluate=ifelse(iris_test_ve.vi$class>0,"virginica","versicolor")
+1-length(which(iris_test_ve.vi$Species==iris_test_ve.vi$evaluate))/20
 ```
-Error rate = 0%
 
+\begin{center}
+    \captionof{table}{Confusion matrix}
+    \label{tab:confusion-matrix}
+\begin{tabular}{|c|c|c|c||c|c|c|}
+\hline
+\multirow{2}{*}{}& \multicolumn{6}{c|}{Actural Species} \\
+\cline{2-7}
+                             & test 1 & Setosa & Versicolor & test 2 & Virginica & Versicolor \\\hline
 
-#\fontsize{8pt}{0pt}
-#\footnotesize
-\begin{multicols}{2}
-\end{multicols}
+\multirow{2}{*}{Test Species}& Setosa & 10 & 0 & Virginica & 9 & 0\\
+\cline{2-7}
+                             & Versicolor & 0 & 10 & Versicolor & 1 & 10\\
+\hline
+\end{tabular}
+  \end{center}
 
-#\begin{tabular}{ l|c|c }
-#&A&B&{\tiny AB}&C&{\tiny AC}&{\tiny BC}&{\tiny \shortstack{AB\\C}}&D&{\tiny AD}&{\tiny BD}&{\tiny \shortstack{AB\\D}}&{\tiny CD}&{\tiny \shortstack{AC\\D}}&{\tiny \shortstack{BC\\D}}&{\tiny \shortstack{AB\\CD}}\\
-#\end{tabular}
+Error rate = 0% and 5% in two tests respectively.
 
-f
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+library(pander)
+library(dplyr)
+pander(bind_cols(iris_test_se.ve[,c(5:7)],iris_test_ve.vi[,c(5:7)]),caption="setosa v.s.versicolor/  /virginica v.s.versicolor")
+```
+
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+library(kableExtra)
+kable(iris_test_se.ve[,c(5:7)],format="latex",booktabs=F)%>%
+     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
+     add_header_above(c("setosa v.s.versicolor" = 4))
+kable(iris_test_ve.vi[,c(5:7)],format="latex",booktabs=F)%>%
+     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
+     row_spec(13,background ="yellow")%>%
+     add_header_above(c("virginica v.s.versicolor" = 4))
+```
+
