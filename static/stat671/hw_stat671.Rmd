@@ -1,6 +1,6 @@
 ---
 title: ''
-fontfamily: mathpazo
+# fontfamily: mathpazo
 fontsize: 10pt
 geometry: margin=3mm
 #linestretch: 0.1
@@ -9,15 +9,9 @@ classoption:
 pagenumbering: TRUE
 #whitespace: none
 output:
-  html_document:
-    toc: FALSE
-    toc_depth: 3
-    toc_float:
-      collapsed: yes
-      smooth_scroll: yes
   pdf_document:
     toc: FALSE
-    number_sections: FALSE
+    number_sections: TRUE
 header-includes:
     - \usepackage{multicol}
     - \usepackage{multirow}
@@ -28,22 +22,10 @@ header-includes:
 ---
 
 
-# 
+671 HW1
 
-### 20191002 {#kernel}
-[kernel](#kernel)
-
-
-- Cat and Dog problem
-
-- A simple geometric solution
-
-- A more general solution
-
-## HW1
-
-### 1-1
-
+\section{ Classifier }
+\subsection{proof}
 Dot product $\vec a\vec b=a_xb_x+a_yb_y=|\vec a||\vec b|\cos(\theta)$
 
 Exercise: 
@@ -67,8 +49,9 @@ $b=\frac12\left[\frac1{n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>-\frac1{n_{+
 $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
 
 
+\section{ Classifier }
+\subsection{iris data clasification}
 
-### 1-2
 
 \fontsize{10pt}{0pt}
 \footnotesize
@@ -136,7 +119,6 @@ classifier <- function(test,train_po,train_ne){
   class = a_po+a_ne+b_po+b_ne
   return(class)
 }
-
 for (i in 1:20){
 iris_test_se.ve[i,6] <- classifier(iris_test_se.ve[i,1:4],iris_train_se[,1:4],iris_train_ve[,1:4])
 }
@@ -164,7 +146,7 @@ plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z)%>%add_markers( x = ~iris$Petal.Le
 - Define the kernel function and Computing the classifier
 
 ```{r,echo=T,message=F,warning=F,out.width='100%'}
-k = function(x,y)  return(sum(x*y)+1)
+k = function(x,y)  return(sum(x*y))
 k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_se[i,1:4],iris_train_se[j,1:4])))
 k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_ve[i,1:4],iris_train_ve[j,1:4])))
 b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
@@ -176,7 +158,7 @@ iris_test_se.ve[,6]=(t(k.x)%*%alpha+b)
 ```
 
 ```{r,echo=T,message=F,warning=F,out.width='100%'}
-k = function(x,y)  return(sum(x*y)+1)
+k = function(x,y)  return(sum(x*y))
 k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_vi[i,1:4],iris_train_vi[j,1:4])))
 k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_ve[i,1:4],iris_train_ve[j,1:4])))
 b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
@@ -206,7 +188,7 @@ for (i in (1:g.n)){
 
 
 
-```{r,echo=F,message=F,warning=F,out.width='100%',dev='pdf'}
+```{r,echo=F,message=F,warning=F,out.width='100%'}
 # Plot the test and grid
 z.zero=matrix(0,nrow=20,ncol=20)
 library(plotly)
@@ -223,12 +205,14 @@ p <- plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T 
 
 - Evaluate the classifier
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
+```{r,echo=T,message=F,warning=F,out.width='100%',collapse=T}
 iris_test_se.ve$evaluate=ifelse(iris_test_se.ve$class>0,"setosa","versicolor")
-1-length(which(iris_test_se.ve$Species==iris_test_se.ve$evaluate))/20
+iris_test_se.ve$evaluate=ifelse(iris_test_se.ve$Species==iris_test_se.ve$evaluate,"Rigt","Wrong")
+length(which(iris_test_se.ve$evaluate=="Wrong"))/20
 
 iris_test_ve.vi$evaluate=ifelse(iris_test_ve.vi$class>0,"virginica","versicolor")
-1-length(which(iris_test_ve.vi$Species==iris_test_ve.vi$evaluate))/20
+iris_test_ve.vi$evaluate=ifelse(iris_test_ve.vi$Species==iris_test_ve.vi$evaluate,"Rigt","Wrong")
+length(which(iris_test_ve.vi$evaluate=="Wrong"))/20
 ```
 
 \begin{center}
@@ -249,47 +233,38 @@ iris_test_ve.vi$evaluate=ifelse(iris_test_ve.vi$class>0,"virginica","versicolor"
 
 Error rate = 0% and 5% in two tests respectively.
 
-```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+```{r,echo=F,message=F,warning=F,out.width='100%'}
 library(pander)
 library(dplyr)
 pander(bind_cols(iris_test_se.ve[,c(5:7)],iris_test_ve.vi[,c(5:7)]),caption="setosa v.s.versicolor/  /virginica v.s.versicolor")
 ```
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
 library(kableExtra)
 kable(list(iris_test_se.ve[,c(5:7)],iris_test_ve.vi[,c(5:7)]),format="latex",booktabs=F)%>%
-     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
-     row_spec(13,background ="yellow")%>%
-  add_header_above(c("setosa v.s.versicolor" = 4,"virginica v.s.versicolor" = 4))
-
+     add_header_above(c("setosa v.s.versicolor" = 4,"virginica v.s.versicolor" = 4))
 ```
 
 
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
 library(kableExtra)
 kable(iris_test_se.ve[,c(5:7)],format="latex",booktabs=F)%>%
      kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
      add_header_above(c("setosa v.s.versicolor" = 4))
+```
+
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
 kable(iris_test_ve.vi[,c(5:7)],format="latex",booktabs=F)%>%
      kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
      row_spec(13,background ="yellow")%>%
      add_header_above(c("virginica v.s.versicolor" = 4))
 ```
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-kable(iris_test_ve.vi[,c(5:7)],format="latex",booktabs=F)%>%
-     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
-     row_spec(13,background ="yellow")%>%
-     add_header_above(c("virginica v.s.versicolor" = 4))
-```
+\section{ Perceptron }
+\subsection{ pseduo code }
 
 
-
-
-### 2-1
-
-```{r}
+```{r, eval=F}
 k_percetron <- function(data,T,n){
   alpha=rep(0,n)
   for (i in 1:n){
@@ -306,76 +281,7 @@ k_percetron <- function(data,T,n){
 }
 ```
 
-```{r}
-## A few kernel functions
 
-k1 = function(x,y)
-  return(sum(x*y))
-k12 = function(x,y)
-  return(sum(x*y)+1)
-k2 = function(x,y)
-  return(sum(x*y)^2)
-k3 = function(x,y)
-  return((1+sum(x*y))^2)
-d=4
-k4 = function(x,y)
-  return((1+sum(x*y))^d)
-sigma=1
-k5 = function(x,y)
-  return(exp(-sum((x-y)^2)/(2*sigma^2)))        
-kappa=1
-theta=1
-k6 = function(x,y)
-  return(tanh(kappa*sum(x*y)+theta))
-k = function(x,y)
-  return(k12(x,y))
-```
-
-```{r}
-## generate 2d data
-n.p=40
-n.m=40
-n=n.p+n.m
-library(mvtnorm)
-x.p=rmvnorm(n=n.p,mean=c(1,1)+c(2,2),sigma=diag(rep(1,2)))
-x.m=rmvnorm(n=n.m,mean=c(-1,-1)+c(2,2),sigma=diag(rep(2,2)))
-y = c(rep(1,n.p),rep(-1,n.m))
-x=rbind(x.p,x.m)
-plot(x,col=y+rep(3,n),pch=16)
-```
-
-```{r}
-## compute the classifier 
-f.per=function(u){
-  k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
-  return(sum(alpha*k.x))
-}  
-alpha=rep(0.0,times=n)
-alpha[1]=y[1]
-for (i in (2:n))
-  if ((f.per(x[i,])*y[i])<0) alpha[i]=y[i]
-```
-
-```{r}
-## evaluate the classifier over a grid
-g.n=50
-x.min=min(x)
-x.max=max(x)
-y.hat=matrix(NA,nrow=g.n,ncol=g.n)
-g=seq(from=x.min,to=x.max,length.out=g.n)
-for (i in (1:g.n)){
-  for (j in (1:g.n)){
-    u=c(g[i],g[j])
-    k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
-    y.hat[i,j]=sum(k.x*alpha)
-  }
-}
-filled.contour(x=g,y=g,z=y.hat,
-               plot.axes = {axis(1);axis(2);points(x,col=y+rep(3,n),pch=16) })
-```
-
-
-### 2-2
 
 ```{r, eval=F}
 data <- data.frame(matrix(runif(200,min = -10, max=10),nrow = 100, ncol = 2))
@@ -404,4 +310,154 @@ k_percetron(data,10)
 k <- function(a,b){return((a %*% t(b) +1)^2)}
 k_percetron(data,10)
 ```
+
+```{r,echo=T,message=F,warning=F,out.width='50%'}
+rm(list=ls())
+## generate 2d data
+n.p=50
+n.m=50
+n=n.p+n.m
+library(mvtnorm)
+data.p=rmvnorm(n=n.p,mean=c(1,1)+c(2,2),sigma=diag(rep(1,2)))
+data.m=rmvnorm(n=n.m,mean=c(-1,-1)+c(2,2),sigma=diag(rep(2,2)))
+class = c(rep(1,n.p),rep(-1,n.m))
+data=rbind(data.p,data.m)
+id_train=sort(sample(1:100,size=80))
+id_test=sort(c(1:100)[-id_train])
+data_train=data[id_train,]
+class_train=class[id_train]
+n_train=dim(data_train)[1]
+data_train.m=data_train[class_train==-1,]
+data_train.p=data_train[class_train==1,]
+n_train.m=dim(data_train.m)[1]
+n_train.p=dim(data_train.p)[1]
+data_test=data[id_test,]
+class_test=class[id_test]
+n_test=dim(data_test)[1]
+plot(data_train,col=class_train+rep(2,n_train),pch=1);points(data_test,col=class_test+rep(2,n_test),pch=3)
+```
+
+
+```{r, eval=F}
+## compute the classifier by k1
+k = function(x,y)  return(sum(x*y))
+k_percetron=function(u){
+  k.x=outer(1:n_train,1,Vectorize(function(i,j) k(data_train[i,],data_train[j,])))
+  return(sum(alpha*k.x))
+}  
+alpha=matrix(NA,nrow=n_train,ncol=2)
+alpha[1,]=class_train[1]*data_train[1,]
+for (i in (2:n_train)){
+  if ((k_percetron(data_train[i,])*class_train[i])<0) alpha[i,]=alpha[i,]+class_train[i]*data_train[i,]
+}
+alpha
+z.hat=matrix(NA,nrow=20,ncol=1)
+k.x=outer(1:80,1:20,Vectorize(function(i,j) k(data_train[i,],data_train[j,])))
+for (i in (1:20)){
+z.hat[i]=sum(t(k.x[,i])%*%alpha)
+}
+z.hat
+```
+
+
+
+```{r}
+## compute the classifier by k1
+k = function(x,y)  return(sum(x*y))
+
+k_percetron=function(n.test){
+  
+alpha=rep(0,n_train)
+alpha[1]=class_train[1]  
+  
+for (j in (2:n_train)){  
+  k.x=outer(1:n_train,1,Vectorize(function(i,j) k(data_train[i,],data_train[j,])))
+  
+  if ((sum(alpha*k.x)*class_train[j])<0) alpha[j]=alpha[j]+class_train[j]*data_train[j,]
+}
+
+z.hat=matrix(NA,nrow=n.test,ncol=1)
+k.x=outer(1:80,1:20,Vectorize(function(i,j) k(data_train[i,],data_train[j,])))
+for (t in (1:n.test)){
+z.hat[t]=sum(t(k.x[,t])%*%alpha)
+}
+return(z.hat)
+}
+
+```
+
+
+\subsection{Using 3 Kernels}
+
+```{r,echo=F,message=F,warning=F,out.width='100%'}
+# Plot the test and grid
+k1_test <- cbind(data.frame(x1=data_test[,1]),data.frame(x2=data_test[,2]),data.frame(class=class_test),data.frame(predict=c(k_percetron(20))))
+
+g.n=20
+x.min=min(data_test)
+x.max=max(data_test)
+y.hat=matrix(NA,nrow=g.n,ncol=g.n)
+g=seq(from=x.min,to=x.max,length.out=g.n)
+for (i in (1:g.n)){
+  for (j in (1:g.n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n_train,1,Vectorize(function(i,j) k(data_train[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)
+  }
+}
+
+library(plotly)
+plot_ly (type = 'surface' , x=g,y=g,z=(y.hat), opacity = 0.9 ,showscale =T )%>%
+  add_markers( x = k1_test$x1, y = k1_test$x2, z = k1_test$predict, 
+               color =k1_test$class, size=1,
+               symbol=k1_test$class, symbols = c('circle-open','cross'),
+               opacity = 1)%>%
+  layout(scene = list(xaxis = list(title = 'x1'),
+                     yaxis = list(title = 'x2'),
+                     zaxis = list(title = 'predict')))
+plot_ly ( k1_test,x = k1_test$x1, y = k1_test$x2, z =k1_test$predict,type = 'scatter3d', color=k1_test$class,symbol=k1_test$class, symbols = c('circle-open','cross'))%>%
+  add_surface(x=g,y=g,z=(y.hat), opacity = 0.9 ,showscale =T)
+```
+
+
+```{r eval=F}
+## evaluate the classifier
+
+    for (j in 1:100){
+    for (i in 1:100){
+      alpha[j] =ifelse (as.matrix(data$y[i])%*%alpha[j]%*%as.matrix(data[i,-3])<0, alpha[j]+as.matrix(data$y[i])%*%as.matrix(data[i,-3]), alpha[j])
+    }
+  }
+```
+
+
+```{r}
+
+## compute the classifier by k1
+k1_test <- k_percetron(20)
+## compute the classifier by k2
+k = function(x,y)
+  return(sum(x*y)+1)
+k2_test <- k_percetron(20)
+## compute the classifier by k3
+k = function(x,y)
+  return((1+sum(x*y))^2)
+k3_test <- k_percetron(20)
+
+pander(cbind(k1_test,k2_test,k3_test),caption="k1/ k2 /k3")
+```
+
+\section{ Kernels over $\mathcal{X}=\mathbb{R}^2$ }
+
+\subsection{Verify that $\phi(x)^T\phi(y) = (x^Ty)^2$}
+\begin{enumerate}
+\item Find a function $\phi(x)$:$\mathbb{R}^2 \mapsto \mathbb{R}^6$ such that for any $(x,y)$, $\phi(x)^T\phi(y) = (x^Ty+1)^2$
+\item Find a function $\phi(x)$:$\mathbb{R}^2 \mapsto \mathbb{R}^9$ such that for any $(x,y)$, $\phi(x)^T\phi(y) = (x^Ty+1)^2$
+\item Verify that $$K(x,y)=(1+x^Ty)^d$$ for $d=1,2\ldots$ is a positive definite kernel
+\item find a function $\phi$:$\mathbb{R}^2 \mapsto H$, where $H$ is an inner product space such that for any $(x,y)$, $<\phi(x),\phi(y)>_H = x^Ty -1$
+\end{enumerate}
+
+
+
+
 

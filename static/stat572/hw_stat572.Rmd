@@ -1,11 +1,20 @@
 ---
 title: ''
+fontsize: 10pt
+geometry: margin=3mm
 output:
+  pdf_document:
+    toc: no
   html_document:
     toc: no
     toc_float: no
-  pdf_document:
-    toc: no
+header-includes:
+    - \usepackage{multicol}
+    - \usepackage{multirow}
+    - \usepackage{caption}
+    - \setlength\tabcolsep{0.1pt}
+    - \setlength\lineskip{0pt}
+    - \setlength\parskip{0pt}
 ---
 
 
@@ -40,11 +49,11 @@ $(y_1,...,y_8) = (20.9,69.7,3.6,21.8,21.4,0.4,6.7,10.0)$
 Plot the prior and posterior pdf’s. (Be sure to make your plots on a scale that allows you to clearly see the important features.) 
 
 
-```{r echo=F, message=F, warning=F, fig.width=4, fig.height=4, fig.align='center'}
+```{r echo=T, message=F, warning=F,out.width='50%',fig.show='hold', fig.align='center'}
 y <- cumsum(c(20.9,69.7,3.6,21.8,21.4,0.4,6.7,10.0))
 N <- 1:8
 k <- 8
-ps <- seq(0,0.5,length.out = 50)
+ps <- seq(0,1,length.out = 50)
 prior <- dgamma(ps,shape=0.1,rate=1)
 post <- dgamma(ps,shape=(0.1+N[k]),rate=(1+y[k]))
 
@@ -152,7 +161,7 @@ $\hat{\theta}=\delta(y_{1:n}) =E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{42}=c-0.5
 
 (c). Graphically compare $l(\theta,\hat c)$ and $l(\theta,\bar y)$ as $\theta$ ranges from 0 to 1.
 
-```{r echo=F,fig.height=5,fig.width=5,fig.align='center'}
+```{r echo=T,out.width='50%',fig.show='hold',fig.align='center'}
 
 n <- 20
 a <- 2
@@ -182,7 +191,7 @@ text(x=0.5,1.2,labels=expression(paste("c=",bar(y))),cex=1,col="orange")
 
 (d). Compare the outcome from the Bayesian decision procedure to the procedures that choose (i) $c=\bar y$ and (ii) $c=0.1$ constant (i.e., setting it to the prior mean). This comparison can be done by observing the optimal quantity $c$ derived from each of the decision procedures considered while varying the value of $y$ (the number of infected cases).
 
-```{r echo=F,fig.height=5,fig.width=5,fig.align='center'}
+```{r echo=T,out.width='50%',fig.show='hold',fig.align='center'}
 n <- 20
 a <- 2
 b <- 20
