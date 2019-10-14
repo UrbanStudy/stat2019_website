@@ -112,14 +112,18 @@ plot(x  = Theta,y = post.theta,
 
 (c). Find $E[\theta|x]$, the posterior mean of $\theta$.
 
-$$p(\theta|x)\propto p(x|\theta) p(\theta)=\frac{(20\theta)^{x}e^{-20\theta}}{x!}\boldsymbol{1}_{\{\theta\in\Theta\}} \frac1{50}\propto\theta^{x}e^{-20\theta}\boldsymbol{1}_{\{\theta\in\Theta\}}
-\propto \text{Gamma}(x+1,20)$$
-
-$E[\theta|X=36]=\frac{36+1}{20}=1.85$
-
 ```{r}
 sum(Theta*post.theta)
 ```
+
+- A method may be not right, but has a same value.
+
+$p(\theta|x)\propto p(x|\theta) p(\theta)=\frac{(20\theta)^{x}e^{-20\theta}}{x!}\boldsymbol{1}_{\{\theta\in\Theta\}} \frac1{50}\propto\theta^{x}e^{-20\theta}\boldsymbol{1}_{\{\theta\in\Theta\}}
+\propto \text{Gamma}(x+1,20)$
+
+$E[\theta|X=36]=\frac{36+1}{20}=1.85$
+
+
 
 (d). Find two numbers, $\theta_l$ and $\theta_h$ such that $Pr(\theta_l\le\theta\le\theta_h|x)\approx 0.95$. This is an approximate 95% posterior confidence interval. Note that there is more than one way of doing this. 
 
@@ -223,7 +227,7 @@ $= \int_{\theta\in\Theta} \theta e^{-\theta y_{n+1}} \frac{(b+\sum y_i)^{a+n}}{\
 
 $=\frac{(a+n)(b+\sum y_i)^{a+n}}{(b+\sum y_i+y_{n+1})^{a+n+1}} \int_{\theta\in\Theta} \frac{(b+\sum y_i+y_{n+1})^{a+n+1}}{\Gamma(a+n+1)}\theta^{a+n}e^{-(b+\sum y_i+y_{n+1})\theta}d\theta$
 
-$$= \frac{(a+n)(b+\sum y_i)^{a+n}}{(b+\sum y_i+y_{n+1})^{a+n+1}}$$
+$$= \frac{(a+n)(b+\sum_{i=1}^{n} y_i)^{a+n}}{(b+\sum_{i=1}^{n+1} y_i)^{a+n+1}}\prod_{i=1}^{n+1} 1_{\{y_i>0\}}$$
 
 
 
@@ -268,21 +272,20 @@ plot(x = c.values,y = rho.values,
      xlab = "c",ylab = expression(rho(theta,c)),
      type = "l",lwd = 2,col="orange")
 abline(v=c.argmin,col="forestgreen",lwd=2,lty=3)
-text(0.75,0.2,labels="c=0.55 minimizes the \n poseriorexpected loss")
+text(0.75,0.2,labels=expression(paste(hat(c),"=0.55")))
 ```
+The Bayesian decision procedure gives that $\hat c=0.55$ can minimize the poseriorexpected loss.
 
+Check with
+$\ell(\theta,c)=\theta^2-2\hat{\theta}\theta+\hat{\theta}^2$;
+$\frac{d}{d\hat{\theta}}\rho(\hat{\theta},y_{1:n})=-2E(\boldsymbol{\theta}|y_{1:n})+2\hat{\theta}=0$;
+$\hat{\theta}=E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{2+40}=\frac{2}{42}$
 
-$$\ell(\theta,c)=\theta^2-2\hat{\theta}\theta+\hat{\theta}^2$$
-$$\frac{d}{d\hat{\theta}}\rho(\hat{\theta},y_{1:n})=-2E(\boldsymbol{\theta}|y_{1:n})+2\hat{\theta}=0$$
-
-$$\hat{\theta}=E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{2+40}=\frac{2}{42}$$
-
-Let $\hat{\theta}=c-0.5$, $$\hat{\theta}=\delta(y_{1:n}) =E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{42}=c-0.5\implies \hat c=\frac{23}{42}=0.547619$$
-
+Let $\hat{\theta}=c-0.5$, $\hat{\theta}=\delta(y_{1:n}) =E(\boldsymbol{\theta}|y_{1:n})=\frac{2}{42}=c-0.5\implies \hat c=\frac{23}{42}=0.547619$,
 which is very close to the result by Bayesian decision procedure.
 
-
-$$\rho(\hat{\theta},y_{1:n}) = E(\ell(\boldsymbol{\theta},\hat{\theta})| y_{1:n})= E[(\boldsymbol{\theta}-\hat{\theta})^2| y_{1:n}]=E[(\boldsymbol{\theta}-\mu)^2| y_{1:n}]=Var(\boldsymbol{\theta}| y_{1:n})=\frac{2*40}{42^2(42+1)}=0.001054685$$
+And, 
+$\rho(\hat{\theta},y_{1:n}) = E(\ell(\boldsymbol{\theta},\hat{\theta})| y_{1:n})= E[(\boldsymbol{\theta}-\hat{\theta})^2| y_{1:n}]=E[(\boldsymbol{\theta}-\mu)^2| y_{1:n}]=Var(\boldsymbol{\theta}| y_{1:n})=\frac{2*40}{42^2(42+1)}=0.001054685$
 
 (c). Graphically compare $l(\theta,\hat c)$ and $l(\theta,\bar y)$ as $\theta$ ranges from 0 to 1.
 

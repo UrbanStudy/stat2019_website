@@ -30,21 +30,21 @@ Shen Qu
 \section{ Classifier }
 \subsection{proof}
 
-$g(x)=<C_+-C_-,X-C>=<C_+,X>-<C_-,X>-<C_+,C>+<C_-,C>$;
+$g(x)=\langle C_+-C_-,X-C\rangle =\langle C_+,X\rangle -\langle C_-,X\rangle -\langle C_+,C\rangle +\langle C_-,C\rangle$
 
-$<C_+,X>=<\frac1{n_{+}}\sum\limits_{i\in I_+}^nx_i,x>$;
+$\langle C_+,X\rangle =\frac1{n_{+}}\sum\limits_{i\in I_+}^n\langle x_i,x\rangle$;
 
-$<C_-,X>=<\frac1{n_{-}}\sum\limits_{i\in I_-}^nx_i,x>$;
+$\langle C_-,X\rangle =\frac1{n_{-}}\sum\limits_{i\in I_-}^n\langle x_i,x\rangle$;
 
-$<C_+,C>=<C_+,\frac12C_+>+<C_+,\frac12C_->=\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>+\frac12<C_+,C_->$
+$\langle C_+,C\rangle =\langle C_+,\frac12C_+\rangle +\langle C_+,\frac12C_-\rangle =\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle +\frac12\langle C_+,C_-\rangle$
 
-$<C_-,C>=<C_-,\frac12C_+>+<C_-,\frac12C_->=\frac12<C_+,C_->+\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>$
+$\langle C_-,C\rangle =\langle C_-,\frac12C_+\rangle +\langle C_-,\frac12C_-\rangle =\frac12\langle C_+,C_-\rangle +\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle$
 
-$g(x)=<\frac1{n_{+}}\sum\limits_{i\in I_+}^nx_i,x>-<\frac1{n_{-}}\sum\limits_{i\in I_-}^nx_i,x>-\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>-\frac12<C_+,C_->+\frac12<C_+,C_->+\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>$
+$$g(x)=\frac1{n_{+}}\sum\limits_{i\in I_+}^n\langle x_i,x\rangle-\frac1{n_{-}}\sum\limits_{i\in I_-}^n\langle x_i,x\rangle -\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle-\frac12\langle C_+,C_-\rangle +\frac12\langle C_+,C_-\rangle +\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle$$
 
-$$=\sum_{i=1}^n\alpha_i<x_i,x>+b$$
+$$=\sum_{i=1}^n\alpha_i\langle x_i,x\rangle +b$$
 
- where $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$; $b=\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>-\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>$
+ where $\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$; $b=\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle -\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle$
 
 \subsection{iris data clasification}
 
@@ -311,7 +311,7 @@ misclassfied <- TRUE                       ## initialize the argument
 }
 k <- function(x,y) {return(sum(x*y))} ## Use k1
 (w1 <- k_perceptron(data,2))
-k <- function(x,y) {return(sum(x*y+1))} ## Use k2
+k <- function(x,y) {return(sum(x*y)+1)} ## Use k2
 (w2 <- k_perceptron(data,2))
 k <- function(x,y) {return(sign(x%*%y))} ## Use k3
 (w3 <- k_perceptron(data,2))
@@ -378,22 +378,22 @@ $$k(x,y)=(1+x^Ty)^d=\sum_{k=0}^d\binom{d}{k}(x^Ty)^k1^{d-k}=\sum_{k=0}^d\binom{d
 
 For $d,k\in\mathbb{N^+}$,
 
-$$\sum_{i=1}^2\sum_{j=1}^2\alpha_i\alpha_j<x_i,x_j>_{R^d}=\sum_{i=1}^2\sum_{j=1}^2\alpha_i\alpha_j\left[\sum_{k=0}^d\binom{d}k\phi_i(x)^T\phi_j(x)\right]=\sum_{k=0}^d\binom{d}k\left[\sum_{i=1}^2\sum_{j=1}^2\alpha_i\alpha_j<\phi_i(x)^T\phi_j(x)>_{R}\right]$$
+$$\sum_{i=1}^2\sum_{j=1}^2\alpha_i\alpha_j\langle x_i,x_j\rangle_{R^d}=\sum_{i=1}^2\sum_{j=1}^2\alpha_i\alpha_j\left[\sum_{k=0}^d\binom{d}k\phi_i(x)^T\phi_j(x)\right]=\sum_{k=0}^d\binom{d}k\left[\sum_{i=1}^2\sum_{j=1}^2\alpha_i\alpha_j\langle\phi_i(x)^T\phi_j(x)\rangle_{R}\right]$$
 $$=\sum_{k=0}^d\binom{d}k\|\sum_{i=1}^2\alpha_i\phi_i(x)\|^2\ge0$$
 
 Therefore, for $x_1,x_2$, $x_i\in\mathbb{R^d}$; $\alpha_1,..\alpha_2$, $\alpha_i\in\mathbb{R}$
 $k(x,y)=(1+x^Ty)^d$ is a positive definite kernel. $\qquad\blacksquare$
 
 
-\subsection{find a function $\phi$:$\mathbb{R}^2 \mapsto H$, where $H$ is an inner product space such that for any $(x,y)$, $<\phi(x),\phi(y)>_H = x^Ty -1$}
+\subsection{find a function $\phi$:$\mathbb{R}^2 \mapsto H$, where $H$ is an inner product space such that for any $(x,y)$, $\langle\phi(x),\phi(y)\rangle_H = x^Ty -1$}
 
-$$k(x,y)=<\phi(x),\phi(y)>_H = x^Ty -1=\begin{bmatrix} x_1\\x_2 \end{bmatrix}_{2\times1}\begin{bmatrix} y_1&y_2 \end{bmatrix}_{1\times2}-1=x_1y_1+x_2y_2-1$$
+$$k(x,y)=\langle \phi(x),\phi(y)\rangle _H = x^Ty -1=\begin{bmatrix} x_1\\x_2 \end{bmatrix}_{2\times1}\begin{bmatrix} y_1&y_2 \end{bmatrix}_{1\times2}-1=x_1y_1+x_2y_2-1$$
 
-For all $|x|<\frac{\sqrt{2}}{2}$, when $\alpha_1=\alpha_2=1$, $<\phi(x),\phi(x)>_H=2x^2-1<0$.
+For all $|x|<\frac{\sqrt{2}}{2}$, when $\alpha_1=\alpha_2=1$, $\langle\phi(x),\phi(x)\rangle_H=2x^2-1<0$.
 
 By the property of Kernel, $k(x,y)$ should be positive. 
 
-Therefore, there isn't a function $\phi$:$\mathbb{R}^2 \mapsto H$ that can make $<\phi(x),\phi(y)>_H = x^Ty -1$. $\qquad\blacksquare$
+Therefore, there isn't a function $\phi$:$\mathbb{R}^2 \mapsto H$ that can make $\langle\phi(x),\phi(y)\rangle_H = x^Ty -1$. $\qquad\blacksquare$
 
 
 
