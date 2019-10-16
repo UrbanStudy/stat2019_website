@@ -76,7 +76,7 @@ text(0.1,18,labels="posterior",cex=1,col="orange")
 
 In stable traffic, the time between the vehicles entering the highway has an exponential distribution.
 
-The distribution of urban size (human population) within a region have the "rank-size" property called Zipf ’s law. Reed et al. (2004) found "the time since foundation follows an exponential distribution, and that at foundation sizes are lognormally distributed, then the current sizes should follow the Double Pareto-Lognormal Distribution. 
+The distribution of urban size (human population) within a region have the "rank-size" property called Zipf ’s law. Reed et al. (2004) found "the time since foundation follows an exponential distribution, and that at foundation sizes are lognormally distributed, then the current sizes should follow the Double Pareto-Lognormal Distribution". 
 
 The p.d.f. of Pareto distribution has a scale parameter of $\alpha$ and its support is dependent on the value of $\alpha$ (lower limit). Thus, the Exponential model is not appropriate for the distribution of urban size.
 
@@ -97,9 +97,9 @@ $$p(\theta\,|\, x)=\frac{p(x|\theta_j)p(\theta_j)}{\sum_{k=1}^Kp(x|\theta_k)p(\t
 
 
 ```{r}
-x <- 36; n <- 20
+x <- 36; n <- 20; a.n <- x+1; b.n <- n
 Theta <- seq(0.1,5,by = 0.1)
-post.theta <- exp(-n*Theta)*(Theta^x)
+post.theta <-  exp(-n*Theta)*(Theta^x) 
 post.theta <- post.theta/sum(post.theta)
 ```
 
@@ -116,7 +116,7 @@ plot(x  = Theta,y = post.theta,
 sum(Theta*post.theta)
 ```
 
-- A method may be not right, but has a same value.
+- A method may not be right, but give a same value.
 
 $p(\theta|x)\propto p(x|\theta) p(\theta)=\frac{(20\theta)^{x}e^{-20\theta}}{x!}\boldsymbol{1}_{\{\theta\in\Theta\}} \frac1{50}\propto\theta^{x}e^{-20\theta}\boldsymbol{1}_{\{\theta\in\Theta\}}
 \propto \text{Gamma}(x+1,20)$
@@ -148,17 +148,16 @@ while(round(cumprob,2)<0.95){
   cumprob <- sum(post.theta[post.theta>=pmf[k]])
   k <- k+1
 }
-names(hpd_ci) <- c("l(x)","u(x)")
+names(hpd_ci) <- c("l(x)","h(x)")
 
 pos.lims.hpd <- which(Theta%in%hpd_ci)
 #move position one to the left of lower limit since:
-# P(theta \in [l(y),u(y)]) = P(theta <= u(y))- P(theta < l(y))
+# P(theta \in [l(y),h(y)]) = P(theta <= u(y))- P(theta < l(y))
 pos.lims.hpd[1] <- pos.lims.hpd[1]-1
 #get cumulative probs for each limit
 cumprobs.lims.hpd <- cumsum(post.theta)[pos.lims.hpd]
 #the difference below gives the actual Bayesian coverage of the HPD
 check_hpd <- diff(cumprobs.lims.hpd)
-
 hpd_ci
 check_hpd
 ```
@@ -173,10 +172,12 @@ plot(x  = Theta,
 abline(v=quant_ci,col="red",lwd=2,lty=2)
 abline(v=hpd_ci,col="forestgreen",lwd=2,lty=3)
 legend("topright",lty=c(2,3),col=c("red","forestgreen"),
-       legend=c("p(quant CI)=0.0.945","p(HPD CI)=0.954"))
+       legend=c("p(quant CI)=0.945","p(HPD CI)=0.954"))
 ```
 
 
+
+The quantile CI bound (red) from $l(x)=1.3$ to $h(x)=2.5$ is wider than HPD CI (green) from $l(x)=1.3$ to $h(x)=2.4$, I feel confused that the p(HPD CI)=0.954>p(quant CI)=0.945.
 
 (e). Remake the plot in part (b) but with $n = 40$ and $x = 72$. Describe and explain the differences you see between this plot and the one in (b).
 
@@ -214,7 +215,6 @@ The result shows that the ratio of observed value over sample size will decide t
 ### 3  posterior predictive density
 
 Suppose the data $y_{1:n}|\theta$ is modeled as iid $Exp(\theta)$, and the prior is 
-
 $p(\theta) = Gamma(\theta|a,b) = \frac{b^a}{\Gamma(a)} \theta^{a-1}e^{-b\theta}1_{\{\theta>0\}}$
 
 From problem 1, we know that the posterior is $p(\theta|y_{1:n}) = Gamma(\theta|a_n,b_n)$, where $a_n=a+n$ and $b_n=b+\sum^n_{i=1} y_i$. What is the posterior predictive density $p(y_{n+1}|y_{1:n})$? Give your answer as a closed-form expression (not an integral). 
@@ -223,11 +223,11 @@ $p(y_{n+1}| y)\;=\; p(y_{n+1}| y_{1:n})=\int_{\theta\in\Theta} p(y_{n+1},\theta 
 $= \int_{\theta\in\Theta} p(y_{n+1} | \theta, y_{1:n}) p(\theta | y_{1:n}) d\theta$
 $= \int_{\theta\in\Theta} p(y_{n+1} | \theta) p(\theta | y_{1:n}) d\theta$
 
-$= \int_{\theta\in\Theta} \theta e^{-\theta y_{n+1}} \frac{(b+\sum y_i)^{a+n}}{\Gamma(a+n)}\theta^{a+n-1}e^{-(b+\sum y_i)\theta} d\theta$
+$$= \int_{\theta\in\Theta} \theta e^{-\theta y_{n+1}}\mathbf{1}_{\{y>0\}} \frac{(b+\sum y_i)^{a+n}}{\Gamma(a+n)}\theta^{a+n-1}e^{-(b+\sum y_i)\theta}\mathbf{1}_{\{\theta>0\}} d\theta$$
 
-$=\frac{(a+n)(b+\sum y_i)^{a+n}}{(b+\sum y_i+y_{n+1})^{a+n+1}} \int_{\theta\in\Theta} \frac{(b+\sum y_i+y_{n+1})^{a+n+1}}{\Gamma(a+n+1)}\theta^{a+n}e^{-(b+\sum y_i+y_{n+1})\theta}d\theta$
+$$=\frac{(a+n)(b+\sum y_i)^{a+n}}{(b+\sum y_i+y_{n+1})^{a+n+1}}\mathbf{1}_{\{y>0\}} \int_{\theta\in\Theta} \frac{(b+\sum y_i+y_{n+1})^{a+n+1}}{\Gamma(a+n+1)}\theta^{a+n}e^{-(b+\sum y_i+y_{n+1})\theta}\mathbf{1}_{\{\theta>0\}}d\theta$$
 
-$$= \frac{(a+n)(b+\sum_{i=1}^{n} y_i)^{a+n}}{(b+\sum_{i=1}^{n+1} y_i)^{a+n+1}}\prod_{i=1}^{n+1} 1_{\{y_i>0\}}$$
+$$= \frac{(a+n)(b+\sum_{i=1}^{n} y_i)^{a+n}}{(b+\sum_{i=1}^{n+1} y_i)^{a+n+1}}\mathbf{1}_{\{y>0\}}$$
 
 
 
@@ -348,5 +348,5 @@ legend("topleft",legend=c("Bayes",expression(bar(y)),"c=0.1"),
        lty=rep(1,3),pch=rep(20,3),bty="n",ncol=1)
 ```
 
-
+The result shows that, if set $c=0.1$ constant, the number of infected cases will not change the optimal c; if set $c=\bar y$, the more infected cases, the optimal c is closer to Bayesian decision procedure. This may suggest that the set of loss function is more decisive when there is a few infected cases.
 
