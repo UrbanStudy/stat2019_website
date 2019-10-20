@@ -1,5 +1,6 @@
 ---
-title: ''
+title: 'Note of STAT 671'
+subtitle: 'Statistical Learning I 2019'
 fontfamily: mathpazo
 fontsize: 10pt
 geometry: margin=3mm
@@ -9,15 +10,16 @@ classoption:
 pagenumbering: TRUE
 #whitespace: none
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 4
+    number_sections: yes
   html_document:
-    toc: FALSE
-    toc_depth: 3
+    toc: yes
+    toc_depth: 4
     toc_float:
       collapsed: yes
       smooth_scroll: yes
-  pdf_document:
-    toc: FALSE
-    number_sections: FALSE
 header-includes:
     - \usepackage{multicol}
     - \usepackage{multirow}
@@ -28,380 +30,319 @@ header-includes:
 ---
 
 
-# 
+# {.tabset .tabset-fade .tabset-pills}
 
-### 20191002 {#kernel}
-[kernel](#kernel)
 
+## Kernel `10/02`
 
 - Cat and Dog problem
 
-- A simple geometric solution
 
-- A more general solution
 
-## HW1
+### A Simple Classifier
 
-### 1-1
+- $\mathcal{X}\mapsto\mathbb{R}^2$, Training set:
+ 
+ $$T=\{(x_i,y_i);x_i\in\mathcal{X},y_i\in\{-1;+1\}\}$$
+ 
+Notate  $I_+=\{i;y_i=+1\},\ I_-=\{i;y_i=-1\}$
+Number of  $I_+=n_+;\ I_-=n_-;\ T=n=n_++n_-$
+
+$$C_+=\frac1{n_{+}}\sum\limits_{i\in I_+}^n x_i;\quad C_-=\frac1{n_{-}}\sum\limits_{i\in I_-}^n x_i;\quad C=\frac1{2}(C_++C_-)$$
+
+- Deifne the generalized "simple classifier" $g: \mathbb{R}^2\to\mathbb{R}$
+
+\begin{eqnarray*}
+g(x)&=\langle C_+-C_-,X-C\rangle_{\mathbb{R}^2}=(X-C)^T(C_+-C_-)\\
+    &=\langle X,C_+\rangle-\langle X,C_-\rangle+b
+\end{eqnarray*}
+
+- A binary "simple classifier" is then $f(x)=\begin{cases}+1&\text{if }g(x)\ge0\\-1&\text{if }g(x)<0\end{cases}$
+
+Let us write $g(x)$ using $\langle \cdot,\cdot\rangle_{\mathbb{R}^2}$ such that we can propose other classifiers by using the kernel trick, that is reproduing $\langle \cdot,\cdot\rangle_{\mathbb{R}^2}$ by $k(\cdot,\cdot)$ a p.d. kernel.
+
+$$g(x)=\langle C_+,X\rangle -\langle C_-,X\rangle -\langle C_+,C\rangle +\langle C_-,C\rangle$$
+
+$\langle C_+,X\rangle =\frac1{n_{+}}\sum\limits_{i\in I_+}^n\langle x_i,x\rangle$;
+
+$\langle C_-,X\rangle =\frac1{n_{-}}\sum\limits_{i\in I_-}^n\langle x_i,x\rangle$;
+
+$\langle C_+,C\rangle =\langle C_+,\frac12C_+\rangle +\langle C_+,\frac12C_-\rangle =\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle +\frac12\langle C_+,C_-\rangle$
+
+$\langle C_-,C\rangle =\langle C_-,\frac12C_+\rangle +\langle C_-,\frac12C_-\rangle =\frac12\langle C_+,C_-\rangle +\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle$
+
+$$g(x)=\frac1{n_{+}}\sum\limits_{i\in I_+}^n\langle x_i,x\rangle-\frac1{n_{-}}\sum\limits_{i\in I_-}^n\langle x_i,x\rangle -\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle-\frac12\langle C_+,C_-\rangle +\frac12\langle C_+,C_-\rangle +\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle$$
+
+$$=\sum_{i=1}^n\alpha_i\langle x_i,x\rangle +b;
+\text{where } \alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\\frac{-1}{n_{-}}&y_i=-1\end{cases};\ b=\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle -\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle$$
+ 
+
+### A simple geometric solution
+
+### A more general solution
+
+
+## RKHS `10/09`
+Reproducing Kernel Hilbert Space
+
+A Hilbert Space is a complete inner product space.
+
+A inner product space is a vector space with an inner product (dot product, scalar product).
 
 Dot product $\vec a\vec b=a_xb_x+a_yb_y=|\vec a||\vec b|\cos(\theta)$
 
-Exercise: 
+Start with a vector space (H,+,$\cdot$) over $\mathbb{R}$ ($\cdot$ scalor multiplication)
+
+An inner product is a mapping: $H\times H\to\mathbb{R}$ such that
+
+1. $\langle f,g\rangle=\langle g,f\rangle$ symmetry for any $f,g\in H$
+
+2. $\langle\alpha f_1+\beta f_2,g\rangle=\alpha\langle f_1,g\rangle+\beta\langle f_2,g\rangle$ for any $f,g\in H;\alpha,\beta\in\mathbb{R}$
+
+3. $\langle f,f\rangle\ge0$ for all $f\in H$
+
+4. $\langle f,f\rangle=0\iff f=0_H$
+
+We can define $\|f\|^2=\langle f,f\rangle$ that defines a Norm on $H$
+
+A metric space is complete for an inner product when it cantains the limit fo all the Cauchy sequences for this inner product.
+
+- 
+
+$x,x'\in\mathcal{X}\neq\phi$, $\phi\in\mathcal{H}$
+
+K is a positive definite kernel, $\mathcal{H}$ is a Hilbert Space of function $\mathcal{X}\mapsto\mathbb{R}$.
+
+We known that if a function $k: \mathcal{X}\times\mathcal{X}\mapsto\mathbb{R}$ verifies $k(x,x')=\langle\phi(x),\phi(x')_{\mathcal{H}}$, then it is a positive kernel
+
+- Reverse: Aronsjar Theorem
+
+If k is a positive definite kernel then there exist $\mathcal{H}$ and $\phi$ such that $k(x,x')=\langle\phi(x),\phi(x')_{\mathcal{H}}$ is true.
 
 
-$g(x)=<C_+-C_-,X-C>=<C_+,X>-<C_-,X>-<C_+,C>+<C_-,C>$;
+Let us start with k and come up with $\mathcal{H}$ and $\phi$ : $\mathcal{X}, k(\cdot,\cdot)$
 
-$<C_+,X>=<\frac1{n_{+}}\sum\limits_{l\in I_+}^nx_i,x>$;
+Let us start $\mathcal{H}$ with the function $k(\cdot,x)$ for all $x\in\mathcal{X}$
 
-$<C_-,X>=<\frac1{n_{-}}\sum\limits_{l\in I_-}^nx_i,x>$;
+### Example 0: Linear kernel 
 
-$<C_+,C>=<C_+,\frac12C_+>+<C_+,\frac12C_->=\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>+\frac12<C_+,C_->$
+$\mathcal{X}=\mathbb{R}, k(x,x')=xx'$, $k(\cdot,x): y\mapsto yx$
 
-$<C_-,C>=<C_-,\frac12C_+>+<C_-,\frac12C_->=\frac12<C_+,C_->+\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>$
+### Example 1: Gaussian kernel with parametor $\sigma^2$
 
-
-$g(x)=\sum_{l=1}^n\alpha_i<x_i,x>+b$, 
-
-$b=\frac12\left[\frac1{n_{-}^2}\sum\limits_{(i,j)\in I_{-}}<x_i,x_j>-\frac1{n_{+}^2}\sum\limits_{(i,j)\in I_{+}}<x_i,x_j>\right]$
-
-$\alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\-\frac1{n_{-}}&y_i=-1\end{cases}$
+$k(\cdot,x): y\mapsto \exp[-\frac1{2\sigma^2}(y-x)^2]$
 
 
+Let us create a vector space by adding all the finite linear combination of $k(\cdot,x),x\in\mathcal{X}$
 
-### 1-2
+$$V=\{f:\mathcal{X}\to\mathbb{R},\ f(x)=\sum_{i=1}^n\alpha_ik(x,x_i)\ \text{  for some  } n\ge1;\ x_1,..,x_n\in\mathcal{X};\alpha_1,..,\alpha_n\in\mathbb{R}\}$$
 
-\fontsize{10pt}{0pt}
-\footnotesize
-
-- Import the iris data
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-rm(list=ls())
-library(datasets)
-data(iris)
-```
-
-```{r,echo=T,message=F,warning=F,out.width='100%',fig.align='center'}
-library(ggplot2)
-GGally::ggpairs(iris,mapping=aes(color =Species,shape=Species,alpha=0.3),
-        columns=c("Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"))+theme_light()
-```
-
-- Define the train and test sets
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-iris$class <- NA
-iris_setosa <- iris[iris$Species=="setosa",]
-iris_versicolor <- iris[iris$Species=="versicolor",]
-iris_virginica <- iris[iris$Species=="virginica",]
-
-iris_train_se<- iris_setosa[1:40,]
-iris_train_ve<- iris_versicolor[1:40,]
-iris_train_vi<- iris_virginica[1:40,]
-
-iris_test_se<- iris_setosa[41:50,]
-iris_test_ve<- iris_versicolor[41:50,]
-iris_test_vi<- iris_virginica[41:50,]
-
-iris_train_se.ve<- rbind(iris_train_se,iris_train_ve)
-iris_train_ve.vi<- rbind(iris_train_ve,iris_train_vi)
-iris_test_se.ve<- rbind(iris_test_se,iris_test_ve)
-iris_test_ve.vi<- rbind(iris_test_ve,iris_test_vi)
-```
-
-
-```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
-# Define a kernel function and classifier
-k <- function(x,y){return(x %*% t(y))}
-classifier <- function(test,train_po,train_ne){
+$$f\in V\leftrightarrow\begin{Bmatrix}\ x_1,..,x_n\\\alpha_1,..,\alpha_n\end{Bmatrix}\quad 
+  g\in V\leftrightarrow\begin{Bmatrix}\ y_1,..,y_m\\\beta_1,..,\beta_m\end{Bmatrix}\quad 
+  f+g\leftrightarrow\begin{Bmatrix}\ x_1,..,x_n,y_1,..,y_m\\\alpha_1,..,\alpha_n,\beta_1,..,\beta_m\end{Bmatrix}\quad 
+  \gamma f\leftrightarrow\begin{Bmatrix}\ x_1,..,x_n\\\gamma\alpha_1,..,\gamma\alpha_n\end{Bmatrix},\gamma\in\mathbb{R}$$
   
-  for(i in 1:nrow(train_po)){
-    a_po = 1/nrow(train_po)*sum(k(as.matrix(test),train_po[i,]))
-  }
-  for(i in 1:nrow(train_ne)){
-    a_ne = 1/nrow(train_ne)*sum(k(as.matrix(test),train_ne[i,]))
-  }
-  
-  for(i in 1:(nrow(train_po)-1)){
-    for (j in (i+1):nrow(train_po)){
-      b_po = -0.5*(1/nrow(train_po)^2)*sum(k(as.matrix(train_po[i,]),train_po[j,]))
-    }
-  }
-  for(i in 1:(nrow(train_ne)-1)){
-    for (j in (i+1):nrow(train_ne)){
-      b_ne = 0.5*(1/nrow(train_ne)^2)*sum(k(as.matrix(train_ne[i,]),train_ne[j,]))
-    }
-  }
-  
-  class = a_po+a_ne+b_po+b_ne
-  return(class)
-}
+$$\gamma_1f+\gamma_2g\leftrightarrow\begin{Bmatrix}\ \overbrace{x_1,..,x_n}^{z_1,..,z_n},\overbrace{y_1,..,y_m}^{z_{n+1},..,z_{n+m}}\\
+                     \underbrace{\gamma_1\alpha_1,..,\gamma_1\alpha_n}_{\delta_1,..,\delta_n},\underbrace{\gamma_2\beta_1,..,\gamma_2\beta_m}_{\delta_{n+1},..,\delta_{n+m}}\end{Bmatrix}
+                     \leftrightarrow h(x)=\sum_{i=1}^{n+m}\delta_ik(x,z_i)$$
 
-for (i in 1:20){
-iris_test_se.ve[i,6] <- classifier(iris_test_se.ve[i,1:4],iris_train_se[,1:4],iris_train_ve[,1:4])
-}
-```
+$$(\gamma_1f+\gamma_2g)(x)=\gamma_1\sum_{i=1}^n\alpha_ik(x,x_i)+\gamma_2\sum_{i=1}^m\beta_ik(x,y_i)=\gamma_1f(x)+\gamma_2g(x)$$
 
-```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
-# define a 3D grid
-kd <- with(iris_test_se.ve, MASS::kde2d(iris_train_se.ve$Petal.Length,iris_train_se.ve$Petal.Width, n = 20))
-kd <- MASS::kde2d(iris_train_se.ve$Petal.Length,iris_train_se.ve$Petal.Width, n = 20)
-```
+Note: the representation $\begin{Bmatrix}\ x_1,..,x_n\\\alpha_1,..,\alpha_n\end{Bmatrix}$ of a function in V is not necessary unique
 
-```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
-# Plot the test and 3D grid
-library(plotly)
-plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z, opacity=0.95)%>%add_markers( x = ~iris_test_se.ve$Petal.Length, y = ~iris_test_se.ve$Petal.Width, z = ~iris_test_se.ve$class-2, color = ~iris_test_se.ve$Species,size =10, symbol=iris_test_se.ve$Species, symbols = c('circle-open','cross'))
-```
-
-```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
-for (i in 1:100){
-iris[i,6] <- classifier(iris[i,1:4],iris_train_se.ve_setosa[,1:4],iris_train_se.ve_versicolor[,1:4])
-}
-plot_ly (type='surface',x=kd$x,y=kd$y,z =kd$z)%>%add_markers( x = ~iris$Petal.Length, y = ~iris$Petal.Width, z = ~iris$class-2, color = ~iris$Species,size =1 )
-```
-
-- Define the kernel function and Computing the classifier
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-k = function(x,y)  return(sum(x*y)+1)
-k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_se[i,1:4],iris_train_se[j,1:4])))
-k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_ve[i,1:4],iris_train_ve[j,1:4])))
-b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
-alpha=ifelse(iris_train_se.ve$Species=="setosa",1/40,-1/40)
-
-k.x=outer(1:80,1:20,Vectorize(function(i,j) k(iris_train_se.ve[i,1:4],iris_test_se.ve[j,1:4])))
-iris_test_se.ve[,6]=(t(k.x)%*%alpha+b)
-
-```
-
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-k = function(x,y)  return(sum(x*y)+1)
-k.pp=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_vi[i,1:4],iris_train_vi[j,1:4])))
-k.mm=outer(1:40,1:40,Vectorize(function(i,j) k(iris_train_ve[i,1:4],iris_train_ve[j,1:4])))
-b=(sum(k.mm)/(40^2)-sum(k.pp)/(40^2))/2
-alpha=ifelse(iris_train_ve.vi$Species=="virginica",1/40,-1/40)
-
-k.x=outer(1:80,1:20,Vectorize(function(i,j) k(iris_train_ve.vi[i,1:4],iris_test_ve.vi[j,1:4])))
-iris_test_ve.vi[,6]=(t(k.x)%*%alpha+b)
-
-```
+- Define $\langle f,g\rangle=\sum_{i=1}^n\alpha_i\sum_{j=1}^m\beta_ik(x_i,y_j)$ is a function $\mathcal{X}\times\mathcal{X}\mapsto\mathbb{R}$
 
 
-```{r,echo=F,message=F,warning=F,out.width='100%'}
-# Define a grid 
-g.n=20
-x.min=min(iris_test_se.ve[,3:4])
-x.max=max(iris_test_se.ve[,3:4])
-z.hat=matrix(NA,nrow=g.n,ncol=g.n)
-g=seq(from=x.min,to=x.max,length.out=g.n)
-for (i in (1:g.n)){
-  for (j in (1:g.n)){
-    u=c(0,0,g[i],g[j])
-    k.x=outer(1:80,1,Vectorize(function(i,j) k(as.matrix(iris_train_se.ve[i,1:4]),u)))
-    z.hat[i,j]=sum(k.x*alpha)+b
-  }
-}
-```
+$f\in V\leftrightarrow\begin{Bmatrix}\ x_1,..,x_n\\\alpha_1,..,\alpha_n\end{Bmatrix};g\in V\leftrightarrow\begin{Bmatrix}\ y_1,..,y_m\\\beta_1,..,\beta_m\end{Bmatrix}$
 
+$$\langle f,g\rangle=\sum_{i=1}^n\alpha_i\underbrace{\sum_{j=1}^m\beta_ik(x_i,y_j)}_{g(x_i)}=\sum_{i=1}^n\alpha_ig(x_i)
+=\sum_{j=1}^m\beta_i\underbrace{\sum_{i=1}^n\alpha_ik(y_j,x_i)}_{f(y_j)}=\sum_{j=1}^m\beta_if(y_j)$$
 
+which shows that $\langle f,g\rangle$ does not depend on the particular representation of $(f,g)$
 
-```{r,echo=F,message=F,warning=F,out.width='100%',dev='pdf'}
-# Plot the test and grid
-z.zero=matrix(0,nrow=20,ncol=20)
-library(plotly)
-p <- plot_ly (type = 'surface' , x=g,y=g,z=(z.hat), opacity = 0.9 ,showscale =T )%>%
-  add_markers( x = iris_test_se.ve$Petal.Length, y = iris_test_se.ve$Petal.Width, z = iris_test_se.ve$class, 
-               color =iris_test_se.ve$Species, size=1,
-               symbol=iris_test_se.ve$Species, symbols = c('circle-open','cross'),
-               opacity = 1)%>%
-  layout(scene = list(xaxis = list(title = 'Petal.Length'),
-                     yaxis = list(title = 'Petal.Width'),
-                     zaxis = list(title = 'Class')))
+So it is a function $\mathcal{X}\times\mathcal{X}\mapsto\mathbb{R}$
 
-```
+$\langle f,k(\cdot,x)\rangle=\sum_{i=1}^n\alpha_ik(x_i,x)=f(x)$
 
-- Evaluate the classifier
+$\langle k(\cdot,y),k(\cdot,x)\rangle=k(x,y)$
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-iris_test_se.ve$evaluate=ifelse(iris_test_se.ve$class>0,"setosa","versicolor")
-1-length(which(iris_test_se.ve$Species==iris_test_se.ve$evaluate))/20
+## RKHS construction and definitions `10/14`
 
-iris_test_ve.vi$evaluate=ifelse(iris_test_ve.vi$class>0,"virginica","versicolor")
-1-length(which(iris_test_ve.vi$Species==iris_test_ve.vi$evaluate))/20
-```
+, $\phi\in\mathcal{H}$
 
-\begin{center}
-    \captionof{table}{Confusion matrix}
-    \label{tab:confusion-matrix}
-\begin{tabular}{|c|c|c|c||c|c|c|}
-\hline
-\multirow{2}{*}{}& \multicolumn{6}{c|}{Actural Species} \\
-\cline{2-7}
-                             & test 1 & Setosa & Versicolor & test 2 & Virginica & Versicolor \\\hline
+K is a positive definite kernel over $\mathcal{X}\neq\phi$ $\iff$ There is some Hilbert Space $\mathcal{H}$ and some mapping $\phi: x\mapsto\mathcal{H}$ such that
+$k(x,y)=\langle\phi(x),\phi(y)\rangle_{\mathcal{H}}$ is true for every $(x,y)\in \mathcal{X}\times\mathcal{X}$
 
-\multirow{2}{*}{Test Species}& Setosa & 10 & 0 & Virginica & 9 & 0\\
-\cline{2-7}
-                             & Versicolor & 0 & 10 & Versicolor & 1 & 10\\
-\hline
-\end{tabular}
-  \end{center}
+For constructing $t\mapsto k(t,x), x\in\mathbb{R}$, add linear combinations
 
-Error rate = 0% and 5% in two tests respectively.
+$$f:\mathcal{X}\mapsto\mathbb{R};\ f(x)=\sum_{i=1}^n\alpha_ik(x,x_i);\ g(x)=\sum_{j=1}^m\beta_jk(x,y_j)$$
 
-```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
-library(pander)
-library(dplyr)
-pander(bind_cols(iris_test_se.ve[,c(5:7)],iris_test_ve.vi[,c(5:7)]),caption="setosa v.s.versicolor/  /virginica v.s.versicolor")
-```
+- Define $\langle f,g\rangle=\sum_{i=1}^n\sum_{j=1}^m\alpha_i\beta_ik(x_i,y_j)$
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-library(kableExtra)
-kable(list(iris_test_se.ve[,c(5:7)],iris_test_ve.vi[,c(5:7)]),format="latex",booktabs=F)%>%
-     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
-     row_spec(13,background ="yellow")%>%
-  add_header_above(c("setosa v.s.versicolor" = 4,"virginica v.s.versicolor" = 4))
+1. not depend on the "represenation" in term of $\begin{Bmatrix}\ x_1,..,x_n\\\alpha_1,..,\alpha_n\end{Bmatrix}; \begin{Bmatrix}\ y_1,..,y_m\\\beta_1,..,\beta_m\end{Bmatrix}$
 
-```
+2. $\langle f,g\rangle=\langle g,f\rangle$
+
+3. Linearity $\langle f+g,h\rangle=\langle f,h\rangle+\langle g,h\rangle;\ \alpha\langle f,g\rangle=\alpha\langle f,g\rangle$ 
+
+4. $\langle f,f\rangle\ge0\iff$ k has the definite positive property
+
+$\langle f,k(\cdot,x)\rangle=\sum_{i=1}^n\alpha_ik(x_i,x)=f(x)$, $f\in\begin{Bmatrix}\ x_1,..,x_n\\\alpha_1,..,\alpha_n\end{Bmatrix}$; $k(\cdot,x)=(x,1)^T$
+
+$k(x,y)=\langle\phi(x),\phi(y)\rangle=\langle k(\cdot,y),k(\cdot,x)\rangle=\langle k(\cdot,x),k(\cdot,y)\rangle$
+
+- Proof $\langle f,f\rangle=0\implies f=0\iff$ for any $x\in\mathcal{X}, f(x)=0$
+
+Step 1 check that $\langle f,g\rangle$ is p.d.;
+
+$f_1,..f_n$, scalar $\gamma_1,..,\gamma_n$
+
+ $$\sum_{i=1}^n\sum_{j=1}^n\gamma_i\gamma_j\langle f_i,f_j\rangle=\langle\sum_{i=1}^n\gamma_i f_i,\sum_{j=1}^n\gamma_jf_j\rangle\ge0, g\in H$$
+
+Step 2 Use Cauchy-Schwarz inequality for $\langle f,g\rangle$
+
+$x\in\mathcal{X},f\in\mathcal{H}$
+
+$$|f(x)|^2=|\langle f,k(\cdot,x)\rangle|^2\le\|f\|^2\|k(\cdot,x)\|^2=\|f\|^2k(x,x)$$
+then for any $x\in\mathcal{X}$, $\|f\|^2=\langle f,f\rangle=0\implies|f(x)|^2=0\implies f(x)=0$
+
+We have shown that ($H,\langle\cdot,\cdot\rangle$) just constructed to a inner product space pre-Hilbert Space.
+
+It can be completed into a Hilbert Space by including the limits of convergent Cauchy sequances
+
+- Define RKHS 1
+
+$X\neq\phi$, $\mathcal{H}$ is a Hilbert Space of function $\mathcal{X}\mapsto\mathbb{R}$
+
+$\mathcal{H}$ is a Reproducing Kernel Hilbert Space when there is a function $k: \mathcal{X}\times\mathcal{X}\mapsto\mathbb{R}$ such that
+
+1. $k(\cdot,x)\in{\mathcal{H}}$ for all $x\in\mathcal{X}$
+
+2. Reproducing Property $\langle\underbrace{ f}_{function},\underbrace{k(\cdot,x)}_{argument}\rangle_{\mathcal{H}}=f(x)$ for any $f\in\mathcal{H}$
+
+### Example 0: $\mathcal{X}\in\mathbb{R}^d,\quad k(x,y)=x^Ty$
+
+The RKHS with kernel k is 
+
+$$\mathcal{H} = \{f_w:\ \mathbb{R}^d\mapsto\mathbb{R};\ f_w(x)=w^Tx;\quad w\in\mathbb{R}^d\}$$
+
+$$\langle f_v,f_w\rangle_{\mathcal{H}}=v^Tw\implies\langle f_v,f_v\rangle=\|f_v\|^2_{\mathcal{H}}=\|v\|^2$$
+Let us check that $\mathcal{H}$ is the RKHS associated with k
+
+$t\mapsto k(t,x)=x^Tt=(x^Tt)^T=t^Tx=f_t(x)$
+
+Exercise:
+
+$\langle f,k(\cdot,x)\rangle=\langle f_w,f_x\rangle=x^Tw=(x^Tw)^T=w^Tx=f_w(x)$
+
+### Example 1: $\mathcal{X}\in\mathbb{R}^d,\quad k(x,y)=x^Ty+c,c>0$
 
 
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-library(kableExtra)
-kable(iris_test_se.ve[,c(5:7)],format="latex",booktabs=F)%>%
-     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
-     add_header_above(c("setosa v.s.versicolor" = 4))
-kable(iris_test_ve.vi[,c(5:7)],format="latex",booktabs=F)%>%
-     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
-     row_spec(13,background ="yellow")%>%
-     add_header_above(c("virginica v.s.versicolor" = 4))
-```
+$$\mathcal{H} = \{f:\ \mathbb{R}^d\mapsto\mathbb{R};\ f_{w,w_0}(x)=w^Tx+w_0;\quad w\in\mathbb{R}^d,w_0\in\mathbb{R}\}$$
+$$\langle f_{v,v_0},f_{w,w_0}\rangle_{\mathcal{H}}=v^Tw+\frac1cv_0w_0\implies\langle f_{v,v_0},f_{v,v_0}\rangle=\|f_{v,v_0}\|^2_{\mathcal{H}}=\|v\|^2+\frac{v_0^2}c$$
+What is the RKHS associated with $k_c$?
 
-```{r,echo=T,message=F,warning=F,out.width='100%'}
-kable(iris_test_ve.vi[,c(5:7)],format="latex",booktabs=F)%>%
-     kable_styling(c("striped", "bordered"), full_width = F,font_size = 8)%>%
-     row_spec(13,background ="yellow")%>%
-     add_header_above(c("virginica v.s.versicolor" = 4))
-```
+$t\mapsto k(t,x)=x^Tt=(x^Tt)^T=t^Tx=f_t(x)$
 
+$$\langle f_{w,w_0},k(\cdot,x)\rangle=\langle f_{w,w_0},f_x\rangle=x^Tw+\frac1cxw_0=(x^Tw+c)^T+w_0=w^Tx+w_0=f_w(x)$$
 
+- Define RKHS 2
+
+$X\neq\phi$, $\mathcal{H}$ is a Hilbert Space of function $\mathcal{X}\mapsto\mathbb{R}$
+
+$\mathcal{H}$ is a RKHS if and only if for any $f\in{\mathcal{H}}$, $x\in\mathcal{X}$
+
+the evaluation function $\mathcal{H}\mapsto\mathbb{R}$: $F_x: f\mapsto f(x)$ is continuous
+
+$f,g\in\mathcal{H}$ if $\|f-g\|$ is small then their different $|f(x)-g(x)|$ is small.
 
 
-### 2-1
 
-```{r}
-k_percetron <- function(data,T,n){
-  alpha=rep(0,n)
-  for (i in 1:n){
-    for (j in 1:n){
-      K[i,j]=alpha %*% k(dataX[i,],dataX[j,])
-    }
-  }
-  for (t in 1:T){
-    for (i in 1:n){
-      ifelse (dataX$y[i]%*%alpha[t]%*%data$x[i,]<0, alpha[t]+data$y[i]%*%data$x[i,], alpha[t])
-    }
-  }
-  return(sum(K[i,j]))
-}
-```
+## Two Definitions of RKHS (why equvalent) `10/16`
 
-```{r}
-## A few kernel functions
+$X\neq\phi$, $\mathcal{H}$: Hilbert Space of function $\mathcal{X}\mapsto\mathbb{R}$
 
-k1 = function(x,y)
-  return(sum(x*y))
-k12 = function(x,y)
-  return(sum(x*y)+1)
-k2 = function(x,y)
-  return(sum(x*y)^2)
-k3 = function(x,y)
-  return((1+sum(x*y))^2)
-d=4
-k4 = function(x,y)
-  return((1+sum(x*y))^d)
-sigma=1
-k5 = function(x,y)
-  return(exp(-sum((x-y)^2)/(2*sigma^2)))        
-kappa=1
-theta=1
-k6 = function(x,y)
-  return(tanh(kappa*sum(x*y)+theta))
-k = function(x,y)
-  return(k12(x,y))
-```
+Example: $\mathcal{X}=\{x_1,..x_n\}$;  $\begin{bmatrix} f(x_1)\\\vdots\\f(x_n) \end{bmatrix}\subset\{\text{vector of}\ \mathbb{R}^n\}$
 
-```{r}
-## generate 2d data
-n.p=40
-n.m=40
-n=n.p+n.m
-library(mvtnorm)
-x.p=rmvnorm(n=n.p,mean=c(1,1)+c(2,2),sigma=diag(rep(1,2)))
-x.m=rmvnorm(n=n.m,mean=c(-1,-1)+c(2,2),sigma=diag(rep(2,2)))
-y = c(rep(1,n.p),rep(-1,n.m))
-x=rbind(x.p,x.m)
-plot(x,col=y+rep(3,n),pch=16)
-```
+### Definition 1: 
 
-```{r}
-## compute the classifier 
-f.per=function(u){
-  k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
-  return(sum(alpha*k.x))
-}  
-alpha=rep(0.0,times=n)
-alpha[1]=y[1]
-for (i in (2:n))
-  if ((f.per(x[i,])*y[i])<0) alpha[i]=y[i]
-```
+$\mathcal{H}$ is a RKHS when there is a function $\mathcal{X}\times\mathcal{X}\mapsto\mathbb{R}$, $K(\cdot,\cdot)$ such that
 
-```{r}
-## evaluate the classifier over a grid
-g.n=50
-x.min=min(x)
-x.max=max(x)
-y.hat=matrix(NA,nrow=g.n,ncol=g.n)
-g=seq(from=x.min,to=x.max,length.out=g.n)
-for (i in (1:g.n)){
-  for (j in (1:g.n)){
-    u=c(g[i],g[j])
-    k.x=outer(1:n,1,Vectorize(function(i,j) k(x[i,],u)))
-    y.hat[i,j]=sum(k.x*alpha)
-  }
-}
-filled.contour(x=g,y=g,z=y.hat,
-               plot.axes = {axis(1);axis(2);points(x,col=y+rep(3,n),pch=16) })
-```
+- A:
+$t\mapsto k(t,x)\in\mathcal{H}$ for each $x$
+
+- B:
+$\langle f,k(\cdot,x)\rangle_{\mathcal{H}}=f(x)$ for each $f\in\mathcal{H}$, $x\in\mathcal{X}$
+
+    -- Reproducing Property
+    
+    
+
+### Definition 2: 
+
+$\mathcal{H}$ is a RKHS when the evaluation functions
+
+\begin{eqnarray*}
+F_x: & \mathcal{H}&\mapsto\mathbb{R} \\& f&\mapsto f(x) \quad \text{are continuous.}
+\end{eqnarray*}
+    
+### Definition 1 $\implies$ Definition 2
+
+$F_x$ is continuous. if 
+
+\begin{eqnarray*}
+&\|f-g\|_{\mathcal{H}}&<\delta \quad\text{(might depend on x)}\\ \implies &|f(x)-g(x)| & <  \varepsilon
+\end{eqnarray*}
+
+$F_x$ is *C-Lipschitz* continuous when
+$$|f(x)-g(x)|  \le  c\|f-g\|_{\mathcal{H}},\quad c>0, \quad\text{for any}\ f,\ g\in\mathcal{H}$$
+*C-Lipschitz* $\implies$ continuity.
+
+$$|f(x)-g(x)|=|(f-g)(x)|=|\langle f-g,k(\cdot,x)\rangle_{\mathcal{H}}|\le  \|f-g\|_{\mathcal{H}}\ \underbrace{\langle k(\cdot,x),k(\cdot,x)\rangle^{\frac12}}_{k^{\frac12}(x,x)}$$
+
+### Definition 2 $\implies$ Definition 1
+
+>*Riesz Representation Theorem*:
+In any Hilber Space of function $\mathcal{X}\mapsto\mathbb{R}$ for which $F_x$ is continuous for each $x\in\mathcal{X}$,
+then there is an unique element of $\mathcal{H}$, notated $g_x$, for which $f(x)=\langle f,g_x\rangle_\mathcal{H}$ for each $f\in\mathcal{H},\quad g_x(\cdot)=k(\cdot,x)$.
 
 
-### 2-2
+## Examples
 
-```{r, eval=F}
-data <- data.frame(matrix(runif(200,min = -10, max=10),nrow = 100, ncol = 2))
-data$y <- ifelse(data$X1<=data$X2,1,-1)
+### Example 0: $\mathcal{X}\in\mathbb{R}^d,\quad k(x,y)=x^Ty$
+ 
+### Example 1: $\mathcal{X}=\{x_1,..x_n\}$, 
 
-k_percetron <- function(data,T){
-  alpha=rep(0,100)
-  for (i in 1:100) {
-    for (j in 1:100){
-      Kij=alpha[i] %*% k(as.matrix(data[i,-3]),as.matrix(data[,-3]))
-    }
-  }
-  for (t in 1:T){
-    for (i in 1:100){
-      alpha[t] =ifelse (as.matrix(data$y[i])%*%alpha[t]%*%as.matrix(data[i,-3])<0, alpha[t]+as.matrix(data$y[i])%*%as.matrix(data[i,-3]), alpha[t])
-    }
-  }
-}
-# use kernel 1
-k <- function(a,b){return(a %*% t(b))}
-k_percetron(data,10)
-# use kernel 2
-k <- function(a,b){return((a %*% t(b))^2)}
-k_percetron(data,10)
-# use kernel 3
-k <- function(a,b){return((a %*% t(b) +1)^2)}
-k_percetron(data,10)
-```
+notate $\underset{{(n,n)}}{k}$; ${[k]}_{ij}=k(x_i,x_j)$.
+$k$ is symmetric and positive semi-definite.
+
+Assume that $k$ is positive definite,
+
+$$f:\ \mathcal{X}\mapsto\mathbb{R},\quad  \begin{bmatrix} f(x_1)\\\vdots\\f(x_n) \end{bmatrix}\subset\ \mathbb{R}^n$$
+
+$$k(\cdot,x_i)=\begin{bmatrix} k_{1i}\\\vdots\\k_{ni} \end{bmatrix}=k_i\ ;\quad k=(k_1,..k_n)$$
+
+\begin{eqnarray*}
+\mathcal{H}  &= & \{ \alpha_1k_1+\cdots+\alpha_nk_n;\ \alpha_1,\cdots,\alpha_n\in\mathbb{R}\} \\ & = & \text{Span}\{k_1,..k_n\}=\mathbb{R}^n \quad \text{is a vector space.}
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\langle f,g\rangle_{\mathcal{H}}&=&f^Tk^{-1}g\\ \langle f,k(\cdot,x_i)\rangle &=& \langle f,ke_i \rangle,\quad e_i=\begin{bmatrix} 0\\\vdots \\1 \\\vdots\\0 \end{bmatrix}\begin{matrix} \\ \\\leftarrow i \\ \\ \\ \end{matrix}\\
+&=&f^T\underbrace{k^{-1}k}_{I}e_i\\
+&=&f^Te_i\\
+&=&\begin{bmatrix} f(x_1)&\hdots&f(x_n) \end{bmatrix}\begin{bmatrix} 0\\\vdots \\1 \\\vdots\\0 \end{bmatrix}\begin{matrix} \\ \\\leftarrow i \\ \\ \\ \end{matrix}\\
+&=&f(x_i)
+\end{eqnarray*}
+
+### Example 2: $\mathcal{X}\in\mathbb{R}^n,\quad k(x,y)=(x^Ty)^2$
+
+$$\mathcal{H} = \{f:\ f(x)=x^TS_x;\quad \underset{{(n,n)}}{S}\ \text{is a symmetric Matrix}\}$$
+verify this is a Hilbert Space.
+
+$$\langle f_{S_1},f_{S_2}\rangle_{\mathcal{H}}=\langle S_1,S_2\rangle_{\mathcal{F}}=\sum\limits_{i,j=1}^n[S_1]_{ij}[S_2]_{ij}$$
+
+$$ \langle f_{S_1},k(\cdot,x_i)\rangle = f_{S_1}(x)\quad \text{check it}$$
+
+$$k(y,x)=(y^Tx)(y^Tx)=y^T\cdot \underbrace{xx^T}_{\substack{(n,n)\\ \text{symmetric}\\ \text{matrix}}}\cdot y$$
 
