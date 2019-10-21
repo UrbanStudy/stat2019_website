@@ -37,9 +37,8 @@ header-includes:
 
 - Cat and Dog problem
 
+### A simple geometric solution
 
-
-### A Simple Classifier
 
 - $\mathcal{X}\mapsto\mathbb{R}^2$, Training set:
  
@@ -77,10 +76,71 @@ $$=\sum_{i=1}^n\alpha_i\langle x_i,x\rangle +b;
 \text{where } \alpha_i=\begin{cases}\frac1{n_{+}}&y_i=+1\\\frac{-1}{n_{-}}&y_i=-1\end{cases};\ b=\frac1{2n_{-}^2}\sum\limits_{(i,j)\in I_{-}}\langle x_i,x_j\rangle -\frac1{2n_{+}^2}\sum\limits_{(i,j)\in I_{+}}\langle x_i,x_j\rangle$$
  
 
-### A simple geometric solution
-
 ### A more general solution
 
+We notice that in this cunstruction, the mapping $x\mapsto\mathcal{H}$ appears only through $k(x,x')=\langle\phi(x),\phi(x')\rangle_{\mathcal{H}}$
+
+k is a positive definite kernel. $\mathcal{H}$ and $\phi$ such that $k(x,x')=\langle\phi(x),\phi(x')\rangle_{\mathcal{H}}$ .
+
+
+For any $x,x'\in\mathcal{X}\neq\phi$, $\phi: x \mapsto \mathcal{H}$, $k(x,x')=\langle\phi(x),\phi(x')\rangle_{\mathcal{H}}$
+
+- Properties of k
+
+ + Symmetric $k(x,x')=k(x',x)$
+ 
+ + positive $\|\sum_{i=1}^n\alpha_i\phi(x_i)\|_{\mathcal{H}}^2\ge0$
+ 
+$\langle\sum_{i=1}^n\alpha_i\phi(x_i),\sum_{j=1}^n\alpha_j\phi(x_j)\rangle_{\mathcal{H}}=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\langle\phi(x_i),\phi(x_j)\rangle_{\mathcal{H}}$
+ 
+
+
+K is a positive definite kernel, $\mathcal{H}$ is a Hilbert Space of function $\mathcal{X}\mapsto\mathbb{R}$.
+
+## Polynomial Kernel `10/07`
+
+$x\in\mathbb{R}^2, x=(x_1,x_2)^T$
+
+### Example 0: Linear kernel 
+
+$k(x,x')=\langle x,x'\rangle_\mathbb{R^2}=x^Tx'=x_1x'_1+x_2x'_2$
+
+Chech that this kernel is p.d.
+
+Let $\phi=I,H=\mathbb{R^2}$, Find $k(x,x')=\langle\phi(x),\phi(x')\rangle_{\mathcal{H}}$
+
+$\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jk(x_i,x_j)=\alpha^Tx^Tx\alpha=\|\alpha x\|^2\ge0$
+
+### Example 1 $\phi: \mathbb{R}^4\to\mathbb{R}^{2}$
+
+$x=(x_1,x_2) \in \mathbb{R}^2$, $\phi(x)=(x_1^2,x_1x_2,x_2x_1,x_2^2)^T$
+
+$k(x,y)=\langle\phi(x),\phi(y)\rangle_{\mathbb{R^4}}=x_1^2y_1^2+2x_1x_2y_1y_2+x_2^2y_2^2=\langle x_1,y_1\rangle^2_{\mathbb{R^2}}+2\langle x_1,y_1\rangle\langle x_2,y_2\rangle+\langle x_2,y_2\rangle^2_{\mathbb{R^2}}$
+
+
+$\phi: \mathbb{R}^2\to\mathbb{R}^{2^3}$
+
+$\phi(x)=(x_1^3, x_1^2x_2, x_2x_1^2, x_1x_2x_1, x_2x_1x_2, x_1x_2^2, x_2^2x_1, x_2^3)^T$
+
+$k(x,y)=\langle\phi(x),\phi(y)\rangle_{\mathbb{R^8}}=x_1^3y_1^3+3x_1^2x_2y_1^2y_2+3x_1x_2^2y_1y_2^2+x_2^3y_2^3=\langle x,y\rangle^3_{\mathbb{R^2}}=(x_1y_1+x_2y_2)^3$
+
+### Example 2 $\mathcal{X}=\mathbb{R}^n$
+
+$\phi(x)=\{x_{j1},..,x_{jd};1\le j1,..jd\le n\}$, $n^d$ iterms
+
+$k(x,y)=\langle\phi(x),\phi(y)\rangle_{\mathbb{R^{n^d}}}=\langle x,y\rangle^d_{\mathbb{R^n}}$
+
+### Cauchy-Schwarts inequity for kernels
+
+$x,x'\in\mathcal{X}\neq\phi$, $k: \mathcal{X}\times\mathcal{X} \to \mathbb{R}$ is a positive definite kernel, proposition for any $x,x'$ 
+
+$$k^2(x,x')\le k(x,x)k(x',x')$$
+
+Proof: $n=2, x=(x_1,x_2), \alpha=(\alpha_1, \alpha_2)$
+
+$\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jk(x_i,x_j)\ge0 \iff$ the Gram matrix $\begin{pmatrix}k(x_1,x_1)&k(x_1,x_2)\\k(x_2,x_1)&k(x_2,x_2)\end{pmatrix}$ semi-positive definite or equvalent determinant $\ge0$
+
+$$k(x_1,x_1)k(x_2,x_2)- k(x_1,x_2)k(x_2,x_1)\ge0\implies k(x_1,x_1)k(x_2,x_2)\ge k^2(x_1,x_2)$$
 
 ## RKHS `10/09`
 Reproducing Kernel Hilbert Space

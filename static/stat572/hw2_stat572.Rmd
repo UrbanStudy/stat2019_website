@@ -10,13 +10,14 @@ header-includes:
  - \usepackage{multicol}
  - \usepackage{multirow}
  - \usepackage{caption}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{Shen Qu}
+ - \lhead{Homework2}
+ - \chead{STAT 572}
+ - \rfoot{Page \thepage}
 ---
-
-
-\begin{flushright}STAT 572\\
-Homework 2\\
-Shen Qu
-\end{flushright}
 
 
 1. If $X_1,\ldots, X_n \sim\text{Bernoulli}(\theta)$, then the distribution of the sum $Z=\sum_{i=1}^n X_i$ has the Binomial$(n,\theta)$ distribution. Show that with $n$ fixed, the Binomial$(n,\theta)$ distributions form a one-parameter exponential family.
@@ -46,7 +47,7 @@ Hence, the Binomial$(n,\theta)$ distributions form a one-parameter exponential f
 
 \begin{align*}
    P(y_{1:n}|\theta)=\theta^{\sum_i^n y_i} e^{-n\theta}(\prod_{i=1}^{n} \frac{1}{y_i!}\mathbf{1}_{\{y\in(0,1,2,..)\}})\\
-   =\exp[\underbrace{\ln(\theta)}_{\varphi(\theta)(\theta)}\underbrace{\sum_i^n y_i}_{t(y)}
+   =\exp[\underbrace{\ln(\theta)}_{\varphi(\theta)}\underbrace{\sum_i^n y_i}_{t(y)}
    -n\underbrace{\theta}_{\kappa(\theta)}]
    \underbrace{ \prod_{i=1}^{n} \frac{1}{y_i!}\mathbf{1}_{\{y\in(0,1,2,..)\}} }_{h(y)}
 \end{align*}
@@ -54,8 +55,8 @@ Hence, the Binomial$(n,\theta)$ distributions form a one-parameter exponential f
 Assuming the conjugate priors has pdf of the form:
 
 \begin{align*}
-p_{n_o,t_0}(\theta)&\propto \exp[n_0 t_0 \ln(\theta)-n_0 \theta] \mathbf{1}_{\{\theta\in \Theta\}}
-\propto \theta^{n_0 t_0+1-1}e^{n_0 \theta}\mathbf{1}_{\{\theta\in \Theta\}}\\
+p_{n_o,t_0}(\theta)&\propto \exp[n_0 t_0 \ln(\theta)-n_0 \theta] \mathbf{1}_{\{\theta\in \mathbb{R^+}\}}
+\propto \mathbb{R^+}^{n_0 t_0+1-1}e^{n_0 \theta}\mathbf{1}_{\{\theta\in \mathbb{R^+}\}}\\
 &\sim \text{Gamma}(n_0 t_0+1,n_0)
 \end{align*}
 
@@ -64,24 +65,25 @@ where $n_0>0$ and $t_0\in\mathbb{R}$ are values for which $p_{n_0,t_0}(\theta)$ 
 The posteriors of the form
 
 \begin{align*}
-p(\theta| y)&\propto \exp[\ln(\theta)\sum_i^n y_i-n\theta]h(y)
-                \cdot\exp[n_0 t_0 \ln(\theta)-n_0 \theta] \mathbf{1}_{\{\theta\in \Theta\}}\\
-            &\propto \exp[(t(y) + n_0 t_0 )\ln(\theta) - (n+n_0)\theta] \mathbf{1}_{\{\theta\in \Theta\}}\\
-            &\propto \theta^{t(y) + n_0 t_0+1-1}e^{(n+n_0)\theta}\mathbf{1}_{\{\theta\in \Theta\}}\\
+p(\theta| y)&\propto  P(y_{1:n}|\theta)\cdot p_{n_o,t_0}(\theta)\\
+            &\propto \exp[\ln(\theta)\sum_i^n y_i-n\theta]h(y)
+                \cdot\exp[n_0 t_0 \ln(\theta)-n_0 \theta] \mathbf{1}_{\{\theta\in \mathbb{R^+}\}}\\
+            &\propto \exp[(t(y) + n_0 t_0 )\ln(\theta) - (n+n_0)\theta] \mathbf{1}_{\{\theta\in \mathbb{R^+}\}}\\
+            &\propto \theta^{t(y) + n_0 t_0+1-1}e^{(n+n_0)\theta}\mathbf{1}_{\{\theta\in \mathbb{R^+}\}}\\
             &\sim \text{Gamma}(t(y) + n_0 t_0+1,n+n_0)
 \end{align*}
   
   + Show that what is referred to as $t^\star$ in the class notes can be expressed as a convex combination of the ``prior guess'' $t_0$ and the sufficient statistic $t(y)$ that you obtain for this problem.
   
-When we have $n>1$ observation, $t(y)=\sum \tilde{t}(y_i)$,
+When we have $n>1$ observation, $t(y)=\sum \tilde{t}(y_i)=\sum y_i$,
 
 \begin{align*}
-p(\theta| y_{1:n})&\propto \exp[(t^\star n^\star\ln(\theta) - n^\star\theta] \mathbf{1}_{\{\theta\in \Theta\}}\\
-            &\propto \theta^{t^\star n^\star+1-1}e^{n^\star\theta}\mathbf{1}_{\{\theta\in \Theta\}}\\
+p(\theta| y_{1:n})&\propto \exp[(t^\star n^\star\ln(\theta) - n^\star\theta] \mathbf{1}_{\{\theta\in \mathbb{R^+}\}}\\
+            &\propto \theta^{t^\star n^\star+1-1}e^{n^\star\theta}\mathbf{1}_{\{\theta\in \mathbb{R^+}\}}\\
             &\sim \text{Gamma}(t^\star n^\star+1,n^\star)
 \end{align*}
 
-where $n^\star = n_0+n\quad\text{ and }\quad t^\star = \frac{n_0}{n_0 + n} t_0  + \frac{n}{n_0 + n}\frac{1}{n}\sum \tilde{t}(y_i),$
+where $n^\star = n_0+n\quad\text{ and }\quad t^\star = \frac{n_0}{n_0 + n} t_0  + \frac{n}{n_0 + n}\frac{1}{n}\sum \tilde{t}(y_i)$ is a convex combination of the ``prior guess'' $t_0$ and the sufficient statistic $t(y)$
   
   
 3. Show that for a certain choice of $t(y)$ and $h(y)$, the Gamma$(a, b)$ distributions are in natural form with natural parameter $\theta = (a, b)^T$.
@@ -105,7 +107,7 @@ Hence, letting $\eta_1 = a$, $\eta_2 = b$, we can rewrite the expression above a
     \underbrace{y^{-1}\mathbf{1}_{\{y\in(0,\infty)\}}}_{h(y)}
 \end{align*}
 
-Should we show that $A(\eta)=\ln(\int_{\mathcal{X}}y^{-1}(\eta_1\ln y+\eta_2(-y))dy)$?
+<!-- Should we show that $A(\eta)=\ln(\int_{\mathcal{X}}y^{-1}(\eta_1\ln y+\eta_2(-y))dy)$? -->
 
 This is the natural form for the Gamma$(a, b)$ distributions, where  $\eta$ corresponds to the canonical parameter.
 
