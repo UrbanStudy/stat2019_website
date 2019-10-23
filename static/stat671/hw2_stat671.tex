@@ -31,6 +31,7 @@
 
 
 \section{Kernels}
+
 \begin{enumerate}
 \item let $(x,y) \in \mathbb{R}^+ \times \mathbb{R}^+$, where $\mathbb{R}^+=\{x \in \mathbb{R};x \geq 0\}$, the ``french positive\rq\rq{} real numbers. 
 
@@ -43,40 +44,51 @@ where  $\mathbb{I}_A =  \left\{
 \end{tabular}\right.$
 
 \item Use the previous question to show that $K(x,y)=\min(x,y)$ is a pd kernel over $\mathbb{R}^+$
+\end{enumerate}
 
+\vspace{5mm}
 $K(x,y)=\min(x,y)=\int_0^\infty \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt=\min(y,x)=K(y,x)$ symmetric
 
 $\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\min(x,y)=\int_0^\infty \sum_{i=1}^n\alpha_i\mathbb{I}_{t\leq x} \sum_{j=1}^n\alpha_j\mathbb{I}_{t\leq y} dt=\int_0^\infty (\sum_{i=1}^n\alpha_i\mathbb{I}_{t\leq x})^2dt\ge0$
+\vspace{5mm}
 
+\begin{enumerate}
 \item Show that $\max(x,y)$ is not a pd kernel over  $\mathbb{R}^+$. 
 \end{enumerate}
 
-$\max(x,y)=\int_0^\infty \mathbb{I}_{t\geq x} \mathbb{I}_{t\geq y} dt$
+\vspace{5mm}
+$\max(x,y)=\int_0^\infty \mathbb{I}_{t\geq x} \mathbb{I}_{t\geq y} dt=\max(y,x)=K(y,x)$ symmetric
 
+
+\vspace{5mm}
 
 \item Consider a probability space $(\Omega,\mathcal{A},P)$
+
+
+
 \begin{enumerate}
 \item Define for any two events $A$ and $B$, $K_1(A,B)=P(A \cap B)$
 where $A \cap B$ is the intersection between the events A and B 
 Verify that $K_1$ is positive definite. Hint: $P(A)=E[\mathbb{I}_A]$
-\end{enumerate}
 
+\vspace{5mm}
 $K_1(A,B)=P(A \cap B)=P(B \cap A)=K_1(B,A)$ symmetric
 
-$P(A)=E[\mathbb{I}_A]$; $P(B)=E[\mathbb{I}_B]$; $P(A\cap B)=P(A)P(B)=E[\mathbb{I}_A]E[\mathbb{I}_B]$
+$P(A)=E[\mathbb{I}_A]$; $P(B)=E[\mathbb{I}_B]$; $P(A\cap B)=E[\mathbb{I}_A\mathbb{I}_B]$
 
-$k_1(x,y)=\sum_{i=1}^n\alpha_iE[\mathbb{I}_A]\sum_{j=1}^n\alpha_jE[\mathbb{I}_A]=\|\sum_{i=1}^n\alpha_iE[\mathbb{I}_A]\|^2\ge0$
-
+$k_1(x,y)=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jE[\mathbb{I}_A\mathbb{I}_A]=\|\sum_{i=1}^n\alpha_iE[\mathbb{I}_A]\|^2\ge0$
+\vspace{5mm}
 
 \item Define for any two events $A$ and $B$, 
 $K_2(A,B)=P(A \cap B)-P(A)P(B)$
 Verify that $K_2$ is positive definite. 
+\end{enumerate}
 
-
+\vspace{5mm}
 $K_2(A,B)=P(A \cap B)-P(A)P(B)=E[\mathbb{I}_A\mathbb{I}_B]-E[\mathbb{I}_A]E[\mathbb{I}_B]=Cov[\mathbb{I}_A,\mathbb{I}_B]$
 
 $K_2(x,y)=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jCov[\mathbb{I}_A,\mathbb{I}_A]=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jVar[\mathbb{I}_A]\ge 0$
-
+\vspace{5mm}
 
 
 
@@ -103,9 +115,9 @@ $$\langle f_{v,v_0},f_{w,w_0}\rangle_{\mathcal{H}}=v^Tw+\frac1cv_0w_0\Rightarrow
 
 \item Verify the reproducing property
 
-$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(t,x)=x^Tt=(x^Tt)^T=t^Tx=f_t(x)$
+$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(t,x)=t^Tx+c=f_t(x)$
 
-$$\langle f_{w,w_0},k(\cdot,x)\rangle=\langle f_{w,w_0},f_x\rangle=x^Tw+\frac1cxw_0=(x^Tw+c)^T+w_0=w^Tx+w_0=f_w(x)$$
+$$\langle f_{w,w_0},k(\cdot,x)\rangle=\langle f_{w,w_0},f_{x,c}\rangle=x^Tw+\frac1ccw_0=w^Tx+w_0=f_w(x)$$
 
 $\therefore\langle f,k(\cdot,x)\rangle_{\mathcal{H}}=f(x)$ for each $f\in\mathcal{H}$, $x\in\mathcal{X}$
 
@@ -122,20 +134,23 @@ $<f_{S_1},f_{S_2}>=<S_1,S_2>_F$
 \begin{enumerate}
 \item Verify the reproducing property. 
 
-$$\mathcal{H} = \{f_S: f_S(x)=x^TS_x;\}$$
+$$\mathcal{H} = \{f_S: f_S(x)=x^TS x;\}$$
 
-$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(x,t)=xx^Ttt^T$
+$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(x,t)=\langle xx^T,tt^T\rangle$
+
+
+
+$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}=x^TS_1 x= f_{S_1}(x)$$
+
+
+\item Why do we require that $S$ is symmetric?
 
 $$\langle f_{S_1},f_{S_2}\rangle_{\mathcal{H}}=\langle S_1,S_2\rangle_{\mathcal{F}}=\sum\limits_{i,j=1}^n[S_1]_{ij}[S_2]_{ij}$$
 
 
 $$[S_1]_{ij}[S_2]_{ij}=\trace[(x_i^Tx_j)(y_j^Ty_i)]=\trace[(y_ix_i^T)(x_jy_j^T)]=\langle x_iy_i^T,x_jy_j^T\rangle_{\mathcal{F}}=\langle z_i,z_j\rangle_{\mathbb{R}^{n^2}}$$
 
-$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}= f_{S_1}(x)$$
 
-
-\item Why do we require that $S$ is symmetric?
- 
 $\underset{(d,d)}{S}$ is a symmetric Matrix,
 $y^Tx=x^Ty$
 
@@ -148,7 +163,7 @@ $$k(y,x)=(y^Tx)(y^Tx)=y^T\cdot xx^T\cdot y$$
 \begin{enumerate}
 \item What is the RKHS associated with the kernel $K$? no proof is required. 
 
-$$\{f_{S,s_0}; f_S(x)=x^T S_x+s_0\}$$
+$$\{f_{S,s_0}; f_S(x)=x^T S x+s_0\}$$
 
 where $S$ is a symmetric $(d,d)$ matrix
 
@@ -159,9 +174,9 @@ $$\langle f_{S_1},f_{S_2}\rangle_{\mathcal{H}}=\langle S_1,S_2\rangle_{\mathcal{
 
 \item Verify the reproducing property
 
-$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(x,t)=xx^Ttt^T+c$
+$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(x,t)=\langle xx^T,tc\rangle$
 
-$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}=x^T S_1+s_0= f_{S_1}(x)$$
+$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}=x^T S_1x+s_0= f_{S_1}(x)$$
 
 \end{enumerate}
 

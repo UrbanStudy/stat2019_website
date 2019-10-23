@@ -275,19 +275,18 @@ Thus, geometric distributions is a one-parameter exponential family with $T(x)=x
 $\sum_{i=1}^n X_i$ form a one-parameter exponential family.
 
 \begin{align*}
-   P_\theta(\sum_{i=1}^n X_i=x) = \prod_{i=1}^n P_\theta[X=x]= 
+   P_\theta(X_{1:n}) = \prod_{i=1}^n P_\theta[X=x]= 
    \exp[\underbrace{\ln(1-\theta)}_{\eta(\theta)}\underbrace{\sum_{i=1}^n x_i}_{T(x)}
    -\underbrace{-n\ln(\theta)}_{B(\theta)}]
    \underbrace{ \prod_{i=1}^n\mathbf{1}_{\{x\in(0,1,2,..)\}}}_{h(x)}
 \end{align*}
 
-Thus, $\sum_{i=1}^n X_i$ is a sufficient statistic for $\theta$. $P_\theta(\sum_{i=1}^n X_i=x)$ is a one-parameter exponential family.
+$\sum_{i=1}^n X_i$ is a sufficient statistic for $\theta$ for a one-parameter exponential family. By theorem 1.6.1, the family of the distribution of $\sum_{i=1}^n X_i$ is a one-parameter exponential family, whose p.m.f may be written as 
+$h^*(t)\exp[\eta(\theta)t-B(\theta)]$ for a suitable $h^*$.
 
 (c) Show that $\sum_{i=1}^n X_i$ in part (b) has a negative binomial distribution with parameters $(n,\theta)$ defined by $P_\theta[\sum_{i=1}^nX_i=k] = \binom{n+k-1}{k}(1-\theta)^k\theta^n, k = 0, 1, 2,..$
 (The negative binomial distribution is that of the number of failures before the nth success in a sequence of Bernoulli trials with probability of success $\theta$.)
 Hint: By Theorem 1.6.1, $P_\theta[\sum_{i=1}^nX_i=k] = c_k(1-\theta)^k\theta^n, 0 <\theta <1$. If $\sum_{k=0}^{\infty}c_k\omega^k =\frac1{(1- \omega)^n} , 0 <\omega< 1$, then $c_k=\left.\frac1{k!}\frac{d^k}{d\omega^k} (1-\omega)^{-n}\right|_{\omega=0}$
-
-In part (b), $P_\theta(\sum_{i=1}^n X_i=k)=(1-\theta)^k\theta^n$. 
 
 To find p.m.f of this distribution, let $\sum_{k=1}^n c_k(1-\theta)^k\theta^n=1, 0 <\theta <1$
 
@@ -297,8 +296,8 @@ let $\omega=1-\theta$, $\sum_{k=1}^n c_k\omega^k=\theta^{-n}, 0 <\omega <1$, the
    \frac{d'}{d\omega'} (1-\omega)^{-n}&=(-n)(-1)(1-\omega)^{-n-1}=n(1-\omega)^{-n-1}\\
    \frac{d^2}{d\omega^2} (1-\omega)^{-n}&=(-n-1)(-1)n(1-\omega)^{-n-2}=(n+1)n(1-\omega)^{-n-2}\\
    \cdots\\
-   \frac{d^k}{d\omega^k} (1-\omega)^{-n}&=(-n-k+1)(-1)\cdots(n+1)n(1-\omega)^{-n-k+1}=[\prod_{i=0}^{k-1}(n+i)](1-\omega)^{-n-k+1}\\
-   \left.\frac{d^k}{d\omega^k} (1-\omega)^{-n}\right|_{\omega=0} & =\prod_{i=0}^{k-1}(n+i)
+   \frac{d^k}{d\omega^k} (1-\omega)^{-n}&=(-n-k+1)(-1)\cdots(n+1)n(1-\omega)^{-n-k}=[\prod_{i=1}^{k}(n+i-1)](1-\omega)^{-n-k}\\
+   \left.\frac{d^k}{d\omega^k} (1-\omega)^{-n}\right|_{\omega=0} & =\prod_{i=1}^{k}(n+i-1)=\prod_{i=0}^{k-1}(n+i)
 \end{align*}
 
 $c_k=\left.\frac1{k!}\frac{d^k}{d\omega^k} (1-\omega)^{-n}\right|_{\omega=0}=\frac1{k!}\prod_{i=0}^{k-1}(n+i)=\frac{(n+k-1)!}{k!(n-1)!}=\binom{n+k-1}{k}$
@@ -314,21 +313,23 @@ $P_\theta[\sum_{i=1}^nX_i=k] = \binom{n+k-1}{k}(1-\theta)^k\theta^n, k = 0, 1, 2
 
 \begin{align*}
     f_{r,s}(x)=\exp[\underbrace{(r-1)\ln(x)+(s-1)\ln(1-x)}
-    _{\eta(r,s)=\begin{bmatrix}r-1\\s-1\end{bmatrix};T(x)=\begin{bmatrix}\ln(x)\\\ln(1-x)\end{bmatrix}}
+    _{\eta(r,s)T(x)}
     -\underbrace{\ln(B(r,s))}_{B(r,s)}]
     \underbrace{\mathbf{1}_{\{x\in(0,1)\}}}_{h(x)}
 \end{align*}
 
-
+The beta family is a two-parameter exponential family with $\eta(r,s)=(r-1,s-1)^T;\ T(x)=(\ln(x),\ln(1-x))$; $B(r,s)=\frac{\Gamma(r+s)}{\Gamma(r)\Gamma(s)}$; $h(x)=\mathbf{1}_{\{x\in(0,1)\}}$
 
 (b) The gamma family.
 
 \begin{align*}
     f_{p,\lambda}(x)=\exp[\underbrace{-\lambda x+(p-1)\ln x}
-    _{\eta(p,\lambda)=\begin{bmatrix}-\lambda\\(p-1)\end{bmatrix};T(x)=\begin{bmatrix}x\\\ln(x)\end{bmatrix}}
+    _{\eta(p,\lambda)T(x)}
     -\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(p,\lambda)}]
     \underbrace{\mathbf{1}_{\{x\in(0,\infty)\}}}_{h(x)}
 \end{align*}
+
+The gamma family is a two-parameter exponential family with $\eta(p,\lambda)=(-\lambda,(p-1))^T;\ T(x)=(x,\ln(x))$; $B(p,\lambda)=-\ln(\frac{\lambda^p}{\Gamma{p}})$; $h(x)=\mathbf{1}_{\{x\in(0,\infty)\}}$
 
 
 ### 1.6-7 Let X = (($X_1,Y_1$),.., ($X_n, Y_n$)) be a sample from a bivariate normal population.
@@ -345,12 +346,7 @@ f(\vec X,\vec Y)=\\
                   +\frac{\rho\sum xy}{(1-\rho^2)\sigma_X\sigma_Y}
                   +\frac{\sum y}{(1-\rho^2)}(\frac{\mu_Y}{\sigma_Y^2}-\frac{\mu_X\rho}{\sigma_X\sigma_Y})
                   -\frac{\sum y^2}{2(1-\rho^2)\sigma_Y^2}}
-                  _{\eta(\rho,\mu_X,\mu_Y,\sigma_X,\sigma_Y)=\begin{bmatrix}-\frac{1}{2(1-\rho^2)\sigma_X^2}\\
-                                                              \frac{1}{(1-\rho^2)}(\frac{\mu_X}{\sigma_X^2}-\frac{\mu_Y\rho}{\sigma_X\sigma_Y})\\
-                                                              \frac{\rho}{(1-\rho^2)\sigma_X\sigma_Y}\\
-                                                              \frac{1}{(1-\rho^2)}(\frac{\mu_Y}{\sigma_Y^2}-\frac{\mu_X\rho}{\sigma_X\sigma_Y}) \\
-                                                              -\frac{1}{2(1-\rho^2)\sigma_Y^2} \end{bmatrix};
-                                                              T(x,y)=\begin{bmatrix}\sum x^2\\\sum x\\\sum xy\\\sum y\\\sum y^2\end{bmatrix}}]\\
+                  _{\eta(\rho,\mu_X,\mu_Y,\sigma_X,\sigma_Y)T(x,y)}]\\
 \cdot\exp[-\underbrace{n\left(\frac{1}{2(1-\rho^2)}(\frac{\mu_X^2}{\sigma_X^2}
                       -\frac{2\rho\mu_X\mu_Y}{\sigma_X\sigma_Y}
                       +\frac{\mu_Y^2}{\sigma_Y^2})
@@ -359,7 +355,22 @@ f(\vec X,\vec Y)=\\
 \underbrace{\mathbf{1}_{\{x,y\in\mathbb{R}^n\}}}_{h(x)}
 \end{multline*}
 
-where $\rho\in(0,1),\mu_X\in\mathbb{R},\mu_Y\in\mathbb{R},\sigma_X\in\mathbb{R},\sigma_Y\in\mathbb{R}$
+where 
+
+$\eta(\rho,\mu_X,\mu_Y,\sigma_X,\sigma_Y)=\left\{-\frac{1}{2(1-\rho^2)\sigma_X^2},
+      \frac{1}{(1-\rho^2)}(\frac{\mu_X}{\sigma_X^2}-\frac{\mu_Y\rho}{\sigma_X\sigma_Y}),
+      \frac{\rho}{(1-\rho^2)\sigma_X\sigma_Y},
+      \frac{1}{(1-\rho^2)}(\frac{\mu_Y}{\sigma_Y^2}-\frac{\mu_X\rho}{\sigma_X\sigma_Y}) ,
+      -\frac{1}{2(1-\rho^2)\sigma_Y^2} \right\}^T$
+                                                              
+$T(x,y)=(\sum x^2,\sum x,\sum xy,\sum y,\sum y^2)$; $h(x)=\mathbf{1}_{\{x,y\in\mathbb{R}^n\}}$
+
+$nB(\rho,\mu_X,\mu_Y,\sigma_X,\sigma_Y)=n\left(\frac{1}{2(1-\rho^2)}(\frac{\mu_X^2}{\sigma_X^2}
+                      -\frac{2\rho\mu_X\mu_Y}{\sigma_X\sigma_Y}
+                      +\frac{\mu_Y^2}{\sigma_Y^2})
+                      +\ln(2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2})\right)$
+
+$\rho\in(0,1),\mu_X\in\mathbb{R},\mu_Y\in\mathbb{R},\sigma_X\in\mathbb{R^+},\sigma_Y\in\mathbb{R^+}$
 
 $x\in\mathcal{X}\subset\mathbb{R}^n$, $y\in\mathcal{Y}\subset\mathbb{R}^n$
 
