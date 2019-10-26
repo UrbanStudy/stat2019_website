@@ -1,10 +1,10 @@
 
 \documentclass[11pt]{article}
 \setlength{\textwidth}{7in} \setlength{\textheight}{9.8in}
-\setlength{\topmargin}{-1in} \setlength{\oddsidemargin}{-0.25in}
+\setlength{\topmargin}{-0.5in} \setlength{\oddsidemargin}{-0.25in}
 \setlength{\evensidemargin}{-0.25in}
 
-\pagestyle{empty}
+
 \usepackage{graphicx}
 \usepackage{epstopdf}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
@@ -14,20 +14,19 @@
 \usepackage{amsmath}
 %\usepackage{algpseudocode}
 
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Shen Qu}
+\lhead{Homework2}
+\chead{STAT 671}
+\rfoot{Page \thepage}
+
 \DeclareMathOperator{\trace}{trace}
 
 \begin{document}
-\thispagestyle{empty}
 %\includegraphics{../../../psulogo_horiz_bw.eps}\hfill\includegraphics{../../../deptlogo}
-\vspace{10pt}
-\begin{center}
-{\large\bf STAT 671}    \\*[5pt] {\Large Statistical Learning I}
-\\*[12pt] {\large Fall 2019}
-\\ {\large Homework 2}
-\\ {\large Due October 28$^{th}$ at the beginning of class}
-\end{center}
-\vspace{1cm}
-\noindent
+
 
 
 \section{Kernels}
@@ -43,24 +42,41 @@ where  $\mathbb{I}_A =  \left\{
 0 & \mbox{otherwise}
 \end{tabular}\right.$
 
-\item Use the previous question to show that $K(x,y)=\min(x,y)$ is a pd kernel over $\mathbb{R}^+$
-\end{enumerate}
+When $x\le y$,
+\begin{align*}
+\int_0^\infty \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt&=\int_0^x \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt+\int_x^y \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt+\int_y^\infty \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt\\
+&=\int_0^x 1\cdot 1 dt+\int_x^y 0\cdot 1 dt+\int_y^\infty 0\cdot 0 dt=x\\
+\end{align*}
 
-\vspace{5mm}
+By the same way, when $y\le x$, $\int_0^\infty \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt=y$.
+
+Therefore, $\min(x,y) = \int_0^\infty \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt$
+\vspace{2mm}
+\item Use the previous question to show that $K(x,y)=\min(x,y)$ is a pd kernel over $\mathbb{R}^+$
+
+
+\vspace{2mm}
 $K(x,y)=\min(x,y)=\int_0^\infty \mathbb{I}_{t\leq x} \mathbb{I}_{t\leq y} dt=\min(y,x)=K(y,x)$ symmetric
 
 $\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\min(x,y)=\int_0^\infty \sum_{i=1}^n\alpha_i\mathbb{I}_{t\leq x} \sum_{j=1}^n\alpha_j\mathbb{I}_{t\leq y} dt=\int_0^\infty (\sum_{i=1}^n\alpha_i\mathbb{I}_{t\leq x})^2dt\ge0$
-\vspace{5mm}
+\vspace{3mm}
 
-\begin{enumerate}
+
 \item Show that $\max(x,y)$ is not a pd kernel over  $\mathbb{R}^+$. 
 \end{enumerate}
 
-\vspace{5mm}
-$\max(x,y)=\int_0^\infty \mathbb{I}_{t\geq x} \mathbb{I}_{t\geq y} dt=\max(y,x)=K(y,x)$ symmetric
+\vspace{2mm}
 
+When $x\le y$, $\int_0^\infty \mathbb{I}_{t\geq x} \mathbb{I}_{t\geq y} dt=\int_y^\infty 1\cdot 1 dt=\left.t\right|_y^\infty\neq\max(x,y)$
 
-\vspace{5mm}
+The Gram Matrix
+$$M(x,y)=\begin{bmatrix}\max(x, x) & \max(x, y)\\\max(x,y) & \max(y,y)\end{bmatrix} =
+       \begin{bmatrix}x &y \\y & y\end{bmatrix}=xy-y^2\le 0$$
+
+When $y\le x$ is the same. $M(x,y)=xy-x^2\le 0$
+
+Therefore, $\max(x,y)$ can not be a pd kernel over  $\mathbb{R}^+$
+
 
 \item Consider a probability space $(\Omega,\mathcal{A},P)$
 
@@ -71,24 +87,23 @@ $\max(x,y)=\int_0^\infty \mathbb{I}_{t\geq x} \mathbb{I}_{t\geq y} dt=\max(y,x)=
 where $A \cap B$ is the intersection between the events A and B 
 Verify that $K_1$ is positive definite. Hint: $P(A)=E[\mathbb{I}_A]$
 
-\vspace{5mm}
+\vspace{2mm}
 $K_1(A,B)=P(A \cap B)=P(B \cap A)=K_1(B,A)$ symmetric
 
 $P(A)=E[\mathbb{I}_A]$; $P(B)=E[\mathbb{I}_B]$; $P(A\cap B)=E[\mathbb{I}_A\mathbb{I}_B]$
 
-$k_1(x,y)=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jE[\mathbb{I}_A\mathbb{I}_A]=\|\sum_{i=1}^n\alpha_iE[\mathbb{I}_A]\|^2\ge0$
-\vspace{5mm}
+$\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jE[\mathbb{I}_{A_i}\mathbb{I}_{A_j}]=E[\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\mathbb{I}_{A_i}\mathbb{I}_{A_j}]=E[\|\sum_{i=1}^n\alpha_i\mathbb{I}_{A_i}\|^2]\ge0$
+\vspace{3mm}
 
 \item Define for any two events $A$ and $B$, 
 $K_2(A,B)=P(A \cap B)-P(A)P(B)$
 Verify that $K_2$ is positive definite. 
 \end{enumerate}
 
-\vspace{5mm}
+\vspace{2mm}
 $K_2(A,B)=P(A \cap B)-P(A)P(B)=E[\mathbb{I}_A\mathbb{I}_B]-E[\mathbb{I}_A]E[\mathbb{I}_B]=Cov[\mathbb{I}_A,\mathbb{I}_B]$
 
-$K_2(x,y)=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jCov[\mathbb{I}_A,\mathbb{I}_A]=\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jVar[\mathbb{I}_A]\ge 0$
-\vspace{5mm}
+$\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jCov[\mathbb{I}_{A_i},\mathbb{I}_{A_j}]=Cov[\sum_{i=1}^n\alpha_i\mathbb{I}_{A_i},\sum_{j=1}^n\alpha_j\mathbb{I}_{A_j}]=Var[\sum_{i=1}^n\alpha_i\mathbb{I}_{A_i}]\ge 0$
 
 
 
@@ -136,25 +151,25 @@ $<f_{S_1},f_{S_2}>=<S_1,S_2>_F$
 
 $$\mathcal{H} = \{f_S: f_S(x)=x^TS x;\}$$
 
-$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(x,t)=\langle xx^T,tt^T\rangle$
+$\mathcal{H}$ contains all the functions 
 
+$k(\cdot,x_i): t\mapsto k(t,x)=(t^Tx)(t^Tx)=x^T\cdot (tt^T)\cdot x=f_t(x)$
 
+$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}=\trace[S_1xx^T]=\trace[x^TS_1x]=x^TS_1 x= f_{S_1}(x)$$
 
-$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}=x^TS_1 x= f_{S_1}(x)$$
+Frobenius Norm
+
+$\therefore\langle f_{S_1},k(\cdot,x)\rangle_{\mathcal{H}}=f_{S_1}(x)$ for each $f\in\mathcal{H}$, $x\in\mathcal{X}$
 
 
 \item Why do we require that $S$ is symmetric?
 
-$$\langle f_{S_1},f_{S_2}\rangle_{\mathcal{H}}=\langle S_1,S_2\rangle_{\mathcal{F}}=\sum\limits_{i,j=1}^n[S_1]_{ij}[S_2]_{ij}$$
-
-
-$$[S_1]_{ij}[S_2]_{ij}=\trace[(x_i^Tx_j)(y_j^Ty_i)]=\trace[(y_ix_i^T)(x_jy_j^T)]=\langle x_iy_i^T,x_jy_j^T\rangle_{\mathcal{F}}=\langle z_i,z_j\rangle_{\mathbb{R}^{n^2}}$$
-
-
 $\underset{(d,d)}{S}$ is a symmetric Matrix,
-$y^Tx=x^Ty$
 
-$$k(y,x)=(y^Tx)(y^Tx)=y^T\cdot xx^T\cdot y$$
+%$$[S_1]_{ij}[S_2]_{ij}=\trace[(x_i^Tx_j)(y_j^Ty_i)]=\trace[(y_ix_i^T)(x_jy_j^T)]=\langle x_iy_i^T,x_jy_j^T\rangle_{\mathcal{F}}=\langle z_i,z_j\rangle_{\mathbb{R}^{n^2}}$$
+
+If not, we can not complete the step of $(t^Tx)(t^Tx)=x^T\cdot (tt^T)\cdot x$
+
 
 \end{enumerate}
 
@@ -163,7 +178,7 @@ $$k(y,x)=(y^Tx)(y^Tx)=y^T\cdot xx^T\cdot y$$
 \begin{enumerate}
 \item What is the RKHS associated with the kernel $K$? no proof is required. 
 
-$$\{f_{S,s_0}; f_S(x)=x^T S x+s_0\}$$
+$$\{f_{S,s_0}; f_S(x)=x^T S x+2s^Tx+s_0^2\}$$
 
 where $S$ is a symmetric $(d,d)$ matrix
 
@@ -174,9 +189,12 @@ $$\langle f_{S_1},f_{S_2}\rangle_{\mathcal{H}}=\langle S_1,S_2\rangle_{\mathcal{
 
 \item Verify the reproducing property
 
-$\mathcal{H}$ contains all the functions $k(\cdot,x_i): t\mapsto k(x,t)=\langle xx^T,tc\rangle$
+$\mathcal{H}$ contains all the functions 
 
-$$ \langle f_{S_1},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S_1},f_{xx^T}\rangle_{\mathcal{H}}=\langle S_1,xx^T\rangle_{\mathcal{F}}=x^T S_1x+s_0= f_{S_1}(x)$$
+$k(\cdot,x_i): t\mapsto k(t,x)=(t^Tx+c)(t^Tx+c)=x^T\cdot (tt^T)\cdot x+2ct^Tx+c^2=f_t(x)$
+
+
+$$ \langle f_{S},k(\cdot,x_i)\rangle_{\mathcal{H}}=\langle f_{S},f_{xx^T}\rangle_{\mathcal{H}}=\langle S,xx^T\rangle_{\mathcal{F}}=x^T Sx+2s^Tx+s_0^2= f_{S}(x)$$
 
 \end{enumerate}
 
@@ -204,14 +222,8 @@ where
 
 $k(x,x')=\frac{\phi(x,\theta_0)\phi(x',\theta_0)}{I(\theta_0)}=\frac{\phi(x',\theta_0)\phi(x,\theta_0)}{I(\theta_0)}=k(x',x)$ symmetric
 
-\begin{align*}
-  p_\theta(x)&=\theta^x(1-\theta)^{(1-x)} \\
-  \ln p_\theta(x)&=x\ln\theta+(1-x)\ln(1-\theta)\\
-  \phi(x,\theta_0)= \frac{d}{d \theta} \ln p_\theta(x)&=\frac{x}{\theta}+\frac{1-x}{1-\theta}=\frac{x-\theta}{\theta(1-\theta)}
-\end{align*}
 
-$k(x,x')=\frac{1}{I(\theta_0)}\sum_{i=1}^n\alpha_i\phi(x_i)\sum_{j=1}^n\alpha_j\phi(x_j)=\frac{1}{I(\theta_0)}\|\sum_{i=1}^n\alpha_i\phi(x_i)\|^2\ge0$
-
+$k(x,x')=\frac{1}{I(\theta_0)}\sum_{i=1}^n\alpha_i\phi(x_i,\theta_0)\sum_{j=1}^n\alpha_j\phi(x_j,\theta_0)=\frac{1}{I(\theta_0)}\|\sum_{i=1}^n\alpha_i\phi(x_i,\theta_0)\|^2\ge0$
 
 
 \item Consider the following model: $x \in \{0,1\}$, $X \sim Bernoulli(\theta)$, $0 < \theta < 1$, that is
@@ -220,10 +232,15 @@ We recall that in this case $E[X]=\theta$ and $Var[X]=E[(X-\theta)^2]=\theta(1-\
 Compute $k(x,x')$
 
 \begin{align*}
-I(\theta)=E[\phi^2(X,\theta)]&=E[(\frac{x-\theta}{\theta(1-\theta))^2}]\\
-=\frac{E[(x-\theta)^2]}{\theta^2(1-\theta)^2}&=\frac{V[X]}{\theta^2(1-\theta)^2}\\
-=\frac{\theta(1-\theta)}{\theta^2(1-\theta)^2}&=\frac{1}{\theta(1-\theta)}
+p_\theta(x)&=\theta^x(1-\theta)^{(1-x)} \\
+  \ln p_\theta(x)&=x\ln\theta+(1-x)\ln(1-\theta)\\
+  \frac{d}{d \theta} \ln p_\theta(x)&=\frac{x}{\theta}+\frac{1-x}{1-\theta}=\frac{x-\theta}{\theta(1-\theta)}
 \end{align*}
+
+$$I(\theta)=E[\phi^2(X,\theta)]=E[(\frac{X-\theta}{\theta(1-\theta)})^2]
+=\frac{E[(X-\theta)^2]}{\theta^2(1-\theta)^2}=\frac{V[X]}{\theta^2(1-\theta)^2}
+=\frac{\theta(1-\theta)}{\theta^2(1-\theta)^2}=\frac{1}{\theta(1-\theta)}$$
+
 
 $$k(x,x')=\frac{\phi(x,\theta_0)\phi(x',\theta_0)}{I(\theta_0)}=\frac{(x-\theta_0)(x'-\theta_0)}{\theta_0^2(1-\theta_0)^2}\theta_0(1-\theta_0)=\frac{(x-\theta_0)(x'-\theta_0)}{\theta_0(1-\theta_0)}$$
 
@@ -231,9 +248,22 @@ $$k(x,x')=\frac{\phi(x,\theta_0)\phi(x',\theta_0)}{I(\theta_0)}=\frac{(x-\theta_
 We consider the following model where $X=(X_1,X_2)$, $X_1$ and $X_2$ are independent with the same $Bernoulli(\theta)$ distribution. 
 Compute $k(x,x')$. 
 
-$$k(x,x')=\frac{(x-\theta_0)(x'-\theta_0)}{\theta_0(1-\theta_0)}=\frac{xx'-(x+x')\theta_0+\theta_0^2}{\theta_0(1-\theta_0)}=\frac{x_1x'_1+x_2x'_2-(x_1+x_2,x'_1+x'_2)^T\theta_0+\theta_0^2}{\theta_0(1-\theta_0)}$$
+\begin{align*}
+  p_\theta(\vec x)&=p_\theta(x_1)p_\theta(x_2)=\theta^{x_1+x_2}(1-\theta)^{2-x_1-x_2} && why?\\
+  \ln p_\theta(x)&=(x_1+x_2)\ln\theta+(2-x_1-x_2)\ln(1-\theta)\\
+  \phi(\vec x,\theta)&= \frac{d}{d \theta} \ln p_\theta(x)=\frac{x_1+x_2}{\theta}+\frac{2-x_1-x_2}{1-\theta}=\frac{x_1+x_2-2\theta}{\theta(1-\theta)}
+\end{align*}
 
+\begin{align*}
+I(\theta)&=E[\phi^2(\vec X,\theta)]=\frac{E[(X_1+X_2-2\theta)^2]}{\theta^2(1-\theta)^2}\\
+&\underset{x_1\perp x_2}{=}\frac{E[(X_1-\theta)^2]+E[(X_2-\theta)^2]+2(E[X_1]-\theta)(E[X_2]-\theta)}{\theta^2(1-\theta)^2}\\
+&=\frac{V[X_1]+V[X_2]-0}{\theta^2(1-\theta)^2}=\frac{2\theta(1-\theta)}{\theta^2(1-\theta)^2}=\frac{2}{\theta(1-\theta)}
+\end{align*}
 
+\begin{align*}
+k(x,x')&=\frac{\phi(\vec x,\theta_0)\phi(\vec x',\theta_0)}{I(\theta_0)}=\frac{(x_1+x_2-2\theta_0)(x'_1+x'_2-2\theta_0)}{\theta_0^2(1-\theta_0)^2}\frac{\theta_0(1-\theta_0)}2\\
+&=\frac{(x_1+x_2-2\theta_0)(x'_1+x'_2-2\theta_0)}{2\theta_0(1-\theta_0)}
+\end{align*}
 
 \end{enumerate}
  

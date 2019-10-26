@@ -10,6 +10,8 @@ header-includes:
  - \usepackage{multicol}
  - \usepackage{multirow}
  - \usepackage{caption}
+ - \usepackage{amssymb}
+ - \usepackage{amsmath}
  - \usepackage{fancyhdr}
  - \pagestyle{fancy}
  - \fancyhf{}
@@ -19,7 +21,7 @@ header-includes:
  - \rfoot{Page \thepage}
 ---
 
-```{r}
+```{r,echo=F}
 knitr::opts_chunk$set(echo = FALSE, fig.path = '', cache = TRUE)
 ```
 
@@ -124,13 +126,14 @@ Not sure. If the geographic factors are principal causes of weather, the distrib
 
 Not sure. We can say that there is a large number of facotrs on snowfall. If the effects of these factors are additive, the data may be normal distributed. From the central limit theorem, the sum or mean of a set of random variables is approximately normally distributed.
 
-```{r, echo=F,message=F,collapse=T,out.width='50%',fig.show='hold',fig.align='center'}
+```{r, eval=F,include=FALSE,message=F,collapse=T,out.width='50%',fig.show='hold',fig.align='center'}
 ggplot(snowfall, aes(year,record,col=city,shape=city)) +
   geom_point(alpha=0.8) +
   xlab("year") + ylab("snowfall")+theme_light()+ scale_x_discrete(breaks=seq(1954,2014,10))
+# The figure of snowfall in the different years didn't show obvious trend over years
 ```
 
-The figure of snowfall in the different years didn't show obvious trend over years
+
 
 @2. Is the mean annual snowfall for Valdez higher than that of Aomori? To address this question, perform an analysis like the one for the Pygmalion effect in the class notes assuming normality. In particular, your analysis should involve computing the posterior probability that the mean annual snowfall for Valdez is higher than that of Aomori. Choose suitable prior parameters (hyperparameters) that reflect your prior knowledge (or lack thereof).
 
@@ -162,26 +165,18 @@ Assuming the parameters for the two citiess have the same distribution and are i
 
 We use subjective prior knowledge to assign values for the parameters in the prior (a.k.a. hyperparameters), as
 
-  + $\mu_0=300$: we don't know the snowfall value on average.
+  + $\mu_0=0$: we don't know the snowfall value on average.
   
   + $\nu=1$: we are uncertain about how big the mean will be, setting it to 1 is equivalent to assigning  the strength of one observation to the information coming from the prior on $\mu_p$ and $\mu_c$.
 
   +  $\alpha=1/2$: refelcts uncertainty about how much the standard deviation is
   
-  +  $\beta=6400\alpha$ this value leads to a expected standard deviation of the changes in the snowfall of about 80 inches/year, since $\sqrt{E(\lambda)}=\sqrt{\alpha/\beta}=1/80$, and so $\sigma\approx 80$ a priori.
-
-Check whether a prior conforms to our beliefs?
-
-  + Draw some samples from the prior and look at them—this is probably the best general strategy.
-  + I choose to look at sample hypothetical datasets $x_{1:n_v}, y_{1:n_a}$ drawn using these sampled parameter values.
-  +  Plot the cdf and check various quantiles (first quartile, median, third quartile), if univariate.
-  +  Plot the pdf.
-  +  Look at various moments (e.g., mean, standard deviation).
+  +  $\beta=100\alpha$ this value leads to a expected standard deviation of the changes in the snowfall of about 10 inches/year, since $\sqrt{E(\lambda)}=\sqrt{\alpha/\beta}=1/10$, and so $\sigma\approx 10$ a priori.
 
 
 ```{r, echo=F,message=F,collapse=T,out.width='50%',fig.show='hold',fig.align='center'}
 #hyperparameters
-mu0 <- 300; nu <- 1; alpha <- 1/2; beta <- 6400*alpha
+mu0 <- 0; nu <- 1; alpha <- 1/2; beta <- 100*alpha
 
 lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
 mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
@@ -189,7 +184,7 @@ mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
 plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
-     ylim=c(0,200), xlim=c(0,600),
+     ylim=c(0,200), xlim=c(-300,300),
      xlab=expression(paste(mu," (mean of snowfall)")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 ```
@@ -207,8 +202,8 @@ na <- summ.snow$Aomori$n
 y.bar <- summ.snow$Aomori$mean
 
 #posterior parameters
-mu.v.s <- (nv/(nu+nv))*x.bar
-mu.a.s <- (na/(nu+na))*y.bar
+mu.v.s <- (nv/(nu+nv))*x.bar+(nu/(nu+nv))* mu0
+mu.a.s <- (na/(nu+na))*y.bar+(nu/(nu+na))* mu0
 
 nu.v <- nu+nv
 nu.a <- nu+na
@@ -253,8 +248,8 @@ prob.v.greater.a <- mean(mu.post.v>mu.post.a)
 plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
-     ylim=c(50,150), xlim=c(200,400),
-     xlab=expression(paste(mu," (mean snowfall)")),
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=1/2; ",beta,"=100"*alpha)),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -273,29 +268,132 @@ and the approximate
 $P(\mu_v>\mu_a | x_{1:n_p},y_{1:n_c}) \approx \frac{1}{\text{nsim}}\sum_{k=1}^{\text{nsim}}\mathbf{1}_{\{\mu_v^{(k)}>\mu_a^{(k)}\}}$=`r round(prob.v.greater.a,3)`
 
 
-This data strongly supports the hypothesis that Valdez has more snowfll. This is evidenced in both the figure and by the probability calculated, the posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+This data strongly supports the hypothesis that Valdez has more snowfall. This is evidenced in both the figure and by the probability calculated, the posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
 
 
 
 @3. Try different values for the hyperparameters, to see what effect they have on the results. Report your results for three different settings of the hyperparameters.
 
-I tried four combination of $\mu_0$, $nu$ and $\beta$.  I did not try to change the value of $\alpha$ without obvious evidents,
+I tried six combination of $\mu_0$, $\nu$ $\alpha$,and $\beta$.
 
 \begin{center}
 \begin{tabular}{c|c|c|c|c}
  &$\mu_0$ & $nu$ & $\alpha$ & $\beta$\\
 \hline
-set 1 &0   & 1 & 1/2 & 6400$\alpha$\\
-set 2 &300 & 1 & 1/2 & 100$\alpha$ \\
-set 3 &300 & 4 & 1/2 & 6400$\alpha$\\
-set 4 &300 &1/4& 1/2 & 6400$\alpha$\\
+set 1 &300 & 1 & 1/2 & 100$\alpha$\\
+set 2 &0   & 1 & 1/2 & 6400$\alpha$ \\
+set 3 &0   & 1 & 1/25& 100$\alpha$\\
+set 4 &0   & 1 &  25 & 100$\alpha$\\
+set 5 &0   & 4 & 1/2 & 100$\alpha$\\
+set 6 &0   &1/4& 1/2 & 100$\alpha$\\
 \end{tabular}
 \end{center}
 
 ```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
 # hyperparameters set 1
 #hyperparameters
+mu0 <- 300; nu <- 1; alpha <- 1/2; beta <- 100*alpha
+
+lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
+mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
+
+plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
+     panel.first = grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(0,600),
+     xlab=expression(paste(mu," (mean of snowfall)")),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+
+#posterior parameters
+mu.v.s <- (nv/(nu+nv))*x.bar+(nu/(nu+nv))* mu0
+mu.a.s <- (na/(nu+na))*y.bar+(nu/(nu+na))* mu0
+
+nu.v <- nu+nv
+nu.a <- nu+na
+
+alpha.v <- alpha+nv/2
+alpha.a <- alpha+na/2
+
+beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
+beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
+
+nsim <- 10^4
+lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
+lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
+mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
+mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
+
+prob.v.greater.a <- mean(mu.post.v>mu.post.a)
+
+plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
+     grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 1, col = "red",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=300; ", nu,"=1; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+points(x=mu.post.v,y=sqrt(1/lambda.post.a),
+       col="cornflowerblue",cex=0.6, pch=2)
+legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
+       legend=c("Aomori","Valdez"),bty="n")
+```
+
+Setting $\mu_0=300$ change the location of of prior distribution. It makes two more concentrated and seperated posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+
+
+```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
+# hyperparameters set 2
+#hyperparameters
 mu0 <- 0; nu <- 1; alpha <- 1/2; beta <- 6400*alpha
+
+lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
+mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
+
+plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
+     panel.first = grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(-300,300),
+     xlab=expression(paste(mu," (mean of snowfall)")),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+
+#posterior parameters
+mu.v.s <- (nv/(nu+nv))*x.bar+(nu/(nu+nv))* mu0
+mu.a.s <- (na/(nu+na))*y.bar+(nu/(nu+na))* mu0
+
+nu.v <- nu+nv
+nu.a <- nu+na
+
+alpha.v <- alpha+nv/2
+alpha.a <- alpha+na/2
+
+beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
+beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
+
+nsim <- 10^4
+lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
+lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
+mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
+mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
+
+prob.v.greater.a <- mean(mu.post.v>mu.post.a)
+
+plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
+     grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 1, col = "red",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=1/2; ",beta,"=6400"*alpha)),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+points(x=mu.post.v,y=sqrt(1/lambda.post.a),
+       col="cornflowerblue",cex=0.6, pch=2)
+legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
+       legend=c("Aomori","Valdez"),bty="n")
+```
+
+Setting $\sigma\approx 80$ change the scale of prior distribution. It makes two more disperstive and overlapped posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+
+```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
+# hyperparameters set 3
+#hyperparameters
+mu0 <- 0; nu <- 1; alpha <- 1/25; beta <- 100*alpha
 
 lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
 mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
@@ -331,8 +429,8 @@ prob.v.greater.a <- mean(mu.post.v>mu.post.a)
 plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
-     ylim=c(50,150), xlim=c(200,400),
-     xlab=expression(paste(mu," (mean snowfall)")),
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=1/25; ",beta,"=100"*alpha)),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -340,114 +438,12 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
        legend=c("Aomori","Valdez"),bty="n")
 ```
 
-Setting $\mu_0=0$ change the location of of prior distribution. But it doesn't chage the posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
-
-
-```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
-# hyperparameters set 2
-#hyperparameters
-mu0 <- 300; nu <- 1; alpha <- 1/2; beta <- 100*alpha
-
-lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
-mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
-
-plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
-     panel.first = grid(ny=8,nx=12,col=grey(0.6)),
-     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
-     ylim=c(0,200), xlim=c(0,600),
-     xlab=expression(paste(mu," (mean of snowfall)")),
-     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
-
-#posterior parameters
-mu.v.s <- (nv/(nu+nv))*x.bar
-mu.a.s <- (na/(nu+na))*y.bar
-
-nu.v <- nu+nv
-nu.a <- nu+na
-
-alpha.v <- alpha+nv/2
-alpha.a <- alpha+na/2
-
-beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
-beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
-
-nsim <- 10^4
-lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
-lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
-mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
-mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
-
-prob.v.greater.a <- mean(mu.post.v>mu.post.a)
-
-plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
-     grid(ny=8,nx=12,col=grey(0.6)),
-     pch = 1, col = "red",cex=0.6,cex.lab=0.8,
-     ylim=c(50,150), xlim=c(200,400),
-     xlab=expression(paste(mu," (mean snowfall)")),
-     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
-points(x=mu.post.v,y=sqrt(1/lambda.post.a),
-       col="cornflowerblue",cex=0.6, pch=2)
-legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
-       legend=c("Aomori","Valdez"),bty="n")
-```
-
-Setting $\sigma\approx 10$ change the scale of prior distribution. But it doesn't chage the posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
-
-```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
-# hyperparameters set 3
-#hyperparameters
-mu0 <- 300; nu <- 4; alpha <- 1/2; beta <- 6400*alpha
-
-lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
-mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
-
-plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
-     panel.first = grid(ny=8,nx=12,col=grey(0.6)),
-     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
-     ylim=c(0,200), xlim=c(0,600),
-     xlab=expression(paste(mu," (mean of snowfall)")),
-     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
-
-#posterior parameters
-mu.v.s <- (nv/(nu+nv))*x.bar
-mu.a.s <- (na/(nu+na))*y.bar
-
-nu.v <- nu+nv
-nu.a <- nu+na
-
-alpha.v <- alpha+nv/2
-alpha.a <- alpha+na/2
-
-beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
-beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
-
-nsim <- 10^4
-lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
-lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
-mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
-mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
-
-prob.v.greater.a <- mean(mu.post.v>mu.post.a)
-
-plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
-     grid(ny=8,nx=12,col=grey(0.6)),
-     pch = 1, col = "red",cex=0.6,cex.lab=0.8,
-     ylim=c(50,150), xlim=c(200,400),
-     xlab=expression(paste(mu," (mean snowfall)")),
-     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
-points(x=mu.post.v,y=sqrt(1/lambda.post.a),
-       col="cornflowerblue",cex=0.6, pch=2)
-legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
-       legend=c("Aomori","Valdez"),bty="n")
-```
-
-Setting $\nu=4$ a high strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a higher stand diviation but it doesn't chage the posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
-
+Setting $\alpha=1/25$  mades a more dispersive prior and posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
 
 ```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
 # hyperparameters set 4
 #hyperparameters
-mu0 <- 300; nu <- 0.25; alpha <- 1/2; beta <- 6400*alpha
+mu0 <- 0; nu <- 1; alpha <- 25; beta <- 100*alpha
 
 lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
 mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
@@ -455,7 +451,7 @@ mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
 plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
-     ylim=c(0,200), xlim=c(0,600),
+     ylim=c(0,200), xlim=c(-300,300),
      xlab=expression(paste(mu," (mean of snowfall)")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
@@ -483,8 +479,8 @@ prob.v.greater.a <- mean(mu.post.v>mu.post.a)
 plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
-     ylim=c(50,150), xlim=c(200,400),
-     xlab=expression(paste(mu," (mean snowfall)")),
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=25; ",beta,"=100"*alpha)),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -492,4 +488,105 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
        legend=c("Aomori","Valdez"),bty="n")
 ```
 
-Setting $\nu=1/4$ a low strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a lower stand diviation but it doesn't chage the posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+Setting $\alpha=25$ mades a more concentrated prior and posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+
+```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
+# hyperparameters set 5
+#hyperparameters
+mu0 <- 0; nu <- 4; alpha <- 1/2; beta <- 100*alpha
+
+lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
+mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
+
+plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
+     panel.first = grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(-300,300),
+     xlab=expression(paste(mu," (mean of snowfall)")),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+
+#posterior parameters
+mu.v.s <- (nv/(nu+nv))*x.bar
+mu.a.s <- (na/(nu+na))*y.bar
+
+nu.v <- nu+nv
+nu.a <- nu+na
+
+alpha.v <- alpha+nv/2
+alpha.a <- alpha+na/2
+
+beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
+beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
+
+nsim <- 10^4
+lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
+lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
+mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
+mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
+
+prob.v.greater.a <- mean(mu.post.v>mu.post.a)
+
+plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
+     grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 1, col = "red",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=4; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+points(x=mu.post.v,y=sqrt(1/lambda.post.a),
+       col="cornflowerblue",cex=0.6, pch=2)
+legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
+       legend=c("Aomori","Valdez"),bty="n")
+```
+
+Setting $\nu=1/4$ a lower strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a higher stand diviation and a more overlapped posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+
+
+```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
+# hyperparameters set 6
+#hyperparameters
+mu0 <- 0; nu <- 0.25; alpha <- 1/2; beta <- 100*alpha
+
+lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
+mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
+
+plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
+     panel.first = grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(-300,300),
+     xlab=expression(paste(mu," (mean of snowfall)")),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+
+#posterior parameters
+mu.v.s <- (nv/(nu+nv))*x.bar
+mu.a.s <- (na/(nu+na))*y.bar
+
+nu.v <- nu+nv
+nu.a <- nu+na
+
+alpha.v <- alpha+nv/2
+alpha.a <- alpha+na/2
+
+beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
+beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
+
+nsim <- 10^4
+lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
+lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
+mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
+mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
+
+prob.v.greater.a <- mean(mu.post.v>mu.post.a)
+
+plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
+     grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 1, col = "red",cex=0.6,cex.lab=0.8,
+     ylim=c(0,200), xlim=c(200,400),
+     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1/4; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
+points(x=mu.post.v,y=sqrt(1/lambda.post.a),
+       col="cornflowerblue",cex=0.6, pch=2)
+legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
+       legend=c("Aomori","Valdez"),bty="n")
+```
+
+Setting $\nu=1/4$ a higher strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a lower stand diviation and two more seperated posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
