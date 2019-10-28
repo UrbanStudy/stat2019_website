@@ -21,7 +21,7 @@ header-includes:
  - \rfoot{Page \thepage}
 ---
 
-```{r,echo=F}
+```{r,eval=F,include=F}
 knitr::opts_chunk$set(echo = FALSE, fig.path = '', cache = TRUE)
 ```
 
@@ -33,20 +33,28 @@ Let $Y_1,Y_2,\ldots,Y_n | \mu,\lambda\stackrel{iid}{\sim}N(\mu,\lambda^{-1})$, a
 
 @1. Derive the exponential family form for the generating distribution (the likelihood) of $Y_1,Y_2,\ldots,Y_n$. 
 \begin{align*}
-p(y_{1:n}|\mu) &=\prod_{i=1}^n \mathbf{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac12}\exp[-\frac{\lambda}{2} (y_i-\mu)^2] \\
-    &= \prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} \sum_{i=1}^n (y_i-\mu)^2]\\
-    &= \prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} (\sum_{i=1}^n y_i^2 - 2 \mu \sum_{i=1}^n y_i+n \mu^2)]\\
-    &= \underbrace{\prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} \sum_{i=1}^n y_i^2]}_{h(y)}\exp[\underbrace{n\lambda \mu}_{\phi(\mu)} \underbrace{\bar{y}}_{t(y)} -n\underbrace{\frac{\lambda\mu^2}{2}}_{\kappa(\mu)}] \\
-    &\propto \exp[-\frac{n \lambda}{2} (\mu^2 - 2 \mu \bar{y})]
+p(y_{1:n}|\mu) &=\prod_{i=1}^n \left(\mathbf{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac12}\exp[-\frac{\lambda}{2} (y_i-\mu)^2]\right) \\
+    &= (\prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}})(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} \sum_{i=1}^n (y_i-\mu)^2]\\
+    &= (\prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}})(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} (\sum_{i=1}^n y_i^2 - 2 \mu \sum_{i=1}^n y_i+n \mu^2)]\\
+    &= \underbrace{(\prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}})(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} \sum_{i=1}^n y_i^2]}_{h(y)}\exp[\underbrace{n\lambda \mu}_{\phi(\mu)} \underbrace{\bar{y}}_{t(y)} -n\underbrace{\frac{\lambda\mu^2}{2}}_{\kappa(\mu)}] 
 \end{align*}
 
 
 @2. Use the likelihood derived above in exponential family form to show that the conjugate family of priors for $\boldsymbol{\mu}$ corresponds to
 $\Big\{N(\mu_0,(\nu\lambda)^{-1}): \mu_0\in\mathbb{R}, \nu >0\Big\},$
 
+$p(y_{1:n}|\mu)=\propto \exp[n\bar{y}\lambda \mu-\frac{n \lambda}{2}\mu^2]$, assume the conjugate family of priors is
 
-$$p(\mu)=\mathbf{1}_{\{\mu\in\mathbb{R}\}}(\frac{\nu\lambda}{2\pi})^{\frac{1}2} \exp[-\frac{\nu\lambda}{2} (\mu-\mu_0)^2] \propto \exp[-\frac{\nu\lambda}{2} (\mu^2-2\mu\mu_0)]$$
+\begin{align*}
+p(\mu)&\propto \mathbf{1}_{\{\mu\in\mathbb{R}\}}\exp[-n_0\frac{\lambda}{2}\mu^2+n_0t_0\lambda \mu] \\
+      &= \mathbf{1}_{\{\mu\in\mathbb{R}\}}\exp[-\frac{n_0\lambda}{2} ((\mu-t_0)^2+t_0^2)]\\
+      &=\mathbf{1}_{\{\mu\in\mathbb{R}\}} \exp[-\frac{n_0\lambda}{2} (\mu-t_0)^2]\exp[\frac{n_0\lambda}{2}t_0^2]\\
+&\propto \mathbf{1}_{\{\mu\in\mathbb{R}\}}(\frac{n_0\lambda}{2\pi})^{\frac{1}2} \exp[-\frac{n_0\lambda}{2} (\mu-t_0)^2]
+\end{align*}
 
+Let $n_0=\nu$, $t_0=\mu_0$, then
+$p(\mu)=\mathbf{1}_{\{\mu\in\mathbb{R}\}}(\frac{\nu\lambda}{2\pi})^{\frac{1}2} \exp[-\frac{\nu\lambda}{2} (\mu-\mu_0)^2]\sim N(\mu_0,(\nu\lambda)^{-1})$
+where $\mu_0\in\mathbb{R}, \nu >0$
 
 @3. Use the results from the two parts above to find the posterior distribution for $\mu$.
 
@@ -73,7 +81,7 @@ and mean $\mu^\star=\frac{n}{n+\nu} \bar{y} +\frac{\nu}{n+\nu}\mu_0$
 
 \begin{align*}
 p(y_{1:n}|\mu,\lambda)&=\prod_{i=1}^n \mathbf{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac12}\exp[-\frac{\lambda}{2} (y_i-\mu)^2] \\
-    &= \underbrace{\mathbf{1}_{\{y_i\in\mathbb{R}\}}(2\pi)^{-\frac{n}2}}_{h(y)}\exp[\underbrace{-\frac{\lambda}{2} \sum_{i=1}^n y_i^2+n\lambda \mu\bar{y}}_{\phi(\mu,\lambda)t(y_{1:n})} -n\underbrace{\frac{\lambda\mu^2-\ln\lambda}{2}}_{\kappa(\mu)}] \\
+    &= \underbrace{(\prod_{i=1}^n\mathbf{1}_{\{y_i\in\mathbb{R}\}})(2\pi)^{-\frac{n}2}}_{h(y)}\exp[\underbrace{-\frac{\lambda}{2} \sum_{i=1}^n y_i^2+n\lambda \mu\bar{y}}_{\phi(\mu,\lambda)t(y_{1:n})} -n\underbrace{\frac{\lambda\mu^2-\ln\lambda}{2}}_{\kappa(\mu)}] \\
 \end{align*}
 
 where $\phi(\mu,\lambda)=(-\frac{\lambda}{2},n\lambda \mu)$, $t(y_{1:n}) = (\sum_{i=1}^n y_i^2,\bar{y})^T$
@@ -112,11 +120,11 @@ snowfall[,2] <- as.factor(snowfall$year)
 
 @1. Do you think an iid normal model is appropriate here? Why or why not?
 
-These data are weather observations of many years in two locations. Before analys the data, Our prior experiences tell me that the atmospheric and geographic factors decide the precipitation.
+These data are weather observations of many years in two locations. Before analys the data, Our prior experiences tell me that both of the atmospheric and geographic factors affect the precipitation.
 
 - Independent: 
 
-Not strictly.  From a global perspective, all the climate issues are connected and have interaction with each other. Therefore, compared to a data in a lab, the weather observations are not purely independent. If the researcher think the distance between the two cities is far enough that the interations are negligible, we can consider the data as independent. The effect of time factor may not be independent, previous years value may affects the next year, but it doesn't affect the comparison of two cities.
+Not strictly.  From a global perspective, all the climate issues are connected and have interaction with each other. Therefore, compared to a data in a lab, the weather observations in two cities are not completely independent. If the researcher think the distance between the two cities is far enough that the interations are negligible, we can consider the data as independent. The effect of time factor may not be independent, previous years value may affects the next year, but it doesn't affect the comparison of two cities.
 
 - Identical: 
 
@@ -154,9 +162,8 @@ The histograms show that the mean for Valdez was higher.  The distributions do n
 \text{Valdez: }X_1,\ldots,X_{n_v} &\overset{iid}{\sim} N(\mu_v,\lambda_v^{-1})\\
 \text{Aomori: }Y_1,\ldots,Y_{n_a} &\overset{iid}{\sim} N(\mu_a,\lambda_a^{-1})
 \end{align*}
-We are interested in the difference between the means is $\mu_v > \mu_a$. We don’t know the standard deviations $\sigma_v = \lambda_v^{-1/2}$ and $\sigma_a = \lambda_a^{-1/2}$. When $\sigma_v\not=\sigma_a$, The frequentist approach to this problem involves approximate t-distributions based on the Welch–Satterthwaite degrees of freedom.
+We are interested in the difference between the means is $\mu_v > \mu_a$. <!--We don’t know the standard deviations $\sigma_v = \lambda_v^{-1/2}$ and $\sigma_a = \lambda_a^{-1/2}$. When $\sigma_v\not=\sigma_a$, The frequentist approach to this problem involves approximate t-distributions based on the Welch–Satterthwaite degrees of freedom.-->
 From the Bayesian perspective we need to determine is $P(\vec\mu_p>\vec\mu_c|\text{data})$
-
 Assuming the parameters for the two citiess have the same distribution and are independent across cities.  Their conjugate prior for the means and variances are given by
 \begin{align*}
 \text{Valdez: }\vec\mu_v,\vec\lambda_v &\sim \text{Normal-Gamma}(\mu_0,\nu,\alpha,\beta)\\
@@ -185,7 +192,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(-300,300),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean of snowfall",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 ```
 
@@ -215,23 +222,20 @@ beta.v <- 0.5*(sum(x^2)+2*beta-nu.v*mu.v.s^2)
 beta.a <- 0.5*(sum(y^2)+2*beta-nu.a*mu.a.s^2)
 ```
 
-From the derivations in the previous section we have that the posterior distributions for $\vec\mu_v,\vec\lambda_v$ and for $\vec\mu_a,\vec\lambda_a$ are given by
-
-\begin{align*}
-\text{Valdez: }\vec\mu_v,\vec\lambda_v &\sim \text{Normal-Gamma}(\mu_v^\star,\nu_v^\star,\alpha_v^\star,\beta_v^\star)\\
-\text{Aomori: }\vec\mu_a,\vec\lambda_a &\sim \text{Normal-Gamma}(\mu_a^\star,\nu_a^\star,\alpha_a^\star,\beta_a^\star).
-\end{align*}
-
-where
+The posterior distributions for $\vec\mu_v,\vec\lambda_v$ and for $\vec\mu_a,\vec\lambda_a$ are given by
 
 \begin{center}
 \begin{tabular}{rl|rl}
-\multicolumn{2}{c}{Valdez} & \multicolumn{2}{c}{Aomori}\\
+\multicolumn{2}{c}{Valdez: $\vec\mu_v,\vec\lambda_v \sim \text{Normal-Gamma}(\mu_v^\star,\nu_v^\star,\alpha_v^\star,\beta_v^\star)$} & 
+\multicolumn{2}{c}{Aomori: $\vec\mu_a,\vec\lambda_a \sim \text{Normal-Gamma}(\mu_a^\star,\nu_a^\star,\alpha_a^\star,\beta_a^\star)$}\\
 \hline
 $\mu_v^\star=\frac{n_v}{\nu+n_v}\bar{x}+\frac{\nu}{\nu+n_v}\mu_0$&=`r round(mu.v.s,2)` & $\mu_a^\star=\frac{n_a}{\nu+n_a}\bar{y}+\frac{\nu}{\nu+n_a}\mu_0$&=`r round(mu.a.s,2)` \\
 $\nu_v^\star=\nu+n_v$&=`r nu.v` &   $\nu_a^\star=\nu+n_a$&=`r nu.a`\\
 $\alpha_v^\star=\alpha+n_v/2$&=`r alpha.v` &  $\alpha_a^\star=\alpha+n_a/2$&=`r alpha.a`  \\
-$\beta_v^\star=\frac{1}{2} (\sum_i x_i^2+\nu \mu_0^2+2\beta-\nu_v^\star {\mu_v^\star}^2)$&=`r round(beta.v,1)` & $\beta_a^\star=\frac{1}{2} (\sum_i y_i^2+\nu \mu_0^2+2\beta-\nu_a^\star {\mu_a^\star}^2)$&=`r round(beta.a,1)`
+$\beta_v^\star=\frac{1}{2} (\sum_i x_i^2+\nu \mu_0^2+2\beta-\nu_v^\star {\mu_v^\star}^2)$&=`r round(beta.v,1)` & $\beta_a^\star=\frac{1}{2} (\sum_i y_i^2+\nu \mu_0^2+2\beta-\nu_a^\star {\mu_a^\star}^2)$&=`r round(beta.a,1)`\\
+\hline
+\multicolumn{2}{c}{$\vec\mu_v,\vec\lambda_v \sim \text{Normal-Gamma}(`r round(mu.v.s,1)`,`r nu.v`,`r alpha.v`,`r round(beta.v,1)`)$} & 
+\multicolumn{2}{c}{$\vec\mu_a,\vec\lambda_a \sim \text{Normal-Gamma}(`r round(mu.a.s,1)`,`r nu.a`,`r alpha.a`,`r round(beta.a,1)`)$}\\
 \end{tabular}
 \end{center}
 
@@ -249,7 +253,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=0; ", nu,"=1; ",alpha,"=1/2; ",beta,"=100"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -258,12 +262,6 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
 ```
 
  The Figure shows a scatterplot of samples from the posteriors by a Monte Carlo approximation: taking a bunch of samples (nsim$= 10^4$) from each of the posteriors and the fraction of times we have $\mu_v > \mu_a$
-
-
-Valdez: $\vec\mu_v,\vec\lambda_v \sim$ Normal-Gamma(`r round(mu.v.s,1)`,`r nu.v`,`r alpha.v`,`r round(beta.v,1)`)
-
-Aomori: $\vec\mu_a,\vec\lambda_a \sim$ Normal-Gamma(`r round(mu.a.s,1)`,`r nu.a`,`r alpha.a`,`r round(beta.a,1)`)
-
 and the approximate 
 $P(\mu_v>\mu_a | x_{1:n_p},y_{1:n_c}) \approx \frac{1}{\text{nsim}}\sum_{k=1}^{\text{nsim}}\mathbf{1}_{\{\mu_v^{(k)}>\mu_a^{(k)}\}}$=`r round(prob.v.greater.a,3)`
 
@@ -301,7 +299,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(0,600),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
 #posterior parameters
@@ -329,7 +327,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=300; ", nu,"=1; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=300; ", nu,"=1; ",alpha,"=1/2; ",beta,"=100"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -352,7 +350,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(-300,300),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
 #posterior parameters
@@ -380,7 +378,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=1/2; ",beta,"=6400"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=0; ", nu,"=1; ",alpha,"=1/2; ",beta,"=6400"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -402,7 +400,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(-300,300),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
 #posterior parameters
@@ -430,7 +428,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=1/25; ",beta,"=100"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=0; ", nu,"=1; ",alpha,"=1/25; ",beta,"=100"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -438,7 +436,7 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
        legend=c("Aomori","Valdez"),bty="n")
 ```
 
-Setting $\alpha=1/25$  mades a more dispersive prior and posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+If $\sigma$ is uncertain, setting $\alpha=1/25$  mades a more dispersive prior and posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
 
 ```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
 # hyperparameters set 4
@@ -452,7 +450,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(-300,300),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
 #posterior parameters
@@ -480,7 +478,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1; ",alpha,"=25; ",beta,"=100"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=0; ", nu,"=1; ",alpha,"=25; ",beta,"=100"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -488,7 +486,7 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
        legend=c("Aomori","Valdez"),bty="n")
 ```
 
-Setting $\alpha=25$ mades a more concentrated prior and posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+If $\sigma$ is certain, setting $\alpha=25$ mades a more concentrated prior and posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
 
 ```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
 # hyperparameters set 5
@@ -502,7 +500,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(-300,300),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
 #posterior parameters
@@ -530,7 +528,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=4; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=0; ", nu,"=4; ",alpha,"=1/2; ",beta,"=100"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -538,7 +536,7 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
        legend=c("Aomori","Valdez"),bty="n")
 ```
 
-Setting $\nu=1/4$ a lower strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a higher stand diviation and a more overlapped posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+Setting $\nu=4$ represents a lower strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a higher stand diviation and a more overlapped posterior probability that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
 
 
 ```{r, echo=F,message=F,collapse=T,out.width='40%',fig.show='hold',fig.align='center'}
@@ -553,7 +551,7 @@ plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
      panel.first = grid(ny=8,nx=12,col=grey(0.6)),
      pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(-300,300),
-     xlab=expression(paste(mu," (mean of snowfall)")),
+     xlab="prior mean",
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 
 #posterior parameters
@@ -581,7 +579,7 @@ plot(x=mu.post.a,y=sqrt(1/lambda.post.v),
      grid(ny=8,nx=12,col=grey(0.6)),
      pch = 1, col = "red",cex=0.6,cex.lab=0.8,
      ylim=c(0,200), xlim=c(200,400),
-     xlab=expression(paste(mu," (",mu,"0=0; ", nu,"=1/4; ",alpha,"=1/2; ",beta,"=100"*alpha)),
+     xlab=expression(paste("postrior mean (",mu,"0=0; ", nu,"=1/4; ",alpha,"=1/2; ",beta,"=100"*alpha,")")),
      ylab=expression(paste(lambda^{-1/2}," (std. dev)") ))
 points(x=mu.post.v,y=sqrt(1/lambda.post.a),
        col="cornflowerblue",cex=0.6, pch=2)
@@ -589,4 +587,4 @@ legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
        legend=c("Aomori","Valdez"),bty="n")
 ```
 
-Setting $\nu=1/4$ a higher strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a lower stand diviation and two more seperated posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
+Setting $\nu=1/4$ represents a higher strenth of one observation to the information coming from the prior on $\mu_v$ and  $\mu_a$. It shows a lower stand diviation and two more seperated posterior probability distribution that the Valdez has a higher mean of snowfall is about `r round(prob.v.greater.a,3)`.
