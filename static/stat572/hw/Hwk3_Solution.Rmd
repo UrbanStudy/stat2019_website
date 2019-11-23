@@ -1,0 +1,296 @@
+---
+title: "STAT 572: Bayesian Statistics" 
+subtitle: "Homework 3"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+\vspace{-0.5cm}
+\begin{center}
+(to be submitted online in D2L before October 29th before noon)
+\end{center}
+
+\vspace{1cm}
+
+
+## Part 1
+
+Let $Y_1,Y_2,\ldots,Y_n | \mu,\lambda\stackrel{iid}{\sim}N(\mu,\lambda^{-1})$, and **assume that $\lambda>0$ is fixed and known**.
+
+@1. Derive the exponential family form for the generating distribution (the likelihood) of $Y_1,Y_2,\ldots,Y_n$. 
+
+From our class notes, we know that the normal likelihood is given by
+\begin{eqnarray*}
+p(y_{1:n}|\mu)&=&\left(\frac{\lambda}{2\pi}\right)^{n/2}\exp{\left\{-\frac{\lambda}{2}\sum_{i=1}^n(y_i-\mu)^2 \right\}}\boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\\
+&=& \exp{\left\{-\frac{\lambda}{2}(\sum_i y_i^2 - 2 \mu n \bar{y}+n\mu^2) \right\}} \left(\left(\frac{\lambda}{2\pi}\right)^{n/2} \boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\right)\\
+&=&  \exp{\left\{-\frac{\lambda}{2}( - 2 \mu n \bar{y}+n\mu^2) \right\}} \left(  e^{-\frac{\lambda}{2} \sum_i y_i^2 }\left(\frac{\lambda}{2\pi}\right)^{n/2} \boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\right)\\
+&=&  \exp{\Big\{ \overbrace{\lambda \mu}^{\varphi(\mu)}  \underbrace{n \bar{y}}_{t(y_{1:n})}-n\underbrace{\frac{\lambda\mu^2}{2}}_{\kappa(\mu)} \Big\}} \underbrace{\left( e^{-\frac{\lambda}{2} \sum_i y_i^2 }\left(\frac{\lambda}{2\pi}\right)^{n/2} \boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\right)}_{h(y_{1:n})}\\
+\end{eqnarray*}
+
+@2. Use the likelihood derived above in exponential family form to show that the conjugate family of priors for $\boldsymbol{\mu}$ corresponds to
+
+$$\Big\{N(\mu_0,(\nu\lambda)^{-1}): \mu_0\in\mathbb{R}, \nu >0\Big\},$$ 
+
+We know that the form for the conjugate family of priors for the likelihood above must be given by
+\begin{eqnarray*}
+p_{n_0,t_0}(\mu) &\propto&  \exp{\left\{ n_0 t_0 \varphi(\mu)- n_0 \kappa(\mu)\right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}},
+\end{eqnarray*}
+so replacing the functions $\varphi(\mu)$ and $\kappa(\mu)$ from our solution to the previous exercise, we have that
+\begin{eqnarray*}
+p_{n_0,t_0}(\mu) &\propto&  \exp{\left\{ n_0 t_0\;(\lambda \mu)- n_0 \left(\frac{\lambda\mu^2}{2}\right)\right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}\\
+&\propto&  \exp{\left\{ -\frac{n_0\lambda }{2}(\mu^2 -2 t_0\; \mu) \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}} \quad\text{factorizing and rearranging terms}\\
+&\propto&  \exp{\left\{ -\frac{n_0\lambda }{2}(\mu - t_0)^2 \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}\quad\text{completing the square for $\mu$}.
+\end{eqnarray*}
+Setting $\nu=n_0$ and $\mu_0=t_0$, we then have that
+\begin{eqnarray*}
+p_{\nu,\mu_0}(\mu) &\propto& \exp{\left\{ -\frac{\nu\lambda }{2}(\mu - \mu_0)^2 \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}\\
+&\propto& \left(\frac{\nu\lambda}{2\pi}\right)^{1/2}\exp{\left\{ -\frac{\nu\lambda }{2}(\mu - \mu_0)^2 \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}},\\
+\end{eqnarray*}
+which implies that $\Big\{N(\mu_0,(\nu\lambda)^{-1}): \mu_0\in\mathbb{R}, \nu >0\Big\},$ is the conjugate family of priors for the mean parameter $\boldsymbol{\mu}$ for the normal likelihood with known precision parameter $\lambda$.
+
+@3. Use the results from the two parts above to find the posterior distribution for $\mu$.
+
+From parts 1 and 2, extracting only the pieces that dependn on $mu$,t he posterior density for $\boldsymbol{\mu}$ is given (up to proportionality) by
+\begin{eqnarray*}
+p(\mu | y_{1:n}) &\propto&  p(y_{1:n}|\mu) p_{\nu,\mu_0}(\mu)\\
+&\propto&  \left(  \exp{\left\{-\frac{\lambda}{2}( - 2 n \mu \bar{y}+n\mu^2) \right\}} \right) \left(\exp{\left\{ -\frac{\nu\lambda }{2}(\mu^2 -2 \mu_0 \mu ) \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}\right)\\
+&\propto&  \exp{\left\{-\frac{n \lambda}{2}(\mu^2 - 2 \mu \bar{y}) -\frac{\nu\lambda }{2}(\mu^2 -2 \mu_0  \mu) \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}\\
+&\propto&  \exp{\left\{-\frac{\lambda}{2}\Big(\mu^2(n+\nu) - 2 \mu(n\bar{y}+\nu\mu_0)\Big) \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}\\
+&\propto&  \exp{\left\{-\frac{\lambda (n+\nu)}{2}\Big(\mu^2 - 2 \mu\left(\frac{n\bar{y}+\nu\mu_0}{n+\nu}\right)\Big) \right\}} \boldsymbol{1}_{\{\mu\in \mathbb{R}\}}
+\end{eqnarray*}
+Notice the pattern that emerges when we obtain the form in the last equation in the equation panel above (identify this pattern in the derivation of the prior in part 2). Once we have this form, we can go ahead and complete the square and we know that the resulting distribution will be normal. However, completing the square is unnecessary since we can identify the form of the mean and the precision before doing so.  Specifically, in that last equation, note that the resulting posterior mean is actually the term multiplying $\mu$, given by $$E[\boldsymbol{\mu} | y_{1:n}]=\frac{n\bar{y}+\nu\mu_0}{n+\nu}.$$ Additionally, the precision is given by the numerator of the negative fraction in the exponential function (i.e., $\lambda(n+\nu)$), such that the posterior variance is $$\text{var}(\boldsymbol{\mu} | y_{1:n})=\left(\lambda(n+\nu)\right)^{-1}.$$
+
+Puting it all together,w e therefore have that $$\boldsymbol{\mu} | y_{1:n} \sim N\left(\frac{n\bar{y}+\nu\mu_0}{n+\nu},\;\left(\lambda(n+\nu)\right)^{-1} \right).$$
+
+@4. Now, assume that $\lambda$ is not known, and show that the collection of $N(\mu,\lambda^{-1})$ distributions, with $\mu\in\mathbb{R}$ and $\lambda > 0$, is a two-parameter exponential family, and identify the sufficient statistics function $t(y_{1:n}) = (t_1(y_{1:n}), t_2(y_{1:n}))^T$ for your parametrization.
+
+Note that the parametrization in exponential family form is not unique, so there is more than one way to do this.  One possibility is obtained as follows:
+\begin{eqnarray*}
+p(y_{1:n}|\mu,\lambda)&=&\left(\frac{\lambda}{2\pi}\right)^{n/2}\exp{\left\{-\frac{\lambda}{2}\sum_{i=1}^n(y_i-\mu)^2 \right\}}\boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\\
+&=& \exp{\left\{-\frac{\lambda}{2}(\sum_i y_i^2 - 2 \mu n \bar{y}+n\mu^2) + \frac{n}{2}\ln{\left(\frac{\lambda}{2\pi}\right)} \right\}} \left( \boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\right)\\
+&=&  \exp{\left\{ -\frac{\lambda}{2} \sum_i y_i^2 + \lambda \mu n \bar{y} - \frac{n}{2}\left(\lambda \mu^2-\ln{\left(\frac{\lambda}{2\pi}\right)}\right) \right\}} \left(  \boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\right)\\
+&=&  \exp{\left\{ \left(\lambda \quad \lambda \mu  \right) {-\sum_i y_i^2/2 \choose n \bar{y}}  - n\frac{1}{2}\left(\lambda \mu^2-\ln{\left(\frac{\lambda}{2\pi}\right)}\right) \right\}} \left(  \boldsymbol{1}_{\{y_{1:n}\in \mathbb{R}^n\}}\right),
+\end{eqnarray*}
+hence the vector of sufficient statistics is given by $$t(y_{1:n})=\left(\begin{matrix} t_1(y_{1:n}) \\ t_2(y_{1:n}) \end{matrix}\right) = \left(\begin{matrix} -\sum_i y_i^2/2 \\ n \bar{y} \end{matrix}\right).$$
+
+
+## Part 2
+
+Two competitors for the snowiest city in the world are Aomori City in Japan, and Valdez in the state of Alaska. Here are annual snowfall records, in inches/year, for the two cities:
+```{r, echo=F}
+
+#Aomori, 1954–2014: 
+Aomori <- c(188.6, 244.9, 255.9, 329.1, 244.5, 167.7, 298.4, 274.0, 241.3, 288.2,208.3, 
+           311.4,273.2, 395.3, 353.5, 365.7, 420.5, 303.1, 183.9, 229.9, 359.1, 355.5, 
+           294.5, 423.6, 339.8, 210.2, 318.5, 320.1, 366.5, 305.9, 434.3, 382.3, 497.2, 
+           319.3, 398.0, 183.9, 201.6, 240.6, 209.4, 174.4, 279.5, 278.7, 301.6, 196.9, 
+           224.0, 406.7, 300.4, 404.3, 284.3, 312.6, 203.9, 410.6, 233.1, 131.9, 167.7, 
+           174.8, 205.1, 251.6, 299.6, 274.4, 248.0)
+
+#Valdez, 1976–2013: 
+Valdez <- c(351.0, 379.3, 196.1, 312.3, 301.4, 240.6, 257.6, 304.5, 296.0, 338.8, 299.9, 
+            384.7, 353.5, 312.8, 550.7, 327.1, 515.8, 343.4, 341.6, 396.9, 267.3, 230.6, 
+            277.4, 341.0, 377.0, 391.3, 337.0, 250.4, 353.7, 307.7, 237.5, 275.2, 271.4, 
+            266.5, 318.7, 215.5, 438.3, 404.6) 
+```
+
+Assume that for each city independently, the data is i.i.d. normal.
+
+@1. Do you think an iid normal model is appropriate here? Why or why not?
+
+Data of across cities can perhaps be independent if the cities are relatively far apart and assuming that there are no world scale climatological event taking place in the period during which the data was collected, which could induce dependences.  However, within the same city, the data points correspond to time series, and may contain serial correlation.  As such, the iid assumption will not hold water in a real analysis. Nonetheless, we will push through with the analysis to see if we can obtain any insights.  
+
+```{r, cho=F, message=F, warning=F, fig.width=6, fig.height=4, fig.align='center'}
+library(ggplot2)
+all.data <- data.frame(city=rep(c("Aomori","Valdez"),times=c(length(Aomori),length(Valdez))),
+                       year=c(1954:2014,1976:2013),snow=c(Aomori,Valdez))
+(summ.dat <- with(all.data,by(data = snow, INDICES = city,
+                 FUN = function(x){
+                   data.frame(n=round(length(x),0),mean=mean(x),sd=sd(x))})))
+
+ggplot(data=all.data, aes(x=year,y=snow,col=city)) + 
+  geom_line()+
+  xlab("year") + 
+  ylab("snowfall")
+  
+```
+
+@2. Is the mean annual snowfall for Valdez higher than that of Aomori? To address this question, perform an analysis like the one for the Pygmalion effect in the class notes assuming normality. In particular, your analysis should involve computing the posterior probability that the mean annual snowfall for Valdez is higher than that of Aomori. Choose suitable prior parameters (hyperparameters) that reflect your prior knowledge (or lack thereof).
+
+Our first task is to specify the hyperparameters for the joint priors $p(\theta_A,\lambda_A)$ and $p(\theta_V,\lambda_V)$ for Aomori and Valdez, respectively.  To pick values that make sense, I will use (independent) data found online for some of the snowiest cities in the world in 2015. 
+<!-- \begin{figure}[h] -->
+```{r, echo=T, message=F, warning=F, fig.width=4, fig.height=4, fig.align='center'}
+#specify the hyperparameters
+#snowfall/year top ten cities in 2015 (in cm and converted to inches)
+top.sf <- c(7.92, 4.85, 3.63, 3.32, 3.15, 3.15, 3.12, 2.72, 2.51, 2.41)*39.3701
+
+#hyperparameters
+#I will use top 10 cities
+top.ct <- 10
+#get their mean and use this as mu0
+(mu0 <- mean(sort(top.sf,decreasing = T)[1:top.ct]))
+#get their variance and use 1/var as the prior mean  for lambda (i.e., this would be alpha/beta)
+(mu.lambda <- 1/var(sort(top.sf,decreasing = T)[1:top.ct])) #this is E[lambda] = alpha/beta
+#since mean of a Gamma is alpha/beta, and variance is alpha/beta^2 then
+alpha <- 2
+beta <- alpha/mu.lambda
+
+nu <- 1
+lambda.pr.sample <- rgamma(500,shape=alpha,rate=beta)
+mu.pr.sample <- rnorm(500,mean=mu0,sd=1/sqrt(lambda.pr.sample))
+
+plot(x=mu.pr.sample,y=sqrt(1/lambda.pr.sample),
+     panel.first = grid(ny=8,nx=12,col=grey(0.6)), 
+     pch = 20, col = "forestgreen",cex=0.6,cex.lab=0.8,
+     ylim=c(0,250), xlim=c(0,400),
+     xlab=expression(paste(theta," (mean snowfall values drawn from prior)")),
+     ylab=expression(paste(lambda^{-1/2}," (sd snowfall drawn from prior)") ))
+```
+<!-- \label{fig:prPyg}\caption{Samples from the Normal-Gamma prior selected.} -->
+<!-- \end{figure} -->
+
+Notice that my choice of hyperparameters yield prior draws $(\theta_k,\lambda_k)$ for $k\in\{\text{A},\text{V}\}$ that make sense and allow for the prior values to move quite a bit.
+
+```{r}
+#data
+x <- Aomori
+y <- Valdez
+
+#data summaries
+na <- length(x)
+x.bar <- mean(Aomori)
+
+nv <- length(y)
+y.bar <- mean(y)
+
+
+#posterior parameters
+mu.a.s <- (nu/(nu+na))*mu0 + (na/(nu+na))*x.bar
+mu.v.s <- (nu/(nu+nv))*mu0 + (nv/(nu+nv))*y.bar
+
+nu.a <- nu+na
+nu.v <- nu+nv
+
+alpha.a <- alpha+na/2
+alpha.v <- alpha+nv/2
+
+beta.a <- 0.5*(sum(x^2)+2*beta-nu.a*mu.a.s^2)
+beta.v <- 0.5*(sum(y^2)+2*beta-nu.v*mu.v.s^2)
+```
+
+
+Aomori                                  | Valdez                                  
+--------------------------------------- | ---------------------------------------
+$\mu_a^\star=\frac{n_a}{\nu+n_a}\bar{x}+\frac{\nu}{\nu+n_a}\mu_0=`r round(mu.a.s,2)`$ | $\mu_v^\star=\frac{n_v}{\nu+n_v}\bar{y}+\frac{\nu}{\nu+n_v}\mu_0= `r round(mu.v.s,2)`$
+$\nu_a^\star=\nu+n_a=`r nu.a`$ |   $\nu_v^\star=\nu+n_v=`r nu.v`$
+$\alpha_a^\star=\alpha+n_p/2=`r alpha.a`$ |  $\alpha_v^\star=\alpha+n_c/2=`r alpha.v`$  
+$\beta_a^\star=\frac{1}{2} (\sum_i x_i^2+\nu \mu_0^2+2\beta-\nu_a^\star {\mu_a^\star}^2)=`r round(beta.a,1)`$ | $\beta_v^\star=\frac{1}{2} (\sum_i y_i^2+\nu \mu_0^2+2\beta-\nu_v^\star {\mu_v^\star}^2)=`r round(beta.v,1)`$
+
+The plot below shows 10,000 draws from the joint posterior densities for $(\theta_a,\lambda_a)$ and $(\theta_v,\lambda_v)$.  
+
+```{r echo=F, message=F, warning=F, fig.width=5, fig.height=4, fig.align='center'}
+nsim <- 10^4
+lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
+lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
+mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
+mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
+
+prob.pgreaterc <- mean(mu.post.v>mu.post.a)
+
+plot(x=mu.post.a,y=1/sqrt(lambda.post.a),
+     grid(ny=8,nx=12,col=grey(0.6)),
+     pch = 2, col = "cornflowerblue",cex=0.6,cex.lab=0.8,
+     ylim=c(25,125), xlim=c(225,375),
+     xlab=expression(paste(mu," (mean snowfall)")),
+     ylab=expression(paste(lambda^{-1/2}," (sd snowfall)") ))
+points(x=mu.post.v,y=1/sqrt(lambda.post.v),
+       col="red",cex=0.6, pch=1)
+legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
+       legend=c("Valdez","Aomori"),bty="n")
+```
+
+It is clear that there is a high proportion of values for $\theta_v>\theta_a$.  To answer the question of interest, we have that $\Pr(\boldsymbol{\theta}_v>\boldsymbol{\theta}|\text{data})=`r round(prob.pgreaterc,4)`$, which provides strong evidence to support the hypothesis that the mean annual snowfall is higher in Valdez than in Aomori.
+
+@3. Try different values for the hyperparameters, to see what effect they have on the results. Report your results for three different settings of the hyperparameters.
+
+Comparing the prior mean value I used above ($\mu_0=``r mu0$) to the means observed in the data, it seems somewhat low, as such, it might be biasing our inference for the mean towards smaller values.  Therefore, I will choose two larger values for $\mu_0$ using the mean data from only the top 5 and top 2 snowiest cities.  Also, to check the sensitivity of our posterior inference to the choice precision parameter I consider two alternative values for $\beta$, one larger and one smaller. The alternative scenarios I used are
+
+$\mu_0$  | $\beta$
+----- | ---------
+180 | 1000
+300 | 1000
+180 | 20000
+300 | 20000
+
+```{r, echo=FALSE}
+get.posdraws <- function(mu0,beta){
+  #posterior parameters
+  mu.a.s <- (nu/(nu+na))*mu0 + (na/(nu+na))*x.bar
+  mu.v.s <- (nu/(nu+nv))*mu0 + (nv/(nu+nv))*y.bar
+  
+  nu.a <- nu+na
+  nu.v <- nu+nv
+  
+  alpha.a <- alpha+na/2
+  alpha.v <- alpha+nv/2
+  
+  beta.a <- 0.5*(sum(x^2)+2*beta-nu.a*mu.a.s^2)
+  beta.v <- 0.5*(sum(y^2)+2*beta-nu.v*mu.v.s^2)  
+  
+  nsim <- 10^4
+  lambda.post.a <- rgamma(nsim,shape=alpha.a,rate=beta.a)
+  lambda.post.v <- rgamma(nsim,shape=alpha.v,rate=beta.v)
+  mu.post.a <- rnorm(nsim,mean=mu.a.s,sd=1/sqrt(nu.a*lambda.post.a))
+  mu.post.v <- rnorm(nsim,mean=mu.v.s,sd=1/sqrt(nu.v*lambda.post.v))
+  
+  rnx <- range(c(mu.post.a,mu.post.v))
+  rny <- range(c(1/sqrt(lambda.post.a),1/sqrt(lambda.post.v)))
+  
+  prob.vgreatera <- mean(mu.post.v>mu.post.a)
+  plot(x=mu.post.a,y=1/sqrt(lambda.post.a),
+       grid(ny=8,nx=12,col=grey(0.6)),
+       pch = 2, col = "cornflowerblue",cex=0.6,cex.lab=0.8,
+       ylim=rny, xlim=rnx,
+       xlab=expression(paste(theta," (mean snowfall)")),
+       ylab=expression(paste(lambda^{-1/2}," (sd snowfall)") ),
+       main=paste("mu0 = ",mu0," beta = ",beta))
+  points(x=mu.post.v,y=1/sqrt(lambda.post.v),
+         col="red",cex=0.6, pch=1)
+  legend("topleft",pch=c(1,2),col=c("red","cornflowerblue"),
+         legend=c("Valdez","Aomori"),bty="n")
+  return(prob.vgreatera)
+}
+```
+
+```{r}
+p.vga1 <-get.posdraws(mu0=180,beta=1000)
+```
+
+
+```{r}
+p.vga2 <-get.posdraws(mu0=300,beta=1000)
+```
+
+```{r}
+p.vga3 <-get.posdraws(mu0=180,beta=20000)
+```
+
+```{r}
+p.vga4 <-get.posdraws(mu0=300,beta=20000)
+```
+
+
+When comparing the figures obtained for the posterior draws from $\boldsymbol{\theta}_a,\boldsymbol{\lambda}_a$ and $\boldsymbol{\theta}_v,\boldsymbol{\lambda}_v$ we see that while there are some changes in terms of the range of values obtained, the values $\Pr(\boldsymbol{\theta}_v> \boldsymbol{\theta}_a | \text{data})$ remain quite similar.  As such, we can be confident that the conclusion regarding the mean snowfall in Vadez being greater than that in Aomori obtained is robust.  
+
+The table below compares our original prior setup to the additional four prior settings considered.
+
+$\mu_0$ | $\beta$ | probability
+------ | ------ | -------
+145 | 8355 | $`r round(prob.pgreaterc,4)`$
+180 | 1000 | $`r round(p.vga1,4)`$
+300 | 1000 | $`r round(p.vga2,4)`$
+180 | 20000 | $`r round(p.vga3,4)`$
+300 | 20000 | $`r round(p.vga4,4)`$
+

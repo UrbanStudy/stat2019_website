@@ -1,0 +1,74 @@
+---
+title: "STAT 572: Bayesian Statistics" 
+subtitle: "Homework 2"
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+\vspace{-0.5cm}
+\begin{center}
+(to be submitted online in D2L before October 21st at 5:00 pm)
+\end{center}
+
+\vspace{1cm}
+
+\begin{enumerate}
+\item If $X_1,\ldots, X_n \sim\text{Bernoulli}(\theta)$, then the distribution of the sum $Z=\sum_{i=1}^n X_i$ has the Binomial$(n,\theta)$ distribution. Show that with $n$ fixed, the Binomial$(n,\theta)$ distributions form a one-parameter exponential family.
+
+The likelihood for the Binomial$(n,\theta)$ family is given by
+\begin{eqnarray*}
+p(z|n,\theta)&=&{n \choose z}\theta^z (1-\theta)^{n-z}\\
+&=&\exp\left\{z\ln(\theta)+(n-z)\ln(1-\theta)\right\}{n \choose z}\\
+&=&\exp\left\{z\ln(\theta)-z\ln(1-\theta)+n\ln(1-\theta)\right\}{n \choose z}\\
+&=&\exp\left\{z\ln{\left(\frac{\theta}{1-\theta}\right)}-n(-\ln(1-\theta))\right\}{n \choose z}.
+\end{eqnarray*}
+Since the general exponential family form is given by
+$$p(z | \theta)=\exp\left\{t(y)\varphi(\theta)-n\kappa(\theta)\right\}h(z),$$
+then the Binomial$(n,\theta)$ family of distributions, with $n$ fixed, is a one-parameter exponential family distribution with
+\begin{itemize}
+\item $t(z)=z$
+\item $\varphi(\theta)=\ln{\left(\frac{\theta}{1-\theta}\right)}$,
+\item $\kappa(\theta)=-\ln{(1-\theta)}$, and
+\item $h(z)={n \choose z}$,
+\end{itemize}
+following the notation in the class notes.
+
+
+
+\item Consider the family of generating distributions $\left\{\text{Poisson}(\theta): \theta>0\right\}$ for the random sample $Y_1,\ldots,Y_n$ together with the conjugate family of priors $\left\{\text{Gamma}(a,b): a,b>0 \right\}$ for $\theta$.  
+
+
+\begin{enumerate}
+\item Verify that the family of posteriors for $\theta|X=x$, can be expressed in the same form as Equation (3) of Section 3 in the \emph{Exponential Families and Conjugacy} class notes. 
+
+\begin{eqnarray*}
+p(\theta | y_{1:n})&\propto& \left(e^{n\bar{y}\ln{\theta}-n\theta}\right)\left(e^{(a-1)\ln(\theta)-b \theta +\ln{\left(b^a/\Gamma(a)\right)}} \right) \\
+&\propto&  e^{(n\bar{y}+a-1)\ln(\theta)-(n+b)\theta +\ln{\left(b^a/\Gamma(a)\right)}}\\
+&=&  e^{n^\star t^\star\ln(\theta)-n^\star\theta}
+\end{eqnarray*}
+%where $t(y)=\sum y_i$, $\varphi(\theta)=\ln(\theta)$, $\kappa(\theta)=\theta$, $n^\star = (n+b)$, and $t^\star= (n\bar{y}+a-1)/(n+b)$, and
+$$t^\star = \frac{n\bar{y}+a-1}{n+b}\quad\text{and}\quad n^\star=n+b $$
+
+\item Show that what is referred to as $t^\star$ in the class notes can be expressed as a convex combination of the ``prior guess'' $t_0$ and the sufficient statistic $t(y)$ that you obtain for this problem.
+
+From above, we have that $$t^\star=\frac{n\bar{y}+a-1}{n+b}=\frac{b}{n+b}\left(\frac{a-1}{b}\right)+\frac{n}{n+b}\bar{y},$$
+which is a convex combination of $(a-1)/b$ and $\bar{y}$.  The ``best prior guess'' $(a-1)/b$ corresponds to the prior mode of the Gamma$(a,b)$ density, obtained by setting $dp(\theta)/d\theta = 0$ and substituting to find the value of $\theta$ that maximizes the Gamma pdf -- obtaining the 2nd derivative is usually advised to confirm that you are in fact finding a max.
+
+\end{enumerate}
+
+
+\item Show that for a certain choice of $t(y)$ and $h(y)$, the Gamma$(a, b)$ distributions are in natural form with natural parameter $\theta = (a, b)^T$.
+
+Assuming that we have $Y_1,\ldots,Y_n \overset{iid}{\sim}\text{Gamma}(a,b)$, the likelihood in exponential family form is given by
+\begin{eqnarray*}
+p(y_{1:n} | a, b)&=& \prod_i \frac{b^a}{\Gamma(a)}y_i^{a-1} e^{-b y_i} \\
+&\propto&  \exp{\left\{(a-1)\sum_{i=1}^n\ln(y_i)-b n \bar{y}+n\ln\left(\frac{b^a}{\Gamma(a)}\right)\right\}}\\
+&\propto&  \exp{\left\{a\sum_{i=1}^n\ln(y_i)-b n \bar{y}+n\ln\left(\frac{b^a}{\Gamma(a)}\right)-\sum_{i=1}^n\ln(y_i)\right\}}\\
+&=&  \exp{\left\{(a, b){\sum_{i=1}^n\ln(y_i) \choose -n \bar{y}}-n\ln\left(\frac{\Gamma(a)}{b^a}\right) \right\}}  \exp{\left\{-\sum_{i=1}^n\ln(y_i)\right\}},
+\end{eqnarray*}
+and so, setting
+$$t(y)={\sum_{i=1}^n\ln(y_i) \choose -n \bar{y}}\quad\text{ and }h(y)=\exp{\left\{-\sum_{i=1}^n\ln(y_i)\right\}}$$
+the Gamma$(a,b)$ distribution can be written in natural form with parameter $\varphi(\theta)=\theta=(a,b)^T.$
+\end{enumerate}

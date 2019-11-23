@@ -1,0 +1,558 @@
+---
+title: 'STAT 572: Bayesian Statistics'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Gibbs Sampling
+output:
+  beamer_presentation: default
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+## Announcements
+
+1. Office hours will be moved to 4 pm on Thursday
+
+2. Midterm one week from today
+
+3. I will post practice problems tonight and will hold an extra office hour on Friday (time TBD)
+
+
+## Why Gibbs Sampling?
+
+- So far, we have been able to obtain the quantities of interest in closed form, or sample directly and design a MC algorithm.
+
+- But distributions associated to more interesting problems have complicated forms from which we cannot sample directly. 
+
+- Most real-world applications involve with complex probability distributions on complicated high-dimensional spaces.
+
+Let's consider an example we are now familiar with...
+
+## Semi-conjugate priors for the Normal likelihood problem
+
+\begin{block}{Consider $Y_1,\ldots,Y_n\overset{iid}{\sim}N(\theta,\lambda^{-1})$}
+
+The conjugate prior for $(\boldsymbol{\theta},\boldsymbol{\lambda})$ is Normal-Gamma$(\mu_0,\nu,\alpha,\beta)$, which is equivalent to $$\boldsymbol{\theta} | \boldsymbol{\lambda} \sim N\{\mu_0,(\nu\lambda)^{-1}\}\;\text{ and }\;\boldsymbol{\lambda}\sim \text{Gamma}(\alpha/2,\beta/2).$$
+\end{block}
+
+- Conjugate family is restrictive. 
+
+- Forces the variance of $\boldsymbol{\theta}$ to be proportional to that of the likelihood (could be too small or too large).
+
+
+## Semi-conjugate priors for the Normal likelihood problem
+
+In practice it is more common to assume that the joint prior is $$p(\theta,\lambda)=p(\theta)p(\lambda),$$
+with
+\begin{eqnarray*}
+\boldsymbol{\theta} &\sim& N(\mu_0,\lambda_0^{-1})\\
+\boldsymbol{\lambda} &\sim& \text{Gamma}(\alpha/2,\beta/2).
+\end{eqnarray*}
+
+## Semi-conjugate priors for the Normal likelihood problem
+
+This yields
+\small{
+$$p(\theta,\lambda| y_{1:n})=p(\theta |\lambda, y_{1:n})p(\lambda | y_{1:n}),$$
+where $$\theta | \lambda, y_{1:n}\sim N\left(\frac{n\lambda \bar{y}+\lambda_0 \mu_0}{n\lambda +\lambda_0}, (n\lambda +\lambda_0)^{-1}\right),$$
+which we clearly can sample from.  However
+$$ p(\lambda | y_{1:n})\propto \frac{\lambda^{\frac{n+\alpha}{2}-1}}{(n\lambda +\lambda_0)^{1/2}}\text{exp}\left\{-\frac{1}{2} \left(\lambda\left(\sum y_i^2 +\beta\right)-\frac{(n\lambda \bar{y}+\lambda_0 \mu_0)^2}{n\lambda +\lambda_0} \right)\right\}.$$
+}
+
+\normalsize{
+- So $\lambda | y_{1:n}$ \textcolor{blue}{is no longer Gamma and it is not immediately evident how to sample from this distribution.}
+
+- What can we do to obtain quantities from this joint posterior?
+}
+
+## Approximating the posterior by discretizing the parameter space
+
+- Obtaining $p(\theta,\lambda, y_{1:n})$ for particular values $\theta$ and $\lambda$ is a simple calculation.
+
+- But, we are not able to sample from the joint posterior density, so we cannot use MC.
+
+- However, since we only have a few parameters: define a grid of values for the parameters in the joint parameter space, and calculate $p(\theta,\lambda, y_{1:n})$ (the numerator of the posterior).
+
+## Approximating the posterior by discretizing the parameter space
+
+- We know that $(\theta,\lambda)\in \Theta=\mathbb{R}\times \mathbb{R}^+$
+
+- Let's consider instead a discretized version of $\Theta$ with a $100\times 100$ grid of values for $\theta$ and $\lambda$, given by $$\Theta_d=\left\{\theta_1,\theta_2,\ldots,\theta_{100}\right\}\times \left\{\lambda_1,\lambda_2,\ldots,\lambda_{100}\right\}.$$
+
+- We can define the posterior density over discretized space by using $p(\theta,\lambda | y_{1:n})$ (posterior over original parameter space $\Theta$). 
+
+## Approximating the posterior by discretizing the parameter space
+
+- Let $p_d(\theta,\lambda| y_{1:n})$ be the posterior over $\Theta_d$.  For a particular pair $(\theta_l,\lambda_k)\in \Theta_d$, we have
+
+$$p_d(\theta_l,\lambda_k| y_{1:n})=\frac{p(\theta_l,\lambda_k| y_{1:n})}{\sum_{j=1}^{100}\sum_{h=1}^{100} p(\theta_j,\lambda_h | y_{1:n}) }$$
+
+- Since $p(\theta_l,\lambda_k | y_{1:n})=\frac{p(\theta_l,\lambda_k, y_{1:n})}{p( y_{1:n})}$, we can rewrite the discretized joint density above as
+\begin{eqnarray*}
+p_d(\theta_l,\lambda_k | y_{1:n})&=&\frac{p(\theta_l,\lambda_k, y_{1:n})/ p( y_{1:n})}{\sum_{j=1}^{100}\sum_{h=1}^{100} p(\theta_j,\lambda_h, y_{1:n})/ p( y_{1:n}) }\\
+&=&\frac{p(\theta_l,\lambda_k, y_{1:n})}{\sum_{j=1}^{100}\sum_{h=1}^{100} p(\theta_j,\lambda_h, y_{1:n})}, \label{eq:discrjoint}
+\end{eqnarray*}
+
+## Approximating the posterior by discretizing the parameter space
+
+- So, we can calculate the posterior density over the grid by simply calculating $p(\theta_l,\lambda_k, y_{1:n})$ for all pairs $(\theta_l,\lambda_k)\in\Theta_d$.
+
+- Straightforward to calculate $p_d(\theta | y_{1:n})$ and $p_d(\lambda | y_{1:n})$ over $\Theta_d$ for each $\theta_l\in\Theta_d$ and $\lambda_k\in\Theta_d$, as follows:
+
+\begin{eqnarray*}
+p_d(\theta_l| y_{1:n})&=&\sum_{k=1}^{100}p_d(\theta_l,\lambda_k| y_{1:n}),\\
+p_d(\lambda_k| y_{1:n})&=&\sum_{l=1}^{100}p_d(\theta_l,\lambda_k| y_{1:n})
+\end{eqnarray*}
+
+## Example: Midge wing length
+
+The wing length of 9 midge specimens was measured in mm. Assume $Y_1,\ldots,Y_n\overset{iid}{\sim}N(\theta,\lambda^{-1})$, and 
+\begin{eqnarray*}
+\boldsymbol{\theta} &\sim& N(\mu_0,\tau^2)\\
+\boldsymbol{\lambda} &\sim& \text{Gamma}(\nu_0/2,s_0^2\nu_0 /2).
+\end{eqnarray*}
+
+- From previous studies: $\mu_0=1.9$
+
+- Since the values of $\boldsymbol{\theta}$ are expected to be positive, $\tau$ is chosen so that $\mu_0-2\tau >0$, hence $\tau > \mu_0/2=0.95$.
+
+## Example: Midge wing length
+
+- Discretize the space o approximate the posterior probabilities
+
+- Define the grid (i.e., the discretized parameter space $\Theta_d$):
+
+$$\Theta_d=\left\{(\theta,\lambda):\theta\in \left\{1.505,1.510,\ldots,2\right\},\;\lambda\in\left\{1.75,3.5,\ldots,175\right\}\right\}$$
+
+
+## Example: Midge wing length
+
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=4.2, fig.height=1.4, fig.align='center'}
+# priors
+mu0<-1.9  ; t20<-0.95^2
+s20<-.01 ; nu0<-1
+
+#data
+y<-c(1.64,1.70,1.72,1.74,1.82,1.82,1.82,1.90,2.08)
+n<-length(y) ; mean.y<-mean(y) ; var.y<-var(y)
+
+
+####
+G<-100 ; H<-100
+
+mean.grid<-seq(1.505,2.00,length=G) 
+prec.grid<-seq(1.75,175,length=H) 
+
+post.grid<-matrix(nrow=G,ncol=H)
+
+for(g in 1:G) {
+  for(h in 1:H) { 
+    
+    post.grid[g,h]<- dnorm(mean.grid[g], mu0, sqrt(t20)) *
+      dgamma(prec.grid[h], nu0/2, s20*nu0/2 ) *
+      prod( dnorm(y,mean.grid[g],1/sqrt(prec.grid[h])) )
+  }
+}
+
+post.grid<-post.grid/sum(post.grid)
+
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+image( mean.grid,prec.grid,post.grid,col=gray( (10:0)/10 ),
+       xlab=expression(theta), ylab=expression(lambda) )
+
+mean.post<- apply(post.grid,1,sum)
+plot(mean.grid,mean.post,type="l",xlab=expression(theta),
+     ylab=expression( paste(italic("p("),
+                            theta,"|",italic(y[1]),"...",italic(y[n]),")",sep="")))
+
+prec.post<-apply(post.grid,2,sum)
+plot(prec.grid,prec.post,type="l",xlab=expression(lambda),
+     ylab=expression( paste(italic("p("),
+                            lambda,"|",italic(y[1]),"...",italic(y[n]),")",sep=""))) 
+
+CDF.theta <- cumsum(mean.post)
+CDF.prec <- cumsum(prec.post)
+CI.theta<- mean.grid[c(which(CDF.theta<=0.025)[1],which(CDF.theta>=0.975)[1])]
+CI.prec <- prec.grid[c(which(CDF.prec<=0.025)[1],which(CDF.prec>=0.975)[1])]
+```
+\caption{Discrete approximation to the joint posterior for $(\boldsymbol{\theta},\boldsymbol{\lambda})$ (left), marginal posterior density for $\boldsymbol{\theta}$ (center), and marginal posterior density for $\boldsymbol{\lambda}$ (right).}
+\label{fig:discnormal}
+\end{figure}
+
+## Example: Midge wing length
+
+We can obtain, for example, the 95\% CI for $\boldsymbol{\theta}$ and precision $\boldsymbol{\lambda}$, directly from the marginal posteriors $(\theta_{2.5},\theta_{97.5})=(`r CI.theta`)$ and $(\lambda_{2.5},\lambda_{97.5})=(`r CI.prec`)$.
+
+## Approximating the posterior by discretizing the parameter space
+
+*The discretization strategy is only feasible for problems that involve a few parameters.  If we choose a grid with 100 values for each parameter in a problem with $m$ parameters, our discretized space would have $100^m$ points.*
+
+## Gibbs Sampling
+
+- Most real-world applications involve with complex probability distributions on complicated high-dimensional spaces.
+
+- It is the exception rather than the rule to be able to sample exactly from the distribution of interest.
+
+- Markov chain Monte Carlo (MCMC) is a sampling technique that can work remarkably well.
+
+- MCMC generates a sequence of correlated samples $Y_1, Y_2, \ldots$ that explore the region of high probability by making a sequence of incremental movements.
+
+## Gibbs Sampling
+
+- Samples are not independent, but under very general conditions $$\frac{1}{S}\sum_k g(Y_k) \stackrel{S\rightarrow\infty}{\longrightarrow} E(g(Y))$$
+using MCMC samples, just as with MC approximation.
+
+- Simplest MCMC algorithm is Gibbs sampling (Geman \& Geman, 1984)
+
+## Gibbs Sampling
+
+\begin{block}{Some examples where Gibbs Sampling is useful}
+\begin{enumerate}
+\item[(a)] semi-conjugate priors
+\item[(b)] hyper-priors and hierarchical models
+\item[(c)] data augmentation / auxiliary variables
+\end{enumerate}
+
+\end{block}
+
+## Gibbs Sampling
+
+\begin{block}{Advantages of Gibbs Sampling}
+\begin{itemize}
+\item can be used even when we can't directly draw samples from the distribution of interest
+\item reliable
+\item works with high-dimensional parameter spaces and complicated distributions, even when it is not clear where the high probability regions are.
+\item relatively easy to implement
+\end{itemize}
+\end{block}
+
+## Gibbs Sampling
+
+\begin{block}{Some disadvantages of Gibbs Sampling}
+\begin{itemize}
+\item slower convergence than MC or IS because of correlated samples
+\item convergence is hard to evaluate
+\end{itemize}
+\end{block}
+
+## General two-variable Gibbs Sampling
+
+- Assume that $p(x, y)$ is a pdf or pmf difficult to sample from directly. 
+
+- Suppose that we can easily sample from the conditional distributions $p(x|y)$ and $p(y|x)$.
+
+## General two-variable Gibbs Sampling
+
+\begin{block}{The Gibbs Sampler proceeds as follows}
+\begin{enumerate}
+\item[0.] Set $(x^{(0)}, y^{(0)})$ to some starting value.
+\item[1.a] Sample $x^{(1)} \sim p(x|y^{(0)})$, that is, from the conditional distribution $X|Y = y^{(0)}$.
+\item[1.b] Sample $y^{(1)} \sim p(y|x^{(1)})$, that is, from the conditional distribution $Y|X = x^{(1)}$.
+\item[2.a] Sample $x^{(2)} \sim p(x|y^{(1)})$, that is, from the conditional distribution $X|Y = y^{(1)}$. 
+\item[2.b] Sample $y^{(2)} \sim p(y|x^{(2)})$, that is, from the conditional distribution $Y|X = x^{(2)}$.
+\end{enumerate}
+$${\Large\vdots}$$
+\end{block}
+
+## General two-variable Gibbs Sampling
+
+- This generates a sequence of pairs of random variables $$(X^{(0)}, Y^{(0)}), (X^{(1)}, Y^{(1)}), (X^{(2)}, Y^{(2)}), (X^{(3)}, Y^{(3)}),\ldots$$
+
+- Defines a Markov chain because the conditional distribution of $(X^{(k)},Y^{(k)})$ given all of the previous pairs depends only on $(X^{(k-1)},Y^{(k-1)})$. 
+
+## General two-variable Gibbs Sampling
+
+- Under very general conditions, for any $g(x, y)$ such that $E(|g(X, Y )|) <\infty$, where $(X, Y ) \sim p(x, y)$, a sequence constructed in this way has the property that
+$$\frac{1}{S}\sum_{k=1}^S g ( X^{(k)} , Y^{(k)}) \stackrel{S \rightarrow \infty}{\longrightarrow} E[g( X , Y )]\; \text{ w.p. }\,1$$
+
+- This justifies the use of the sample average $\frac{1}{S}\sum_{k=1}^S g ( X^{(k)} , Y^{(k)})$ to approximate $E(g(X, Y ))$
+
+- This is true in spite of the fact that the pairs $(X^{(k)}, Y^{(k)})$ for $k=1,2,\ldots,S$ are NOT iid!!!
+
+## General comment on Gibbs Sampling
+
+- The Gibbs Sampler is guaranteed to converge no matter the starting point, but ideally, the starting point $(x^{(0)}, y^{(0)})$ should be in a region of high
+probability under $p(x, y)$. This is not always easy, so:
+
+- *Discard the first $B$ samples $(X^{(1)},Y^{(1)}),\ldots,(X^{(B)},Y^{(B)})$. This is referred to as the burn-in period. *
+
+- The performance of an MCMC algorithm, i.e., how fast $$\frac{1}{S}\sum_{k=1}^S g ( X^{(k)} , Y^{(k)}) \rightarrow E(g(X, Y ))$$ is referred to as the **mixing rate**. 
+
+## Back to semi-conjugate priors and the Normal model
+
+- Let's derive the Gibbs Sampler (GS) for the $N(\theta, \lambda^{-1})$ likelihood problem with (independent) priors  
+\begin{eqnarray*}
+p(\theta,\lambda)&=&p(\theta)p(\lambda)\\
+p(\theta,\lambda)&=&N(\theta \,|\, \mu_0, \lambda_0^{-1})\text{Gamma}(\lambda \,|\, \alpha/2, \beta/2)
+\end{eqnarray*}
+
+From the beginning of the section we know that the **full-conditional posterior** for $\boldsymbol{\theta}$ is $$\boldsymbol{\theta} | \lambda, y_{1:n}\sim N\left(\frac{n\lambda \bar{y}+\lambda_0 \mu_0}{n\lambda +\lambda_0}, (n\lambda +\lambda_0)^{-1}\right),$$
+and again, we can sample directly from this!
+
+## Back to semi-conjugate priors and the Normal model
+
+Now, let's derive the **full-conditional posterior** for $\boldsymbol{\lambda}$
+\begin{eqnarray*}
+p(\lambda | \theta, y_{1:n})&\propto& \left(\lambda^{\frac{n}{2}} \text{exp}\left\{-\frac{\lambda}{2} \sum_i\left( y_i-\theta\right)^2\right\}\right) \left(\lambda^{\frac{\alpha}{2}-1} \text{exp}\left\{-\lambda\frac{\beta}{2}\right\}\right)\\
+&\propto&
+\end{eqnarray*}
+\vfill
+
+## The GS for the Normal (semi-conjugate) model
+
+In summary, we have that
+\begin{eqnarray*}
+\boldsymbol{\theta} \,|\, \lambda, y_{1:n}&\sim& N\left(\frac{n\lambda \bar{y}+\lambda_0 \mu_0}{n\lambda +\lambda_0}, (n\lambda +\lambda_0)^{-1}\right),\\
+\boldsymbol{\lambda} \,|\, \theta, y_{1:n}&\sim& \text{Gamma}\left(\frac{n+\alpha}{2}, \frac{\sum_i(y_i-\theta)^2 + \beta}{2}\right).
+\end{eqnarray*}
+
+So, for a particular value of $\lambda$ we can sample from $p(\theta \,|\, \lambda, y_{1:n})$ and for a particular value of $\theta$ we can sample from $p(\lambda \,|\, \theta, y_{1:n})$.
+
+\textcolor{blue}{Note: The priors are called semi-conjugate because they are of the same form as the full conditionals.}
+
+## The GS for the Normal (semi-conjugate) model
+
+Using the full conditional densities for $\boldsymbol{\theta}$ and $\boldsymbol{\lambda}$, we can specify a GS as follows
+
+\begin{enumerate}
+\item Define a starting value for $\lambda$, which we will denote by $\lambda^{(0)}$.
+\item Let $k=0,\ldots,S$ for some sufficiently large integer $S$.
+\item Sample $\theta^{(k+1)}$ from $p(\theta \,|\, \lambda^{(k)}, y_{1:n})$
+\item Sample $\lambda^{(k+1)}$ from $p(\lambda \,|\, \theta^{(k+1)}, y_{1:n})$
+\item Set $\phi^{(k+1)}=(\theta^{(k+1)},\lambda^{(k+1)}).$
+\item If $k<S$, set $k=k+1$ and go back to step (3).
+\end{enumerate}
+
+## The GS for the Normal (semi-conjugate) model
+### Implementation details
+
+- Note the term $\sum_i (y_i-\theta)^2$ in $p(\lambda \,|\, \theta, y_{1:n})$. 
+
+- Calculating this sum every time we update $\theta$ is very inefficient!!!
+
+- How can we make this calculation more efficient?
+
+## The GS for the Normal (semi-conjugate) model
+### Implementation details
+
+\begin{eqnarray*}
+%\sum_{i=1}^n(y_i-\theta)^2&=& \sum_{i=1}^n (y_i-\bar{y} + \bar{y} - \theta)^2\\
+% &=& \sum_{i=1}^n (y_i-\bar{y})^2 + 2\sum_{i=1}^n(y_i-\bar{y}) (\bar{y} - \theta) + \sum_{i=1}^n(\bar{y} - \theta)^2\\
+%&=& \sum_{i=1}^n (y_i-\bar{y})^2 + 2(\bar{y} - \theta)\underbrace{\sum_{i=1}^n(y_i-\bar{y})}_{n \bar{y} - n \bar{y}=0}  + n(\bar{y} - \theta)^2\\
+%&=& \sum_{i=1}^n (y_i-\bar{y})^2 +  n(\bar{y} - \theta)^2\\
+\sum_{i=1}^n(y_i-\theta)^2 &=& (n-1) s_n^2 +  n(\bar{y} - \theta)^2.
+\end{eqnarray*}
+with $$s_n^2=\frac{1}{n-1}\sum_{i=1}^n (y_i-\bar{y})^2.$$
+
+- So, we can bypass calculating the sum by pre-computing $S_n^2$ and $\bar{y}$.
+
+## The GS for the Normal (semi-conjugate) model
+### The code
+\tiny
+```{r echo=T}
+set.seed(1)
+S<-2000
+PHI<-matrix(nrow=S,ncol=2)
+PHI[1,]<-phi<-c( mean.y, 1/var.y)
+mu0<-1.9  ; t20<-0.95^2
+lambda0 <- 1/t20
+beta<-.01 ; alpha<-1
+
+### Gibbs sampling
+for(s in 2:S) {
+  
+  # generate a new theta value from its full conditional
+  mu.n <-  ( mu0*lambda0 + n*mean.y*phi[2] ) / ( lambda0 + n*phi[2] )
+  lambda.n <- ( lambda0 + n*phi[2] )
+  phi[1] <- rnorm(1, mu.n, sqrt(1/lambda.n) )
+  
+  # generate a new lambda value from its full conditional
+  alpha.n<- alpha+n
+  beta.n<- (beta + (n-1)*var.y + n*(mean.y-phi[1])^2 )
+  phi[2]<- rgamma(1, alpha.n/2, beta.n/2)
+  
+  PHI[s,]<-phi         
+}
+###
+```
+
+
+## The GS for the Normal (semi-conjugate) model
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=4.2, fig.height=1.4, fig.align='center'}
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+m1<-5
+plot( PHI[1:m1,],type="l",xlim=range(PHI[1:100,1]), ylim=range(PHI[1:100,2]),
+      lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+text(  PHI[1:m1,1], PHI[1:m1,2], c(1:m1), cex=0.5)
+
+m1<-15
+plot( PHI[1:m1,],type="l",xlim=range(PHI[1:100,1]), ylim=range(PHI[1:100,2]),
+      lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+text(  PHI[1:m1,1], PHI[1:m1,2], c(1:m1), cex=0.5)
+
+m1<-100
+plot( PHI[1:m1,],type="l",xlim=range(PHI[1:100,1]), ylim=range(PHI[1:100,2]),
+      lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+text(  PHI[1:m1,1], PHI[1:m1,2], c(1:m1), cex=0.5)
+
+sseq<-1:1000
+sseq2<-1000:2000#c(200,1000,4)
+
+### Gibbs based credible intervals
+CI.gibbstheta <- round(quantile(PHI[sseq2,1],probs=c(0.025,0.975)),4)
+CI.gibbslambda <- round(quantile(PHI[sseq2,2],probs=c(0.025,0.975)),4)
+
+### t-test based confidence interval
+n<-length(y) ; ybar<-mean(y) ; s2<-var(y)
+t.CI <- ybar+qt( c(.025,.975), n-1) *sqrt(s2/n)
+```
+\caption{Sequence of Gibbs sampling draws $S=5,15,100$}
+\end{figure}
+
+## The GS for the Normal (semi-conjugate) model
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=4.0, fig.height=3.5, fig.align='center'}
+m2 <- 500
+plot( PHI[1:m2,],type="l",xlim=range(PHI[1:m2,1]), ylim=range(PHI[1:m2,2]),
+      lty=1,col="gray",xlab=expression(theta),ylab=expression(tilde(sigma)^2))
+sslabs <- sample(1:m2,50)
+text(  PHI[sslabs,1], PHI[sslabs,2], sslabs, cex=0.3)
+
+```
+\caption{Sequence of Gibbs sampling draws $S=500$}
+\end{figure}
+
+## The GS for the Normal (semi-conjugate) model
+\scriptsize
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=3.5, fig.height=3, fig.align='center'}
+
+image( mean.grid,prec.grid,post.grid,col=gray( (10:0)/10 ),
+       xlab=expression(theta), ylab=expression(tilde(sigma)^2) ,
+       #xlim=range(PHI[,1]),ylim=range(PHI[,2]) )
+       xlim=c(1.6,2), ylim=range(prec.grid))
+points(PHI[sseq2,1],PHI[sseq2,2],pch=".",cex=0.05, col="cornflowerblue" )
+
+```
+\caption{Estimated joint posterior density and draws}
+\label{fig:Gibbsnormal}
+\end{figure}
+
+## The GS for the Normal (semi-conjugate) model
+\scriptsize
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=4.2, fig.height=1.4, fig.align='center'}
+
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+image( mean.grid,prec.grid,post.grid,col=gray( (10:0)/10 ),
+       xlab=expression(theta), ylab=expression(tilde(sigma)^2) ,
+       xlim=range(PHI[,1]),ylim=range(PHI[,2]) )
+points(PHI[sseq,1],PHI[sseq,2],pch=".",cex=0.05, col="cornflowerblue" )
+
+plot(density(PHI[,1],adj=2),  xlab=expression(theta),main="",
+     xlim=c(1.55,2.05),
+     ylab=expression( paste(italic("p("),
+                            theta,"|",italic(y[1]),"...",italic(y[n]),")",sep="")))
+
+abline(v=CI.theta,lwd=2,col="gray")
+abline( v= t.CI, col="black",lwd=1)
+
+plot(density(PHI[,2],adj=2), xlab=expression(tilde(sigma)^2),main="",
+     ylab=expression( paste(italic("p("),tilde(sigma)^2,"|",italic(y[1]),
+                            "...",italic(y[n]),")",sep=""))) 
+```
+\caption{Estimated marginal posterior densities}
+\end{figure}
+
+
+## Visualization tools for MCMC's
+
+\scriptsize
+\begin{block}{Scatterplot}
+The scatterplot shows us what the posterior distribution looks like. 
+\end{block}
+
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=3.5, fig.height=3, fig.align='center'}
+image( mean.grid,prec.grid,post.grid,col=gray( (10:0)/10 ),
+       xlab=expression(theta), ylab=expression(tilde(sigma)^2) ,
+       #xlim=range(PHI[,1]),ylim=range(PHI[,2]) )
+       xlim=c(1.6,2), ylim=range(prec.grid))
+points(PHI[sseq2,1],PHI[sseq2,2],pch=".",cex=0.05, col="cornflowerblue" )
+
+```
+\end{figure}
+
+## Visualization tools for MCMC's
+
+\scriptsize
+\begin{block}{Traceplots}
+A traceplot simply shows the sequence of samples, for instance $\phi^{(1)}\phi^{(2)},\ldots,\phi^{(S)}$. Traceplots are a simple but very useful way to visualize how the sampler is behaving. If the traceplot indicates that the sampler is getting stuck on or near particular values, it is said to have poor mixing. %The traceplots in Figure 2(a) look very healthy—the sampler doesn’t appear to be getting stuck anywhere.
+\end{block}
+
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=4, fig.height=2, fig.align='center'}
+
+par(mfrow=c(1,2),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+plot(PHI[,1],  ylab=expression(theta^{(k)}),main="",pch=20,cex=0.1,
+     xlab="Gibbs iteration (k)")
+plot(PHI[,2],  ylab=expression(lambda^{(k)}),main="",pch=20,cex=0.1,
+     xlab="Gibbs iteration (k)")
+```
+\end{figure}
+
+## Visualization tools for MCMC's
+
+\scriptsize
+
+\begin{block}{Running averages}
+A traceplot simply shows the sequence of samples, for instance $\phi^{(1)}\phi^{(2)},\ldots,\phi^{(S)}$. Traceplots are a simple but very useful way to visualize how the sampler is behaving. If the traceplot indicates that the sampler is getting stuck on or near particular values, it is said to have poor mixing. %The traceplots in Figure 2(a) look very healthy—the sampler doesn’t appear to be getting stuck anywhere.
+\end{block}
+
+\begin{figure}[H]
+```{r echo=F, message=F, warning=F, fig.width=4, fig.height=2, fig.align='center'}
+par(mfrow=c(1,2),mar=c(2.75,2.75,.5,.5),mgp=c(1.70,.70,0))
+plot(cumsum(PHI[,1])/(1:S),  ylab=expression(theta^{(k)}),main="",
+     type="l",col="cornflowerblue",lwd=2,xlab="Gibbs iteration (k)")
+plot(cumsum(PHI[,2])/(1:S),  ylab=expression(lambda^{(k)}),main="",
+     type="l",col="cornflowerblue",lwd=2,xlab="Gibbs iteration (k)")
+```
+\end{figure}
+
+
+## The General Gibbs Sampling Algorithm
+
+To sample from the joint of 3 r.v.'s $X,Y,Z$, $p(x,y,z)$, the GS procedure can be summarized as
+
+\begin{enumerate}
+\item[0.] Set $(x^{(0)}, y^{(0)}, z^{(0)})$ to some starting value.
+\item[1.] Sample $x^{(1)} \sim p(x|y^{(0)}, z^{(0)})$.
+
+Sample $y^{(1)} \sim p(y|x^{(1)}, z^{(0)})$.
+
+Sample $z^{(1)} \sim p(z|x^{(1)}, y^{(1)})$.
+
+\item[2.] Sample $x^{(2)} \sim p(x|y^{(1)}, z^{(1)})$.
+
+Sample $y^{(2)} \sim p(y|x^{(2)}, z^{(1)})$.
+
+Sample $z^{(2)} \sim p(z|x^{(2)}, y^{(2)})$.
+
+\item[] $\qquad\qquad\qquad\vdots$
+\item[S.] Sample $x^{(S)} \sim p(x|y^{(S-1)}, z^{(S-1)})$.
+
+Sample $y^{(S)} \sim p(y|x^{(S)}, z^{(S-1)})$.
+
+Sample $z^{(S)} \sim p(z|x^{(S)}, y^{(S)})$.
+\end{enumerate}
+
+## The General Gibbs Sampling Algorithm
+
+More generally, to approximate with Gibbs Sampling the joint distribution of $m$ random variables, say, $p(\nu_1,\ldots , \nu_m)$; at each iteration of the algorithm we sample from
+\begin{eqnarray*}
+\nu_1\,|\, \nu_2,\nu_3,&\ldots&,\nu_m\\
+\nu_2 \,|\, \nu_1,\nu_3,&\ldots&,\nu_m \\
+&\vdots&\\
+\nu_m \,|\, \nu_1,\nu_2,&\ldots&,\nu_{m-1} 
+\end{eqnarray*}

@@ -380,41 +380,102 @@ $x\in\mathcal{X}\subset\mathbb{R}^n$, $y\in\mathcal{Y}\subset\mathbb{R}^n$
 
 ### 2.1-1  Consider a population made up of three different types of individuals occurring in the Hardy-Weinberg proportions $\theta^2, 2\theta(1-\theta)$ and $(1-\theta)^2$, respectively, where $0<\theta<1$. 
 
+
+
+\begin{multicols}{2}
+
+\begin{tabular}{ c|c c c|c }
+j          & 1 & 2 & 3 &  \\
+$N_j$      & $N_1$ &$N_2$ & $N_3$ & $\sum N_j=n$  \\
+$p_j$      & $p_1=\theta^2$ & $p_2=2\theta(1-\theta)$ & $p_3=(1-\theta)^2$ \\
+$\hat p_j$ &$N_1/n$ &$N_2/n$ & $N_3/n$& $\sum \hat p_j=1$   \\
+$x_j$      & -1  & 0 & 1 & \\
+
+\end{tabular}
+
+
+
+
+\end{multicols}
+
 (a) Show that $T_3 = N_1/n + N_2/2n$ is a frequency substitution estimate of $\theta$.
+
+$$E[T_3]= E[N_1/n+N_2/2n]=E[\hat p_1]+\frac12E[\hat p_2]=\theta^2+\frac12\cdot2\theta(1-\theta)=\theta$$
+
+$\therefore T_3$ is a frequency substitution estimate of $\theta$.
+
 
 (b) Using the estimate of (a), what is a frequency substitution estimate of the odds ratio $\frac\theta{1-\theta}$? 
 
+For $\hat p_3=1-\frac{N_1}n-\frac{N_2}n$
+
+Let $g(\frac{N_1}n,\frac{N_2}n)=(1-\frac{N_1}n-\frac{N_2}n)^{-\frac12}-1=(\hat p_3)^{-\frac12}-1$\hfill convert to 1-patametric function.
+
+$E[g(\frac{N_1}n,\frac{N_2}n)]=E[\frac{1}{\sqrt{\hat p_3}}-1]=\frac{1}{\sqrt{E[\hat p_3]}}-1=\frac{1}{\sqrt{(1-\theta)^2}}-1\underset{0<\theta<1}{=}\frac\theta{1-\theta}$
+
+$T(X_1,X_2)=g(\frac{N_1}n,\frac{N_2}n)$ is a frequency substitution estimate of the odds ratio $\frac\theta{1-\theta}$
+
+
 (c) Suppose X takes the values $-1,0,1$ with respective probabilities $p1,p2,p3$ given by the Hardy-Weinberg proportions. By considering the ﬁrst moment of $X$, show that $T_3$ is a method of moment estimate of $\theta$.
+
+
+$$\mu_1(\theta)=E_{\theta}[X^1]=\sum_{j=1}^3p_jx_j=p_1x_1+p_2x_2+p_3x_3=\theta^2\cdot(-1)+2\theta(1-\theta)\cdot0+(1-\theta)^2\cdot1=1-2\theta$$
+$$\hat\mu_1=\frac1n\sum_{i=1}^nx_i^1=\frac1n(N_1x_1+N_2x_2+N_3x_3)=\frac1n[N_1\cdot(-1)+N_2\cdot0+(n-N_1-N_2)\cdot1]=1-2(\frac{N_1}n+\frac{N_2}{2n})=1-2T_3$$
+
+Since $E[\hat\mu_1]=1-2E[T_3]=1-2\theta=\mu_1$,  $T_3$ is a method of moment estimate of $\theta$.
 
 
 ### 2.1-9 Suppose $\mathbf{X} = (X_1,..,X_n)$ where the $X_i$ are independent $N(0,\sigma^2)$. 
 
 (a) Find an estimate of $\sigma^2$ based on the second moment. 
 
+$$\mu_2(\sigma^2)=E_{\sigma^2}[X^2]=V[X]+E[X]=\sigma^2$$
+$$E[\hat\mu_2]=E[\frac1n\sum_{i=1}^nx_i^2]=\mu_2(\sigma^2)=\sigma^2$$
+
+Therefore, $\frac1n\sum_{i=1}^nx_i^2$ is an estimate of $\sigma^2$ based on the second moment.
+
+
 (b) Construct an estimate of $\sigma$ using the estimate of part (a) and the equation $\sigma =\sqrt{\sigma^2}$.
 
-(c) Use the empirical substitution principle to construct an estimate of $\sigma$ using the relation $E(|X_1|) = \sigma\sqrt{2\pi}$.
+Let $T_2=\sqrt{\hat\mu_2}=\sqrt{\frac1n\sum_{i=1}^nx_i^2}$ is a 1-1 transformation in $(0,\infty)$. Therefore $T_2$ and $\hat\mu_2$ are equivalent statistics.
+
+$$E\left[T_2\right]=E\left[\sqrt{\hat\mu_2}\right]=\sqrt{E\left[\hat\mu_2\right]}=\sqrt{E\left[\frac1n\sum_{i=1}^nx_i^2\right]}=\sqrt{\sigma^2}=\sigma,\quad x\in(0,\infty)$$
+Therefore, $\sqrt{\frac1n\sum_{i=1}^nx_i^2}$ is an estimate of $\sigma$ based on the second moment.
+
+(c) Use the empirical substitution principle to construct an estimate of $\sigma$ using the relation $E(|X_1|) = \sigma\sqrt{2/\pi}$.
+
+If $X\sim N(0,\sigma^2)$, then $|X|\sim$ half-normal ($\sigma\sqrt{\frac2\pi},\sigma^2(1-\frac2\pi)$). We have
+$\mu_1(\sigma)=E_{\sigma}[|X_1|]=\sigma\sqrt{\frac2\pi}$
+
+<!--$$\mu_2(\sigma)=E_{\sigma}[|X_1|^2]=V[|X_1|]+E[|X_1|]^2=V[|X_1|]+(\sigma\sqrt{2/\pi})^2=\sigma^2(1-\frac2\pi)+(\sigma\sqrt{2/\pi})^2=\sigma^2$$ -->
+
+Let $T_1=\sqrt{\frac\pi2}\hat\mu_1=\sqrt{\frac\pi2}\frac1n\sum_{i=1}^n|x_i|$ is a 1-1 transformation in $\mathbb{R}$. Therefore $T_1$ and $\hat\mu_1$ are equivalent statistics.
+
+$$E[T_1]=E[\sqrt{\frac\pi2}\frac1n\sum_{i=1}^n|x_i|]=\sqrt{\frac\pi2}\frac1n\sum_{i=1}^nE[|x_i|]=\sqrt{\frac\pi2}\mu_1(\sigma)=\sigma$$
+By the empirical substitution principle, $\sqrt{\frac\pi2}\frac1n\sum_{i=1}^n|x_i|$ is an estimate of $\sigma$ based on the first moment.
 
 ### 2.1-15 *Hardy-Weinberg with six genotypes*. 
 In a large natural population of plants (Mimulus guttatus) there are three possible alleles S, I, and F at one locus resulting in six genotypes labeled SS, II, FF, SI, SF, and IF. Let $\theta_1, \theta_2$, and $\theta_3$ denote the probabilities of S, I, and F, respectively, where $\sum^3_{j=1} \theta_j = 1$. The Hardy-Weinberg model speciﬁes that the six genotypes have probabilities 
 
 
-\begin{tabular}{ c c c c c c c }
+\begin{tabular}{ c|c c c c c c|c }
 Genotype &1   &  2 & 3  & 4  & 5  & 6 \\
 Genotype & SS & II & FF & SI & SF & IF \\
-Probability & $\theta^2_1$ & $\theta^2_2$ & $\theta^2_3$ & $2\theta_1\theta_2$ & $2\theta_1\theta_3$ & $2\theta_2\theta_3$ \\
+$p_j$  & $p_1=\theta^2_1$ & $p_2=\theta^2_2$ & $p_3=\theta^2_3$ & $p_4=2\theta_1\theta_2$ & $p_5=2\theta_1\theta_3$ & $p_6=2\theta_2\theta_3$ & $\sum^3_{j=1} \theta_j = 1$\\
+$N_j$        & $N_1$ &$N_2$ & $N_3$ & $N_4$& $N_5$& $N_6$& $\sum N_j=n$  \\
+$\hat p_j$ &$N_1/n$ &$N_2/n$ & $N_3/n$& $N_4/n$ & $N_5/n$ & $N_6/n$ & $\sum \hat p_j=1$   \\
 \end{tabular}
 
-Let $N_j$ be the number of plants of genotype $j$ in a sample of n independent plants, $1\le j\le 6$ and let$\hat p_j = N_j/n$. 
-Show that 
+Let $N_j$ be the number of plants of genotype $j$ in a sample of n independent plants, $1\le j\le 6$ and $\hat p_j = N_j/n$. 
+Show the frequency plug-in estimates of $\theta_1, \theta_2$, and $\theta_3$
 
-\begin{align*}
-\hat\theta_1 = \hat p_1 + \frac12\hat p_4 + \frac12\hat p_5 \\
-\hat\theta_2 = \hat p_2 + \frac12\hat p_4 + \frac12\hat p_6 \\
-\hat\theta_3 = \hat p_3 + \frac12\hat p_5 + \frac12\hat p_6
-\end{align*}
+$$\theta^2_1+\theta_1\theta_2+\theta_1\theta_3=\theta_1(\theta_1+\theta_2+\theta_3)\underset{\sum\theta_j= 1}{=}\theta_1\implies\hat\theta_1=\hat p_1+\frac12\hat p_4+\frac12\hat p_5$$
+$$\theta^2_2+\theta_1\theta_2+\theta_2\theta_3=\theta_2(\theta_1+\theta_2+\theta_3)\underset{\sum\theta_j= 1}{=}\theta_2\implies\hat\theta_2=\hat p_2+\frac12\hat p_4+\frac12\hat p_6$$
 
-are frequency plug-in estimates of $\theta_1, \theta_2$, and $\theta_3$.
+$$\theta^2_3+\theta_1\theta_3+\theta_2\theta_3=\theta_3(\theta_1+\theta_2+\theta_3)\underset{\sum\theta_j= 1}{=}\theta_3\implies\hat\theta_3=\hat p_3+\frac12\hat p_5+\frac12\hat p_6$$
+
+
+\pagebreak
 
 ## HW4 
 
@@ -423,36 +484,158 @@ $f(x,\theta)=\frac1 \sigma\exp[-\frac{x-\mu}\sigma], x \ge \mu$, where $\theta =
 
 (a) Find maximum likelihood estimates of $\mu$ and $\sigma^2$.
 
+$$L(\theta)=(\frac1 \sigma)^n\exp[-\frac{\sum_{i=1}^n(x_i-\mu)}\sigma]\mathbf{1}_{\{x_i \ge \mu\}}=\exp[-\frac{1}\sigma\sum_{i=1}^nx_i+\frac{n\mu}\sigma-n\ln\sigma]\mathbf{1}_{\{x_i \ge \mu\}}$$
+
+Given $\sigma$, $L(\mu)$ is monotone increasing in $\mu$, $\sup L(\mu)$ is equivalent to $\max\mu\le x_i$, thus $\hat \mu=X_{(1)}$ is the maximum likelihood estimaters of $\mu$
+
+Given $\mu$
+
+$$l(\theta)=-\frac{1}\sigma\sum_{i=1}^nx_i+\frac{n\mu}\sigma-n\ln\sigma$$
+$$l'(\sigma)=\frac{1}{\sigma^2}\sum_{i=1}^nx_i-\frac{n\mu}{\sigma^2}-\frac{n}\sigma\overset{set}{=}0$$
+
+$$\hat\sigma=\frac1{n}\sum_{i=1}^nx_i-\hat\mu=\frac1{n}\sum_{i=1}^nx_i-x_{(1)}$$
+
+For $n\ge2$,$\frac1{n}\sum_{i=1}^nx_i-x_{(1)}>0$, $\hat\sigma\in(0,\infty)$ then
+
+$\hat\sigma^2=h(\hat\sigma)=(\hat\sigma)^2$ is a 1-1 transformation on $\hat\sigma\in(0,\infty)$, $\hat\sigma^2$ and $\hat\sigma$ are equivalent statistics. 
+
+Therefore, $$\hat\sigma^2=(\frac1{n}\sum_{i=1}^nx_i-x_{(1)})^2$$
+
 (b) Find the maximum likelihood estimate of $P_\theta[X_1 \ge t]$ for $t > \mu$. Hint: You may use Problem 2.2.16(b). 
+
+$F_X=\int_\mu^x\frac1 \sigma\exp[-\frac{x-\mu}\sigma]\mathbf{1}_{\{x \ge \mu\}}dx=1-\exp[-\frac{x-\mu}\sigma]$
+
+<!--$f_{X_{(1)}}=nf(x)[1-F_X]^{n-1}=\frac n \sigma\exp[-\frac{n}\sigma(x-\mu)]$-->
+
+Define $\omega=q(t,\mu,\sigma)=P_\theta[X_1 \ge t]=1-F_{X}(t)=\exp[-\frac{1}\sigma(t-\mu)]$ 
+which is an one to one transformation. 
+
+Since $(x_{(1)},\bar x-x_{(1)})$ are MLE of $(\mu,\sigma)$,
+
+$\hat\omega=q(t,\hat\mu,\hat\sigma)=\exp[-\frac{1}{\hat\sigma}(t-\hat\mu)]=\exp[-\frac{t-x_{(1)}}{\bar x-x_{(1)}}]$ is the maximum likelihood estimate of $P_\theta[X_1 \ge t]$ for $t > \mu$
+
 
 ### 2.2-13 Let $X_1,...,X_n$ be a sample from a$U[\theta-\frac1 2,\theta+\frac1 2]$ distribution. 
 Show that any T such that $X_{(n)} - \frac1 2 \le T \le X_{(1)} + \frac1 2$ is a maximum likelihood estimate of $\theta$. (We write $U[a,b]$ to make $p(a)=p(b)=(b-a)^{-1}$ rather than $0$.)
+
+$p_\theta(x)=\frac{1}{\theta+\frac12-\theta-\frac12}\mathbf{1}_{\{\theta-\frac12\le x \le \theta+\frac12\}}=\mathbf{1}_{\{\theta-\frac12\le x \le \theta+\frac12\}}$
+
+$$L(\theta)=\prod_{i=1}^n\mathbf{1}_{\{\theta-\frac12\le x_{(i)}\le \theta+\frac12\}}=\prod_{i=1}^n\mathbf{1}_{\{\theta-\frac12\le x_{(1)},x_{(n)} \le \theta+\frac12\}}=\mathbf{1}_{\{\theta\le x_{(1)}+\frac12,x_{(n)}-\frac12 \le \theta\}}=\mathbf{1}_{\{x_{(n)}-\frac12 \le \theta\le x_{(1)}+\frac12\}}$$
+
+To maximum $L(\theta)$ is equivalent to let $X_{(n)}-\frac12 \le \theta\le X_{(1)}+\frac12$,
+which is a MLE of $\theta$.
 
 ## HW5 
 
 ### 2.3-3  Consider the Hardy-Weinberg model with the six genotypes given in Problem 2.1.15. 
 Let $\Theta = \{(\theta_1,\theta_2) : \theta_1 > 0,\theta_2 > 0,\theta_1 + \theta_2 < 1\}$ and let $\theta_3 = 1-(\theta_1 + \theta_2)$. In a sample of n independent plants, write $x_i = j$ if the ith plant has genotype $j$, $1\le j\le 6$. Under what conditions on ($x_1,..,x_n$) does the MLE exist? What is the MLE? Is it unique?
 
+\begin{tabular}{ c|c c c c c c|c }
+Genotype &1   &  2 & 3  & 4  & 5  & 6 \\
+Genotype & SS & II & FF & SI & SF & IF \\
+$p_j$  & $p_1=\theta^2_1$ & $p_2=\theta^2_2$ & $p_3=\theta^2_3$ & $p_4=2\theta_1\theta_2$ & $p_5=2\theta_1\theta_3$ & $p_6=2\theta_2\theta_3$ & $\sum^3_{j=1} \theta_j = 1$\\
+$N_j$        & $N_1$ &$N_2$ & $N_3$ & $N_4$& $N_5$& $N_6$& $\sum N_j=n$  \\
+$T$ &$N_1/n$ &$N_2/n$ & $N_3/n$& $N_4/n$ & $N_5/n$ & $N_6/n$ & $\sum \hat p_j=1$   \\
+\end{tabular}
+
+$N_j$ be the number of plants of genotype $j$ in a sample of n independent plants. $\sum N_j=n$
+
+Let
+$$t_0=N_4+N_5+N_6$$
+$$t_1=2N_1+N_4+N_5$$
+$$t_2=2N_2+N_4+N_6$$
+$$t_3=2n-t_1-t_2=2n-(2N_1+N_4+N_5)-(2N_2+N_4+N_6)=2N_3+N_5+N_6$$
+
+
+
+$$L(\theta_1,\theta_2,\theta_3|x_{1:n})=(\theta^2_1)^{N_1}(\theta^2_2)^{N_2} (\theta^2_3)^{N_3} (2\theta_1\theta_2)^{N_4} (2\theta_1\theta_3)^{N_5}(2\theta_2\theta_3)^{N_6}$$
+$$=\exp\left[(N_4+N_5+N_6)\ln2+(2N_1+N_4+N_5)\ln\theta_1+(2N_2+N_4+N_6)\ln\theta_2+(2N_3+N_5+N_6)\ln\theta_3\right]$$
+$$=\exp\left[t_0\ln2+t_1\ln\theta_1+t_2\ln\theta_2+t_3\ln\theta_3\right]$$
+
+Substitude $\theta_3$ with $1-\theta_1-\theta_2$ and $t_3$ with $2n-t_1-t_2$
+
+$$L(\theta_1,\theta_2|x_{1:n})=\exp\left[t_0\ln2+t_1\ln\theta_1+t_2\ln\theta_2+(2n-t_1-t_2)\ln(1-\theta_1-\theta_2)\right]$$
+$$L(\theta_1,\theta_2|x_{1:n})=\underbrace{2^{t_0}}_{T(x)}\exp\left[\underbrace{t_1\ln\frac{\theta_1}{1-\theta_1-\theta_2}+t_2\ln\frac{\theta_2}{1-\theta_1-\theta_2}}_{T(\vec x)\cdot\eta(\vec\theta)}-\underbrace{2n\ln\frac{1}{1-\theta_1-\theta_2}}_{A(\eta)}\right]$$
+
+which is a 2-parameter exponential family.
+
+$$l(\theta_1,\theta_2)=t_0\ln2+t_1\ln\theta_1+t_2\ln\theta_2+t_3\ln(1-\theta_1-\theta_2)$$
+$$\frac{\partial}{\partial\theta_1} l(\theta_1,\theta_2)=\frac{t_1}{\theta_1}+\frac{-t_3}{1-\theta_1-\theta_2}\overset{set}{=}0$$
+
+$$\frac{\partial}{\partial\theta_2} l(\theta_1,\theta_2)=\frac{t_2}{\theta_2}+\frac{-t_3}{1-\theta_1-\theta_2}\overset{set}{=}0$$
+Find the solutions of 
+$$\begin{cases}\frac{t_1}{\hat\theta_1}=\frac{t_3}{1-\hat\theta_1-\hat\theta_2}\\\frac{t_2}{\hat\theta_2}=\frac{t_3}{1-\hat\theta_1-\hat\theta_2}\end{cases}$$
+
+That is
+
+$$\begin{cases}\hat\theta_1=\frac{t_1}{2n}=\frac{2N_1+N_4+N_5}{2n} \\ \hat\theta_2=\frac{t_2}{2n}=\frac{2N_2+N_4+N_6}{2n} \\\hat\theta_3=\frac{t_3}{2n}=\frac{2N_3+N_5+N_6}{2n}\end{cases}$$
+
+
+$$\frac{\partial^2}{\partial\theta_1^2} l(\theta_1,\theta_2)=\frac{-t_1}{\theta_1^2}+\frac{-t_3}{(1-\theta_1-\theta_2)^2}<0$$
+$$\frac{\partial^2}{\partial\theta_2^2} l(\theta_1,\theta_2)=\frac{-t_2}{\theta_2^2}+\frac{-t_3}{(1-\theta_1-\theta_2)^2}<0$$
+$$\frac{\partial^2}{\partial\theta_1\partial\theta_2} l(\theta_1,\theta_2)=\frac{\partial^2}{\partial\theta_2\partial\theta_1} l(\theta_1,\theta_2)=\frac{-t_3}{(1-\theta_1-\theta_2)^2}<0$$
+
+If
+$$[\frac{\partial^2}{\partial\theta_1^2} l(\theta_1,\theta_2)][\frac{\partial^2}{\partial\theta_2^2} l(\theta_1,\theta_2)]<[\frac{\partial^2}{\partial\theta_1\partial\theta_2} l(\theta_1,\theta_2)]^2$$
+$$[\frac{-t_1}{\theta_1^2}+\frac{-t_3}{(1-\theta_1-\theta_2)^2}][\frac{-t_2}{\theta_2^2}+\frac{-t_3}{(1-\theta_1-\theta_2)^2}]<[\frac{-t_3}{(1-\theta_1-\theta_2)^2}]^2$$
+
+Subtitude the $\vec\theta$ with $\hat{\vec\theta}$
+
+$$[\frac{4n^2}{t_1}+\frac{4n^2}{t_3}][\frac{4n^2}{t_2}+\frac{4n^2}{t_3}]<[\frac{4n^2}{t_3}]^2$$
+$$[\frac{t_3}{t_1}+1][\frac{t_3}{t_2}+1]<4n^2$$
+$$\frac{(2n-t_1)(2n-t_2)}{t_1t_2}<4n^2$$
+When satisfied this inequality,
+the likelihood function is strictly concave and the unique MLEs exist. 
+
+
 
 ### 2.3-12  Let $X_1,..,X_n$ be i.i.d. $\frac1\sigma f_0(\frac{x-\mu}\sigma)$, $\sigma>0, \mu\in R$, and assume for $w \equiv-\log f_0$ that $\omega''>0$ so that w is strictly convex, $\omega(\pm\infty) = \infty$. 
 
-(a) Show that, if $n \ge 2$, the likelihood equations $\sum^n_{i=1} w'(\frac{X_i-\mu}\sigma)= 0$
-
+(a) Show that, if $n \ge 2$, the likelihood equations $\sum^n_{i=1} w'(\frac{X_i-\mu}\sigma)= 0$;
 $\sum^n_{i=1}[\frac{(X_i-\mu)}\sigma w'(\frac{X_i-\mu}\sigma)-1]= 0$ have a unique solution $(\hat\mu,\hat\sigma)$. 
 
+$$L(\mu,\sigma)=\prod_{i=1}^n\frac1\sigma f_0(\frac{x_i-\mu}\sigma)$$
+$$l(\mu,\sigma)=n\ln(\frac1\sigma)+ \sum_{i=1}^n\ln f_0(\frac{x_i-\mu}\sigma)=n\ln(\frac1\sigma)- \sum_{i=1}^n\omega(\frac{x_i-\mu}\sigma)$$
+
+By **Hint (b) Reparametrize by $a=\frac1\sigma$, $b=\frac\mu \sigma$ and consider varying a, b successively**.
+
+By **Hint (a) The function $D(a,b) =\sum^n_{i=1} w(aX_i-b)-n\log a$ is strictly convex in $(a,b)$ and $\lim\limits_{(a,b)\to(a_0,b_0)} D(a,b) =\infty$ if either $a_0=0$ or $\infty$ or $b_0=\pm\infty$**,
+
+$$l(\mu,\sigma)=n\ln(a)- \sum_{i=1}^n\omega(ax_i-b)=-D(a,b)$$
+Therefore, $l(\mu,\sigma)$ is strictly convex in $(\mu,\sigma)$
+
+$$\frac{\partial}{\partial\mu}l(\mu,\sigma)=\sum_{i=1}^n\omega'(\frac{x_i-\mu}\sigma)\frac1\sigma\overset{set}{=}0$$
+
+$$\frac{\partial}{\partial\sigma}l(\mu,\sigma)=\frac{-n}{\sigma}+\sum_{i=1}^n\omega'(\frac{x_i-\mu}\sigma)\cdot\frac{x_i-\mu}{\sigma^2}=\frac1\sigma\sum^n_{i=1}[\frac{(X_i-\mu)}\sigma w'(\frac{X_i-\mu}\sigma)-1]\overset{set}{=}0$$
+
+By Hint **(i) If a strictly convex function has a minimum, it is unique.**
+
+The equations have a unique solution $(\hat\mu,\hat\sigma)$ to get a maximum for $L(\mu,\sigma)$
+
+
 (b) Give an algorithm such that starting at $\hat\mu^0=0,\hat\sigma^0=1,\hat\mu^{(i)}\to\hat\mu,\hat\sigma^{(i)}\to\hat\sigma$. 
+
+
+
+
+
+
+
+
+
+
 
 (c) Show that for the logistic distribution $F_0(x) = [1 + \exp{\{-x\}}]^{-1}$, w is strictly convex and give the likelihood equations for $\mu$ and $\sigma$. (See Example 2.4.3.) 
 
 Hint: 
 
-(a) The function $D(a,b) =\sum^n_{i=1} w(aX_i-b)-n\log a$ is strictly convex in $(a,b)$ and $\lim\limits_{(a,b)\to(a_0,b_0)} D(a,b) =\infty$ if either $a_0=0$ or $\infty$ or $b_0=\pm\infty$. 
 
-(b) Reparametrize by $a=\frac1\sigma$, $b=\frac\mu \sigma$ and consider varying a, b successively. Note: You may use without proof (see Appendix B.9).
 
-(i) If a strictly convex function has a minimum, it is unique.
+ Note: You may use without proof (see Appendix B.9).
 
-(ii) If $\frac{\partial^2D}{\partial a^2}>0$, $\frac{\partial^2D}{\partial b^2}>0$ and $\frac{\partial^2D}{\partial a^2} \frac{\partial^2D}{\partial b^2}>(\frac{\partial^2D}{\partial b\partial b})^2$, then $D$ is strictly convex. 
+
+
+  (ii) If $\frac{\partial^2D}{\partial a^2}>0$, $\frac{\partial^2D}{\partial b^2}>0$ and $\frac{\partial^2D}{\partial a^2} \frac{\partial^2D}{\partial b^2}>(\frac{\partial^2D}{\partial b\partial b})^2$, then $D$ is strictly convex. 
 
 ## HW6 
 

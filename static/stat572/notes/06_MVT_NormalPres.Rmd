@@ -1,0 +1,370 @@
+---
+title: 'STAT 572: Bayesian Statistics'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Inference for Multivariate Normal data
+output:
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+## Announcements
+
+1. No quiz today, let's go over homework really quickly instead
+
+2. Midterm redo, for Monday November 25th
+
+3. No homework due next week, I will assign a combined homework for multivariate normal and regression tonight, so that you can start working on it. It will be longer than usual, but you'll have more time to come with questions.
+
+
+## Letting the variance be random
+Assume that $\bY_1,\ldots,bY_n\stackrel{iid}{\sim} N_p(\btheta,\Sigma)$
+
+\begin{block}{But now, both $\btheta$ and $\Sigma$ are unknown}
+
+\bit
+\item From last class, we know that it is useful to have $\btheta \given \Sigma$ is $$\btheta \given \Sigma \sim N_p(\bmu_0, \Omega_0).$$
+\item In addition, we now need to build a prior for $\Sigma$.
+
+\item To do so, we first need to understand the properties of $\Sigma$.
+\eit
+
+\end{block}
+
+## Properties of $\Sigma$
+
+ 
+
+\begin{block}{From our knowledge of covariance matrices, we need}
+\benum
+\item $(\Sigma)_{ii}>0$, for $i=1,\ldots,p$, and 
+\item $(\Sigma)_{ij}=(\Sigma)_{ji}$
+\eenum
+\end{block}
+
+\begin{block}{Implying that $\Sigma$ has to be positive definite:}
+\bit
+\item $\Sigma=\Sigma'$ (i.e., symmetric), and
+\item $\bx' \Sigma \bx>0$ for all $\bx\in \mathbb{R}^p$ $\bx\not=0$.
+\eit
+\end{block}
+
+$$\Rightarrow \Sigma\in \mathcal{S}_p=\left\{\text{space of }\mathbb{R}^{p\times p}\text{ pd matrices}\right\}$$
+
+
+## Generating pd matrices
+
+\begin{block}{Consider the collection of vectors}
+\bit
+\item $\bz_1,\bz_2,\ldots,\bz_n \in\mathbb{R}^p$, with $\bz_i\not=\0$.
+\item Recall that for any $i=1,2,\ldots,n$:  $$\bz_i \bz_i' = \lrp{\bmat z_{i1}^2& z_{i1}z_{i2}&\cdots& z_{i1}z_{ip}\\ z_{i2}z_{i1} & z_{i2}^2& \cdots& z_{i2}z_{ip} \\ \vdots & \vdots &\ddots & \vdots \\ z_{ip}z_{i1} & z_{ip}z_{i2}& & z_{ip}^2 \emat}$$
+
+\item $\bz_i \bz_i'$ is a $p\times p$ \textcolor{blue}{symmetric} matrix, with \textcolor{blue}{positive diagonal entries}, but...
+\item It is rank 1, and so \textcolor{blue}{non-invertible}.
+\eit
+\end{block}
+
+## Generating pd matrices
+
+\begin{block}{However}
+\bit
+\item Letting $$\bZ_{n\times p} =\lrsqb{\bmat \bz_1' \\ \bz_2' \\ \vdots \\ \bz_n' \emat},$$
+\item Then $$\bZ' \bZ = \sum_{i=1}^n \bz_i \bz_i',$$ which is rank $p$ and if $n\geq p$ it is invertible.
+\eit
+\end{block}
+
+## Generating pd matrices
+
+If $E[\bz_i]=\0$, then $\frac{1}{n}\bZ' \bZ$ is unbiased for $\Sigma$ (the population covariance matrix), since
+
+\begin{eqnarray*}
+E\lrp{\frac{1}{n} \bZ' \bZ} &=& E\lrp{\frac{1}{n} \bZ' \bZ}\,=\, E\lrp{\frac{1}{n} \sum_{i=1}^n \bz_i \bz_i'}\\
+&=& \frac{1}{n} \sum_{i=1}^n  E\lrp{\bz_i \bz_i'}\quad \text{by indep}\\
+&=& \frac{1}{n} \sum_{i=1}^n \lrp{\bmat E[z_{i1}^2]& E[z_{i1}z_{i2}] &\cdots& E[z_{i1}z_{ip}]\\ E[z_{i2}z_{i1}] & E[z_{i2}^2]& \cdots& E[z_{i2}z_{ip}] \\ \vdots & \vdots &\ddots & \vdots \\ E[z_{ip}z_{i1}] & E[z_{ip}z_{i2}] & \cdots & E[z_{ip}^2] \emat}
+\end{eqnarray*}
+
+## Generating pd matrices (continued)
+
+Letting var$(z_{ij})=\sigma_j^2$, and cov$(z_{ij,z_{ik}})=\sigma_{jk}=\sigma_{kj}$, then
+
+\begin{eqnarray*}
+E\lrp{\frac{1}{n} \bZ' \bZ}&=& \frac{1}{n} \sum_{i=1}^n \lrp{\bmat \sigma_1^2 & \sigma_{12} &\cdots& \sigma_{1p}\\ \sigma_{21} & \sigma_2^2& \cdots& \sigma_{2p} \\ \vdots & \vdots &\ddots & \vdots \\ \sigma_{p1} & \sigma_{p2} & \cdots & \sigma_p^2 \emat}\\
+&=& \frac{1}{n} n \lrp{\bmat \sigma_1^2 & \sigma_{12} &\cdots& \sigma_{1p}\\ \sigma_{21} & \sigma_2^2& \cdots& \sigma_{2p} \\ \vdots & \vdots &\ddots & \vdots \\ \sigma_{p1} & \sigma_{p2} & \cdots & \sigma_p^2 \emat}
+\end{eqnarray*}
+
+## Generating pd matrices (continued)
+
+So, if $\bz_i\stackrel{iid}{\sim} N_p(\0,\Sigma)$ with $p\leq n$, then $\bZ'\bZ$ is pd, suggesting a mechanism to build priors over $\mathcal{S}$.
+
+\begin{block}{For $k=1,\ldots,S$:}
+\benum
+\item Draw realizations $\vz_1^{(k)}, \ldots,\vz_{\nu_0}^{(k)}$ of the random sample  $\bz_1, \bz_2, \ldots, \bz_{\nu_0} \stackrel{iid}{\sim} N_p(\0_p,\Phi_0)$
+\item Calculate $(\bZ^{(k)})'\bZ^{(k)}=\sum_{i=1}^n \vz_i^{(k)} (\vz_i^{(k)})'$
+\eenum
+\end{block}
+\textcolor{blue}{It turns out that the draws from $(\bZ^{(k)})'\bZ^{(k)}$ have a $p\times p$-dimensional Wishart distribution with parameters $\nu_0$ and $\Phi_0$}, in other words
+
+$$\bZ'\bZ \sim \text{Wishart}_p(\nu_0,\Phi_0).$$
+
+
+## Properties of the Wishart distribution
+
+\benum
+\item If $\nu_0>p\Rightarrow \bZ'\bZ$ is pd with probability 1
+\item $E(\bZ'\bZ)= \nu_0 \Phi_0$
+\item If $\Omega_j\sim \text{Wishart}_p(n_j,\Phi_0)$ for $j=1,2$, then $$\Omega_1+\Omega_2 \sim \text{Wishart}_p(n_1+n_2,\Phi_0)$$
+\eenum
+
+
+
+
+## Some comments
+
+\bit
+\item The Wishart distribution is the mvt analog of the Gamma distribution!!
+
+\item In the univariate case, we use the Gamma distribution for the precision $\blambda$.
+
+\item Similarly, the Wishart is semi-conjugate for the *precision matrix* $\Sigma^{-1}$.
+
+\item Analogously, the Inverse Wishart is the semi-conjugate prior for $\Sigma$.
+\eit
+
+## Sampling $\Sigma$
+
+\begin{block}{For $k=1,\ldots,S$:}
+\benum
+\item Draw realizations $\vz_1^{(k)}, \ldots,\vz_{\nu_0}^{(k)}$ from  $N_p(\0_p,S_0^{-1})$
+\item Calculate $(\bZ^{(k)})'\bZ^{(k)}=\sum_{i=1}^n \vz_i^{(k)} (\vz_i^{(k)})'$
+\item Set $\Sigma^{(k)} = \lrp{(\bZ^{(k)})'\bZ^{(k)}}^{-1}$ 
+\eenum
+\end{block}
+$\Sigma^{-1}=(\bZ'\bZ)^{-1}\sim \text{Wishart}_p(\nu_0,S_0^{-1})$, then $E[(\Sigma^{(k)})^{-1}]=\nu_0 S_0^{-1}$ and 
+
+\bigskip
+$\Sigma\sim  \text{Inv. Wishart}_p(\nu_0,S_0^{-1}),$ with $E[\Sigma] =\frac{1}{\nu_0-p-1} S_0$.
+
+## Density for the Inverse-Wishart$(\nu_0,S_0^{-1})$
+
+\begin{eqnarray*}
+p(\Sigma)&=&\lrsqb{2^{\nu_0 p/2} \pi^{p \choose 2} |S_0|^{-\nu_0/2} \prod_{j=1}^p \Gamma\lrp{\frac{\nu_0+1-j}{2}}}^{-1} \times \\
+&& \qquad\qquad |\Sigma|^{-(\nu_0+p+1)/2} \exp{-\frac{1}{2}\text{tr}(S_0\Sigma^{-1})}\\
+&\propto_{\Sigma}& |\Sigma|^{-(\nu_0+p+1)/2} \exp{-\frac{1}{2}\text{tr}(S_0\Sigma^{-1})}
+\end{eqnarray*}
+where tr$(A)$ is the trace of matrix $A$.
+
+## Semi-conjugacy for the Inverse-Wishart$(\nu_0,S_0^{-1})$
+
+The likelihood for the multivariate normal problem is
+$$p(\by_{1:n} \given \theta,\Sigma) \propto_{\Sigma}  |\Sigma|^{-n/2} \text{exp}\lrb{-\frac{1}{2}\sum_{i=1}^n(\by_i -\btheta)'\Sigma^{-1}(\by_i -\btheta)}.$$
+where
+\begin{eqnarray*}
+\sum_{i=1}^n(\by_i -\btheta)'\Sigma^{-1}(\by_i -\btheta) &=& \text{tr}\Big\{\Sigma^{-1} \underbrace{\sum_{i=1}^n (\by_i -\btheta)(\by_i -\btheta)'}_{=S_{\btheta}} \Big\}\\
+ &=&\text{tr}\lrb{\Sigma^{-1} S_{\btheta}}.
+\end{eqnarray*}
+
+\textcolor{blue}{By additivity and invariance under cyclic rotations of the trace!}
+
+## Semi-conjugacy for the Inverse-Wishart$(\nu_0,S_0^{-1})$
+
+Combining likelihood and prior, we have
+\small{
+\begin{eqnarray*}
+p(\Sigma\given \theta, \by_{1:n} ) &\propto_{\Sigma}& p(\by_{1:n} \given \theta,\Sigma) p(\Sigma)\\
+&\propto_{\Sigma}& |\Sigma|^{-n/2} \text{exp}\lrb{-\frac{1}{2}\text{tr}\lrb{\Sigma^{-1}S_{\btheta} }} \times\\ &&\qquad\qquad |\Sigma|^{-(\nu_0+p+1)/2} \text{exp}\lrb{-\frac{1}{2}\text{tr}(S_0\Sigma^{-1})/2}\\
+&\propto_{\Sigma}& |\Sigma|^{-(n+\nu_0+p+1)/2} \text{exp}\lrb{-\frac{1}{2}\lrp{\text{tr}(\Sigma^{-1}S_{\btheta})+\text{tr}(S_0\Sigma^{-1})}}\\
+&\propto_{\Sigma}& |\Sigma|^{-(n+\nu_0+p+1)/2} \text{exp}\lrb{-\frac{1}{2}\text{tr}\lrp{(S_{\btheta}+S_0)\Sigma^{-1}}},
+\end{eqnarray*}
+}
+where the last step is justified since $\text{tr}(AB)=\text{tr}(BA)$.
+
+## Semi-conjugacy for the Inverse-Wishart$(\nu_0,S_0^{-1})$
+
+Then $$\Sigma\given \theta, \by_{1:n} \sim \text{IW}_p(n+\nu_0, (S_{\btheta}+S_0)^{-1}),$$
+with 
+\begin{eqnarray*}
+E[\Sigma\given \theta, \by_{1:n}] &=& \frac{1}{n+\nu_0-p-1} (S_{\btheta} +S_0)\\
+&=& \frac{n}{n+\nu_0-p-1} \frac{1}{n} S_{\btheta} + \frac{\nu_0-p-1}{n+\nu_0-p-1} \frac{1}{\nu_0-p-1} S_0
+\end{eqnarray*}
+
+
+## Gibbs Sampler for the MVT normal model
+
+\begin{block}{Assuming the hierarchy}
+
+\vspace{-1cm}
+\begin{eqnarray*}
+\by_1,\ldots,\by_n\given \theta, \Sigma &\stackrel{iid}{\sim}& N_p(\btheta,\Sigma)\\
+\btheta \given \Sigma &\sim& N_p(\bmu_0, \Omega_0) \\
+\Sigma &\sim& \text{IW}_p(\nu_0,S_0)
+\end{eqnarray*}
+\end{block}
+
+\begin{block}{yields the full conditional densities}
+\vspace{-1cm}
+\begin{eqnarray*}
+\btheta \given \Sigma, \by_{1:n}&\sim& N_p(\bmu_\star, \Omega_\star) \\
+\Sigma \given \theta, \by_{1:n} &\sim& \text{IW}_p(n+\nu_0, (S_{\btheta}+S_0)^{-1})
+\end{eqnarray*}
+\end{block}
+
+## Gibbs Sampler for the MVT normal model
+
+Set, say $\theta=\theta^{(0)}$ (say to $\bar{\by}$), then for $k=1,\ldots,S$
+
+\begin{enumerate}
+\item Sample $\Sigma^{(k)}$ from $p(\Sigma \given \theta^{(k-1)}, \by_{1:n})$
+
+\item Sample $\theta^{(k)}$ from $p(\theta \given \Sigma^{(k)}, \by_{1:n})$
+
+\item Store the samples in $\phi^{(k)}=(\theta^{(k)},\Sigma^{(k)})$
+
+\item If $k<S$, return to step 1, else, stop.
+\end{enumerate}
+
+
+## Example: Reading Comprehension
+
+\begin{block}{Problem information}
+\bit
+\item A reading comprehension test is given to $n=22$ children before and after implementing a particular instruction method in order to compare its efficacy. 
+
+\item Each student's response is $\bY_i=\lrp{\bsm Y_{i1}\\ Y_{i2} \esm}$ for $i=1,2,\ldots,22$, where $Y_{i1}$ and $Y_{i2}$ denote the tests scores before and after, respectively.
+
+\item Exam was designed to give average scores of 50/100
+\eit
+\end{block}
+
+## Example: Reading Comprehension
+
+\begin{block}{Prior specification}
+\bit
+\item Because of how the exam was designed, set $\bmu_0=(50,50)'$. 
+
+\item Scores range between 0 and 100, so prior variances should ensure the means are within this range with a high probability, so $$\text{E}(\theta_j)- 2\sqrt{\text{var}(\theta_j)}=50 - 2\omega_{j} \geq 0 \Longrightarrow\omega_j \leq 25,$$
+so we choose var$(\theta_j)=\omega_j^2 \leq 25^2=625$
+\eit
+\end{block}
+
+## Example: Reading Comprehension
+
+\begin{block}{Prior specification}
+\bit
+\item Scores should be positively correlated, assuming a correlation of $\rho=0.5$, $\omega_{12}=\text{cov}(\theta_{1},\theta_2)=0.5\sqrt{25^2 \times 25^2}=`r 0.5*625`$, so we have:
+$$\Omega_0 = \lrp{\bmat 625 & 312.5 \\ 312.5 & 625 \emat}$$
+\item For $\Sigma$, assume that $S_0=\Omega_0$, but to have a more non-informative take we let $\nu_0=p+2=4$.
+\eit
+\end{block}
+
+## Example: Reading Comprehension
+
+\begin{figure}[H]
+```{r echo=F, message=F, eval=T, warning=F, fig.width=4.2, fig.height=2, fig.align='center'}
+### sample from the multivariate normal distribution
+rmvnorm<-function(n,mu,Sigma) 
+{
+  p<-length(mu)
+  res<-matrix(0,nrow=n,ncol=p)
+  if( n>0 & p>0 )
+  {
+    E<-matrix(rnorm(n*p),n,p)
+    res<-t(  t(E%*%chol(Sigma)) +c(mu))
+  }
+  res
+}
+###
+
+
+### sample from the Wishart distribution
+rwish<-function(n,nu0,S0)
+{
+  sS0 <- chol(S0)
+  S<-array( dim=c( dim(S0),n ) )
+  for(i in 1:n)
+  {
+     Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0
+     S[,,i]<- t(Z)%*%Z
+  }
+  S[,,1:n]
+}
+###
+
+
+### reading data
+Y <- dget("http://www2.stat.duke.edu/~pdh10/FCBS/Inline/Y.reading")
+
+n <- nrow(Y); p<- ncol(Y)
+y.bar <- colMeans(Y)
+
+#initialize Sigma at sample covariance
+Sigma <- cov(Y)
+
+##prior parameters
+#for theta
+mu0 <- c(50,50)
+L0 <- matrix(c(625,312.5,312.5,625),ncol=2)
+
+#for Sigma
+nu0 <- 4
+S0 <- L0
+
+
+set.seed(123)
+
+S <- 10000
+##Storage objects
+theta.Mat <- matrix(NA,ncol=2,nrow=S)
+Sigma.Mat <- matrix(NA,ncol=4,nrow=S)
+
+YS<-NULL
+
+S0.inv <- solve(S0)
+
+for(i in 1:S){
+  ##update theta
+  Ln <- solve(S0.inv+n*solve(Sigma))
+  mun <- Ln %*% (S0.inv %*%mu0 + n*solve(Sigma)%*%y.bar)
+  theta <- c(rmvnorm(1,mun,Ln))
+  
+  ##update Sigma
+  Sn <- S0 + (t(Y)-c(theta))%*%t(t(Y)-c(theta))
+  Sigma <- solve(rwish(1,nu0+n,solve(Sn)))
+  
+  ### save predicted draws
+  YS<-rbind(YS,rmvnorm(1,theta,Sigma))
+  
+  ###Save new draws
+  theta.Mat[i,] <- theta
+  Sigma.Mat[i,] <- c(Sigma)
+}
+
+#estimate P(theta2>theta1 | y)
+pmu <- mean(theta.Mat[,2]>theta.Mat[,1])
+pys <- mean(YS[,2]>YS[,1])
+
+par(mfrow=c(1,2),mgp=c(1.75,.75,0),mar=c(3,3,1,1))
+plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[1]),
+     ylab=expression(theta[2]), cex=0.3)
+abline(0,1,col="red",lwd=2)
+plot(YS,xlab=expression(italic(y[1])),ylab=expression(italic(y[2])), 
+     xlim=c(0,100),ylim=c(0,100), cex=0.3)
+abline(0,1,col="red",lwd=2)
+points(Y[,1],Y[,2],pch=16,cex=.7,col="cornflowerblue")
+
+```
+\caption{(left) Joint density $\theta_1$ and $\theta_2$. (right) predicted and observed data}
+\label{fig:discnormal}
+\end{figure}
+
+## Example: Reading Comprehension
+We can ask a few different questions, some are:
+\bit
+\item Do the children improve after the instruction? 
+
+\item This is equivalent to asking what is $\Pr(\theta_2>\theta_1 | \by_{1:n})$? From the analysis we have that  $$\Pr(\theta_2>\theta_1 | \by_{1:n})=`r pmu`$$
+
+\item Now, what is the probability that a randomly selected child improves in the second exam?
+$$\Pr(Y_{2}^\star>Y_{1}^\star | \by_{1:n})=`r pys`$$
+\eit

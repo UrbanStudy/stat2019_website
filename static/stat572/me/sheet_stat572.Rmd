@@ -1,0 +1,347 @@
+---
+title: ''
+fontfamily: mathpazo
+fontsize: 10pt
+geometry: margin=1mm
+linestretch: 0.1
+classoption:
+
+pagenumbering: FALSE
+whitespace: none
+output:
+  pdf_document:
+    toc: FALSE
+    number_sections: FALSE
+
+header-includes:
+    - \usepackage{multicol}
+    - \usepackage{multirow}
+    - \usepackage{lscape}
+    - \newcommand{\blandscape}{\begin{landscape}}
+    - \newcommand{\elandscape}{\end{landscape}} 
+    - \setlength\tabcolsep{0pt}
+    - \setlength\lineskip{5pt}
+    - \setlength\parskip{5pt}
+    - \usepackage[fleqn]{mathtools}
+    - \setlength{\columnsep}{0pt}
+---
+
+
+\setlength\tabcolsep{0.0pt}
+\setlength\lineskip{0pt}
+\setlength\parskip{0pt}
+\fontsize{10pt}{0pt}
+\small
+\setlength{\columnseprule}{0.1pt}
+\begin{multicols}{2}
+
+\begin{tabular}{ l|l }
+Bernoulli$(y| \theta)$ & = $\theta^y (1-\theta)^{1-y} \mathbb{1}_{\{y\in\{0,1\}\}},\;\theta\in(0,1)$\\
+Binomial$(y| n, \theta)$&= ${n\choose y} \theta^y (1-\theta)^{n-y} \mathbb{1}_{\{y\in\{0,1,2,\ldots,n\}\}},\;\theta\in(0,1)$\\
+Poisson$(y| \theta)$&= $\frac{\theta^y e^{-\theta}}{y!} \mathbb{1}_{\{y\in\{0,1,2,\ldots\}\}},\;\theta>0$\\
+Geometric$(y| n, \theta)$&=  $(1-\theta)^{y-1}\theta  \mathbb{1}_{\{y\in\{1,2,\ldots\}\}},\;\theta\in(0,1)$\\
+Neg.Binom$(y| r,\theta)$&=${y+r-1\choose y}(1-\theta)^r \theta^y \mathbb{1}_{\{y\in\{0,1,2,\ldots\}\}},\; r>0,\;\theta\in(0,1)$\\
+Uniform$(y| a,b)$&= $\frac{1}{b-a}\mathbb{1}_{\{y\in(a,b)\}},\;-\infty<a<b<\infty$\\
+Beta$(y| a,b)$&= $\frac{1}{B(a,b)}y^{a-1}(1-y)^{b-1} \mathbb{1}_{\{y\in(0,1)\}},\;a,b>0$\\
+Exp$(y| \theta)$&=$\theta e^{-y \theta} \mathbb{1}_{\{y>0\}},\;\theta>0$\\
+Gamma$(y| a,b)$&=$\frac{b^a}{\Gamma(a)}y^{a-1}e^{-y b} \mathbb{1}_{\{y>0\}},\;a,b>0$\\
+InvGamma$(y| a,b)$&=$\frac{b^a}{\Gamma(a)} y^{-a-1} e^{-\frac{b}{y}} \mathbb{1}_{\{y>0\}},\;a,b>0$\\
+N$(y| \mu,\sigma^2)$&$= \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2\sigma^2}(y-\mu)^2},\;\mu,\sigma^2>0$\\
+or&$\sqrt{\frac{\lambda}{2\pi}}e^{-\frac{\lambda}{2}(y-\mu)^2}\quad\text{where }\lambda=1/\sigma^2,\;\mu\in\mathbb{R},\lambda>0$\\
+Pareto$(y| a,b)$&=$\frac{a\,b^a}{y^{a+1}}\mathbb{1}_{\{y>b\}},\;a,b>0$
+\end{tabular}
+
+\hrulefill
+ 
+\textbf{Marginal Likelihood} $X_1,\ldots,X_n \sim \text{Geom}(\theta)$. prior on $\theta\sim$Beta$(a, b)$
+
+$p(x_{1:n})=\int_{\theta\in\Theta}p(x_{1:n}|\theta)p(\theta)d\theta=\int(\prod(1-\theta)^{x_i-1}\theta)\frac{1}{B(a,b)}\theta^{a-1}(1-\theta)^{b-1}d\theta$
+=$\frac{1}{B(a,b)}\int\theta^{n+a-1}(1-\theta)^{\sum x_i-n+b-1}d\theta=\frac{B(a+n,\sum x_i-n+b)}{B(a,b)}\int\frac{\theta^{n+a-1}(1-\theta)^{\sum x_i-n+b-1}}{B(a+n,\sum x_i-n+b)}d\theta$
+
+
+
+\hrulefill
+
+\textbf{Exponential family} $p(y_{1:n} | \theta) = \exp\{t(y)\varphi(\theta) -n\kappa(\theta)\}h(y_{1:n})$
+
+
+$N(\mu,\sigma^2)$, $\mu\in\mathbb{R}$,$\sigma^2>0$ two-para
+
+\begin{align*}
+p(y_{1:n}|\mu,\lambda)&=\prod_{i=1}^n \mathbb{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac12}\exp[-\frac{\lambda}{2} (y_i-\mu)^2] \\
+    &= \underbrace{(\prod_{i=1}^n\mathbb{1}_{\{y_i\in\mathbb{R}\}})(2\pi)^{-\frac{n}2}}_{h(y)}\exp[\underbrace{-\frac{\lambda}{2} \sum_{i=1}^n y_i^2+n\lambda \mu\bar{y}}_{\phi(\mu,\lambda)t(y_{1:n})} -n\underbrace{\frac{\lambda\mu^2-\ln\lambda}{2}}_{\kappa(\mu)}] \\
+p(y_{1:n}|\mu,\sigma^2)&=\prod_{i=1}^n \mathbb{1}_{\{y_i\in\mathbb{R}\}}(2\pi\sigma^2)^{-\frac12}\exp[-\frac{1}{2\sigma^2} (y_i-\mu)^2] \\
+    &= \underbrace{(\prod_{i=1}^n\mathbb{1}_{\{y_i\in\mathbb{R}\}})(2\pi)^{-\frac{n}2}}_{h(y)}\exp[\underbrace{-\frac{\sum_{i=1}^n y_i^2}{2\sigma^2} +\frac{ \mu\sum{y}}{\sigma^2}}_{\phi(\mu,\lambda)t(y_{1:n})} -n\underbrace{(\frac{\mu^2}{2\sigma^2}+\ln\lambda)}_{\kappa(\mu)}] \\
+\end{align*}
+
+$\phi(\mu,\lambda)$=$(-\frac{\lambda}{2},n\lambda \mu)$, $(-\frac{1}{2\sigma^2},\frac{\mu}{\sigma^2})$; $t(y_{1:n})$ = $(\sum_{i=1}^n y_i^2,\bar{y})^T$, $(\sum_{i=1}^n y_i^2,\sum{y})^T$
+
+
+
+\hrulefill
+
+\textbf{Conjugate priors} $p_{n_0,t_0}(\theta) \propto \exp\{t_0 n_0 \varphi(\theta) - n_0\kappa(\theta)\}$
+
+
+
+\begin{tabular}{ l | l | l}
+Generating Family & Conjugate Family & Posterior Family\\
+\hline
+$Y\sim \text{Bernoulli}(\theta)$ & $\theta\sim \text{Beta}(a,b)$ & $\theta| Y=y\sim \text{Beta}(a+y,b+1-y)$\\
+$Y\sim \text{Poisson}(\theta)$ & $\theta\sim \text{Gamma}(\alpha,\beta)$ & $\theta| Y=y \sim \text{Gamma}(\alpha+y,\beta+1)$\\
+$Y\sim \text{Exp}(\theta)$ & $\theta\sim \text{Gamma}(\alpha,\beta)$ & $\theta| Y=y \sim \text{Gamma}(\alpha+1,\beta+y)$\\
+$Y\sim \text{Unif}(0,\theta)$ & $\theta\sim \text{Pareto}(a,b)$ & $\theta| Y=y \sim \text{Pareto}(a+n,\max\{b,x_{(n)}\})$\\
+\end{tabular}
+
+\dotfill
+
+$Y_1,\ldots,Y_n|\theta\overset{iid}{\sim}\text{U}(0,\theta)$;
+$p(y_i|\theta)=\frac{1}{\theta}\mathbb{1}_{\{0< y_i < \theta\}}$
+$\vec\theta\sim$Pareto$(a,b)$, $a> 0$,$b > 0$
+
+Likelihood $p(y_{1:n}|\theta)=\theta^{-n}\prod\mathbb{1}_{\{0< y_i < \theta\}}=\theta^{-n}\mathbb{1}_{\{0< y_{(1}),  y_{(n)}< \theta\}}$
+
+Posterior $p(\theta|y_{1:n})\propto p(y_{1:n}|\theta)p(\theta)=\theta^{-n}\mathbb{1}_{\{0< y_{(1)},  y_{(n)}< \theta\}}\theta^{-a-1}ab^a\mathbb{1}_{\{b<\theta\}}$
+
+$\propto\theta^{-(n+a+1)}(a+n)b^{a+n}\mathbb{1}_{\{\max \{y_{(n)},b\}< \theta\}}$;$\theta|y_{1:n}\sim$Pareto$(a+n,\max \{y_{(n)},b\})$
+
+
+\hrulefill
+
+\textbf{Posterior predictive density} $p(\tilde{y}| y_{1:n})=\int p(\tilde{y}| \theta) p(\theta | y_{1:n}) d\theta$
+
+Exp-Gamma$Y_1,\ldots,Y_n\overset{iid}{\sim}$ Exp$(\theta)$; prior $p(\theta) = \text{Gamma}(\theta | a, b)$. 
+
+$p(\theta|y_{1:n}) = Gamma(\theta|a_n,b_n)$, $a_n=a+n$ and $b_n=b+\sum^n_{i=1} y_i$
+
+$p(\tilde{y}| y_{1:n})=\int_{\theta\in\Theta} \text{Exp}(\tilde{y}|\theta) \Gamma(\theta|a_n,b_n) d\theta$
+= $\int \theta e^{-\theta \tilde{y}}\mathbb{1}_{\{\tilde{y}>0\}} \frac{b_n^{a_n}}{\Gamma(a_n)}\theta^{a_n-1}e^{-b_n\theta}\mathbb{1}_{\{\theta>0\}} d\theta$
+
+=$\frac{a_n(b_n)^{a_n}}{(b_n+\tilde{y})^{a_n+1}}\mathbb{1}_{\{\tilde{y}>0\}} \int \frac{(b_n+\tilde{y})^{a_n+1}}{\Gamma(a_n+1)}\theta^{a_n}e^{-(b_n+\tilde{y})\theta}\mathbb{1}_{\{\theta>0\}}d\theta$
+= $\frac{a_n}{b_n+\tilde{y}}(\frac{b_n}{b_n+\tilde{y}})^{a_n}\mathbb{1}_{\{\tilde{y}>0\}}$
+
+
+\dotfill
+
+Pois-Gamma $p(\tilde{y}| y_{1:n})=\int_{-\infty}^\infty Pois(\tilde{y}| \theta) \Gamma(\theta |a_n,b_n) d\theta$ $a_n=\sum y_i+a$,$b_n=n+b$
+
+=$\int_{-\infty}^\infty\mathbb{1}_{\{\tilde{y}\in\mathbb{N}_0\}} (1/\tilde{y}!) \theta^{\tilde{y}}e^{-\theta}\frac{b_n^{a_n}}{\Gamma{(a_n)}}\theta^{a_n -1} e^{-b_n\theta} \mathbb{1}_{\{\theta>0\}}d\theta$
+
+=$\mathbb{1}_{\{\tilde{y}\in\mathbb{N}_0\}} \frac{b_n^{a_n}}{\tilde{y}!\Gamma{(a_n)}}\int_{0}^\infty \theta^{(\tilde{y}+a_n -1)} e^{-\theta(b_n+1)}d\theta$
+
+\resizebox{1\hsize}{!}{=$\mathbb{1}_{\{\tilde{y}\in\mathbb{N}_0\}} \frac{\Gamma{(\tilde{y}+a_n)}}{\tilde{y}!\Gamma{(a_n)}}\frac{b_n^{a_n}}{(b_n+1)^{(\tilde{y}+a_n)}}\int_{0}^\infty \frac{(b_n+1)^{(\tilde{y}+a_n)}}{\Gamma{(\tilde{y}+a_n)}} \theta^{(\tilde{y}+a_n-1)} e^{-\theta(b_n+1)}d\theta$}
+
+=$\mathbb{1}_{\{\tilde{y}\in\mathbb{N}_0\}} \binom{\tilde{y}+a_n-1}{\tilde{y}} (1-\frac{1}{b_n+1})^{a_n}(\frac{1}{b_n+1})^{\tilde{y}}$
+;$\tilde{y}| y_{1:n}\sim$ NegBinom$(\tilde{y}| a_n, \frac{1}{b_n+1})$.
+
+
+\hrulefill
+
+\textbf{Normal-Normal}$Y_1,\ldots,Y_n | \mu,\lambda\stackrel{iid}{\sim}N(\mu,\lambda^{-1})$,$\lambda>0$ known
+
+
+$p(y_{1:n}|\mu) =\prod_{i=1}^n \left(\mathbb{1}_{\{y_i\in\mathbb{R}\}}(\frac{\lambda}{2\pi})^{\frac12}\exp[-\frac{\lambda}{2} (y_i-\mu)^2]\right)$
+
+= $(\prod_{i=1}^n\mathbb{1}_{\{y_i\in\mathbb{R}\}})(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} \sum_{i=1}^n (y_i-\mu)^2]$
+
+= $(\prod_{i=1}^n\mathbb{1}_{\{y_i\in\mathbb{R}\}})(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} (\sum_{i=1}^n y_i^2 - 2 \mu \sum_{i=1}^n y_i+n \mu^2)]$
+
+= $\underbrace{(\prod_{i=1}^n\mathbb{1}_{\{y_i\in\mathbb{R}\}})(\frac{\lambda}{2\pi})^{\frac{n}2}\exp[-\frac{\lambda}{2} \sum_{i=1}^n y_i^2]}_{h(y)}\exp[\underbrace{n\lambda \mu}_{\phi(\mu)} \underbrace{\bar{y}}_{t(y)} -n\underbrace{\frac{\lambda\mu^2}{2}}_{\kappa(\mu)}] $
+
+\dotfill
+
+$p(\mu)\propto \mathbb{1}_{\{\mu\in\mathbb{R}\}}\exp[-n_0\frac{\lambda}{2}\mu^2+n_0t_0\lambda \mu]= \mathbb{1}_{\{\mu\in\mathbb{R}\}}\exp[-\frac{n_0\lambda}{2} ((\mu-t_0)^2+t_0^2)]$
+=$\mathbb{1}_{\{\mu\in\mathbb{R}\}} \exp[-\frac{n_0\lambda}{2} (\mu-t_0)^2]\exp[\frac{n_0\lambda}{2}t_0^2]\propto \mathbb{1}_{\{\mu\in\mathbb{R}\}}(\frac{n_0\lambda}{2\pi})^{\frac{1}2} \exp[-\frac{n_0\lambda}{2} (\mu-t_0)^2]$
+
+$p(\mu)=\mathbb{1}_{\{\mu\in\mathbb{R}\}}(\frac{\nu\lambda}{2\pi})^{\frac{1}2} \exp[-\frac{\nu\lambda}{2} (\mu-\mu_0)^2]\sim N(\mu_0,(\nu\lambda)^{-1})$,
+
+$n_0=\nu$, $t_0=\mu_0$, $\mu_0\in\mathbb{R}, \nu >0$
+
+\dotfill
+
+
+$p(\mu|y_{1:n}) \propto p(y_{1:n}|\mu,\lambda) p(\mu)$ priors $\boldsymbol{\mu}$ is conjugate with the normal likelihood.
+
+$\propto \exp[-\frac{n \lambda}{2} (\mu^2 - 2 \mu \bar{y})]  \exp[-\frac{\nu\lambda}{2} (\mu^2-2\mu\mu_0)]$
+
+$\propto \exp[-\frac{\lambda}{2} \left(\mu^2(n +\nu) - 2 \mu (n\bar{y} +\nu\mu_0)\right) ]$
+
+$\propto \exp[-\frac{\lambda(n +\nu)}{2} \left(\mu^2 - 2 \mu \frac{n\bar{y} + \nu\mu_0 }{n+\nu} + [\frac{n\bar{y} +\nu\mu_0}{n+\nu} ]^2\right)]$
+
+$\exp[\frac{\lambda(n+\nu)}{2} (\frac{n\bar{y} + \nu\mu_0 }{n+ \nu})^2 ]$
+$\propto \exp[-\frac{\lambda(n+\nu)}{2} [\mu - (\frac{n}{n+\nu} \bar{y} +\frac{\nu}{n+\nu}\mu_0 )]^2]$
+
+$\sim N(\mu^\star,{\lambda^\star}^{-1})$, precision $\lambda^\star=\lambda(n+\nu)$,$\mu^\star=\frac{n}{n+\nu} \bar{y} +\frac{\nu}{n+\nu}\mu_0$
+
+\dotfill
+
+
+$p(\tilde{y}| y_{1:n})= \int_{-\infty}^\infty p(\tilde{y}| \theta) p(\theta | y_{1:n}) d\theta= \int_{-\infty}^\infty N(\tilde{y}| \theta,\lambda^{-1}) N(\theta |\theta^\star,{\lambda^\star}^{-1}) d\theta$
+
+=$ (2\pi)^{-\frac12-\frac12}(\lambda\lambda^\star)^{\frac12} \int_{-\infty}^\infty \exp\{-\frac{\lambda}{2}(\tilde{y}- \theta)^2 -\frac{\lambda^\star}{2}(\theta-\theta^\star)^2\} d\theta$
+
+=$ (2\pi)^{-\frac12-\frac12}(\lambda\lambda^\star)^{1/2} \int_{-\infty}^\infty \exp\{-\frac{\lambda}{2}(\theta^2-2 \theta \tilde{y}+\tilde{y}^2) -\frac{\lambda^\star}{2}(\theta^2-2\theta \theta^\star+{\theta^\star}^2)\} d\theta$
+
+=$ (2\pi)^{-1}(\lambda\lambda^\star)^{\frac12} \int\exp\{-\frac{1}{2}\left[\theta^2(\lambda+\lambda^\star)-2 \theta(\lambda \tilde{y}+\lambda^\star\theta^\star)\right]-\frac{\lambda}{2}\tilde{y}^2-\frac{\lambda^\star}{2}{\theta^\star}^2\} d\theta$
+
+=$ (2\pi)^{-\frac12} \left(\frac{\lambda\lambda^\star}{\lambda+\lambda^\star}\right)^{\frac12}\exp\{-\frac{\lambda}{2}\tilde{y}^2-\frac{\lambda^\star}{2}{\theta^\star}^2 + \frac{1}{2} \frac{1}{\lambda+\lambda^\star}(\lambda \tilde{y}+\lambda^\star\theta^\star)^2\} \times$
+
+$\int_{-\infty}^\infty (2\pi)^{-\frac12}(\lambda+\lambda^\star)^{\frac12}\exp\{-\frac{\lambda+\lambda^\star}{2}\left(\theta -\frac{1}{\lambda+\lambda^\star}(\lambda \tilde{y}+\lambda^\star\theta^\star)\right)^2\}d\theta$
+
+=$ (2\pi)^{-\frac12} \left(\frac{\lambda\lambda^\star}{\lambda+\lambda^\star}\right)^{\frac12}\exp\{-\frac{1}{2} \frac{\lambda\lambda^\star}{\lambda+\lambda^\star}(\tilde{y}-\theta^\star)^2 \}$
+
+
+$\tilde{Y}\sim N\{\tilde{y}| \theta^\star,{\lambda^\star}^{-1}+\lambda^{-1}\}$.
+$\frac{\lambda+\lambda^\star}{\lambda\lambda^\star}={\lambda^\star}^{-1}+\lambda^{-1}$
+
+$\tilde{Y}| \theta, \sigma^2\sim N(\theta,\lambda^{-1})\Longrightarrow \tilde{Y}=\theta + \tilde{\epsilon},$
+where $\tilde{\epsilon}| \theta,\sigma^2\sim N(0,\lambda^{-1})$, for a particular value of $\theta$.
+
+$\theta| y_{1:n}\sim N(\theta^\star,{\lambda^\star}^{-1})$, and denoting by $\psi=\theta| y_{1:n}$, we have that $\tilde{Y}| y_{1:n}=\psi+\tilde{\epsilon},$ which by the properties of the normal (specifically the one regarding the distribution of the sum of two independent normal random variables), is distributed as follows 
+
+$\tilde{Y}| y_{1:n}\sim N\{E(\psi)+E(\tilde{\epsilon}),var(\psi)+var(\tilde{\epsilon})\}=N(\theta^\star,{\lambda}^{-1}+{\lambda^\star}^{-1})$
+
+
+
+\textbf{Normal and marginal}$Y_1,\ldots,Y_n \sim N(\theta,\sigma^2)$,$\sigma^2$ is known. prior$\vec\theta\sim$ $N(\mu_0,\sigma_0^2)$
+
+When $n = 1$, marginal likelihood $p(y_1)$
+
+When $n > 1$, marginal likelihood factors $p(y_{1:n}) \neq p(y_1)\cdots p(y_n)$
+
+
+\hrulefill
+
+\textbf{Normal-Gamma}
+$X_1,\ldots,X_{n} \overset{iid}{\sim} N(\mu,\lambda^{-1})$;
+$\vec\mu,\vec\lambda \sim \text{N-G}(\mu_0,\nu,\alpha,\beta)$;$\lambda$ unknown
+
+prior $p(\vec\theta,\vec\lambda) = N(\theta| \mu_0,(\nu\lambda)^{-1})\text{Gamma}(\alpha,\beta)\nonumber$
+
+=$\{\sqrt{\frac{\nu\lambda}{2\pi}} \exp[-\frac{\nu\lambda}{2}(\theta-\mu_0)^2]\} \{\frac{\beta^\alpha}{\Gamma(\alpha)}\lambda^{\alpha-1} e^{- \beta \lambda}\}$
+
+$\propto \lambda^{1/2+\alpha-1} \exp[-\frac{\lambda}{2}(\nu\theta^2-2\nu\theta\mu_0+\nu\mu_0^2+2\beta)]$
+
+likelihood \dotfill
+
+$p(y_{1:n}| \theta,\lambda) = (\frac{\lambda}{2\pi})^{\frac{n}2}\prod_i \exp[-\frac{\lambda}{2}(y_i-\theta)^2]$
+$\propto \lambda^{\frac{n}2} \exp[-\frac{\lambda}{2}(n\theta^2 -2 n\theta \bar{y} + \sum_{i}y_i^2 )]$
+
+posterior density 
+$p(\theta,\lambda| y_{1:n}) \propto p(y_{1:n}| \theta,\lambda) p(\theta,\lambda)$\dotfill
+
+$\propto \lambda^{\frac{n}2} \exp[-\frac{\lambda}{2}(n\theta^2 -2 n\theta \bar{y} +  \sum_{i}y_i^2 ]\lambda^{\frac12+\alpha-1} \exp[-\frac{\lambda}{2}(\nu\theta^2-2\nu\theta\mu_0+\nu\mu_0^2+2\beta)]$
+
+$\propto \lambda^{\frac12+\alpha+\frac{n}2 -1}\exp[-\frac{\lambda}{2}(\theta^2(n+\nu)-2\theta(n\bar{y}+\nu\mu_0)+\sum_i y_i^2 +\nu \mu_0^2+2\beta )]$
+
+$\propto \lambda^{\frac12}\exp[-\frac{\lambda (n+\nu)}{2}(\theta-\frac{n\bar{y}+\nu\mu_0}{n+\nu})^2]$
+$\lambda^{\alpha+\frac{n}2 -1}\exp[-\frac{\lambda(\sum_i y_i^2 +\nu \mu_0^2+2\beta)}{2} +\frac{\lambda(n\bar{y}+\nu\mu_0)^2}{2(n+\nu)} ]$
+
+$\propto \{\lambda^{1/2}\exp[-\frac{\lambda \nu^\star}{2}(\theta-\mu^\star)^2]\} \{\lambda^{\alpha^\star -1}\exp[-\lambda \beta^\star]\}$
+
+$\propto N(\theta | \mu^\star, (\nu^\star \lambda)^{-1})\text{Gamma}(\lambda| \alpha^\star,\beta^\star)$
+
+where
+$\mu^\star=\frac{n}{\nu+n}\bar{y}+\frac{\nu}{\nu+n}\mu_0$;
+$\nu^\star=\nu+n$;
+$\alpha^\star=\alpha+n/2$
+
+$\beta^\star=\frac{1}{2} (\sum_i y_i^2+\nu \mu_0^2+2\beta-\nu^\star {\mu^\star}^2)=\beta + \frac{1}{2}\sum_i (y_i-\bar{y})^2+\frac{1}{2}\frac{\nu n}{\nu+n}(\bar{y}-\mu_0)^2$
+
+
+$\vec\lambda | y_{1:n} \sim \text{G}(\alpha^\star,\beta^\star)$;
+$\vec\theta| \lambda, y_{1:n} \sim N(\mu^\star,(\nu^\star\lambda)^{-1})$
+or equivalently
+
+$p(\theta,\lambda| y_{1:n})$
+=G$(\lambda |  \alpha^\star,\beta^\star)$ N$(\theta| \mu^\star,(\nu^\star\lambda)^{-1})$
+=N-G$(\mu^\star,\nu^\star,\alpha^\star,\beta^\star)$
+
+
+
+\hrulefill
+
+
+\textbf{Normal-Inverse Gamma prior}$Y_1,\ldots,Y_{n}\sim$ $N(\mu,\sigma^2)$;$\vec\mu,\vec\sigma^2 \sim \text{N-IG}(\mu_0,\nu,\alpha,\beta)$
+
+set $\mu_0=1$; $\nu=10$; $\alpha=3$;$\beta=2\times10^{-4}$
+  
+Prior $p(\vec\mu, \vec{\sigma}^2)=N(\mu_0,\nu\sigma^2)IG(\alpha,\beta)$
+
+Likelihood $P(y_{1:n}|\mu,\sigma^2)=$
+
+Posterior $p(\vec\mu, \vec{\sigma}^2| y_{1:n})\propto p(y_{1:n}|\mu,\sigma^2)p(\mu|\sigma^2)p(\sigma^2)$
+
+\hrulefill
+
+\textbf{Monte Carlo} find $\Pr(X> 20)$,$X$ simulating from $N(0, 1)$does not work. 
+
+Express the probability as an integral and use an obvious change of variable to rewrite this integral as an expectation under a $U(0, 1/20)$ distribution. 
+
+Deduce a Monte Carlo approximation to $\Pr(X > 20)$ along with an error assessment. Compare the performance of this estimator to that of the direct Monte Carlo estimator.
+
+$P(\tilde{X} < a| x_{1:n}) = F_{\tilde{X}}( a \,\big|\,  x_{1:n}) = \int_{-\infty}^a p(\tilde{x} | x_{1:n}) d \tilde{x},$
+
+by definition of the posterior predictive density, and by independence of the $y's$ conditional on $\theta$, we have that $p(\tilde{x} | x_{1:n})=\int_{\theta\in \Theta} p(\tilde{x} | \theta)p(\theta | x_{1:n}) d\theta;$
+
+\begin{eqnarray*}
+P(\tilde{X} < a| x_{1:n}) &=& \int_{-\infty}^a \int_{\theta\in \Theta} p(\tilde{x} | \theta)p(\theta | x_{1:n}) d\theta d \tilde{x}\\
+&=& \int_{\theta\in \Theta} \int_{-\infty}^a  p(\tilde{x} | \theta)p(\theta | x_{1:n}) d\theta d \tilde{x} \\
+&=& \int_{\theta\in \Theta} \left(\int_{-\infty}^a  p(\tilde{x} | \theta) d \tilde{x}\right)p(\theta | x_{1:n}) d\theta \\
+&=& \int_{\theta\in \Theta} P(\tilde{X} < a | \theta)  p(\theta | x_{1:n}) d\theta \\
+&=& \int_{\theta\in \Theta} F_{\tilde{X}}( a |  \theta)  p(\theta | x_{1:n}) d\theta  \text{by def. of the CDF} \\
+&=& E_{\mathbb{\theta}}\left[P(\tilde{X} < a | \,\theta) | x_{1:n}\right] \\
+&\approx& \frac{1}{S}\sum_{k=1}^S F_{\tilde{X}}( a |  \theta_k),\quad\text{with }\theta_k \sim p(\theta | x_{1:n}).
+\end{eqnarray*}
+The expression above is easy to calculate given that it is easy to sample from $p(\theta | x_{1:n})$ and $P(\tilde{X} < a | \theta)$ is easy to compute
+
+For $k=1,\ldots,S$, sample $\theta_k$ from $p(\theta | x_{1:n})$.
+
+Calculate $F_{\tilde{X}}( a |  \theta_k)$ for each $\theta_k$.
+
+Estimate $F_{\tilde{X}}( a |  x_{1:n})$ with the average of the $F_{\tilde{X}}( a |  \theta_k)$ values.
+
+\hrulefill
+
+\textbf{Monte Carlo} For the computation of the expectation $E[h(X)]$ when $X\sim N(0,1)$ and $h(x)=exp\{-\frac{1}{2}(x - 3)^2\} + exp\{-\frac{1}{2}(x - 6)^2\}$
+
+Show that $E[h(X)]$ can be computed in closed form and derive its value. 
+
+Construct a regular Monte Carlo approximation based on a normal $N(0, 1)$ sample of size $S=10^3$ and produce an error evaluation.
+
+\hrulefill
+
+\textbf{Gibbs Sampling}  $x$: $p(x|a, b) = a\, b\, e^{-a\, b\, x}\mathbb{1}_{\{x > 0\}},$
+and suppose the prior is $p(a, b) \propto e^{-(a + b)}\mathbb{1}_{\{a, b > 0\}}$
+You want to sample from the posterior $p(a, b | x)$. 
+
+Derive the conditional distributions needed for implementing a Gibbs sampler, and write out the steps to implement the Gibbs Sampling algorithm.
+
+
+
+
+
+
+
+
+
+\pagebreak
+\tiny
+\begin{tabular}{c|c|c}
+\multirow{2}{*}{N($\mu,\sigma^2$)}   & $\sigma^2$ ﬁxed & $\exp[\underbrace{\frac{\mu}{\sigma^2}}_{\eta(\mu)}\underbrace{x}_{T(x)}-\underbrace{(\frac{\mu^2}{2\sigma^2}+\ln{(\sqrt{2\pi}\sigma)})}_{B(\mu)}]\underbrace{\exp[-\frac{x^2}{2\sigma^2}]\mathbb{1}_{\{x\in\mathbb{R}\}}}_{h(x)}$\\
+\cline{2-3}
+                                     & $\mu$ ﬁxed      & $\exp[\underbrace{-\frac{1}{2\sigma^2}}_{\eta(\sigma^2)}\underbrace{(x-\mu)^2}_{T(x)}-\underbrace{\ln{(\sqrt{2\pi}\sigma)}}_{B(\sigma^2)}]\underbrace{\mathbb{1}_{\{x\in\mathbb{R}\}}}_{h(x)}$ \\\hline
+\multirow{3}{*}{$\Gamma(p,\lambda)$} & $p$ ﬁxed        & $\exp[\underbrace{-\lambda}_{\eta(\lambda)}\underbrace{x}_{T(x)}-\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(\lambda)}]\underbrace{x^{p-1}\mathbb{1}_{\{x\in(0,\infty)\}}}_{h(x)}$\\
+\cline{2-3}
+                                     & $\lambda$ ﬁxed  & $\exp[\underbrace{(p-1)}_{\eta(p)}\underbrace{\ln(x)}_{T(x)}-\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(p)}]\underbrace{\exp[-\lambda x]\mathbb{1}_{\{x\in(0,\infty)\}}}_{h(x)}$\\
+&\multicolumn{2}{c}{$\exp[\underbrace{-\lambda x+(p-1)\ln x}_{\eta(p,\lambda)T(x)}-\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(p,\lambda)}]\underbrace{\mathbb{1}_{\{x\in(0,\infty)\}}}_{h(x)}$}\\\hline
+\multirow{3}{*}{$\beta(r,s)$}        & $r$ ﬁxed        & $\exp[\underbrace{(s-1)}_{\eta(s)}\underbrace{\ln(1-x)}_{T(x)}-\underbrace{\ln(B(r,s))}_{B(s)}]\underbrace{x^{r-1}\mathbb{1}_{\{x\in(0,1)\}}}_{h(x)}$\\
+\cline{2-3}
+                                     & $s$ ﬁxed        & $\exp[\underbrace{(r-1)}_{\eta(r)}\underbrace{\ln(x)}_{T(x)}-\underbrace{\ln(B(r,s))}_{B(r)}]\underbrace{(1-x)^{s-1}\mathbb{1}_{\{x\in(0,1)\}}}_{h(x)}$\\
+&\multicolumn{2}{c}{$\exp[\underbrace{(r-1)\ln(x)+(s-1)\ln(1-x)}_{\eta(r,s)T(x)}-\underbrace{\ln(B(r,s))}_{B(r,s)}]\underbrace{\mathbb{1}_{\{x\in(0,1)\}}}_{h(x)}$}
+\end{tabular}
+
+                 
+
+
+\end{multicols}

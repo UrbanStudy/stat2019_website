@@ -1,0 +1,53 @@
+---
+title: "STAT 572: Bayesian Statistics" 
+subtitle: "Homework 5 (Gibbs Sampling)"
+output:
+  pdf_document: default
+  html_document: default
+  html_notebook: default
+---
+
+\vspace{-0.5cm}
+\begin{center}
+(to be submitted online in D2L by Wednesday November 20th at 5:30 pm)
+\end{center}
+
+\vspace{1cm}
+
+
+<!-- \begin{itemize} -->
+<!-- \item  -->
+1. Do exercise 6.1 from the Hoff Book (pg 237)
+
+
+```{r,fig.height=6,fig.width=7,fig.align='center'}
+#Store the menchild30bach.dat and menchild30nobach.dat 
+#files in the same folder as this Rmd file to load them
+y.A <- scan("menchild30bach.dat")
+y.B <- scan("menchild30nobach.dat") 
+
+nA <- length(y.A)
+nB <- length(y.B)
+
+sumA <- sum(y.A)
+sumB <- sum(y.B)
+```
+
+2. Gibbs sampling is incredibly flexible and can easily handle hierarchical models, particularly when each piece of the model involves a conjugate (or at least semi-conjugate) prior.  Hierarchical models are particularly useful when we don't have suffient information to specify meaningfully some parameters in the priors, or when there is an inherent hierarchical structure to the relationships between the data, latent variables, and parameters. So in these cases, we may want to put a prior not only on the parameters, but also on the *hyperparameters*.  Priors on the prior parameters are often called \emph{hyperpriors}.  
+Consider the Normal model with the semi-conjugate prior we defined in class, and assume that $\boldsymbol{\lambda}_0\sim \text{Gamma}(\nu/2,\nu/1000)$, so that the model is defined by:
+
+\begin{eqnarray*}
+\boldsymbol{\lambda}_0 &\sim& \text{Gamma}(\nu/2,\nu/1000)\\
+\boldsymbol{\theta} | \lambda_0 &\sim& \text{N}(\mu_0,\lambda_0^{-1})\\
+\boldsymbol{\lambda} &\sim& \text{Gamma}(1/2, 1/2)\\
+Y_1,\ldots,Y_n &\overset{iid}{\sim}& \text{N}(\theta,\lambda^{-1})
+\end{eqnarray*}
+
+
+- Derive the Gibbs sampling algorithm to sample from the posterior $p(\theta,\lambda,\lambda_0 | y_{1:n})$.
+- Assume that: $$n=50, \quad \bar{y}=\frac{1}{n}\sum_{i=1}^n y_i=150\;\text{ and } \; S^2=\frac{1}{n-1}\sum_{i=1}^n (y_i-\bar{y}) = 81.$$
+Implement and run the Gibbs sampler for $S = 10^4$ iterations, with each of the following: $(\mu_0=110,\nu=1)$, $(\mu_0=0,\nu=1)$, and $(\mu_0=110,\nu=10)$. Comment on your results.
+- For each of these values of $(\mu_0,\nu)$, make traceplots for $\theta$ and $\lambda$, and scatterplots (i.e., xy-plots) for $(\theta, \lambda)$.
+- Calculate the means and 95\% credible intervals for $\boldsymbol{\theta}$ and $\boldsymbol{\lambda}$.
+
+

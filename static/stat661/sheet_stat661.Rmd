@@ -1,0 +1,1010 @@
+---
+title: ''
+fontfamily: mathpazo
+fontsize: 10pt
+geometry: margin=0mm
+linestretch: 0.1
+classoption:
+
+pagenumbering: FALSE
+whitespace: none
+output:
+  pdf_document:
+    toc: FALSE
+    number_sections: FALSE
+
+header-includes:
+    - \usepackage{multicol}
+    - \usepackage{multirow}
+    - \usepackage{lscape}
+    - \newcommand{\blandscape}{\begin{landscape}}
+    - \newcommand{\elandscape}{\end{landscape}} 
+    - \setlength\tabcolsep{0.0pt}
+    - \setlength\lineskip{5pt}
+    - \setlength\parskip{5pt}
+    - \usepackage[fleqn]{mathtools}
+    - \setlength{\columnsep}{0pt}
+---
+
+
+\setlength\tabcolsep{0.0pt}
+\setlength\lineskip{0pt}
+\setlength\parskip{0pt}
+\fontsize{10pt}{0pt}
+\small
+\setlength{\columnseprule}{0.1pt}
+\begin{multicols}{2}
+
+\textbf{Sufficient; Factorization theorem}
+
+\textbf{Multinomial $n_i=$the number of times we get outcome $i=1,..,k$}
+
+$f_{\vec\theta}(\vec n)=n!\prod_{i=1}^k\frac{\theta_i^{n_i}}{n_i!}\mathbf{1}_{\{\sum N_i=n\}}$
+$T(\vec N)=(N_1,..,N_{k-1},n-\sum_{i=1}^{k-1}N_i)$ is equivalent with $(N_1,..,N_{k-1})$  is sufficient for $\theta$.
+
+\textbf{$p(x, \theta)=\frac1\sigma\exp\{-\frac{x - \mu}\sigma \}\mathbf{1}_{\{x_i \ge \mu\}}$ $\theta = (\mu, \sigma)$ $-\infty < \mu < \infty, \sigma > 0$}
+
+$x_{(1)}$ is sufficient for $\mu$ when $\sigma$ is fixed.
+
+$h(x)=\sigma^{-n}\exp[-\frac{\sum_{i=1}^n x}\sigma]$, $g(T(x),\mu)=\exp[\frac{n\mu}\sigma]\prod_{i=1}^n\mathbf{1}_{\{x_i\ge \mu\}}$
+
+$T(x)=\sum_{i=1}^n x_i$ is sufficient for $\sigma$ when $\mu$ is fixed.
+
+$h(x)=\prod_{i=1}^n\mathbf{1}_{\{x \ge \mu\}}$, 
+$g(T(x),\sigma)=\sigma^{-n}\exp[-\frac{\sum_{i=1}^n x}\sigma+\frac{n\mu}\sigma]$
+
+$T(x)=(x_{(1)},\sum_{i=1}^n x_i)$ is a two-dimensional sufficient
+
+$h(x)=1$, 
+$g(T(x),\mu,\sigma)=\sigma^{-n}\exp[-\frac{\sum_{i=1}^n x}\sigma+\frac{n\mu}\sigma]\prod_{i=1}^n\mathbf{1}_{\{x_{(1)}\ge\mu\}}$
+
+\textbf{Exp family:The suppose depends on the unknown $\theta$ is not a 1-para}\hrulefill
+
+$h(x)\exp[\eta(\theta)T(x)-B(\theta)]$, $x\in\mathcal{X}\subset\mathbb{R^q}$free of $\theta$
+
+\textbf{$X=[Z,Y]^T$, where $Y=Z+\theta W$, $\theta>0$,$Z\perp W\sim N(0,1)$}
+
+$f(x,\theta)=f(z,y,\theta)=f(z)f_\theta(y|z)=\phi(z)\theta^{-1}\phi(\frac{y-z}{\theta})$
+
+$=\frac1{2\pi}\exp[\frac{-1}{2}z^2]\exp[\frac{-1}{2\sigma^2}(y-z)^2-\ln\theta]$
+
+\textbf{$U[\theta_1, \theta_2]$, let $h(x)=1$, $a(\theta)=(\theta_2-\theta_1)^{-1}$}
+
+$g(T(x),\theta_1,\theta_2)=\prod_{i=1}^n[\mathbf{1}_{\{x_{(n)}\le\theta_2\}}\mathbf{1}_{\{x_{(1)}\ge\theta_1\}}][\theta_2-\theta_1]^{-n}$,
+$h'(x)=1$
+
+$T(x)=(x_{(1)},x_{(n)})$ is a two-dimensional sufficient for $\theta$ in the $U[\theta_1, \theta_2]$ family.
+
+\begin{tabular}{c|c|c}
+\multirow{2}{*}{N($\mu,\sigma^2$)}   & $\sigma^2$ ﬁxed & $\exp[\underbrace{\frac{\mu}{\sigma^2}}_{\eta(\mu)}\underbrace{x}_{T(x)}-\underbrace{(\frac{\mu^2}{2\sigma^2}+\ln{(\sqrt{2\pi}\sigma)})}_{B(\mu)}]\underbrace{\exp[-\frac{x^2}{2\sigma^2}]\mathbf{1}_{\{x\in\mathbb{R}\}}}_{h(x)}$\\
+\cline{2-3}
+                                     & $\mu$ ﬁxed      & $\exp[\underbrace{-\frac{1}{2\sigma^2}}_{\eta(\sigma^2)}\underbrace{(x-\mu)^2}_{T(x)}-\underbrace{\ln{(\sqrt{2\pi}\sigma)}}_{B(\sigma^2)}]\underbrace{\mathbf{1}_{\{x\in\mathbb{R}\}}}_{h(x)}$ \\\hline
+\multirow{3}{*}{$\Gamma(p,\lambda)$} & $p$ ﬁxed        & $\exp[\underbrace{-\lambda}_{\eta(\lambda)}\underbrace{x}_{T(x)}-\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(\lambda)}]\underbrace{x^{p-1}\mathbf{1}_{\{x\in(0,\infty)\}}}_{h(x)}$\\
+\cline{2-3}
+                                     & $\lambda$ ﬁxed  & $\exp[\underbrace{(p-1)}_{\eta(p)}\underbrace{\ln(x)}_{T(x)}-\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(p)}]\underbrace{\exp[-\lambda x]\mathbf{1}_{\{x\in(0,\infty)\}}}_{h(x)}$\\
+&\multicolumn{2}{c}{$\exp[\underbrace{-\lambda x+(p-1)\ln x}_{\eta(p,\lambda)T(x)}-\underbrace{-\ln(\frac{\lambda^p}{\Gamma{p}})}_{B(p,\lambda)}]\underbrace{\mathbf{1}_{\{x\in(0,\infty)\}}}_{h(x)}$}\\\hline
+\multirow{3}{*}{$\beta(r,s)$}        & $r$ ﬁxed        & $\exp[\underbrace{(s-1)}_{\eta(s)}\underbrace{\ln(1-x)}_{T(x)}-\underbrace{\ln(B(r,s))}_{B(s)}]\underbrace{x^{r-1}\mathbf{1}_{\{x\in(0,1)\}}}_{h(x)}$\\
+\cline{2-3}
+                                     & $s$ ﬁxed        & $\exp[\underbrace{(r-1)}_{\eta(r)}\underbrace{\ln(x)}_{T(x)}-\underbrace{\ln(B(r,s))}_{B(r)}]\underbrace{(1-x)^{s-1}\mathbf{1}_{\{x\in(0,1)\}}}_{h(x)}$\\
+&\multicolumn{2}{c}{$\exp[\underbrace{(r-1)\ln(x)+(s-1)\ln(1-x)}_{\eta(r,s)T(x)}-\underbrace{\ln(B(r,s))}_{B(r,s)}]\underbrace{\mathbf{1}_{\{x\in(0,1)\}}}_{h(x)}$}
+\end{tabular}
+
+\textbf{Geometric $G(\theta)$} the number of failures before the first success in a sequence of Bernoulli trials with probability of success $\theta$
+
+$P_\theta(X=k) = \exp[\underbrace{\ln(1-\theta)}_{\eta(\theta)}\underbrace{k}_{T(k)}-\underbrace{-\ln(\theta)}_{B(\theta)}]\underbrace{\mathbf{1}_{\{k\in(0,1,2,..)\}}}_{h(k)}$
+
+$P_\theta(X_{1:n}) = \prod_{i=1}^n P_\theta[X=x]= \exp[\underbrace{\ln(1-\theta)}_{\eta(\theta)}\underbrace{\sum_{i=1}^n x_i}_{T(x)} -\underbrace{-n\ln(\theta)}_{B(\theta)}]\underbrace{ \prod_{i=1}^n\mathbf{1}_{\{x\in(0,1,2,..)\}}}_{h(x)}$
+
+\textbf{bivariate normal population $f(\vec X,\vec Y)=$}
+                 
+\resizebox{1\hsize}{!}{$\exp[\underbrace{-\frac{\sum x^2}{2(1-\rho^2)\sigma_X^2}+\frac{\sum x}{(1-\rho^2)}(\frac{\mu_X}{\sigma_X^2}-\frac{\mu_Y\rho}{\sigma_X\sigma_Y})+\frac{\rho\sum xy}{(1-\rho^2)\sigma_X\sigma_Y}+\frac{\sum y}{(1-\rho^2)}(\frac{\mu_Y}{\sigma_Y^2}-\frac{\mu_X\rho}{\sigma_X\sigma_Y})-\frac{\sum y^2}{2(1-\rho^2)\sigma_Y^2}}_{\eta(\rho,\mu_X,\mu_Y,\sigma_X,\sigma_Y)T(x,y)}]$}
+
+\resizebox{1\hsize}{!}{$\cdot\exp[-\underbrace{n\left(\frac{1}{2(1-\rho^2)}(\frac{\mu_X^2}{\sigma_X^2}-\frac{2\rho\mu_X\mu_Y}{\sigma_X\sigma_Y}+\frac{\mu_Y^2}{\sigma_Y^2})+\ln(2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2})\right)}_{nB(\rho,\mu_X,\mu_Y,\sigma_X,\sigma_Y)}]\underbrace{\mathbf{1}_{\{x,y\in\mathbb{R}^n\}}}_{h(x)}$}
+
+$\rho\in(0,1),\mu_X\in\mathbb{R},\mu_Y\in\mathbb{R},\sigma_X\in\mathbb{R^+},\sigma_Y\in\mathbb{R^+}$
+
+$x\in\mathcal{X}\subset\mathbb{R}^n$, $y\in\mathcal{Y}\subset\mathbb{R}^n$
+
+\textbf{theorem 1.6.1} $\sum_{i=1}^n X_i$ is a sufficient statistic for $\theta$ for a one-para exp family. the family of the distribution of $\sum_{i=1}^n X_i$ is a one-parameter exponential family, whose p.m.f may be written as 
+$h^*(t)\exp[\eta(\theta)t-B(\theta)]$ for a suitable $h^*$.
+
+\textbf{Mult$_k(n,p_1,..,p_k)$,$\vec p\in(0,1)^k$, $\sum p_i=1$}
+
+$=n!\prod_{i=1}^k\frac{p_i^{n_i}}{x_i!}\mathbf{1}_{\{\sum x_i=n\}}=n!\prod_{i=1}^k(x_i!)^{-1}\exp[x_1\ln(p_1),..,x_k\ln(p_k)]$
+
+\textbf{Canonical $q(x,\eta)=h(x)\exp[\eta T(x)-A(\eta)]$, $x\in\mathcal{X}\subset\mathbb{R^q}$free of $\theta$}\hrulefill
+
+$A(\eta)=\ln(\int_\mathcal{X}h(x)\exp[\eta T(x)]dx)$;$\int_\mathcal{X}h(x)\exp[\eta(\theta) T(x)-B(\theta)]dx=1$
+
+\textbf{Bino:$p(x,\theta) = $, $\eta=\ln{p}{1-p}$, $p=\frac{e^\eta}{1+e^\eta}$, $1-p=\frac{1}{1+e^\eta}$}
+
+$A(\eta)=-n\ln(\frac{1}{1+e^\eta})=n\ln(1+e^\eta)$ finite $\forall\eta\in\mathbb{R}$
+
+\textbf{Weibull:$p(x,\theta) = k\theta(\theta x)^{k-1} \exp[-(\theta x)^k], x > 0$}
+
+$p(x,\theta)= \exp[-\theta^k\sum^n_{i=1}xki-nk\ln\theta +X^n_{i=1}\ln x^{k-1}_i + n \ln k]$
+
+$\eta=-\theta^k$, $A(\eta)=-n\ln\theta^k=-n\ln(-\eta)$, 
+
+$T=\sum_{i+1}^n X_i^k$ is n.s.s. $E[T]=\frac{-n}{\eta}=\frac{n}{\theta^k}$; $Var[T]=\frac{-n}{\eta^2}=\frac{n}{\theta^{2k}}$
+
+\textbf{Suppose $\eta\in\varepsilon$ interior of $\varepsilon$, then $M_\eta(s)$exists for s in a nbd of 0}
+
+$M_\eta(s)=\exp[A(s+\eta)-A(\eta)]$
+
+\textbf{Corollary $E_\eta[T(x)=\frac{\partial A(\eta)}{\partial\eta}= \dot{A}(\eta)$;$V_\eta[T(x)]=\frac{\partial^2 A(\eta)}{\partial\eta^2}= \ddot{A}(\eta)$}
+
+if $\eta\in\varepsilon$ has all moments
+
+\textbf{Bino $\dot{A}(\eta)=n\frac{1}{1+e^\eta}e^\eta=np$;$\ddot{A}(\eta)=n\frac{e^\eta}{(1+e^\eta)^2}=np(1-p)$}
+
+\textbf{Pois $\dot{A}(\eta)=e^\eta=\lambda$;$\ddot{A}(\eta)=e^\eta=\lambda$}
+
+$\eta=\ln\lambda$;$A(\eta)=e^\eta=\lambda$
+
+\textbf{Rayleigh $\dot{A}(\eta)=-n(-\frac1{2\eta})(-2)=\frac{-n}{\eta}=-n(2\theta^2)$;$\ddot{A}(\eta)=\frac{n}{\eta^2}=4n\theta^4$}
+
+\textbf{B($\mu,\sigma^2$)=$-\frac{\mu^2}{2\sigma^2}+\ln(\sqrt{2\pi}\sigma)=-\frac{-\eta_1^2}{4\eta_2}-\frac12\ln(-\eta_2)+\ln(\sqrt\pi)$=A$(\eta_1,\eta_2)$}
+
+$\dot{A}(\eta)=(\frac{-\eta_1}{2\eta_2},\frac{-1}{2\eta_2}+\frac{\eta_1^2}{4\eta_2^2})^T=(\mu,\mu^2+\sigma^2)^T$
+
+$\ddot{A}(\eta)=\begin{bmatrix}\frac{-1}{2\eta_2}&\frac{\eta_1}{2\eta_2^2}\\\frac{\eta_1}{2\eta_2^2}&\frac{1}{2\eta_2^2}-\frac{\eta_1^2}{2\eta_2^3}\end{bmatrix}=\begin{bmatrix}\sigma^2&2\mu\sigma^2\\2\mu\sigma^2&2\sigma^4+4\mu^2\sigma^2\end{bmatrix}$
+\end{multicols}
+
+\pagebreak
+
+\tiny
+
+\begin{multicols}{4}
+
+
+
+\textbf{calculous}
+
+$(\frac{u}v)'=\frac{u'v-uv'}{v^2}$;
+$(uv)'=u'v-uv'$, $\int{u}dv=uv-\int vdu$;
+
+$(a^x)'=a^xln(a)$,$\int{a^x\ln{a}}=a^x$;
+$\int xe^{x}dx=xe^{x}-\int e^{x}dx=xe^{x}-e^{x}$;
+
+$(e^{ax})'=ae^{ax}$,$\int{e^{au}}=\frac1ae^{au}$;
+$(x\ln{x}-x)'=\ln{x}$, $\int{\ln u}=u\ln u-u$;
+
+$(x^n)'=nx^{n-1}$, $\int{x^n}=\frac{x^{n+1}}{n+1}$;
+$(\ln x)'=\frac1x$, $\int\frac1{ax+b}=\frac{\ln|ax+b|}a$;
+
+$\lim\limits_{n\to\infty}(1\pm\frac{a}n)^n=e^{\pm a}$, $\sum_{n=0}^\infty\frac{(tx)^n}{n!}=e^{tx}$;
+
+$\Gamma(n)=(n-1)!=(n-1)\Gamma(n-1)$, $\Gamma(1/2)=\sqrt\pi$,
+
+$\Gamma(-1/2)=-2\Gamma(1/2)$, $\Gamma(0)=\Gamma(-1)=\infty$;
+
+$\Gamma(t) = \int_0^\infty x^{t-1}e^{-x}dx$, $\int_0^1 x^{a-1}(1-x)^{b-1}dx = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$;
+
+$\Gamma(\frac{2k+1}{2})=\frac{(2k)!\sqrt\pi}{4^{k}k!},k>0$;$\frac{(-4)^{-k}(-k)!\sqrt\pi}{(-2k)!},k<0$
+
+$\sum_{n=0}^{\infty}{ar^n}=\frac{a}{1-r}, |r|<1$; $\sum_{k=0}^{n-1}{ar^n}=\frac{a(1-r^n)}{1-r}$;
+
+
+\begin{tabular}{ l|l }
+Finite                                    & Binomial \\
+$\sum_{k=1}^n k=\frac{n(n+1)}{2}$         & $\sum_{k=0}^n \binom{n}{k} = 2^n$ \\
+$\sum_{k=1}^n (2k-1)=n^2$                 & $\sum_{k=0}^n \binom{r+k}{k}=\binom{r+n+1}{n}$ \\
+$\sum_{k=1}^n k^2=\frac{n(n+1)(2n+1)}{6}$ & $\sum_{k=0}^n \binom{k}{m}=\binom{n+1}{m+1}$ \\
+$\sum_{k=1}^n k^3=(\frac{n(n+1)}{2})^2$   & $\sum_{k=0}^r \binom{m}{k}\binom{n}{r-k}=\binom{m+n}{r}$ \\
+$\sum_{k=0}^n c^k=\frac{c^{n+1}-1}{c-1}$  & $\sum_{k=0}^n \binom{n}{k}a^{n-k}b^k = (a+b)^n$
+\end{tabular}
+
+
+
+\textbf{1 Basic}\hrulefill
+
+$P(X\le y|X\ge c)=\frac{P(X\le y,X\ge c)}{P(X\ge c)}=\frac{P(c\le X\le y)}{1-P(X\le c)}=\frac{F(y)-F(c)}{1-F(c)}$
+
+CDF nondecreasing, right-continuou; 
+$\lim\limits_{x\to\infty}F(x)=1$;
+$\lim\limits_{x\to-\infty}F()=0$
+
+$Z=X+Y$,$X\perp Y$,$g(z)=\int_{-\infty}^{\infty}f_X(w)f_Y(z-w)dw$
+
+$\frac{5*0.99}{5*0.99+995*0.02}=0.1992$; 
+$V[X|Y]=E[X-E(X|Y)^2|Y]$
+
+$Pois(3)$,$E[30-3X-X^2]=30-3EX-EX^2=9$;
+
+$U(0,1)$,$E[Y]=E(E[Y|X])=\alpha+\beta EX^2=\alpha+\beta/3$
+
+
+\dotfill
+
+$\begin{cases} f_T(t)=\frac1{1.5}e^{-\frac1{1.5}t};0& v<5 \\P(V=5)=P(t<3)=\int_0^3dt=1-e^{-2}  & 5\le v<6 \\ P(V\le v)=P(2T<v)=\int_0^{v/2}dt=1-e^{-\frac{v}3} &6\le v\end{cases}$
+
+\dotfill
+
+$\frac29(x+1), -1\le x\le2$, $Y=X^2$; $P(Y\le y)=P(X^2\le y)=$
+
+$\begin{cases}P(1\le X\le\sqrt y)=\int_1^{\sqrt y}f(x)dx=\frac{y}{9}+\frac{2\sqrt y}{9}-\frac13&x\ge1\\P(-\sqrt y\le X\le\sqrt y)=\int_{-\sqrt y}^{\sqrt y}f(x)dx=\frac{4\sqrt y}{9}& |x|\le1\end{cases}$
+$f_Y(y)=\begin{cases}\frac{1}{9}+\frac{1}{9\sqrt y}&1\le y\le4\\\frac{2}{9\sqrt y}& 0\le y\le1\end{cases}$
+
+\textbf{2.3 Moment}\hrulefill
+
+$M_X(t)=E[e^{tX}]$; 
+$M_{\bar X}(t)=[M_{X}(\frac{t}{n})]^n$;
+$M_X^{(n)}(0)=EX^n$
+
+
+\dotfill
+
+$Expo(1)$
+
+$E[e^{tX_{(1)}}]=\int_0^\infty e^{tx}(ne^{-nx})dx=\frac{n}{n-t}\int_0^\infty(n-t)e^{-(n-t)x}dx$
+
+\dotfill
+
+$X=e^Z\sim LN(0,1)$; $(e^{n\mu+n^2\sigma^2/2})$
+$M_Z(t)=e^{\frac{1}2t^2}$;
+
+$E[X^n]=E[(e^Z)^n]=M_Z(n)=e^{\frac{1}2n^2}$;
+$E[X^{1,2,3}]=e^{\frac12},e^2,e^{\frac92}$
+
+skewness $E\frac{X-\mu^3}{\sigma^3}=(e+2)\sqrt{e-1}$
+
+\textbf{Geom}\hrulefill
+
+
+*$\frac{e^t}{4-3e^t}\sim Geom(\frac14)$; 
+$EX=\frac1p=4$; $VarX=\frac{1-p}{p^2}=12$; 
+$\frac{\sigma}\mu=\frac{\sqrt3}2$ 
+
+*2B2W,pick,replace opposite, p=0, x=1,3,5;p=$\frac14$,x=2,4,6
+
+X=all same color,Y=$\frac{X}2\sim Geo(\frac14)$; EX,$2\frac1p=8$; VX,$4\frac{1-p}{p^2}=48$
+
+*$cpq^{x-1}$,x=a,a+1, F=$c[\sum_1^\infty pq^{x-1}-\sum_1^{a-1} pq^{x-1}]$
+=$c[1-(1-q^{a-1})]$=1; X+1-a=Y$\sim Geo(p)$, EX=EY+a-1=$\frac1p$+a-1, VX=VY=$\frac{1-p}{p^2}$
+
+\textbf{NB}\hrulefill
+
+6coins,toss even head p=$\frac12$; X $2^{nd}$success$\sim NB(2,\frac12)$; $EX=VX=4$
+
+\textbf{Pois}\hrulefill
+
+Pois($\mu$);x=1 uniq-mode; $\frac{p_m}{p_{m-1}},\frac{p_m}{p_{m+1}}\ge1$,$x\in[\mu-1,\mu]$,$\mu\in(1,2)$
+
+
+*Time:$\Gamma(\alpha,\beta)$,Vist:$Pois(\lambda=\frac{t}{\beta})$,$P(T>t)=P(X\le\alpha-1)$
+
+10($\alpha$) visits longer than 8(t) min, 1.5vist/min($\beta$) =0.2424
+
+
+\textbf{Expo}\hrulefill
+
+Exp,Geom Memoryless $P(X>a+b|x>a)=P(x>b)$
+
+$X_1\sim \Gamma(\alpha_1,\beta)$, $X_2\sim \Gamma(\alpha_2,\beta)$, $U=\frac{X_1}{V=X_1+X_2}\sim B(\alpha_1,\alpha_2)$;
+
+$X_1,X_2\sim Exp(1),\Gamma(1,1)$, 
+$U\sim B(1,1),U(0,1)$;
+$V\sim \Gamma(2,1)$,$xe^{-x}$
+
+\dotfill
+
+$X_1,X_2\sim Exp(\lambda)$, $Y=X_1-X_2\sim DExp(0,\lambda)$, $\frac\lambda2e^{-\lambda|x|}\forall x>0$
+
+\dotfill
+
+$X\sim B(\theta,1)$, $-\ln X\sim Exo(\theta)$, $-2\theta\sum\ln X\sim \Gamma(n,2),\chi^2_{2n}$;
+
+\textbf{DExp,Laplace}\hrulefill
+
+$L(\theta|x)=2^{-n}e^{-\sum|x_i-\theta|}$; $\hat\theta_{MLE}=X_{((n+1)/2)}$ sample median 
+
+$E[X_{((n+1)/2)}=\int_{-\infty}^{\theta}x\frac12e^{x-\theta}dx+\int_{\theta}^{\infty}x\frac12e^{-x+\theta}dx=\theta$
+
+\textbf{Gamma}\hrulefill
+
+$\bar X_{\Gamma}\sim\Gamma(n\alpha,\frac{\beta}n)$; $\chi^2_{\nu}\sim\Gamma(\frac\nu2,2)$
+
+
+\textbf{Beta}\hrulefill
+
+$B(\alpha,\beta)$$\perp$$B(\alpha+\beta,\gamma)$, $U=XY\sim B(\alpha,\beta+\gamma)$
+
+\dotfill
+
+\textbf{4.4 Beta-Bino}
+
+$X|P\sim Bin(n,P)$, 
+$P\sim B(\alpha,\beta)$;
+$EX=E[E(X|P)]=E[nP]=n\frac{\alpha}{\alpha+\beta}$;
+
+\resizebox{1\hsize}{!}{$VX=E[Var(X|P)]+Var[E(X|P)]=E[npq]+Var[np]=\frac{n\alpha\beta(\alpha+\beta+n)}{(\alpha+\beta)^2(\alpha+\beta+1)}$}
+
+$P\sim B(\frac12,\frac12)$, $EX=\frac{n}2$; $VX=\frac{n(n+1)}8$;
+
+$P\sim B(1,1)$, $X\sim U(0,n+1)$, $P|X\sim B(x+1,n-x+1)$
+
+\textbf{Pois-Bino}\hrulefill
+
+$Pois(\lambda)$.$S_{10}=\sum^{10}_{i=1} X_i\sim Pois(10\lambda)$. 
+
+$M_{S_{10}}(t)=\prod_{i=1}^{10}M_X(t)=[e^{\lambda(e^t-1)}]^{10}=e^{10\lambda(e^t-1)}$
+
+$S_{10}=s=S_{4}+S_{6}$, $P(S_{4}|S_{10})=\frac{P(S_{4},S_{6}=s-S_{10})}{P(S_{10})}\sim Bino(s,\frac25)$
+
+$Pois(\lambda)$, $Pois(3\lambda)$ $P(x|x+y=5)=\frac{P(x)P(y=5-x)}{P(x+y=5)}\sim Bino(5,\frac13)$;
+
+
+\textbf{Uniform}\hrulefill
+
+$F\sim U(0,1),B(1,1)$; $-\ln F,-\ln(1-F)\sim Exp(1),\Gamma(1,1)$;
+
+$-\lambda\ln U\sim Exp(\lambda)$;
+$-2\sum^\nu\ln U\sim \chi^2_{2\nu}$;
+
+$-\beta\sum^\alpha\ln U\sim \Gamma(\alpha,\beta)$;
+$\frac{\sum^a\ln U}{\sum^{a+b}\ln U}\sim B(a,b)$
+
+\dotfill
+
+$U(0,1)$, $U=Y-X$,$0<x<y<1$, $g(u,v)=1$,$0<v<1-u$,$f_U(u)=1-u$,$0<u<1$;
+$f_{|U|}(u)=2(1-u)$;$E[|U|]=\frac13$;
+
+\dotfill
+
+$U(0,1)$, $U=Y_1+Y_2$,$0<u-v<1$, $u-1<v<u$; $J=1$; $f(u,v)=1$; 
+
+$\begin{cases}f_U(u)=0;F_U(u)=0&o.w.\\\int_0^u=u ;\int_0^u=\frac{u^2}2&u\in(0,1)\\\int_{u-1}^1=2-u;F_U(1)+\int_{1}^u2u-\frac{u^2}2-1&u\in(1,2)\end{cases}$
+
+
+\textbf{N}\hrulefill
+
+$E[\bar X]=\mu$, $V[\bar X]=\frac{\sigma^2}n$, $E[S^2]=\sigma^2$ without normality;
+
+$\bar X\sim n(\mu,\frac{\sigma^2}n)$; $\bar X\perp S^2$; $\frac{(n-1)S^2}{\sigma^2}\sim\chi^2_{n-1}$
+
+$E(Z^{2k})=\frac{(2k)!}{2^KK!}, k=1,2,..$;
+$E(Z^{2k+1})=0$
+
+$V[S^2]>CRLB>V[S_n^2]$;$\frac{2\sigma^4}{n-1}\ge\frac{2\sigma^4}{n}>\frac{2(n-1)\sigma^4}{n^2}$;
+
+$E[S]=\sqrt{\frac{2\sigma^2}{n-1}}\frac{\Gamma(\frac{n}{2})}{\Gamma(\frac{n-1}{2})}\approx\sigma-\frac{\sigma}{4(n-1)}$;
+
+$V[S]=\sigma^2-\frac{2\sigma^2}{n-1}\frac{\Gamma^2(\frac{n}{2})}{\Gamma^2(\frac{n-1}{2})}\approx\frac{\sigma^2}{2(n-1)}$
+
+$E[\hat\sigma^2]=\frac{1}{n}\sum E[(x_i-\mu)^2]=\sigma^2$,$\mu$ known; 
+
+$E[\hat\sigma^2]=\frac{E[\sum(x_i-\bar x)^2]}{n}=\frac{(n-1)E[S^2]}{n}=\frac{(n-1)\sigma^2}{n}$,$\mu$ unknown
+
+\dotfill
+
+$E[\Phi^{2}(z)]=V[\Phi(z)]+E[\Phi(z)]^{2}=\frac1{12}+\frac14=\frac13$;
+
+$E[n\Phi^{n-1}(z)]=\int_0^1n\Phi^{n-1}\phi(z)dz=\int_0^1n\Phi^{n-1}d\Phi(z)=1$;
+
+\dotfill
+
+*$Y|\theta\sim n(\theta,1)$,$\theta\sim n(0,1)$ $Y\sim N(0,2)$ $\theta|Y\sim N(\frac{y}2,\frac12)$
+
+\dotfill
+
+$\frac{Z_1}{Z_2}$;
+$f(u)=\int_{-\infty}^{\infty}f(1)f(2)|v|dv=2\int_{0}^{\infty}=\frac{1}{\pi(u^2+1)}\sim Cauch(0,1)$
+
+$\bar X\sim Cauchy(0,\sigma)$, $\sum^{n} X\sim Cauchy(0,n\sigma)$; $Z^2\sim\chi^2_1$
+
+\dotfill
+
+\resizebox{1\hsize}{!}{$\frac{\bar X-\mu}{S/\sqrt{n}},\frac{\frac{\bar x-\mu}{\sigma/\sqrt{n}}}{\sqrt{S^2/\sigma^2}},t_{n-1}$;
+$\frac{S_X^2/\sigma_X^2}{S_Y^2/\sigma_Y^2},F_{n-1,m-1}$ 
+$\frac{S_X^2}{\sigma_X^2},\chi^2$;
+$F_{(p,q)}$, $\frac{\frac{p}{q}X}{1+\frac{p}{q}X},B(\frac{p}2,\frac{q}2)$}
+
+$t_1,Cau(0,1)$; $\chi^2_{2},Exp(2)$;$\chi^2_{p},\Gamma(\frac{p}2,2)$;$U+V,\chi^2_{m+n}$;
+$T_{(q)}^2$, $F_{(1,q)}$; 
+
+
+
+*$X\sim N(\mu,\sigma^2)\perp Y\sim N(\gamma,\sigma^2)$, $U=X+Y\perp V=X-Y$
+
+Trans and  Or $M_U(t)=M_X(t)\cdot M_Y(t)$, $M_V(t)=M_X(t)\cdot M_Y(-t)$;
+
+Or $Cov(X+Y,X-Y)=Cov(X,X)-Cov(Y,Y)=V[X]-V[Y]=0$
+
+$U\sim N(\mu+\gamma,2\sigma^2)$;$V\sim N(\mu-\gamma,2\sigma^2)$ by factor or linear combi
+
+$E[U]=E[X]+E[Y]=\mu+\gamma$;
+$E[V],\mu-\gamma$;
+$V[U]=V[X]+V[Y]=2\sigma^2$
+
+
+\dotfill
+
+\resizebox{1\hsize}{!}{$(X,Y)=(2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2})^{-1}\exp(-\frac{1}{2(1-\rho^2)}[(\frac{x-\mu_X}{\sigma_X})^2-2\rho(\frac{x-\mu_X}{\sigma_X})(\frac{y-\mu_Y}{\sigma_Y})+(\frac{y-\mu_Y}{\sigma_Y})^2])$}
+
+
+$Y|X\sim n(\mu_Y+\rho\frac{\sigma_Y}{\sigma_X}(x-\mu_X),\sigma_Y^2(1-\rho^2))$
+
+$aX+bY\sim n(a\mu_X+b\mu_Y,a^2\mu_X^2+b^2\mu_Y^2+2ab\rho\sigma_X\sigma_Y)$
+
+
+\textbf{4.5 Cov Corr}\hrulefill
+
+$Cov(X,Y)=\sigma_{XY}=E((X-\mu_X)(Y-\mu_Y))=E[XY]-\mu_X\mu_Y$;
+$Cov(aX,bY)=abCov(X,Y)$;
+$Cov(X,Y+Z)=Cov(X,Y)+Cov(X,Z)$;
+$Cov(X,c)=0$;
+$Cov(X,X)=E[X^2]-\mu_X^2$;
+$X\perp Y$,$Cov(X+Y,X-Y)=Cov(X,X)-Cov(Y,Y)=V[X]-V[Y]$
+
+$Cor(X,Y)=\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}$,
+$\rho_{XY},\frac{\sigma_{XY}}{\sigma_X\sigma_Y}$,
+$\frac{1/3-(7/12)^2}{11/144}$,$-\frac1{11}$
+
+$Cov[\bar X,X_n]=\frac{Cov[\sum X_i,X_n]}n=\frac{\sigma^2}{n}$;
+$Cor[\bar X,X_n]=\frac{\sigma^2/n}{\sigma\sigma/\sqrt{n}}=\frac1{\sqrt{n}}$
+
+\textbf{4.7 Inequity;Chebyshev;Cauchy-Schwarz;Jensen}\hrulefill
+
+$g(x)\ge0 \forall r>0$,
+$P(g(X)\ge r)\le\frac{Eg(X)}{r}$;
+$P(|x-\mu|<t\sigma)\ge1-\frac1{t^2}$;
+
+$\sigma=3$, $t=2$; $P(-4<x<8)\ge\frac34$;
+$\sigma=2$, $t=\frac52$,$P(-2<x<8)=\frac{21}{25}$
+$U(a,b)$,$\sigma^2=\frac{(b-a)^2}{12}$,
+$P(|x-\mu|<1.5\sigma)=P(+)-P(-)=$
+
+$\frac{\mu+1.5\sigma}{b-a}-\frac{\mu-1.5\sigma}{b-a}=\frac{3\sigma}{b-a}=0.866\ge 0.555$ Che conservative
+
+$|EXY|\le E|XY|\le(E|X|^2)^{\frac12}(E|Y|^2)^{\frac12}$;
+$Cov(X,Y)\le \sigma^2_X\sigma^2_Y$;
+
+Convex function $Eg(X)\ge g(EX)$
+
+
+\textbf{5.4 Order}\hrulefill
+
+
+$X_{(k)}=k\binom{n}{k}f(x)[F(x)]^{k-1}[1-F(x)]^{n-k}$;
+
+$X_{(1)}=nf(x)[1-F(x)]^{n-1}$;$F=1-[1-F(x)]^{n}$;
+
+$X_{(n)}=nf(x)[F(x)]^{n-1}$;$F=[F(x)]^{n}$;
+$f(1,..,n)=n!\prod f(x_i)$
+
+$\frac{n!f(u)f(v)}{(i-1)!(j-1-i)!(n-j)!}[F(u)]^{i-1}[F(v)-F(u)]^{j-1-i}[1-F(v)]^{n-j}$
+
+$-\infty<u<v<\infty$; 
+$X_{(1),(n)}=n(n-1)f_{(1)}f_{(n)}[F_{(n)}-F_{(1)}]^{n-2}$;
+
+\dotfill
+
+$U(0,1)$
+$X_{(k)}\sim B(k,n-k+1)$;$X_{(1)}=n[1-x]^{n-1}$;$X_{(n)}=nx^{n-1}$
+
+$EX_{(k)}=\frac{k}{n+1}$;$VarX_{(k)}=\frac{k(n-k+1)}{(n+1)^2(n+2)}$;
+
+
+$P(n(1-Y_n)<y)=1-P(Y_n<1-\frac{y}n)=1-\int_0^{1-\frac{y}n}Y_ndy_n=$
+$P(nY_1<y)=P(Y_1<\frac{y}n)=\int_0^{\frac{y}n}Y_1dy_1=1-(1-\frac{y}n)^n$;
+
+Or transf $W_1=ny_1$,$f(w)=f(\frac{w}n)|\frac{dy}{dw}|=n(1-\frac{w}n)^{n-1}\frac1{n}$;
+
+$W_n=n(1-Y_n)$,$f(w_n)=f(1-\frac{w}n)|\frac{dy}{dw}|=n(1-\frac{w}n)^{n-1}\frac1{n}$
+
+
+$\lim\limits_{x\to\infty}nY_1=\lim\limits_{x\to\infty}n(1-Y_n)=1-e^{-y}\sim Expo(1)$ 
+
+\dotfill
+
+$U(0,\theta)$:
+$X_{(n)}=\frac{n}{\theta}(\frac{x}\theta)^{n-1}\sim Beta(n,1)$; 
+$V[X_{n}]=\frac{n\theta^2}{(n+1)^2(n+2)}$; 
+
+$EX_{(n)}=\frac{n\theta}{n+1}$, $E[\frac{n+1}{n}X_{(n)}]=\theta$;
+$E[\frac{n+2}{n}X_{(n)}^2]=\theta^2$is UMVUE
+
+$f_{rm}=\frac{n(n-1)r^{n-2}}{\theta^n}$,$r\in(0,\theta)$,$m\in(\frac{r}2,\theta-\frac{r}2)$;
+
+$f_R=\int_{\frac{r}2}^{\theta-\frac{r}2}dm=\frac{n(n-1)r^{n-2}(\theta-r)}{\theta^n}$,$r\in(0,\theta)$; $\theta$=1,$Beta(n-1,2)$;
+
+$f_m=\int_0^{2m}dr=\frac{n(2m)^{n-1}}{\theta^n}$,$m\in(0,\frac{\theta}2)$;
+V[R]=$\frac1{\lambda^2}\sum_{k=1}^{n-1}\frac1k$;
+
+$f_m=\int_0^{2(\theta-m)}dr=\frac{n[2(\theta-m)]^{n-1}}{\theta^n}$,$m\in(\frac{\theta}2,\theta)$;
+E[R]=$\frac1\lambda\sum_{k=1}^{n-1}\frac1k$
+
+\dotfill
+
+$Exp(\lambda)$:
+$X_{(1)}=n\lambda e^{-n\lambda x}\sim Exp(n\lambda)$;$F=1-e^{-n\lambda x}$;
+
+$X_{(n)}=n\lambda e^{-\lambda x}(1-e^{-\lambda x})^{n-1}$;$F=(1-e^{-\lambda x})^n$
+
+
+
+\textbf{5.5 Convergence;CLT;Slutsky }\hrulefill
+
+$X_n\overset{a.s.}\to X$,$P(\lim\limits_{n\to\infty}|X_n-X|<\epsilon)$=1;
+$\overset{\mathcal{P}}\to$,$\lim\limits_{n\to\infty}P(|X_n-X|<\epsilon)$=1
+ 
+$X_n\overset{\mathcal{D}}\to X$; $\lim\limits_{n\to\infty}F_{X_n}(x)=F_X(x)$;
+$\frac{\sqrt{n}(\bar X_n-\mu)}{\sigma}\overset{\mathcal{D}}\to N(0,1)$;
+
+$X_n\overset{\mathcal{D}}\to X$,
+$Y_n\overset{\mathcal{P}}\to a$,
+$X_nY_n\overset{\mathcal{D}}\to aX$,
+$X_n+Y_n\overset{\mathcal{D}}\to X+a$,
+
+\textbf{Delta Method}: if$\sqrt n(Y_n-\theta)\overset{D}{\to}N(0,\sigma^2)$,
+
+
+$g'(\theta)\neq0$,
+$\sqrt n[g(Y_n)-g(\theta)]\overset{D}{\to}N(0,\sigma^2[g'(\theta)]^2)$
+
+$g'(\theta)=0$,
+$\overset{D}{\to}\sigma^2\frac{g''(\theta)}2\chi^2_1)$
+
+$g(x)=g(x_0)+g'(x_0)(x-x_0)+g''(x_0)\frac{(x-x_0)^2}2+R$
+
+Stein $n(\theta,\sigma^2)$,$E[g(X)(X-\theta)]=\sigma^2E[g'(X)]$;
+\dotfill
+
+*$g(\mu)=\frac1{\mu}$, $E_\mu(\frac1{X})\approx\frac1{\mu}$,$Var_\mu(\frac1{X})\approx(\frac1{\mu})^4Var_\mu(X)$
+
+$\sqrt n(\frac1{\bar X}-\frac1{\mu})\overset{D}{\to}N(0,(\frac1{\mu})^4Var_\mu[X_1])$
+
+$\widehat Var[\frac1{\bar X}]\approx(\frac1{\bar X})^4S^2$, 
+$\frac{\sqrt n(\frac1{\bar X}-\frac1{\mu})}{(1/\bar X)^2S}\overset{D}{\to}N(0,1)$
+
+\dotfill
+
+*$Exp(\lambda)$, $\sqrt n(\bar X_n-\frac1{\lambda})\overset{D}{\to}N(0,\frac1{\lambda^2})$,
+$g(u)=u^2$, $g'(u)=2u\neq0$
+$\sqrt{n}(\bar X_n^2-(\frac1{\lambda})^2)\to n(0,\frac4{\lambda^4})$
+
+\dotfill
+
+*$Pois(\mu)$,$g(\bar X_n)=e^{-\bar X_n}$, $g(\mu)=e^{-\mu}$, $g'(\mu)=-e^{-\mu}\neq0$
+
+$\sqrt{n}(e^{-\bar X_n}-e^{-\mu})\to n(0,\frac{[(e^{-\mu})']^2}{I(\mu)})=n(0,\mu e^{-2\mu}))$
+
+
+\textbf{6.2.1 Suffi;6.2.2 Mini Suffi;6.2.3 Ancillary Stat}\hrulefill
+
+$\frac{\prod f(x|\theta)}{g(t|\theta)}=h(\vec x)$free of $\theta$;$\frac{f(x|\theta)}{f(y|\theta)}$ constant fn of $\theta$ if $T(\mathbf{x})=T(\mathbf{y})$
+
+$g_a(\vec x)=x_i+a$, $G=\{g_a(\vec x): a\in \mathbf{R}\}$ is a group,is invariant under loc-para$\theta$
+$[Y_n-\bar Y]_{(g_a(\vec x))}=Y_n+a-\frac{\sum(Y_i+a)}n=(Y_n-\bar Y)_{(\vec x)}$
+
+
+Loca-scale familiy $g(x|\mu,\sigma)=\frac1{\sigma}f(\frac{x-\mu}{\sigma})$, $\mu$location-par,$\sigma$scale-par
+
+\textbf{6.2.4 Compl Suffi; Basu}\dotfill
+
+$E[g(t)]=0$. $\forall\lambda$ iff $P(g(t)=0)=1$;
+
+$f(x|\vec\theta)=h(x)c(\vec \theta)e^{\sum^k_{j=1}W_j(\vec \theta)t_j(x)}$, 
+t free of $\theta$ W open set in $\mathbb R^k$;
+
+Expo familiy $t/n=\bar Y$ is comp/suff, indep with $Y_n-\bar Y$
+
+\textbf{7 Point Estimation}\hrulefill
+
+\textbf{MOM} $\hat\mu=EX=\bar x$;$\hat\sigma^2=E[X^2]-EX^2=\frac{\sum x_i^2}{n}-\bar x^2$
+
+\textbf{7.2.2 MLE - Indecator fn}
+
+*$F(x)=(\frac{x}\theta)^2, 0\le x<\theta$
+
+$\max L(\theta)=2^n\theta^{-2n}\prod x_i I_{(-\infty,\theta)}(x_{(n)})I_{(0,\infty)}(x_{(1)})$
+
+$\min\hat\theta_{MLE}=X_{(n)}=nf()[F()]^{n-1}=\frac{2n}{\theta^n}x^{2n-1}\sim Beta(2n,1)$ 
+
+$EX_{(n)}=\frac{2n}{2n+1}\theta$;Or $=\int_0^\theta xf_{X_{(n)}}(x)dx$
+
+$\lim\limits_{n\to\infty}[EX_{(n)}-\theta]=0$; $\lim\limits_{n\to\infty}P(X_{(n)}-\theta)\ge\varepsilon)=0$;
+
+$\lim\limits_{n\to\infty}V[X_{(n)}]=\lim\limits_{n\to\infty}\frac{n}{(2n+1)^2(n+1)}\theta^2=0$
+
+\dotfill
+
+*$Y_i\sim Pois(\mu_i=\gamma x_i)$, $x_i$ known constants,
+
+$\hat\gamma_{mle}=\frac{\sum_{i=1}^{n}y_i}{\sum_{i=1}^{n}x_i}$;
+$E[\hat\gamma_{mle}]=\gamma$;$V[\hat\gamma_{mle}]=\frac{\gamma}{\sum_{i=1}^{n}x_i}$
+
+
+
+\textbf{7.2.3 Bayes estimator}\dotfill
+
+$X_n$iid$Expo(\theta)$, $\pi(\theta)\sim Expo(\lambda)$
+
+$\pi(\theta|\vec x)=\frac{g(\vec x|\theta)}{m(\vec x)}=\frac{f(\vec x|\theta)h(\theta)}{\int g(\vec x|\theta)d\theta}\propto L(\theta)h(\theta)\sim \Gamma(n+1,\frac{1}{\lambda+\sum x_i})$
+
+$\mathcal{L}_\theta(\hat\theta)=(\hat\theta-\theta)^2$, to $\min$Posterior risk $E[\mathcal{L}_\theta(\hat\theta|\vec x)]$, Posterior mean $\hat\theta_{L_2Bayes}=E[\pi(\theta|\vec x)]=\frac{n+1}{\lambda+\sum x_i}=\frac{\lambda(\frac1\lambda,E[\theta])}{\lambda+n\bar x}+\frac{n\bar x(\frac1{\bar x},\hat\theta_{MLE})}{\lambda+n\bar x}$; 
+
+absolute error loss $|a-\theta|$, post-median$\hat\theta_{L_1Bayes}=F^{-1}(\frac12)$;
+
+binary$0,\hat\theta=\theta;1,o.w.$ po-mode$\hat\theta_{L_0Bayes}=(\alpha-1)\beta$,$\Gamma'\overset{set}{=}0$
+
+\dotfill
+
+$X\sim Pois(\theta)$, $\theta\sim \Gamma(\alpha,\beta)$ (known
+
+$\pi(\theta|\vec x)\sim \Gamma(\alpha+\sum x_i,\frac{\beta}{n\beta+1})$;
+$\hat\theta_{L_2Bayes}=\frac{(\alpha+\sum x_i)\beta}{n\beta+1}$
+
+\dotfill
+
+$X\sim Bino(n,\theta)$, $\theta\sim Beta(\alpha,\beta)$;
+
+$\pi(\theta|x)\sim B(\alpha+x,\beta-n+x)$;
+$\hat\theta_{L_2Bayes}=\frac{\alpha+x}{\alpha+\beta+n}$
+
+\dotfill
+
+$n(\theta,\sigma^2)$, $\theta\sim n(\mu,\tau^2)$;
+$f(\theta|x)\sim N(\frac{\tau^2x+\sigma^2\mu}{\tau^2+\sigma^2},\frac{\sigma^2\tau^2}{\sigma^2+\tau^2})$
+
+
+
+
+\textbf{7.3.1 MSE}\dotfill
+
+
+$MSE=E[(T-\theta)^2]=V[S_k^2]+Bias^2=[\frac{2(n-1)}{k^2}+(\frac{n-1}{k}-1)^2]\sigma^4$;
+
+$S_k^2=\frac{\sum(X_i-\bar X)^2}k$;$\frac{\partial MSE}{\partial k}\overset{set}=0$,$S_{n+1}^2\min(MSE)$
+
+$kS^2_{k+1}=(n-1)S_k^2+\frac{k}{k+1}(X_{k+1}-\bar X_k)^2$
+
+\textbf{7.3.2 CRLB}\dotfill
+
+$Var_\theta W(\vec X)\ge\frac{(\frac{d}{d\theta}E_\theta W(\vec X))^2}{nE_\theta\left[(\frac{\partial}{\partial\theta}\ln f(X|\theta))^2\right]}=\frac{[\tau'(\theta)]^2}{nI_\theta}$,$h(\theta)=E[W]$
+
+\dotfill
+
+*$Expo(\theta)$,median$0.5=\int_0^{\tilde x}f()dx$,$\tilde x=\frac{\ln2}{\theta}$;
+
+$90^{th}$ $\int_0^{g(\theta)}dx=0.9$;$g(\theta)=\frac{\ln10}{\theta}$,
+$VX_{(90)}\ge\frac{g'(\theta)^2}{nI_{\theta}}=\frac{(\ln10)^2}{n\theta^2}$
+
+\dotfill
+
+*$N(\mu,\sigma^2)$,$\frac{X_{(95)}-\mu}{\sigma}=Z_{(95)}=1.645$; $X_{(95)}=\mu+1.645\sigma$;
+
+$E[\frac{\sum(X_{(95)}-\mu)^2}{n}]=1.645^2\sigma^2=g(\sigma^2)$;$g'(\sigma^2)=1.645^2$
+
+$V[\hat\sigma^2_{(95)}]\ge\frac{2(1.645\sigma)^4}{n}>\frac{2\sigma^4}{n}$
+
+
+
+\textbf{7.3.3 UMUVE;Rao-Blackwell;Lehmann-Scheffe}\dotfill
+
+T Suffi for $\theta$, $EW=\tau(\theta)$, $\phi(T)=E[W|T]$, then $E\phi(T)=\tau(\theta)$, $V_\theta\phi(T)\le V_\theta W$.
+
+$T$ Compl/Suffi for $\theta$, $E\phi(T)=\tau(\theta)$, $\phi(T)$ is UMVUE of $\tau(\theta)$
+
+\dotfill
+
+$Pois(\lambda>0)$,$T=\sum x_i\sim Pois(n\lambda)$ Compl/Suffi;
+
+$E[\frac{T}n]=\lambda$; 
+$E[T^2-T]=VT+ET^2-ET=n^2\lambda^2$;
+
+$\delta(x_i)=\begin{cases}1&X_1=0,1,k\\0&X_1\neq0,1,k\end{cases}$, $\sum_{i=2}^n x_i\sim Pois((n-1)\lambda)$
+
+$E(\delta|t)=\frac{P(x_i=0,1,k)P(\sum_{i=2}^n x_i=t,t-1,t-k)}{P(\sum_{i=1}^n x_i=t)} \sim Bino(t,\frac1n)$
+
+$=(\frac{n-1}{n})^t$,
+$\frac{t(n-1)^{t-1}}{n^t}$,
+$\frac{t!}{k!(n-k)!}\frac{(n-1)^{t-k}}{n^t}$
+
+\dotfill
+
+$Bino(n,p)$, $Y$ Compl/Suffi
+$E[\frac{Y}n]=p$;
+$E[\frac{Y^2-Y}{n^2-n}]=p^2$;
+
+$E[\frac{Y(n-Y)}{n(n-1)]}=pq$;
+$E[\frac{Y!(n-Y)!}{(Y-k)!(k-Y)!k!(n-k)!}]=\binom{n}{k}p^k(1-p)^{n-k}$
+
+
+
+
+\textbf{8 Hypo test;Neyman-Pearson;MLR;Karlin-Rubin}\hrulefill
+
+
+
+Size$\alpha_{I}=P_{H_0}(RR)$ Power$=1-\beta_{II}=P_{H_1}(RR)$; $Z_{1-\beta}=-Z_{\beta}$
+
+$H_0:\theta=\theta_0$,$H_1:\theta=\theta_1$,$\theta_0<\theta_1$, RR  $\Lambda=\frac{\sup L(\theta_0)}{\sup L(\theta_1)}<C$ is MP
+
+Expo family $g(t|\theta)=h(t)c(\theta)e^{W(\theta)t}$ T has MLR.
+
+T free of $\theta$ is Suffi, $\Lambda=\frac{L(\theta_0)}{L(\theta_1)}$ has $\nearrow$ MLR in T,$T\le C$ $\Lambda\searrow$,$T\ge C$, $P_{H_0}(RR)=\alpha$ is UMP;  $-2\ln\Lambda\overset{D}\to\chi^2_1$
+
+\dotfill
+
+*$Beta(\theta,\theta)$,$H_0:\theta=1$, $H_1:\theta=2$ One Obs $X_1<\frac23$.
+
+$\alpha=P_{\theta_0}(x_1<\frac23)=\int_0^{\frac23}f(x|\theta_0)=\frac23$
+
+Power$P_{\theta_1}(x_1<\frac23)=1-\int_0^{\frac23}f(x|\theta_1)=\frac{20}{27}$
+
+\dotfill
+
+*$X_m\sim Expo(\frac1\theta_1)$,$Y_n\sim Expo(\frac1\theta_2)$
+$H_0:\theta_1=\theta_2$, $H_1:\theta_1\neq\theta_2$;
+
+$\hat\theta_{MLE}=\frac{\sum x_i+\sum y_i}{m+n}$;
+$\hat\theta_{1}=\frac{\sum x_i}{m}$;
+$\hat\theta_{2}=\frac{\sum y_i}{n}$
+
+$T=\frac{\sum x_i}{\sum x_i+\sum y_i}\sim\frac{\Gamma(m,\theta_1)}{\Gamma(m,\theta_1)+\Gamma(n,\theta_2)}$suff
+
+$\Lambda=\frac{(m+n)^{m+n}}{m^mn^n}T^m(1-T)^n\propto B(m+1,n+1),F\le C'$
+
+\dotfill
+
+
+*$N(\mu,25)$,$H_0:\mu=50$,$H_1:\mu=55$; $Z_{0.05}=1.645$,$Z_{0.1}=1.28$;
+
+$P_{H_0}(\bar X_n\ge c)=0.05$;$\frac{\sqrt{n}(\bar X_n-50)}{5}\ge\frac{\sqrt{n}(c-50)}{5}=Z_{\alpha}=1.645$;
+
+$P_{H_1}(\bar X_n\ge c)=0.90$; $\frac{\sqrt{n}(\bar X_n-55)}{5}\ge\frac{\sqrt{n}(c-55)}{5}=-Z_{\beta}=-1.28$
+
+
+$n=[\frac{(Z_\alpha+Z_\beta)\sigma}{\delta=\mu_1-\mu_0}]^2=[\frac{(1.645+1.28)5}{55-50}]^2=8.56\approx9$,$c=52.74~87$
+
+\dotfill
+
+*$N(120,\sigma^2)$;
+$\Lambda$=$(\frac{\sigma_1^2}4)^{\frac{n}2}e^{(\frac1{2\sigma_1^2}-\frac18)\sum(x-120)^2}$
+T=$\sum(x-120)^2$ suff;
+
+$\sigma^2<4$ MLR $\Lambda\nearrow T\le c$, $\sigma^2>4$ MLR $\Lambda\searrow T\ge c$ 
+Under $H_0$, $\frac{T}{4}\sim\chi^2_n$
+
+\dotfill
+
+*$\bar X=6.7$,$n=18$,$\sigma=2$, $\frac{\bar x-\mu_0}{\sigma/\sqrt{n}}=1.48<1.645$
+
+If $\mu_1=7.5$, Power=$P(Z>Z_{\alpha}-\frac{\delta\sqrt{n}}{\sigma})=P(Z>1.53)=0.937$
+
+\dotfill
+
+
+*$N(\theta,1)$,$N(3\theta,1)$;$H_0:\theta\le0$, $H_1:\theta>0$;T:$\bar X+3\bar Y\sim n(10\theta,\frac{10}m)$,$\Lambda\searrow$
+
+$\sqrt{\frac{m}{10}}(\bar X+3\bar Y-10\theta)\overset{\mathcal{D}}\to n(0,1)$;
+$P_{\theta_0}(\sqrt{\frac{m}{10}}(\bar X+3\bar Y-10\theta_0>Z_{\alpha})=\alpha$;
+
+$P_{\theta_1}(\sqrt{\frac{m}{10}}(\bar X+3\bar Y-10\theta_1>Z_{\alpha}-(\theta_1-\theta_0)\sqrt{10m})$
+
+\dotfill
+
+
+*$Pois(\lambda)$  $H_0:\lambda\le1$,$H_1:\lambda>1$
+$\Lambda=(\frac{\lambda_0}{\lambda_1})^{\sum x_i}e^{n(\lambda_1-\lambda_0)}<C$
+
+$T=\sum x_i\sim Pois(n\lambda)$; $\Lambda\searrow$ $\alpha=P_{\theta_0}(T>C)=0.05$
+
+$\lambda=1$ $\max\Lambda$, $P_{\theta_0}(T\ge4)<0.05$ ifT=3let 0.019+p0.061=0.05,$p=\frac{31}{61}$
+
+\dotfill
+
+
+*$\theta x^{\theta-1}\sim Beta(\theta,1)$,$-\ln x\sim Expo(\theta)$,$-2\theta\sum\ln x\sim \Gamma(n,2),\chi^2_{2n}$
+
+$P_{\theta_1}(X>0.5)=1-\int_0^{0.5}\theta x^{\theta-1}dx=1-0.5^\theta$
+
+$H_0:\theta$=1, $H_1 :\theta>1$;$\Lambda\nearrow$ $P_{H_0}(-\ln y\le C)=\alpha$
+
+$H_0:\lambda=\frac12$, $H_1 :\lambda=1$;$P_{H_0}(-\sum\ln x\le \chi^2_{20,0.95}(10.85))=0.05$;
+
+$P_{H_1}(-2\sum\ln x\le 2*10.85)=0.64$; 
+
+
+$\hat\lambda_{mle}$$\frac{n}{T}$;$E\hat\lambda_{mle}$$\frac{n\lambda}{n-1}$;Bias$\frac{\lambda}{n-1}$;V$\frac{n^2\lambda^2}{(n-1)^2(n-2)}$;$MSE$$\frac{(n+2)\lambda^2}{(n-1)(n-2)}$;
+
+$\hat\lambda_{u}$$\frac{n-1}{T}$;
+$V\hat\theta_{u}$$\frac{\lambda^2}{n-2}$;
+$I_{\lambda}=\frac{1}{\lambda^2}$;
+effi$\frac{n-2}{n}$
+
+
+
+
+\dotfill
+
+
+*$e^{-(x-\theta)},n=10$;
+$H_0:\theta=0$, $H_1:\theta>0$;
+$T=X_{(1)}\ge C$
+
+Let$Y=X-\theta$, $Y_{(1)}\sim Expo(10), \Gamma(1,\frac1{10})$; $20Y_{(1)}\sim \chi^2_2$;
+
+$P_{H_0}(X_{(1)}\ge C)=P_{H_0}(20Y_{(1)}\ge 20C)\overset{set}=0.05$,$20C=5.991$;
+
+$P_{H_1}(X_{(1)}\ge 0.2996)=P_{H_1}(Y_{(1)}\ge -0.7)=1$, 
+$\min\beta$ at $H_0$ is unbia
+
+A test whose power never drops below $\alpha$ is unbiased
+
+\dotfill
+
+*$Expo(\frac1\mu)$; $H_0:\mu=5$,$H_1:\mu\neq5$
+
+$\Lambda=\frac{L(\mu_0)}{L(\mu_1)}=(\frac{\mu_1}5)^ne^{(\frac1{\mu_1}-\frac15)\sum x_i}\le c$
+
+$\mu_1<5$,$\Lambda\nearrow$, $\sum x_i\le c'$;
+$\mu_1>5$,$\Lambda\searrow$, $\sum x_i\ge c'$;
+
+$T=\sum x_i\sim Gamma(10,\mu)$, $\frac{2}{\mu}T\sim\chi^2_{20}$;
+
+$P_{H_0}(\frac{2T}{5}\le \chi^2_{20,0.975}(9.59))+P_{H_0}(\frac{2T}{5}\ge \chi^2_{20,0.025}(34.2))=0.05$;
+
+$P_{H_1}(\frac{2T}{\mu_1}\le \frac{5\chi^2_{20,0.975}}{\mu_1})+P_{H_1}(\frac{2T}{\mu_1}\ge \frac{5\chi^2_{20,0.025}}{\mu_1})$
+
+\dotfill
+
+
+*$U(\theta,\theta+1)$,$H_0:\theta=0$,$f(z)=f(x_1+x_2)=z,z<1;2-z,z>1$
+
+$\alpha=P_{H_0}(x_1+x_2>c)=P_{H_0}(x_1>0.95)$;
+
+$\int_{c}^{2}f(z)dz=\frac{c^2}2-2c+2=\int_{0.95}^{1}f(x)dx=0.05$
+
+$c=\frac{2}{1}\pm\sqrt{2^2-4\cdot\frac12\cdot1.95}$, choose $2-0.3162=1.6838$
+
+
+
+\textbf{10 Consistency}\hrulefill
+
+Asym unbiased $\lim\limits_{n\to\infty}Bias(\hat\theta)=0$
+
+$\lim\limits_{n\to\infty}Var_\theta[W_n]=0$, $\lim\limits_{n\to\infty}Bias_\theta[W_n]=0$,
+
+$\lim\limits_{n\to\infty}P(\tau(\hat\theta_{MLE})-\tau(\theta)\ge\varepsilon)=0$
+
+\textbf{10 Efficiency}\hrulefill
+
+$\lim\limits_{n\to\infty}\frac{CRLB}{Var(\hat\theta)}$; $U(a,b)$, $m_n\approx N(M, \frac{1}{4nf^2(M)})$,$V[\bar X]=\frac{(b-a)^2}{12n}$,
+
+$V[m_n]=\frac{(b-a)^2}{4n}$;
+ARE of $m_n$ to $\bar X$ $=\lim\limits_{n\to\infty}\frac{V[\bar X]}{Var[m_n]}=\frac13$
+
+
+Asym effi of MLE: $\sqrt n[\tau(\hat\theta_{MLE})-\tau(\theta)]\overset{D}{\to}N(0,\frac{1}{I_{\theta}})$
+
+\hrulefill
+
+\textbf{Robust} if $l'(\theta)=\sum\psi(x_i-\theta)$ , $W(x_i-\theta)\frac{\psi(x_i-\theta)}{x-\theta}$ bounded;
+
+n()$\psi(x_i-\theta)=\frac1{\sigma^2}\times$; DE$=\frac{sgn(x-\theta)}{x-\theta}\checkmark$; Cau$=\frac{2}{1+(x-\theta)^2}\checkmark$
+
+
+
+
+\textbf{Breakdown} corrupt 1 (m) value in order to corrupt Mean(Median) Absolute Deviation $\frac{\sum_{i=1}^n|X_i-\bar X|}n$, finite breakdown point is $\frac1n(\frac{m}n)$
+
+
+**Classical**\hrulefill
+
+$f(x;\theta)=(\theta+1)x^\theta, 0<x<1$,$B(\theta+1,1)$;$H_0:\theta=0.5$,$H_1:\theta>0.5$
+
+$\hat\theta_{mom}=\frac{2\bar X-1}{1-\bar X}$;
+$\hat\theta_{mle}=\frac{n}{-\sum\ln x_i}-1$;
+$\hat\theta_u=\frac{n-1}{-\sum\ln x_i}-1$;
+
+CRLB $\frac{(\theta+1)^2}{n}$;
+$\sqrt{n}(\hat\theta-\theta)\sim N(0,(\theta+1)^2)$
+
+$\Lambda=\frac{L(\theta_0)}{L(\theta_1)}=e^{(\theta_1-0.5)(-\sum\ln x_i)}\le C$ $\nearrow$ MLR, T suff
+
+$-\ln x^\sim Exp(\theta+1)$, $-2(\theta+1)\sum\ln x\sim \Gamma(n,2),\chi^2_{2n}$,$n=10$
+
+$P_{H_0}(-3\sum\ln x_i\le \chi^2_{20,0.95}(10.851))=0.05$
+
+$P_{H_1=1}(-4\sum\ln x_i\le\frac43* 10.851)=1-0.806$
+
+\dotfill
+
+*$f(x;\theta)=\theta(x+1)^{-\theta-1}, x>0,\theta>2$;
+Let $y=\ln(x+1)$, $x=e^y-1$, $\frac{dx}{dy}=e^y$, $Y=\theta e^{-\theta y}\sim Exp(\theta), \Gamma(1,\frac1\theta)$;
+
+$\hat\theta_{u}$$\frac{n-1}{\sum\ln(x+1)}$;$V\hat\theta_{u}$$\frac{\theta^2}{n-2}$;
+CRLB$\frac{\theta^2}{n}$
+$\lim\limits_{n\to\infty}\frac{CRLB}{V\hat\theta_{U}}=\lim\limits_{n\to\infty}\frac{n-2}{n}=1$
+
+
+$\hat\theta_{mle}$$\frac{n}{\sum\ln(x+1)}$;$E[\hat\theta_{mle}]$$\frac{n\theta}{n-1}$, $Bias$$\frac{\theta}{n-1}$;
+$E[\hat\theta_{mle}^2]$$\frac{n^2\theta^2}{(n-1)(n-2)}$; 
+$V[\hat\theta_{mle}]$$\frac{n^2\theta^2}{(n-1)^2(n-2)}$;
+$MSE$$\frac{(n+2)\theta^2}{(n-1)(n-2)}$;
+
+
+$H_0:\theta=3$,$H_1:\theta=4$$P_{H_0}(6\sum\ln(x+1)<\chi^2_{2n,\alpha})=\alpha$ is UMP
+
+\dotfill
+
+,$\theta x^{-\theta-1}, x>1$
+
+EX=$\int_0^{\infty}f_X=\frac1{\theta-1}$,$\int_1^{\infty}f_X=1+\frac1{\theta-1}=\mu$; 
+
+$\hat\theta_{mom}=1+\frac{1}{\bar X}$,$1+\frac{1}{\bar X-1}=g(\bar x)$;
+
+VX=$\frac{\theta}{(\theta-1)^2(\theta-2)}=\sigma^2$;
+$\sqrt n[\bar x-\mu]\overset{D}{\to}N(0,\sigma^2)$
+
+$g(\mu)=1+\frac{1}{\mu},$$1+\frac{1}{\mu-1}=\theta$;
+$g'(\mu)=\frac{-1}{\mu^2},$$\frac{-1}{(\mu-1)^2}=-(\theta-1)^2\neq0$
+
+$\sqrt n[\hat\theta_{mom}-\theta-\frac{\theta(\theta-1)}{n(\theta-2)}]\overset{D}{\to}N(0,\frac{\theta(\theta-1)^2}{(\theta-2)})$
+
+$\hat\theta_{mom}=\frac{\bar x}{\bar x-1}\approx \frac{\mu}{\mu-1}+\frac{-1}{(\mu-1)^2}(\bar x-\mu)+\frac{1}{(\mu-1)^3}(\bar x-\mu)^2$
+
+$E[\hat\theta_{mom}]\approx \frac{\mu}{\mu-1}+0+\frac{1}{(\mu-1)^3}\frac{\sigma^2}n=\theta+\frac{\theta(\theta-1)}{n(\theta-2)}$
+
+$V[\hat\theta_{mom}]\approx V[\frac{\mu}{\mu-1}+\frac{1}{(\mu-1)^2}(\bar x-\mu)]=\frac{\theta(\theta-1)^2}{n(\theta-2)}$
+
+\dotfill
+
+*$f(x,y)=6(y-x)$,$0<x<y<1$,$Z=\frac{X+Y}2$,$W=Y$; $z<w<2z$;
+
+$|J|=2$,$g(z,w)=24(w-z)$,$g(z)=\int_{z}^{2z}g(z,w)dw=12z^2, 0<z<\frac12$;
+$f_{Z}(z)=\int_{z}^{1}g(z,w)dw=12(z-1)^2, \frac12<z<1$
+
+\dotfill
+
+*$f(x,y)=c(x+2y)$,$y\in(0,1)$,$x\in(0,2)$;c=$\frac14$;
+$f_X=\frac14(x+1)$,0,o.w.
+
+$F=\begin{cases}0,y\le0,x\le0&1,y\ge1,x\ge2 \\\int_0^x\int_0^ydydx=\frac{x^2y}8+\frac{xy^2}4&y\in(0,1),x\in(0,2)\\\int_0^2\int_0^ydydx=\frac{y^2}2+\frac{y}2&y\in(0,1),2\le x\\\int_0^x\int_0^1dydx=\frac{x^2}8+\frac{x}{4}&1\le y,x\in(0,2) \end{cases}$
+
+$Z=\frac{9}{(X+1)^2}$,$f_Z=\frac98z^{-2},z\in(1,9)$,0,o.w.
+
+\dotfill
+
+*$f(y_1,y_2)=c(1-y_2)$,$0\le y1\le y2\le 1$;$\int_0^1\int_0^{y_2}dy_1dy_2=1$, $c=6$;
+
+$f(y_1)=\int_{y_1}^1dy_2=3(y_1-1)^2$;
+$f(y_2)=\int_0^{y_2}dy_1=6(y_2-y_2^2)$
+
+\resizebox{1\hsize}{!}{$P(Y_1\le\frac12|Y_2\le\frac34)=\frac{P(Y_1\le\frac12, Y_2\le\frac34)}{P(Y_2\le3/4)}=\frac{P(Y_1\le\frac12, Y_2\le\frac12)+P(Y_1\le\frac12, \frac12\le Y_2\le\frac34)}{P(Y_2\le3/4)}$}
+
+$=\frac{\int_0^{\frac12}\int_0^{y_2}f(,)dy_1dy_2+\int_{\frac12}^{\frac34}\int_0^{\frac12}f(,)dy_1dy_2}{\int_{0}^{3/4}f_{Y_2}(y_2)dy_2}=\frac{25/32}{27/32}=25/27$
+
+\dotfill
+
+
+*$f(y_1,y_2)=C=2$,$0\le y_1\le y_2\le 1$;
+$\int_0^1\int_0^{y_2}$;
+
+$f_{Y_1}=2-2y_1$;$f_{Y_2}=2y_2$
+
+$E[Y_1+Y_2]=\int_0^1y_1(2-2y_1)dy_1+\int_0^1y_2(2y_2)dy_2=\frac13+\frac23=1$
+
+$P(Y_1\le\frac34|Y_1>\frac13)=\frac{\int_{1/3}^{3/4}}{1-\int_0^{1/3}}=\frac{55}{64}$
+
+\dotfill
+
+*$f(x;y)=Cxy$, $0\le x\le 2$, $0\le y\le 2$, $x+y\le 2$;
+
+$0<x<2-y<2$,$0<y<2-x<2$;
+$\int_0^2\int_0^{2-x}$, $c=\frac32$;
+
+$f(x)=\int_0^{2-x}f(x,y)dy=\frac34x(x-2)^2$; $f(y)$same
+
+$P(X<Y)=P(X<Y,Y<1)+P(X<Y,Y>1)=P(X<Y<1)+P(X<2-Y,1<Y<2)$
+$=\int_0^1\int_0^{y}dxdy+\int_1^2\int_0^{2-y}dxdy=\frac12$
+
+\dotfill
+
+*$f_X$=$3kxe^{-3x^2}$; k=2; m=$\sqrt\frac{\ln2}{3}$; $f_X'$=0,mode=$\frac1{\sqrt6}$
+Y=$X^2$, $f_Y$=$3e^{-3y}$
+
+\end{multicols}

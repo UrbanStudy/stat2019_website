@@ -1,0 +1,162 @@
+---
+title: "STAT 572: Bayesian Statistics" 
+subtitle: "Homework 4 (Monte Carlo Methods)"
+output:
+  pdf_document: default
+  html_document: default
+  html_notebook: default
+---
+
+\vspace{-0.5cm}
+\begin{center}
+(to be submitted online in D2L before November 4th at 5:00 pm)
+\end{center}
+
+\vspace{1cm}
+
+
+# Part 1
+
+Throughout the 90's the General Social Survey gathered data about 155 women of age 40 at the time of the survey.  These women were in their 20's during the 70's, which is considered a period of historically low fertility in the US.  Assume that $Y_1,\ldots,Y_{n}\overset{iid}{\sim}\theta\sim \text{Poisson}(\theta)$ denote the number of children that each of the $n$ women have. Recall that for $n$ observations assumed to come from a $\text{Poisson}(\theta)$ generating model, the likelihood is
+$$p(y_{1:n} |  \theta) =  \theta^{\sum y_i} e^{- n\theta } \prod_{i=1}^n (1/y_i!) \boldsymbol{1}_{\{y_i\in\mathbb{N}_0\}},$$
+which when assuming a Gamma$(a,b)$ prior on $\boldsymbol{\theta}$ yields the posterior
+$$p(\theta | y_{1:n}) \propto  \theta^{\sum y_i + a -1} e^{- \theta(n+b) }\boldsymbol{1}_{\{\theta>0\}}\Longrightarrow \boldsymbol{\theta} | y_{1:n}\sim\text{Gamma}\left(\sum y_i + a,n+b\right).$$ Assume that $a=2, b=1$ for the prior of $\boldsymbol{\theta}$.
+
+1. Using the information above, build a Monte Carlo algorithm to approximate the posterior predictive probability mass function (pmf). That is, sample indirectly $\tilde{Y}$ from the posterior predictive density as we did in page 7 of the Monte Carlo class notes (i.e., sampling first $\theta | y_{1:n}$ and then $\tilde{Y} | \theta$).  Then use the sampled values to approximate $p(\tilde{y}=0 | y_{1:n}), p(\tilde{y}=1 | y_{1:n}), p(\tilde{y}=2 | y_{1:n}), \ldots$). Notice that a new observation $\tilde{Y}$ will have the same support as the data (i.e., $\mathbb{N}_0$); however, for large values of $\tilde{y}$ (say, $\tilde{y}=20$, remember that the variable represents the number of children) the probabilities will be so close to zero that you will need to sample a very large number of times to actually draw samples of these values. Because of this, for large values of $\tilde{y}$ (for the sake of this exercise) can be assumed to be zero, so only approximate the values of the posterior predictive density for $\tilde{y}\in\{0,1,2,3,\ldots,10\}$. If in your samples you don't draw a particular number, the estimate for that probability is 0.
+
+First, we know that we can use a Monte Carlo algorithm to draw samples from the posterior predictive distribution as follows:
+
+\begin{itemize}
+\item For $k=1,2,\ldots,S$, sample $\theta_k$ from $p(\theta | y_{1:n})$, i.e., the Gamma$\left(\sum y_i + a,n+b\right)$ distribution.
+\item Conditioning on the $\theta_k$ sampled in the previous step, draw $\tilde{y}_k$ from $p(\tilde{y} | \theta_k)$, which is Poisson$(\theta_K)$.
+\item For $j=0,1,\ldots,10$, estimate $\Pr(\tilde{Y}=j \; |\; y_{1:n}) \approx \left(\sum_{k=1}^S \boldsymbol{1}_{\{\tilde{y}_k=j\}}\right) \big/ S $
+\end{itemize}
+  
+```{r R.options="asis"}
+#load data
+load("alldata.txt")
+
+#Select data for women that were 40 at time of survey
+w40 <- Y[(Y$YEAR>=1990)&(Y$FEMALE==1)&(Y$AGE==40),#&(Y$DEGREE<3),
+         c("YEAR","CHILDS","AGE","DEGREE")]
+#Remove missing values
+w40 <- na.exclude(w40)
+
+#hyperparameters
+a <- 2; b <- 1
+#number of observations
+n <- nrow(w40)
+#sum of the y's
+sum.y <- sum(w40$CHILDS)
+
+approx.postpred <- function(S){
+  #S: number of Monte Carlo draws
+  theta.draws <- rgamma(S,sum.y+a,n+b)
+  ytilde.draws <- rpois(S,theta.draws)
+  
+  ytilde.draws <- factor(ytilde.draws,levels=0:10,labels=0:10)
+  table(unlist(ytilde.draws))/S
+}
+
+#number of Monte Carlo draws
+S <- 100000
+#Monte Carlo Approximation to the Posterior Predictive 
+pp100K <- approx.postpred(S)
+
+knitr::kable(pp100K, format = "markdown",align=c("c","c"),
+             caption="Monte Carlo approximation to $p(y.tilde |y_{1:n})$",
+             col.names=c("y.tilde","MC post.pred."))
+```
+
+```{r message=F, warning=F, fig.width=4, fig.height=4, fig.align='center'}
+plot( pp100K,xlab="number of children",col=gray(.75),lwd=4,
+      ylab=expression(p(Y[i]==y[i])),type="h",main="")
+legend(4,0.35,legend=c("approx. post. pred."),
+       bty="n", lwd=2,col=gray(.75))
+```
+  
+
+2. Show that the actual posterior predictive distribution $p(\tilde{y} | y_{1:n})$ for a new observation under this particular setup is $$\text{NegBinom}\left(\sum y_i + a, 1/(b+n+1)\right).$$ The negative binomial pmf can be represented in two different ways, so for this problem assume that a random variable $X| r, \theta \sim \text{NegBinom}(r,\theta)$ if its pmf is given by $$p(x | r,\theta)={x+r-1\choose x}(1-\theta)^r \theta^x,\; r>0,\;\theta\in(0,1),\;\text{for }x\in\left\{0,1,2,\ldots\right\}.$$
+
+Recall that the posterior predictive for a new observation $\tilde{Y}$ (assuming conditional independence between ) is given by $$p(\tilde{y} | y_{1:n}) = \int_{0}^{\infty}p(\tilde{y} | \theta) p(\theta | y_{1:n}) d\theta.$$  Letting $a_n=n\bar{y}+a$ and $b_n=n+b$, we have that
+\begin{eqnarray*}
+p(\tilde{y} | y_{1:n}) &=& \int_{0}^{\infty}p(\tilde{y} | \theta) p(\theta | y_{1:n}) d\theta\\
+&=& \int_{0}^{\infty} \left(\frac{\theta^{\tilde{y}}e^{-\theta}}{\tilde{y}!}\boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}} \right) \left(\frac{b_n^{a_n}}{\Gamma(a_n)} \theta^{a_n-1} e^{- b_n \theta}\right) d\theta\\
+&=&  \frac{b_n^{a_n}}{\Gamma(a_n)}\frac{1}{\tilde{y}!}\boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}} \int_{0}^{\infty} \theta^{\tilde{y}} \theta^{a_n-1} e^{-\theta} e^{- b_n \theta} d\theta\\
+&=&  \frac{b_n^{a_n}}{\Gamma(a_n)}\frac{1}{\tilde{y}!}\boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}} \frac{\Gamma(\tilde{y} + a_n)}{(1+b_n)^{\tilde{y} + a_n}} \int_{0}^{\infty} \underbrace{\frac{(1+b_n)^{\tilde{y} + a_n}}{\Gamma(\tilde{y} + a_n)} \theta^{\tilde{y} + a_n-1} e^{-(1+b_n) \theta}}_{\text{Gamma}(\tilde{y} + a_n, 1+b_n)\;\text{density}} d\theta\\
+&=&  \frac{b_n^{a_n}}{\Gamma(a_n)}\frac{1}{\tilde{y}!} \frac{\Gamma(\tilde{y} + a_n)}{(1+b_n)^{\tilde{y} + a_n}} \boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}}
+\end{eqnarray*}
+Notice that 
+\begin{eqnarray*}
+\Gamma(\tilde{y} + a_n) &=& (\tilde{y} + a_n-1) (\tilde{y} + a_n-2) \cdots (\tilde{y} + a_n- \tilde{y}) \Gamma(a_n) \\
+&=&\frac{(\tilde{y} + a_n-1)!}{(a_n - 1)!} \Gamma(a_n) \\
+&=&{\tilde{y} + a_n-1 \choose \tilde{y}}  y! \;\Gamma(a_n),
+\end{eqnarray*}
+such that rearranging terms we have
+\begin{eqnarray*}
+p(\tilde{y} | y_{1:n}) &=& \frac{\Gamma(\tilde{y} + a_n)}{\Gamma(a_n)\tilde{y}!} \frac{b_n^{a_n}}{(1+b_n)^{\tilde{y} + a_n}} \boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}}\\
+&=& \frac{{\tilde{y} + a_n-1 \choose \tilde{y}}  y! \;\Gamma(a_n)}{\Gamma(a_n)\tilde{y}!} \frac{b_n^{a_n}}{(1+b_n)^{\tilde{y} + a_n}} \boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}}\\
+&=& {\tilde{y} + a_n-1 \choose \tilde{y}} \left(\frac{b_n}{1+b_n}\right)^{a_n}  \left(\frac{1}{1+b_n}\right)^{\tilde{y}} \boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}}\\
+&=& {\tilde{y} + a_n-1 \choose \tilde{y}} \left(1-\frac{1}{1+b_n}\right)^{a_n}  \left(\frac{1}{1+b_n}\right)^{\tilde{y}} \boldsymbol{1}_{\{\tilde{y}\in\mathbb{R}_0\}},
+\end{eqnarray*}
+such that $\tilde{Y} | y_{1:n} \sim \text{NegBin}\left(a_n, \frac{1}{1+b_n} \right)$, as required.
+
+3. Compare graphically the quality of the approximation to the exact pmf for $S=2000, 5000, 10000$ (the number of Monte Carlo samples) and comment on your results.
+
+```{r echo=F, message=F, warning=F, fig.width=6, fig.height=5, fig.align='center'}
+
+#exact posterior density 
+p <- (b+n)/(b+n+1)
+
+post.pred <- dnbinom(0:10,size=(a+sum.y),prob=p)#mu=((a+sum.y)/(b+n)))#
+pp100 <- as.numeric(approx.postpred(S=100))
+pp500 <- as.numeric(approx.postpred(S=500))
+pp2000 <- as.numeric(approx.postpred(S=2000))
+pp5000 <- as.numeric(approx.postpred(S=5000))
+pp10000 <- as.numeric(approx.postpred(S=10000))
+
+df <- data.frame(post.pred,pp100,pp500,pp2000,pp5000,pp10000)
+
+colv <- colorspace::rainbow_hcl(6)#heat.colors(6, alpha=1)#c("black","cornflowerblue","forestgreen","orange","")
+#plot empty graph device (using the option type="n")
+dev <- c(-0.3,-0.2,-0.1,0,0.1,0.2)
+plot( x=c(-0.3,10+0.2), y=c(0,.4),xlab="number of children",
+      ylab=expression(p(Y[i]==y[i])),type="n",main="")
+
+#add barplots for theta=0.05, 0.1 and 0.2
+# points(0:10-dev,pr.child,type="h",col="black",lwd=4)
+for(k in 1:6){
+  points(0:10+dev[k],df[,k],type="h",col=colv[k],lwd=4)
+}
+legend(4,0.35,legend=c("true","pp100","pp500","pp2000","pp5000","pp10000"),
+       bty="n", lwd=c(2,2),col=colv)
+
+```
+
+in addition to the values of $S$ requested, I also obtain the estimates for $S=100$ and $S=500$ to get a better sense for how the stimates improve as we sample more and more from the distribution.  The difference between the true posterior predictive pmf values and those obtained through Monte Carlo estimation are quite evident for the smaller values of $S$ are considered; but there are only minor differences for larger values of $S$.
+
+# Part 2
+
+4. Suppose $X_1,X_2,\ldots,X_n \stackrel{iid}{\sim} p(x | \theta)$ given $\theta$. Imagine that the posterior predictive for a new observation $\tilde{X}$, $p(\tilde{x} | x_{1:n})$, is too complicated to compute analytically; however, you can easily sample from the posterior $p(\theta | x_{1:n})$, and you can also easily compute the cdf $F(X\leq a |  \theta).$ Construct a Monte Carlo estimator for $$\Pr(\tilde{X}<a | x_{1:n})$$ for some particular value of $a$.
+
+We have that $$P(\tilde{X} < a| x_{1:n}) = F_{\tilde{X}}( a \,\big|\,  x_{1:n}) = \int_{-\infty}^a p(\tilde{x} | x_{1:n}) d \tilde{x},$$  but since by definition of the posterior predictive density, and by independence of the $y's$ conditional on $\theta$, we have that $$p(\tilde{x} | x_{1:n})=\int_{\theta\in \Theta} p(\tilde{x} | \theta)p(\theta | x_{1:n}) d\theta;$$ such that $P(\tilde{X} < a| x_{1:n})$ can be written as:
+\begin{eqnarray*}
+P(\tilde{X} < a| x_{1:n}) &=& \int_{-\infty}^a \int_{\theta\in \Theta} p(\tilde{x} | \theta)p(\theta | x_{1:n}) d\theta d \tilde{x}\\
+&=& \int_{\theta\in \Theta} \int_{-\infty}^a  p(\tilde{x} | \theta)p(\theta | x_{1:n}) d\theta d \tilde{x}\quad\text{changing the order of integration} \\
+&=& \int_{\theta\in \Theta} \left(\int_{-\infty}^a  p(\tilde{x} | \theta) d \tilde{x}\right)p(\theta | x_{1:n}) d\theta \\
+&=& \int_{\theta\in \Theta} P(\tilde{X} < a | \theta)  p(\theta | x_{1:n}) d\theta \\
+&=& \int_{\theta\in \Theta} F_{\tilde{X}}( a |  \theta)  p(\theta | x_{1:n}) d\theta  \quad\text{by def. of the CDF} \\
+&=& E_{\boldsymbol{\theta}}\left[P(\tilde{X} < a | \,\theta) | x_{1:n}\right] \\
+&\approx& \frac{1}{S}\sum_{k=1}^S F_{\tilde{X}}( a |  \theta_k),\quad\text{with }\theta_k \sim p(\theta | x_{1:n}).
+\end{eqnarray*}
+The expression above is easy to calculate given that it is easy to sample from $p(\theta | x_{1:n})$ and $P(\tilde{X} < a | \theta)$ is easy to compute
+
+
+This implies that a Monte Carlo algorithm for this problem is as follows:
+\begin{itemize}
+\item For $k=1,\ldots,S$, sample $\theta_k$ from $p(\theta | x_{1:n})$.
+\item Calculate $F_{\tilde{X}}( a |  \theta_k)$ for each $\theta_k$.
+\item Estimate $F_{\tilde{X}}( a |  x_{1:n})$ with the average of the $F_{\tilde{X}}( a |  \theta_k)$ values.
+\end{itemize}
+
+

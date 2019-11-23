@@ -1,0 +1,179 @@
+---
+title: ''
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    toc_float: no
+header-includes:
+ - \usepackage{multicol}
+ - \usepackage{multirow}
+ - \usepackage{caption}
+ - \usepackage{amssymb}
+ - \usepackage{amsmath}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{Shen Qu}
+ - \lhead{Homework 4 (Monte Carlo Methods)}
+ - \chead{STAT 572}
+ - \rfoot{Page \thepage}
+---
+
+
+# Part 1
+
+Throughout the 90's the General Social Survey gathered data about 155 women of age 40 at the time of the survey.  These women were in their 20's during the 70's, which is considered a period of historically low fertility in the US.  Assume that $Y_1,\ldots,Y_{n}\overset{iid}{\sim}\theta\sim \text{Poisson}(\theta)$ denote the number of children that each of the $n$ women have. Recall that for $n$ observations assumed to come from a $\text{Poisson}(\theta)$ generating model, the likelihood is
+$p(y_{1:n} |  \theta) =  \theta^{\sum y_i} e^{- n\theta } \prod_{i=1}^n (1/y_i!) \boldsymbol{1}_{\{y_i\in\mathbb{N}_0\}},$
+which when assuming a Gamma$(a,b)$ prior on $\boldsymbol{\theta}$ yields the posterior
+$p(\theta | y_{1:n}) \propto  \theta^{\sum y_i + a -1} e^{- \theta(n+b) }\boldsymbol{1}_{\{\theta>0\}}\Longrightarrow \boldsymbol{\theta} | y_{1:n}\sim\text{Gamma}\left(\sum y_i + a,n+b\right).$ Assume that $a=2, b=1$ for the prior of $\boldsymbol{\theta}$.
+
+ 1. Using the information above, build a Monte Carlo algorithm to approximate the posterior predictive probability mass function (pmf). That is, sample indirectly $\tilde{Y}$ from the posterior predictive density as we did in page 7 of the Monte Carlo class notes (i.e., sampling first $\theta | y_{1:n}$ and then $\tilde{Y} | \theta$).  Then use the sampled values to approximate $p(\tilde{y}=0 | y_{1:n}), p(\tilde{y}=1 | y_{1:n}), p(\tilde{y}=2 | y_{1:n}), \ldots$). Notice that a new observation $\tilde{Y}$ will have the same support as the data (i.e., $\mathbb{N}_0$); however, for large values of $\tilde{y}$ (say, $\tilde{y}=20$, remember that the variable represents the number of children) the probabilities will be so close to zero that you will need to sample a very large number of times to actually draw samples of these values. Because of this, for large values of $\tilde{y}$ (for the sake of this exercise) can be assumed to be zero, so only approximate the values of the posterior predictive density for $\tilde{y}\in\{0,1,2,3,\ldots,10\}$. If in your samples you don't draw a particular number, the estimate for that probability is 0.
+  
+```{r,echo=F}
+#load data
+load("alldata.txt")
+
+#Select data for women that were 40 at time of survey
+w40 <- Y[(Y$YEAR>=1990)&(Y$FEMALE==1)&(Y$AGE==40),#&(Y$DEGREE<3),
+         c("YEAR","CHILDS","AGE","DEGREE")]
+#Remove missing values
+w40 <- na.exclude(w40)
+```
+
+```{r,echo=T}
+#empirical distribution
+ct.child <- rep(0,11)
+ct.child[1:length(unique(w40$CHILDS))] <- as.vector(table(w40$CHILDS))
+pr.child <- ct.child/sum(ct.child)
+names(pr.child) <- names(ct.child) <- 0:10
+
+#posterior predictive NegBinom(sum(y) + a, (b+n)/(b+n+1))
+a <- 2; b <- 1
+n <- nrow(w40)
+sum.y <- sum(w40$CHILDS)
+p <- (b+n)/(b+n+1)
+post.pred <- dnbinom(0:10,size=(a+sum.y),prob=p) # mu=((a+sum.y)/(b+n)))#
+
+#approximate predictive Gamma(sum(y)+a,b+n)–Poisson(theta.k) mixture
+S <- 20000
+theta.k <- ytilde.ks <- NULL
+for(k in 1:S){
+  theta.k <- rgamma(1,a+sum.y,b+n)
+  ytilde.ks <- rpois(n,theta.k)
+}
+appr.child <- rep(0,11)
+appr.child[1:length(unique(ytilde.ks))] <- as.vector(table(ytilde.ks))
+appr.pred <- appr.child/sum(appr.child)
+names(appr.pred) <- names(appr.child) <- 0:10
+```
+
+
+```{r,echo=F,out.width='50%',fig.show='hold',fig.align='center'}
+par(mfrow=c(1,1))
+#plot empty graph device (using the option type="n")
+dev <- 0.1
+plot( x=c(-dev,10+dev), y=c(0,.4),xlab="number of children",
+      ylab=expression(p(Y[i]==y[i])),type="n",main="")
+
+#add barplots for empirical, approximate, and exact
+points(0:10-dev,pr.child,type="h",col="red",lwd=4)
+points(0:10+dev,post.pred,type="h",col="orange",lwd=4)
+points(0:10+3*dev,appr.pred,type="h",col="blue",lwd=4)
+legend(7.5,0.4,legend=c("empirical","exact pmf","approximate"),
+       bty="n", lwd=c(3,2),col=c("red","orange","blue"))
+```
+
+Compared with empirical values, the approximate posterior predictions have closed results.
+
+But each run gives a different result. Sometime underestimate the probabilities, sometimes overestimate. Meanwhile, the exact posterior prediction gives a non-dithering result.
+
+ 2. Show that the actual posterior predictive distribution $p(\tilde{y} | y_{1:n})$ for a new observation under this particular setup is $\text{NegBinom}\left(\sum y_i + a, (b+n)/(b+n+1)\right).$ The negative binomial pmf can be represented in two different ways, so for this problem assume that a random variable $X| r, \theta \sim \text{NegBinom}(r,\theta)$ if its pmf is given by $p(x | r,\theta)={x+r-1\choose x}(1-\theta)^r \theta^x,\; r>0,\;\theta\in(0,1),\;\text{for }x\in\left\{0,1,2,\ldots\right\}.$
+
+\begin{align*}
+p(\tilde{y}| y_{1:n})&=\int_{-\infty}^\infty p(\tilde{y}| \theta) p(\theta | y_{1:n}) d\theta\\
+&=\int_{-\infty}^\infty Pois(\tilde{y}| \theta) Gamma(\theta |\sum y_i + a,n+b) d\theta\\
+&=\int_{-\infty}^\infty 
+    \boldsymbol{1}_{\{\tilde{y}\in\mathbb{N}_0\}} (1/\tilde{y}!) \theta^{\tilde{y}}e^{-\theta}
+    \frac{(n+b)^{\sum y_i+a}}{\Gamma{(\sum y_i+a)}}\theta^{\sum y_i + a -1} e^{-\theta(n+b)} \boldsymbol{1}_{\{\theta>0\}}d\theta\\
+&=\boldsymbol{1}_{\{\tilde{y}\in\mathbb{N}_0\}} \frac{(n+b)^{\sum y_i+a}}{\tilde{y}!\Gamma{(\sum y_i+a)}}
+    \int_{0}^\infty \theta^{(\tilde{y}+\sum y_i + a -1)} e^{-\theta(n+b+1)}d\theta\\
+&=\boldsymbol{1}_{\{\tilde{y}\in\mathbb{N}_0\}} \frac{(\tilde{y}+\sum y_i+a-1)!}{\tilde{y}!(\sum y_i+a-1)!}
+    \frac{(n+b)^{\sum y_i+a}}{(n+b+1)^{(\tilde{y}+\sum y_i+a)}}
+    \int_{0}^\infty \frac{(n+b+1)^{(\tilde{y}+\sum y_i+a)}}{\Gamma{(\tilde{y}+\sum y_i+a)}} \theta^{(\tilde{y}+\sum y_i + a -1)} e^{-\theta(n+b+1)}d\theta\\
+&=\boldsymbol{1}_{\{\tilde{y}\in\mathbb{N}_0\}} \binom{\tilde{y}+\sum y_i+a-1}{\tilde{y}} 
+    (1-\frac{1}{n+b+1})^{\sum y_i+a}
+    (\frac{1}{n+b+1})^{\tilde{y}}
+    \\
+\end{align*}
+
+The posterior predictive density for $\tilde{Y}$ is NegBinom$(\tilde{y}| \sum y_i + a, \frac{1}{b+n+1})$.
+
+
+3. Compare graphically the quality of the approximation to the exact pmf for $S=2000, 5000, 10000$ (the number of Monte Carlo samples) and comment on your results.
+
+```{r,echo=T,out.width='50%',fig.show='hold',fig.align='center'}
+S <- 2000
+theta.k <- ytilde.ks <- NULL
+for(k in 1:S){theta.k <- rgamma(1,a+sum.y,b+n); ytilde.ks <- rpois(n,theta.k)}
+appr.child <- rep(0,11)
+appr.child[1:length(unique(ytilde.ks))] <- as.vector(table(ytilde.ks))
+appr.pred.2k <- appr.child/sum(appr.child)
+names(appr.pred.2k) <- names(appr.child) <- 0:10
+
+S <- 5000
+theta.k <- ytilde.ks <- NULL
+for(k in 1:S){theta.k <- rgamma(1,a+sum.y,b+n); ytilde.ks <- rpois(n,theta.k)}
+appr.child <- rep(0,11)
+appr.child[1:length(unique(ytilde.ks))] <- as.vector(table(ytilde.ks))
+appr.pred.5k <- appr.child/sum(appr.child)
+names(appr.pred.5k) <- names(appr.child) <- 0:10
+
+S <- 10000
+theta.k <- ytilde.ks <- NULL
+for(k in 1:S){theta.k <- rgamma(1,a+sum.y,b+n); ytilde.ks <- rpois(n,theta.k)}
+appr.child <- rep(0,11)
+appr.child[1:length(unique(ytilde.ks))] <- as.vector(table(ytilde.ks))
+appr.pred.10k <- appr.child/sum(appr.child)
+names(appr.pred.10k) <- names(appr.child) <- 0:10
+```
+
+
+```{r,echo=F,out.width='50%',fig.show='hold',fig.align='center'}
+par(mfrow=c(1,1))
+dev <- 0.1
+plot( x=c(-dev,10+dev), y=c(0,.4),xlab="number of children",
+      ylab=expression(p(Y[i]==y[i])),type="n",main="")
+points(0:10-dev,appr.pred.2k,type="h",col=gray(.6),lwd=4)
+points(0:10+dev,appr.pred.5k,type="h",col=gray(.3),lwd=4)
+points(0:10+3*dev,appr.pred.10k,type="h",col=gray(0),lwd=4)
+points(0:10+5*dev,post.pred ,type="h",col="red",lwd=4)
+legend(7,0.4,legend=c("S=2k","S=5k","S=10k","exact pmf"),
+       bty="n", lwd=c(4,2),col=c(gray(.6),gray(.3),gray(0),"red"))
+```
+
+Comparing the quality of the approximation to the exact pmf for different number of Monte Carlo samples, the larger number shows a closer approximation to the exact pmf. But this process didn't show a stable prefermance and may need a longer sequence to confirm the trend.
+
+# Part 2
+
+4. Suppose $X_1,X_2,\ldots,X_n \stackrel{iid}{\sim} p(x | \theta)$ given $\theta$. Imagine that the posterior predictive for a new observation $\tilde{X}$, $p(\tilde{x} | x_{1:n})$, is too complicated to compute analytically; however, you can easily sample from the posterior $p(\theta | x_{1:n})$, and you can also easily compute the cdf $F(X\leq a |  \theta).$ Construct a Monte Carlo estimator for $\Pr(\tilde{X}<a | x_{1:n})$ for some particular value of $a$.
+
+Use the Monte Carlo method to approximate a posterior predictive density.
+The posterior predictive density for a new observation $\tilde{X}$ is defined as
+$$p(\tilde{x}| x_{1:n})= \int_{\theta\in \Theta} p(\tilde{x}| \theta) p(\theta| x_{1:n}) d\theta= E[p(\tilde{x}| \vec\theta) | x_{1:n}]\approx \frac{1}{S} \sum_{k=1}^S p(\tilde{x}| \vec\theta_k)$$
+where $\vec\theta_1,\ldots,\vec\theta_S \overset{iid}{\sim}p(\theta| x_{1:n})$.  
+Sampling $\theta_k$ from $p(\theta| x_{1:n})$ then sampling $\tilde{x}_k$ from $p(\tilde{x}| \theta_k)$ can generate samples from $p(\tilde{x}| x_{1:n})$ for $k=1,2,\ldots,S$
+
+This yields the sequence of $S$ independent bivariate samples $[(\theta_1,\tilde{x}_1),\ldots,(\theta_S,\tilde{x}_S)]$ drawn from the joint posterior distribution of $(\vec\theta,\tilde{X})$ given $X_{1:n}=x_{1:n}$.  Dropping the $\theta_k$'s, the values $[\tilde{x}_1,\ldots,\tilde{x}_S]$ constitute $S$ independent draws from the  (marginal) posterior predictive $p(\tilde{x}| x_{1:n})$.  This is equivalent to integrating out $\vec\theta$.
+
+When $X$ has cdf $F_X$, the random variable $F_X^{-1}(U)$, where $U\sim uniform(0,a)$, has distribution $F_X$. $F_X^{-1}(u)=x\leftrightarrow\int_{-\infty}^xf_x(y)dy$
+
+\begin{align*}
+\Pr(\tilde{X}<a | x_{1:n})&=\int_{0}^a p(\tilde{x}|\theta) dx
+= a\int_{-\infty}^\infty   p(\tilde{y}|\theta) (\frac{1}{a} \mathbf1_{\{y\in(0,a)\}})dy\\
+&= aE(g(Y))
+\approx  \frac{a}{S}\sum_{k=1}^S g(Y_k)
+\end{align*}
+
+where $g(Y)=p(x|\theta)$ and $Y\sim U(0,a)$ (i.e., has pdf $p(y)=\frac{1}{a} \mathbf1_{\{y\in(0,a)\}}$).

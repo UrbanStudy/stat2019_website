@@ -1,0 +1,46 @@
+---
+title: "STAT 572: Bayesian Statistics" 
+subtitle: "Homework 4 (Monte Carlo Methods)"
+output:
+  pdf_document: default
+  html_document: default
+  html_notebook: default
+---
+
+\vspace{-0.5cm}
+\begin{center}
+(to be submitted online in D2L before November 4th at 5:00 pm)
+\end{center}
+
+\vspace{1cm}
+
+
+# Part 1
+
+Throughout the 90's the General Social Survey gathered data about 155 women of age 40 at the time of the survey.  These women were in their 20's during the 70's, which is considered a period of historically low fertility in the US.  Assume that $Y_1,\ldots,Y_{n}\overset{iid}{\sim}\theta\sim \text{Poisson}(\theta)$ denote the number of children that each of the $n$ women have. Recall that for $n$ observations assumed to come from a $\text{Poisson}(\theta)$ generating model, the likelihood is
+$$p(y_{1:n} |  \theta) =  \theta^{\sum y_i} e^{- n\theta } \prod_{i=1}^n (1/y_i!) \boldsymbol{1}_{\{y_i\in\mathbb{N}_0\}},$$
+which when assuming a Gamma$(a,b)$ prior on $\boldsymbol{\theta}$ yields the posterior
+$$p(\theta | y_{1:n}) \propto  \theta^{\sum y_i + a -1} e^{- \theta(n+b) }\boldsymbol{1}_{\{\theta>0\}}\Longrightarrow \boldsymbol{\theta} | y_{1:n}\sim\text{Gamma}\left(\sum y_i + a,n+b\right).$$ Assume that $a=2, b=1$ for the prior of $\boldsymbol{\theta}$.
+
+1. Using the information above, build a Monte Carlo algorithm to approximate the posterior predictive probability mass function (pmf). That is, sample indirectly $\tilde{Y}$ from the posterior predictive density as we did in page 7 of the Monte Carlo class notes (i.e., sampling first $\theta | y_{1:n}$ and then $\tilde{Y} | \theta$).  Then use the sampled values to approximate $p(\tilde{y}=0 | y_{1:n}), p(\tilde{y}=1 | y_{1:n}), p(\tilde{y}=2 | y_{1:n}), \ldots$). Notice that a new observation $\tilde{Y}$ will have the same support as the data (i.e., $\mathbb{N}_0$); however, for large values of $\tilde{y}$ (say, $\tilde{y}=20$, remember that the variable represents the number of children) the probabilities will be so close to zero that you will need to sample a very large number of times to actually draw samples of these values. Because of this, for large values of $\tilde{y}$ (for the sake of this exercise) can be assumed to be zero, so only approximate the values of the posterior predictive density for $\tilde{y}\in\{0,1,2,3,\ldots,10\}$. If in your samples you don't draw a particular number, the estimate for that probability is 0.
+  
+```{r}
+#load data
+load("alldata.txt")
+
+#Select data for women that were 40 at time of survey
+w40 <- Y[(Y$YEAR>=1990)&(Y$FEMALE==1)&(Y$AGE==40),#&(Y$DEGREE<3),
+         c("YEAR","CHILDS","AGE","DEGREE")]
+#Remove missing values
+w40 <- na.exclude(w40)
+```
+  
+2. Show that the actual posterior predictive distribution $p(\tilde{y} | y_{1:n})$ for a new observation under this particular setup is $$\text{NegBinom}\left(\sum y_i + a, (b+n)/(b+n+1)\right).$$ The negative binomial pmf can be represented in two different ways, so for this problem assume that a random variable $X| r, \theta \sim \text{NegBinom}(r,\theta)$ if its pmf is given by $$p(x | r,\theta)={x+r-1\choose x}(1-\theta)^r \theta^x,\; r>0,\;\theta\in(0,1),\;\text{for }x\in\left\{0,1,2,\ldots\right\}.$$
+
+3. Compare graphically the quality of the approximation to the exact pmf for $S=2000, 5000, 10000$ (the number of Monte Carlo samples) and comment on your results.
+
+\pagebreak
+
+# Part 2
+
+4. Suppose $X_1,X_2,\ldots,X_n \stackrel{iid}{\sim} p(x | \theta)$ given $\theta$. Imagine that the posterior predictive for a new observation $\tilde{X}$, $p(\tilde{x} | x_{1:n})$, is too complicated to compute analytically; however, you can easily sample from the posterior $p(\theta | x_{1:n})$, and you can also easily compute the cdf $F(X\leq a |  \theta).$ Construct a Monte Carlo estimator for $$\Pr(\tilde{X}<a | x_{1:n})$$ for some particular value of $a$.

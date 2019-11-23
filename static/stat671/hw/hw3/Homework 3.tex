@@ -1,0 +1,85 @@
+% Fact sheet for MATH 300, for Fall 2014.
+%
+\documentclass[11pt]{article}
+% Nice page size.
+\setlength{\textwidth}{7in} \setlength{\textheight}{9.8in}
+\setlength{\topmargin}{-1in} \setlength{\oddsidemargin}{-0.25in}
+\setlength{\evensidemargin}{-0.25in}
+%
+% No page numbering.
+\pagestyle{empty}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{algpseudocode}
+\begin{document}
+\thispagestyle{empty}
+\includegraphics{../../../psulogo_horiz_bw.eps}\hfill\includegraphics{../../../deptlogo}
+\vspace{10pt}
+\begin{center}
+{\large\bf STAT 671}    \\*[5pt] {\Large Statistical Learning I}
+\\*[12pt] {\large Fall 2019}
+\\ {\large Homework 3}
+\\ {\large Due November 6$^{th}$ at the beginning of class}
+\end{center}
+\vspace{1cm}
+\noindent
+\section{Kernalized ridge regression}
+\begin{enumerate}
+\item Code the kernalized ridge regression for the 2d data that you already used for the simple classifier and the perceptron. Show your code. Note that an example code for 1d data is available in the folder \lq\lq{}code\rq\rq{} in d2l.   Show 3 examples of results obtain with simulated data in 2 dimensions, using 3 different kernels. 
+
+\item Import the MNIST dataset. It is available on D2L. A R file is available for reading the files and run a simple classifier.  You will find online similar code in case you use Python,  Matlab or other high level language. 
+
+Code a version of the kernalized ridge regression algorithm that let you run the algorithm for various sets of images from the MNIST dataset such that you can perform controled experiments. The input of the algorithm could be a list of filenames, corresponding to images for training, testing, as well as the corresponding labels.  
+
+Run the kernelized ridge regression for one digit versus another one of your choice. You will see that the size of the full MNIST training set might be too large for the algorithm to run in a reasonable time. Instead, sample smaller training sets, say of size 100. Now, you should be able to run the algorithm. Experiment with smaller and larger training set size. Report the performance by specifying the total number of images correctly classified, as well as the learning time and testing time. Show graphs, with on the horizontal axis the number of images used for training or for testing. 
+\end{enumerate}
+%\section{Kernalized ridge regression}
+%\begin{enumerate}
+%\item Code the kernalized ridge regression for the 2d example that you already used for the simple classifier and the perceptron. Show your code.  
+%\item Show 3 examples of results obtain with simulated data in 2 dimensions, using 3 different kernels. 
+%\end{enumerate}
+%\section{MNIST dataset}
+%\begin{enumerate}
+%\item Import the MNIST dataset. It is available on D2L. A R file is available for reading the files and run a simple classifier.  you will find online similar code in case you use Matlab or other high level language. 
+%\item Try to run the kernelized ridge regression for the digit zero versus all the other ones.  You will see that the size of the training set is too large. Sample a smaller training set, say of size 100. Now, you should be able to run it. Experiment with larger training set size. Report the performances, learning time and testing time on a graph.   
+%\end{enumerate}
+\section{Semi-parametric regression}
+Let $\mathcal{D}=\{(x_i,y_i), 1 \leq i \leq n\}$ be a training set where $x_i \in \mathbb{R}^d$ is a feature vector, and $y_i \in \mathbb{R}$ is the target, or independent variable. 
+
+We are interested in the following semi-parametric model for predicting $y$, 
+\begin{equation}
+f(x) = \theta^T x + g(x)
+\end{equation}
+where $\theta \in \mathbb{R}^d$ is a vector of parameters and $g: \mathbb{R}^d \mapsto \mathbb{R}$ belongs to a RKHS with kernel $k(.,.)$. 
+
+This model is called semi-parametric because it is the sum of a parametric component, here the linear term $\theta^T x$ and a non-linear component, the function $g(.)$. 
+
+Consider the functional 
+\begin{equation}
+J(\theta,g) = \sum_{i=1}^n \left(y_i - \theta^T x_i - g(x_i)\right)^2 + \lambda ||g||_H^2
+\end{equation}
+\begin{enumerate}
+\item 
+Show that for any $\theta$, a function $g \in H$ that minimizes $J(\theta,g)$ has the following form 
+\begin{equation}
+g(.)=\sum_{i=1}^n \alpha_i k(x_i,.)
+\end{equation}
+where $\alpha \in \mathbb{R}^n$ 
+\item 
+Show that 
+\begin{equation}
+J(\sum_{i=1}^n \alpha_i k(x_i,.),\theta)=||y - X\theta - K\alpha||^2 + \lambda \alpha^T K \alpha
+\end{equation}
+for some matrix $K$ and $X$ which you will specify together with their dimensions. 
+\item Compute $\nabla_\alpha J$, the gradient of $J$ with respect to $\alpha$. Similarly, compute $\nabla_\theta J$, the gradient of $J$ with respect to $\theta$. 
+\item Assume that the matrix $X^TX$ is positive definite.
+Find one solution $(\alpha,\theta)$ of the system  $\nabla_\alpha J=0, \nabla_\theta J=0$.  
+\item 
+Write a code that demonstrate in one dimension the semi-parametric regression. Use the data in the file ``hmw3-data1.csv''. Show your code and one plot of a solution.  
+\end{enumerate}
+
+\end{document}

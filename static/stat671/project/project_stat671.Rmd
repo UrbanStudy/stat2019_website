@@ -1,0 +1,131 @@
+---
+title: 'STAT 671: Statistical Learning'
+author: "Di & Shen"
+subtitle: Support Vector Machines
+output:
+  ioslides_presentation: default
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  slidy_presentation: default
+---
+
+# Introduction
+
+Some basic concepts of support vector machines.
+
+
+## Example 1: A 1-dimension dataset
+
+25 soft drink sugar content measurements. 
+ 
+The distinct clusters for identifying candidate decision boundaries.
+
+```{r, echo=F}
+# Create the data frame.
+sugar <- data.frame(
+   sugar_sample = as.factor(c (1:25)),
+   sugar_content=c(10.9,10.9,10.6,10.0,8.0,8.2,8.6,10.9,10.7,8.0,7.7,7.8,8.4,11.5,11.2,8.9,8.7,7.4,10.9,10.0,11.4,10.8,8.5,8.2,10.6)
+)
+library(ggplot2)
+plot_1 <- ggplot(data =sugar, aes(x = sugar_content, y =0)) + 
+    geom_point() + theme_light()+
+    geom_text(aes(label = sugar_content), size = 2.5, vjust = 2, hjust = 0.5)
+plot_1
+```
+
+## Find the maximal margin separator
+
+Identified two distinct clusters (classes), the regular and the reduced sugar.
+
+A dataset in which the classes do not overlap is called separable, the classes being separated by a decision boundary. 
+
+The maximal margin separator is the decision boundary that is furthest from both classes. 
+
+It is located at the mean of the relevant extreme points from each class. 
+
+The relevant points are the highest valued point in the low sugar content class and the lowest valued point in the high sugar content class. 
+
+find the maximal margin separator for the sugar content dataset.
+
+```{r,eval=T}
+#The maximal margin separator is at the midpoint of the two extreme points in each cluster.
+mm_separator <- (8.9 + 10)/2
+```
+
+## Visualize the maximal margin separator
+
+Add the maximal margin separator to the scatter plot.
+
+```{r,echo=F}
+#create data frame containing the maximum margin separator
+separator <- data.frame(sep = mm_separator)
+
+#add ggplot layer 
+plot_sep <- plot_1 + geom_point(data = separator, aes(x = sep, y = 0), color = "blue", size = 4)
+
+#display plot
+plot_sep
+```
+
+## Example 2: A 2d dataset.
+A 2 dimensional uniformly distributed dataset containing 600 datapoints.
+
+```{r}
+#set seed
+set.seed(42)
+
+#set number of data points. 
+n <- 600
+
+#Generate data frame with two uniformly distributed predictors.
+df <- data.frame(x1 = runif(n,0,1), 
+                 x2 = runif(n,0,1))
+```
+
+## Create a decision boundary
+
+Add a class variable to that dataset by creating a variable y whose value is -1 or +1 depending on whether the point (x1, x2) lies below or above the straight line that passes through the origin and has slope 1.4.
+
+```{r}
+#classify data points depending on location
+df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1), 
+    levels = c(-1, 1))
+```
+
+## Introduce a margin in the dataset
+
+Create a margin in the dataset and then display the margin in a plot. The slope of the linear decision boundary is 1.4.
+
+
+```{r,echo=F}
+#set margin
+delta <- 0.07
+
+# retain only those points that lie outside the margin
+df1 <- df[abs(1.4*df$x1 - df$x2) > delta, ]
+
+#build plot
+plot_margins <- ggplot(data = df1, aes(x = x1, y = x2, color = y)) + geom_point() + 
+    scale_color_manual(values = c("red", "blue")) + 
+    geom_abline(slope = 1.4, intercept = 0)+
+    geom_abline(slope = 1.4, intercept = delta, linetype = "dashed") +
+    geom_abline(slope = 1.4, intercept = -delta, linetype = "dashed")
+ 
+#display plot 
+plot_margins
+```
+
+
+# Support Vector Classifiers - Linear Kernels
+
+
+
+# Polynomial Kernels
+
+
+# Radial Basis Function Kernels
+
+
+
+

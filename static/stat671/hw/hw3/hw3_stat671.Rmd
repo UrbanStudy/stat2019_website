@@ -1,0 +1,887 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+    number_sections: yes
+header-includes:
+ - \usepackage{multicol}
+ - \usepackage{multirow}
+ - \usepackage{caption}
+ - \usepackage{amssymb}
+ - \usepackage{amsmath}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{Shen Qu}
+ - \lhead{Homework 3}
+ - \chead{STAT 671}
+ - \rfoot{Page \thepage}
+---
+
+# Kernalized ridge regression
+
+\fontsize{8pt}{0pt}
+
+Code the kernalized ridge regression for the 2d data that you already used for the simple classifier and the perceptron. Show your code. Show 3 examples of results obtain with simulated data in 2 dimensions, using 3 different kernels. 
+
+<!--
+
+## iris data clasification
+
+
+
+```{r,eval=F,include=F}
+rm(list=ls())
+
+k1 = function(x,y)
+  return(sum(x*y))
+k12 = function(x,y)
+  return(sum(x*y)+1)
+k2 = function(x,y)
+  return(sum(x*y)^2)
+k3 = function(x,y)
+  return((1+sum(x*y))^2)
+d=4
+k4 = function(x,y)
+  return((1+sum(x*y))^d)
+sigma=1
+k5 = function(x,y)
+  return(exp(-sum((x-y)^2)/(2*sigma^2)))        
+k51 = function(x,y)
+  return(exp(-sum(x^2)-sum(y^2)+2*sum((x*y))))
+kappa=1
+theta=1
+k6 = function(x,y)
+  return(tanh(kappa*sum(x*y)+theta))
+kernel = function(x,y)
+  return(k1(x,y))
+
+library(datasets)
+data(iris)
+```
+
+```{r,eval=F,include=F}
+# Define the train and test sets
+iris$y <- as.integer(iris$Species) # setosa=1;versicolor=2;virginica=3
+iris_setosa <- iris[iris$Species=="setosa",c(3:4,6)]
+iris_versicolor <- iris[iris$Species=="versicolor",c(3:4,6)]
+iris_virginica <- iris[iris$Species=="virginica",c(3:4,6)]
+iris_train_se<- iris_setosa[1:40,]
+iris_train_ve<- iris_versicolor[1:40,]
+iris_train_vi<- iris_virginica[1:40,]
+iris_test_se<- iris_setosa[41:50,]
+iris_test_ve<- iris_versicolor[41:50,]
+iris_test_vi<- iris_virginica[41:50,]
+iris_train_se.ve<- rbind(iris_train_se,iris_train_ve)
+iris_test_se.ve<- rbind(iris_test_se,iris_test_ve)
+iris_train_ve.vi<- rbind(iris_train_ve,iris_train_vi)
+iris_test_ve.vi<- rbind(iris_test_ve,iris_test_vi)
+```
+
+```{r,eval=F,include=F}
+## compute the classifier
+n=80;m=20
+lambda=0.01
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_train_se.ve[j,1:2])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%(iris_train_se.ve[,3]-1.5)
+
+## evaluate the classifier
+
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:m,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_test_se.ve[j,1:2])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[iris_test_se.ve[,3]==1,]==-1)
+c12=sum(hat.y[iris_test_se.ve[,3]==1,]==1)
+c21=sum(hat.y[iris_test_se.ve[,3]==2,]==-1)
+c22=sum(hat.y[iris_test_se.ve[,3]==2,]==1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,eval=F,include=F,message=F,warning=F,out.width='100%'}
+# hyperplane
+x1.min=min(iris_test_se.ve[,1])
+x1.max=max(iris_test_se.ve[,1])
+g1=seq(from=x1.min,to=x1.max,length.out=m)
+x2.min=min(iris_test_se.ve[,2])
+x2.max=max(iris_test_se.ve[,2])
+g2=seq(from=x2.min,to=x2.max,length.out=m)
+y.hat=matrix(NA,nrow=m,ncol=m)
+for (i in (1:m)){
+  for (j in (1:m)){
+    u=c(g1[i],g2[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],u)))
+    y.hat[i,j]=sum(k.x*alpha)
+  }
+}
+
+filled.contour(x=g1,y=g2,z=-y.hat,color.palette = function(n) hcl.colors(n, "Geyser", rev = T),
+               plot.axes = {axis(1);axis(2);points(iris_test_se.ve[,1],iris_test_se.ve[,2],col=iris_test_se.ve[,3]+rep(5,n),pch=17) })
+library(plotly)
+plot_ly (type='surface',x=g1,y=g2,z =y.hat, opacity=0.95)%>%add_markers( x =iris_test_se.ve[,1] , y = iris_test_se.ve[,2], z =iris_test_se.ve[,3]-1.5, color = as.factor(iris_test_se.ve[,3]+rep(3,m)),size =10, symbol=iris_test_se.ve[,3], symbols = c('circle-open','cross'))
+
+```
+
+### Using 3 Kernels
+
+```{r,eval=F,include=F}
+## use x*y+1
+kernel = function(x,y)
+  return(k12(x,y))
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_train_se.ve[j,1:2])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%(iris_train_se.ve[,3]-1.5)
+## evaluate the classifier
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:m,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_test_se.ve[j,1:2])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[iris_test_se.ve[,3]==1,]==-1)
+c12=sum(hat.y[iris_test_se.ve[,3]==1,]==1)
+c21=sum(hat.y[iris_test_se.ve[,3]==2,]==-1)
+c22=sum(hat.y[iris_test_se.ve[,3]==2,]==1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,eval=F,include=F}
+## use (x*y)^2
+kernel = function(x,y)
+  return(k2(x,y))
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_train_se.ve[j,1:2])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%(iris_train_se.ve[,3]-1.5)
+## evaluate the classifier
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:m,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_test_se.ve[j,1:2])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[iris_test_se.ve[,3]==1,]==-1)
+c12=sum(hat.y[iris_test_se.ve[,3]==1,]==1)
+c21=sum(hat.y[iris_test_se.ve[,3]==2,]==-1)
+c22=sum(hat.y[iris_test_se.ve[,3]==2,]==1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,eval=F,include=F}
+## use Gaussian
+kernel = function(x,y)
+  return(k5(x,y))
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_train_se.ve[j,1:2])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%(iris_train_se.ve[,3]-1.5)
+## evaluate the classifier
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:m,Vectorize(function(i,j) kernel(iris_train_se.ve[i,1:2],iris_test_se.ve[j,1:2])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[iris_test_se.ve[,3]==1,]==-1)
+c12=sum(hat.y[iris_test_se.ve[,3]==1,]==1)
+c21=sum(hat.y[iris_test_se.ve[,3]==2,]==-1)
+c22=sum(hat.y[iris_test_se.ve[,3]==2,]==1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+
+
+-->
+
+
+## 2d data
+
+
+```{r,echo=T}
+# Define Kernel
+rm(list=ls())
+k1 = function(x,y) return(sum(x*y))
+k12 = function(x,y)  return(sum(x*y)+1)
+k2 = function(x,y)  return(sum(x*y)^2)
+k3 = function(x,y)  return((1+sum(x*y))^2)
+d=4
+k4 = function(x,y)  return((1+sum(x*y))^d)
+sigma=1
+k5 = function(x,y)  return(exp(-sum((x-y)^2)/(2*sigma^2)))        
+k51 = function(x,y)  return(exp(-sum(x^2)-sum(y^2)+2*sum((x*y))))
+kappa=1
+theta=1
+k6 = function(x,y)  return(tanh(kappa*sum(x*y)+theta))
+kernel = function(x,y)  return(k5(x,y))
+```
+
+
+```{r,echo=T,include=T,message=F,warning=F,out.width='50%'}
+# Generating training data and test data
+n=100
+library(mvtnorm)
+x <- rmvnorm(n=n,mean=c(-2,-2)+c(2,2),sigma=diag(rep(1,2)))
+y<-ifelse(x[,1]^2+x[,2]^2<1,1,-1)
+plot(x[,1],x[,2],col=y+rep(3,n),pch=16)
+
+test.x <- rmvnorm(n=n,mean=c(-2,-2)+c(2,2),sigma=diag(rep(1,2)))
+test.y <- ifelse(test.x[,1]^2+test.x[,2]^2<1,1,-1)
+
+## compute the classifier 
+lambda=0.01
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],x[j,])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%y
+f=t(KK)%*%alpha
+
+# test
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],test.x[j,])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[test.y==1,]==1)
+c12=sum(hat.y[test.y==1,]==-1)
+c21=sum(hat.y[test.y==-1,]==1)
+c22=sum(hat.y[test.y==-1,]==-1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,echo=F,include=T,message=F,warning=F,out.width='50%',fig.align='center'}
+# hyperplane
+x.min=min(test.x)
+x.max=max(test.x)
+y.hat=matrix(NA,nrow=n,ncol=n)
+g=seq(from=x.min,to=x.max,length.out=n)
+for (i in (1:n)){
+  for (j in (1:n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) kernel(x[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)
+  }
+}
+filled.contour(x=g,y=g,z=y.hat,color.palette = function(n) hcl.colors(n, "Geyser", rev = T),
+               plot.axes = {axis(1);axis(2);points(test.x,col=test.y+rep(5,n),pch=17) })
+# Plot the test and 3D grid
+# library(plotly)
+# plot_ly (type='surface',x=g,y=g,z =2*y.hat, opacity=0.95)%>%add_markers( x =test.x[,1] , y = test.x[,2], z = test.y, color = as.factor(test.y+rep(3,n)),size =10, symbol=test.y, symbols = c('circle-open','cross'))
+
+```
+
+### Using 3 Kernels
+
+\fontsize{8pt}{0pt}
+
+```{r}
+## use  kernel (x*y)^2
+kernel = function(x,y)
+  return(k2(x,y))
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],x[j,])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%y
+f=t(KK)%*%alpha
+
+# test
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],test.x[j,])))
+hat.y=sign(t(k.t)%*%alpha+0.25)
+
+c11=sum(hat.y[test.y==1,]==1)
+c12=sum(hat.y[test.y==1,]==-1)
+c21=sum(hat.y[test.y==-1,]==1)
+c22=sum(hat.y[test.y==-1,]==-1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,echo=F,include=T,message=F,warning=F,out.width='50%',fig.align='center'}
+# hyperplane
+x.min=min(test.x)
+x.max=max(test.x)
+y.hat=matrix(NA,nrow=n,ncol=n)
+g=seq(from=x.min,to=x.max,length.out=n)
+for (i in (1:n)){
+  for (j in (1:n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) kernel(x[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)+2
+  }
+}
+filled.contour(x=g,y=g,z=y.hat,color.palette = function(n) hcl.colors(n, "Geyser", rev = T),
+               plot.axes = {axis(1);axis(2);points(test.x,col=test.y+rep(5,n),pch=17) })
+```
+
+```{r}
+## use kernel Gaussian-1
+kernel = function(x,y)
+  return(k51(x,y))
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],x[j,])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%y
+f=t(KK)%*%alpha
+
+# test
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],test.x[j,])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[test.y==1,]==1)
+c12=sum(hat.y[test.y==1,]==-1)
+c21=sum(hat.y[test.y==-1,]==1)
+c22=sum(hat.y[test.y==-1,]==-1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,echo=F,include=T,message=F,warning=F,out.width='50%',fig.align='center'}
+# hyperplane
+x.min=min(test.x)
+x.max=max(test.x)
+y.hat=matrix(NA,nrow=n,ncol=n)
+g=seq(from=x.min,to=x.max,length.out=n)
+for (i in (1:n)){
+  for (j in (1:n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) kernel(x[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)
+  }
+}
+filled.contour(x=g,y=g,z=y.hat,color.palette = function(n) hcl.colors(n, "Geyser", rev = T),
+               plot.axes = {axis(1);axis(2);points(test.x,col=test.y+rep(5,n),pch=17) })
+```
+
+
+```{r}
+## use kernel 6
+kernel = function(x,y)
+  return(k6(x,y))
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],x[j,])))
+alpha = solve(KK + lambda*n*diag(rep(1,n)))%*%y
+f=t(KK)%*%alpha
+
+# test
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],test.x[j,])))
+hat.y=sign(t(k.t)%*%alpha)
+
+c11=sum(hat.y[test.y==1,]==1)
+c12=sum(hat.y[test.y==1,]==-1)
+c21=sum(hat.y[test.y==-1,]==1)
+c22=sum(hat.y[test.y==-1,]==-1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r,echo=F,include=T,message=F,warning=F,out.width='50%',fig.align='center'}
+# hyperplane
+x.min=min(test.x)
+x.max=max(test.x)
+y.hat=matrix(NA,nrow=n,ncol=n)
+g=seq(from=x.min,to=x.max,length.out=n)
+for (i in (1:n)){
+  for (j in (1:n)){
+    u=c(g[i],g[j])
+    k.x=outer(1:n,1,Vectorize(function(i,j) kernel(x[i,],u)))
+    y.hat[i,j]=sum(k.x*alpha)
+  }
+}
+filled.contour(x=g,y=g,z=y.hat,color.palette = function(n) hcl.colors(n, "Geyser", rev = T),
+               plot.axes = {axis(1);axis(2);points(test.x,col=test.y+rep(5,n),pch=17) })
+```
+
+```{r, eval=F,include=F,message=F,warning=F,collapse=T}
+# attempt
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],x[j,])))
+
+f=function(X){
+  k.x=outer(1:n,1,Vectorize(function(i,j) kernel(x[i],X[j])))
+  return(t(k.x)%*%alpha)
+}
+
+alpha=rep(0,n)
+alpha[1]=y[1]
+
+for (j in 2:n) {                      
+ if (f(x[j]) < 0) { 
+    alpha[j] = y[j]}
+}
+
+t(cbind(y,alpha))
+
+k.t <- matrix(rep(0,n^2),n,n)
+k.t=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],test.x[j,])))
+y.hat=sign(t(k.t)%*%alpha+4)
+
+hist(t(k.t)%*%alpha)
+
+c11=sum(y.hat[test.y==1,]==1)
+c12=sum(y.hat[test.y==1,]==-1)
+c21=sum(y.hat[test.y==-1,]==1)
+c22=sum(y.hat[test.y==-1,]==-1)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+
+
+
+
+## MNIST data clasification
+
+\fontsize{8pt}{0pt}
+
+Code a version of the kernalized ridge regression algorithm that let you run the algorithm for various sets of images from the MNIST dataset such that you can perform controled experiments. The input of the algorithm could be a list of filenames, corresponding to images for training, testing, as well as the corresponding labels.  
+
+Run the kernelized ridge regression for one digit versus another one of your choice. You will see that the size of the full MNIST training set might be too large for the algorithm to run in a reasonable time. Instead, sample smaller training sets, say of size 100. Now, you should be able to run the algorithm. Experiment with smaller and larger training set size. Report the performance by specifying the total number of images correctly classified, as well as the learning time and testing time. Show graphs, with on the horizontal axis the number of images used for training or for testing. 
+
+Import data: Omitted.
+
+```{r,echo=F,message=F}
+rm(list=ls())
+library(pROC)
+load_mnist <- function() {
+  load_image_file <- function(filename) {
+    ret = list()
+    f = file(filename,'rb')
+    readBin(f,'integer',n=1,size=4,endian='big')
+    ret$n = readBin(f,'integer',n=1,size=4,endian='big')
+    nrow = readBin(f,'integer',n=1,size=4,endian='big')
+    ncol = readBin(f,'integer',n=1,size=4,endian='big')
+    x = readBin(f,'integer',n=ret$n*nrow*ncol,size=1,signed=F)
+    ret$x = matrix(x, ncol=nrow*ncol, byrow=T)
+    close(f)
+    ret
+  }
+  load_label_file <- function(filename) {
+    f = file(filename,'rb')
+    readBin(f,'integer',n=1,size=4,endian='big')
+    n = readBin(f,'integer',n=1,size=4,endian='big')
+    y = readBin(f,'integer',n=n,size=1,signed=F)
+    close(f)
+    y
+  }
+  train <<- load_image_file('train-images-idx3-ubyte')
+  test <<- load_image_file('t10k-images-idx3-ubyte')
+  train$y <<- load_label_file('train-labels-idx1-ubyte')
+  test$y <<- load_label_file('t10k-labels-idx1-ubyte')  
+}
+show_digit <- function(arr784, col=gray(128:1/128), ...) {
+  image(matrix(arr784, nrow=28)[,28:1], col=col, ...)
+}
+load_mnist()
+```
+
+```{r, eval=F,include=F}
+# First Run: 50 train and 50 test
+digit1=1
+digit2=9
+id.train = sample(which(train$y==digit1 | train$y==digit2),size=10)
+id.test= sample(which(test$y==digit1 | test$y==digit2),size=100)
+x=train$x[id.train,]
+y=train$y[id.train]
+test.x=test$x[id.test,]
+test.y=test$y[id.test]
+
+sigma=1
+k5 = function(x,y)  return(exp(-sum((x-y)^2)/(2*sigma^2)))        
+k51 = function(x,y)  return(exp(-sum(x^2)-sum(y^2)+2*sum((x*y))))
+
+# start to train by ridge regression 
+ptm <- proc.time()
+n <- 10; m <- 100
+lambda=0.001
+kk <- outer(1:n,1:n,Vectorize(function(i,j) k5(x[i,],x[j,])))
+dd <- diag(kk)
+alpha = solve(kk + lambda*n*dd)%*%y
+f=t(kk)%*%alpha
+
+# test
+k.t <- matrix(rep(0,n^2),n,m)
+k.t <- outer(1:n,1:m,Vectorize(function(i,j) k5(x[i,],test.x[j,])))
+hat.y=sign(t(k.t)%*%alpha)
+
+
+KK <- matrix(rep(0,n^2),n,n)
+KK=outer(1:n,1:n,Vectorize(function(i,j) k5(x[i,],x[j,])))
+
+```
+
+
+
+```{r}
+# First Run: 50 train and 50 test
+digit1=1
+digit2=9
+id.train = sample(which(train$y==digit1 | train$y==digit2),size=50)
+id.test= sample(which(test$y==digit1 | test$y==digit2),size=50)
+x=train$x[id.train,]
+y=train$y[id.train]
+test.x=test$x[id.test,]
+test.y=test$y[id.test]
+
+# start to train by ridge regression 
+ptm <- proc.time()
+n <- 50; m <- 50
+lambda=0.001
+kk <- tcrossprod(x)
+dd <- diag(kk)
+gau.kernel <- exp((-matrix(dd,n,n)-t(matrix(dd,n,n))+2*kk))
+alpha = solve(gau.kernel + lambda*n*diag(rep(1,n)))%*%y
+train_50<- proc.time() - ptm
+
+# start to test by ridge regression 
+kt <- tcrossprod(test.x)
+dd <- diag(kt)
+gau.kernel <- exp((-matrix(dd,m,m)-t(matrix(dd,m,m))+2*kt))
+hat.y=sign(gau.kernel%*%alpha-4.76)
+test_50<-proc.time() - ptm
+
+# show the result
+c11=sum(hat.y[y==digit1,]<0)
+c12=sum(hat.y[y==digit2,]<0)
+c21=sum(hat.y[y==digit1,]>0)
+c22=sum(hat.y[y==digit2,]>0)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+
+```
+
+```{r}
+# Second Run : 100 train and 100 test
+digit1=1
+digit2=9
+id.train = sample(which(train$y==digit1 | train$y==digit2),size=100)
+id.test= sample(which(test$y==digit1 | test$y==digit2),size=100)
+x=train$x[id.train,]
+y=train$y[id.train]
+test.x=test$x[id.test,]
+test.y=test$y[id.test]
+
+# start to train by ridge regression 
+ptm <- proc.time()
+n <- 100; m <- 100
+lambda=0.001
+kk <- tcrossprod(x)
+dd <- diag(kk)
+gau.kernel <- exp((-matrix(dd,n,n)-t(matrix(dd,n,n))+2*kk))
+alpha = solve(gau.kernel + lambda*n*diag(rep(1,n)))%*%y
+train_100 <-proc.time() - ptm
+
+# start to test by ridge regression 
+kt <- tcrossprod(test.x)
+dd <- diag(kt)
+gau.kernel <- exp((-matrix(dd,m,m)-t(matrix(dd,m,m))+2*kt))
+hat.y=sign(gau.kernel%*%alpha-4.55)
+test_100 <-proc.time() - ptm
+
+# show the result
+c11=sum(hat.y[y==digit1,]<0)
+c12=sum(hat.y[y==digit2,]<0)
+c21=sum(hat.y[y==digit1,]>0)
+c22=sum(hat.y[y==digit2,]>0)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+
+```{r}
+# Third Run : 1000 train and 1000 test
+digit1=1
+digit2=9
+id.train = sample(which(train$y==digit1 | train$y==digit2),size=1000)
+id.test= sample(which(test$y==digit1 | test$y==digit2),size=1000)
+x=train$x[id.train,]
+y=train$y[id.train]
+test.x=test$x[id.test,]
+test.y=test$y[id.test]
+
+# start to train by ridge regression 
+ptm <- proc.time()
+n <- 1000; m <- 1000
+lambda=0.001
+kk <- tcrossprod(x)
+dd <- diag(kk)
+gau.kernel <- exp((-matrix(dd,n,n)-t(matrix(dd,n,n))+2*kk))
+alpha = solve(gau.kernel + lambda*n*diag(rep(1,n)))%*%y
+train_1000 <-proc.time() - ptm
+lambda_0.001 <-proc.time() - ptm
+
+# start to test by ridge regression 
+kt <- tcrossprod(test.x)
+dd <- diag(kt)
+gau.kernel <- exp((-matrix(dd,m,m)-t(matrix(dd,m,m))+2*kt))
+hat.y=sign(gau.kernel%*%alpha-2.5)
+test_1000 <-proc.time() - ptm
+
+# show the result
+c11=sum(hat.y[y==digit1,]<0)
+c12=sum(hat.y[y==digit2,]<0)
+c21=sum(hat.y[y==digit1,]>0)
+c22=sum(hat.y[y==digit2,]>0)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r}
+# Fouth Run : lambda=0.01
+
+# start to train by ridge regression 
+ptm <- proc.time()
+n <- 1000; m <- 1000
+lambda=0.01
+kk <- tcrossprod(x)
+dd <- diag(kk)
+gau.kernel <- exp((-matrix(dd,n,n)-t(matrix(dd,n,n))+2*kk))
+alpha = solve(gau.kernel + lambda*n*diag(rep(1,n)))%*%y
+lambda_0.01 <-proc.time() - ptm
+
+# start to test by ridge regression 
+kt <- tcrossprod(test.x)
+dd <- diag(kt)
+gau.kernel <- exp((-matrix(dd,m,m)-t(matrix(dd,m,m))+2*kt))
+hat.y=sign(gau.kernel%*%alpha-0.45)
+
+
+# show the result
+c11=sum(hat.y[y==digit1,]<0)
+c12=sum(hat.y[y==digit2,]<0)
+c21=sum(hat.y[y==digit1,]>0)
+c22=sum(hat.y[y==digit2,]>0)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+```{r}
+# Fifth Run : lambda=0.1
+
+# start to train by ridge regression 
+ptm <- proc.time()
+n <- 1000; m <- 1000
+lambda=0.1
+kk <- tcrossprod(x)
+dd <- diag(kk)
+gau.kernel <- exp((-matrix(dd,n,n)-t(matrix(dd,n,n))+2*kk))
+alpha = solve(gau.kernel + lambda*n*diag(rep(1,n)))%*%y
+lambda_0.1 <-proc.time() - ptm
+
+# start to test by ridge regression 
+kt <- tcrossprod(test.x)
+dd <- diag(kt)
+gau.kernel <- exp((-matrix(dd,m,m)-t(matrix(dd,m,m))+2*kt))
+hat.y=sign(gau.kernel%*%alpha-0.045)
+
+# show the result
+c11=sum(hat.y[y==digit1,]<0)
+c12=sum(hat.y[y==digit2,]<0)
+c21=sum(hat.y[y==digit1,]>0)
+c22=sum(hat.y[y==digit2,]>0)
+print(matrix(c(c11,c21,c12,c22),nrow=2))
+```
+
+
+
+```{r,echo=F,include=T,message=F,warning=F,out.width='45%'}
+time1 <- rbind(train_50, test_50, train_100, test_100, train_1000, test_1000)[,3]
+barplot(time1, main="running time of different data sizes",
+  xlab="Number of sample size", col=c("darkgreen","GreenYellow"),
+  legend = rownames(time1), beside=TRUE)
+
+time2 <- rbind(lambda_0.001,lambda_0.01,lambda_0.1)[,3]
+barplot(time2, main="Training time for different lambda values",
+  xlab="Value of lambda", col=c("darkRed","orange","Goldenrod"),
+  legend = rownames(time2), beside=T)
+
+
+```
+
+
+
+
+
+
+```{r,eval=F,include=F}
+hist(as.vector(test$y),xlim=range(test$y),col=rgb(0.1,0.1,0.1,0.5),main="")
+hist(as.vector(hat.y),add=T,col=rgb(0.8,0.8,0.8,0.5),main="")
+hist(test$y)
+hist(hat.y)
+hist(as.vector(hat.y),add=T,col=rgb(0.8,0.8,0.8,0.5),main="")
+
+sigma=1
+k = function(x,y) return(exp(-sum((x-y)^2)/(2*sigma^2)))     
+kk=outer(1:n,1:n,Vectorize(function(i,j) k(train$x[i],train$x[j])))
+kk <- matrix(rep(0,n^2),n,n)
+kk=outer(1:n,1:n,Vectorize(function(i,j) k(train$x[i],train$x[j])))
+kt=outer(1:n,1:n,Vectorize(function(i,j) k(train$x[i],test$x[j])))
+
+
+alphas <- solve(Gau.kernel +lambda*n*diag(rep(1,n))) %*%train$y
+
+  g = t(train$x[s,]) %*% (mu[s]-train$y[s]) + 2*lambda%*%w
+  h = t(train$x[s,])%*%(delta[s,s]%*%train$x[s,]) + 2*lambda
+  d = solve(h,g)
+  w = w - 0.1*d
+  hist(as.vector(test$x[test$y==digit1,]%*%alpha),xlim=range(as.vector(test$x%*%alpha)),col=rgb(0.1,0.1,0.1,0.5),main="")
+  hist(as.vector(test$x[test$y==digit2,]%*%alpha),add=T,col=rgb(0.8,0.8,0.8,0.5),main="")
+
+lambda=0.01
+N = nrow(x)
+ident.N = diag(rep(1,N))
+KK <- matrix(rep(0,N^2),N,N)
+KK=outer(1:n,1:n,Vectorize(function(i,j) kernel(x[i,],x[j,])))
+alpha = solve(KK + lambda*N*diag(rep(1,N)))%*%y
+
+##################################
+## evaluate the classifier #######
+## over a grid             #######
+##################################
+k.x=outer(1:n,1:n.plot,Vectorize(function(i,j) k(x[i],x.plot[j])))
+lines(x.plot,t(k.x)%*%alpha)
+legend("bottomleft",legend=c("true", "estimated"),
+       col=c(2,1),lty=c(1,1))  
+
+ptm <- proc.time()
+N <- nrow(train_krr$x)
+kk <- tcrossprod(train_krr$x)
+dd <- diag(kk)
+ident.N <- diag(rep(1,N))
+
+Gau.kernel <- exp((-matrix(dd,N,N)-t(matrix(dd,N,N))+2*kk))
+
+alphas <- solve(Gau.kernel + .0001*N*ident.N) %*% train_krr$class
+#f <- Gau.kernel %*% alphas
+
+proc.time() - ptm
+
+# test accuracy rate and output test time
+
+test_krr <- list(x=test$x[1:1000,1:748],y=train$y[1:1000])
+
+ptm <- proc.time()
+
+N <- nrow(test_krr$x)
+kk <- tcrossprod(test_krr$x)
+dd <- diag(kk)
+ident.N <- diag(rep(1,N))
+G_kernel <- exp((-matrix(dd,N,N)-t(matrix(dd,N,N))+2*kk))
+f <- G_kernel %*% alphas
+y<-with(test_krr, ifelse(y==1, 1, ifelse(y==6, -1, 0)))
+
+proc.time() - ptm
+
+performance <- data.frame(cbind(f,y))
+Performance <- ifelse((performance$V1 - performance$y)==0, "Right", "Wrong")
+table(Performance)
+```
+
+
+
+# Semi-parametric regression
+
+\fontsize{8pt}{0pt}
+
+Let $\mathcal{D}=\{(x_i,y_i), 1 \leq i \leq n\}$ be a training set where $x_i \in \mathbb{R}^d$ is a feature vector, and $y_i \in \mathbb{R}$ is the target, or independent variable. 
+We are interested in the following semi-parametric model for predicting $y$, 
+$f(x) = \theta^T x + g(x)$
+where $\theta \in \mathbb{R}^d$ is a vector of parameters and $g: \mathbb{R}^d \mapsto \mathbb{R}$ belongs to a RKHS with kernel $k(.,.)$. 
+This model is called semi-parametric because it is the sum of a parametric component, here the linear term $\theta^T x$ and a non-linear component, the function $g(.)$. 
+Consider the functional 
+$J(\theta,g) = \sum_{i=1}^n \left(y_i - \theta^T x_i - g(x_i)\right)^2 + \lambda ||g||_H^2$
+
+## Show that for any $\theta$, a function $g \in H$ that minimizes $J(\theta,g)$ has the following form $g(.)=\sum_{i=1}^n \alpha_i k(x_i,.)$ where $\alpha \in \mathbb{R}^n$ 
+
+\normalsize
+
+Let $v=\text{span} [k(\cdot,x_i),..,k(\cdot,x_n)]$ $\mathcal{V}$ is closed linear subspace of $\mathcal{H}$. Then all minimizers of $J$ belong to  $\mathcal{V}$.
+Thus, there is an unique decomposition $g=g_v+g_{\perp}$ with $g_v\in\mathcal{V}$
+
+$\forall g\in\mathcal{V}$, $\langle g_{\perp},f\rangle=0$
+
+$$\|g\|^2_{\mathcal{H}}=\|g_v+g_{\perp}\|^2_{\mathcal{H}}=\langle g_v+g_{\perp},g_v+g_{\perp}\rangle=\langle g_v,g_v\rangle+\langle g_{\perp},g_{\perp}\rangle+\underbrace{2\langle g_v,g_{\perp}\rangle}_{0}=\|g_v\|^2_{\mathcal{H}}+\|g_{\perp}\|^2_{\mathcal{H}}$$
+
+$$g(x_i)=\langle g,k(\cdot,x_i)\rangle=\langle g_{v}+g_{\perp},k(\cdot,x_i)\rangle=\langle g_{v},k(\cdot,x_i)\rangle+\underbrace{\langle g_{\perp},k(\cdot,x_i)\rangle}_{0}=g_v(x_i)$$
+
+For $g$ is strictly increasing
+
+\begin{align*}
+J(\theta,g)-J(\theta,g_v) &= \sum_{i=1}^n \left(y_i - \theta^T x_i - g(x_i)\right)^2 + \lambda \|g\|_{\mathcal{H}}^2-\sum_{i=1}^n \left(y_i - \theta^T x_i - g_v(x_i)\right)^2 - \lambda \|g_v\|_{\mathcal{H}}^2\\
+&=\sum_{i=1}^n \left(y_i - \theta^T x_i - g(x_i)\right)^2-\sum_{i=1}^n \left(y_i - \theta^T x_i - g_v(x_i)\right)^2+\lambda \|g\|_{\mathcal{H}}^2-\lambda \|g_v\|_{\mathcal{H}}^2\\
+&=\lambda \|g_{\perp}\|_{\mathcal{H}}^2\ge 0 \quad \text{is free of} \theta
+\end{align*}
+
+The representer theorem allows us to reduce the optimization problem to a finite dimensional optimization problem.
+
+Let $\alpha=(\alpha_1,..,\alpha_n)^T\in\mathbb{R^n}$ is the solution of $\min J(\theta,g)$
+
+For any $\theta$, the function $g(.)=\sum_{i=1}^n \alpha_i k(x_i,.)$,$g \in\mathcal{H}$ that minimizes $J(\theta,g)$
+
+## Show that $J(\sum_{i=1}^n \alpha_i k(x_i,.),\theta)=||y - X\theta - K\alpha||^2 + \lambda \alpha^T K \alpha$ for some matrix $K$ and $X$ which you will specify together with their dimensions. 
+
+$$\|g\|^2_{\mathcal{H}}=\langle g,g\rangle_{\mathcal{H}}=\langle \sum_{i=1}^n\alpha_i k(\cdot,x_i),\sum_{j=1}^n\alpha_j k(\cdot,x_j)\rangle_{\mathcal{H}}=\sum_{i,j=1}^n\alpha_i\alpha_j\underbrace{\langle k(\cdot,x_i),k(\cdot,x_j)\rangle_{\mathcal{H}}}_{k(x_i,x_j)}=\underset{(1,n)}{\alpha^T}\underset{(n,n)}{K}\underset{(n,1)}{\alpha}$$
+
+$$g(x_i)=\sum_{j=1}^n\alpha_j k(x_i,x_j)=\sum_{j=1}^n\alpha_j[\underset{(n,n)}{K}]_{i,j}=[K\alpha]_i$$
+
+$$J(\theta,\sum_{i=1}^n\alpha_i k(x_i,\cdot))=\sum_{i=1}^n (y_i - \theta^T x_i - [K\alpha]_i)^2 + \lambda \|g\|_{\mathcal{H}}^2=\|\underset{(n,1)}{Y} - \underset{(n,d)}{X}\underset{(d,1)}{\theta}  -\underset{(n,n)}{K}\underset{(n,1)}{\alpha}\|^2 + \underset{(1,1)}{\lambda} \underset{(1,n)}{\alpha^T}\underset{(n,n)}{K}\underset{(n,1)}{\alpha}$$
+
+## Compute $\nabla_\alpha J$, the gradient of $J$ with respect to $\alpha$. Similarly, compute $\nabla_\theta J$, the gradient of $J$ with respect to $\theta$. 
+
+$\min_{g\in\mathcal{H}} J(\theta,g)$
+
+\begin{align*}
+\nabla_\alpha J&=\frac{\partial}{\partial\alpha}[\|Y - X\theta -K\alpha\|^2 + \lambda \alpha^TK\alpha]\\
+&=\frac{\partial}{\partial\alpha}\|K\alpha+X\theta-Y\|^2 + \lambda \frac{\partial}{\partial\alpha}\langle\alpha,K\alpha\rangle\\
+&=2(K\alpha+X\theta-Y)\frac{\partial}{\partial\alpha}(K\alpha+X\theta-Y) + \lambda (IK\alpha+K^T\alpha)\\
+&=2(K\alpha+X\theta-Y)K^T+2\lambda K\alpha\\
+&\underset{K=K^T}{=}2K[(K+\lambda I)\alpha+X\theta-Y]
+\end{align*}
+
+\begin{align*}
+\nabla_\theta J&=\frac{\partial}{\partial\theta}[\|Y - X\theta -K\alpha\|^2 + \lambda \alpha^TK\alpha]\\
+&=2(K\alpha+X\theta-Y)\frac{\partial}{\partial\theta}(K\alpha+X\theta-Y)\\
+&=2(K\alpha+X\theta-Y)X^T
+\end{align*}
+
+
+
+## Assume that the matrix $X^TX$ is positive definite. Find one solution $(\alpha,\theta)$ of the system  $\nabla_\alpha J=0, \nabla_\theta J=0$.  
+
+p.d. $K,X$ is symmetric, $K=K^T$, $X=X^T$; $K=P\Lambda P^T$; $I=PP^T$; $\Lambda$ is diagonal matrix with $\gamma_1,..,\gamma_n$.
+
+$\lambda>0$,$\gamma_i>0$, $K+\lambda I=P(\Lambda+\lambda I) P^T$ is inversible.
+
+$$\nabla_\alpha J=(K+\lambda I)\alpha+X\theta-Y\overset{set}{=}0\implies
+(K+\lambda I)\alpha^\star=Y-X\theta\implies\alpha^\star=(K+\lambda I)^{-1}(Y-X\theta)$$
+
+$$\nabla_\theta J=(K\alpha+X\theta-Y)X^T\overset{set}{=}0\implies
+X\theta^\star X^T=(Y-K\alpha)X^T\implies\theta^\star=(X^TX)^{-1}X^T(Y-K\alpha)$$
+
+$\theta^\star=(X^TX)^{-1}X^T[Y-K(K+\lambda I)^{-1}(Y-X\theta^\star)]=(X^TX)^{-1}X^TY-(X^TX)^{-1}X^TK(K+\lambda I)^{-1}Y+(X^TX)^{-1}X^TK(K+\lambda I)^{-1}X\theta^\star$
+
+$[I-(X^TX)^{-1}X^TK(K+\lambda I)^{-1}X]\theta^\star=(X^TX)^{-1}X^TY-(X^TX)^{-1}X^TK(K+\lambda I)^{-1}Y=(X^TX)^{-1}X^T[I-K(K+\lambda I)^{-1}]Y$
+
+$\theta^\star=[I-(X^TX)^{-1}X^TK(K+\lambda I)^{-1}X]^{-1}(X^TX)^{-1}X^T[I-K(K+\lambda I)^{-1}]Y$
+
+$\alpha^\star=(K+\lambda I)^{-1}Y-(K+\lambda I)^{-1}X[(X^TX)^{-1}X^T(Y-K\alpha^\star)]=(K+\lambda I)^{-1}[I-X[(X^TX)^{-1}X^T]Y+(K+\lambda I)^{-1}X[(X^TX)^{-1}X^TK\alpha^\star]$
+
+$[I-(K+\lambda I)^{-1}HK]\alpha^\star=(K+\lambda I)^{-1}[I-H]Y$
+
+$\alpha^\star=[I-(K+\lambda I)^{-1}HK]^{-1}(K+\lambda I)^{-1}[I-H]Y$
+
+## Write a code that demonstrate in one dimension the semi-parametric regression.
+
+\fontsize{8pt}{0pt}
+
+```{r,echo=T,include=T,message=F,warning=F,out.width='45%', fig.align='center'}
+hmw3_data1 <- read.csv("hmw3-data1.csv")
+n=10;n.plot=100
+x = hmw3_data1$x
+y = hmw3_data1$y
+x.plot=seq(from=min(x),to=max(x),length.out=n.plot)
+y.plot=seq(from=min(y),to=max(y),length.out=n.plot)
+plot(x.plot,y.plot,type='n')
+points(x,y,pch=16)
+
+## compute the classifier 
+lambda=0.01
+theta=1
+I=diag(rep(1,n))
+sigma=1
+k = function(x,y)  return(exp(-sum((x-y)^2)/(2*sigma^2)))   
+kk=outer(1:n,1:n,Vectorize(function(i,j) k(x[i],x[j])))
+alpha = solve(kk + lambda*diag(rep(1,n)))%*%(y-x*theta)
+
+## evaluate the classifier 
+k.x=outer(1:n,1:n.plot,Vectorize(function(i,j) k(x[i],x.plot[j])))
+hat.y=t(k.x)%*%alpha +x.plot*theta
+lines(x.plot,hat.y,col=2)
+legend("bottomleft",legend="estimated",col=2,lty=1)  
+```
+
+
+
+
