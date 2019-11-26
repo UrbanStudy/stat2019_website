@@ -14,45 +14,70 @@ output:
 
 # Topic
 
-Lambert, D. (1992). Zero-Inflated Poisson Regression, with an Application to Defects in Manufacturing. Technometrics, 34(1), 1-14. doi:10.2307/1269547
+Schmee, J., & Hahn, G. (1979). A Simple Method for Regression Analysis With Censored Data. Technometrics, 21(4), 417-432.
 
 ## Abstract {.smaller}
 
-Zero-inflated Poisson (ZIP) regression is a model for count data with excess zeros. It assumes that with probability p the only possible observation is 0, and with probability 1 - p, a Poisson(λ) random variable is observed. For example, when manufacturing equipment is properly aligned, defects may be nearly impossible. But when it is misaligned, defects may occur according to a Poisson(λ) distribution. Both the probability p of the perfect, zero defect state and the mean number of defects λ in the imperfect state may depend on covariates. Sometimes p and λ are unrelated; other times p is a simple function of λ such as p=1/(1+λ τ) for an unknown constant τ. In either case, ZIP regression models are easy to fit. The maximum likelihood estimates (MLE's) are approximately normal in large samples, and confidence intervals can be constructed by inverting likelihood ratio tests or using the approximate normality of the MLE's. Simulations suggest that the confidence intervals based on likelihood ratio tests are better, however. Finally, ZIP regression models are not only easy to interpret, but they can also lead to more refined data analyses. For example, in an experiment concerning soldering defects on printed wiring boards, two sets of conditions gave about the same mean number of defects, but the perfect state was more likely under one set of conditions and the mean number of defects in the imperfect state was smaller under the other set of conditions; that is, ZIP regression can show not only which conditions give lower mean number of defects but also why the means are lower.
+
+Problems requiring regression analysis of censored data arise frequently in practice. For example, in accelerated testing one wishes to relate stress and average time to failure from data including unfailed units, i. e., censored observations. Maximum likelihood is one method for obtaining the desired estimates; in this paper, we propose an alternative approach. An initial least squares fit is obtained treating the censored values as failures. Then, based upon this initial fit, the expected failure time for each censored observation is estimated. These estimates are then used, instead of the censoring times, to obtain a revised least squares fit and new expected failure times are estimated for the censored values. These are then used in a further least squares fit. The procedure is iterated until convergence is achieved. This method is simpler to implement and explain to non-statisticians than maximum likelihood and appears to have good statistical and convergence properties. The method is illustrated by an example, and some simulation results are described. Variations and areas for further study also are discussed.
 
 
-## The motivating appliction
+## Introduction
 
+## Related work and literature
 
+## Description of method for simple situation
 
-## The model
+$$\mu_x=\beta_0+\beta_1x$$
+$$\mu^\star_x=\mu_x+\frac{\sigma f(z)}{1-F(z)}$$
+where
+$$z=\frac{(c_x-\mu_x)}{\sigma}$$
 
+- Iteration 0
 
-## Maximum Likelihood Estimation
+- Iteration 1
 
-### $\lambda$ and $p$ Unrelated
+## Numerical Example {.smaller}
 
-### $p$ a Function of $\lambda$
+```{r}
+n=matrix(c(1764,2772,3444,3542,3780,4860,5196),7,1)
+```
 
-## Standard Erros and Confidence Intervals
+## Iteration 0 {.smaller}
 
-### The simulation Experiments
+- Step 1:
 
-### Simulated Properties of the MLE's
+$\hat\beta_0^{(0)}=-4.9307$,$\hat\beta_1^{(0)}=3.7471$,$\hat\sigma^{(0)}=0.1572$.
 
-### Simulated Behavior of Confidence Intervals and Tests
+- Step 2:
 
-### Simulated Behavior of Properties of the Observable $Y$
+$$x=\frac{1000}{170+273.2}=2.256318$$
 
-## The Motivating Application Revisited
+$$\hat\mu^{(0)}_{2.26}=-4.9307+3.7471\frac{1000}{170+273.2}=3.523948$$
 
-### ZIP Regression
+$$C_{2.26}=\ln(5448)=8.603004$$
 
-### ZIP Regressin Complared to Negative Binomial Regression
+$$z=\frac{C_{2.26}-\hat\mu^{(0)}_{2.26}}{\sigma}=\frac{8.603004-3.523948}{0.1572}=32.30952$$
 
-### ZIP ($\tau$) Regression
+$$\hat\mu^{\star(0)}_{2.26}=\hat\mu^{(0)}_{2.26}+\hat\sigma^{(0)}\frac{ f(z)}{1-F(z)}=3.8089$$
+Or 6440 hours
 
-## Conclusions
+## Iteration 1
 
+- Step 1:
+
+$\hat\beta_0^{(1)}=-5.2603$,$\hat\beta_1^{(1)}=3.9263$,$\hat\sigma^{(1)}=0.1799$.
+
+- Step 2:
+
+$$\hat\mu^{\star(1)}_{2.26}=3.83972 $$
+
+## Subsequent Iterations
+
+$\hat\beta_0=-5.81829$,$\hat\beta_1= 4.20426$,$\hat\sigma= 0.204322$.
+
+$$\hat\mu^{\star(17)}_{2.26}=3.87676 $$
+
+## Results of simulation analysis
 
 
