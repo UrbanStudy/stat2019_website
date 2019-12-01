@@ -10,6 +10,21 @@ output:
   slidy_presentation: default
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=F)
+options(scipen=100)
+options(digits=3)
+
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+# special installation process for printr as it is not available on CRAN
+pacman::p_load(tidyverse, knitr, readr, pander, ggplot2)
+
+panderOptions("digits", 2)
+panderOptions('round', 2)
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('keep.line.breaks', TRUE)
+```
+
 
 # 
 
@@ -94,6 +109,33 @@ $$0\le y_i\alpha_i\le\frac1{2\lambda n}, \text{for } i = 1,...,n$$
 
 ## Geometric interpretation
 
+```{r}
+set.seed(42) #set seed
+n <- 600 #set number of data points. 
+#Generate data frame with two uniformly distributed predictors.
+df <- data.frame(x1 = runif(n,0,1), x2 = runif(n,0,1))
+#classify data points depending on location
+df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1), 
+    levels = c(-1, 1))
+delta <- 0.07 #set margin
+df1 <- df[abs(1.4*df$x1 - df$x2) > delta, ] # retain only those points that lie outside the margin
+plot_margins <- ggplot(data = df1, aes(x = x1, y = x2, color = y)) + geom_point() + #build plot
+    scale_color_manual(values = c("red", "blue")) + 
+    geom_abline(slope = 1.4, intercept = 0)+
+    geom_abline(slope = 1.4, intercept = delta, linetype = "dashed") +
+    geom_abline(slope = 1.4, intercept = -delta, linetype = "dashed")
+plot_margins #display plot 
+```
+
+
+
+
+
+
+
+
+
+
 ## Support vectors
 
 - Consequence of KKT conditions 
@@ -160,7 +202,6 @@ sugar <- data.frame(
    sugar_sample = as.factor(c (1:25)),
    sugar_content=c(10.9,10.9,10.6,10.0,8.0,8.2,8.6,10.9,10.7,8.0,7.7,7.8,8.4,11.5,11.2,8.9,8.7,7.4,10.9,10.0,11.4,10.8,8.5,8.2,10.6)
 )
-library(ggplot2)
 plot_1 <- ggplot(data =sugar, aes(x = sugar_content, y =0)) + 
     geom_point() + theme_light()+
     geom_text(aes(label = sugar_content), size = 2.5, vjust = 2, hjust = 0.5)
