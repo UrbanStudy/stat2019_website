@@ -1,0 +1,406 @@
+---
+title: 'STAT 572: Bayesian Statistics'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Regression Analysis
+output:
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+## Announcements
+
+\benum
+\item Please take 5 minutes to fill out the course evaluation survey.
+
+\bigskip
+\item Three more lectures to go including this one!
+
+\bigskip
+\item We'll cover regression in two sessions and we have one more lecture.  We can either do: 
+
+\bit
+\item a small part of Hierarchical Modeling, 
+\item more on prior specification, 
+\item or cover in detail Bayesian Variable Selection.
+\eit
+YOUR PICK
+\eenum
+
+
+## Regression Modeling
+
+\begin{block}{Connects generating distribution of a rv $Y$ (support in $\mathbb{R}$) to one or more \emph{predictors} $\bx = (x_1, \ldots,x_p)\in \mathbb{R}^p$.}
+
+\bit
+\item Let $p(y \given \bx)$ denote the generating distribution of the rv $Y$ conditional on predictors $\bx$
+
+\bigskip
+\item Consider realizations $y_1,y_2, \ldots, y_n$ of the rv's $$Y_1\given \bx_1, Y_2\given \bx_2, \ldots, Y_n \given \bx_n$$
+
+\bigskip
+\item \textcolor{blue}{GOAL: Estimate $p(y \given \bx)$}
+\eit
+
+\end{block}
+
+
+## Regression Modeling
+
+Connection between $Y$ and $\bx = (x_{1},\ldots,x_{p})\in\mathbb{R}^p$:
+
+\begin{itemize}
+\item Assume $p(y \given \bx)$ varies smoothly with $\bx$, that is $$g:\mathbb{R}^p\rightarrow \mathbb{R},\;\text{with}\quad E[Y\given \bx] = g(\bx).$$
+
+\item Most commonly, we assume that $g$ is a the linear function
+\end{itemize}
+
+\begin{eqnarray*}
+E[Y\given \bx, \bbeta] &=& g(\bx; \bbeta) \;=\;\int_{y\in \mathbb{R}} y p(y\given \bx) dy \\
+&=&\bbeta' \bx = \beta_1 x_1 + \beta_2 x_2 +\cdots \beta_p x_p.
+\end{eqnarray*}
+
+\textcolor{blue}{NOTE: this model is linear in $\bbeta$, the $x$'s can be anything!}
+
+
+## Example: Oxygen Uptake
+
+\bit
+\item Sample of $n=12$ healthy men who DO NOT exercise regularly
+
+\bigskip
+\item Want to assess effect of oxygen uptake of 2 exercise regiments
+
+\bigskip
+\item 6 men assigned at random to 12-week flat-terrain running
+
+\bigskip
+\item 6 remaining, assigned to 12-week step aerobics
+
+\eit
+
+## Example: Oxygen Uptake
+
+\bit
+\item Response ($y$): change in max oxygen uptake (lt$/$min) measured on treadmill before and after trt.
+
+\bigskip
+\item Predictors ($\bx$):
+\bdes
+\item[$x_1=1$:\hfill] Intercept
+
+\smallskip
+\item[$x_2$:\hfill] $x_2=1$ if trt$\equiv$aerobics, $x_2=0$ o.w.
+
+\smallskip
+\item[$x_3$:\hfill] age (treated as continuous)
+
+\smallskip
+\item[$x_4=x_2*x_3$:\hfill] interaction of treatment and age
+\edes
+\eit
+
+## Example: Oxygen Uptake
+
+For $i=1,\ldots,12$, the model is
+
+\vspace{-0.7cm}
+\begin{eqnarray*}
+Y_i &=& g(\bx_i;\bbeta)+\varepsilon_i\\
+&=&\beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3+\beta_4 x_4+\varepsilon_i\\
+\text{with}&&\varepsilon_1,\varepsilon_2,\ldots,\varepsilon_n \stackrel{iid}{\sim}N(0,\sigma^2).
+\end{eqnarray*}
+Note that:
+\begin{eqnarray*}
+E[Y_i\given x_{1i}, x_{2i}=0,x_{3i}, x_{4i}=0, \bbeta]&=&\beta_1+\beta_3 x_{3i},\quad\text{and}\\
+E[Y_i\given x_{1i}, x_{2i}=1,x_{3i}, x_{4i}=x_{3i}, \bbeta]&=&\beta_1+\beta_2+\beta_3 x_{3i}+\beta_4 x_{3i}\\
+&=&\beta_1+\beta_2+(\beta_3+\beta_4) x_{3i}.
+\end{eqnarray*}
+
+
+## Example: Oxygen Uptake
+
+\textcolor{blue}{The randomness in $Y_i$ is entirely induced by $\varepsilon_i$!!}, implying
+
+$$Y_i\given \bx_i,\bbeta,\sigma^2 \sim N(g(\bx_i; \bbeta), \sigma^2)=N(\bbeta' \bx_i, \sigma^2),$$
+with $Y_1,\ldots, Y_n$ independent... 
+
+\centering
+\textcolor{blue}{BUT NOT IDENTICALLY DISTRIBUTED!}
+
+
+## Likelihood for the regression problem
+
+As such, we have that
+\small{
+\begin{eqnarray*}
+p(y_{1:n}\given \bx_{1:n},\bbeta,\sigma^2)&=&\prod_{i=1}^{n} (2\pi\sigma^2)^{-1/2} e^{-\frac{1}{2}(y_{i}-\bbeta' \bx)^2}\\
+&=&(2\pi\sigma^2)^{-n/2} e^{-\frac{1}{2}\sum_{i=1}^{n} (y_{i}-\bbeta' \bx)^2}
+\end{eqnarray*}
+}
+Letting $\by=(y_1, y_2, \ldots, y_n)'$ and $X = (\bx_1,\bx_2,\ldots,\bx_n)'$, we can represent this likelihood as 
+\small{
+\begin{eqnarray*}
+p(y_{1:n}\given \bx_{1:n},\bbeta,\sigma^2)&=& p(\by \given X,\bbeta,\sigma^2)\\
+&=&(2\pi)^{-n/2} |\sigma^2\text{I}_n|^{-1/2} e^{-\frac{1}{2}(\by-X \bbeta)' (\sigma^2\text{I}_n)^{-1}(\by-X \bbeta)}
+\end{eqnarray*}
+}
+
+Look familiar?
+
+## Likelihood for the regression problem
+
+It should, this is the density for the $n$-variate normal distribution $$\bY\given X, \bbeta,\sigma^2\sim N_n(X\bbeta,\sigma^2 \text{I}_n),$$ since 
+$$E[\bY\given X,\bbeta]=X\bbeta = \lrsqb{\bmat \bbeta'\bx_1 \\ \bbeta'\bx_2 \\ \vdots \\ \bbeta'\bx_n \emat}= \lrsqb{\bmat E[Y_1 \given \bx_1,\bbeta] \\ E[Y_2 \given \bx_2,\bbeta] \\ \vdots \\ E[Y_n \given \bx_n,\bbeta] \emat}$$
+
+
+## Likelihood for the regression problem
+
+The likelihood $p(y_{1:n}\given \bx_{1:n},\bbeta,\sigma^2)$ is maximized over $\bbeta$ when
+\small{
+\begin{eqnarray*}
+SSR(\bbeta) &=&\sum_{i=1}^n (y_i -\bbeta' \bx_i)^2\\
+&=& (\by-X\bbeta)'(\by-X\bbeta)\\
+&=& \by'\by-2\bbeta' X' \by + \bbeta' (X'X)\bbeta
+\end{eqnarray*}
+is minimized.  Deriving w.r.t. $\bbeta$ and setting to 0, we have
+\begin{eqnarray*}
+\frac{d SSR(\bbeta)}{d\bbeta} &=& -2 X' \by + (X'X)\bbeta \;\stackrel{set}{=}\;0\\
+\frac{d SSR(\bbeta)}{d\bbeta} &=& 0 \Longleftrightarrow \hat{\bbeta}_{OLS}\;=\; (X' X)^{-1} X' \by. 
+\end{eqnarray*}
+\textcolor{blue}{This is the OLS estimate for $\bbeta$} (unique if $(X'X)^{-1}$ exists).
+}
+
+## Bayesian inference for the Regression problem
+### Semiconjugate priors for $\bbeta$ and $\sigma^2$
+
+As a function of $\bbeta$, we have that
+$$p(\by \given X,\bbeta,\sigma^2)\propto_{\bbeta} e^{-\frac{1}{2\sigma^2}\lrp{\bbeta' (X'X)\bbeta - 2\bbeta' X' \by }},$$ so assuming $\bbeta\sim N_p(\bbeta_0,\Sigma_0)$, the full conditional posterior is
+\begin{eqnarray*}
+p(\bbeta\given X,\sigma^2,\by) &\propto_{\bbeta}& p(\by\given X,\bbeta,\sigma^2) p(\bbeta)\\
+&\propto_{\bbeta}& % \lrp{e^{-\frac{1}{2\sigma^2}\lrp{\bbeta' (X'X)\bbeta - 2\bbeta' X' \by }}} \lrp{e^{-\frac{1}{2}\lrp{\bbeta' \Sigma_0^{-1}\bbeta - 2\bbeta' \Sigma_0^{-1}\bbeta_0 }}}\\
+%&\propto_{\bbeta}& \lrp{e^{-\frac{1}{2}\lrp{\bbeta' \lrp{\frac{1}{\sigma^2}(X'X) + \Sigma_0^{-1}}\bbeta - 2\bbeta'\lrp{\frac{1}{\sigma^2}X' \by+\Sigma_0^{-1}\bbeta_0} }  }}
+\end{eqnarray*}
+\vspace{3cm}
+
+## Bayesian inference for the Regression problem
+### Semiconjugate priors for $\bbeta$ and $\sigma^2$
+So, letting 
+\begin{eqnarray*}
+\Sigma_{\bbeta}&=&\lrp{\frac{1}{\sigma^2}(X'X) + \Sigma_0^{-1}}^{-1}\;\text{and}\\
+\bmu_{\bbeta} &=&  \frac{1}{\sigma^2}(X' \by)+\Sigma_0^{-1}\bbeta_0,
+\end{eqnarray*}
+
+we have that 
+
+$$\bbeta\given X,\sigma^2,\by \sim N_p( \Sigma_{\bbeta} \bmu_{\bbeta},\Sigma_{\bbeta}).$$
+\vspace{2cm}
+
+## Bayesian inference for the Regression problem
+### Semiconjugate priors for $\bbeta$ and $\sigma^2$
+
+Assuming that a priori $\sigma^2\sim \text{IG}\lrp{\frac{\nu_0}{2},\frac{\nu_0\sigma_0^2}{2}}$, we have
+\small{
+\begin{eqnarray*}
+p(\sigma^2\given X,\bbeta,\by) &\propto_{\sigma^2}& p(\by\given X,\bbeta,\sigma^2) p(\sigma^2)\\
+&\propto_{\sigma^2}& % \lrp{(\sigma^2)^{-\frac{n}{2}} e^{-\frac{1}{2\sigma^2}(\by-X\bbeta)'(\by-X\bbeta)}} \times \\
+%&& \qquad\lrp{(\sigma^2)^{-\frac{\nu_0}{2}-1}e^{-\frac{1}{\sigma^2} \frac{\nu_0\sigma_0^2}{2} }}\\
+%&\propto_{\sigma^2}& (\sigma^2)^{-\frac{n+\nu_0}{2}-1}\times \\
+%&&\qquad \text{exp}\lrb{-\frac{1}{\sigma^2}
+%\frac{(\by-X\bbeta)'(\by-X\bbeta)+\nu_0\sigma_0^2}{2}},
+\end{eqnarray*}}
+
+\vspace{2cm}
+
+Implying that $$\sigma^2\given X,\bbeta,\by\sim \text{IG}\lrp{\frac{n+\nu_0}{2},\frac{1}{2}\lrp{(\by-X\bbeta)'(\by-X\bbeta)+\nu_0\sigma_0^2} }$$
+
+## Gibbs Sampler for Bayesian Regression
+
+Init. $(\sigma^{2})^{(0)}$, calculate fixed quantities: $X'X$, $(X'X)^{-1}$, $X' \by$, $\Sigma_0^{-1}.$
+
+\begin{block}{For $k=1,\ldots,S$}
+\begin{enumerate}
+\item Update $\bbeta=\bbeta^{(k)}$
+\begin{itemize}
+\item Update $\Sigma_{\bbeta}^{(k)}=\lrp{\frac{1}{(\sigma^2)^{(k-1)}}(X'X) + \Sigma_0^{-1}}^{-1}$
+\item Update $\frac{1}{(\sigma^2)^{(k-1)}} (X' \by) +\Sigma_0^{-1}\bbeta_0$
+\item Sample $\bbeta^{(k)}$ from $N_p( \Sigma_{\bbeta} \bmu_{\bbeta},\Sigma_{\bbeta})$
+\end{itemize}
+
+\item Update $\sigma^2=(\sigma^2)^{(k)}$
+\begin{itemize}
+\item Sample $(\sigma^2)^{(k)}$ from $\text{IG}\lrp{\frac{n+\nu_0}{2},\frac{1}{2}\lrp{(\by-X\bbeta^{(k)})'(\by-X\bbeta^{(k)})+\nu_0\sigma_0^2} }$
+\end{itemize}
+
+\end{enumerate}
+\end{block}
+
+
+## Example: Oxygen Uptake
+
+```{r echo=F,fig.height=3.5, fig.width=4}
+o2uptake<-data.frame(dget("yX.o2uptake.txt"))
+with(o2uptake,plot(x=age,y=uptake,col=c("black","grey")[aerobic+1],pch=20)) 
+legend("topleft",legend=c("running","aerobic"),cex=0.8,
+       col=c("black","grey"),pch=20,bty="n")
+```
+
+
+## Example: Oxygen Uptake
+
+To analyze this problem with the framework we developed we need $$(\bbeta_0,\Sigma_0)\quad\text{and}\quad(\nu_0,\sigma_0^2).$$
+Specification of these parameters can be hard! To illustrate:
+
+\begin{itemize}
+\item A scan of the literature reveals that males in their 20's is $\sim 150$  lt/min
+\item With sd 15 lt/min, so
+\end{itemize}
+$$150\pm2\times 15=(120,180)$$
+\begin{itemize}
+\item Changes in oxygen uptake should be somewhere in $(-60,60)$ with high prob.
+\end{itemize}
+
+## Example: Oxygen Uptake
+\small{
+\begin{itemize}
+\item So, to start we at least need $$\beta_1+\beta_3 x_{3}\in (-60,60)$$ with high prob.
+\item Some algebra reveals that $$-300< \beta_1 <300\quad\text{and}\quad -12< \beta_3 <12$$
+\end{itemize}
+$$150\pm2\times 15=(120,180)$$
+\begin{itemize}
+\item We can induce this behavior by setting $$\text{var}(\beta_1)=150^2\quad\text{and}\quad \text{var}(\beta_3)=6^2$$
+\end{itemize}
+\textcolor{blue}{But what about the variances for the other parameters and all covariances?}
+}
+
+<!-- ## Example: Oxygen Uptake -->
+
+
+
+<!-- ## Example: Oxygen Uptake -->
+
+<!-- ```{r echo=F, eval=F} -->
+
+<!-- yX.diabetes.train<-dget("yX.diabetes.train.txt") -->
+<!-- yX.diabetes.test<-dget("yX.diabetes.test.txt") -->
+
+
+<!-- ### sample from the multivariate normal distribution -->
+<!-- rmvnorm<-function(n,mu,Sigma) -->
+<!-- { -->
+<!--   p<-length(mu) -->
+<!--   res<-matrix(0,nrow=n,ncol=p) -->
+<!--   if( n>0 & p>0 ) -->
+<!--   { -->
+<!--     E<-matrix(rnorm(n*p),n,p) -->
+<!--     res<-t(  t(E%*%chol(Sigma)) +c(mu)) -->
+<!--   } -->
+<!--   res -->
+<!-- } -->
+<!-- ### -->
+
+<!-- ``` -->
+
+
+<!-- ## Example: Reading Comprehension -->
+
+<!-- \begin{figure}[H] -->
+<!-- ```{r echo=F, message=F, eval=F, warning=F, fig.width=4.2, fig.height=2, fig.align='center'} -->
+<!-- ### sample from the multivariate normal distribution -->
+<!-- rmvnorm<-function(n,mu,Sigma)  -->
+<!-- { -->
+<!--   p<-length(mu) -->
+<!--   res<-matrix(0,nrow=n,ncol=p) -->
+<!--   if( n>0 & p>0 ) -->
+<!--   { -->
+<!--     E<-matrix(rnorm(n*p),n,p) -->
+<!--     res<-t(  t(E%*%chol(Sigma)) +c(mu)) -->
+<!--   } -->
+<!--   res -->
+<!-- } -->
+<!-- ### -->
+
+
+<!-- ### sample from the Wishart distribution -->
+<!-- rwish<-function(n,nu0,S0) -->
+<!-- { -->
+<!--   sS0 <- chol(S0) -->
+<!--   S<-array( dim=c( dim(S0),n ) ) -->
+<!--   for(i in 1:n) -->
+<!--   { -->
+<!--      Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0 -->
+<!--      S[,,i]<- t(Z)%*%Z -->
+<!--   } -->
+<!--   S[,,1:n] -->
+<!-- } -->
+<!-- ### -->
+
+
+<!-- ### reading data -->
+<!-- Y <- dget("http://www2.stat.duke.edu/~pdh10/FCBS/Inline/Y.reading") -->
+
+<!-- n <- nrow(Y); p<- ncol(Y) -->
+<!-- y.bar <- colMeans(Y) -->
+
+<!-- #initialize Sigma at sample covariance -->
+<!-- Sigma <- cov(Y) -->
+
+<!-- ##prior parameters -->
+<!-- #for theta -->
+<!-- mu0 <- c(50,50) -->
+<!-- L0 <- matrix(c(625,312.5,312.5,625),ncol=2) -->
+
+<!-- #for Sigma -->
+<!-- nu0 <- 4 -->
+<!-- S0 <- L0 -->
+
+
+<!-- set.seed(123) -->
+
+<!-- S <- 10000 -->
+<!-- ##Storage objects -->
+<!-- theta.Mat <- matrix(NA,ncol=2,nrow=S) -->
+<!-- Sigma.Mat <- matrix(NA,ncol=4,nrow=S) -->
+
+<!-- YS<-NULL -->
+
+<!-- S0.inv <- solve(S0) -->
+
+<!-- for(i in 1:S){ -->
+<!--   ##update theta -->
+<!--   Ln <- solve(S0.inv+n*solve(Sigma)) -->
+<!--   mun <- Ln %*% (S0.inv %*%mu0 + n*solve(Sigma)%*%y.bar) -->
+<!--   theta <- c(rmvnorm(1,mun,Ln)) -->
+
+<!--   ##update Sigma -->
+<!--   Sn <- S0 + (t(Y)-c(theta))%*%t(t(Y)-c(theta)) -->
+<!--   Sigma <- solve(rwish(1,nu0+n,solve(Sn))) -->
+
+<!--   ### save predicted draws -->
+<!--   YS<-rbind(YS,rmvnorm(1,theta,Sigma)) -->
+
+<!--   ###Save new draws -->
+<!--   theta.Mat[i,] <- theta -->
+<!--   Sigma.Mat[i,] <- c(Sigma) -->
+<!-- } -->
+
+<!-- #estimate P(theta2>theta1 | y) -->
+<!-- pmu <- mean(theta.Mat[,2]>theta.Mat[,1]) -->
+<!-- pys <- mean(YS[,2]>YS[,1]) -->
+
+<!-- par(mfrow=c(1,2),mgp=c(1.75,.75,0),mar=c(3,3,1,1)) -->
+<!-- plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[1]), -->
+<!--      ylab=expression(theta[2]), cex=0.3) -->
+<!-- abline(0,1,col="red",lwd=2) -->
+<!-- plot(YS,xlab=expression(italic(y[1])),ylab=expression(italic(y[2])),  -->
+<!--      xlim=c(0,100),ylim=c(0,100), cex=0.3) -->
+<!-- abline(0,1,col="red",lwd=2) -->
+<!-- points(Y[,1],Y[,2],pch=16,cex=.7,col="cornflowerblue") -->
+
+<!-- ``` -->
+<!-- \caption{(left) Joint density $\theta_1$ and $\theta_2$. (right) predicted and observed data} -->
+<!-- \label{fig:discnormal} -->
+<!-- \end{figure} -->
+

@@ -660,8 +660,8 @@ Using **Coordinate-Ascent Algorithm**, get the unique solution of $(\hat\mu^{(i)
 Using **Newton-Raphson Method**, get the unique solution of $(\hat\mu^{(i)},\hat\sigma^{(i)})$ by solving
 
 \begin{align*}
-\hat\mu^{(i)}&=\hat\mu^{(i-1)}+\frac{l(\mu,\sigma)}{\frac{\partial}{\partial\mu}l(\mu,\sigma)}=\hat\mu^{(i-1)}+\frac{n\ln(\frac1{\sigma^{(i-1)}})- \sum_{i=1}^n\omega(\frac{x_i-\mu^{(i-1)}}{\sigma^{(i-1)}})}{\sum^n_{i=1} w'(\frac{X_i-\hat\mu^{(i-1)}}{\hat\sigma^{(i-1)}})}&&\text{plugin}\hat\mu^{(i-1)} \text{ and } \hat\sigma^{(i-1)},\text{ get }\hat\mu^{i}\\
-\hat\sigma^{(i)}&=\hat\sigma^{(i-1)}+\frac{l(\mu,\sigma)}{\frac{\partial}{\partial\sigma}l(\mu,\sigma)}=\hat\sigma^{(i-1)}+\frac{n\ln(\frac1{\sigma^{(i-1)}})- \sum_{i=1}^n\omega(\frac{x_i-\mu^{(i-1)}}{\sigma^{(i-1)}})}{\sum^n_{i=1}[\frac{(X_i-\hat\mu^{(i-1)})}{\hat\sigma^{(i-1)}}  w'(\frac{X_i-\hat\mu^{(i-1)}}{\hat\sigma^{(i-1)}})-1]}&&\text{plugin} \hat\mu^{(i-1)} \text{ and } \hat\sigma^{(i-1)},\text{ get }\hat\sigma^{(i)}
+\hat\mu^{(i)}&=\hat\mu^{(i-1)}-\frac{l(\mu,\sigma)}{\frac{\partial}{\partial\mu}l(\mu,\sigma)}=\hat\mu^{(i-1)}-\frac{n\ln(\frac1{\sigma^{(i-1)}})- \sum_{i=1}^n\omega(\frac{x_i-\mu^{(i-1)}}{\sigma^{(i-1)}})}{\sum^n_{i=1} w'(\frac{X_i-\hat\mu^{(i-1)}}{\hat\sigma^{(i-1)}})}&&\text{plugin}\hat\mu^{(i-1)} \text{ and } \hat\sigma^{(i-1)},\text{ get }\hat\mu^{i}\\
+\hat\sigma^{(i)}&=\hat\sigma^{(i-1)}-\frac{l(\mu,\sigma)}{\frac{\partial}{\partial\sigma}l(\mu,\sigma)}=\hat\sigma^{(i-1)}-\frac{n\ln(\frac1{\sigma^{(i-1)}})- \sum_{i=1}^n\omega(\frac{x_i-\mu^{(i-1)}}{\sigma^{(i-1)}})}{\sum^n_{i=1}[\frac{(X_i-\hat\mu^{(i-1)})}{\hat\sigma^{(i-1)}}  w'(\frac{X_i-\hat\mu^{(i-1)}}{\hat\sigma^{(i-1)}})-1]}&&\text{plugin} \hat\mu^{(i-1)} \text{ and } \hat\sigma^{(i-1)},\text{ get }\hat\sigma^{(i)}
 \end{align*}
 
 By **Theorem 2.4.2**, $f_0$ is the canonical exponential familiy genertated by $(T,h)$, the natural parameter space $\varepsilon$ is open and the family is of rank $k$. Set $t_0=T(x)$, $t_0\in C_T^0$, $\hat\eta^{(i)}=(\hat\mu^{(i)},\hat\sigma^{(i)})\to\hat\eta=(\hat\mu,\hat\sigma) \text{   as   } i\to\infty$
@@ -694,7 +694,7 @@ The likelihood equations for $\mu$ and $\sigma$ are
 
 
 \pagebreak
-
+<!--
 \begin{align*}
 \frac{\partial\omega}{\partial\mu}
 &=-\frac{1}{\sigma}+\frac{2\exp[-\frac{x-\mu}{\sigma}]}{\sigma(1 + \exp[-\frac{x-\mu}{\sigma}])}=\frac{1}{\sigma}\left\{2\exp[-\frac{x-\mu}{\sigma}]F_0(x)-1\right\}=\frac{\exp[-\frac{x-\mu}{\sigma}]-1}{\sigma(1 + \exp[-\frac{x-\mu}{\sigma}])}\\
@@ -717,7 +717,7 @@ The likelihood equations for $\mu$ and $\sigma$ are
 &=\left[\frac{2(x-\mu)\exp[-\frac{x-\mu}{\sigma}]+\sigma(1-\exp[-\frac{x-\mu}{\sigma}])}{\sigma^3(1 + \exp[-\frac{x-\mu}{\sigma}])^2}\right]^2\\
 &=[\frac{\partial\omega^2}{\partial\mu\partial\sigma}]^2
 \end{align*}
-
+-->
 
 
 ## HW6 
@@ -726,7 +726,61 @@ The likelihood equations for $\mu$ and $\sigma$ are
 
 (a) In the bivariate normal Example 2.4.6, complete the E-step by ﬁnding $E(Z_i | Y_i),E (Z^2_i | Y_i)$ and $E(Z_iY_i | Y_i)$. 
 
+From *Example 2.4.6.* Let ($Z_1,Y_1$),...,($Z_n,Y_n$) be i.i.d. as ($Z,Y$), where $(Z,Y)\sim N(\mu_1,\mu_2,\sigma^2_1,\sigma^2_2,\rho)$. Suppose that some of the $Z_i$ and some of the $Y_i$ are missing as follows: For $1\le i\le n_1$ we observe both $Z_i$ and $Y_i$, for $n_1 + 1 \le i \le n_2$, we oberve only $Z_i$, and for $n_2 + 1\le i\le n$, we observe only $Y_i$. In this case a set of sufﬁcient statistics is 
+
+\begin{tabular}{ c c c }
+$T_1 =\bar Z$&$T_3 =n^{-1}\sum^n_{i=1} Z^2_i$&\\ 
+$T_2 =\bar Y$&$T_4 =n^{-1}\sum^n_{i=1} Y^2_i$&$T_5 = n^{-1}\sum^n_{i=1} Z_iY_i$
+\end{tabular}
+
+The observed data are $S =\{(Z_i,Y_i): 1\le i\le n_1\}\cup\{Z_i:n_1+1\le i\le n_2\}\cup\{ Y_i:n_2+1\le i\le n\}$
+
+To compute $E\theta(\mathbf{T} | S = s)$, where $\theta = (\mu_1,\mu_2,\sigma^2_1,\sigma^2_2,,\theta)$, we note that for the cases with $Z_i$ and/or $Y_i$ observed, the conditional expected values equal their observed values. 
+
+By **Theorem B.4.2** If $(X,Y)$ has a nondegenerate $N(\mu_1,\mu_2,\sigma^2_1,\sigma^2_2,\rho)$ distribution, then the conditional distribution of $Y$ given $X = x$ is $N\left(\mu_2 + \rho\frac{\sigma_2}{\sigma_1} (x-\mu_1), \sigma_2^2(1-\rho^2)\right)$.
+
+Use the properties of the bivariate normal distribution to conclude 
+
+\begin{align*}
+E_\theta(Y_i|Z_i)&= \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(Z_i -\mu_1)\\
+E_\theta(Y^2_i|Z_i)&= [\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(Z_i -\mu_1)]^2 + (1-\rho^2)\sigma_2^2\\
+E_\theta(Z_iY_i|Z_i)&= [\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(Z_i -\mu_1)]Z_i
+\end{align*}
+
+The conditional distribution of $(Z|Y)\sim N\left(\mu_1 + \rho\frac{\sigma_1}{\sigma_2} (x-\mu_2), \sigma_1^2(1-\rho^2)\right)$ with the corresponding Z on Y regression equations. 
+
+\begin{align*}
+E_\theta(Z_i|Y_i)&= \mu_1 + \rho\frac{\sigma_1}{\sigma_2}(Y_i -\mu_2)\\
+E_\theta(Z^2_i|Y_i)&= [\mu_1 + \rho\frac{\sigma_1}{\sigma_2}(Y_i -\mu_2)]^2 + (1-\rho^2)\sigma_1^2\\
+E_\theta(Z_iY_i|Y_i)&= [\mu_1 + \rho\frac{\sigma_1}{\sigma_2}(Y_i -\mu_2)]Y_i
+\end{align*}
+
+The E-step involves imputing missing values in the context of Example 2.4.6. The EM algorithm is a form of multiple imputation.
+
+
 (b) In Example 2.4.6, verify the M-step by showing that $E_\theta\mathbf{T} = (\mu_1,\mu_2,\sigma^2_1 + \mu^2_1,\sigma^2_2+ \mu^2_2,\rho\sigma_1\sigma_2 + \mu_1\mu_2)$.
+
+\begin{align*}
+E[T_1]&=E[\bar Z]=n^{-1}\sum^n_{i=1}E[Z_i]=\mu_1\\
+E[T_2]&=E[\bar Y]=n^{-1}\sum^n_{i=1}E[Y_i]=\mu_2\\
+E[T_3]&=E[n^{-1}\sum^n_{i=1} Z^2_i]=n^{-1}\sum^n_{i=1}(V[Z_i]+E[Z_i]^2)=\sigma^2_1 + \mu^2_1\\
+E[T_4]&=E[n^{-1}\sum^n_{i=1} Y^2_i]=n^{-1}\sum^n_{i=1}(V[Y_i]+E[Y_i]^2)=\sigma^2_2 + \mu^2_2\\
+E[T_5]&=E[n^{-1}\sum^n_{i=1} Z_iY_i]=n^{-1}\sum^n_{i=1}(Cov[Z_iY_i]+E[Z_i]E[Y_i])=n^{-1}\sum^n_{i=1}(\rho\sqrt{V[Z_i]V[Y_i]}+\mu_1\mu_2)=\rho\sigma_1\sigma_2 + \mu_1\mu_2\\
+\dot{A}(\theta)&= E_\theta\mathbf{T} = (\mu_1,\mu_2,\sigma^2_1+\mu^2_1,\sigma^2_2 + \mu^2_2,\sigma_1\sigma_2\rho + \mu_1\mu_2) 
+\end{align*}
+
+We take $\hat\theta_{old}=\hat\theta_{MOM}$, where $\hat\theta_{MOM}$ is the method of moment estimates $(\hat\mu_1,\hat\mu_2,\hat\sigma^2_1,\hat\sigma^2_2,r)$ (Problem 2.1.8) of $\theta$ based on the observed data. 
+ The M-step produces
+ 
+\begin{align*}
+\hat\mu_{1,new} &= T_1(\hat\theta_{old})\\
+\hat\mu_{2,new} &= T_2(\hat\theta_{old})\\
+\hat\sigma^2_{1,new} &= T_3(\hat\theta_{old})-\hat T^2_1\\
+\hat\sigma^2_{2,new} &= T_4(\hat\theta_{old})-\hat T_2^2\\
+\hat\rho_{new} &=\frac{T_5(\hat\theta_{old})-\hat T_1\hat T_2}{\{[T_3(\hat\theta_{old})-\hat T_1][\hat T_4(\hat\theta_{old})-\hat T_2]\}^{\frac12}}
+\end{align*}
+
+where $T_j(\theta)$ denotes $T_j$ with missing values replaced by the values computed in the E-step and $\hat T_j = T_j(\hat\theta_{old}),j=1,2$. Now the process is repeated with $\hat\theta_{MOM}$ replaced by $\hat\theta_{new}$. 
 
 
 ### 2.4-6 Consider a genetic trait that is directly unobservable but will cause a disease among a certain proportion of the individuals that have it. 
@@ -734,7 +788,71 @@ For families in which one member has the disease, it is desired to estimate the 
 
 (a) Show that $P(X = x | X \ge 1) =\frac{\binom{n}{x}\theta^x(1-\theta)^{n-x}}{1-(1-\theta)^n}, x=1,..,n$, and that the MLE exists and is unique.
 
+
+\begin{align*}
+P(X=x|X\ge1)&= \frac{P(X=x,X\ge1)}{P(X\ge1)} = \frac{P(X\ge1|X=x)P(X=x)}{1-P(X=0)}\\
+ &=\frac{\binom{n}{x}\theta^x(1-\theta)^{n-x}}{1-\binom{n}{0}\theta^0(1-\theta)^{n-0}}\mathbf{1}_{\{x\in\mathbf{N^+}\}}\\
+ &=\underbrace{\binom{n}{x}\mathbf{1}_{\{x\in\mathbf{N^+}\}}}_{h(x)}
+ \exp\left(\underbrace{x}_{T(x)}\underbrace{\ln[\frac{\theta}{1-\theta}]}_{\eta}
+   -\underbrace{\ln\frac{1-(1-\theta)^n}{(1-\theta)^n}}_{\eta(\theta)}\right)
+\end{align*}
+
+$$\eta=\ln[\frac{\theta}{1-\theta}]\implies\frac{\theta}{1-\theta}=e^\eta;\ 1-\theta=\frac1{e^\eta+1};\ \theta=\frac{e^\eta}{e^\eta+1}$$
+
+$$\eta(\theta)=\ln\frac{1-(1-\theta)^n}{(1-\theta)^n}=\ln[(e^\eta+1)^n-1]$$
+
+By **Theorem 2.3.1** This is a canonical exponential family generated by $(T,h)$.
+
+$\eta(\theta)$ is finite for $\eta>-\infty$
+
+(i) The natural parameter space,$\varepsilon=\mathbb{R}$, is open. 
+
+(ii) The family is of rank 1. 
+
+$x$ is the observed data vector and set $t0=T(x)=x$. 
+
+$P[c^TT(X) > c^Tt_0]=P[cX>cx]> 0$, $\forall c\neq0$ $x\in\mathbb{R}^{n-1}$
+
+Thus, the MLE $\hat\eta$ exists, is unique, and is a solution to the equation 
+
+$$A(\eta) = E_\eta(T(X)) = t_0$$
+
+
+
 (b) Use (2.4.3) to show that the Newton-Raphson algorithm gives $\hat\theta_1 =\tilde\theta- \frac{\tilde\theta(1-\tilde\theta)[1-(1-\tilde\theta)^n]\{x-n\tilde\theta-x(1-\tilde\theta)^n\}}{ n\tilde\theta^2(1-\tilde\theta)^n[n-1 + (1-\tilde\theta)^n]-[1-(1-\tilde\theta)^n]^2[(1-2\tilde\theta)x + n\tilde\theta^2]}$
 ,where $\tilde\theta =\hat\theta_{old}$  and $\hat\theta_1 = \hat\theta_{new}$, as the ﬁrst approximation to the maximum likelihood estimate of $\theta$.
 
+\begin{align*}
+l(\theta)&=\ln\binom{n}{x}+\ln\mathbf{1}_{\{x\in\mathbf{N^+}\}}+x\ln\theta-x\ln(1-\theta)-\ln[1-(1-\theta)^n]+n\ln(1-\theta)\\
+\dot{l}(\theta)&=\frac{x}{\theta}-\frac{x}{1-\theta}+\frac{n}{1-\theta}(-1)-\frac{1}{1-(1-\theta)^n}(-n)(1-\theta)^{n-1}(-1)=\frac{x}{\theta(1-\theta)}-\frac{n(1-\theta)^{n-1}}{1-(1-\theta)^n}-\frac{n}{1-\theta}\\
+\ddot{l}(\theta)&=\frac{-x}{\theta^2}+\frac{x}{(1-\theta)^2}-\frac{n}{(1-\theta)^2}+\frac{n(n-2)(1-\theta)^{n-2}[1-(1-\theta)^n]+n(1-\theta)^{n-1}n(1-\theta)^{n-1}}{[1-(1-\theta)^n]^2}
+\end{align*}
+
+By (2.4.3)
+$\hat\theta_{new} =\hat\theta_{old} -\ddot{l}^{-1}(\hat\theta_{old})\dot{l}(\hat\theta_{old})$
+
+\begin{align*}
+\hat\theta_{1}&=\tilde\theta -\frac{\frac{x}{\tilde\theta(1-\tilde\theta)}-\frac{n}{1-\tilde\theta}-\frac{n(1-\tilde\theta)^{n-1}}{1-(1-\tilde\theta)^n}}{\frac{-x}{\tilde\theta^2}+\frac{x}{(1-\tilde\theta)^2}+\frac{n(n-1)(1-\tilde\theta)^{n-2}[1-(1-\tilde\theta)^n]+n(1-\tilde\theta)^{n-1}n(1-\tilde\theta)^{n-1}}{[1-(1-\tilde\theta)^n]^2}-\frac{n}{(1-\tilde\theta)^2}}=\\
+&\tilde\theta -\frac{\tilde\theta(1-\tilde\theta)[1-(1-\tilde\theta)^n]\left\{[1-(1-\tilde\theta)^n]x-n\tilde\theta[1-(1-\tilde\theta)^n]-\tilde\theta(1-\tilde\theta)n(1-\tilde\theta)^{n-1}\right\}}
+{[1-(1-\tilde\theta)^n]^2\left\{-(1-\tilde\theta)^2x+\tilde\theta^2x-n\tilde\theta^2\right\}+\tilde\theta^2(1-\tilde\theta)^2\left\{n(n-1)(1-\tilde\theta)^{n-2}[1-(1-\tilde\theta)^n]+n(1-\tilde\theta)^{n-1}n(1-\tilde\theta)^{n-1}\right\}}\\
+&=\tilde\theta -\frac{\tilde\theta(1-\tilde\theta)[1-(1-\tilde\theta)^n]\left\{[1-(1-\tilde\theta)^n]x-n\tilde\theta[1-(1-\tilde\theta)^n]-n\tilde\theta(1-\tilde\theta)^{n}\right\}}
+{[1-(1-\tilde\theta)^n]^2\left\{(2\tilde\theta-1)x-n\tilde\theta^2\right\}+n\tilde\theta^2(1-\tilde\theta)^n\left\{(n-1)[1-(1-\tilde\theta)^n]+n(1-\tilde\theta)^{n}\right\}}\\
+&=\tilde\theta -\frac{\tilde\theta(1-\tilde\theta)[1-(1-\tilde\theta)^n]\left\{[1-(1-\tilde\theta)^n]x-n\tilde\theta\right\}}
+{[1-(1-\tilde\theta)^n]^2\left\{(2\tilde\theta-1)x-n\tilde\theta^2\right\}+n\tilde\theta^2(1-\tilde\theta)^n\left\{n-1+(1-\tilde\theta)^{n}\right\}}\\
+&=\tilde\theta- \frac{\tilde\theta(1-\tilde\theta)[1-(1-\tilde\theta)^n]\left\{x-n\tilde\theta-x(1-\tilde\theta)^n\right\}}{ n\tilde\theta^2(1-\tilde\theta)^n\left\{n-1 + (1-\tilde\theta)^n\right\}-[1-(1-\tilde\theta)^n]^2\left\{(1-2\tilde\theta)x + n\tilde\theta^2\right\}}
+\end{align*}
+
+
 (c) If $n = 5, x = 2$, ﬁnd$\hat\theta_1$ of (b) above usinge $\theta = x/n$ as a preliminary estimate.
+
+$\tilde\theta = \frac{2}{5}$
+
+\begin{align*}
+\hat\theta_{1}&=\frac{2}{5}- \frac{\frac{2}{5}(1-\frac{2}{5})[1-(1-\frac{2}{5})^5]\left\{2-5(\frac{2}{5})-2(1-\frac{2}{5})^5\right\}}{ 5(\frac{2}{5})^2(1-\frac{2}{5})^5\left\{5-1 + (1-\frac{2}{5})^5\right\}-[1-(1-\frac{2}{5})^5]^2\left\{(1-2\cdot\frac{2}{5})2 + 5(\frac{2}{5})^2\right\}}\\
+&=\frac{2}{5}- \frac{\frac{2}{5}(\frac{3}{5})[1-(\frac{3}{5})^5]\left\{2-2-2(\frac{3}{5})^5\right\}}{ \frac{4}{5}(\frac{3}{5})^5\left\{4+ (\frac{3}{5})^5\right\}-[1-(\frac{3}{5})^5]^2\left\{(1-\frac{4}{5})2 + \frac{4}{5}\right\}}\\
+&=\frac{2}{5}- \frac{\frac{6}{25}[1-\frac{243}{3125}]\{-2(\frac{243}{3125})\}}{ \frac{4}{5}(\frac{243}{3125})\left\{4+\frac{243}{3125}\right\}-[1-\frac{243}{3125}]^2 \frac{6}{5}}
+=\frac{2}{5}- \frac{-\frac{12}{25}[\frac{2882}{3125}](\frac{243}{3125})}{ \frac{4}{5}(\frac{243}{3125})\left\{\frac{12743}{3125}\right\}-[\frac{2882}{3125}]^2 \frac{6}{5}}\\
+&=\frac{2}{5}- \frac{-12[700326]}{ 20(3096549)-[8305924] 30}=\frac{2}{5}- \frac{-8403912}{-187246740}=0.4-0.04488149=0.3551185
+\end{align*}
+
+

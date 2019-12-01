@@ -27,7 +27,8 @@ library(knitr)
 library(ggplot2)
 library(cowplot)
 library(reshape)
-library(MASS)
+library(MASS) # mvrnorm
+library(dplyr)
 inv = solve
 ```
 
@@ -43,29 +44,24 @@ over the support of this function is infinite and cannot be 1.
 
 
 ## b) Let $p_J(\theta,\Sigma|y_1,...,y_n)$ be the probability density that is proportional 
-to $pJ(\theta,\Sigma)\times p(y_1,...,y_n|\theta,\Sigma)$.Obtain the form of $p_J(\theta,\Sigma|y_1,...,y_n), p_J(\theta|\Sigma,y_1,...,y_n)$ and $p_J(\Sigma|y_1,...,y_n)$.
+to $p_J(\theta,\Sigma)\times p(y_1,...,y_n|\theta,\Sigma)$.Obtain the form of $p_J(\theta,\Sigma|y_1,...,y_n), p_J(\theta|\Sigma,y_1,...,y_n)$ and $p_J(\Sigma|y_1,...,y_n)$.
 
-\begin{align}
-p_J(\boldsymbol{\theta}, \Sigma \mid \boldsymbol{y}_1, \dots, \boldsymbol{y}_n) &\propto p(\boldsymbol{\theta}, \Sigma) \times p(\boldsymbol{y}_1, \dots, \boldsymbol{y}_n \mid \boldsymbol{\theta}, \Sigma) \\
-&\propto \left[ | \Sigma |^{-(p + 2) / 2} \right] \times \left[ | \Sigma |^{-n / 2} \exp\left( -\text{tr}(\mathbf{S}_\theta \Sigma^{-1}) \right) \right] \\
-&\propto | \Sigma |^{-(p + n + 2) / 2} \exp \left( -\text{tr}(\mathbf{S}_\theta \Sigma^{-1}) / 2 \right)
-\end{align}
+\begin{align*}
+p_J(\boldsymbol{\theta}, \Sigma \mid \boldsymbol{y}_{1:n}) &\propto p(\boldsymbol{\theta}, \Sigma) \times p(\boldsymbol{y}_{1:n} \mid \boldsymbol{\theta}, \Sigma) \\
+&\propto \left( |\Sigma|^{-\frac{p+2}2}\right)\times\left( |\Sigma|^{-\frac{n}2} \exp\left[-\frac12\mathrm{tr}(\mathbf{S}_\theta \Sigma^{-1}) \right] \right) \\
+&\propto |\Sigma|^{-\frac{n+p+2}2} \exp\left[-\frac12\mathrm{tr}(\mathbf{S}_\theta \Sigma^{-1})\right]
+\end{align*}
 
 To obtain the full conditionals of a parameter, we treat the other parameters as constant, so
 
-\begin{align}
-p_J(\boldsymbol{\theta} \mid \boldsymbol{y}_1, \dots, \boldsymbol{y}_n, \Sigma) &\propto \exp(- \text{tr}(\mathbf{S}_\theta \Sigma^{-1}) / 2) \\
-&= \exp(-\sum_{i = 1}^n (\boldsymbol{y}_i - \theta)^T \Sigma^{-1} (\boldsymbol{y}_i - \theta) / 2 ) & \text{Expand back} \\
-&= \exp(- n (\bar{\boldsymbol{y}} - \theta)^T \Sigma^{-1} (\bar{\boldsymbol{y}} - \theta) / 2 ) \\
-&= \text{dnormal}(\bar{\boldsymbol{y}}, \Sigma / n)
-\end{align}
-
-and
-
-\begin{align}
-p_J(\Sigma \mid \boldsymbol{y}_1, \dots, \boldsymbol{y}_n, \boldsymbol{\theta}) &\propto | \Sigma | ^{-(p + n + 2) / 2 } \exp(- \text{tr}(\mathbf{S}_\theta \Sigma^{-1}) / 2) \\
-&\propto \text{dinverse-wishart}\left(n + 1, \mathbf{S}_\theta^{-1} \right)
-\end{align}
+\begin{align*}
+p_J(\boldsymbol{\theta} \mid\Sigma , \boldsymbol{y}_{1:n}) &\propto \exp\left[-\frac12\mathrm{tr}(\mathbf{S}_\theta \Sigma^{-1})\right]\\
+&= \exp\left[-\frac12\sum_{i = 1}^n (\boldsymbol{y}_i - \theta)' \Sigma^{-1} (\boldsymbol{y}_i - \theta)\right]\\
+&= \exp\left[-\frac{n}2 (\bar{\boldsymbol{y}} - \theta)' \Sigma^{-1} (\bar{\boldsymbol{y}} - \theta)\right]\\
+\boldsymbol{\theta} \mid\Sigma , \boldsymbol{y}_{1:n}&\sim \text{Normal}(\bar{\boldsymbol{y}}, \Sigma / n)\\
+p_J(\Sigma \mid \boldsymbol{\theta},\boldsymbol{y}_{1:n}) &\propto |\Sigma|^{-\frac{n+p+2}2} \exp\left[-\frac12\mathrm{tr}(\mathbf{S}_\theta \Sigma^{-1})\right]\\
+\Sigma \mid \boldsymbol{\theta},\boldsymbol{y}_{1:n}&\sim \text{Inverse-Wishart}\left(n + 1, \mathbf{S}_\theta^{-1} \right)
+\end{align*}
 
 
 # 2. Exercise 7.2 (pg 238) Unit information prior
@@ -84,14 +80,14 @@ Obtain a density $p_U(\theta,\Sigma|y_1,...,y_n)\propto\ p_U(\theta|\Sigma)p_U(\
 # 3. Exercise 7.4 (pg 239) Marriage data
 The ﬁle agehw.dat contains data on the ages of 100 married couples sampled from the U.S. population. 
 
-```{r}
+```{r,eval=F}
 agehw = as.matrix(read.table(url('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/agehw.dat')))
 colnames(agehw) = agehw[1, ]
 agehw = agehw[-1, ]
 agehw = matrix(as.numeric(agehw), nrow = 100)
 ```
 
-```{r}
+```{r, echo=T}
 #Store the agehw.dat files in the same folder as this Rmd file
 Y.marr <- read.table("agehw.dat",sep=" ",header=T)
 ```
@@ -99,41 +95,34 @@ Y.marr <- read.table("agehw.dat",sep=" ",header=T)
 
 ## a) Before you look at the data, use your own knowledge to formulate a semiconjugate prior distribution for 
 $\theta = (\theta_h,\theta_w)^T$ and $\Sigma$,where $\theta_h$,$\theta_w$ are mean husband and wife ages, and $\Sigma$ is the covariance matrix. 
+<!--
+With typical intuitions about life expectancy and age of marriage, I suspect that the ages of most of the married couples will fall between 25 and 80. There
+may be slight age differences among men and women, but nothing that I'm confident enough to to encode in my prior. Thus I will set $\boldsymbol{\mu}_0=((25+80)/2,(25+80)/2)=(52.5,52.5)^T$
 
-With typical intuitions about life expectancy and age of marriage, I suspect
-that the ages of most of the married couples will fall between 25 and 80. There
-may be slight age differences among men and women, but nothing that I'm
-confident enough to to encode in my prior. Thus I will set $\boldsymbol{\mu}_0=((25+80)/2,(25+80)/2)=(52.5,52.5)^T$
+I have no choice but to pick a semiconjugate prior distribution in this case, but it does seem intuitive that there are less married couples at ages 25 and 80
+than there are married couples around age 50, thus justifying a bell curve centered around $52.5$ with variance $13.75^2 \approx 189$ such that approximately 95\% of my prior falls within the range $(25,80)$.
 
-I have no choice but to pick a semiconjugate prior distribution in this case,
-but it does seem intuitive that there are less married couples at ages 25 and 80
-than there are married couples around age 50, thus justifying a bell curve
-centered around $52.5$ with variance $13.75^2 \approx 189$ such that
-approximately 95\% of my prior falls within the range $(25,80)$.
-
-I also have reason to believe the ages of the couples are quite tightly
-correlated, so knowing the above variance, I will aim for a prior correlation of
-$0.75$ Solving the correlation equation gives
-
+I also have reason to believe the ages of the couples are quite tightly correlated, so knowing the above variance, I will aim for a prior correlation of $0.75$ Solving the correlation equation gives 
 \begin{align}
 & 0.75 = \frac{\sigma_{1, 2}}{189} \\
 \implies& \sigma_{1, 2} = 141.75
 \end{align}
 
-So I will set $$\Lambda_0 = \begin{bmatrix} 189 & 141.75 \\ 141.75 & 189 \end{bmatrix} $$
-
 Like previous problems, for the variance, I will set $\mathbf{S}_0^{-1} =\Lambda_0$ and $\nu_0=p+2=4$. Note that this only loosely centers our covariance matrix prior on $\Lambda_0$, so I am being a bit conservative in
 terms of my belief in the variance and the correlation between the ages.
+-->
 
-```{r}
-Y = agehw
-p = ncol(agehw)
-n = nrow(agehw)
-ybar = colMeans(agehw)
-mu0 = rep(52.5, p)
-lambda0 = s0 = rbind(c(189, 141.75), c(141.75, 189))
-# nu0 = p + 2
-nu0 = p + 2 + 10
+Assume the mean value is 40. The 95\% range of ages is [20,60].  Variance is $10^2=100$. Correlation is 0.9, $\sigma_{hw}=0.9\times100=90$.
+Set $$\mathbf{S}_0^{-1}=\Lambda_0 = \begin{bmatrix} 100 & 90 \\ 90 & 100 \end{bmatrix}\quad \nu_0=p+2=4 $$
+
+```{r,eval=T}
+Y = Y.marr
+p = ncol(Y.marr)
+n = nrow(Y.marr)
+ybar = colMeans(Y.marr)
+mu0 = rep(40, p)
+lambda0 = s0 = rbind(c(100,90), c(90,100))
+nu0 = p + 2 
 ```
 
 ## b) Generate a prior predictive dataset of size n = 100, 
@@ -146,20 +135,17 @@ In fact, because of that wording, I originally set $\nu_0 = p + 2 = 4$ to loosel
 After increasing $\nu_0$, I'm fairly comfortable with what these posterior
 predictive datasets look like.
 
-```{r}
-N = 100
-S = 12
-Y_preds = lapply(1:S, function(s) {
+```{r,eval=T}
+# N = 100;S = 12
+Y_preds = lapply(1:12, function(s) {
   # Sample THETA according to prior
   theta = mvrnorm(n = 1, mu0, lambda0)
-  sigma = inv(rWishart(1, nu0, inv(s0))[, , 1])
+  sigma = solve(rWishart(1, nu0, solve(s0))[, , 1])
   Y_s = mvrnorm(n = 100, theta, sigma)
-  data.frame(Y1 = Y_s[, 1], Y2 = Y_s[, 2], dataset = s)
+  data.frame(Y_h = Y_s[, 1], Y_w = Y_s[, 2], dataset = s)
 })
 Y_comb = do.call(rbind, Y_preds)
-ggplot(Y_comb, aes(x = Y1, y = Y2)) +
-  geom_point() +
-  facet_wrap(~ dataset)
+ggplot(Y_comb, aes(x = Y_h, y = Y_w)) +geom_point(shape =1,alpha = 2/10,colour="blue") +facet_wrap(~ dataset)+theme_light()
 ```
 
 
@@ -168,46 +154,34 @@ obtain an MCMC approximation to $p(\theta,\Sigma|y_1,...,y_{100})$. Plot the joi
 posterior distribution of $\theta_h$ and $\theta_w$, and also the marginal posterior density of the correlation between $Y_h$ and $Y_w$, the ages of a husband and wife. Obtain 95% posterior conﬁdence intervals for $\theta_h$, $\theta_w$ and the correlation coefficient. 
 
 
-```{r}
+```{r,eval=T}
 S = 10000
-# Reuse this since we'll need to specify different priors
-do_mcmc = function(Y, mu0, lambda0, s0, nu0) {
-  ybar = colMeans(Y)
-  p = ncol(Y)
-  n = nrow(Y)
+mcmc = function(Y, mu0, lambda0, s0, nu0) {
+  ybar = colMeans(Y); p = ncol(Y); n = nrow(Y)
   THETA = matrix(nrow = S, ncol = p)
   SIGMA = array(dim = c(p, p, S))
-  
-  # Start with sigma sample
-  sigma = cov(Y)
-  
+  sigma = cov(Y) # Start with sigma sample
   # Gibbs sampling
-  
-  # Also, inv = solve to make it more readable
-  inv = solve
-  
   for (s in 1:S) {
     # Update theta
-    lambdan = inv(inv(lambda0) + n * inv(sigma))
-    mun = lambdan %*% (inv(lambda0) %*% mu0 + n * inv(sigma) %*% ybar)
-    theta = mvrnorm(n = 1, mun, lambdan)
-    
+    lambda_n = solve(solve(lambda0) + n * solve(sigma))
+    mu_n = lambda_n %*% (solve(lambda0) %*% mu0 + n * solve(sigma) %*% ybar)
+    theta = mvrnorm(n = 1, mu_n, lambda_n)
     # Update sigma
     resid = t(Y) - c(theta)
-    stheta = resid %*% t(resid)
-    sn = s0 + stheta
-    sigma = inv(rWishart(1, nu0 + n, inv(sn))[, , 1])
+    s_theta = resid %*% t(resid)
+    s_n = s0 + s_theta
+    sigma = solve(rWishart(1, nu0 + n,solve(s_n))[, , 1])
     
     THETA[s, ] = theta
     SIGMA[, , s] = sigma
   }
-  
   list(theta = THETA, sigma = SIGMA)
 }
-my_prior_mcmc = do_mcmc(agehw, mu0, lambda0, s0, nu0)
-THETA = my_prior_mcmc$theta
-SIGMA = my_prior_mcmc$sigma
-# For reuse later
+prior_mcmc = mcmc(Y.marr, mu0, lambda0, s0, nu0)
+THETA = prior_mcmc$theta
+SIGMA = prior_mcmc$sigma
+
 print_quantiles = function(THETA, SIGMA) {
   print("Husband")
   print(quantile(THETA[, 1], probs = c(0.025, 0.5, 0.975))) # Husband
@@ -226,89 +200,78 @@ print_quantiles(THETA, SIGMA)
 
 ## d) Obtain 95% posterior conﬁdence intervals for $\theta_h$, $\theta_w$ and the correlation coefficient using the following prior distributions: 
 
-I haven't done 7.2, but doing Jeffreys' prior and a "diffuse prior" below will
-still be helpful to see what effect prior information has.
+<!--I haven't done 7.2, but doing Jeffreys' prior and a "diffuse prior" below will
+still be helpful to see what effect prior information has. -->
 
-### i. Jeffreys’ prior, described in Exercise 7.1; 
+### i. Jeffreys’ prior in Exercise 7.1; 
 
-```{r}
+```{r,eval=T}
 THETA = matrix(nrow = S, ncol = p)
 SIGMA = array(dim = c(p, p, S))
-# Start with sigma sample
-sigma = cov(Y)
+sigma = cov(Y)# Start with sigma sample
 # Gibbs sampling
-# Also, inv = solve to make it more readable
-inv = solve
 for (s in 1:S) {
   # Update theta
-  theta = mvrnorm(n = 1, ybar, sigma / n)
-  
+  theta = mvrnorm(n = 1, ybar, sigma/n)
   # Update sigma
   resid = t(Y) - c(theta)
-  stheta = resid %*% t(resid)
-  sigma = inv(rWishart(1, n + 1, inv(stheta))[, , 1])
-  
+  s_theta = resid %*% t(resid)
+  sigma = solve(rWishart(1, n + 1, solve(s_theta))[, , 1])
   THETA[s, ] = theta
   SIGMA[, , s] = sigma
 }
 print_quantiles(THETA, SIGMA)
 ```
-  
 
-### ii. the unit information prior, described in Exercise 7.2; 
+### ii. the unit information prior in Exercise 7.2; 
 
-Unit information prior (skipping)
+Unit information prior 
 
 ### iii. a “diffuse prior” with $\mu_0 =\mathbf{0},\Lambda_0 = 10^5\times \mathbf{I}, \mathbf{S_0} = 1000\times \mathbf{I}$ and $\nu_0 = 3$. 
 
-```{r}
+```{r,eval=T}
 mu0 = rep(0, p)
 lambda0 = 10^5 * diag(p)
 s0 = 1000 * diag(p)
 nu0 = 3
-diffuse_mcmc = do_mcmc(agehw, mu0, lambda0, s0, nu0)
+diffuse_mcmc = mcmc(Y.marr, mu0, lambda0, s0, nu0)
 print_quantiles(diffuse_mcmc$theta, diffuse_mcmc$sigma)
 ```
-
 
 ## e) Compare the conﬁdence intervals from d) to those obtained in c). 
 Discusswhetherornotyouthinkthatyourpriorinformationishelpful in estimating $\theta$ and $\Sigma$, or if you think one of the alternatives in d) is preferable. What about if the sample size were much smaller, say $n = 25$?
 
+<!--
+It doesn't really seem like the prior information matters because the sample size is so large. Regardless of whether the prior is informative, the quantiles and correlations end up quite similar. Maybe the diffuse prior is slightly different, but it's not a big difference.
 
-It doesn't really seem like the prior information matters because the sample 
-size is so large. Regardless of whether the prior is informative, the quantiles 
-and correlations end up quite similar. Maybe the diffuse prior is slightly 
-different, but it's not a big difference.
-
-If we have a smaller sample size, this may be different. Let's see what 
-happens if I truncate the dataset to the first 25 variables and rerun with my 
-informative prior and the diffuse prior:
+If we have a smaller sample size, this may be different. Let's see what happens if I truncate the dataset to the first 25 variables and rerun with my 
+informative prior and the diffuse prior: -->
 
 - My prior
 
-```{r}
-mu0 = rep(52.5, p)
-lambda0 = s0 = rbind(c(189, 141.75), c(141.75, 189))
-# nu0 = p + 2
-nu0 = p + 2 + 10
-my_prior_mcmc_short = do_mcmc(agehw[1:25, ], mu0, lambda0, s0, nu0)
-print_quantiles(my_prior_mcmc_short$theta, my_prior_mcmc_short$sigma)
+```{r,eval=T}
+mu0 = rep(40, p)
+lambda0 = s0 = rbind(c(100,90), c(90,100))
+nu0 = p + 2
+# nu0 = p + 2 + 10
+prior_mcmc_short = mcmc(Y.marr[1:25,], mu0, lambda0, s0, nu0)
+print_quantiles(prior_mcmc_short$theta, prior_mcmc_short$sigma)
 ```
 
 - Diffuse prior
 
-```{r}
+```{r,eval=T}
 mu0 = rep(0, p)
 lambda0 = 10^5 * diag(p)
 s0 = 1000 * diag(p)
 nu0 = 3
-diffuse_mcmc_short = do_mcmc(agehw[1:25, ], mu0, lambda0, s0, nu0)
+diffuse_mcmc_short = mcmc(Y.marr[1:25,], mu0, lambda0, s0, nu0)
 print_quantiles(diffuse_mcmc_short$theta, diffuse_mcmc_short$sigma)
 ```
 
-In this case, the effect of the prior on correlation especially is easily 
-observed. The correlation for the diffuse prior is quite low, as it is being 
-dragged towards nothing.
+<!--
+In this case, the effect of the prior on correlation especially is easily observed. The correlation for the diffuse prior is quite low, as it is being 
+dragged towards nothing. -->
 
 
   
@@ -316,11 +279,10 @@ dragged towards nothing.
 
 The ﬁle swim.dat contains data on the amount of time, in seconds, it takes each of four high school swimmers to swim 50 yards. Each swimmer has six times, taken on a biweekly basis.
 
-```{r}
+```{r,echo=F}
 #Store the agehw.dat files in the same folder as this Rmd file
 Ywide.swim <- read.table("swim.dat") #one column per swimmer
 Y.swim <- reshape2::melt(Ywide.swim)[,-1]
-# No id variables; using all as measure variables
 Y.swim <- cbind(Y.swim, rep(seq(1,12,by=2),each=4), rep(1:4,times=6))
 colnames(Y.swim) <- c("time","week","swimmer")
 ```
@@ -329,91 +291,68 @@ colnames(Y.swim) <- c("time","week","swimmer")
 
 i. Fit a linear regression model of swimming time as the response and week as the explanatory variable. To formulate your prior, use the information that competitive times for this age group generally range from 22 to 24 seconds. 
 
+```{r}
+model_swim <- lm(time~week,data.frame(Y.swim))
+ggplot(data.frame(Y.swim),aes(x=week,y=time,colour=swimmer))+geom_point()+geom_smooth(method ='lm')+theme_light()
+```
+
+
+
+
 ii. For each swimmer j, obtain a posterior predictive distribution for $Y^\star_j$ , their time if they were to swim two weeks from the last recorded time. 
 
-```{r}
+```{r,eval=T}
 swim = read.table(url('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/swim.dat'))
 ```
 
-To specify our prior, we let the prior expectation of our $y$-intercept to be 
-23, and we let the prior expectation of the effect of training week by week to
-be 0, so $\boldsymbol{\beta} = (23, 0)^T$.
+To specify our prior, we let the prior expectation of our $y$-intercept to be 23, and we let the prior expectation of the effect of training week by week to be 0, so $\boldsymbol{\beta} = (23, 0)^T$.
+We expect no covariance with the $\beta$ coefficients, but we do have uncertainty about our initial $\beta$ estimates. Specifically, to let 95% of our uncertainty of the $y$-intercept to fall in $[22, 24]$, we let $\Sigma_{0(1, 1)} = 1/4$ (so that $\pm$ 2 standard deviations is $\pm$ 1). We also expect that training has a relatively mild effect on time, so we let $\Sigma_{0(2, 2)} = 0.1$ which is just an arbitrarily chosen small variance.
+For our expectation of the variability of measurements, let's similarly set  $\sigma^2_0 = 1/4$ and only lightly center this prior with $\nu_0 = 1$.
 
-We expect no covariance with the $\beta$ coefficients, but we do have
-uncertainty about our initial $\beta$ estimates. Specifically, to let 95% of our
-uncertainty of the $y$-intercept to fall in $[22, 24]$, we let $\Sigma_{0(1, 1)} = 1/4$ (so that $\pm$ 2 standard deviations is $\pm$ 1).
-We also expect that training has a relatively mild effect on time, so we let
-$\Sigma_{0(2, 2)} = 0.1$ which is just an arbitrarily chosen small variance.
-
-For our expectation of the variability of measurements, let's similarly set 
-$\sigma^2_0 = 1/4$ and only lightly center this prior with $\nu_0 = 1$.
-
-```{r}
-library(MASS) # mvrnorm
-library(dplyr)
+```{r,eval=T}
 S = 5000
 X = cbind(rep(1, 6), seq(1, 11, by = 2))
 n = dim(X)[1]
 p = dim(X)[2]
 # Prior
 beta0 = c(23, 0)
-sigma0 = rbind(c(0.25, 0), c(0, 0.1))
+sigma0 = rbind(c(0.25, 0), c(0, 0.2))
 nu0 = 1
 s20 = 0.25
 set.seed(1)
-inv = solve
-# For each swimmer, run linear regression gibbs sampling and obtain a posterior
+# run linear regression gibbs sampling and obtain a posterior for each swimmer
 # predictive distribution
 swim_pred = apply(swim, MARGIN = 1, function(y) {
-  
-  # Store samples
-  BETA = matrix(nrow = S, ncol = length(beta0))
+  BETA = matrix(nrow = S, ncol = length(beta0)) # Store samples
   SIGMA = numeric(S)
-  
-  # Starting values - just use prior values?
-  beta = c(23, 0)
+  beta = c(23, 0) # Starting values
   s2 = 0.7^2
-  
-  # Gibbs sampling algorithm from 9.2.1
-  for (s in 1:S) {
-    # 1a) Compute V and m
-    V = inv(inv(sigma0) + (t(X) %*% X) / s2)
+  for (s in 1:S) { # Gibbs sampling algorithm from 9.2.1
+    V = inv(inv(sigma0) + (t(X) %*% X) / s2) # 1a) Compute V and m
     m = V %*% (inv(sigma0) %*% beta0 + (t(X) %*% y) / s2)
-    
-    # 1b) sample beta
-    beta = mvrnorm(1, m, V)
-    
-    # 2a) Compute SSR(beta) (specific formula from 9.1)
-    ssr = (t(y) %*% y) - (2 * t(beta) %*% t(X) %*% y) + (t(beta) %*% t(X) %*% X %*% beta)
-    
-    # 2b) sample s2
-    s2 = 1 / rgamma(1, (nu0 + n) / 2, (nu0 * s20 + ssr) / 2)
+    beta = mvrnorm(1, m, V) # 1b) sample beta
+    ssr=(t(y)%*%y)-(2*t(beta) %*% t(X)%*%y)+(t(beta)%*%t(X)%*%X%*%beta) # 2a) Compute SSR(beta) (from 9.1)
+    s2 = 1 / rgamma(1, (nu0 + n) / 2, (nu0 * s20 + ssr) / 2) # 2b) sample s2
     BETA[s, ] = beta
     SIGMA[s] = s2
   }
-  
-  # Now sample posterior predictive - two weeks later
-  xpred = c(1, 13)
+  xpred = c(1, 13) # sample posterior predictive + two weeks
   YPRED = rnorm(S, BETA %*% xpred, sqrt(SIGMA))
-  
   YPRED
 })
 ```
-
-
 
 
 ## b) The coach of the team has to decide which of the four swimmers will compete 
 in a swimming meet in two weeks. Using your predictive distributions, compute $Pr(Y^\star_j = \max\{Y^\star_1 ,...,Y^\star_4\}|Y))$ for each swimmer j , and based on this make a recommendation to the coach. 
 
 
-```{r}
+```{r,eval=T}
 fastest_times = apply(swim_pred, MARGIN = 1, FUN = which.min)
 table(fastest_times) / length(fastest_times)
 ```
 
-We notice that with our posterior predictive dataset, swimmer 1 is the fastest 
-about 65% of the time by week 13, so we recommend that swimmer 1 race.
+In posterior predictive dataset, swimmer 1 is the fastest about 65% of the time by week 13, so we recommend that swimmer 1 race.
 
 
   
@@ -421,12 +360,12 @@ about 65% of the time by week 13, so we recommend that swimmer 1 race.
 
 The ﬁle crime.dat contains crime rates and data on 15 explanatory variables for 47 U.S. states, in which both the crime rates and the explanatory variables have been centered and scaled to have variance 1. A description of the variables can be obtained by typing library(MASS);?UScrime in R. 
 
-```{r}
+```{r,eval=T}
 data("UScrime",package="MASS")
 namvars <- names(UScrime)
 ```
 
-```{r}
+```{r,echo=F}
 crime = read.table(url('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/crime.dat'), header = TRUE)
 ```
 
@@ -434,26 +373,26 @@ crime = read.table(url('http://www.stat.washington.edu/people/pdhoff/Book/Data/h
 $y = X\beta+\epsilon$ using the g-prior with $g=n, \nu_0 = 2$ and $\sigma^2_0 = 1$. Obtain marginal posterior means and 95% conﬁdence intervals for $\beta$, and compare to the least squares estimates. Describe the relationships between crime and the explanatory variables. Which variables seem strongly predictive of crime rates? 
 
 
-```{r}
+```{r,eval=T}
 y = crime$y
-X = crime %>% select(-y) %>% as.matrix
+X =as.matrix(crime[,-1]) # X = crime %>% select(-y) %>% as.matrix
 n = dim(X)[1]
 p = dim(X)[2]
 g = n
 nu0 = 2
 s20 = 1
 S = 1000
-Hg = (g / (g + 1)) * X %*% inv(t(X) %*% X) %*% t(X)
+Hg = (g / (g + 1)) * X %*% solve(t(X) %*% X) %*% t(X)
 SSRg = t(y) %*% (diag(1, nrow = n) - Hg) %*% y
 s2 = 1 / rgamma(S, (nu0 + n) / 2, (nu0 * s20 + SSRg) / 2)
-Vb = g * inv(t(X) %*% X) / (g + 1)
+Vb = g * solve(t(X) %*% X) / (g + 1)
 Eb = Vb %*% t(X) %*% y
 E = matrix(rnorm(S * p, 0, sqrt(s2)), S, p)
 beta = t(t(E %*% chol(Vb)) + c(Eb))
 ```
 
 
-```{r}
+```{r,eval=T}
 library(tidyr)
 signif = apply(beta, MARGIN = 2, FUN = quantile, probs = c(0.025, 0.5, 0.975)) %>%
   apply(MARGIN = 2, FUN = function(y) !(y[1] < 0 && 0 < y[3]))
@@ -461,22 +400,20 @@ beta_df = as.data.frame(beta) %>%
   gather(key = 'variable', val = 'coefficient') %>%
   mutate(signif = signif[variable])
 ggplot(beta_df, aes(x = variable, y = coefficient, color = signif)) +
-  stat_summary(fun.y = mean, fun.ymin = function(y) quantile(y, probs = c(0.025)), fun.ymax = function(y) quantile(y, probs = c(0.975))) +
-  geom_hline(yintercept = 0, lty = 2)
+  stat_summary(fun.y=mean,fun.ymin=function(y)quantile(y,probs=c(0.025)),fun.ymax=function(y)quantile(y,probs=c(0.975)))+
+  geom_hline(yintercept = 0, lty = 2)+theme_light()
 ```
 
-Looks like Ed (mean years of schooling), Ineq (Income inequality), M (percentage
-of males aged 14-24), Prob (probability of imprisonment), and U2 (unemployment
-rate of urban males 35-39).
+Looks like Ed (mean years of schooling), Ineq (Income inequality), M (percentage of males aged 14-24), Prob (probability of imprisonment), and U2 (unemployment rate of urban males 35-39).
 
 
 ## b) Lets see how well regression models can predict crime rates based on the 
 X-variables. Randomly divide the crime roughly in half, into a training set $\{y_{tr},X_{tr}\}$ and a test set $\{y_{te},X_{te}\}$
 
 
-```{r}
+```{r,eval=T}
 y = crime$y
-X = crime %>% select(-y) %>% as.matrix
+X =as.matrix(crime[,-1]) # X = crime %>% select(-y) %>% as.matrix
 set.seed(1) # Reproducible!
 train_i = sample.int(length(y), size = round(length(y) / 2), replace = FALSE)
 ytr = y[train_i]
@@ -490,17 +427,12 @@ Xte = X[-train_i, ]
 Obtain predicted values for the test data by computing $\hat y_{ols}=\mathbf{X}_{te}\hat\beta_{ols}$. Plot $\hat y_{ols}$ versus $y_{te}$ and compute the prediction error $\frac1{n_{te}}\sum(y_{i,te} -\hat y_{i,ols})^2$. 
 
 
-```{r}
-# From 9.1
-beta_ols = inv(t(Xtr) %*% Xtr) %*% t(Xtr) %*% ytr
+```{r,eval=T}
+beta_ols = solve(t(Xtr) %*% Xtr) %*% t(Xtr) %*% ytr # From 9.1
 beta_ols
 y_ols = Xte %*% beta_ols
-ols_df = data.frame(
-  observed = yte,
-  predicted = y_ols
-)
-ggplot(ols_df, aes(x = observed, y = predicted)) +
-  geom_point() +
+ols_df = data.frame(observed = yte,predicted = y_ols)
+ggplot(ols_df, aes(x = observed, y = predicted)) +geom_point() +
   geom_smooth(method = 'lm')
 pred_error = sum((yte - y_ols)^2) / length(yte)
 pred_error
@@ -512,7 +444,7 @@ pred_error
 Obtain predictions for the test set $\hat y_{Bayes}= \mathbf{X}_{test}\hat\beta_{Bayes}$. Plot versus the test data, compute the prediction error, and compare to the OLS prediction error. Explain the results.
 
 
-```{r}
+```{r,eval=F}
 y = ytr
 X = Xtr
 n = dim(X)[1]
@@ -521,10 +453,10 @@ g = n
 nu0 = 2
 s20 = 1
 S = 1000
-Hg = (g / (g + 1)) * X %*% inv(t(X) %*% X) %*% t(X)
+Hg = (g / (g + 1)) * X %*% solve(t(X) %*% X) %*% t(X)
 SSRg = t(y) %*% (diag(1, nrow = n) - Hg) %*% y
 s2 = 1 / rgamma(S, (nu0 + n) / 2, (nu0 * s20 + SSRg) / 2)
-Vb = g * inv(t(X) %*% X) / (g + 1)
+Vb = g * solve(t(X) %*% X) / (g + 1)
 Eb = Vb %*% t(X) %*% y
 E = matrix(rnorm(S * p, 0, sqrt(s2)), S, p)
 beta = t(t(E %*% chol(Vb)) + c(Eb))
@@ -535,8 +467,7 @@ bayes_df = data.frame(
   predicted = y_bayes
 )
 ggplot(ols_df, aes(x = observed, y = predicted)) +
-  geom_point() +
-  geom_smooth(method = 'lm')
+  geom_point() +geom_smooth(method = 'lm')+theme_light()
 pred_error = sum((yte - y_bayes)^2) / length(yte)
 pred_error
 ```
@@ -548,54 +479,40 @@ between the prediction errors.
 ## c) Repeat the procedures in b) many times with different randomly generated
 test and training sets. Compute the average prediction error for both the OLS and Bayesian methods.
 
-```{r}
-# Unnecessary code repeating here. Clean this up later w/ functions
+```{r,eval=T}
 N = 100
 set.seed(1)
 pred_errors = t(sapply(1:N, function(i) {
   y = crime$y
-  X = crime %>% select(-y) %>% as.matrix
+  X =as.matrix(crime[,-1])
   train_i = sample.int(length(y), size = round(length(y) / 2), replace = FALSE)
   ytr = y[train_i]
   Xtr = X[train_i, ]
   yte = y[-train_i]
   Xte = X[-train_i, ]
-  
   # OLS
   beta_ols = inv(t(Xtr) %*% Xtr) %*% t(Xtr) %*% ytr
   beta_ols
-  
   y_ols = Xte %*% beta_ols
-  
   pred_error_ols = sum((yte - y_ols)^2) / length(yte)
-  
   # Bayes
   y = ytr
   X = Xtr
-  
   n = dim(X)[1]
   p = dim(X)[2]
-  
   g = n
   nu0 = 2
   s20 = 1
-  
   S = 1000
-  
   Hg = (g / (g + 1)) * X %*% inv(t(X) %*% X) %*% t(X)
   SSRg = t(y) %*% (diag(1, nrow = n) - Hg) %*% y
-  
   s2 = 1 / rgamma(S, (nu0 + n) / 2, (nu0 * s20 + SSRg) / 2)
   Vb = g * inv(t(X) %*% X) / (g + 1)
   Eb = Vb %*% t(X) %*% y
-  
   E = matrix(rnorm(S * p, 0, sqrt(s2)), S, p)
   beta = t(t(E %*% chol(Vb)) + c(Eb))
-  
   beta_bayes = as.matrix(colMeans(beta))
-  
   y_bayes = Xte %*% beta_bayes
-  
   pred_error_bayes = sum((yte - y_bayes)^2) / length(yte)
   c(pred_error_ols, pred_error_bayes)
 })) %>% as.data.frame
@@ -606,19 +523,15 @@ Here's a plot of the density of $\text{err}_{\text{Bayes}} -
 \text{err}_{\text{ols}}$. If this is less than 0, then the Bayes estimator did
 better than the OLS estimator:
 
-```{r}
+```{r,eval=T}
 pred_diff = pred_errors %>% transmute(`bayes - ols` = bayes - ols)
 ggplot(pred_diff, aes(x = `bayes - ols`)) +
-  geom_density() +
-  geom_vline(xintercept = 0, lty = 2)
+  geom_density() + geom_vline(xintercept = 0, lty = 2)
 ```
 
-Lastly,
 
-```{r}
+```{r,eval=T}
 mean(pred_errors$bayes < pred_errors$ols)
 ```
 
-For `N` samples, `r mean(pred_errors$bayes < pred_errors$ols) * 100`% of the
-time, the predictive error using the Bayes estimators is less than the
-predictive error using the OLS estimators. Nice!
+For `r N` samples, `r mean(pred_errors$bayes < pred_errors$ols) * 100`% of the time, the predictive error using the Bayes estimators is less than the predictive error using the OLS estimators. 

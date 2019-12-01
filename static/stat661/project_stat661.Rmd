@@ -1,83 +1,294 @@
 ---
-title: 'STAT 661: ADV MTH STAT I'
+title: 'STAT 661: Project'
 author: "Jacob, Robin, Ryan & Shen"
 date: Dec, 2019
-subtitle: Zip_EM
+subtitle: LS v.s. EM
 output:
-  ioslides_presentation: 
-    incremental: true
+  pdf_document:
+    toc: no
+    number_sections: yes
   beamer_presentation:
     includes:
       in_header: "preamble.tex"
+  ioslides_presentation: 
+    incremental: true
   slidy_presentation: default
+
 ---
 
-# Topic
+# Least Square Method v.s. EM Method
 
-Schmee, J., & Hahn, G. (1979). A Simple Method for Regression Analysis With Censored Data. Technometrics, 21(4), 417-432.
+Schmee, J., & Hahn, G. (1979). A Simple Method for Regression Analysis with Censored Data. Technometrics, 21(4), 417-432. doi:10.2307/1268280
 
-## Abstract {.smaller}
+Aitkin, M. (1981). A Note on the Regression Analysis of Censored Data. Technometrics, 23(2), 161-163. doi:10.2307/1268032
+
+## Introduction {.smaller}
 
 
 Problems requiring regression analysis of censored data arise frequently in practice. For example, in accelerated testing one wishes to relate stress and average time to failure from data including unfailed units, i. e., censored observations. Maximum likelihood is one method for obtaining the desired estimates; in this paper, we propose an alternative approach. An initial least squares fit is obtained treating the censored values as failures. Then, based upon this initial fit, the expected failure time for each censored observation is estimated. These estimates are then used, instead of the censoring times, to obtain a revised least squares fit and new expected failure times are estimated for the censored values. These are then used in a further least squares fit. The procedure is iterated until convergence is achieved. This method is simpler to implement and explain to non-statisticians than maximum likelihood and appears to have good statistical and convergence properties. The method is illustrated by an example, and some simulation results are described. Variations and areas for further study also are discussed.
 
 
-## Introduction
+## Least Square Method
 
-## Related work and literature
+Description of method for simple situation
 
-## Description of method for simple situation
+$\mu_x=\beta_0+\beta_1x$
 
-$$\mu_x=\beta_0+\beta_1x$$
-$$\mu^\star_x=\mu_x+\frac{\sigma f(z)}{1-F(z)}$$
+$\mu^\star_x=\mu_x+\frac{\sigma f(z)}{1-F(z)}$
 where
-$$z=\frac{(c_x-\mu_x)}{\sigma}$$
+$z=\frac{(c_x-\mu_x)}{\sigma}$
 
 - Iteration 0
 
-- Iteration 1
+   + Step 1:$\hat\beta_0^{(0)}=-4.9307$,$\hat\beta_1^{(0)}=3.7471$,$\hat\sigma^{(0)}=0.1572$.
+   + Step 2:$x=\frac{1000}{170+273.2}=2.256318$
 
-## Numerical Example {.smaller}
+$\hat\mu^{(0)}_{2.26}=-4.9307+3.7471\frac{1000}{170+273.2}=3.523948$
 
-```{r}
-n=matrix(c(1764,2772,3444,3542,3780,4860,5196),7,1)
-```
+$C_{2.26}=\log_{10}(5448)=3.736237$
 
-## Iteration 0 {.smaller}
+$z=\frac{C_{2.26}-\hat\mu^{(0)}_{2.26}}{\sigma}=\frac{3.736237-3.523948}{0.1572178}=1.350286$
 
-- Step 1:
-
-$\hat\beta_0^{(0)}=-4.9307$,$\hat\beta_1^{(0)}=3.7471$,$\hat\sigma^{(0)}=0.1572$.
-
-- Step 2:
-
-$$x=\frac{1000}{170+273.2}=2.256318$$
-
-$$\hat\mu^{(0)}_{2.26}=-4.9307+3.7471\frac{1000}{170+273.2}=3.523948$$
-
-$$C_{2.26}=\ln(5448)=8.603004$$
-
-$$z=\frac{C_{2.26}-\hat\mu^{(0)}_{2.26}}{\sigma}=\frac{8.603004-3.523948}{0.1572}=32.30952$$
-
-$$\hat\mu^{\star(0)}_{2.26}=\hat\mu^{(0)}_{2.26}+\hat\sigma^{(0)}\frac{ f(z)}{1-F(z)}=3.8089$$
+$\hat\mu^{\star(0)}_{2.26}=\hat\mu^{(0)}_{2.26}+\hat\sigma^{(0)}\frac{ f(z)}{1-F(z)}=3.8089$
 Or 6440 hours
 
-## Iteration 1
+- Iteration 1
 
-- Step 1:
+   + Step 1:$\hat\beta_0^{(1)}=-5.2603$,$\hat\beta_1^{(1)}=3.9263$,$\hat\sigma^{(1)}=0.1799$.
+   + Step 2:$\hat\mu^{\star(1)}_{2.26}=3.83972$
 
-$\hat\beta_0^{(1)}=-5.2603$,$\hat\beta_1^{(1)}=3.9263$,$\hat\sigma^{(1)}=0.1799$.
-
-- Step 2:
-
-$$\hat\mu^{\star(1)}_{2.26}=3.83972 $$
-
-## Subsequent Iterations
+- Subsequent Iterations
 
 $\hat\beta_0=-5.81829$,$\hat\beta_1= 4.20426$,$\hat\sigma= 0.204322$.
 
-$$\hat\mu^{\star(17)}_{2.26}=3.87676 $$
+$\hat\mu^{\star(17)}_{2.26}=3.87676$
 
-## Results of simulation analysis
+## LS Code
 
+```{r,echo=F}
+rm(list=ls())
+```
+
+
+```{r}
+temp <- c(150,170,190,220) #temperature levels 
+trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
+x <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10)) 
+cen <- c(8064,5448,1680,528) #censoring times 
+logcen <- log10(cen) #log10 censoring times 
+y_uncensored <-log10(c(rep(1,10),1764,2772,3444,3542,3780,4860,5196,rep(1,3),408,408,1344,1344,1440,rep(1,5),408,408,504,504,504,rep(1,5)))
+y_censored <- c(rep(logcen[1],10),rep(0,7),rep(logcen[2],3),rep(0,5),rep(logcen[3],5),rep(0,5),rep(logcen[4],5))
+S <- 23; Y<-matrix(nrow=S,ncol=40)
+Y[1,] <- y_0 <- y_uncensored+y_censored
+fit0 <- lm(y_0~x) #linear model between log10 of observed life time for different r eciprocal values
+plot(x,y_0,main="Scatterplot",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.4),ylim=c(2.5,4),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+abline(fit0,lwd=2,lty=2,col="red")
+# Iteration 0 
+sigma_0 <- sigma(fit0) #standard error of residuals 
+beta_00 <- coef(fit0)[1] #intercept 
+beta_10 <- coef(fit0)[2] #slope 
+mu_0 <- beta_00 + beta_10*trec #mean log time to failure 
+z <- (logcen-mu_0)/sigma_0 #z-vector 
+ex_mu_0 <- mu_0 + sigma_0*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+delta = 1e-006; iteration <- 1
+PHI<-matrix(nrow=S,ncol=8,dimnames=list(NULL, c('mu150','mu170','mu190','mu220','Intercept','Slope','Sigma','Iteration')))
+PHI[1,]<-phi<-c(ex_mu_0, beta_00, beta_10,sigma_0,iteration)
+# Subsequent iteration
+repeat { 
+ phi[8] <- phi[8]+1     
+ y_censored <- c(rep(phi[1],10),rep(0,7),rep(phi[2],3),rep(0,5),rep(phi[3],5),rep(0,5),rep(phi[4],5))
+ y<- y_uncensored+y_censored
+ Y[phi[8],]<-y   # Replace the new censored values
+ fit <- lm(y~x)   # fit a new model
+ phi[5] <- coef(fit)[1] #intercept 
+ phi[6] <- coef(fit)[2] #slope 
+ phi[7] <- sigma(fit) #standard error of residuals  
+ mu <- phi[5] + phi[6]*trec    
+ z <- (logcen-mu)/phi[7] #z-vector 
+ phi[1:4] <- mu + phi[7]*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+ conv <- dist(rbind(PHI[phi[8]-1,1:4],phi[1:4])) 
+ if(conv < delta) break 
+  PHI[phi[8],]<-phi         
+}
+```
+
+
+
+```{r,echo=F}
+# kableExtra::kable(PHI)
+pander::pander(PHI)
+```
+
+```{r,echo=F}
+plot(x,y_0,main="Least Squares Method",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.4),ylim=c(2.5,4),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(PHI[,8],na.rm =T)))
+abline(PHI[i,5:6],lwd=0.5,lty=1,col=i)
+text(2.3,3.95, labels = "22nd");text(2.32,3.65, labels = "1st")
+```
+
+## EM Method
+
+- E-step
+
+
+
+
+$$Q(\vec\theta,\vec\theta^\star)=-\frac{n}2\ln(2\pi)-n\ln(\sigma)-\frac1{2\sigma^2}\sum_{j=1}^m(t_j-\beta_0-\beta_1\nu_j)^2-\frac1{2\sigma^2}\sum_{i=m+1}^nE[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]$$
+
+$$E[T_i|T_i>w_i,\vec\theta^\star]=\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})$$
+
+$$E[T_i^2|T_i>w_i,\vec\theta^\star]=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star})H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})$$
+
+$$E[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star})H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-2(\beta_0+\beta_1\nu_i)[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})]+(\beta_0+\beta_1\nu_i)^2$$
+
+- M-step
+
+$$\frac{\partial Q}{\partial\beta_0}=-\frac1{\sigma^2}\left\{\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-\beta_0-\beta_1\nu_i]\right\}=0$$
+$$\frac{\partial Q}{\partial\beta_1}=-\frac1{\sigma^2}\left\{\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]\nu_j+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-\beta_0-\beta_1\nu_i]\nu_i\right\}=0$$
+
+$$\frac{\partial Q}{\partial\sigma^2}=\frac1{2\sigma^2}\left\{-n+\frac1{\sigma^2}\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\frac1{\sigma^2}\sum_{i=m+1}^nE[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]\right\}=0$$
+$$\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\sum_{i=m+1}^n\left\{\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star}-2\mu_i)H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-2\mu_i\mu_i^\star+\mu_i^2\right\}=n\sigma^2$$
+
+
+
+
+
+```{r,echo=F}
+# y_censored_150 <- c(rep(logcen[1],10),rep(0,30))
+# y_censored_170 <- c(rep(0,17),rep(logcen[2],3),rep(0,20))
+# y_censored_190 <- c(rep(0,25),rep(logcen[3],5),rep(0,10))
+# y_censored_220 <- c(rep(0,35),rep(logcen[4],5))
+# index <- which(y_0 %in% logcen)
+# y<-log10(c(rep(8064,10),1764,2772,3444,3542,3780,4860,5196,rep(5448,3),408,408,1344,1344,1440,rep(1680,5),408,408,504,504,504,rep(528,5))) #log10 of the observed life time
+# type <- c(rep(1,10),rep(0,7),rep(1,3),rep(0,5),rep(1,5),rep(0,5),rep(1,5))
+# 
+# index <- 1:(size-1)
+
+nu_uncensored <-c(rep(trec[2],7),rep(trec[3],5),rep(trec[4],5))
+nu_censored <- c(rep(trec[1],10),rep(trec[2],3),rep(trec[3],5),rep(trec[4],5))
+nu <- c(nu_uncensored,nu_censored) 
+index_nu <- c(rep(-2,7),rep(-3,5),rep(-4,5),rep(1,10),rep(2,3),rep(3,5),rep(4,5))
+n<-length(nu); m <- length(nu_uncensored)
+cen <- c(8064,5448,1680,528) #censoring times 
+w <- log10(cen) #log10 censoring times: last time still working
+y_uncensored <-log10(c(1764,2772,3444,3542,3780,4860,5196,408,408,1344,1344,1440,408,408,504,504,504))
+y_censored <- c(rep(w[1],10),rep(w[2],3),rep(w[3],5),rep(w[4],5))
+
+
+x <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10)) 
+cen <- c(8064,5448,1680,528) #censoring times 
+logcen <- log10(cen) #log10 censoring times 
+y_uncensored <-log10(c(rep(1,10),1764,2772,3444,3542,3780,4860,5196,rep(1,3),408,408,1344,1344,1440,rep(1,5),408,408,504,504,504,rep(1,5)))
+y_censored <- c(rep(logcen[1],10),rep(0,7),rep(logcen[2],3),rep(0,5),rep(logcen[3],5),rep(0,5),rep(logcen[4],5))
+```
+
+
+## EM Code
+
+```{r}
+temp <- c(150,170,190,220) #temperature levels 
+trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
+nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10))
+index_nu <- c(rep(-2,7),rep(-3,5),rep(-4,5),rep(1,10),rep(2,3),rep(3,5),rep(4,5))
+n<-length(nu); m <- length(nu_uncensored)
+cen <- c(8064,5448,1680,528) #censoring times 
+w <- log10(cen) #log10 censoring times: last time still working
+y_uncensored <-log10(c(rep(1,10),1764,2772,3444,3542,3780,4860,5196,rep(1,3),408,408,1344,1344,1440,rep(1,5),408,408,504,504,504,rep(1,5)))
+y_censored <- c(rep(w[1],10),rep(0,7),rep(w[2],3),rep(0,5),rep(w[3],5),rep(0,5),rep(w[4],5))
+# which(index_x %in% 1)
+S <- 23; Y<-matrix(nrow=S,ncol=40)
+Y[1,] <- y_0 <- (y_uncensored+y_censored)
+index <- which(y_0 %in% w)
+
+fit0 <- lm(y_0~nu) #linear model 
+sigma_0 <- sigma(fit0) #standard error of residuals 
+beta_00 <- coef(fit0)[1] #intercept 
+beta_10 <- coef(fit0)[2] #slope 
+mu_0 <- beta_00 + beta_10*trec #mean log time to failure 
+z <- (w-mu_0)/sigma_0 #z-vector 
+H <- dnorm(z)/(1-pnorm(z))
+Test <- mu_0 + sigma_0*H #new expected mean log times to failure
+
+delta = 1e-006; iteration <- 1
+THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL, c('mu150','mu170','mu190','mu220','Intercept','Slope','Sigma','Iteration')))
+THETA[1,]<-theta<-c(Test, beta_00, beta_10,sigma_0,iteration)
+# Subsequent iteration
+repeat { 
+ theta[8] <- theta[8]+1     
+ y_censored <- c(rep(theta[1],10),rep(theta[2],3),rep(theta[3],5),rep(theta[4],5))
+ y<- y_uncensored+y_censored
+ Y[theta[8],]<-y   # Replace the new censored values
+ fit <- lm(y~trec)   # fit a new model
+ theta[5] <- coef(fit)[1] #intercept 
+ theta[6] <- coef(fit)[2] #slope 
+ theta[7] <- sigma(fit) #standard error of residuals  
+ 
+ mu <- theta[5] + theta[6]*trec    
+ z <- (w-mu)/theta[7] #z-vector 
+ theta[1:4] <- mu + theta[7]*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+ conv <- dist(rbind(THETA[theta[8]-1,1:4],theta[1:4])) 
+ if(conv < delta) break 
+  THETA[theta[8],]<-theta         
+}
+```
+
+
+
+```{r, eval=F, include=F}
+# Robin's Code
+y <- c(rep(8064,10),1764,2772,3444,3542,3780,4860,5196,rep(5448,3),408,408,1344,1344,1440,rep(1680,5),408,408,504,504,504,rep(528,5)) 
+x <- c(rep(150,10),rep(170,10),rep(190,10),rep(220,10)) 
+rec <- 1000/(x+273.2) #reciprocal of the absolute temperature T 
+temp <- c(150,170,190,220) #temperature levels 
+trec <- 1000/(temp+273.2) #reciprocal of the temperature levels 
+logy <- log10(y) #log10 of the observed life time
+
+#Iteration 0 
+fit0 <- lm(logy~rec) #linear model between log10 of observed life time for different r eciprocal values
+plot(rec,logy,main="Scatterplot",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.4),ylim=c(2.5,4),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+abline(fit0,lwd=2,lty=2,col="red")
+
+
+se <- sigma(fit0) #standard error of residuals 
+beta00 <- coef(fit0)[1] #intercept 
+beta01 <- coef(fit0)[2] #slope 
+m0 <- beta00 + beta01*trec #mean log time to failure 
+cen <- c(8064,5448,1680,528) #censoring times 
+logcen <- log10(cen) #log10 censoring times 
+z <- (logcen-m0)/se #z-vector 
+e0 <- m0 + se*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+
+
+#Iteration 1 
+logynew1 <- c(rep(e0[1],10),log10(1764),log10(2772),log10(3444),log10(3542),log10(3780),log10(4860),log10(5196),rep(e0[2],3),log10(408),log10(408),log10(1344),log10(1344), log10(1440),rep(e0[3],5),log10(408),log10(408),log10(504),log10(504),log10(504),rep(e0 [4],5)) 
+fit1 <- lm(logynew1~rec) 
+se1 <- sigma(fit1) 
+beta10 <- coef(fit1)[1] 
+beta11 <- coef(fit1)[2] 
+m1 <- beta10 + beta11*trec 
+z1 <- (logcen-m1)/se1 
+e1 <- m1 + se1*dnorm(z1)/(1-pnorm(z1)) 
+
+et <- e0 
+ek <- e1 
+c<-1 
+while(max(ek-et)>0.00001){
+  logynewk <- c(rep(ek[1],10),log10(1764),log10(2772),log10(3444),log10(3542),log10(3780),log10(4860),log10(5196),rep(ek[2],3),log10(408),log10(408),log10(1344),log10(1344),log10(1440),rep(ek[3],5),log10(408),log10(408),log10(504),log10(504),log10(504),rep (ek[4],5))
+  fitk <- lm(logynewk~rec)
+  sek <- sigma(fitk)
+  betak0 <- coef(fitk)[1]
+  betak1 <- coef(fitk)[2]
+  mk <- betak0 + betak1*trec
+  zk <- (logcen-mk)/sek
+  et <- ek
+  ek <- mk + sek*dnorm(zk)/(1-pnorm(zk))
+  c <- c+1 
+}
+```
 

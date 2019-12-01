@@ -199,26 +199,38 @@ We thus have explicit solutions to the likelihood equations under the hypothesis
 
 
 ```{r, echo=T, message=F, warning=F, fig.width=12, fig.height=4, fig.align='center'}
+rm(list=ls())
 #data
 y<-c(3062,587,284,103,33,4,2)
-S<-length(y)
+S <- 27
+size<-length(y)
+index <- 1:(size-1)
 w <- sum(y)
 w_0 <- y[1]
 w_1to6 <- sum(y[2:7])
 c<- sum(y[2:7]*c(1:6))
-lambda0<-2; eta0=0.1
-PHI<-matrix(nrow=S,ncol=2)
-PHI[1,]<-phi<-c( eta0, lambda0)
+lambda0<-0.4; ksi0=0.75; delta = 1e-006; iteration <- 1
+PHI<-matrix(nrow=S,ncol=3)
+PHI[1,]<-phi<-c( ksi0, lambda0,iteration)
 ### iteration
-for(s in 1:S) {
-# generate a new eta value 
+repeat { 
+
+# generate a new ksi value 
   phi[1] <- (w-w_0*exp(phi[2]))/(w*(1-exp(phi[2])))
 # generate a new lambda value 
-  phi[2]<- (c*phi[1]*(lambda0-1)*exp(lambda0)-w_1to6*phi[1]*(lambda0)^2*exp(lambda0)-c*(1-phi[1]))/
-    ((c-w_1to6)*phi[1]*exp(lambda0)-w_1to6*phi[1]*(lambda0)*exp(lambda0)-w*(1-phi[1]))
-  PHI[s,]<-phi         
+  phi[2] <- (sum(index*y[2:size]) * (phi[1]*exp(phi[2])+(1-phi[1])))/
+    ((w - w_0) * phi[1] * exp(phi[2]) + w*(1-phi[1]))    
+
+  
+
+ conv <- dist(rbind(PHI[phi[3],1:2],phi[1:2])) 
+  phi[3] <- phi[3]+1 
+ if(conv < delta) break 
+ 
+  PHI[phi[3],]<-phi         
 }
 PHI
+
 ```
 
 

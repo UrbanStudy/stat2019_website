@@ -1,7 +1,7 @@
 ---
-title: 'STAT 671: Statistical Learning'
+title: 'Support Vector Machines'
 author: "Di & Shen"
-subtitle: Support Vector Machines
+subtitle: 'STAT 671: Statistical Learning'
 output:
   ioslides_presentation: default
   beamer_presentation:
@@ -9,6 +9,139 @@ output:
       in_header: "preamble.tex"
   slidy_presentation: default
 ---
+
+
+# 
+
+- Kernel Methods: 
+  * Supervised Learning 
+    + Kernel ridge regression 
+    + Kernel logistic regression 
+    + Large-margin classiﬁers 
+    + Interlude: convex optimization and duality 
+    + Support vector machines
+
+
+## Introduction
+
+Historically the ﬁrst “kernel method” for pattern recognition, still the most popular. 
+
+Often state-of-the-art in performance. 
+
+One particular choice of loss function (hinge loss). \textcolor{orange}{}
+
+Leads to a sparse solution, i.e., not all points are involved in the decomposition (compression). 
+
+Particular algorithm for fast optimization (decomposition by chunking methods).
+
+
+## Deﬁnition 
+
+The hinge loss is the function $\mathbb{R}\to\mathbb{R}_+$: 
+
+$$\varphi_{hinge}(u) = \max(1−u,0) =\begin{cases}0 &\text{if  } u\ge 1,\\ 1−u& \text{otherwise}. \end{cases}$$
+
+SVM is the corresponding large-margin classiﬁer, which solves:
+$$\underset{f\in\mathcal{H}}{\min}\left\{\frac1n\sum_{i=1}^n\varphi_{hinge}(y_if(x_i)) + \lambda\|f\|^2_\mathcal{H}\right\}$$
+
+## Problem reformulation 
+
+By the representer theorem, the solution satisfies
+$$\hat f (x) =\sum_{i=1}^n\hat\alpha_i K (x_i,x) $$,
+where $\hat\alpha$ solves
+
+$$\underset{\alpha\in\mathbb{R^n}}{\min}\left\{\frac1n\sum_{i=1}^n\varphi_{hinge}(y_i[K\alpha]_i) + \lambda\alpha^TK\alpha\right\}$$
+This is a convex optimization problem But the objective function is not smooth (because of the hinge loss)
+
+## Problem reformulation 
+
+Let us introduce additional slack variables $\xi_1,...,\xi_n\in\mathbb{R}$. The problem is equivalent to:
+
+$$\underset{\alpha\in\mathbb{R^n},\xi\in\mathbb{R^n}}{\min}\left\{\frac1n\sum_{i=1}^n\xi_i + \lambda\alpha^TK\alpha\right\}$$
+subject to:
+$$\xi_i\ge \varphi_{hinge}(y_i[K\alpha]_i)$$ . 
+The objective function is now smooth, but not the constraints 
+However it is easy to replace the non-smooth constraint by a cunjunction of two smooth constraints, because: 
+
+$$u \ge\varphi_{hinge}(v)\iff \begin{cases}u\ge 1−v \\u\ge 0\end{cases}$$
+## SVM (primal formulation)
+
+In summary, the SVM solution is
+$$\hat f (x) =\sum_{i=1}^n\hat\alpha_i K (x_i,x) $$,
+where $\hat\alpha$ solves: 
+
+$$\underset{\alpha\in\mathbb{R^n},\xi\in\mathbb{R^n}}{\min}\left\{\frac1n\sum_{i=1}^n\xi_i + \lambda\alpha^TK\alpha\right\}$$
+subject to:
+$$\begin{cases}(y_i[K\alpha]_i +\xi_i −1\ge 0,& \text{for} i = 1,...,n,\\\xi_i\ge 0,& \text{for} i = 1,...,n\end{cases}$$.
+
+## Solving the SVM problem
+
+This is a classical quadratic program (minimization of a convex quadratic function with linear constraints) for which any out-of-the-box optimization package can be used. 
+
+The dimension of the problem and the number of constraints, however, are 2n where n is the number of points. General-purpose QP solvers will have diﬃculties when n exceeds a few thousands. 
+
+Solving the dual of this problem (also a QP) will be more convenient and lead to faster algorithms (due to the sparsity of the ﬁnal solution).
+
+## SVM (dual formulation)
+
+$$\underset{\alpha\in\mathbb{R^n}}{\max}\left\{2\sum_{i=1}^n\alpha_i y_i -\sum_{i,j=1}^n\alpha_i\alpha_j K(x_i,x_j)\right\}=2\alpha^Ty-\alpha^TK\alpha$$
+subject to:
+$$0\le y_i\alpha_i\le\frac1{2\lambda n}, \text{for } i = 1,...,n$$
+
+## Complimentary slackness conditions
+
+## Analysis of KKT conditions 
+
+## Geometric interpretation
+
+## Support vectors
+
+- Consequence of KKT conditions 
+
+The training points with $\alpha_i\neq0$ are called support vectors. 
+
+Only support vectors are important for the classiﬁcation of new points:
+
+$$\forall x\in\mathcal{X},\ f (x) =\sum_{i=1}^n\alpha_i K (x_i,x)=\sum_{i\in SV}\alpha_i K (x_i,x) $$
+where SV is the set of support vectors.
+
+- Consequences 
+
+The solution is sparse in $\alpha$, leading to fast algorithms for training (use of decomposition methods). 
+
+The classiﬁcation of a new point only involves kernel evaluations with support vectors (fast).
+
+## Remark: C-SVM
+
+Often the SVM optimization problem is written in terms of a regularization parameter $C$ instead of $\lambda$ as follows:
+
+$$\underset{f\in\mathcal{H}}{\arg\min}\left\{\frac12\|f\|^2_\mathcal{H}+C\sum_{i=1}^nL_{hinge}(f(x_i),y_i)\right\}$$
+
+This is equivalent to our formulation with $C=\frac1{2\lambda n}$. 
+
+The SVM optimization problem is then:
+
+$$\underset{\alpha\in\mathbb{R^d}}{\max}\left\{2\sum_{i=1}^n\alpha_i y_i -\sum_{i,j=1}^n\alpha_i\alpha_j K(x_i,x_j)\right\}$$
+
+subject to:
+$$0\le y_i\alpha_i\le C, \text{for } i = 1,...,n$$
+This formulation is often called C-SVM.
+
+## Remark: 2-SVM
+
+A variant of the SVM, sometimes called 2-SVM, is obtained by replacing the hinge loss by the square hinge loss:
+
+$$\underset{f\in\mathcal{H}}{\min}\left\{\frac1n\sum_{i=1}^n\varphi_{hinge}(y_if(x_i))^2 + \lambda\|f\|^2_\mathcal{H}\right\}$$
+
+The dual problem of the 2-SVM is:
+
+$$\underset{\alpha\in\mathbb{R^d}}{\max}\left\{2\alpha^Ty-\alpha^T(K+n\lambda I)\alpha\right\}$$
+$$0\le y_i\alpha_i,\ \text{for } i = 1,...,n$$
+
+This is therefore equivalent to the previous SVM with the kernel $K + n\lambda I$ and $C=+\infty$
+
+
+
 
 # Introduction
 

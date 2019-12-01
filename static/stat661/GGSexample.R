@@ -18,6 +18,7 @@ conv <- abs(newlambda - lambda)
 # absolute difference between 
 # two consecutive iterates
 if(conv < delta) break    
+
 lambda <- newlambda   }
 newlambda   
 x <- c(newksi, newlambda)   
