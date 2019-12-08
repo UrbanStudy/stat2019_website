@@ -1,18 +1,18 @@
 library("quadprog")
 library(ggplot2)
-
-iris <- read.csv("~/Google Drive File Stream/My Drive/LAPTOP Backup/STAT 610 Machine Learning I-III/III/iris.csv")[,2:6]
+data(iris)
+# iris <- read.csv("~/Google Drive File Stream/My Drive/LAPTOP Backup/STAT 610 Machine Learning I-III/III/iris.csv")[,2:6]
 train_ind <- sample(seq_len(nrow(iris)), size = 120)
 train <- iris[train_ind, ]
 test <- iris[-train_ind, ]
 
 # train <- iris[c(1:40,51:90,101:140),]
 # test <- iris[c(41:50,91:100,141:150),]
-train$y1 <-ifelse(train$Species=="I. Setosa", 1, -1)
-train$y2 <-ifelse(train[,5]=="I. virginica", 1, -1)
+train$y1 <-ifelse(train$Species=="setosa", 1, -1)
+train$y2 <-ifelse(train[,5]=="virginica", 1, -1)
 
 # set the problem data and parameters
-X <- as.matrix(train[,c("Petal.length", "Petal.width")])
+X <- as.matrix(train[,c("Petal.Length", "Petal.Width")])
 y1 <- as.matrix(train$y1)
 y2 <- as.matrix(train$y2)
 n <- dim(X)[1]
@@ -80,7 +80,7 @@ findLine <- function(a, y, X){
 qpline1 <- findLine(qpsol1, y1, X)
 qpline2 <- findLine(qpsol2, y2, X)
 
-ggplot(train, aes(x=Petal.length, y=Petal.width)) + 
+ggplot(train, aes(x=Petal.Length, y=Petal.Width)) + 
   ggtitle("Solving the SVM") +
   geom_point(aes(fill=Species), size=3, pch=21) +
   geom_abline(intercept=qpline1[1], slope=qpline1[2], size=1, aes(color="quadprog"), show.legend =TRUE) +

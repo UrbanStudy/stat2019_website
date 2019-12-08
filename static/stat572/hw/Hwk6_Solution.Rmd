@@ -1,0 +1,443 @@
+---
+title: "STAT 572: Bayesian Statistics" 
+subtitle: "Homework 6 (Multivariate Normal and Regression)"
+output:
+  pdf_document: default
+  html_document: default
+  html_notebook: default
+---
+
+\vspace{-0.5cm}
+\begin{center}
+(to be submitted online in D2L by Wednesday December 4th by 5 pm)
+\end{center}
+
+\vspace{1cm}
+
+\begin{enumerate}
+\item[1] Exercise 7.1 from the Hoff Book (pg 238)
+
+\textbf{(a)} Let $Y_1,\ldots,Y_n\stackrel{iid}{\sim} N_p (\theta,\Sigma)$.  Jeffreys' prior for this problem corresponds to $p_J(\theta,\Sigma)\propto |\Sigma|^{-(p+2)/2}$.
+
+It turns out that $\not\exists$ any constant $c>0$ such that $$\int_{\theta\in\mathbb{R}^p}\int_{\Sigma\in \mathcal{S}} c |\Sigma|^{-(p+2)/2} d\Sigma d\theta =1$$ because $$\int_{\Sigma\in \mathcal{S}} c |\Sigma|^{-(p+2)/2} d\Sigma=\infty.$$
+
+\bigskip
+
+\textbf{(b)} The posterior obtained when using Jeffreys' prior is given by
+
+\begin{eqnarray*}
+p(\theta,\Sigma | \boldsymbol{y}_{1:n})&\propto& p_J(\boldsymbol{y}_{1:n} | \theta,\Sigma) p_J(\theta,\Sigma) \\
+&\propto_{\theta,\Sigma}&|\Sigma|^{-n/2}| e^{-\frac{1}{2}\sum_{i=1}^n (\boldsymbol{y}_{i} - \theta)' \Sigma^{-1} (\boldsymbol{y}_{i} - \theta)} |\Sigma|^{-(p+2)/2}\\
+&\propto_{\theta,\Sigma}& |\Sigma|^{-p/2}| e^{-\frac{1}{2} (n \theta' \Sigma^{-1} \theta - 2 \theta' \Sigma^{-1} n \bar{\boldsymbol{y}} ) } \\
+&&\quad \times |\Sigma|^{-(n+2)/2} e^{-\frac{1}{2} \sum_{i=1}^n \boldsymbol{y}_{i}' \Sigma^{-1} \boldsymbol{y}_{i}}\quad\quad (***)
+\end{eqnarray*}
+
+Note that (1)
+\begin{eqnarray*}
+n \theta' \Sigma^{-1} \theta - 2 \theta' \Sigma^{-1} n \bar{\boldsymbol{y}}  &=&  n(\theta' \Sigma^{-1} \theta - 2 \theta' \Sigma^{-1} \bar{\boldsymbol{y}} + \bar{\boldsymbol{y}}'\Sigma^{-1} \bar{\boldsymbol{y}}-\bar{\boldsymbol{y}}'\Sigma^{-1} \bar{\boldsymbol{y}})\\
+&=&  n(\theta  -  \bar{\boldsymbol{y}})'\Sigma^{-1}(\theta  -  \bar{\boldsymbol{y}}) -n \bar{\boldsymbol{y}}'\Sigma^{-1} \bar{\boldsymbol{y}},
+\end{eqnarray*}
+and that by properties of the trace ($tr(A+B)=tr(A)+tr(B)$ and $tr(ABC)=tr(BCA)=tr(CAB)$), we have that (2) 
+\begin{eqnarray*}
+\sum_{i=1}^n \boldsymbol{y}_{i}' \Sigma^{-1} \boldsymbol{y}_{i}  &=& \text{tr}\left(\sum_{i=1}^n \boldsymbol{y}_{i}' \Sigma^{-1} \boldsymbol{y}_{i}\right)\\
+&=& \sum_{i=1}^n\text{tr}\left( \boldsymbol{y}_{i}' \Sigma^{-1} \boldsymbol{y}_{i}\right)\\
+&=& \sum_{i=1}^n\text{tr}\left( \Sigma^{-1} \boldsymbol{y}_{i} \boldsymbol{y}_{i}'\right)\\
+&=& \text{tr}\left( \Sigma^{-1} \sum_{i=1}^n \boldsymbol{y}_{i} \boldsymbol{y}_{i}'\right)\;=\; \text{tr}\left( \sum_{i=1}^n \boldsymbol{y}_{i} \boldsymbol{y}_{i}' \Sigma^{-1} \right)
+\end{eqnarray*}
+and, similarly (3)
+\begin{eqnarray*}
+n \bar{\boldsymbol{y}}'\Sigma^{-1} \bar{\boldsymbol{y}} &=& tr(n \bar{\boldsymbol{y}}\bar{\boldsymbol{y}}'\Sigma^{-1}).
+\end{eqnarray*}
+
+Then, replacing (1), (2), and (3), $(***)$ becomes
+\begin{eqnarray*}
+p(\theta,\Sigma | \boldsymbol{y}_{1:n}) &\propto_{\theta,\Sigma}& |\Sigma|^{-p/2}| e^{-\frac{n}{2} (\theta  -  \bar{\boldsymbol{y}})'\Sigma^{-1}(\theta  -  \bar{\boldsymbol{y}}) } \times  \\
+&&\quad |\Sigma|^{-(n+2)/2} e^{-\frac{1}{2} tr(\sum_{i=1}^n \boldsymbol{y}_{i} \boldsymbol{y}_{i}' \Sigma^{-1} -n \bar{\boldsymbol{y}}\bar{\boldsymbol{y}}'\Sigma^{-1})}\\
+&\propto_{\theta,\Sigma}& |\Sigma|^{-p/2}| e^{-\frac{n}{2} (\theta  -  \bar{\boldsymbol{y}})'\Sigma^{-1}(\theta  -  \bar{\boldsymbol{y}}) } \times  \\
+&&\quad |\Sigma|^{-(n+p-p+2)/2} e^{-\frac{1}{2} tr(\sum_{i=1}^n (\boldsymbol{y}_{i}-\bar{\boldsymbol{y}}) (\boldsymbol{y}_{i}-\bar{\boldsymbol{y}})' \Sigma^{-1})},
+\end{eqnarray*}
+Denoting by $S_n=\frac{1}{n} \sum_{i=1}^n (\boldsymbol{y}_{i}-\bar{\boldsymbol{y}}) (\boldsymbol{y}_{i}-\bar{\boldsymbol{y}})'$
+\begin{eqnarray*}
+\theta|\Sigma, \boldsymbol{y}_{1:n} &\sim& N_p\Big(\bar{\boldsymbol{y}}, \; \frac{1}{n}\Sigma \Big) \\
+&&\\
+\Sigma | \boldsymbol{y}_{1:n}&\sim& \text{IW}\left(n+p,\; (n S_n)^{-1}\right).
+\end{eqnarray*}
+
+\item[7.2] Exercise 7.2 from the Hoff Book (pg 238) 
+
+\textbf{(a)} Let $\Psi^{-1}=\Sigma$, and assuming that $\boldsymbol{Y}_1,\ldots,\boldsymbol{Y}_n \stackrel{iid}{\sim} N_p(\theta,\Psi^{-1})$, the likelihood is given by
+$$p(\boldsymbol{y}_{1:n} | \theta,\Sigma) = (2\pi)^{-np/2} |\Psi|^{n/2}\text{exp}\left\{ -\frac{1}{2}\sum_{i=1}^n  (\boldsymbol{y}_{i} - \theta)' \Psi (\boldsymbol{y}_{i} - \theta) \right\}.$$
+By properties of the trace:
+\begin{eqnarray*}
+\sum_{i=1}^n  (\boldsymbol{y}_{i} - \theta)' \Psi (\boldsymbol{y}_{i} - \theta)&=& tr\left( \left(\sum_{i=1}^n  (\boldsymbol{y}_{i} - \theta)(\boldsymbol{y}_{i} - \theta)'  \right)\Psi\right)\\
+&=& tr\Bigg( \Big(\underbrace{\sum_{i=1}^n  (\boldsymbol{y}_{i} - \bar{\boldsymbol{y}})(\boldsymbol{y}_{i} - \bar{\boldsymbol{y}})'}_{n S_n} + n \underbrace{(\bar{\boldsymbol{y}}-\boldsymbol{\theta})(\bar{\boldsymbol{y}}-\boldsymbol{\theta})'}_{n S_\theta}  \Big) \Psi \Bigg)\\
+&=& (n S_n + n S_\theta)\Psi.
+\end{eqnarray*}
+
+Therefore, we have that
+\begin{eqnarray*}
+p(\boldsymbol{y}_{1:n} | \theta,\Psi) &=& (2\pi)^{-np/2} |\Psi|^{n/2}\text{exp}\left\{ -\frac{1}{2}tr( (n S_n + n S_\theta)\Psi ) \right\}\\
+&=& (2\pi)^{-np/2} |\Psi|^{n/2}\text{exp}\left\{ -\frac{n}{2}tr(S_\theta \Psi) \right\} \text{exp}\left\{ -\frac{n}{2}tr(S_n\Psi) \right\} 
+\end{eqnarray*}
+Using this last expression, the log-likelihood is
+\begin{eqnarray*}
+\ell(\theta,\Psi | \boldsymbol{y}_{1:n} ) &=& -\frac{np}{2}\text{ln}(2\pi) \frac{n}{2}\text{ln}|\Psi|-\frac{n}{2}tr(S_\theta \Psi) -\frac{n}{2}tr(S_n\Psi),
+\end{eqnarray*}
+such that, setting $\text{ln}(p(\theta,\Psi))=\frac{1}{n}\ell(\theta,\Psi | \boldsymbol{y}_{1:n} )+c$, yields
+\begin{eqnarray*}
+\text{ln}(p(\theta,\Psi))&=& -\frac{p}{2}\text{ln}(2\pi) \frac{1}{2}\text{ln}|\Psi|-\frac{1}{2}tr(S_\theta \Psi) -\frac{1}{2}tr(S_n\Psi) +c.
+\end{eqnarray*}
+Applying the exponential function on both sides of the equation above provides
+\begin{eqnarray*}
+p(\theta,\Psi)&=& (2\pi)^{-p/2} |\Psi|^{1/2}\text{exp}\left\{-\frac{1}{2}tr( (\bar{\boldsymbol{y}}-\boldsymbol{\theta})(\bar{\boldsymbol{y}}-\boldsymbol{\theta})'\Psi)\right\} \text{exp}\left\{-\frac{1}{2}tr(S_n\Psi)\right\}e^c\\
+&=& \left((2\pi)^{-p/2} |\Psi|^{1/2}\text{exp}\left\{-\frac{1}{2} (\boldsymbol{\theta}-\bar{\boldsymbol{y}})' \Psi (\boldsymbol{\theta}-\bar{\boldsymbol{y}})\right\}\right) e^c \left(|\Psi|^{(p+1-p-1)/2}\text{exp}\left\{-\frac{1}{2}tr(S_n\Psi)\right\}\right).
+\end{eqnarray*}
+with $e^c = \frac{|S_n|^{(p+1)/2}}{2^{(p+1)p/2}\Gamma((p+1)/2)}.$  Therefore, we have that $$p_U(\boldsymbol{\theta},\Psi)= p_U(\boldsymbol{\theta}|\Psi)p_U(\Psi)   \equiv N_p(\boldsymbol{\theta} | \bar{\boldsymbol{y}}, \Psi^{-1})\; \text{Wishart}_p(\Psi| p+1,\; S_n^{-1}).$$
+Notice that the prior in terms of $\Sigma$ would be an Inverse Wishart, but it does not have well-defined moments since the degrees of freedom are equal to $p+1$, and for the mean of the Inverse Wishart to exist, the df's have to be greater than $p+1$.  In the case of the Wishart these can be greater of equal in order for the mean to exist, so the prior in terms of $\Psi$ is well-defined.
+
+
+\textbf{(b)} Taking the likelihood as expressed above and multiplying it by the prior (but now in terms of $\Sigma$), yields
+\begin{eqnarray*}
+p_U(\theta,\Sigma | \boldsymbol{y}_{1:n}) &\propto& p(\boldsymbol{y}_{1:n} | \theta,\Sigma)p_U(\boldsymbol{\theta}|\Sigma)p_U(\Sigma)\\
+&\propto& |\Sigma|^{-n/2}\text{exp}\left\{ -\frac{n}{2}(\boldsymbol{\theta}-\bar{\boldsymbol{y}})' \Sigma^{-1} (\boldsymbol{\theta}-\bar{\boldsymbol{y}}) \right\} \text{exp}\left\{ -\frac{n}{2}tr(S_n\Sigma^{-1}) \right\} \times\\
+&&\left(|\Sigma|^{-1/2}\text{exp}\left\{-\frac{1}{2} (\boldsymbol{\theta}-\bar{\boldsymbol{y}})' \Sigma^{-1} (\boldsymbol{\theta}-\bar{\boldsymbol{y}})\right\}\right)  \left(|\Sigma|^{-(p+1-p-1)/2}\text{exp}\left\{-\frac{1}{2}tr(S_n\Sigma^{-1})\right\}\right)\\
+&=& |\Sigma|^{-(n+1)/2}\text{exp}\left\{ -\frac{n+1}{2}(\boldsymbol{\theta}-\bar{\boldsymbol{y}})' \Sigma^{-1} (\boldsymbol{\theta}-\bar{\boldsymbol{y}}) \right\} \text{exp}\left\{ -\frac{1}{2}tr((n+1) S_n\Sigma^{-1}) \right\},
+\end{eqnarray*}
+or in other words
+$$p_U(\boldsymbol{\theta},\Psi | \boldsymbol{y}_{1:n})= p_U(\boldsymbol{\theta}|\Psi, \boldsymbol{y}_{1:n})p_U(\Psi|\boldsymbol{y}_{1:n})   \equiv N_p(\boldsymbol{\theta} | \bar{\boldsymbol{y}}, \frac{1}{n+1}\Sigma)\; \text{InverseWishart}_p(\Sigma| n+p+2,\; S_n^{-1}).$$
+
+Yes, once we update the unit information prior $p_U(\theta|\Psi)p_U(\Psi)$ with the likelihood, we obtain the well-defined joint posterior $p(\boldsymbol{\theta}, \Sigma|\boldsymbol{y}_{1:n})= p(\boldsymbol{\theta}, |\Sigma,\boldsymbol{y}_{1:n})p(\Sigma|\boldsymbol{y}_{1:n})$, with $p(\Sigma|\boldsymbol{y}_{1:n})$ being Inverse Wishart distribution with $n+p+2$ degrees of freedom, which has well-defined moments.  It can be considered a posterior; homwever, there is something to be said about the fact that the data is being used in the likelihood and in the prior.
+
+\pagebreak 
+\item[3] Exercise 7.4 from the Hoff Book (pg 239) 
+
+\textbf{(a)} Hyper-parameter specification: The semi-conjugate prior $p(\theta,\Sigma)=N_2(\theta | \mu_0,\Lambda_0) \text{IW}_2(\Sigma | \nu_0,S_0^{-1})$. Choosing $$\boldsymbol{\mu}_0=(50,45)^T,\qquad \Lambda_0 =\left(\begin{matrix} 9& 4.5\\ 4.5 & 9\end{matrix}\right),$$ implies that the population means $\boldsymbol{\theta}$ can range more or less between $(40,35)^T$ and $(60,55)^T$, and are centered at $(50,45)^T$, and have a correlation of 0.5.
+
+Furthermore, we set the hyperparameters to $\nu_0=4$ and $S_0=\left(\begin{matrix}100&100*0.5\\100*0.5&100 \end{matrix}\right)$, which yields a mean for this Inverse Wishart of $$E[\Sigma]=(\nu_0-p-1)^{-1}S_0=\left(\begin{matrix}100&50\\50&100 \end{matrix}\right).$$
+
+\end{enumerate}
+
+\textbf{(b)} Sampling from the **prior predictive distribution**: a prior predictive data set can be generated by draw one sample of $\theta$ and $\Sigma$ values from the prior distribution, and then using these values sampling the $n$ length-$p$ vectors $y_1,\ldots,y_n$.  Although this seems a little weird to do, the intention is simply to do some sensitivity analysis on the prior parameters chosen.
+
+```{r, echo=F}
+#Store the agehw.dat file in the same folder as this Rmd file to load it
+Y <- read.delim("agehw.dat", header = TRUE, sep=" ") 
+```
+
+First we define functions to draw the $N_p(\mu,\Sigma)$ and IW_$p(\nu_0,S_0^{-1})$ densities, the we sample draws 
+
+```{r echo=T, fig.align='center',fig.height=10,fig.width=10}
+### sample from the multivariate normal distribution
+rmvnorm<-function(n,mu,Sigma){
+  p<-length(mu)
+  res<-matrix(0,nrow=n,ncol=p)
+  if( n>0 & p>0 )
+  {
+    E<-matrix(rnorm(n*p),n,p)
+    res<-t(  t(E%*%chol(Sigma)) +c(mu))
+  }
+  res
+}
+###
+
+### sample from the Wishart distribution
+riwish<-function(n,nu0,S0){
+  sS0 <- chol(S0)
+  S<-array( dim=c( dim(S0),n ) )
+  for(i in 1:n)
+  {
+     Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0
+     S[,,i]<- solve(t(Z)%*%Z)
+  }
+  S[,,1:n]
+}
+
+#some summary stats
+#sample means
+(y.bar <- colMeans(Y))
+#sample cov
+(Sn <- cov(Y))
+
+
+#prior parameters
+mu0 <- c(50,45)
+Lambda0 <- matrix(c(9,4.5,4.5,9),ncol=2)
+nu0 <- 4
+sigsq <- 100; rho <- 0.5
+S0 <- matrix(c(sigsq,sigsq*rho,sigsq*rho,sigsq),ncol=2)
+S0inv <- solve(S0)
+
+#obtain parameter draws
+numdraws <- 16
+theta.draws <- rmvnorm(numdraws,mu=mu0,Sigma=Lambda0)
+Sigma.draws <- riwish(numdraws,nu0=4,S=S0inv)
+
+#obtain data from prior predictive
+n <- 100
+Y.list <- lapply(1:numdraws,function(s){
+  #rmvnorm(n,mu=theta.draws[s,],Sigma=Sigma.draws[,,s])
+  rmvnorm(n,mu=theta.draws[s,],Sigma=Sigma.draws[,,s])
+})
+
+
+par(mfrow=c(4,4))
+for(i in seq_along(Y.list)){
+  plot(x=Y.list[[i]][,1],y=Y.list[[i]][,2],xlab=expression(y[h]),ylab=expression(y[w]),
+       pch=20,cex=0.8)
+}
+```
+
+From the scatterplots shown above, it seems that age values for both genders are not spreading out far enough, so I increase the values in the diagonal of $S_0$ from $100$ to 160, and as seen in the figures dispayed above, this prior predictive model appears to generate data values that seem to align better with what one would expect from these data.
+
+```{r echo=T, fig.align='center',fig.height=10,fig.width=10}
+#adjust prior parameters
+mu0 <- c(50,45)
+Lambda0 <- matrix(c(9,5.4,5.4,9),ncol=2)
+nu0 <- 4
+sigsq <- 160; rho <- 0.5
+S0inv <- solve(matrix(c(sigsq,sigsq*rho,sigsq*rho,sigsq),ncol=2))
+
+#obtain parameter draws
+numdraws <- 16
+theta.draws <- rmvnorm(numdraws,mu=mu0,Sigma=Lambda0)
+Sigma.draws <- riwish(numdraws,nu0=4,S=S0inv)
+
+#obtain data from prior predictive
+n <- 100
+Y.list <- lapply(1:numdraws,function(s){
+  #rmvnorm(n,mu=theta.draws[s,],Sigma=Sigma.draws[,,s])
+  rmvnorm(n,mu=theta.draws[s,],Sigma=Sigma.draws[,,s])
+})
+
+
+par(mfrow=c(4,4))
+for(i in seq_along(Y.list)){
+  plot(x=Y.list[[i]][,1],y=Y.list[[i]][,2],xlab=expression(y[h]),ylab=expression(y[w]),
+       pch=20,cex=0.8)
+}
+```
+
+
+\textbf{(c)} Gibbs sampler with selected prior:
+```{r echo=F, fig.align='center',fig.height=5,fig.width=10}
+n <- nrow(Y); p<- ncol(Y)
+Lambda0.inv <- solve(Lambda0)
+
+#initialize Sigma a sample covariance
+Sigma <- cov(Y)
+
+#obtain parameter draws
+##Storage objects
+theta.Mat <- Sigma.Mat <- rho.vec <- theta <- NULL
+
+set.seed(123)
+
+S<- 1000
+
+for(i in 1:S){
+  ##update theta
+  Ln <- solve(Lambda0.inv+n*solve(Sigma))
+  mun <- Ln %*% (Lambda0.inv %*%mu0 + n*solve(Sigma)%*%y.bar)
+  theta <- rmvnorm(1,mun,Ln)
+  
+  ##update Sigma
+  Sn <- S0 + (t(Y)-c(theta))%*%t(t(Y)-c(theta))
+  Sigma <- riwish(1,nu0+n,solve(Sn))
+  
+  ###Save new draws
+  theta.Mat <- rbind(theta.Mat,theta)
+  Sigma.Mat <- rbind(Sigma.Mat,c(Sigma))
+  rho.vec <- c(rho.vec,Sigma[1,2]/sqrt(Sigma[1,1]*Sigma[2,2]))
+}
+
+par(mfrow=c(1,2))
+plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[h]),ylab=expression(theta[w]),
+       pch=20,cex=0.8)  
+plot(density(rho.vec),xlab=expression(rho),main=expression(paste("p(",rho,"|data)") ))  
+```
+
+The 95% credible intervals are given by 
+```{r}
+#95%CI for theta_h
+(theta.h.CI1<-quantile(theta.Mat[,1],c(0.025,0.975)))
+
+#95%CI for theta_w
+(theta.w.CI1<-quantile(theta.Mat[,2],c(0.025,0.975)))
+
+#95%CI for theta_h
+(rho.CI1<-quantile(rho.vec,c(0.025,0.975)))
+```
+
+\textbf{(d.i)} Jeffreys prior
+
+```{r echo=F, fig.align='center',fig.height=5,fig.width=10}
+#initialize Sigma a sample covariance
+Sn <- Sigma <- cov(Y)
+
+
+##Storage objects
+theta.Mat <- Sigma.Mat <- rho.vec <- theta <- NULL
+
+set.seed(123)
+
+S<- 1000
+
+for(i in 1:S){
+  ##update theta
+  theta <- rmvnorm(1,y.bar,Sigma*(1/n))
+  
+  ##update Sigma
+  Sigma <- riwish(1,n+p,solve(n*Sn))
+  
+  ###Save new draws
+  theta.Mat <- rbind(theta.Mat,theta)
+  Sigma.Mat <- rbind(Sigma.Mat,c(Sigma))
+  rho.vec <- c(rho.vec,Sigma[1,2]/sqrt(Sigma[1,1]*Sigma[2,2]))
+}
+
+par(mfrow=c(1,2))
+plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[h]),ylab=expression(theta[w]),
+       pch=20,cex=0.8)  
+plot(density(rho.vec),xlab=expression(rho),main=expression(paste("p(",rho,"|data)") ))  
+```
+
+with 95% credible intervals using the Jeffreys prior given by 
+```{r}
+#95%CI for theta_h
+(theta.h.CI2<-quantile(theta.Mat[,1],c(0.025,0.975)))
+
+#95%CI for theta_w
+(theta.w.CI2<-quantile(theta.Mat[,2],c(0.025,0.975)))
+
+#95%CI for theta_h
+(rho.CI2<-quantile(rho.vec,c(0.025,0.975)))
+```
+
+
+\textbf{(d.ii)} Unit information prior.  Note that in the code we can precalculate several things to avoid having to repeat the same calculation several times.
+
+```{r echo=F, fig.align='center',fig.height=5,fig.width=10}
+#initialize Sigma a sample covariance
+Sigma <- Sn <- cov(Y)
+Sn.inv <- solve(Sn)
+nu0 <- p+1
+
+#obtain parameter draws
+##Storage objects
+theta.Mat <- Sigma.Mat <- rho.vec <- theta <- NULL
+
+set.seed(123)
+
+S<- 1000
+
+for(i in 1:S){
+  ##update theta
+  theta <- rmvnorm(1,y.bar,Sigma/(1+n))
+  
+  ##update Sigma
+  Sigma <- riwish(1,p+1+n,Sn.inv/(n+1))
+  
+  ###Save new draws
+  theta.Mat <- rbind(theta.Mat,theta)
+  Sigma.Mat <- rbind(Sigma.Mat,c(Sigma))
+  rho.vec <- c(rho.vec,Sigma[1,2]/sqrt(Sigma[1,1]*Sigma[2,2]))
+}
+
+
+par(mfrow=c(1,2))
+plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[h]),ylab=expression(theta[w]),
+       pch=20,cex=0.8)  
+plot(density(rho.vec),xlab=expression(rho),main=expression(paste("p(",rho,"|data)") ))  
+```
+
+with 95% credible intervals using the Unit Information prior given by 
+```{r}
+#95%CI for theta_h
+(theta.h.CI3<-quantile(theta.Mat[,1],c(0.025,0.975)))
+
+#95%CI for theta_w
+(theta.w.CI3<-quantile(theta.Mat[,2],c(0.025,0.975)))
+
+#95%CI for theta_h
+(rho.CI3<-quantile(rho.vec,c(0.025,0.975)))
+```
+
+\textbf{(d.iii)} Diffuse prior.
+
+```{r echo=F, fig.align='center',fig.height=5,fig.width=10}
+n <- nrow(Y); p<- ncol(Y)
+Lambda0.inv <- diag(1/10^5,2)
+S0 <- diag(1000,2)
+nu0 <- 3
+mu0 <- rep(0,2)
+
+#initialize Sigma at sample covariance
+Sigma <- cov(Y)
+
+#obtain parameter draws
+##Storage objects
+theta.Mat <- Sigma.Mat <- rho.vec <- theta <- NULL
+
+set.seed(123)
+
+S<- 1000
+
+for(i in 1:S){
+  
+  ##update theta
+  Ln <- solve(Lambda0.inv+n*solve(Sigma))
+  mun <- Ln %*% (Lambda0.inv %*%mu0 + n*solve(Sigma)%*%y.bar)
+  theta <- rmvnorm(1,mun,Ln)
+  
+  ##update Sigma
+  Sn <- S0 + (t(Y)-c(theta))%*%t(t(Y)-c(theta))
+  Sigma <- riwish(1,nu0+n,solve(Sn))
+  
+  ###Save new draws
+  theta.Mat <- rbind(theta.Mat,theta)
+  Sigma.Mat <- rbind(Sigma.Mat,c(Sigma))
+  rho.vec <- c(rho.vec,Sigma[1,2]/sqrt(Sigma[1,1]*Sigma[2,2]))
+}
+
+par(mfrow=c(1,2))
+plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[h]),ylab=expression(theta[w]),
+       pch=20,cex=0.8)  
+plot(density(rho.vec),xlab=expression(rho),main=expression(paste("p(",rho,"|data)") ))  
+```
+
+The 95% credible intervals for the diffuse prior are given by 
+```{r}
+#95%CI for theta_h
+(theta.h.CI4<-quantile(theta.Mat[,1],c(0.025,0.975)))
+
+#95%CI for theta_w
+(theta.w.CI4<-quantile(theta.Mat[,2],c(0.025,0.975)))
+
+#95%CI for theta_h
+(rho.CI4<-quantile(rho.vec,c(0.025,0.975)))
+```
+
+\textbf{(e)} The 95% Credible Intervals for all the priors considered Have been included in the to facilitate comparison.  Notice that there does not seem to be drastic differences under any of the priors.  Moderate differences can be found in the values obtained for the prior selected in part (a) of the problem for the mean parameters $\theta_h$ and $\theta_w$, and the most notable differences are found in the values obtained $\rho$ under the diffuse prior.  Nonetheless, these differences are not large enough to be of concern.
+
+```{r echo=TRUE,results="asis",warning=FALSE}
+library(xtable)
+
+results.all <- cbind(rbind(theta.h.CI1,theta.h.CI2,theta.h.CI3,theta.h.CI4),
+                     rbind(theta.w.CI1,theta.w.CI2,theta.w.CI3,theta.w.CI4),
+                     rbind(rho.CI1,rho.CI2,rho.CI3,rho.CI4))
+colnames(results.all) <- list("th.h (ll)","th.h (ul)","th.w (ll)",
+                              "th.w (ul)","rho (ll)","rho (ul)")
+row.names(results.all) <- c("Mine","Jeffreys","Unit Info","Diffuse")
+
+xtable(results.all)
+
+
+```
+
+In spite of this, because of the relatively large sample size, all of the priors are bound to have a limited effect over the inference. This is especially the case because the last three prior can be considered reference or weakly-informative, hence allow the data to have a larger effect over the posterior inference.  
+
+In situations in which $n$ is smaller, such as $n=25$, it is likely that the sample will not provide a sufficiently good representation of the population, and, as such, it is not the best idea to use priors that depend on the sample estimates for the mean and the variance ($\bar{y}$ and $\frac{1}{n}S_n=\sum_{i=1}^n (y_i-\bar{y})(y_i-\bar{y})^T$, respectively), or that are too diffuse.  In these cases it might be better to use common sense or a well-informed opinion to elicit reasonable values for the prior parameters.
+
+
+
+

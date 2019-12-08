@@ -73,14 +73,56 @@ Letting $\Psi = \Sigma^{-1}$, show that a unit information prior for ($\theta,\P
 
 Hint: Write $(y_i-\theta)$ as $(y_i-\bar y+\bar y-\theta)$, and note that $\sum a^T_i\mathbf{B}a_i$ can be written as $\mathrm{tr}({AB})$, where $\mathbf{A}=\sum a_ia^T_i$ . 
 
+
+$$\log p(\theta,\Psi) = \frac1nl(\theta,\Psi|\mathbf{Y}) + c= \ln p_U(\theta|\Psi)+\ln p_U(\Psi)$$
+
+$$l(\theta,\Psi|\mathbf{Y})=\ln[\prod_{i=1}^np(y_i|\theta,\Psi)]=\frac{-np}2\ln(2\pi)-\frac{n}2\ln(|\Psi^{-1}|)-\frac12\sum_{i=1}^n(y_i-\theta)^T\Psi(y_i-\theta)$$
+$$=\frac{-np}2\ln(2\pi)-\frac{n}2\ln(|\Psi^{-1}|)-\frac12\mathrm{tr}\left[\sum_{i=1}^n(y_i-\bar y+\bar y-\theta)^T\Psi(y_i-\bar y+\bar y-\theta)\right]$$
+$$=\frac{-np}2\ln(2\pi)-\frac{n}2\ln(|\Psi^{-1}|)-\frac12\mathrm{tr}\{\Psi[\underbrace{\sum_{i=1}^n(y_i-\bar y)(y_i-\bar y)^T}_{nS}+(\bar y-\theta)\underbrace{\sum_{i=1}^n(y_i-\bar y)^T}_{0}+\underbrace{\sum_{i=1}^n(y_i-\bar y)}_{0}(\bar y-\theta)^T+n(\bar y-\theta)(\bar y-\theta)^T]\}$$
+$$=\underbrace{-\frac12\mathrm{tr}\left[\Psi nS\right]}_{n\ln p_U(\Psi)}
+-\underbrace{\frac{n}2\ln(|\Psi^{-1}|)-\frac{n}2\mathrm{tr}\left[\Psi(\bar y-\theta)(\bar y-\theta)^T\right]}_{n\ln p_U(\theta|\Psi)}+\frac{-np}2\ln(2\pi)$$
+
+$$\ln p_U(\Psi)=-\frac1{2n}\mathrm{tr}\left[\Psi\sum_{i=1}^n(y_i-\bar y)(y_i-\bar y)^T\right]=-\frac1{2}\mathrm{tr}\left[S\Psi \right]$$
+$$p_U(\Psi)\propto|\Psi|^{\frac{p+1-p-1}2}\exp\left\{-\frac1{2}\mathrm{tr}\left[S\Psi \right]\right\}$$
+$$\Psi\sim \text{Wishart}( p+1,S^{-1})$$
+
+$$\ln p_U(\theta|\Psi)=\frac{1}2\ln(|\Psi^{-1}|)-\frac{1}2\mathrm{tr}\left[\Psi(\bar y-\theta)(\bar y-\theta)^T\right]$$
+$$p_U(\theta|\Psi)= |\Psi^{-1}|^{-\frac{1}2}\exp\left\{-\frac{1}2\mathrm{tr}\left[\Psi(\bar y-\theta)(\bar y-\theta)^T\right]\right\}= |\Psi^{-1}|^{-\frac{1}2}\exp\left\{-\frac{1}2(\bar y-\theta)\Psi(\bar y-\theta)^T\right\}$$
+$$\theta|\Psi\sim \text{multivariate normal}(\bar y,\Psi^{-1})$$
+
 ## b) Let $p_U(\Sigma)$ be the inverse-Wishart density induced by $p_U(\Psi)$. 
 Obtain a density $p_U(\theta,\Sigma|y_1,...,y_n)\propto\ p_U(\theta|\Sigma)p_U(\Sigma)p(y_1,...,y_n|\theta,\Sigma)$. Can this be interpreted as a posterior distribution for $\theta$ and $\Sigma$? 
+
+$$p_U(\Sigma)\propto|\Sigma|^{-\frac{p+1+1+1}2}\exp\left\{-\frac1{2}\mathrm{tr}\left[S\Sigma^{-1} \right]\right\}$$
+$$p_U(\theta|\Sigma)\propto |\Sigma|^{-\frac{1}2}\exp\left\{-\frac{1}2(\bar y-\theta)\Sigma^{-1}(\bar y-\theta)^T\right\}$$
+
+$$p(y_{1:n}|\theta,\Sigma)\propto|\Sigma|^{-\frac{n}2}\exp\left[-\frac12\sum_{i=1}^n(y_i-\theta)^T\Sigma^{-1}(y_i-\theta)\right]$$
+
+$$p_U(\theta,\Sigma|y_{1:n})\propto\ p_U(\theta|\Sigma)p_U(\Sigma)p(y_{1:n}|\theta,\Sigma)$$
+$$\propto|\Sigma|^{-\frac12-\frac{p+3}2-\frac{n}2}\exp\left[-\frac{1}2(\bar y-\theta)\Sigma^{-1}(\bar y-\theta)^T-\frac1{2}\mathrm{tr}\left[S\Sigma^{-1} \right]-\frac12\sum_{i=1}^n(y_i-\theta)^T\Sigma^{-1}(y_i-\theta)\right]$$
+
+$$\propto|\Sigma|^{-\frac12-\frac{n+p+3}2}\exp[
+-\frac{1}2(\bar y-\theta)\Sigma^{-1}(\bar y-\theta)^T
+-\frac1{2}\mathrm{tr}\left[S\Sigma^{-1} \right]
+-\frac1{2}\sum_{i=1}^n(y_i-\bar y)\Sigma^{-1}(y_i-\bar y)^T$$
+$$+\frac1{2}\sum_{i=1}^n(y_i-\bar y)\Sigma^{-1}(y_i-\bar y)^T
+-\frac12\sum_{i=1}^n(y_i-\theta)^T\Sigma^{-1}(y_i-\theta)]$$
+
+$$\propto|\Sigma|^{-\frac12-\frac{n+p+3}2}\exp\left\{-\frac{1}2\left[(\bar y-\theta)\frac{\Sigma^{-1}}{n}(\bar y-\theta)^T+\sum_{i=1}^n(\bar y-\theta)^T\Sigma^{-1}(\bar y-\theta)\right]-\frac1{2}\mathrm{tr}\left[S\Sigma^{-1} \right]-\frac{n}{2}\mathrm{tr}\left[S\Sigma^{-1} \right]\right\}$$
+$$\propto|\Sigma|^{-\frac12}\exp\left\{-\frac{1}2\left[(\bar y-\theta)(n+1)\Sigma^{-1}(\bar y-\theta)^T\right]\right\}|\Sigma|^{-\frac{n+p+3}2}\exp\left\{-\frac{1}{2}\mathrm{tr}\left[(n+1)S\Sigma^{-1} \right]\right\}$$
+
+$$\propto|\Sigma|^{-\frac12}\exp\left\{-\frac{1}2\left[(\bar y-\theta)(n+1)\Sigma^{-1}(\bar y-\theta)^T\right]\right\}|\Sigma|^{-\frac{n+p+3}2}\exp\left\{-\frac{1}{2}\mathrm{tr}\left[(n+1)S\Sigma^{-1} \right]\right\}$$
+
+$$\theta,\Sigma|y_{1:n}\sim\text{MVN}(\theta|\bar y,\frac{\Sigma}{n+1})\cdot\text{Inverse-Wishart}(\Sigma|n+2,\frac1{(n+1)S})$$
+
+ density induced by $p_U(\Psi)$. 
+Obtain a density $p_U(\theta,\Sigma|y_1,...,y_n)\propto\ p_U(\theta|\Sigma)p_U(\Sigma)p(y_1,...,y_n|\theta,\Sigma)$. Can this be interpreted as a posterior distribution for $\theta$ and $\Sigma$
 
 
 # 3. Exercise 7.4 (pg 239) Marriage data
 The ﬁle agehw.dat contains data on the ages of 100 married couples sampled from the U.S. population. 
 
-```{r,eval=F}
+```{r,echo=F}
 agehw = as.matrix(read.table(url('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/agehw.dat')))
 colnames(agehw) = agehw[1, ]
 agehw = agehw[-1, ]
@@ -223,9 +265,13 @@ for (s in 1:S) {
 print_quantiles(THETA, SIGMA)
 ```
 
+<!--
+
 ### ii. the unit information prior in Exercise 7.2; 
 
 Unit information prior 
+
+-->
 
 ### iii. a “diffuse prior” with $\mu_0 =\mathbf{0},\Lambda_0 = 10^5\times \mathbf{I}, \mathbf{S_0} = 1000\times \mathbf{I}$ and $\nu_0 = 3$. 
 
@@ -273,7 +319,7 @@ print_quantiles(diffuse_mcmc_short$theta, diffuse_mcmc_short$sigma)
 In this case, the effect of the prior on correlation especially is easily observed. The correlation for the diffuse prior is quite low, as it is being 
 dragged towards nothing. -->
 
-
+\pagebreak
   
 # 4. Exercise 9.1 (pg 242) Extrapolation
 
@@ -301,7 +347,7 @@ ggplot(data.frame(Y.swim),aes(x=week,y=time,colour=swimmer))+geom_point()+geom_s
 
 ii. For each swimmer j, obtain a posterior predictive distribution for $Y^\star_j$ , their time if they were to swim two weeks from the last recorded time. 
 
-```{r,eval=T}
+```{r,echo=F}
 swim = read.table(url('http://www.stat.washington.edu/people/pdhoff/Book/Data/hwdata/swim.dat'))
 ```
 
@@ -328,8 +374,8 @@ swim_pred = apply(swim, MARGIN = 1, function(y) {
   beta = c(23, 0) # Starting values
   s2 = 0.7^2
   for (s in 1:S) { # Gibbs sampling algorithm from 9.2.1
-    V = inv(inv(sigma0) + (t(X) %*% X) / s2) # 1a) Compute V and m
-    m = V %*% (inv(sigma0) %*% beta0 + (t(X) %*% y) / s2)
+    V = solve(solve(sigma0) + (t(X) %*% X) / s2) # 1a) Compute V and m
+    m = V %*% (solve(sigma0) %*% beta0 + (t(X) %*% y) / s2)
     beta = mvrnorm(1, m, V) # 1b) sample beta
     ssr=(t(y)%*%y)-(2*t(beta) %*% t(X)%*%y)+(t(beta)%*%t(X)%*%X%*%beta) # 2a) Compute SSR(beta) (from 9.1)
     s2 = 1 / rgamma(1, (nu0 + n) / 2, (nu0 * s20 + ssr) / 2) # 2b) sample s2

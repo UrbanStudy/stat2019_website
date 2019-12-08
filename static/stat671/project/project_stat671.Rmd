@@ -7,18 +7,21 @@ output:
   beamer_presentation:
     includes:
       in_header: "preamble.tex"
+  pdf_document:
   slidy_presentation: default
+header-includes:
+ - \usepackage[ruled,vlined]{algorithm2e}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=F)
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=F,fig.align='center')
 options(scipen=100)
 options(digits=3)
 
 if (!require("pacman")) {install.packages("pacman"); library(pacman)}
 # special installation process for printr as it is not available on CRAN
 pacman::p_load(tidyverse, knitr, readr, pander, ggplot2)
-
+library(e1071) 
 panderOptions("digits", 2)
 panderOptions('round', 2)
 panderOptions('keep.trailing.zeros', TRUE)
@@ -37,50 +40,216 @@ panderOptions('keep.line.breaks', TRUE)
     + Support vector machines
 
 
-## Introduction
+## Motivation: A 1-dimension Example
 
-Historically the ﬁrst “kernel method” for pattern recognition, still the most popular. 
+```{r, echo=F,out.width='75%'}
+# Create the data frame.
+sugar <- data.frame(
+   sugar_sample = as.factor(c (1:25)),
+   sugar_content=c(10.9,10.9,10.6,10.0,8.0,8.2,8.6,10.9,10.7,8.0,7.7,7.8,8.4,11.5,11.2,8.9,8.7,7.4,10.9,10.0,11.4,10.8,8.5,8.2,10.6)
+)
+plot_1 <- ggplot(data =sugar, aes(x = sugar_content, y =0)) + 
+    geom_point() + theme_light()+
+    geom_text(aes(label = sugar_content), size = 2.5, vjust = 2, hjust = 0.5)
+plot_1
+```
 
-Often state-of-the-art in performance. 
+25 soft drink sugar content measurements. 
+The distinct clusters for identifying candidate decision boundaries.
 
-One particular choice of loss function (<span class="red2">hinge loss </span>).
+## The maximal margin separator
 
-Leads to a sparse solution, i.e., not all points are involved in the decomposition (compression). 
+```{r,echo=T}
+mm_separator <- (8.9 + 10)/2
+```
 
-Particular algorithm for fast optimization (decomposition by chunking methods).
+```{r,echo=F,out.width='75%'}
+#create data frame containing the maximum margin separator
+separator <- data.frame(sep = mm_separator)
+#add ggplot layer 
+plot_sep <- plot_1 + geom_point(data = separator, aes(x = sep, y = 0), color = "blue", size = 4)
+#display plot
+plot_sep
+```
 
-## Motivation
+The maximal margin separator is at the midpoint of the two extreme points in each cluster.
+
+## Find the maximal margin separator
+
+Identified two distinct clusters (classes).
+
+A dataset in which the classes do not overlap is called separable, the classes being separated by a decision boundary. 
+
+The maximal margin separator is the decision boundary that is furthest from both classes. 
+
+The relevant points are the highest valued point in the low sugar content class and the lowest valued point in the high sugar content class. 
+
+
+
+## Example 2: A 2d dataset. 
+
+```{r, echo=F}
+#set seed
+set.seed(42)
+#set number of data points. 
+n <- 600
+#Generate data frame with two uniformly distributed predictors.
+df <- data.frame(x1 = runif(n,0,1),x2 = runif(n,0,1))
+#classify data points depending on location
+df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1), 
+    levels = c(-1, 1))
+```
+
+
+
+```{r,echo=F,out.width='75%'}
+#set margin
+delta <- 0.1
+# retain only those points that lie outside the margin
+df1 <- df[abs(1.4*df$x1 - df$x2) > delta, ]
+#build plot
+plot_margins <- ggplot(data = df1, aes(x = x1, y = x2, color = y)) + geom_point() + 
+    scale_color_manual(values = c("red", "blue")) + 
+    geom_abline(slope = 1.4, intercept = 0)+
+    geom_abline(slope = 1.4, intercept = delta, linetype = "dashed") +
+    geom_abline(slope = 1.4, intercept = -delta, linetype = "dashed")
+#display plot 
+plot_margins
+```
+
+A decision boundary and a margin. Add a class variable to that dataset by creating a variable y whose value is -1 or +1 depending on whether the point (x1, x2) lies below or above the straight line that passes through the origin and has slope 1.4.
+
+
+## Deﬁnition 
 
 Consider the $\ell_2$ regularized empirical risk function
 
 $$J(\vec{w}, \lambda)=\sum\limits{i=1}^N L(y_i, \hat{y_i})+\lambda\lVert\vec{w}\rVert^2$$
 where $\hat{y_i}=\vec{w}^T\vec{x}_i+w_0$.
 
-If $L$ is quadratic loss, this is equivalent to ridge regression, and if $L$ is the log-loss, this is equivalent to logistic regression.
+If $L$ is <span class="red2">quadratic loss</span>, this is equivalent to ridge regression.  
+If $L$ is the <span class="red2">log-loss</span>, this is equivalent to logistic regression.
+If we replace the loss function with <span class="red2">hinge loss function</span>, we can ensure that the solution is sparse, so that predictions only depend on a subset of the training data, known as support vectors. This combination of the kernel trick plus a modified loss function is known as a <b>support vector machine</b> or SVM. 
 
-If we replace the loss function with hinge loss function, we can ensure that the solution is sparse, so that predictions only depend on a subset of the training data, known as \textbf{support vectors}. This combination of the kernel trick plus a modified loss function is known as a \textbf{support vector machine} or \textbf{SVM}. 
+## Hinge Loss
+Linear support vector machines can also be interpreted as hinge loss minimization:
+$$\min_{\vec{w},b} \sum\limits_{i=1}^N{L(y_i,f(\vec{x}_i))} + \lambda\|\vec{w}\|^2$$
+where $L(y, f(\vec{x}))$ is a hinge loss function:
 
+$$L(y, f(\vec{x})) = \begin{cases}1-yf(x),  & 1-yf(x) > 0 \\0,  & 1-yf(x) \leqslant 0\end{cases}$$
+
+##
+
+```{r  out.width = "75%"}
+include_graphics("lossfns.png") 
+```
 
 
 ## Deﬁnition 
 
 The hinge loss is the function $\mathbb{R}\to\mathbb{R}_+$: 
 
-$$\varphi_{hinge}(u) = \max(1−u,0) =\begin{cases}0 &\text{if  } u\ge 1,\\ 1−u& \text{otherwise}. \end{cases}$$
+$$\varphi_{hinge}(u) = \max(1-u,0) =\begin{cases}0 &\text{if  } u\ge 1,\\ 1-u& \text{otherwise}. \end{cases}$$
 
 SVM is the corresponding large-margin classiﬁer, which solves:
-$$\underset{f\in\mathcal{H}}{\min}\left\{\frac1n\sum_{i=1}^n\varphi_{hinge}(y_if(x_i)) + \lambda\|f\|^2_\mathcal{H}\right\}$$
+$$\underset{f\in\mathcal{H}}{\min}\frac1n\sum_{i=1}^n\varphi_{hinge}(y_if(x_i)) + \lambda\|f\|^2_\mathcal{H}$$
 
-## Problem reformulation 
+
+
+
+## Primal form
+Representation
+
+$$\mathcal{H}:y=f(\vec{x})=\text{sign}(\vec{w}\vec{x}+b)$$
+
+Evaluation
+
+$$\min_{\vec{w},b} \frac{1}{2}\|\vec{w}\|^2\quad \text{s.t.}\quad  y_i(\vec{w}\vec{x}_i+b)\geqslant 1, i=1,2, \dots , N$$
+
+## Primal form
 
 By the representer theorem, the solution satisfies
 $$\hat f (x) =\sum_{i=1}^n\hat\alpha_i K (x_i,x) $$,
 where $\hat\alpha$ solves
 
-$$\underset{\alpha\in\mathbb{R^n}}{\min}\left\{\frac1n\sum_{i=1}^n\varphi_{hinge}(y_i[K\alpha]_i) + \lambda\alpha^TK\alpha\right\}$$
+$$\underset{\alpha\in\mathbb{R^n}}{\min}\frac1n\sum_{i=1}^n\varphi_{hinge}(y_i[K\alpha]_i) + \lambda\alpha^TK\alpha$$
+
 This is a convex optimization problem But the objective function is not smooth (because of the hinge loss)
 
-## Problem reformulation 
+
+## Support vectors 
+
+Consequence of KKT conditions:
+The training points with $\alpha_i\neq0$ are called support vectors. 
+Only support vectors are important for the classiﬁcation of new points:
+
+$$\forall x\in\mathcal{X},\ f (x) =\sum_{i=1}^n\alpha_i K (x_i,x)=\sum_{i\in SV}\alpha_i K (x_i,x) $$
+where SV is the set of support vectors.
+
+##
+
+```{r  out.width = "75%"}
+include_graphics("svm.png") 
+```
+
+
+<!--
+## Solving the SVM problem
+
+This is a classical quadratic program (minimization of a convex quadratic function with linear constraints) for which any out-of-the-box optimization package can be used. 
+
+The dimension of the problem and the number of constraints, however, are 2n where n is the number of points. General-purpose QP solvers will have diﬃculties when n exceeds a few thousands. 
+
+Solving the dual of this problem (also a QP) will be more convenient and lead to faster algorithms (due to the sparsity of the ﬁnal solution).
+-->
+
+## Dual form {.smaller}
+Representation
+$\mathcal{H}:y=f(\vec{x})=\text{sign}\left(\sum\limits_{i=1}^N{\alpha_iy_i(\vec{x} \cdot \vec{x}_i)}+b\right)$
+
+Evaluation
+$$\min_{\alpha}  \frac{1}{2} \sum\limits_{i=1}^N\sum\limits_{j=1}^N \alpha_i\alpha_j y_i y_j (\vec{x}_i \cdot \vec{x}_j) - \sum\limits_{i=1}^N \alpha_i$$
+s.t.  $\sum\limits_{i=1}^N\alpha_i y_i=0\quad \alpha_i \geqslant 0, i=1,2, \dots, N$
+
+$$\underset{\alpha\in\mathbb{R^n}}{\max}\left\{2\sum_{i=1}^n\alpha_i y_i -\sum_{i,j=1}^n\alpha_i\alpha_j K(x_i,x_j)\right\}=2\alpha^Ty-\alpha^TK\alpha$$
+subject to:
+$0\le y_i\alpha_i\le\frac1{2\lambda n}, \text{for } i = 1,...,n$
+
+## slack variables
+
+<div class="columns-2">
+</div>
+
+```{r  out.width = "75%"}
+include_graphics("nonseparable.jpg") 
+```
+
+The solution is sparse in $\alpha$, leading to fast algorithms for training (use of decomposition methods). 
+
+The classiﬁcation of a new point only involves kernel evaluations with support vectors (fast).
+
+##  slack variables {.smaller}
+
+Representation
+$\mathcal{H}:y=f(\vec{x})=\text{sign}(\vec{w}\vec{x}+b)$
+
+Evaluation
+$\min_{\vec{w},b}  C \sum\limits_{i=1}^N\xi_i + \frac{1}{2}\|\vec{w}\|^2$
+
+s.t. $$ y_i(\vec{w}\vec{x}_i+b)\geqslant 1-\xi_i\quad  \xi_i \geqslant 0, \quad i=1,2, \dots, N $$
+
+the SVM solution is
+$\hat f (x) =\sum_{i=1}^n\hat\alpha_i K (x_i,x)$,
+
+where $\hat\alpha$ solves: 
+$\underset{\alpha\in\mathbb{R^n},\xi\in\mathbb{R^n}}{\min}\left\{\frac1n\sum_{i=1}^n\xi_i + \lambda\alpha^TK\alpha\right\}$
+
+subject to:
+$\begin{cases}(y_i[K\alpha]_i +\xi_i -1\ge 0,& \text{for} i = 1,...,n,\\\xi_i\ge 0,& \text{for} i = 1,...,n\end{cases}$
+
+
+
+## slack variables {.smaller}
 
 Let us introduce additional slack variables $\xi_1,...,\xi_n\in\mathbb{R}$. The problem is equivalent to:
 
@@ -90,73 +259,68 @@ $$\xi_i\ge \varphi_{hinge}(y_i[K\alpha]_i)$$ .
 The objective function is now smooth, but not the constraints 
 However it is easy to replace the non-smooth constraint by a cunjunction of two smooth constraints, because: 
 
-$$u \ge\varphi_{hinge}(v)\iff \begin{cases}u\ge 1−v \\u\ge 0\end{cases}$$
-## SVM (primal formulation)
+$$u \ge\varphi_{hinge}(v)\iff \begin{cases}u\ge 1-v \\u\ge 0\end{cases}$$
 
-In summary, the SVM solution is
-$$\hat f (x) =\sum_{i=1}^n\hat\alpha_i K (x_i,x) $$,
-where $\hat\alpha$ solves: 
 
-$$\underset{\alpha\in\mathbb{R^n},\xi\in\mathbb{R^n}}{\min}\left\{\frac1n\sum_{i=1}^n\xi_i + \lambda\alpha^TK\alpha\right\}$$
-subject to:
-$$\begin{cases}(y_i[K\alpha]_i +\xi_i −1\ge 0,& \text{for} i = 1,...,n,\\\xi_i\ge 0,& \text{for} i = 1,...,n\end{cases}$$.
+## Dual form with slack variables {.smaller}
+Representation
+$\mathcal{H}:y=f(\vec{x})=\text{sign}\left(\sum\limits_{i=1}^N{\alpha_iy_i(\vec{x} \cdot \vec{x}_i)}+b\right)$
 
-## Solving the SVM problem
+Evaluation
+$\min_{\alpha} \frac{1}{2} \sum\limits_{i=1}^N\sum\limits_{j=1}^N \alpha_i\alpha_j y_i y_j (\vec{x}_i \cdot \vec{x}_j) - \sum\limits_{i=1}^N \alpha_i$
 
-This is a classical quadratic program (minimization of a convex quadratic function with linear constraints) for which any out-of-the-box optimization package can be used. 
+ s.t.  $\sum\limits_{i=1}^N\alpha_i y_i=0 \quad 0 \leqslant  \alpha_i \leqslant C, i=1,2, \dots, N$
 
-The dimension of the problem and the number of constraints, however, are 2n where n is the number of points. General-purpose QP solvers will have diﬃculties when n exceeds a few thousands. 
+$$\begin{align*}
+\alpha_i=0 &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\geqslant 1 \\
+\alpha_i=C &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\leqslant 1 \\
+0<\alpha_i<C &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)= 1
+\end{align*}$$
 
-Solving the dual of this problem (also a QP) will be more convenient and lead to faster algorithms (due to the sparsity of the ﬁnal solution).
 
-## SVM (dual formulation)
 
-$$\underset{\alpha\in\mathbb{R^n}}{\max}\left\{2\sum_{i=1}^n\alpha_i y_i -\sum_{i,j=1}^n\alpha_i\alpha_j K(x_i,x_j)\right\}=2\alpha^Ty-\alpha^TK\alpha$$
-subject to:
-$$0\le y_i\alpha_i\le\frac1{2\lambda n}, \text{for } i = 1,...,n$$
+## An nonseparatable Example
 
-## Complimentary slackness conditions
+```{r,echo=F}
+set.seed(1) #set seed for reproducibility 
+df[,"train"] <- ifelse(runif(nrow(df))<0.8,1,0) #assign rows to training/test sets randomly in 80/20 proportion 
+trainset <- df[df$train==1,] #separate training and test sets 
+testset <- df[df$train==0,] 
+trainColNum <- grep("train", names(trainset)) 
+trainset <- trainset[,-trainColNum] 
+testset <- testset[,-trainColNum] 
+```
 
-## Analysis of KKT conditions 
+```{r,echo=F}
+library(e1071) 
+svm_model<- svm(y ~ .,data = trainset,type = "C-classification",kernel = "linear",scale = FALSE) 
+```
 
-## Geometric interpretation
+```{r,echo=F}
+pred_train <- predict(svm_model,trainset) #training accuracy 
+# mean(pred_train==trainset$y)
+pred_test <- predict(svm_model,testset) 
+# mean(pred_test==testset$y)#test accuracy 
+```
 
-```{r}
-set.seed(42) #set seed
-n <- 600 #set number of data points. 
-#Generate data frame with two uniformly distributed predictors.
-df <- data.frame(x1 = runif(n,0,1), x2 = runif(n,0,1))
-#classify data points depending on location
-df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1), 
-    levels = c(-1, 1))
-delta <- 0.07 #set margin
-df1 <- df[abs(1.4*df$x1 - df$x2) > delta, ] # retain only those points that lie outside the margin
-plot_margins <- ggplot(data = df1, aes(x = x1, y = x2, color = y)) + geom_point() + #build plot
-    scale_color_manual(values = c("red", "blue")) + 
-    geom_abline(slope = 1.4, intercept = 0)+
-    geom_abline(slope = 1.4, intercept = delta, linetype = "dashed") +
-    geom_abline(slope = 1.4, intercept = -delta, linetype = "dashed")
-plot_margins #display plot 
+```{r,out.width='75%'}
+#visualize training data, distinguish classes using color 
+p <- ggplot(data = trainset, aes(x = x1, y = x2, color = y)) +geom_point() +scale_color_manual(values = c("red","blue")) 
+df_sv <- trainset[svm_model$index,] #identify support vectors 
+p<-p+geom_point(data=df_sv,aes(x=x1,y=x2),color="purple",size=3,alpha=0.5) #mark out support vectors in plot 
+w <- t(svm_model$coefs) %*% svm_model$SV #build weight vector 
+slope_1 <- -w[1]/w[2] #calculate slope and save it to a variable 
+intercept_1 <- svm_model$rho/w[2] #calculate intercept and save it to a variable 
+#plot decision boundary based on  calculated slope and intercept 
+p <-p+geom_abline(slope=slope_1,intercept = intercept_1) 
+#add margins to plot 
+p <- p +geom_abline(slope=slope_1,intercept=intercept_1-1/w[2],linetype="dashed")+geom_abline(slope=slope_1,intercept=intercept_1+1/w[2],linetype="dashed") 
+p #display plot 
 ```
 
 
-## Support vectors {.smaller}
 
-- Consequence of KKT conditions 
-
-The training points with $\alpha_i\neq0$ are called support vectors. 
-Only support vectors are important for the classiﬁcation of new points:
-
-$$\forall x\in\mathcal{X},\ f (x) =\sum_{i=1}^n\alpha_i K (x_i,x)=\sum_{i\in SV}\alpha_i K (x_i,x) $$
-where SV is the set of support vectors.
-
-- Consequences 
-
-The solution is sparse in $\alpha$, leading to fast algorithms for training (use of decomposition methods). 
-
-The classiﬁcation of a new point only involves kernel evaluations with support vectors (fast).
-
-## Remark: C-SVM
+## C-SVM {.smaller}
 
 Often the SVM optimization problem is written in terms of a regularization parameter $C$ instead of $\lambda$ as follows:
 
@@ -172,7 +336,11 @@ subject to:
 $0\le y_i\alpha_i\le C, \text{for } i = 1,...,n$
 This formulation is often called C-SVM.
 
-## Remark: 2-SVM
+## C-SVM
+
+![](C-svm.jpg)
+
+## 2-SVM
 
 A variant of the SVM, sometimes called 2-SVM, is obtained by replacing the hinge loss by the square hinge loss:
 
@@ -185,163 +353,191 @@ $$0\le y_i\alpha_i,\ \text{for } i = 1,...,n$$
 
 This is therefore equivalent to the previous SVM with the kernel $K + n\lambda I$ and $C=+\infty$
 
-# Another version: SVMs for classification
 
-## Primal form
-Representation
-
-$$\mathcal{H}:y=f(\vec{x})=\text{sign}(\vec{w}\vec{x}+b)$$
-Evaluation
-$$\min_{\vec{w},b} \frac{1}{2}\|\vec{w}\|^2\quad \text{s.t.}\quad  y_i(\vec{w}\vec{x}_i+b)\geqslant 1, i=1,2, \dots , N$$
-
-## Dual form
-Representation
-$$\mathcal{H}:y=f(\vec{x})=\text{sign}\left(\sum\limits_{i=1}^N{\alpha_iy_i(\vec{x} \cdot \vec{x}_i)}+b\right)$$
-
-Evaluation
-
-$$\min_{\alpha}  \frac{1}{2} \sum\limits_{i=1}^N\sum\limits_{j=1}^N \alpha_i\alpha_j y_i y_j (\vec{x}_i \cdot \vec{x}_j) - \sum\limits_{i=1}^N \alpha_i$$
-s.t.  $\sum\limits_{i=1}^N\alpha_i y_i=0\quad \alpha_i \geqslant 0, i=1,2, \dots, N$
-
-
-## Primal form with slack variables
-
-Representation
-
-$$\mathcal{H}:y=f(\vec{x})=\text{sign}(\vec{w}\vec{x}+b)$$
-
-Evaluation
-$$\min_{\vec{w},b}  C \sum\limits_{i=1}^N\xi_i + \frac{1}{2}\|\vec{w}\|^2$$
- s.t. $$ y_i(\vec{w}\vec{x}_i+b)\geqslant 1-\xi_i\quad  \xi_i \geqslant 0, \quad i=1,2, \dots, N $$
-
-
-## Dual form with slack variables {.smaller}
-Representation
-$$\mathcal{H}:y=f(\vec{x})=\text{sign}\left(\sum\limits_{i=1}^N{\alpha_iy_i(\vec{x} \cdot \vec{x}_i)}+b\right)$$
-Evaluation
-
-$$\min_{\alpha} \frac{1}{2} \sum\limits_{i=1}^N\sum\limits_{j=1}^N \alpha_i\alpha_j y_i y_j (\vec{x}_i \cdot \vec{x}_j) - \sum\limits_{i=1}^N \alpha_i $$
- s.t.  $$\sum\limits_{i=1}^N\alpha_i y_i=0 \quad 0 \leqslant  \alpha_i \leqslant C, i=1,2, \dots, N$$
-
-$$\begin{align*}
-\alpha_i=0 &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\geqslant 1 \\
-\alpha_i=C &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\leqslant 1 \\
-0<\alpha_i<C &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)= 1
-\end{align*}$$
-
-
-## Hinge Loss
-Linear support vector machines can also be interpreted as hinge loss minimization:
-$$\min_{\vec{w},b} \sum\limits_{i=1}^N{L(y_i,f(\vec{x}_i))} + \lambda\|\vec{w}\|^2$$
-where $L(y, f(\vec{x}))$ is a \textbf{hinge loss function}:
-
-$$L(y, f(\vec{x})) = \begin{cases}1-yf(x),  & 1-yf(x) > 0 \\0,  & 1-yf(x) \leqslant 0\end{cases}$$
-
-
-# Introduction
-
-Some basic concepts of support vector machines.
-
-
-## Example 1: A 1-dimension dataset
-
-25 soft drink sugar content measurements. 
+## A radially 2d non-linear Example
  
-The distinct clusters for identifying candidate decision boundaries.
+```{r,echo=F}
+n <- 200 #set required number of datapoints 
+set.seed(42)  #set seed to ensure reproducibility 
+df <- data.frame(x1 = runif(n, min = -1, max = 1),x2 = runif(n, min = -1, max = 1)) #Generate dataframe with 2 predictors x1 and x2 in (-1,1) 
+radius <- 0.7 
+radius_squared <- radius^2 
+#categorize data points depending on location wrt boundary 
+df$y <- factor(ifelse(df$x1^2 + df$x2^2 < radius_squared, -1, 1),levels = c(-1,1)) 
 
-```{r, echo=F}
-# Create the data frame.
-sugar <- data.frame(
-   sugar_sample = as.factor(c (1:25)),
-   sugar_content=c(10.9,10.9,10.6,10.0,8.0,8.2,8.6,10.9,10.7,8.0,7.7,7.8,8.4,11.5,11.2,8.9,8.7,7.4,10.9,10.0,11.4,10.8,8.5,8.2,10.6)
-)
-plot_1 <- ggplot(data =sugar, aes(x = sugar_content, y =0)) + 
-    geom_point() + theme_light()+
-    geom_text(aes(label = sugar_content), size = 2.5, vjust = 2, hjust = 0.5)
-plot_1
+# function generates dataframe with points lying on a circle of radius r 
+circle <-function(x1_center, x2_center, r, npoint = 100){    #angular spacing of 2*pi/npoint between points   
+  theta <- seq(0,2*pi,length.out = npoint)   
+  x1_circ <- x1_center + r * cos(theta)   
+  x2_circ <- x2_center + r * sin(theta) 
+  return(data.frame(x1c = x1_circ, x2c = x2_circ)) } 
+boundary <- circle(x1_center = 0,x2_center = 0,r = radius) #generate boundary 
 ```
 
-## Find the maximal margin separator
+<div class="columns-2">
 
-Identified two distinct clusters (classes), the regular and the reduced sugar.
-
-A dataset in which the classes do not overlap is called separable, the classes being separated by a decision boundary. 
-
-The maximal margin separator is the decision boundary that is furthest from both classes. 
-
-It is located at the mean of the relevant extreme points from each class. 
-
-The relevant points are the highest valued point in the low sugar content class and the lowest valued point in the high sugar content class. 
-
-find the maximal margin separator for the sugar content dataset.
-
-```{r,eval=T}
-#The maximal margin separator is at the midpoint of the two extreme points in each cluster.
-mm_separator <- (8.9 + 10)/2
+```{r,out.width='100%'}
+p <- ggplot(data = df, aes(x = x1, y = x2, color = y)) +geom_point() +scale_color_manual(values = c("-1" = "red","1" = "blue")) #build plot 
+p <-p+geom_path(data = boundary,aes(x = x1c, y = x2c),inherit.aes = FALSE)  #add boundary to previous plot 
+p #display plot
 ```
 
-## Visualize the maximal margin separator
 
-Add the maximal margin separator to the scatter plot.
+```{r,out.width='100%'}
+#transform data
+df1 <- data.frame(x1sq = df$x1^2, x2sq = df$x2^2, y = df$y)
+p<-ggplot(data=df1,aes(x=x1sq,y=x2sq,color=y))+geom_point()+scale_color_manual(values=c("red","blue"))+geom_abline(slope=-1,intercept=0.49) 
+p 
+```
+
+</div>
+
+2 predictors x1 and x2, uniformly distributed between -1 and 1.
+
+##
 
 ```{r,echo=F}
-#create data frame containing the maximum margin separator
-separator <- data.frame(sep = mm_separator)
+df[,"train"] <- ifelse(runif(nrow(df))<0.8,1,0) #assign rows to training/test sets randomly in 80/20 proportion 
+trainset <- df[df$train==1,] #separate training and test sets 
+testset <- df[df$train==0,] 
+trainColNum <- grep("train", names(trainset)) 
+trainset <- trainset[,-trainColNum] 
+testset <- testset[,-trainColNum] 
 
-#add ggplot layer 
-plot_sep <- plot_1 + geom_point(data = separator, aes(x = sep, y = 0), color = "blue", size = 4)
+tune_out <- 
+  tune.svm(x = trainset[,-3], y = trainset[,3], 
+        type = "C-classification", kernel = "polynomial", degree = 2,
+        cost = 10^(-1:2), gamma = c(0.1,1,10), coef0 = c(0.1,1,10))
 
-#display plot
-plot_sep
+svm_model <- svm(y~ ., data = trainset, type = "C-classification",
+        kernel = "polynomial", degree = 2,
+        cost = tune_out$best.parameters$cost,
+        gamma = tune_out$best.parameters$gamma,
+        coef0 = tune_out$best.parameters$coef0)
 ```
 
-## Example 2: A 2d dataset.
-A 2 dimensional uniformly distributed dataset containing 600 datapoints.
 
-```{r}
-#set seed
-set.seed(42)
-
-#set number of data points. 
-n <- 600
-
-#Generate data frame with two uniformly distributed predictors.
-df <- data.frame(x1 = runif(n,0,1), 
-                 x2 = runif(n,0,1))
+```{r,echo=F,out.width='100%'}
+pred_test <- predict(svm_model, testset)  #predictions 
+mean(pred_test==testset$y)
+plot(svm_model, trainset) #visualize model 
 ```
 
-## Create a decision boundary
-
-Add a class variable to that dataset by creating a variable y whose value is -1 or +1 depending on whether the point (x1, x2) lies below or above the straight line that passes through the origin and has slope 1.4.
-
-```{r}
-#classify data points depending on location
-df$y <- factor(ifelse(df$x2 - 1.4*df$x1 < 0, -1, 1), 
-    levels = c(-1, 1))
-```
-
-## Introduce a margin in the dataset
-
-Create a margin in the dataset and then display the margin in a plot. The slope of the linear decision boundary is 1.4.
+## A more complex Example
 
 
 ```{r,echo=F}
-#set margin
-delta <- 0.07
+rm(list = ls())
+n <- 600 
+set.seed(42) 
+df <- data.frame(x1 = rnorm(n, mean = -0.5, sd = 1),x2 = runif(n, min = -1, max = 1)) 
+# Generate boundary
+radius <- 0.7 #set radius and centers 
+radius_squared <- radius^2 
+center_1 <- c(-0.7,0) 
+center_2 <- c(0.7,0) 
 
-# retain only those points that lie outside the margin
-df1 <- df[abs(1.4*df$x1 - df$x2) > delta, ]
+df$y<-factor(ifelse((df$x1-center_1[1])^2+(df$x2-center_1[2])^2<radius_squared|(df$x1-center_2[1])^2+(df$x2-center_2[2])^2 <radius_squared,-1,1), levels = c(-1,1)) #classify points 
 
-#build plot
-plot_margins <- ggplot(data = df1, aes(x = x1, y = x2, color = y)) + geom_point() + 
-    scale_color_manual(values = c("red", "blue")) + 
-    geom_abline(slope = 1.4, intercept = 0)+
-    geom_abline(slope = 1.4, intercept = delta, linetype = "dashed") +
-    geom_abline(slope = 1.4, intercept = -delta, linetype = "dashed")
- 
-#display plot 
-plot_margins
+df[,"train"] <- ifelse(runif(nrow(df))<0.8,1,0) #assign rows to training/test sets randomly in 80/20 proportion 
+trainset <- df[df$train==1,] #separate training and test sets 
+testset <- df[df$train==0,] 
+trainColNum <- grep("train", names(trainset)) 
+trainset <- trainset[,-trainColNum] 
+testset <- testset[,-trainColNum] 
+
+#tune parameters 
+tune_out <- tune.svm(x = trainset[,-3],y = trainset[,3],gamma = 5*10^(-2:2),cost = c(0.01,0.1,1,10,100),type = "C-classification",kernel = "radial") 
+svm_model <- svm(y~ .,data=trainset,type="C-classification",kernel="radial",cost=tune_out$best.parameters$cost, gamma=tune_out$best.parameters$gamma) 
 ```
+
+
+```{r,echo=F,out.width='100%'}
+#function to generate points on a circle 
+circle <- function(x1_center, x2_center, r, npoint = 100){
+  theta <- seq(0,2*pi, length.out = npoint)
+  x1_circ <- x1_center+r*cos(theta)
+  x2_circ <- x2_center + r * sin(theta)    
+  return(data.frame(x1c = x1_circ, x2c = x2_circ)) } 
+# generate boundary and plot it 
+boundary_1 <- circle(x1_center = center_1[1],x2_center = center_1[2],r = radius) 
+p <- ggplot(data = df, aes(x=x2,y=x1,color=y))+geom_point()+guides(color = FALSE)+scale_color_manual(values=c("red","blue"))
+p <- p +geom_path(data = boundary_1,aes(x = x2c, y = x1c),inherit.aes = FALSE) 
+boundary_2 <- circle(x2_center = center_2[1], x1_center = center_2[2],r = radius) 
+p <- p + geom_path(data = boundary_2,aes(x = x1c, y = x2c),inherit.aes = FALSE) 
+p 
+```
+
+600 points (x1,x2) x1 and x2 distributed differently
+
+##
+
+```{r,out.width='100%'}
+pred_test <- predict(svm_model, testset)  #predictions 
+mean(pred_test==testset$y)
+plot(svm_model, trainset)
+```
+
+
+
+## Note
+
+Historically the ﬁrst “kernel method” for pattern recognition, still the most popular. 
+
+Often state-of-the-art in performance. 
+
+One particular choice of loss function (hinge loss).
+
+Leads to a sparse solution, i.e., not all points are involved in the decomposition (compression). 
+
+Particular algorithm for fast optimization (decomposition by chunking methods).
+
+## Note
+
+
+SVMs are very unnatural from a probabilistic point of view. 
+
+- First, they encode sparsity in the loss function rather than the prior.
+
+- Second, they encode kernels by using an algorithmic trick, rather than being an explicit part of the model.
+
+- Finally, SVMs do not result in probabilistic outputs, which causes various difficulties, especially in the multi-class classification setting.
+
+
+It is possible to obtain sparse, probabilistic, multi-class kernel-based classifiers, which work as well or better than SVMs, using techniques such as the L1VM or RVM.
+
+## Summary {.smaller}
+
+SVM classiﬁers involve three key ingredients: <span class="red2"> the kernel trick, sparsity, and the large margin principle </span>. 
+
+The kernel trick is necessary to prevent underﬁtting, i.e., to ensure that the feature vector is sufﬁciently rich that a linear classiﬁer can separate the data. 
+
+If the original features are already high dimensional, it suffices to use a linear kernel, $K(x,x') = x^Tx'$ , which is equivalent to working with the original features. 
+
+The sparsity and large margin principles are necessary to prevent overfitting, i.e., to ensure that we do not use all the basis functions. 
+These two ideas are closely related to each other,and both arise (in this case) from the use of the hinge loss function. 
+
+However, there are other methods of achieving sparsity (such as $\ell_1$), and also other methods of maximizing the margin(such as boosting). 
+
+## Experiments
+
+Chapelle, O. (2007). Training a support vector machine in the primal. Neural computation, 19(5), 1155-1178.
+
+
+## 
+
+
+
+![pseudo code](algorithm.png)
+
+#
+
+
+![Reverie](Debussy.jpg)
+
+<!--
+
+# Backup
 
 
 # Support Vector Classifiers - Linear Kernels
@@ -354,15 +550,7 @@ Split dataset into training and test sets
 
 Random 80/20 split 
 
-```{r}
-set.seed(1) #set seed for reproducibility 
-df[,"train"] <- ifelse(runif(nrow(df))<0.8,1,0) #assign rows to training/test sets randomly in 80/20 proportion 
-trainset <- df[df$train==1,] #separate training and test sets 
-testset <- df[df$train==0,] 
-trainColNum <- grep("train", names(trainset)) 
-trainset <- trainset[,-trainColNum] 
-testset <- testset[,-trainColNum] 
-```
+
 
 ## Decision boundaries and kernels
 
@@ -394,10 +582,6 @@ scale - Boolean indicating whether to scale data.
 
 ## Building a Linear SVM
 
-```{r}
-library(e1071) 
-svm_model<- svm(y ~ .,data = trainset,type = "C-classification",kernel = "linear",scale = FALSE) 
-```
 
 Model Accuracy
 
@@ -405,31 +589,7 @@ Obtain class predictions for training and test sets.
 
 Evaluate the training and test set accuracy of the model. 
 
-```{r}
-pred_train <- predict(svm_model,trainset) #training accuracy 
-mean(pred_train==trainset$y)
-pred_test <- predict(svm_model,testset) 
-mean(pred_test==testset$y)#test accuracy 
-```
 
-
-
-## Visualizing support vectors
-
-```{r}
-#visualize training data, distinguish classes using color 
-p <- ggplot(data = trainset, aes(x = x1, y = x2, color = y)) +geom_point() +scale_color_manual(values = c("red","blue")) 
-df_sv <- trainset[svm_model$index,] #identify support vectors 
-p<-p+geom_point(data=df_sv,aes(x=x1,y=x2),color="purple",size=3,alpha=0.5) #mark out support vectors in plot 
-w <- t(svm_model$coefs) %*% svm_model$SV #build weight vector 
-slope_1 <- -w[1]/w[2] #calculate slope and save it to a variable 
-intercept_1 <- svm_model$rho/w[2] #calculate intercept and save it to a variable 
-#plot decision boundary based on  calculated slope and intercept 
-p <-p+geom_abline(slope=slope_1,intercept = intercept_1) 
-#add margins to plot 
-p <- p +geom_abline(slope=slope_1,intercept=intercept_1-1/w[2],linetype="dashed")+geom_abline(slope=slope_1,intercept=intercept_1+1/w[2],linetype="dashed") 
-p #display plot 
-```
 
 ## Soft margin classifiers
 
@@ -444,7 +604,7 @@ Our decision boundary is linear, so we can reduce margin
 
 ## Tuning linear SVMs
 
-```{r}
+```{r,eval=F}
 library(e1071) 
 svm_model<- svm(y ~ .,data = trainset,type = "C-classification",kernel = "linear",cost = 100,scale = FALSE) 
 #print model summary 
@@ -460,7 +620,7 @@ Petal width and length - number (predictor variables);
 Sepal width and length - number (predictor variables);  
 Species - category: setosa, virginica or versicolor (predicted variable) 
 
-```{r}
+```{r, eval=F,out.width='50%'}
 #plot petal length vs width for dataset, distinguish species by color 
 p <- ggplot(data = iris,aes(x = Petal.Width,y = Petal.Length,color = Species)) +geom_point() 
 p  #display plot 
@@ -484,47 +644,13 @@ Called one-against-one classification strategy.
 
 # Polynomial Kernels
 
-## Generating a radially separable dataset
 
-Generating a 2d uniformly distributed set with 200 points 
-
-2 predictors x1 and x2, uniformly distributed between -1 and 1.
- 
-```{r}
-n <- 200 #set required number of datapoints 
-set.seed(42)  #set seed to ensure reproducibility 
-df <- data.frame(x1 = runif(n, min = -1, max = 1),x2 = runif(n, min = -1, max = 1)) #Generate dataframe with 2 predictors x1 and x2 in (-1,1) 
-```
 
 Create a circular decision boundary of radius 0.7 units 
 
 Categorical variable y is +1 or -1 depending on the point lies outside or within boundary
 
-```{r}
-radius <- 0.7 
-radius_squared <- radius^2 
-#categorize data points depending on location wrt boundary 
-df$y <- factor(ifelse(df$x1^2 + df$x2^2 < radius_squared, -1, 1),levels = c(-1,1)) 
-```
 
-##
-
-```{r}
-# function generates dataframe with points lying on a circle of radius r 
-circle <-function(x1_center, x2_center, r, npoint = 100){    #angular spacing of 2*pi/npoint between points   
-  theta <- seq(0,2*pi,length.out = npoint)   
-  x1_circ <- x1_center + r * cos(theta)   
-  x2_circ <- x2_center + r * sin(theta) 
-  return(data.frame(x1c = x1_circ, x2c = x2_circ)) } 
-boundary <- circle(x1_center = 0,x2_center = 0,r = radius) #generate boundary 
-```
-
-
-```{r}
-p <- ggplot(data = df, aes(x = x1, y = x2, color = y)) +geom_point() +scale_color_manual(values = c("-1" = "red","1" = "blue")) #build plot 
-p <-p+geom_path(data = boundary,aes(x = x1c, y = x2c),inherit.aes = FALSE)  #add boundary to previous plot 
-p #display plot 
-```
 
 ## Transforming the problem
 
@@ -533,15 +659,6 @@ Equation of boundary is x1^2 + x2^2 = 0.49
 Map x1^2 to a new variable X1 and x2^2 to X2 
 
 The equation of boundary in the X1-X2 space becomes... X1 + X2 = 0.49 (a line!!)
-
-##
-
-```{r}
-#transform data
-df1 <- data.frame(x1sq = df$x1^2, x2sq = df$x2^2, y = df$y)
-p<-ggplot(data=df1,aes(x=x1sq,y=x2sq,color=y))+geom_point()+scale_color_manual(values=c("red","blue"))+geom_abline(slope=-1,intercept=0.49) 
-p 
-```
 
 
 
@@ -577,27 +694,9 @@ Build a quadratic SVM for the radially separable dataset:
 
 - default values of cost, gamma and coef0 (1, 1/2 and 0) 
 
-```{r,echo=F}
-df[,"train"] <- ifelse(runif(nrow(df))<0.8,1,0) #assign rows to training/test sets randomly in 80/20 proportion 
-trainset <- df[df$train==1,] #separate training and test sets 
-testset <- df[df$train==0,] 
-trainColNum <- grep("train", names(trainset)) 
-trainset <- trainset[,-trainColNum] 
-testset <- testset[,-trainColNum] 
-```
 
-##
 
-```{r}
-svm_model<-svm(y ~ ., data = trainset, type = "C-classification",kernel = "polynomial", degree = 2) 
-pred_test <- predict(svm_model, testset)  #predictions 
-mean(pred_test==testset$y)
-plot(svm_model, trainset) #visualize model 
-```
 
-## Tuning SVMs
-
-Omitted
 
 # Radial Basis Function Kernels
 
@@ -629,9 +728,7 @@ testset <- testset[,-trainColNum]
 ```
 
 
-##
-
-```{r}
+```{r,eval=F,out.width='50%'}
 #function to generate points on a circle 
 circle <- function(x1_center, x2_center, r, npoint = 100){
   theta <- seq(0,2*pi, length.out = npoint)
@@ -640,16 +737,15 @@ circle <- function(x1_center, x2_center, r, npoint = 100){
   return(data.frame(x1c = x1_circ, x2c = x2_circ)) } 
 # generate boundary and plot it 
 boundary_1 <- circle(x1_center = center_1[1],x2_center = center_1[2],r = radius) 
-p <- ggplot(data = df, aes(x=x1,y=x2,color=y))+geom_point()+guides(color = FALSE)+scale_color_manual(values=c("red","blue"))
-p <- p +geom_path(data = boundary_1,aes(x = x1c, y = x2c),inherit.aes = FALSE) 
-boundary_2 <- circle(x1_center = center_2[1], x2_center = center_2[2],r = radius) 
+p <- ggplot(data = df, aes(x=x2,y=x1,color=y))+geom_point()+guides(color = FALSE)+scale_color_manual(values=c("red","blue"))
+p <- p +geom_path(data = boundary_1,aes(x = x2c, y = x1c),inherit.aes = FALSE) 
+boundary_2 <- circle(x2_center = center_2[1], x1_center = center_2[2],r = radius) 
 p <- p + geom_path(data = boundary_2,aes(x = x1c, y = x2c),inherit.aes = FALSE) 
 p 
 ```
 
-##
 
-```{r}
+```{r,eval=F,out.width='50%'}
 svm_model<- svm(y ~ .,data = trainset,type = "C-classification",kernel = "radial") 
 pred_train <- predict(svm_model, trainset) 
 mean(pred_train==trainset$y)
@@ -659,22 +755,20 @@ plot(svm_model, trainset) #plot decision boundary
 ```
 
 
-##
-
-```{r}
+```{r,eval=F}
 #tune parameters 
 tune_out <- tune.svm(x = trainset[,-3],y = trainset[,3],gamma = 5*10^(-2:2),cost = c(0.01,0.1,1,10,100),type = "C-classification",kernel = "radial") 
 svm_model <- svm(y~ .,data=trainset,type="C-classification",kernel="radial",cost=tune_out$best.parameters$cost, gamma=tune_out$best.parameters$gamma) 
 mean(pred_test==testset$y)
 ```
 
-```{r}
+```{r,eval=F,out.width='50%'}
 plot(svm_model, trainset)
 ```
 
 ##
 
-```{r}
+```{r,out.width='50%'}
 #rbf function 
 rbf <- function(r, gamma) exp(-gamma*r) 
 ggplot(data.frame(r = c(-0, 10)), aes(r))+ggtitle("Radial basis function (gamma=0.2 to 2)") +
@@ -686,32 +780,6 @@ ggplot(data.frame(r = c(-0, 10)), aes(r))+ggtitle("Radial basis function (gamma=
   stat_function(fun = rbf, args = list(gamma = 2), aes(color = "2"))+
   scale_color_manual("gamma",values = c("red","orange","yellow","green","blue","violet"))
 ```
-
-## Note
-
-SVMs are very unnatural from a probabilistic point of view. 
-
-- First, they encode sparsity in the loss function rather than the prior.
-
-- Second, they encode kernels by using an algorithmic trick, rather than being an explicit part of the model.
-
-- Finally, SVMs do not result in probabilistic outputs, which causes various difficulties, especially in the multi-class classification setting.
-
-
-It is possible to obtain sparse, probabilistic, multi-class kernel-based classifiers, which work as well or better than SVMs, using techniques such as the L1VM or RVM.
-
-## Summary {.smaller}
-
-SVM classiﬁers involve three key ingredients: <span class="red2"> the kernel trick, sparsity, and the large margin principle </span>. 
-
-The kernel trick is necessary to prevent underﬁtting, i.e., to ensure that the feature vector is sufﬁciently rich that a linear classiﬁer can separate the data. 
-
-If the original features are already high dimensional, it suffices to use a linear kernel, $K(x,x′) = x^Tx′$ , which is equivalent to working with the original features. 
-
-The sparsity and large margin principles are necessary to prevent overfitting, i.e., to ensure that we do not use all the basis functions. 
-These two ideas are closely related to each other,and both arise (in this case) from the use of the hinge loss function. 
-
-However, there are other methods of achieving sparsity (such as $\ell_1$), and also other methods of maximizing the margin(such as boosting). 
 
 
 
@@ -733,4 +801,3 @@ Clair de lune v.s. Mondscheinsonate
 https://terrytao.wordpress.com/2019/08/13/eigenvectors-from-eigenvalues/
 
 -->
-

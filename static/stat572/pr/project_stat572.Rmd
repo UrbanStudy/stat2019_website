@@ -1,3 +1,32 @@
+---
+title: 'STAT 661: Project'
+author: "Geovani Bautista, Simon Lee, Shen Qu"
+date: Dec, 2019
+subtitle: "Chapter 10: Nonconjugate priors and Metropolis-Hastings algorithms"
+output:
+  word_document:
+  pdf_document:
+    toc: no
+    number_sections: no
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: 
+    incremental: true
+  slidy_presentation: default
+header-includes:
+ - \usepackage[ruled,vlined]{algorithm2e}
+
+---
+
+
+
+## 10.1 Generalized linear models
+
+Example: Song sparrow reproductive success
+
+
+```{r, height=3.5,width=7}
 #### Sparrow data
 load("sparrows.RData")  
 fledged<-sparrows[,1] ; age<-sparrows[,2] ; age2<-age^2
@@ -5,14 +34,15 @@ fledged<-sparrows[,1] ; age<-sparrows[,2] ; age2<-age^2
 
 
 #### Figure 10.1 
-pdf("fig10_1.pdf",family="Times",height=3.5,width=7)
+# pdf("fig10_1.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 plot(fledged~as.factor(age),range=0,xlab="age",ylab="offspring",
       col="gray")
 summary(glm(fledged~age+age2,family="poisson"))
-dev.off()
+```
 
 
+```{r, out.width='100%'}
 #### Grid-based posterior approximation
 p<-3
 beta0<-rep(0,p)
@@ -37,7 +67,8 @@ for(i in 1:gs) { for(j in 1:gs) { for(k in 1:gs) {
               dnorm(beta3[k],beta0[3],sqrt(S0[3,3]),log=TRUE)  +
               sum( dpois(fledged,exp(theta),log=TRUE )  )
   }} 
- cat(i,"\n") }
+  }
+cat(i,"\n")
 
 PB<-exp( LPB - max(LPB) )
 PB<-PB/sum(PB)
@@ -56,10 +87,13 @@ i<-sample(1:gs,1,prob=PB2)
 j<-sample(1:gs,1,prob=PB23[i,] )
 k<-sample(1:gs,1,prob=PB[,i,j] )
 BETAg[s,]<-c(beta1[k],beta2[i],beta3[j])  }
+```
 
+## 10.2 The Metropolis algorithm
 
+```{r, height=1.75,width=5}
 #### Figure 10.2
-pdf("fig10_2.pdf",family="Times",height=1.75,width=5)
+# pdf("fig10_2.pdf",family="Times",height=1.75,width=5)
 par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 plot(beta2,PB2*length(beta2)/(max(beta2)-min(beta2)) ,type="l",xlab=expression(beta[2]),ylab=expression(paste(italic("p("),beta[2],"|",italic("y)"),sep="") ) )
 plot(beta3,PB3*length(beta3)/(max(beta3)-min(beta3)),type="l",xlab=expression(beta[3]),ylab=expression(paste(italic("p("),beta[3],"|",italic("y)"),sep="") ))
@@ -69,12 +103,13 @@ eXB.post<- exp(t(Xs%*%t(BETAg )) )
 qE<-apply( eXB.post,2,quantile,probs=c(.025,.5,.975))
 
 source("hdr2d.r")
-library(ash)   # added by Shen
+library(ash)
 plot.hdr2d(BETAg[,2:3],bw=c(15,15),xlab=expression(beta[2]),
            ylab=expression(beta[3]))
-dev.off()
+```
 
 
+```{r, out.width='100%'}
 #### MH algorithm for one-sample normal problem with 
 
 ## Setup
@@ -106,11 +141,11 @@ for(s in 1:S)
   if(log(runif(1))<log.r) { theta<-theta.star }
 
   THETA<-c(THETA,theta)
-
 }
+```
 
 
-
+```{r, height=3.5,width=7}
 #### Figure 10.3
 pdf("fig10_3.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
@@ -122,11 +157,12 @@ plot(skeep,THETA[skeep],type="l",xlab="iteration",ylab=expression(theta))
 hist(THETA[-(1:50)],prob=TRUE,main="",xlab=expression(theta),ylab="density")
 th<-seq(min(THETA),max(THETA),length=100)
 lines(th,dnorm(th,mu.n,sqrt(t2.n)) )
-dev.off()
+```
 
 
+```{r,eval=T,  height=7,width=7}
 #### MH algorithm with different proposal distributions
-par(mfrow=c(4,3))
+par(mfrow=c(2,3))
 ACR<-ACF<-NULL
 THETAA<-NULL
 for(delta2 in 2^c(-5,-1,1,5,7) ) {
@@ -139,7 +175,6 @@ delta<-2
 
 for(s in 1:S) 
 {
-
   theta.star<-rnorm(1,theta,sqrt(delta2))
   log.r<-sum( dnorm(y,theta.star,sqrt(s2),log=TRUE)-
               dnorm(y,theta,sqrt(s2),log=TRUE)  )  +
@@ -149,18 +184,19 @@ for(s in 1:S)
   THETA<-c(THETA,theta) 
 
 }
-plot(THETA[1:1000])
+plot(THETA[1:1000],col = alpha("blue", 0.1))
 
 ACR<-c(ACR,acs/s) 
 ACF<-c(ACF,acf(THETA,plot=FALSE)$acf[2]  )
 THETAA<-cbind(THETAA,THETA)
 }
 plot(ACR,ACF) ; lines(ACR,ACF)
+```
 
 
-
+```{r, height=1.75,width=5}
 #### Figure 10.4 
-pdf("fig10_4.pdf",family="Times",height=1.75,width=5)
+# pdf("fig10_4.pdf",family="Times",height=1.75,width=5)
 par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 laby<-c(expression(theta),"","","","")
 
@@ -169,8 +205,10 @@ plot(THETAA[1:500,k],type="l",xlab="iteration",ylab=laby[k],
     ylim=range(THETAA) )
 abline(h=mu.n,lty=2)
                   }
-dev.off()
+```
 
+
+```{r, out.width='100%'}
 THCM<-apply(THETAA,2,cumsum)
 THCM<- THCM/(1:dim(THCM)[1]) 
 
@@ -223,11 +261,17 @@ cat(ac/S,"\n")
 
 library(coda)
 apply(BETA,2,effectiveSize)
+```
 
 
 
+## 10.3 The Metropolis algorithm for Poisson regression
+
+
+
+```{r, height=1.75,width=5}
 #### Figure 10.5 
-pdf("fig10_5.pdf",family="Times",height=1.75,width=5)
+# pdf("fig10_5.pdf",family="Times",height=1.75,width=5)
 par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 par(mfrow=c(1,3))
 blabs<-c(expression(beta[1]),expression(beta[2]),expression(beta[3]))
@@ -238,11 +282,13 @@ abline(h=mean(BETA[,j]) )
 
 acf(BETA[,j],ci.col="gray",xlab="lag")
 acf(BETA[thin,j],xlab="lag/10",ci.col="gray")
-dev.off()
+```
 
+## 10.4 Metropolis, Metropolis-Hastings and Gibbs
 
+```{r, height=1.75,width=5}
 #### Figure 10.6
-pdf("fig10_6.pdf",family="Times",height=1.75,width=5)
+# pdf("fig10_6.pdf",family="Times",height=1.75,width=5)
 par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 par(mfrow=c(1,3))
 
@@ -261,15 +307,18 @@ plot( c(1,6),range(c(0,qE)),type="n",xlab="age",
 lines( qE[1,],col="black",lwd=1)
 lines( qE[2,],col="black",lwd=2)
 lines( qE[3,],col="black",lwd=1)
+```
 
-dev.off()
+## 10.4 Metropolis, Metropolis-Hastings and Gibbs
+
+Example: Historical CO2 and temperature data
 
 
-
+```{r, height=1.75,width=5}
 #### Ice core example
 load("icecore.RData") 
 
-pdf("fig10_7.pdf",family="Times",height=1.75,width=5)
+# pdf("fig10_7.pdf",family="Times",height=1.75,width=5)
 
 par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 layout(matrix( c(1,1,2),nrow=1,ncol=3) )
@@ -283,13 +332,12 @@ lines(icecore[,1],  (icecore[,2]-mean(icecore[,2]))/sd(icecore[,2]),
   type="l",col="gray")
 
 plot(icecore[,2], icecore[,3],xlab=expression(paste(CO[2],"(ppmv)")),ylab="temperature difference (deg C)")
-
-dev.off()
-
+```
 
 
+```{r,height=3.5,width=7}
 #### Figure 10.8
-pdf("fig10_8.pdf",family="Times",height=3.5,width=7)
+# pdf("fig10_8.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
@@ -343,8 +391,10 @@ for(s in 1:S)
 OUT.1000<-OUT
 library(coda)
 apply(OUT.1000,2,effectiveSize )
+```
 
 
+```{r,eval=T, out.width='100%'}
 ## MCMC - 25000 scans saving every 25th scan
 set.seed(1)
 S<-25000 ; odens<-S/1000
@@ -376,31 +426,40 @@ for(s in 1:S)
 OUT.25000<-OUT
 library(coda)
 apply(OUT.25000,2,effectiveSize )
+```
+
+### 10.5.1 A regression model with correlated errors
 
 
 
+### 10.5.2 Analysis of the ice core data
+
+
+```{r,height=3.5,width=7}
 #### Figure 10.9
-pdf("fig10_9.pdf",family="Times",height=3.5,width=7)
+# pdf("fig10_9.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 plot(OUT.1000[,4],xlab="scan",ylab=expression(rho),type="l")
 acf(OUT.1000[,4],ci.col="gray",xlab="lag")
-dev.off()
+```
 
 
-
+```{r,height=3.5,width=7}
 #### Figure 10.10
-pdf("fig10_10.pdf",family="Times",height=3.5,width=7)
+# pdf("fig10_10.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 plot(OUT.25000[,4],xlab="scan/25",ylab=expression(rho),type="l")
 acf(OUT.25000[,4],ci.col="gray",xlab="lag/25")
-dev.off()
+```
+
+## 10.6 Discussion and further references
 
 
-
+```{r,height=3.5,width=7}
 #### Figure 10.11
-pdf("fig10_11.pdf",family="Times",height=3.5,width=7)
+# pdf("fig10_11.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
@@ -412,5 +471,11 @@ abline(mean(OUT.25000[,1]),mean(OUT.25000[,2]),lwd=2)
 abline(lmfit$coef,col="gray",lwd=2)
 legend(180,2.5,legend=c("GLS estimate","OLS estimate"),bty="n",
       lwd=c(2,2),col=c("black","gray"))
-dev.off()
+```
+
+# Reference
+
+Hoff, P. D. (2009). A first course in Bayesian statistical methods (Chapter 10). New York: Springer.
+
+
 
