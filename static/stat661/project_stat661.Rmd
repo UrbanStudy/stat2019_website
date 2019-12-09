@@ -3,12 +3,12 @@ title: 'STAT 661: Project'
 author: "Jacob, Robin, Ryan & Shen"
 date: "Dec, 2019"
 output:
-  pdf_document:
-    number_sections: yes
+  word_document:
     toc: no
   ioslides_presentation:
     incremental: yes
-  word_document:
+  pdf_document:
+    number_sections: yes
     toc: no
   slidy_presentation: default
   beamer_presentation:
@@ -170,7 +170,6 @@ temp <- c(150,170,190,220) #temperature levels
 trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
 nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10))
 # index_nu <- c(rep(-2,7),rep(-3,5),rep(-4,5),rep(1,10),rep(2,3),rep(3,5),rep(4,5))
-
 cen <- c(8064,5448,1680,528) #censoring times 
 w <- log10(cen) #log10 censoring times: last time still working
 y_uncensored <-log10(c(rep(1,10),
@@ -182,9 +181,7 @@ y_censored <- c(rep(w[1],10),
                 rep(0,5),rep(w[3],5),
                 rep(0,5),rep(w[4],5))
 
-S <- 30
-Y<-matrix(nrow=S,ncol=40)
-Y[1,] <- y <-  (y_uncensored+y_censored)
+y <-  (y_uncensored+y_censored)
 
 index_censored <- which(y %in% w)
 index_uncensored <- which(!(y %in% w))
@@ -194,17 +191,130 @@ n<-length(index_censored)+m
 
 # initial value
 fit0 <- lm(y~nu) #linear model 
-sigma_0 <- sigma(fit0) #standard error of residuals 
-beta0_0 <- as.numeric(coef(fit0)[1]) #intercept 
-beta1_0 <- as.numeric(coef(fit0)[2]) #slope 
+sigma <- sigma(fit0) #standard error of residuals 
+beta0 <- as.numeric(coef(fit0)[1]) #intercept 
+beta1 <- as.numeric(coef(fit0)[2]) #slope 
+
+nu_i <- nu[index_censored]
+nu_j <- nu[index_uncensored]
+
+mu_i <- beta0+beta1*nu_i
+mu_j <- beta0 + beta1 * nu_j
+
+H_i <- dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
+# H_i <-dnorm(0)/(1-pnorm(0))
+D_j <- y[index_uncensored]-mu_j  # difference between uncensored y and mean_j
+ET  <- unique(mu_i+ sigma*H_i) 
+
+S <- 60
+THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL,
+       c('Intercept','Slope','Sigma','mu150','mu170','mu190','mu220','Iteration')))
+THETA[1,]<-c(beta0,beta1,sigma,unique(ET),1)
+Q <- 0
+k=1
+delta = 1e-4
+repeat {  
+beta0<- THETA[k,1]
+beta1<- THETA[k,2]
+sigma<- THETA[k,3]
+
+# M step    
+mu_i <- beta0+beta1*nu_i
+# H_i<-   dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
+
+beta0_star <- 7.012488+3.601233*sum((mu_i+sigma*H_i)*(2.208376-nu_i))
+beta1_star <- -2.586712-1/.6113*sum((mu_i+sigma*H_i)*(2.201434-nu_i))
+
+mu_j <- beta0_star+beta1_star*nu_j
+ D_j <- y[index_uncensored]-mu_j  
+ 
+mu_i_star <- beta0_star+beta1_star*nu_i 
+# H_i_star<-   dnorm((y[index_censored]-mu_i_star)/sigma)/(1-pnorm((y[index_censored]-mu_i_star)/sigma))
+sigma_star <- (sum((y[index_uncensored]-beta0_star-beta1_star*nu_j)^2)+sum(sigma^2+H_i*sigma*2*(mu_i-mu_i_star)+(mu_i-mu_i_star)^2))/40
+
+# E step
+# Get Q
+k <-  k+1  
+Q[k] <-  
+ -n*log(2*pi)/2-
+  n*log(sigma_star)-
+ (1/(2*sigma_star^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
+ (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
+                     mu_i^2+       # mu_i_star^2+
+                     sigma^2+       # sigma_star^2+                         
+                     sigma*(        # sigma_star*(
+  y[index_censored]+mu_i-2*mu_i_star #      w_i+mu_i_star-2mu_i
+                            )*H_i-   #            )*H)-
+                     2*mu_i*mu_i_star+    # 2*mu_i*mu_i_star+
+                     mu_i_star^2               # mu_i^2
+                    )                   #                   )
+# Update THETA
+ THETA[k,1] <- beta0_star
+ THETA[k,2] <- beta1_star
+ THETA[k,3] <- sigma_star
+ THETA[k,4:7]<-unique(mu_i_star+ sigma_star*H_i) 
+ THETA[k,8] <- k
+
+ if(abs(Q[k]-Q[k-1])<=delta) break
+}
+# THETA
+```
+
+
+
+
+## EM figure
+
+```{r,echo=F}
+plot(nu,y,main="EM Method",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.4),ylim=c(2.5,4),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(THETA[,8],na.rm =T)))
+abline(THETA[i,1:2],lwd=0.5,lty=1,col=i)
+text(2.3,3.95, labels = "");text(2.32,3.65, labels = "")
+```
+
+## The results of THETA
+
+```{r,echo=F}
+# kableExtra::kable(THETA)
+pander::pander(THETA)
+```
+
+
+## The results of Q
+
+```{r,echo=F}
+pander::pander(Q)
+```
+
+
+
+# Reference
+
+Schmee, J., & Hahn, G. (1979). A Simple Method for Regression Analysis with Censored Data. Technometrics, 21(4), 417-432. doi:10.2307/1268280
+
+Aitkin, M. (1981). A Note on the Regression Analysis of Censored Data. Technometrics, 23(2), 161-163. doi:10.2307/1268032
+
+
+
+
+
+<!--
+
 
 mu_i0 <- beta0_0 + beta1_0 * nu[index_censored]
 mu_j0 <- beta0_0 + beta1_0 * nu[index_uncensored]
 D_j <- y[index_uncensored]-mu_j0 
 
-beta0_star <- beta0_0
-beta1_star<- beta1_0
-sigma_star<- sigma_0  # should be replaced by solutions
+beta0 <- beta0_0
+beta1 <- beta1_0
+sigma <- sigma_0  
+
+
+Y<-matrix(nrow=S,ncol=40)
+
+Q[1] <- -n*log(2*pi)/2-n*log(sigma_0)-(1/(2*sigma_0^2))*(sum((D_j)^2)+sum(ER))
 
 par=c(beta0_star,beta1_star,sigma_star)
 
@@ -212,8 +322,6 @@ par=c(beta0_star,beta1_star,sigma_star)
 mu_i_F <- function (beta0,beta1) {
   beta0+beta1*nu[index_censored]
 }
-
-k=1
 
 # define H function
 HF <- function (beta0,beta1,sigma) {
@@ -223,6 +331,7 @@ HF <- function (beta0,beta1,sigma) {
        ) )
 }
 
+par=c(beta0,beta1,sigma)
 
 ET <- mu_i_F(par[1],par[2])+ par[3]*HF(par[1],par[2],par[3])
 ET_sq <- mu_i_F(par[1],par[2])^2+ 
@@ -230,28 +339,9 @@ ET_sq <- mu_i_F(par[1],par[2])^2+
          sigma_star*(y[index_censored]+mu_i_F(par[1],par[2]))*HF(par[1],par[2],par[3])
 ER <- ET_sq-2*mu_i0*ET+mu_i0^2
 
-Q <- 0
-Q[1] <- -n*log(2*pi)/2-n*log(sigma_0)-(1/(2*sigma_0^2))*(sum((D_j)^2)+sum(ER))
-
-THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL,
-       c('Intercept','Slope','Sigma','mu150','mu170','mu190','mu220','Iteration')))
-THETA[1,]<-c(par,unique(ET),k)
-delta = 1e-6
-repeat {  
-    # load THETA
-beta0  <- THETA[k,1]
-beta1  <- THETA[k,2]
-sigma  <- THETA[k,3]
-
 # Update y
 y[index_censored] <- ET
 y[index_uncensored] <- y_uncensored[index_uncensored]
-
-# E step
-
-mu_i <- beta0 + beta1 * nu[index_censored]
-mu_j <- beta0 + beta1 * nu[index_uncensored]
-D_j <- y[index_uncensored]-mu_j  # difference between uncensored y and mean_j
 
 
 Q_theta <- function(par){ 
@@ -271,10 +361,6 @@ Q_theta <- function(par){
   (1/(2*sigma^2))*(n-m)*(par[3]^2)      # 1/2sigma^2*(n-m)*sigma_star^2+  
 }
 
-# Get Q
-Q[k]<- Q_theta(par)
-
-# M step    
 
 ############ from Jacob
 # par <- optim(par,
@@ -291,7 +377,7 @@ par[2] <- coef(fit)[2] #slope
 par[3] <- sigma(fit)  
 ############ 
 
-k <-  k+1 
+
 
 # Update ET
 ET <- mu_i_F(par[1],par[2])+ par[3]*HF(par[1],par[2],par[3])
@@ -305,60 +391,13 @@ Q[k]<- Q_theta(par)
  THETA[k,3] <- par[3]
  THETA[k,4:7]<-unique(ET) 
  THETA[k,8] <- k
-
-# Update Y
-Y[k,] <- y  
-
 # par=c(beta0,beta1,sigma)
- if(abs(Q[k]-Q[k-1])<=delta) break
-}
-```
-
-## EM figure
-
-```{r,echo=F}
-plot(nu,y,main="EM Method",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
-     xlim=c(2,2.4),ylim=c(2.5,4),
-     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
-for (i in (1:max(THETA[,8],na.rm =T)))
-abline(THETA[i,1:2],lwd=0.5,lty=1,col=i)
-text(2.3,3.95, labels = "28th");text(2.32,3.65, labels = "1st")
-```
-
-## The results of THETA
-
-```{r,echo=F}
-# kableExtra::kable(PHI)
-pander::pander(THETA)
-```
+ 
+ # Update Y
+Y[k,] <- y  
+ 
 
 
-## The results of Q
-
-```{r,echo=F}
-pander::pander(Q)
-```
-
-
-
-```{r,eval=F,include=F}
-kableExtra::kable(Y[,c(1,18,26,36)])
-# pander::pander(Y)
-```
-
-
-
-# Reference
-
-Schmee, J., & Hahn, G. (1979). A Simple Method for Regression Analysis with Censored Data. Technometrics, 21(4), 417-432. doi:10.2307/1268280
-
-Aitkin, M. (1981). A Note on the Regression Analysis of Censored Data. Technometrics, 23(2), 161-163. doi:10.2307/1268032
-
-
-
-
-
-<!--
 
 
 ## Introduction 
