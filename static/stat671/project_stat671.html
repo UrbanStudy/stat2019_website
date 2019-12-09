@@ -3242,14 +3242,18 @@ Solving the dual of this problem (also a QP) will be more convenient and lead to
 
 <p>\[\underset{\alpha\in\mathbb{R^n}}{\max}2\sum_{i=1}^n\alpha_i y_i -\sum_{i,j=1}^n\alpha_i\alpha_j K(x_i,x_j)=2\alpha^Ty-\alpha^TK\alpha\] subject to: \(0\le y_i\alpha_i\le\frac1{2\lambda n}, \text{for } i = 1,...,n\)</p>
 
-</article></slide><slide class=""><hgroup><h2>Primal and Dual</h2></hgroup><article  id="primal-and-dual">
+<!--
 
-<p>\[\alpha^\star\left[1-y_if^\star(x_i)\right]=0\]</p>
+## Primal and Dual
 
-<p>\[\implies\begin{cases}\alpha^\star&gt;0&amp;\Rightarrow y_if^\star(x_i)=1\\ \alpha^\star=0&amp;\Leftarrow y_if^\star(x_i)&gt;1\\ \alpha^\star&lt;0&amp;\text{not exist}\\
-\text{not exist}&amp;\Leftarrow y_if^\star(x_i)&lt;1\end{cases}\]</p>
+$$\alpha^\star\left[1-y_if^\star(x_i)\right]=0$$
 
-<p>The examples in the ﬁrst category, for which the scaled margin is 1 and the constraints are active are called support vectors. They are the closest to the decision boundary.</p>
+$$\implies\begin{cases}\alpha^\star>0&\Rightarrow y_if^\star(x_i)=1\\ \alpha^\star=0&\Leftarrow y_if^\star(x_i)>1\\ \alpha^\star<0&\text{not exist}\\
+\text{not exist}&\Leftarrow y_if^\star(x_i)<1\end{cases}$$
+
+The examples in the ﬁrst category, for which the scaled margin is 1 and the constraints are active are called support vectors. They are the closest to the decision boundary.
+
+-->
 
 </article></slide><slide class=""><hgroup><h2>Slack variables</h2></hgroup><article  id="slack-variables" class="smaller">
 
@@ -3284,19 +3288,24 @@ Solving the dual of this problem (also a QP) will be more convenient and lead to
 
 <p>subject to: \(\begin{cases}(y_i[K\alpha]_i +\xi_i -1\ge 0,&amp; \text{for} i = 1,...,n,\\\xi_i\ge 0,&amp; \text{for} i = 1,...,n\end{cases}\)</p>
 
-</article></slide><slide class=""><hgroup><h2>Dual form with slack variables</h2></hgroup><article  id="dual-form-with-slack-variables" class="smaller">
+<!--
 
-<p>Representation \(\mathcal{H}:y=f(\vec{x})=\text{sign}\left(\sum\limits_{i=1}^N{\alpha_iy_i(\vec{x} \cdot \vec{x}_i)}+b\right)\)</p>
+## Dual form with slack variables {.smaller}
+Representation
+$\mathcal{H}:y=f(\vec{x})=\text{sign}\left(\sum\limits_{i=1}^N{\alpha_iy_i(\vec{x} \cdot \vec{x}_i)}+b\right)$
 
-<p>Evaluation \(\min_{\alpha} \frac{1}{2} \sum\limits_{i=1}^N\sum\limits_{j=1}^N \alpha_i\alpha_j y_i y_j (\vec{x}_i \cdot \vec{x}_j) - \sum\limits_{i=1}^N \alpha_i\)</p>
+Evaluation
+$\min_{\alpha} \frac{1}{2} \sum\limits_{i=1}^N\sum\limits_{j=1}^N \alpha_i\alpha_j y_i y_j (\vec{x}_i \cdot \vec{x}_j) - \sum\limits_{i=1}^N \alpha_i$
 
-<p>s.t. \(\sum\limits_{i=1}^N\alpha_i y_i=0 \quad 0 \leqslant \alpha_i \leqslant C, i=1,2, \dots, N\)</p>
+ s.t.  $\sum\limits_{i=1}^N\alpha_i y_i=0 \quad 0 \leqslant  \alpha_i \leqslant C, i=1,2, \dots, N$
 
-<p>\[\begin{align*}
-\alpha_i=0 &amp;\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\geqslant 1 \\
-\alpha_i=C &amp;\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\leqslant 1 \\
-0&lt;\alpha_i&lt;C &amp;\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)= 1
-\end{align*}\]</p>
+$$\begin{align*}
+\alpha_i=0 &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\geqslant 1 \\
+\alpha_i=C &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)\leqslant 1 \\
+0<\alpha_i<C &\Rightarrow y_i(\vec{w} \cdot \vec{x}_i+b)= 1
+\end{align*}$$
+
+-->
 
 </article></slide><slide class=""><hgroup><h2>Soft margin classifiers and nonseparatable Data</h2></hgroup><article  id="soft-margin-classifiers-and-nonseparatable-data">
 
@@ -3371,17 +3380,24 @@ Solving the dual of this problem (also a QP) will be more convenient and lead to
 
 <p>Particular algorithm for fast optimization (decomposition by chunking methods).</p>
 
-</article></slide><slide class=""><hgroup><h2>Note</h2></hgroup><article  id="note-1">
+<!--
 
-<p>SVMs are very unnatural from a probabilistic point of view.</p>
+## Note
 
-<ul>
-<li><p>First, they encode sparsity in the loss function rather than the prior.</p></li>
-<li><p>Second, they encode kernels by using an algorithmic trick, rather than being an explicit part of the model.</p></li>
-<li><p>Finally, SVMs do not result in probabilistic outputs, which causes various difficulties, especially in the multi-class classification setting.</p></li>
-</ul>
 
-<p>It is possible to obtain sparse, probabilistic, multi-class kernel-based classifiers, which work as well or better than SVMs, using techniques such as the L1VM or RVM.</p>
+SVMs are very unnatural from a probabilistic point of view. 
+
+- First, they encode sparsity in the loss function rather than the prior.
+
+- Second, they encode kernels by using an algorithmic trick, rather than being an explicit part of the model.
+
+- Finally, SVMs do not result in probabilistic outputs, which causes various difficulties, especially in the multi-class classification setting.
+
+
+It is possible to obtain sparse, probabilistic, multi-class kernel-based classifiers, which work as well or better than SVMs, using techniques such as the L1VM or RVM.
+
+
+-->
 
 </article></slide><slide class=""><hgroup><h2>Summary</h2></hgroup><article  id="summary" class="smaller">
 
