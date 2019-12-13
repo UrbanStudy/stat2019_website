@@ -108,7 +108,7 @@ ind2=sample(which(train$y==-1),size=n/2)
 ind=c(ind1,ind2)
 train$x=train$x[ind,]
 train$y=train$y[ind]
-
+set.seed(1)
 
 
 ##############################
@@ -138,12 +138,10 @@ PrimalSVM = function(kk,y,I_n) return(solve(lambda*I_n+kk)%*%y)
 # Initial alpha
  alpha=PrimalSVM(kk,y,I_n) 
 
- 
- 
  ##############################
  ## 1. Indices decent
  ##############################
- 
+ ptm <- proc.time()
  S=10
  for (s in (1:S)){
    # Initial sv
@@ -162,10 +160,10 @@ PrimalSVM = function(kk,y,I_n) return(solve(lambda*I_n+kk)%*%y)
    # Update indices
    indices <- which(diag(y)%*%kk%*%alpha<1)
    # Until sv has not changed
-   if (all(length(indices)==length(indices0))) break
    print(sprintf("Step %d sv = %f",s,length(indices0)))
+   if (all(length(indices)==length(indices0))) break   
  }
-
+ Indices_decent <-proc.time() - ptm
  alpha_svm_indices=alpha
  
 ##############################
@@ -173,7 +171,7 @@ PrimalSVM = function(kk,y,I_n) return(solve(lambda*I_n+kk)%*%y)
 ##############################
  # Initial alpha
  alpha=PrimalSVM(kk,y,I_n) 
- 
+ ptm <- proc.time() 
 S=500
 for (s in (1:S)){
 old <- Opt(alpha,y,kk)
@@ -195,7 +193,7 @@ indices <- which(diag(y)%*%kk%*%alpha<1)
  
 if (abs(Opt(alpha,y,kk)-old)/old<hinge.epsilon ) break
 }
-
+Margin_Ascend <-proc.time() - ptm
 alpha_svm_margin=alpha
  
  
@@ -205,7 +203,7 @@ alpha_svm_margin=alpha
 
 # Initial alpha
 alpha=PrimalSVM(kk,y,I_n) 
-
+ptm <- proc.time() 
 for (s in (1:S)){
   # Initial sv
 indices0<- indices <- which(round(alpha,13)!=0  ) # non zero components of alpha
@@ -233,7 +231,7 @@ alpha_sv<- alpha_sv-solve(H)%*%gradient
 alpha[indices] <- alpha_sv
 alpha[-indices] <-0
 }
-
+Loss_decent <-proc.time() - ptm
 
 alpha_svm_loss=alpha
 
@@ -244,9 +242,13 @@ alpha_svm_loss=alpha
 m=dim(test$x)[1]
 print("computing kkt")
 kkt=outer(1:m,1:n,Vectorize(function(i,j) k(test$x[i,],train$x[j,])))
+
 y.hat_svm_indices=sign(kkt%*%alpha_svm_indices)
+
 y.hat_svm_margin=sign(kkt%*%alpha_svm_margin)
+
 y.hat_svm_loss=sign(kkt%*%alpha_svm_loss)
+
 ######################################
 ## show the results
 ######################################
@@ -263,5 +265,8 @@ A=table(test$y,y.hat_svm_loss)
 print(A)
 print(sprintf("SVM %d correct out of %d, or %.2f percent",sum(diag(A)),sum(A),100*sum(diag(A))/sum(A)))
 
-
+time <- rbind(Indices_decent,Margin_Ascend, Loss_decent)[,3]
+barplot(time, main="running time of different methods",
+        ylab="second", col=c("darkgreen","GreenYellow","Goldenrod"),
+        legend = rownames(time), beside=TRUE)
 

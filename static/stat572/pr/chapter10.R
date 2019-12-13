@@ -1,15 +1,24 @@
+
+# par()              # view current settings
+opar <- par()      # make a copy of current settings
+par(fg="dodgerblue4")
+
+# col = rgb(0, 0, BETAg[,2]),
+
+
+
 #### Sparrow data
 load("sparrows.RData")  
 fledged<-sparrows[,1] ; age<-sparrows[,2] ; age2<-age^2
 
 
-
 #### Figure 10.1 
 pdf("fig10_1.pdf",family="Times",height=3.5,width=7)
-par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0))
 plot(fledged~as.factor(age),range=0,xlab="age",ylab="offspring",
-      col="gray")
+      col="gray",fg="dodgerblue4")
 summary(glm(fledged~age+age2,family="poisson"))
+mtext("Number of offspring versus age", side = 1, line =-2, outer = TRUE)
 dev.off()
 
 
@@ -59,8 +68,8 @@ BETAg[s,]<-c(beta1[k],beta2[i],beta3[j])  }
 
 
 #### Figure 10.2
-pdf("fig10_2.pdf",family="Times",height=1.75,width=5)
-par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+pdf("fig10_2.pdf",family="Times",height=3,width=9)
+par(mfrow=c(1,3),mar=c(5.5,2.75,.5,.5),mgp=c(1.7,.7,0))
 plot(beta2,PB2*length(beta2)/(max(beta2)-min(beta2)) ,type="l",xlab=expression(beta[2]),ylab=expression(paste(italic("p("),beta[2],"|",italic("y)"),sep="") ) )
 plot(beta3,PB3*length(beta3)/(max(beta3)-min(beta3)),type="l",xlab=expression(beta[3]),ylab=expression(paste(italic("p("),beta[3],"|",italic("y)"),sep="") ))
 
@@ -70,8 +79,9 @@ qE<-apply( eXB.post,2,quantile,probs=c(.025,.5,.975))
 
 source("hdr2d.r")
 library(ash)   # added by Shen
-plot.hdr2d(BETAg[,2:3],bw=c(15,15),xlab=expression(beta[2]),
+plot.hdr2d(BETAg[,2:3],bw=c(15,15),xlab=expression(beta[2]), 
            ylab=expression(beta[3]))
+mtext("Grid-based approximations to p(beta2|X, y), p(beta3|X, y) and p(beta2, beta3|X, y)", side = 1, line =-2, outer = TRUE)
 dev.off()
 
 
@@ -113,20 +123,22 @@ for(s in 1:S)
 
 #### Figure 10.3
 pdf("fig10_3.pdf",family="Times",height=3.5,width=7)
-par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
 skeep<-seq(10,S,by=10)
-plot(skeep,THETA[skeep],type="l",xlab="iteration",ylab=expression(theta))
+plot(skeep,THETA[skeep],type="l",xlab="iteration",ylab=expression(theta),col=alpha("dodgerblue4", 1))
 
 hist(THETA[-(1:50)],prob=TRUE,main="",xlab=expression(theta),ylab="density")
 th<-seq(min(THETA),max(THETA),length=100)
-lines(th,dnorm(th,mu.n,sqrt(t2.n)) )
+lines(th,dnorm(th,mu.n,sqrt(t2.n)),col="dodgerblue4" )
+mtext("Results from the Metropolis algorithm for the normal model", side = 1, line =-2, outer = TRUE)
 dev.off()
 
 
 #### MH algorithm with different proposal distributions
-par(mfrow=c(4,3))
+pdf("fig10_31.pdf",family="Times",height=11,width=7)
+par(mfrow=c(3,2),mar=c(5.5,2.75,.5,.5),mgp=c(1.7,.7,0))
 ACR<-ACF<-NULL
 THETAA<-NULL
 for(delta2 in 2^c(-5,-1,1,5,7) ) {
@@ -149,26 +161,28 @@ for(s in 1:S)
   THETA<-c(THETA,theta) 
 
 }
-plot(THETA[1:1000])
+plot(THETA[1:1000],col=alpha("dodgerblue4", 0.8))
 
 ACR<-c(ACR,acs/s) 
 ACF<-c(ACF,acf(THETA,plot=FALSE)$acf[2]  )
 THETAA<-cbind(THETAA,THETA)
 }
 plot(ACR,ACF) ; lines(ACR,ACF)
-
+mtext("MH algorithm with different proposal distributions", side = 1, line =-1, outer = TRUE)
+dev.off()
 
 
 #### Figure 10.4 
-pdf("fig10_4.pdf",family="Times",height=1.75,width=5)
-par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+pdf("fig10_4.pdf",family="Times",height=3,width=9)
+par(mfrow=c(1,3),mar=c(5.5,2.75,.5,.5),mgp=c(1.7,.7,0))
 laby<-c(expression(theta),"","","","")
 
 for(k in c(1,3,5)) {
-plot(THETAA[1:500,k],type="l",xlab="iteration",ylab=laby[k], 
+plot(THETAA[1:500,k],type="l",xlab="iteration",ylab=laby[k], col=alpha("dodgerblue4", 1),
     ylim=range(THETAA) )
 abline(h=mu.n,lty=2)
                   }
+mtext("Markov chains under three different proposal distributions. \n Going from left to right, the values of delta2 are 1/32, 2 and 64 respectively", side = 1, line =-1, outer = TRUE)
 dev.off()
 
 THCM<-apply(THETAA,2,cumsum)
@@ -227,30 +241,31 @@ apply(BETA,2,effectiveSize)
 
 
 #### Figure 10.5 
-pdf("fig10_5.pdf",family="Times",height=1.75,width=5)
-par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+pdf("fig10_5.pdf",family="Times",height=3,width=9)
+par(mar=c(4.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 par(mfrow=c(1,3))
 blabs<-c(expression(beta[1]),expression(beta[2]),expression(beta[3]))
 thin<-c(1,(1:1000)*(S/1000))
 j<-3
-plot(thin,BETA[thin,j],type="l",xlab="iteration",ylab=blabs[j])
+plot(thin,BETA[thin,j],type="l",xlab="iteration",ylab=blabs[j], col=alpha("dodgerblue4", 1))
 abline(h=mean(BETA[,j]) )
 
-acf(BETA[,j],ci.col="gray",xlab="lag")
-acf(BETA[thin,j],xlab="lag/10",ci.col="gray")
+acf(BETA[,j],ci.col="dodgerblue4",xlab="lag")
+acf(BETA[thin,j],xlab="lag/10",ci.col="dodgerblue4")
+mtext("Plot of the Markov chain in beta3 along with autocorrelation functions", side = 1, line =-1, outer = TRUE)
 dev.off()
 
 
 #### Figure 10.6
-pdf("fig10_6.pdf",family="Times",height=1.75,width=5)
-par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+pdf("fig10_6.pdf",family="Times",height=3,width=9)
+par(mar=c(5.5,2.75,.5,.5),mgp=c(1.7,.7,0))
 par(mfrow=c(1,3))
 
-plot(beta2,PB2*length(beta2)/(max(beta2)-min(beta2)) ,type="l",xlab=expression(beta[2]),ylab=expression(paste(italic("p("),beta[2],"|",italic("y)"),sep="") ) ,lwd=2,lty=2,col="gray")
-lines(density(BETA[,2],adj=2),lwd=2)
+  plot(beta2,PB2*length(beta2)/(max(beta2)-min(beta2)) ,type="l",xlab=expression(beta[2]),ylab=expression(paste(italic("p("),beta[2],"|",italic("y)"),sep="") ),lwd=2,col="gray",lty=1)
+lines(density(BETA[,2],adj=2),lwd=2,col="dodgerblue4")
 
-plot(beta3,PB3*length(beta3)/(max(beta3)-min(beta3)),type="l",xlab=expression(beta[3]),ylab=expression(paste(italic("p("),beta[3],"|",italic("y)"),sep="") ),lwd=2,col="gray",lty=2)
-lines(density(BETA[,3],adj=2),lwd=2)
+  plot(beta3,PB3*length(beta3)/(max(beta3)-min(beta3)),type="l",xlab=expression(beta[3]),ylab=expression(paste(italic("p("),beta[3],"|",italic("y)"),sep="") ),lwd=2,col="gray",lty=1)
+lines(density(BETA[,3],adj=2),lwd=2,col="dodgerblue4")
 
 Xs<-cbind(rep(1,6),1:6,(1:6)^2) 
 eXB.post<- exp(t(Xs%*%t(BETA )) )
@@ -258,10 +273,10 @@ qE<-apply( eXB.post,2,quantile,probs=c(.025,.5,.975))
 
 plot( c(1,6),range(c(0,qE)),type="n",xlab="age",
    ylab="number of offspring")
-lines( qE[1,],col="black",lwd=1)
+lines( qE[1,],col="dodgerblue4",lwd=1)
 lines( qE[2,],col="black",lwd=2)
-lines( qE[3,],col="black",lwd=1)
-
+lines( qE[3,],col="dodgerblue4",lwd=1)
+mtext("The MCMC approximations to the posterior marginal distributions (blue), with the grid-based approximations (gray).\n The 2.5%, 50% and 97.5% posterior quantiles", side = 1, line =-1, outer = TRUE)
 dev.off()
 
 
@@ -269,35 +284,35 @@ dev.off()
 #### Ice core example
 load("icecore.RData") 
 
-pdf("fig10_7.pdf",family="Times",height=1.75,width=5)
+pdf("fig10_7.pdf",family="Times",height=3,width=9)
 
-par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
+par(mar=c(4.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 layout(matrix( c(1,1,2),nrow=1,ncol=3) )
 
 plot(icecore[,1],  (icecore[,3]-mean(icecore[,3]))/sd(icecore[,3]) ,
-   type="l",col="black",
+   type="l",col="dodgerblue4",
    xlab="year",ylab="standardized measurement",ylim=c(-2.5,3))
 legend(-115000,3.2,legend=c("temp",expression(CO[2])),bty="n",
        lwd=c(2,2),col=c("black","gray"))
 lines(icecore[,1],  (icecore[,2]-mean(icecore[,2]))/sd(icecore[,2]),
   type="l",col="gray")
 
-plot(icecore[,2], icecore[,3],xlab=expression(paste(CO[2],"(ppmv)")),ylab="temperature difference (deg C)")
-
+plot(icecore[,2], icecore[,3],xlab=expression(paste(CO[2],"(ppmv)")),ylab="temperature difference (deg C)",col=alpha("dodgerblue4", 1))
+mtext("Temperature and carbon dioxide data", side = 1, line =-2, outer = TRUE)
 dev.off()
 
 
 
 #### Figure 10.8
 pdf("fig10_8.pdf",family="Times",height=3.5,width=7)
-par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
 lmfit<-lm(icecore$tmp~icecore$co2)
 hist(lmfit$res,main="",xlab="residual",ylab="frequency")
-acf(lmfit$res,ci.col="gray",xlab="lag")
-
-
+acf(lmfit$res,ci.col="dodgerblue4",xlab="lag")
+mtext("Residual analysis for the least squares estimation", side = 1, line =-2, outer = TRUE)
+dev.off()
 
 #### Starting values for MCMC
 n<-dim(icecore)[1]
@@ -381,36 +396,44 @@ apply(OUT.25000,2,effectiveSize )
 
 #### Figure 10.9
 pdf("fig10_9.pdf",family="Times",height=3.5,width=7)
-par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
-plot(OUT.1000[,4],xlab="scan",ylab=expression(rho),type="l")
-acf(OUT.1000[,4],ci.col="gray",xlab="lag")
+plot(OUT.1000[,4],xlab="scan",ylab=expression(rho),type="l",col=alpha("dodgerblue4",1))
+acf(OUT.1000[,4],ci.col="dodgerblue4",xlab="lag")
+mtext("The first 1000 values of rho generated from the Markov chain", side = 1, line =-2, outer = TRUE)
 dev.off()
 
 
 
 #### Figure 10.10
 pdf("fig10_10.pdf",family="Times",height=3.5,width=7)
-par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
-plot(OUT.25000[,4],xlab="scan/25",ylab=expression(rho),type="l")
-acf(OUT.25000[,4],ci.col="gray",xlab="lag/25")
+plot(OUT.25000[,4],xlab="scan/25",ylab=expression(rho),type="l",col=alpha("dodgerblue4",0.6))
+acf(OUT.25000[,4],ci.col="dodgerblue4",xlab="lag/25")
+mtext("Every 25th value of rho from a Markov chain of length 25,000", side = 1, line =-2, outer = TRUE)
 dev.off()
 
 
 
 #### Figure 10.11
 pdf("fig10_11.pdf",family="Times",height=3.5,width=7)
-par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
 plot(density(OUT.25000[,2],adj=2),xlab=expression(beta[2]),
    ylab="posterior marginal density",main="")
 
-plot(y~X[,2],xlab=expression(CO[2]),ylab="temperature")
+plot(y~X[,2],xlab=expression(CO[2]),ylab="temperature",col=alpha("dodgerblue4",1))
 abline(mean(OUT.25000[,1]),mean(OUT.25000[,2]),lwd=2)
 abline(lmfit$coef,col="gray",lwd=2)
 legend(180,2.5,legend=c("GLS estimate","OLS estimate"),bty="n",
       lwd=c(2,2),col=c("black","gray"))
+mtext("Posterior distribution of the slope parameter beta2, along with the posterior mean regression line", side = 1, line =-2, outer = TRUE)
 dev.off()
 
+
+
+
+
+par(opar)

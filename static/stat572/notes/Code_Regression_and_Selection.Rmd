@@ -1,0 +1,494 @@
+---
+title: "Code for Bayesian Regression and Bayesian Variable Selection"
+output:
+  
+  pdf_document: default
+  html_document:
+    df_print: paged
+  theme: material
+  html_notebook: default
+---
+
+## Bayesian Regression
+
+Let's use the Oxygen Uptake problem to go over some code that can be used to perform Bayesian Regression with all of the priors that we have discussed, both using informative (i.e., eliciting informative priors), and weakly or non-informative priors.
+
+To start with, let's load in the data.
+
+```{r echo=T, message=F, eval=T, fig.width=3.5, fig.height=3, fig.align='center'}
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+x1<-c(0,0,0,0,0,0,1,1,1,1,1,1)
+x2<-c(23,22,22,25,27,20,31,23,27,28,22,24)
+y<-c(-0.87,-10.74,-3.27,-1.97,7.50,-7.25,17.05,4.96,10.40,11.05,0.26,2.51)
+
+par(mfrow=c(1,1))
+plot(y~x2,pch=16,xlab="age",ylab="change in maximal oxygen uptake", 
+     col=c("black","gray")[x1+1],cex.lab=0.7)
+legend(27,0,legend=c("aerobic","running"),pch=c(16,16),col=c("gray","black"))
+
+```
+
+
+
+Now, let's first build some functions that will prove to be useful to conduct the sampling.
+
+```{r echo=T}
+# Sample from a multivariate normal with mean vector mu and var-covar Sigma
+rmvnorm<-function(n,mu,Sigma)
+{
+  p<-length(mu)
+  res<-matrix(0,nrow=n,ncol=p)
+  if( n>0 & p>0 )
+  {
+    E<-matrix(rnorm(n*p),n,p)
+    res<-t(  t(E%*%chol(Sigma)) +c(mu))
+  }
+  res
+}
+###
+
+
+# Sample from the Wishart distribution with nu0 degrees of freedom and S0 rate matrix
+rwish<-function(n,nu0,S0)
+{
+  sS0 <- chol(S0)
+  S<-array( dim=c( dim(S0),n ) )
+  for(i in 1:n)
+  {
+    Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0
+    S[,,i]<- t(Z)%*%Z
+  }
+  S[,,1:n]
+}
+```
+
+
+### OLS Estimation
+
+```{r}
+#OLS Estimation
+n<-length(y)
+X<-cbind(rep(1,n),x1,x2,x1*x2)
+p<-dim(X)[2]
+XtX <- t(X)%*%X
+XXi <- solve(XtX)
+Xty <- t(X)%*%y
+beta.ols<- XXi%*%Xty
+```
+
+
+```{r, message=F, eval=T, fig.width=6, fig.height=5, fig.align='center'}
+par(mfrow=c(2,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0),oma=c(0,0,.25,0))
+
+
+plot(y~x2,pch=16,col=c("black","gray")[x1+1],ylab="change in maximal oxygen uptake",xlab="",xaxt="n")
+abline(h=mean(y[x1==0]),col="black") 
+abline(h=mean(y[x1==1]),col="gray")
+mtext(side=3,expression(paste(beta[3]==0,"  ",beta[4]==0)) )
+
+plot(y~x2,pch=16,col=c("black","gray")[x1+1],xlab="",ylab="",xaxt="n",yaxt="n")
+abline(lm(y~x2),col="black")
+abline(lm((y+.5)~x2),col="gray")
+mtext(side=3,expression(paste(beta[2]==0,"  ",beta[4]==0)) )
+
+plot(y~x2,pch=16,col=c("black","gray")[x1+1],
+     xlab="age",ylab="change in maximal oxygen uptake" )
+fit<-lm( y~x1+x2)
+abline(a=fit$coef[1],b=fit$coef[3],col="black")
+abline(a=fit$coef[1]+fit$coef[2],b=fit$coef[3],col="gray")
+mtext(side=3,expression(beta[4]==0)) 
+
+plot(y~x2,pch=16,col=c("black","gray")[x1+1],
+     xlab="age",ylab="",yaxt="n")
+abline(lm(y[x1==0]~x2[x1==0]),col="black")
+abline(lm(y[x1==1]~x2[x1==1]),col="gray")
+```
+
+### Regression with Informative Priors 
+
+Since we need $\beta_1+\beta_3 x_{3}\in (-60,60)$ with high probability, this implies that $-300< \beta_1 <300\quad\text{and}\quad -12< \beta_3 <12$ with high probability.   We can induce this behavior by setting 
+$$\text{E}(\beta_1)=0\quad\text{and}\quad \text{E}(\beta_3)=0,\quad\text{and}$$
+$$\text{var}(\beta_1)=150^2\quad\text{and}\quad \text{var}(\beta_3)=6^2.$$  For the remaining $\beta$'s ($\beta_2,\beta_3$) we don't have any information, so let's assume that their mean is 0 as well, and that their variances are $$\text{var}(\beta_2)=5^2\quad\text{and}\quad \text{var}(\beta_4)=2^2.$$  My choice for these variances take into account the fact that $\beta_2$ represents a shift in the intercept (so it's additive) and $\beta_4$ represents a change in the slope (it's multiplicative with age).  In summary, we have then that $$E[\boldsymbol{\beta}]=\boldsymbol{\beta}_0=\boldsymbol{0}_4\quad\text{and}\quad\text{var}(\boldsymbol{\beta})=\Sigma_0=\left(\begin{matrix} 150^2 & 0 & 0 & 0 \\ 0 & 30^2 & 0 & 0 \\ 0 & 0 & 6^2 & 0 \\ 0 & 0 & 0 & 5^2 \end{matrix}\right).$$
+
+Assuming that $\sigma^2\sim \text{IG}(\nu_0/2,\nu_0\sigma_0^2 /2)$, let's set $$\nu_0=1\quad\text{and}\quad \sigma_0^2=15^2.$$
+
+```{r results='asis'}
+#For beta
+beta.0<-rep(0,p) 
+Sigma.0<-diag(c(150,30,6,5)^2,p)
+iSigma.0<-solve(Sigma.0)
+
+#For sigma.sq
+nu.0<-1 
+sigma2.0<- 15^2
+
+iter <- 5000
+## store mcmc samples in these objects
+beta.post<-matrix(nrow=iter,ncol=p)
+sigma2.post<-rep(NA,iter)
+
+## starting value
+set.seed(1)
+sigma2<- var( residuals(lm(y~0+X)) )
+
+## MCMC algorithm
+for( scan in 1:iter) {
+  #update beta
+  V.beta<- solve( XtX/sigma2 + iSigma.0 )
+  E.beta<- V.beta%*%(Xty/sigma2 + iSigma.0%*%beta.0)
+  beta<-t(rmvnorm(1, E.beta,V.beta) )
+  
+  #update sigma2
+  nu.n<- nu.0+n
+  ss.n<- sum(  (y-X%*%beta)^2 ) + nu.0*sigma2.0
+  sigma2<-1/rgamma(1,(n+nu.n)/2, ss.n/2)
+  
+  #save results of this scan
+  beta.post[scan,]<-beta
+  sigma2.post[scan]<-sigma2
+}
+colnames(beta.post) <- paste0("beta",1:4)
+post.draws <- cbind(beta.post,sig.sq=sigma2.post)
+
+#print table summarizing posterior draws from betas and sigma.sq
+knitr::kable(t(apply(post.draws,2,function(cc){c(mean=mean(cc),sd=sd(cc),quantile(cc,c(0.025,0.5,0.975)))})))
+```
+
+
+
+
+### Regression with Unit Information Priors 
+
+
+```{r results='asis'}
+## starting value
+set.seed(1)
+Hx <- X%*%solve(t(X)%*%X)%*%t(X)
+SSR.ols <- t(y)%*%( diag(1,nrow=n)  - Hx ) %*%y
+
+#draw all values from sigma.sq at once (since these don't depend on beta)
+sigma2.post.uip <- 1/rgamma(iter, (n+1)/2, (n+1)*SSR.ols/(2*n) )
+
+#now sample the betas cycling through the values of sigma.sq
+beta.post.uip <- matrix(nrow=iter,ncol=p)
+for( scan in 1:iter) {
+  sigma2 <- sigma2.post.uip[scan]
+  V.beta<- solve( XtX/sigma2)
+  beta.post.uip[scan,]<-t(rmvnorm(1, beta.ols,(n/(n+1))*V.beta) )
+}
+colnames(beta.post.uip) <- paste0("beta",1:4)
+post.draws.uip <- cbind(beta.post.uip,sig.sq=sigma2.post.uip)
+
+#print table summarizing posterior draws from betas and sigma.sq
+knitr::kable(t(apply(post.draws.uip,2,function(cc){c(mean=mean(cc),sd=sd(cc),quantile(cc,c(0.025,0.5,0.975)))})))
+```
+
+### Regression with Jeffreys' Priors 
+
+```{r results='asis'}
+## starting value
+set.seed(1)
+
+#draw all values from sigma.sq at once (since these don't depend on beta)
+sigma2.post.jeff <- 1/rgamma(iter, (n-p)/2, SSR.ols/2 )
+
+#now sample the betas cycling through the values of sigma.sq
+beta.post.jeff <- matrix(nrow=iter,ncol=p)
+for( scan in 1:iter) {
+  sigma2 <- sigma2.post.uip[scan]
+  V.beta<- solve( XtX/sigma2)
+  beta.post.jeff[scan,]<-t(rmvnorm(1, beta.ols,V.beta) )
+}
+colnames(beta.post.jeff) <- paste0("beta",1:4)
+post.draws.jeff <- cbind(beta.post.jeff,sig.sq=sigma2.post.jeff)
+
+#print table summarizing posterior draws from betas and sigma.sq
+knitr::kable(t(apply(post.draws.jeff,2,function(cc){c(mean=mean(cc),sd=sd(cc),quantile(cc,c(0.025,0.5,0.975)))})))
+```
+
+ 
+
+
+### Regression with g-priors 
+
+```{r results='asis'}
+lm.gprior<-function(y,X,g=dim(X)[1],nu0=1,s20=try(summary(lm(y~-1+X))$sigma^2,silent=TRUE),S=5000)
+{
+
+  n<-dim(X)[1] ; p<-dim(X)[2]
+  Hg<- (g/(g+1)) * X%*%solve(t(X)%*%X)%*%t(X)
+  SSRg<- t(y)%*%( diag(1,nrow=n)  - Hg ) %*%y
+
+  s2<-1/rgamma(S, (nu0+n)/2, (nu0*s20+SSRg)/2 )
+
+  Eb<- (g/(g+1)) * beta.ols
+
+  E<-matrix(rnorm(S*p,0,sqrt(s2)),S,p)
+  beta<-t(  t(E%*%chol(g*XXi/(g+1))) +c(Eb))
+
+  list(beta=beta,s2=s2)                                
+}   
+
+post.draws.gprior <- do.call(cbind,lm.gprior(y,X,g=n))
+colnames(post.draws.gprior) <- c(paste0("beta",1:4),"sig.sq")
+#print table summarizing posterior draws from betas and sigma.sq
+knitr::kable(t(apply(post.draws.gprior,2,function(cc){c(mean=mean(cc),sd=sd(cc),quantile(cc,c(0.025,0.5,0.975)))})))
+```
+
+
+```{r, fig.width=4, fig.height=3, fig.align='center'}
+plot.regline <- function(beta.post,nam=NULL){
+  BX<-NULL
+  for(s in 1:dim(beta.post)[1]) { 
+    BX<-rbind(BX, beta.post[s,2] + (min(X[,3]):max(X[,3]))*beta.post[s,4] )
+    }
+  #### Function for plotting
+  qboxplot<-function(x,at=0,width=.5,probs=c(.025,.25,.5,.75,.975)){
+    qx<-quantile(x,probs=probs)
+    segments(at,qx[1],at,qx[5])
+    polygon(x=c(at-width,at+width,at+width,at-width),
+            y=c(qx[2],qx[2],qx[4],qx[4]) ,col="gray")
+    segments(at-width,qx[3],at+width,qx[3],lwd=3)
+    segments(at-width/2,qx[1],at+width/2,qx[1],lwd=1)
+    segments(at-width/2,qx[5],at+width/2,qx[5],lwd=1)
+  }
+  par(mfrow=c(1,1),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+  plot(range(X[,3]),range(y),type="n",xlab="age",main=nam,
+       ylab=expression(paste( beta[2] + beta[4],"age",sep="") ) )
+  for( age  in  1:dim(BX)[2]  ) {
+    qboxplot( BX[,age] ,at=age+19 , width=.25) 
+  }
+  
+  abline(h=0,col="gray")
+}
+
+
+plot.regline(beta.post,"Informative Prior")
+plot.regline(beta.post.uip,"Unit Information Prior")
+plot.regline(beta.post.jeff,"Jeffreys' Prior")
+plot.regline(post.draws.gprior[,-5],"g-Prior")
+```
+
+
+
+## Bayesian Variable Selection
+
+Consider the following problem.  Baseline data over ten predictors $x_1,\ldots,x_{10}$ was collected on a group of 442 diabetes patients, as well as a measure $y$ of disease progression taken one year after the baseline measurements. It is suspected that there are meaningful interactions between the baseline predictors (${10\choose 2}=45$), as well as possible quadratic terms (9, excluding the binary variable sex), so in this case $p=54$.  
+
+Let's analyze this data set by using 342 patients out of the 442 patients for model training and the remaining 100 for validation (testing).
+
+We want to develop a predictive model for $y$ based on the baseline measurements, their interactions and quadratic effects.  
+
+### First let's try your typical backwards selection algorithm
+
+```{r, fig.height=3, fig.width=9}
+load("diabetes.RData")
+yf<-diabetes$y
+yf<-(yf-mean(yf))/sd(yf)
+
+Xf<-diabetes$X
+Xf<-t( (t(Xf)-apply(Xf,2,mean))/apply(Xf,2,sd))
+colnames(Xf)
+
+
+n<-length(yf)
+set.seed(1)
+
+##index sets for training and test data
+i.te<-sample(1:n,100)
+i.tr<-(1:n)[-i.te]
+
+#set test and training data
+y<-yf[i.tr] ; y.te<-yf[i.te]
+X<-Xf[i.tr,]; X.te<-Xf[i.te,]
+
+
+#Fit with Full Model
+par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.5,.5,0))
+olsfit<-lm(y~-1+X)
+y.te.ols<-X.te%*%olsfit$coef
+plot(y.te,y.te.ols,xlab=expression(italic(y)[test]),
+     ylab=expression(hat(italic(y))[test])) ; abline(0,1)
+
+#mspe
+mean( (y.te-y.te.ols )^2 )
+plot(olsfit$coef,type="h",lwd=2,xlab="regressor index",ylab=expression(hat(beta)[ols]))
+
+## backwards selection
+source("backselect.R")
+
+#Fit with Backwards Selection using t.stat
+vars<-bselect.tcrit(y,X,tcrit=1.65)
+bslfit<-lm(y~-1+X[,vars$remain])
+y.te.bsl<-X.te[,vars$remain]%*%bslfit$coef
+
+#mspe
+mean( (y.te-y.te.bsl)^2)
+plot(y.te,y.te.bsl,ylim=range( c(y.te.bsl,y.te.ols)),
+ xlab=expression(italic(y)[test]),ylab=expression(hat(italic(y))[test]))
+ abline(0,1)
+```
+
+
+Backward selection has some issues.  For example, what would happen if there is no real association between the response and the predictors using this approach?  To test this, let's permute the response vector but keep the predictors in the same order.  Here we know for sure that the $y's$ and $x$'s are not associated.
+
+Below we show both the t-statistics for the full model (the one including every predictor) as well as for the one resulting from the backwards selection procedure when using the permuted response vector.
+
+
+
+```{r, fig.height=3, fig.width=6}
+#### backwards selection with permuted data
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+yperm<-sample(y)
+
+fit.perm<-lm(yperm~-1+X)
+t.perm<-summary(fit.perm)$coef[,3]
+b.perm<-summary(fit.perm)$coef[,1]
+plot(t.perm,type="h",lwd=2,xlab="regressor index",ylab="t-statistic",ylim=c(-4.8,4.8))
+
+vars.perm<-bselect.tcrit(yperm,X,tcrit=1.65)
+bslfit.perm<-lm(yperm~-1+X[,vars.perm$remain])
+t.bslperm<-t.perm*0
+b.bslperm<-b.perm*0
+t.bslperm[vars.perm$remain]<-summary(bslfit.perm)$coef[,3]
+b.bslperm[vars.perm$remain]<-summary(bslfit.perm)$coef[,1]
+plot(t.bslperm,type="h",lwd=2,xlab="regressor index",ylab="t-statistic",
+     ylim=c(-4.8,4.8) )
+```
+
+It is concerning that many predictors turn out as meaningful.  This type of misleading result is common in sequential model selection procedures.
+
+### Now, the Bayesian approach
+
+Here all you are doing is simply fitting the model $$y_i = \alpha +\gamma_1\beta_1 x_{i1}+\gamma_2\beta_2 x_{i2}+\cdots+\gamma_p\beta_p x_{ip}+\epsilon_i,$$ where $\gamma_j\in\{0,1\}$ controls if the $j$ the predictor enters the model.  That is, $\gamma_j=1$ if $\beta_j x_{ij}$ is to be included in the model, and $\gamma_j=0$ otherwise. An equivalent interpretation is that $\beta_j\not=0$ if $\gamma_j=1$, and $\beta_j=0$ if $\gamma_j=0$.
+
+```{r eval=F}
+#if you want to run this code set eval=T in chunk header
+p<-dim(X)[2]
+S<-10000
+source("regression_gprior.R")
+
+## Don't run it again if you've already run it
+runmcmc<-!any(system("ls",intern=TRUE)=="diabetesBMA.RData")
+if(!runmcmc){ load("diabetesBMA.RData") }
+
+if(runmcmc){
+
+BETA<-Z<-matrix(NA,S,p)
+z<-rep(1,dim(X)[2] )
+lpy.c<-lpy.X(y,X[,z==1,drop=FALSE])
+for(s in 1:S)
+{
+  for(j in sample(1:p))
+  {
+    zp<-z ; zp[j]<-1-zp[j]
+    lpy.p<-lpy.X(y,X[,zp==1,drop=FALSE])
+    r<- (lpy.p - lpy.c)*(-1)^(zp[j]==0)
+    z[j]<-rbinom(1,1,1/(1+exp(-r)))
+    if(z[j]==zp[j]) {lpy.c<-lpy.p}
+  }
+
+  beta<-z
+  if(sum(z)>0){beta[z==1]<-lm.gprior(y,X[,z==1,drop=FALSE],S=1)$beta }
+  Z[s,]<-z
+  BETA[s,]<-beta
+  # if(s%%10==0)
+  # { 
+  #    bpm<-apply(BETA[1:s,],2,mean) ; plot(bpm)
+  #    cat(s,mean(z), mean( (y.te-X.te%*%bpm)^2),"\n")
+  #    Zcp<- apply(Z[1:s,,drop=FALSE],2,cumsum)/(1:s)
+  #    plot(c(1,s),range(Zcp),type="n") ; apply(Zcp,2,lines)
+  # }
+} 
+save(BETA,Z,file="diabetesBMA.RData")
+}
+```
+
+
+```{r fig.height=3, fig.width=6}
+
+load("diabetesBMA.RData")
+par(mar=c(2.85,3,.5,.5),mgp=c(1.7,.7,0))
+
+beta.bma<-apply(BETA,2,mean,na.rm=TRUE)
+y.te.bma<-X.te%*%beta.bma
+mean( (y.te-y.te.bma)^2)
+
+layout( matrix(c(1,1,2),nrow=1,ncol=3) )
+
+marg.postincl.prob <- apply(Z,2,mean,na.rm=TRUE)
+plot(marg.postincl.prob,xlab="regressor index",
+     ylab=expression(paste( "Pr(",gamma[j] == 1,"|",italic(y),",X)")),type="h",
+     lwd=2,
+     col=c("black","blue","red")[ifelse(marg.postincl.prob<0.25,1,
+                                        ifelse(marg.postincl.prob<0.5,2,3))])
+abline(h=0.5,col="red",lty=2)
+abline(h=0.25,col="blue",lty=2)
+
+plot(y.te,y.te.bma,xlab=expression(italic(y)[test]),
+     ylab=expression(hat(italic(y))[test])) ; abline(0,1)
+```
+
+This is clearly not the case with the Bayesian selection approach, see the fihgures below and notice that with permuted data none of the predictors obtain a marginal posterior inclusion probability greater than 0.25.
+
+```{r, eval=F}
+# turn eval=T if you want to run the selection algorithm with permuted y
+# this takes a while, so sit back and relax
+
+#### Bayesian selection with permuted data
+S<-10000
+p<-dim(X)[2]
+source("regression_gprior.R")
+BETA.perm<-Z.perm<-matrix(NA,S,p)
+z<-rep(1,dim(X)[2] )
+lpy.c<-lpy.X(yperm,X[,z==1,drop=FALSE])
+for(s in 1:S)
+{
+  for(j in sample(1:p))
+  {
+    zp<-z ; zp[j]<-1-zp[j]
+    lpy.p<-lpy.X(yperm,X[,zp==1,drop=FALSE])
+    r<- (lpy.p - lpy.c)*(-1)^(zp[j]==0)
+    z[j]<-rbinom(1,1,1/(1+exp(-r)))
+    if(z[j]==zp[j]) {lpy.c<-lpy.p}
+  }
+
+  beta<-z
+  if(sum(z)>0){beta[z==1]<-lm.gprior(yperm,X[,z==1,drop=FALSE],S=1)$beta }
+  Z.perm[s,]<-z
+  BETA.perm[s,]<-beta
+}
+save(BETA.perm,Z.perm,file="permdiabetesBMA.RData")
+
+
+```
+
+```{r, fig.height=3, fig.width=6}
+# S<-10000
+# p<-dim(X)[2]
+# 
+
+load("permdiabetesBMA.RData")
+margperm.postincl.prob <- apply(Z.perm,2,mean,na.rm=TRUE)
+
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+plot(marg.postincl.prob,xlab="regressor index",main="with real y",
+     ylab=expression(paste( "Pr(",gamma[j] == 1,"|",italic(y),",X)")),type="h",
+     lwd=2,
+     col=c("black","blue","red")[ifelse(marg.postincl.prob<0.25,1,
+                                        ifelse(marg.postincl.prob<0.5,2,3))])
+abline(h=0.5,col="red",lty=2)
+abline(h=0.25,col="blue",lty=2)
+
+plot(margperm.postincl.prob,xlab="regressor index",ylim=c(0,1),main="with permuted y",
+     ylab=expression(paste( "Pr(",gamma[j] == 1,"|",italic(y),",X)")),type="h",
+     lwd=2,
+     col=c("black","blue","red")[ifelse(margperm.postincl.prob<0.25,1,
+                                        ifelse(margperm.postincl.prob<0.5,2,3))])
+abline(h=0.5,col="red",lty=2)
+abline(h=0.25,col="blue",lty=2)
+```
+
+

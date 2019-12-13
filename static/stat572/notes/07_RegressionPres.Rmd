@@ -136,15 +136,15 @@ with $Y_1,\ldots, Y_n$ independent...
 As such, we have that
 \small{
 \begin{eqnarray*}
-p(y_{1:n}\given \bx_{1:n},\bbeta,\sigma^2)&=&\prod_{i=1}^{n} (2\pi\sigma^2)^{-1/2} e^{-\frac{1}{2}(y_{i}-\bbeta' \bx)^2}\\
-&=&(2\pi\sigma^2)^{-n/2} e^{-\frac{1}{2}\sum_{i=1}^{n} (y_{i}-\bbeta' \bx)^2}
+p(y_{1:n}\given \bx_{1:n},\bbeta,\sigma^2)&=&\prod_{i=1}^{n} (2\pi\sigma^2)^{-1/2} e^{-\frac{1}{2 \sigma^2}(y_{i}-\bbeta' \bx)^2}\\
+&=&(2\pi\sigma^2)^{-n/2} e^{-\frac{1}{2 \sigma^2}\sum_{i=1}^{n} (y_{i}-\bbeta' \bx)^2}
 \end{eqnarray*}
 }
 Letting $\by=(y_1, y_2, \ldots, y_n)'$ and $X = (\bx_1,\bx_2,\ldots,\bx_n)'$, we can represent this likelihood as 
 \small{
 \begin{eqnarray*}
 p(y_{1:n}\given \bx_{1:n},\bbeta,\sigma^2)&=& p(\by \given X,\bbeta,\sigma^2)\\
-&=&(2\pi)^{-n/2} |\sigma^2\text{I}_n|^{-1/2} e^{-\frac{1}{2}(\by-X \bbeta)' (\sigma^2\text{I}_n)^{-1}(\by-X \bbeta)}
+&=&(2\pi)^{-n/2} |\sigma^2\text{I}_n|^{-1/2} e^{-\frac{1}{2 \sigma^2}(\by-X \bbeta)' (\sigma^2\text{I}_n)^{-1}(\by-X \bbeta)}
 \end{eqnarray*}
 }
 
@@ -180,10 +180,10 @@ As a function of $\bbeta$, we have that
 $$p(\by \given X,\bbeta,\sigma^2)\propto_{\bbeta} e^{-\frac{1}{2\sigma^2}\lrp{\bbeta' (X'X)\bbeta - 2\bbeta' X' \by }},$$ so assuming $\bbeta\sim N_p(\bbeta_0,\Sigma_0)$, the full conditional posterior is
 \begin{eqnarray*}
 p(\bbeta\given X,\sigma^2,\by) &\propto_{\bbeta}& p(\by\given X,\bbeta,\sigma^2) p(\bbeta)\\
-&\propto_{\bbeta}& % \lrp{e^{-\frac{1}{2\sigma^2}\lrp{\bbeta' (X'X)\bbeta - 2\bbeta' X' \by }}} \lrp{e^{-\frac{1}{2}\lrp{\bbeta' \Sigma_0^{-1}\bbeta - 2\bbeta' \Sigma_0^{-1}\bbeta_0 }}}\\
-%&\propto_{\bbeta}& \lrp{e^{-\frac{1}{2}\lrp{\bbeta' \lrp{\frac{1}{\sigma^2}(X'X) + \Sigma_0^{-1}}\bbeta - 2\bbeta'\lrp{\frac{1}{\sigma^2}X' \by+\Sigma_0^{-1}\bbeta_0} }  }}
+&\propto_{\bbeta}&  \lrp{e^{-\frac{1}{2\sigma^2}\lrp{\bbeta' (X'X)\bbeta - 2\bbeta' X' \by }}} \lrp{e^{-\frac{1}{2}\lrp{\bbeta' \Sigma_0^{-1}\bbeta - 2\bbeta' \Sigma_0^{-1}\bbeta_0 }}}\\
+&\propto_{\bbeta}& \lrp{e^{-\frac{1}{2}\lrp{\bbeta' \lrp{\frac{1}{\sigma^2}(X'X) + \Sigma_0^{-1}}\bbeta - 2\bbeta'\lrp{\frac{1}{\sigma^2}X' \by+\Sigma_0^{-1}\bbeta_0} }  }}
 \end{eqnarray*}
-\vspace{3cm}
+
 
 ## Bayesian inference for the Regression problem
 ### Semiconjugate priors for $\bbeta$ and $\sigma^2$
@@ -205,14 +205,12 @@ Assuming that a priori $\sigma^2\sim \text{IG}\lrp{\frac{\nu_0}{2},\frac{\nu_0\s
 \small{
 \begin{eqnarray*}
 p(\sigma^2\given X,\bbeta,\by) &\propto_{\sigma^2}& p(\by\given X,\bbeta,\sigma^2) p(\sigma^2)\\
-&\propto_{\sigma^2}& % \lrp{(\sigma^2)^{-\frac{n}{2}} e^{-\frac{1}{2\sigma^2}(\by-X\bbeta)'(\by-X\bbeta)}} \times \\
-%&& \qquad\lrp{(\sigma^2)^{-\frac{\nu_0}{2}-1}e^{-\frac{1}{\sigma^2} \frac{\nu_0\sigma_0^2}{2} }}\\
-%&\propto_{\sigma^2}& (\sigma^2)^{-\frac{n+\nu_0}{2}-1}\times \\
-%&&\qquad \text{exp}\lrb{-\frac{1}{\sigma^2}
-%\frac{(\by-X\bbeta)'(\by-X\bbeta)+\nu_0\sigma_0^2}{2}},
+&\propto_{\sigma^2}& \lrp{(\sigma^2)^{-\frac{n}{2}} e^{-\frac{1}{2\sigma^2}(\by-X\bbeta)'(\by-X\bbeta)}} \times \\
+&& \qquad\lrp{(\sigma^2)^{-\frac{\nu_0}{2}-1}e^{-\frac{1}{\sigma^2} \frac{\nu_0\sigma_0^2}{2} }}\\
+&\propto_{\sigma^2}& (\sigma^2)^{-\frac{n+\nu_0}{2}-1}\times \\
+&&\qquad \text{exp}\lrb{-\frac{1}{\sigma^2}
+\frac{(\by-X\bbeta)'(\by-X\bbeta)+\nu_0\sigma_0^2}{2}},
 \end{eqnarray*}}
-
-\vspace{2cm}
 
 Implying that $$\sigma^2\given X,\bbeta,\by\sim \text{IG}\lrp{\frac{n+\nu_0}{2},\frac{1}{2}\lrp{(\by-X\bbeta)'(\by-X\bbeta)+\nu_0\sigma_0^2} }$$
 
@@ -275,132 +273,253 @@ $$150\pm2\times 15=(120,180)$$
 \textcolor{blue}{But what about the variances for the other parameters and all covariances?}
 }
 
-<!-- ## Example: Oxygen Uptake -->
+## Default and weakly informative priors
+
+\begin{itemize}
+\item Ideally, prior should provide meaningful prior information.
+
+\bigskip
+\item In many cases there is none, or not enough.
+
+\bigskip
+\item If so, better to not contaminate data with arbitrary priors
+
+\bigskip
+\item Let the data speak as loud as possible
+\end{itemize}
+
+
+## Default and weakly informative priors
+
+\begin{block}{Three examples of such priors:}
+\begin{itemize}
+\item Unit information prior
+
+\bigskip
+\item Jeffreys' priors 
+
+\bigskip
+\item $g$-priors
+\end{itemize}
+\end{block}
+
+These all strive to minimize the influence of the prior over posterior inference
+
+
+## Unit Information Prior
+
+\begin{block}{IDEA: have prior contain the strength of one observation.}
+\scriptsize{
+\begin{eqnarray*}
+\ell(\bbeta, \sigma^2|\by)&=& \text{ln}\lrp{(2\pi \sigma^2)^{-n/2} e^{-\frac{1}{2\sigma^2}\|\by - X\bbeta \|^2 }}\\
+&\propto_{\beta,\sigma^2}& -\frac{n}{2}\ln{\sigma^2} -\frac{1}{2\sigma^2}\lrp{\bbeta' (X'X)\bbeta - 2\bbeta' X' \by + \by'\by}\\
+&=& -\frac{n}{2}\ln{\sigma^2} -\frac{1}{2\sigma^2}\lrp{(\bbeta-(X' X)^{-1} X' \by)'(X'X)(\bbeta-(X' X)^{-1} X' \by) }\\
+&&{}\qquad\qquad -\frac{1}{2\sigma^2}\lrp{\by' \by - \by' X (X' X)^{-1} X' \by}\\
+&=& -\frac{n}{2}\ln{\sigma^2} -\frac{1}{2\sigma^2}(\bbeta-\hat{\bbeta}_{OLS})'(X'X)(\bbeta-\hat{\bbeta}_{OLS}) \\
+&&{}\qquad\qquad -\frac{1}{2\sigma^2}\lrp{\by'(I_n - H_x)\by} \hspace{2.5cm}(*)
+\end{eqnarray*}
+}
+\end{block}
+
+\normalsize{
+$(*)$ represents info of $n$ observations.  Now rescale to emulate influence of only one observation
+}
+
+## Unit Information Prior
+
+\begin{block}{First, exponentiate $(*)$}
+\small{
+\begin{eqnarray*}
+L(\bbeta, \sigma^2|\by) &\propto_{\beta,\sigma^2}& (\sigma^2)^{-\frac{n}{2}} \text{exp}\lrb{-\frac{1}{2\sigma^2}(\bbeta-\hat{\bbeta}_{OLS})'(X'X)(\bbeta-\hat{\bbeta}_{OLS}) }\\
+&&{}\qquad\qquad \text{exp}\lrb{-\frac{1}{2\sigma^2}\by'(I_n - H_x)\by}\\
+&=& (\sigma^2)^{-\frac{p}{2}} \text{exp}\lrb{-\frac{1}{2\sigma^2}(\bbeta-\hat{\bbeta}_{OLS})' (X'X) (\bbeta-\hat{\bbeta}_{OLS}) }\\
+&&{}\qquad\qquad (\sigma^2)^{-\frac{n-p-2}{2}-1}\text{exp}\lrb{-\frac{1}{2\sigma^2}\by'(I_n - H_x)\by}\\
+&\propto_{\beta,\sigma^2}& N_p\lrp{\bbeta\given \hat{\bbeta}_{OLS}, \sigma^2(X'X)^{-1}}\\
+&&{} \times\; \text{IG}\lrp{\sigma^2\given \frac{n-p-2}{2}, \frac{1}{2}\text{SSR}( \hat{\bbeta}_{OLS})}.
+\end{eqnarray*}
+}
+\end{block}
+
+## Unit Information Prior
+
+\begin{block}{Second, re-scale to unit information}
+\footnotesize{
+\begin{eqnarray*}
+p(\bbeta, \sigma^2) &=& p(\bbeta \given \sigma^2)p(\sigma^2)\\
+&=& N_p\lrp{\bbeta\given \hat{\bbeta}_{OLS}, n \sigma^2(X'X)^{-1}} \\
+&&\qquad \times\; \text{IG}\lrp{\sigma^2\given \frac{1}{2}, \frac{1}{n}\lrp{\frac{1}{2}\text{SSR}( \hat{\bbeta}_{OLS})}}.
+\end{eqnarray*}
+}
+\end{block}
+\textcolor{red}{Warning: double use of data -- cannot represent real prior beliefs}
+
+\begin{block}{This prior leads to the posterior (convince yourself)}
+\small{
+\begin{eqnarray*}
+p(\bbeta, \sigma^2|\by) &=&  N_p\lrp{\bbeta\given \hat{\bbeta}_{OLS}, \frac{n}{n+1} \sigma^2(X'X)^{-1}} \\
+&&\qquad \times\; \text{IG}\lrp{\sigma^2\given \frac{n+1}{2}, \frac{n+1}{n}\lrp{\frac{1}{2}\text{SSR}( \hat{\bbeta}_{OLS})}}.
+\end{eqnarray*}
+}
+\end{block}
+
+## Jeffreys' Prior
+
+\begin{block}{IDEA: build prior invariant to paramerization.}
+\begin{itemize}
+\item Treat $\bbeta$ and $\sigma^2=\phi^{-1}$ independently (orthogonal parametrization)
+
+\bigskip
+\item For ease of derivation, let's use $\phi=1/\sigma^2$ 
+
+\bigskip
+\item Uses the Expected Fisher Information matrix $$\mathcal{J}(\btheta)=- E\lrsqb{\frac{d^2 \ell(\btheta \given \by)}{d\btheta d\btheta'} },\;\text{where}\; \btheta=(\bbeta',\phi)'$$ 
+
+\bigskip
+\item The priors are given by
+$$p_J(\bbeta)\propto \sqrt{\text{det}(\mathcal{J}(\bbeta))}\;\text{and}\;p_J(\phi)\propto \sqrt{\text{det}(\mathcal{J}(\phi))}$$
+
+\end{itemize}
+
+\end{block}
 
 
 
-<!-- ## Example: Oxygen Uptake -->
+## Jeffreys' Prior
 
-<!-- ```{r echo=F, eval=F} -->
+\begin{block}{IDEA: build prior invariant to paramerization.}
+\small{
+\begin{eqnarray*}
+\ell(\bbeta, \phi|\by)&=& \frac{n}{2}\ln{\phi} -\frac{\phi}{2}(\bbeta-\hat{\bbeta}_{OLS})'(X'X)(\bbeta-\hat{\bbeta}_{OLS}) \\
+&&{}\qquad\qquad -\frac{\phi}{2}\text{SSR}(\hat{\bbeta}_{OLS})
+\end{eqnarray*}
+\begin{eqnarray*}
+\frac{d^2 \ell(\btheta \given \by)}{d\btheta d\btheta'}&=& \lrsqb{\bmat -\phi (X' X)& - (X' X)(\bbeta -\hat{\bbeta}_{OLS}) \\
+- (\bbeta -\hat{\bbeta}_{OLS})'(X' X) & -\frac{n}{2}\phi^{-2}\emat}
+\end{eqnarray*}
+}
+\end{block}
 
-<!-- yX.diabetes.train<-dget("yX.diabetes.train.txt") -->
-<!-- yX.diabetes.test<-dget("yX.diabetes.test.txt") -->
+## Jeffreys' Prior
 
+\begin{block}{IDEA: build prior invariant to paramerization.}
 
-<!-- ### sample from the multivariate normal distribution -->
-<!-- rmvnorm<-function(n,mu,Sigma) -->
-<!-- { -->
-<!--   p<-length(mu) -->
-<!--   res<-matrix(0,nrow=n,ncol=p) -->
-<!--   if( n>0 & p>0 ) -->
-<!--   { -->
-<!--     E<-matrix(rnorm(n*p),n,p) -->
-<!--     res<-t(  t(E%*%chol(Sigma)) +c(mu)) -->
-<!--   } -->
-<!--   res -->
-<!-- } -->
-<!-- ### -->
+\begin{eqnarray*}
+\frac{d^2 \ell(\btheta \given \by)}{d\btheta d\btheta'}&=& \lrsqb{\bmat -\phi (X' X)& - (X' X)(\bbeta -\hat{\bbeta}_{OLS}) \\
+- (\bbeta -\hat{\bbeta}_{OLS})'(X' X) & -\frac{n}{2}\phi^{-2}\emat}
+\end{eqnarray*}
 
-<!-- ``` -->
+\bigskip
+Therefore:
+$$\mathcal{J}(\btheta) = \lrsqb{\bmat \phi (X' X)& \0_p \\
+\0_p' & \frac{n}{2}\phi^{-2}\emat}$$
 
-
-<!-- ## Example: Reading Comprehension -->
-
-<!-- \begin{figure}[H] -->
-<!-- ```{r echo=F, message=F, eval=F, warning=F, fig.width=4.2, fig.height=2, fig.align='center'} -->
-<!-- ### sample from the multivariate normal distribution -->
-<!-- rmvnorm<-function(n,mu,Sigma)  -->
-<!-- { -->
-<!--   p<-length(mu) -->
-<!--   res<-matrix(0,nrow=n,ncol=p) -->
-<!--   if( n>0 & p>0 ) -->
-<!--   { -->
-<!--     E<-matrix(rnorm(n*p),n,p) -->
-<!--     res<-t(  t(E%*%chol(Sigma)) +c(mu)) -->
-<!--   } -->
-<!--   res -->
-<!-- } -->
-<!-- ### -->
+\end{block}
+Hence, $$\mathcal{J}(\bbeta)=\phi (X' X)\;\text{and}\;\mathcal{J}(\phi)=\frac{n}{2}\phi^{-2}.$$
 
 
-<!-- ### sample from the Wishart distribution -->
-<!-- rwish<-function(n,nu0,S0) -->
-<!-- { -->
-<!--   sS0 <- chol(S0) -->
-<!--   S<-array( dim=c( dim(S0),n ) ) -->
-<!--   for(i in 1:n) -->
-<!--   { -->
-<!--      Z <- matrix(rnorm(nu0 * dim(S0)[1]), nu0, dim(S0)[1]) %*% sS0 -->
-<!--      S[,,i]<- t(Z)%*%Z -->
-<!--   } -->
-<!--   S[,,1:n] -->
-<!-- } -->
-<!-- ### -->
 
 
-<!-- ### reading data -->
-<!-- Y <- dget("http://www2.stat.duke.edu/~pdh10/FCBS/Inline/Y.reading") -->
+## Jeffreys' Prior
 
-<!-- n <- nrow(Y); p<- ncol(Y) -->
-<!-- y.bar <- colMeans(Y) -->
+\begin{block}{Therefore:}
 
-<!-- #initialize Sigma at sample covariance -->
-<!-- Sigma <- cov(Y) -->
+\begin{eqnarray*}
+p_J(\bbeta)&\propto_\beta& \sqrt{\text{det}(\phi X' X)} \;\propto_{\beta}\; 1,\;\text{and}\\
+p_J(\phi)&\propto_{\phi}& \sqrt{\text{det}(n\phi^{-2}/2)} \;\propto_{\phi}\; \phi^{-1},
+\end{eqnarray*}
+\end{block}
 
-<!-- ##prior parameters -->
-<!-- #for theta -->
-<!-- mu0 <- c(50,50) -->
-<!-- L0 <- matrix(c(625,312.5,312.5,625),ncol=2) -->
-
-<!-- #for Sigma -->
-<!-- nu0 <- 4 -->
-<!-- S0 <- L0 -->
+\begin{block}{Implying that:}
+$$p_{J}(\bbeta,\phi)=p_{J}(\bbeta)p_{J}(\phi)\propto_{\bbeta,\phi} \;\phi^{-1}.$$
+\end{block}
 
 
-<!-- set.seed(123) -->
+## Jeffreys' Prior
 
-<!-- S <- 10000 -->
-<!-- ##Storage objects -->
-<!-- theta.Mat <- matrix(NA,ncol=2,nrow=S) -->
-<!-- Sigma.Mat <- matrix(NA,ncol=4,nrow=S) -->
+\begin{block}{Hence, the posterior densities are}
+\begin{eqnarray*}
+\bbeta \given \phi ,\by &\sim& N_p(\hat{\bbeta}_{OLS}, \phi^{-1}(X'X)^{-1})\\
+\bphi \given \by &\sim& \text{Gamma}\lrp{\frac{n-p}{2}, \frac{1}{2}\|\by-X\hat{\bbeta}_{OLS} \|^2}
+\end{eqnarray*}
+\end{block}
 
-<!-- YS<-NULL -->
+\begin{block}{Note that marginally, we have}
+$$\bbeta \given \by \sim t_{n-p}(\hat{\bbeta}_{OLS}, \hat{\sigma}^{2}(X'X)^{-1})$$
+\end{block}
 
-<!-- S0.inv <- solve(S0) -->
+Bayesian CI's match frequentist confidence regions, but these priors cannot be used for model selection.
 
-<!-- for(i in 1:S){ -->
-<!--   ##update theta -->
-<!--   Ln <- solve(S0.inv+n*solve(Sigma)) -->
-<!--   mun <- Ln %*% (S0.inv %*%mu0 + n*solve(Sigma)%*%y.bar) -->
-<!--   theta <- c(rmvnorm(1,mun,Ln)) -->
+<!-- ## Jeffreys' Prior -->
 
-<!--   ##update Sigma -->
-<!--   Sn <- S0 + (t(Y)-c(theta))%*%t(t(Y)-c(theta)) -->
-<!--   Sigma <- solve(rwish(1,nu0+n,solve(Sn))) -->
+<!-- \begin{block}{Some comments about these priors} -->
+<!-- \begin{itemize} -->
+<!-- \item Invariant to transformations -->
 
-<!--   ### save predicted draws -->
-<!--   YS<-rbind(YS,rmvnorm(1,theta,Sigma)) -->
+<!-- \bigskip -->
+<!-- \item It's optimal from the information theoretic standpoint (minimum description length) -->
 
-<!--   ###Save new draws -->
-<!--   theta.Mat[i,] <- theta -->
-<!--   Sigma.Mat[i,] <- c(Sigma) -->
-<!-- } -->
+<!-- \bigskip -->
+<!-- \item Violate strong likelihood principle -->
+<!-- \end{itemize} -->
+<!-- \end{block} -->
 
-<!-- #estimate P(theta2>theta1 | y) -->
-<!-- pmu <- mean(theta.Mat[,2]>theta.Mat[,1]) -->
-<!-- pys <- mean(YS[,2]>YS[,1]) -->
 
-<!-- par(mfrow=c(1,2),mgp=c(1.75,.75,0),mar=c(3,3,1,1)) -->
-<!-- plot(x=theta.Mat[,1],y=theta.Mat[,2],xlab=expression(theta[1]), -->
-<!--      ylab=expression(theta[2]), cex=0.3) -->
-<!-- abline(0,1,col="red",lwd=2) -->
-<!-- plot(YS,xlab=expression(italic(y[1])),ylab=expression(italic(y[2])),  -->
-<!--      xlim=c(0,100),ylim=c(0,100), cex=0.3) -->
-<!-- abline(0,1,col="red",lwd=2) -->
-<!-- points(Y[,1],Y[,2],pch=16,cex=.7,col="cornflowerblue") -->
 
-<!-- ``` -->
-<!-- \caption{(left) Joint density $\theta_1$ and $\theta_2$. (right) predicted and observed data} -->
-<!-- \label{fig:discnormal} -->
-<!-- \end{figure} -->
+
+## Zellner's $g$-prior
+
+Another popular regression prior is the $g$-prior: $$\bbeta\given \sigma^2 \sim N_p(\bb_0,g \sigma^2 (X'X)^{-1}),$$ which leads to posteriors $$\bbeta\given \sigma^2, \by \sim N_p\lrp{\frac{1}{1+g}\bb_0+\frac{g}{1+g}\hat{\bbeta}_{OLS},\frac{g}{g+1} \sigma^2 (X'X)^{-1}}.$$
+
+Letting $\bb_0=0_p$ leads to a transformation invariant prior. 
+
+## Zellner's $g$-prior
+
+If $\sigma^2\sim \text{IG}(\frac{\nu_0}{2},\frac{\nu_0\sigma_0^2}{2})$, then 
+$$\sigma^2\given \by \sim \text{IG}(\frac{\nu_0+n}{2},\frac{\nu_0\sigma_0^2 + SSR_g}{2}),$$ where 
+\begin{eqnarray*}
+SSR_g &=& \by' \lrp{I_n -\frac{g}{g+1}X (X' X)^{-1}X'}\by \\
+\stackrel{g\rightarrow\infty}{\longrightarrow}&&\by' \lrp{I_n -X (X' X)^{-1}X'}\by = SSR(\hat{\bbeta}_{OLS})
+\end{eqnarray*}
+
+\vspace{0.5cm}
+\centering
+\textcolor{blue}{Because we can sample directly from $p(\sigma^2\given \by)$ and $p(\bbeta\given \sigma^2, \by)$ a direct MC sampler can be built!}
+
+## Example: Oxygen Uptake
+
+\bit
+\item Response ($y$): change in max oxygen uptake (lt$/$min) measured on treadmill before and after trt.
+
+\bigskip
+\item Predictors ($\bx$):
+\bdes
+\item[$x_1=1$:\hfill] Intercept
+
+\smallskip
+\item[$x_2$:\hfill] $x_2=1$ if trt$\equiv$aerobics, $x_2=0$ o.w.
+
+\smallskip
+\item[$x_3$:\hfill] age (treated as continuous)
+
+\smallskip
+\item[$x_4=x_2*x_3$:\hfill] interaction of treatment and age
+\edes
+\eit
+
+## Example: Oxygen Uptake
+
+
+```{r echo=F, message=F, eval=T, warning=F, fig.width=3.5, fig.height=3, fig.align='center'}
+par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+
+x1<-c(0,0,0,0,0,0,1,1,1,1,1,1)
+x2<-c(23,22,22,25,27,20,31,23,27,28,22,24)
+y<-c(-0.87,-10.74,-3.27,-1.97,7.50,-7.25,17.05,4.96,10.40,11.05,0.26,2.51)
+
+par(mfrow=c(1,1))
+plot(y~x2,pch=16,xlab="age",ylab="change in maximal oxygen uptake", 
+     col=c("black","gray")[x1+1],cex.lab=0.7)
+legend(27,0,legend=c("aerobic","running"),pch=c(16,16),col=c("gray","black"))
+
+```
 

@@ -3,12 +3,12 @@ title: 'STAT 661: Project'
 author: "Jacob, Robin, Ryan & Shen"
 date: "Dec, 2019"
 output:
-  word_document:
+  pdf_document:
+    number_sections: yes
     toc: no
   ioslides_presentation:
     incremental: yes
-  pdf_document:
-    number_sections: yes
+  word_document:
     toc: no
   slidy_presentation: default
   beamer_presentation:
@@ -18,105 +18,543 @@ subtitle: LS v.s. EM
 header-includes: \usepackage[ruled,vlined]{algorithm2e}
 ---
 
-# Least Square Method v.s. EM Method
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center',out.width = '100%')
 
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+# special installation process for printr as it is not available on CRAN
+pacman::p_load(tidyverse, knitr, readr, pander, ggplot2,kableExtra)
 
-
+```
 
 # Appendix
-
-## LS Code
 
 ```{r,echo=F}
 rm(list=ls())
 ```
 
-```{r}
+## Least Square Method with Full data
+
+```{r,echo=F}
+I_u <- c(11:17,21:25,31:35)
+I_c <- c(1:10,18:20,26:30,36:40)
 temp <- c(150,170,190,220) #temperature levels 
 trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
 x <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10)) 
-cen <- c(8064,5448,1680,528) #censoring times 
-logcen <- log10(cen) #log10 censoring times 
-y_uncensored <-log10(c(rep(1,10),
-                     1764,2772,3444,3542,3780,4860,5196,rep(1,3),
-                     408,408,1344,1344,1440,rep(1,5),
-                     408,408,504,504,504,rep(1,5)))
-y_censored <- c(rep(logcen[1],10),
-                rep(0,7),rep(logcen[2],3),
-                rep(0,5),rep(logcen[3],5),
-                rep(0,5),rep(logcen[4],5))
-S <- 23; Y<-matrix(nrow=S,ncol=40)
-Y[1,] <- y_0 <- y_uncensored+y_censored
-fit0 <- lm(y_0~x) #linear model between log10 of observed life time 
+y<- y_0<-log10(c(                          rep(8064,10),
+         1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
+                     408,408,1344,1344,1440,rep(1680,5),
+                        408,408,504,504,504,rep(528,5)))
+w<- unique(y[I_c])
+fit0 <- lm(y~x) #linear model between log10 of observed life time 
+fit_c <- lm(y[I_c]~x[I_c])
+fit_u <- lm(y[I_u]~x[I_u])
+```
+
+```{r,echo=F}
+S <- 23;delta = 1e-006
+PHI<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu150','mu170','mu190','mu220')))
+# Iteration 0 
+sigma <- sigma(fit0) #standard error of residuals 
+beta0 <- coef(fit0)[1] #intercept 
+beta1 <- coef(fit0)[2] #slope 
+mu <- beta0 + beta1*unique(x[I_c]) #mean log time to failure 
+z <- (w-mu)/sigma #z-vector 
+ET <- mu + sigma*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+PHI[1,]<-phi<-c(1, beta0, beta1,sigma,ET)
 ```
 
 
 ```{r,echo=F}
-plot(x,y_0,main="Scatterplot",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
-     xlim=c(2,2.4),ylim=c(2.5,4),
-     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
-abline(fit0,lwd=2,lty=2,col="red")
-```
-
-
-```{r}
-# Iteration 0 
-sigma_0 <- sigma(fit0) #standard error of residuals 
-beta_00 <- coef(fit0)[1] #intercept 
-beta_10 <- coef(fit0)[2] #slope 
-mu_0 <- beta_00 + beta_10*trec #mean log time to failure 
-z <- (logcen-mu_0)/sigma_0 #z-vector 
-ex_mu_0 <- mu_0 + sigma_0*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
-
-delta = 1e-006; iteration <- 1
-
-PHI<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
-     c('mu150','mu170','mu190','mu220','Intercept','Slope','Sigma','Iteration')))
-
-PHI[1,]<-phi<-c(ex_mu_0, beta_00, beta_10,sigma_0,iteration)
 # Subsequent iteration
 repeat { 
- phi[8] <- phi[8]+1     
- y_censored <- c(rep(phi[1],10),
-                 rep(0,7),rep(phi[2],3),
-                 rep(0,5),rep(phi[3],5),
-                 rep(0,5),rep(phi[4],5))
- 
- y<- y_uncensored+y_censored
- Y[phi[8],]<-y   # Replace the new censored values
+# Replace the new censored values
+ y[I_c] <- c(rep(ET[1],10),rep(ET[2],3),rep(ET[3],5),rep(ET[4],5)) 
  fit <- lm(y~x)   # fit a new model
- phi[5] <- coef(fit)[1] #intercept 
- phi[6] <- coef(fit)[2] #slope 
- phi[7] <- sigma(fit) #standard error of residuals  
- mu <- phi[5] + phi[6]*trec    
- z <- (logcen-mu)/phi[7] #z-vector 
+# fit <- lm(y[11:40]~x[11:40])   # fit a new model
+ phi[2] <- coef(fit)[1] #intercept 
+ phi[3] <- coef(fit)[2] #slope 
+ phi[4] <- sigma(fit) #standard error of residuals
+  
+ mu <- phi[2] + phi[3]*unique(x[I_c]) 
+ z <- (w-mu)/phi[4] #z-vector 
   #new expected mean log times to failure
- phi[1:4] <- mu + phi[7]*dnorm(z)/(1-pnorm(z))
- conv <- dist(rbind(PHI[phi[8]-1,1:4],phi[1:4])) 
+ # phi[1:4] <- ET<- mu + phi[7]*dnorm(z)/(1-pnorm(z))
+ phi[5:8] <- ET<- (mu + phi[4]*dnorm(z)/(1-pnorm(z)))
+ conv <- dist(rbind(PHI[phi[1],5:8],phi[5:8]))
  if(conv < delta) break 
-  PHI[phi[8],]<-phi         
+ phi[1] <- phi[1]+1   
+  PHI[phi[1],]<-phi         
 }
 ```
 
-## LS Results
+Using Schmee & Hahn's Least Square method, we reproduced the algoritm and got the exact same results after 22 iterations. The results of $\hat\beta_0$,$\hat\beta_1$, and $\hat\sigma$ are `r PHI[22,2:4]`.
+
+In page 422, The authors say "If one ignores the 150c data, the iterative least squares estimates and the maximum likelihood estimates were even closer to each other than before". I will try to confirm this concultion.
+
 
 ```{r,echo=F}
-# kableExtra::kable(PHI)
-pander::pander(PHI)
+plot(x,y_0,main="Least Squares Method with full data",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.5),ylim=c(2.5,5),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(PHI[,1],na.rm =T)))
+abline(PHI[i,2:3],lwd=0.1,lty=1,col=gray(1/max(PHI[,1],na.rm =T)))
+abline(fit_c,lwd=0.5,lty=1,col="red")
+abline(fit_u,lwd=0.5,lty=1,col="blue")
+text(2.45,4.7, labels = "22nd");text(2.45,4.4, labels = "1st")
+legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
 ```
 
-## LS figure
+```{r,echo=F}
+kable(PHI)
+LS_full<- PHI[max(PHI[,1],na.rm =T),]
+# pander::pander(PHI)
+```
+
+## Removing 150c
+
+
+```{r,echo=F}
+I_c_no150 <-c(8:10,16:20,26:30)
+I_u_no150 <-c(1:7,11:15,21:25)
+x_no150 <- x[11:40]
+y_no150<- y_0_no150<-y_0[11:40]
+w_no150<- w[2:4]
+fit0_no150 <- lm(y_no150~x_no150) 
+fit_c_no150 <- lm(y_no150[I_c_no150]~x_no150[I_c_no150])
+fit_u <- lm(y_no150[I_u_no150]~x_no150[I_u_no150])
+```
+
+```{r,echo=F}
+S <- 17;delta = 1e-006
+PHI<-matrix(nrow=S,ncol=7,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu170','mu190','mu220')))
+# Iteration 0 
+sigma <- sigma(fit0_no150) #standard error of residuals 
+beta0 <- coef(fit0_no150)[1] #intercept 
+beta1 <- coef(fit0_no150)[2] #slope 
+mu <- beta0 + beta1*unique(x_no150) #mean log time to failure 
+z <- (w_no150-mu)/sigma #z-vector 
+# z <- 0
+ET <- mu + sigma*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+PHI[1,]<-phi<-c(1, beta0, beta1,sigma,ET)
+```
+
+
+```{r,echo=F}
+# Subsequent iteration
+repeat { 
+# Replace the new censored values
+ y_no150[I_c_no150] <- c(rep(ET[1],3),rep(ET[2],5),rep(ET[3],5)) 
+ fit <- lm(y_no150~x_no150)   # fit a new model
+ phi[2] <- coef(fit)[1] #intercept 
+ phi[3] <- coef(fit)[2] #slope 
+ phi[4] <- sigma(fit) #standard error of residuals
+  
+ mu <- phi[2] + phi[3]*unique(x_no150)
+ z <- (w_no150-mu)/phi[4] #z-vector 
+#  z <- 0
+  #new expected mean log times to failure
+ phi[5:7] <- ET<- (mu + phi[4]*dnorm(z)/(1-pnorm(z)))
+ conv <- dist(rbind(PHI[phi[1],5:7],phi[5:7]))
+ if(conv < delta) break 
+ phi[1] <- phi[1]+1   
+  PHI[phi[1],]<-phi         
+}
+```
+
+
+After removing the 150c censored data and 16 iterations, the results of $\hat\beta_0$,$\hat\beta_1$,$\hat\sigma$ are `r PHI[max(PHI[,1],na.rm =T),2:4]`. From the figure and table we can know the estimats of $\hat\beta_1$ and log time to failure are smaller.
+
+However, the censored data are underestimated values. After iterations, we anticipate the estimate should be larger than the before.
+
+The reason might be below:
+
+For the full data, the initial total fitted $\hat\beta_1$ (3.747043) is lager than the $\hat\beta_1$ (3.532411) fitted merely by censored data. The positive difference will be accumulated during the iterations and make the $\hat\beta_1$ and $\hat\mu$ larger and larger until convergency.
+
+Without the 150c data, the initial total fitted $\hat\beta_1$ (3.886073) is smaller than the $\hat\beta_1$ (4.324944) fitted merely by censored data. Thus, the negative difference will be accumulated during the iterations and make the $\hat\beta_1$ and $\hat\mu$ smaller and smaller.
+
+
+```{r, echo=F}
+kable(data.frame(fit0$coef,fit_c$coef,fit0_no150$coef,fit_c_no150$coef))%>%footnote(general = "The initial regression coefficients")
+```
+
+
+```{r,echo=F}
+plot(x_no150,y_0_no150,main="LS Method without 150c",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.5),ylim=c(2.5,5),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(PHI[,1],na.rm =T)))
+abline(PHI[i,2:3],lwd=0.1,lty=1,col=gray(1/max(PHI[,1],na.rm =T)))
+abline(fit_c_no150,lwd=0.5,lty=1,col="red")
+abline(fit_u,lwd=0.5,lty=1,col="blue")
+text(2.48,4.5, labels = "16th");text(2.45,4.4, labels = "1st")
+legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
+```
+
+```{r,echo=F}
+kable(PHI)
+# pander::pander(PHI)
+LS_no150<- PHI[max(PHI[,1],na.rm =T),]
+```
+
+
+
+
+
+
+<!--
+### Replace 150c by regression value
+A solution is updating the initial value for 150c
+
+
+```{r,echo=T}
+y_new150 <- coef(fit0_no150)[1]+coef(fit0_no150)[2]*trec[1]
+y_new150<-c(rep(y_new150,10),y_0[11:40])
+
+w<- unique(y_0[I_c])
+fit0_new <- lm(y_new150~x) #linear model between log10 of observed life time 
+fit_c_new <- lm(y_new150[I_c]~x[I_c])
+fit_u_new <- lm(y_new150[I_u]~x[I_u])
+```
+
+After this manipulation, the initial total fitted $\beta_1$ (3.886) is lager than the $\beta_1$ (3.701) fitted merely by censored data.
+
+```{r, echo=F}
+data.frame(fit0$coef,fit_c$coef,fit0_no150$coef,fit_c_no150$coef,fit0_new$coef,fit_c_new$coef)
+```
+
+```{r,echo=F}
+S <- 23;delta = 1e-006
+PHI<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu150','mu170','mu190','mu220')))
+# Iteration 0 
+sigma <- sigma(fit0_new) #standard error of residuals 
+beta0 <- coef(fit0_new)[1] #intercept 
+beta1 <- coef(fit0_new)[2] #slope 
+mu <- beta0 + beta1*unique(x[I_c]) #mean log time to failure 
+z <- (w-mu)/sigma #z-vector 
+ET <- mu + sigma*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
+PHI[1,]<-phi<-c(1, beta0, beta1,sigma,ET)
+```
+
+
+```{r,echo=F}
+# Subsequent iteration
+repeat { 
+# Replace the new censored values
+y_new150[I_c] <- c(rep(ET[1],10),rep(ET[2],3),rep(ET[3],5),rep(ET[4],5)) 
+ fit <- lm(y_new150~x)   # fit a new model
+# fit <- lm(y[11:40]~x[11:40])   # fit a new model
+ phi[2] <- coef(fit)[1] #intercept 
+ phi[3] <- coef(fit)[2] #slope 
+ phi[4] <- sigma(fit) #standard error of residuals
+  
+ mu <- phi[2] + phi[3]*unique(x[I_c]) 
+ z <- (w-mu)/phi[4] #z-vector 
+  #new expected mean log times to failure
+ # phi[1:4] <- ET<- mu + phi[7]*dnorm(z)/(1-pnorm(z))
+ phi[5:8] <- ET<- (mu + phi[4]*dnorm(z)/(1-pnorm(z)))
+ conv <- dist(rbind(PHI[phi[1],5:8],phi[5:8]))
+ if(conv < delta) break 
+ phi[1] <- phi[1]+1   
+  PHI[phi[1],]<-phi         
+}
+```
 
 ```{r,echo=F}
 plot(x,y_0,main="Least Squares Method",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
-     xlim=c(2,2.4),ylim=c(2.5,4),
+     xlim=c(2,2.5),ylim=c(2.5,5),
      panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
-for (i in (1:max(PHI[,8],na.rm =T)))
-abline(PHI[i,5:6],lwd=0.5,lty=1,col=i)
-text(2.3,3.95, labels = "22nd");text(2.32,3.65, labels = "1st")
+for (i in (1:max(PHI[,1],na.rm =T)))
+abline(PHI[i,2:3],lwd=0.1,lty=1,col=gray(1/max(PHI[,1],na.rm =T)))
+abline(fit_c,lwd=0.5,lty=1,col="red")
+abline(fit_u,lwd=0.5,lty=1,col="blue")
+text(2.45,4.7, labels = "22nd");text(2.45,4.4, labels = "1st")
+legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
 ```
 
-## EM Method
+```{r,echo=F}
+kableExtra::kable(PHI)
+# pander::pander(PHI)
+```
+
+-->
+
+
+\pagebreak
+
+
+## EM Method with full data
+
+
+
+```{r,echo=F}
+I_u <- c(11:17,21:25,31:35)
+I_c <- c(1:10,18:20,26:30,36:40)
+temp <- c(150,170,190,220) #temperature levels 
+trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
+nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10))
+y<- y_0<-log10(c(                          rep(8064,10),
+         1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
+                     408,408,1344,1344,1440,rep(1680,5),
+                        408,408,504,504,504,rep(528,5)))
+# initial value
+m <- length(I_u)
+n<-length(I_c)+m
+w<- unique(y_0[I_c])
+
+S <- 60
+THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu150','mu170','mu190','mu220')))
+
+fit0 <- lm(y~nu) 
+fit_c <- lm(y[I_c]~nu[I_c])
+fit_u <- lm(y[I_u]~nu[I_u])
+
+sigma <- sigma(fit0) #standard error of residuals 
+beta0 <- coef(fit0)[1] #intercept 
+beta1 <- coef(fit0)[2] #slope 
+
+nu_i <- nu[I_c]
+nu_j <- nu[I_u]
+
+mu_i <- beta0+beta1*nu_i
+mu_j <- beta0 + beta1 * nu_j
+
+H_i <- dnorm((y_0[I_c]-mu_i)/sigma)/(1-pnorm((y_0[I_c]-mu_i)/sigma))
+# H_i <-dnorm(0)/(1-pnorm(0))
+D_j <- y_0[I_u]-mu_j  # difference between uncensored y and mean_j
+ET  <- unique(mu_i+ sigma*H_i) 
+
+THETA[1,]<-theta<-c(1, beta0, beta1,sigma,ET)
+Q <- 0
+k=1
+delta = 1e-4
+```
+
+```{r,echo=F}
+repeat {  
+beta0<- THETA[k,2]
+beta1<- THETA[k,3]
+sigma<- THETA[k,4]
+
+# M step    
+mu_i <- beta0+beta1*nu_i
+# H_i<-   dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
+
+SS_nu <- sum((nu_j)^2)+sum((nu_i)^2)
+MS_nu <- sum(nu)^2/n
+
+beta0_star <- sum(y_0[I_u])/n+
+                 (sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
+                   (MS_nu-SS_nu)*sum(nu)/n-
+                sum(nu)/(MS_nu-SS_nu)/n*
+                 sum((mu_i+sigma*H_i)*(sum(nu)/n-1/(sum(nu)/(MS_nu-SS_nu))-nu_i))
+               
+beta1_star <- -(sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
+                 (MS_nu-SS_nu)+
+              1/(MS_nu-SS_nu)*sum((mu_i+sigma*H_i)*(sum(nu)/n-nu_i))
+
+mu_j <- beta0_star+beta1_star*nu_j
+ D_j <- y_0[I_u]-mu_j  
+
+mu_i_star <- beta0_star+beta1_star*nu_i 
+# H_i_star<-   dnorm((y[index_censored]-mu_i_star)/sigma)/(1-pnorm((y[index_censored]-mu_i_star)/sigma))
+sigma_star <- (sum((y_0[I_u]-beta0_star-beta1_star*nu_j)^2)+
+                 sum(sigma^2+H_i*sigma*2*(mu_i-mu_i_star)+(mu_i-mu_i_star)^2)
+               )/n
+
+# E step
+# Get Q
+k <-  k+1  
+Q[k] <-  
+ -n*log(2*pi)/2-
+  n*log(sigma_star)-
+ (1/(2*sigma_star^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
+ (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
+                     mu_i^2+       # mu_i_star^2+
+                     sigma^2+       # sigma_star^2+                         
+                     sigma*(        # sigma_star*(
+  y_0[I_c]+mu_i-2*mu_i_star #      w_i+mu_i_star-2mu_i
+                            )*H_i-   #            )*H)-
+                     2*mu_i*mu_i_star+    # 2*mu_i*mu_i_star+
+                     mu_i_star^2               # mu_i^2
+                    )                   #                   )
+# Update THETA
+ THETA[k,2] <- beta0_star
+ THETA[k,3] <- beta1_star
+ THETA[k,4] <- sigma_star
+THETA[k,5:8]<-unique(mu_i_star+ sigma_star*H_i)
+THETA[k,1] <- k
+
+ if(abs(Q[k]-Q[k-1])<=delta) break
+}
+```
+
+Using the EM method, the results of $\hat\beta_0$,$\hat\beta_1$,$\hat\sigma$ are `r THETA[max(THETA[,1],na.rm =T),2:4]` after 58th iterations. Although the estimates are smaller than SL method, Thay shows a same trend: $\hat\beta_1$ and $\hat\mu$  grow larger and converges.
+
+
+```{r,echo=F}
+plot(nu,y_0,main="EM Method with full data",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.5),ylim=c(2.5,5),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(THETA[,1],na.rm =T)))
+abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(1/max(THETA[,1],na.rm =T)))
+abline(fit_c,lwd=0.5,lty=1,col="red")
+abline(fit_u,lwd=0.5,lty=1,col="blue")
+text(2.48,4.6, labels = "58th");text(2.45,4.35, labels = "1st")
+legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
+```
+
+```{r,echo=F}
+kable(THETA[c(1:10,48:58),])%>%footnote(general = "The first and last 10 rows")
+EM_full<- THETA[max(THETA[,1],na.rm =T),]
+```
+
+## EM Method removing 150c data
+
+```{r,echo=F}
+I_c<-c(8:10,16:20,26:30)
+I_u<-c(1:7,11:15,21:25)
+temp <- c(170,190,220) #temperature levels 
+trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
+nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10))
+y<- y_0<-log10(c(                         
+         1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
+                     408,408,1344,1344,1440,rep(1680,5),
+                        408,408,504,504,504,rep(528,5)))
+# initial value
+m <- length(I_u)
+n<-length(I_c)+m
+w<- unique(y_0[I_c])
+
+S <- 25
+THETA<-matrix(nrow=S,ncol=7,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu170','mu190','mu220')))
+
+fit0 <- lm(y~nu) 
+fit_c <- lm(y[I_c]~nu[I_c])
+fit_u <- lm(y[I_u]~nu[I_u])
+
+sigma <- sigma(fit0) #standard error of residuals 
+beta0 <- coef(fit0)[1] #intercept 
+beta1 <- coef(fit0)[2] #slope 
+
+nu_i <- nu[I_c]
+nu_j <- nu[I_u]
+
+mu_i <- beta0+beta1*nu_i
+mu_j <- beta0 + beta1 * nu_j
+
+H_i <- dnorm((y_0[I_c]-mu_i)/sigma)/(1-pnorm((y_0[I_c]-mu_i)/sigma))
+# H_i <-dnorm(0)/(1-pnorm(0))
+D_j <- y_0[I_u]-mu_j  # difference between uncensored y and mean_j
+ET  <- unique(mu_i+ sigma*H_i) 
+
+THETA[1,]<-theta<-c(1, beta0, beta1,sigma,ET)
+Q <- 0
+k=1
+delta = 1e-4
+```
+
+```{r,echo=F}
+repeat {  
+beta0<- THETA[k,2]
+beta1<- THETA[k,3]
+sigma<- THETA[k,4]
+
+# M step    
+mu_i <- beta0+beta1*nu_i
+# H_i<-   dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
+
+SS_nu <- sum((nu_j)^2)+sum((nu_i)^2)
+MS_nu <- sum(nu)^2/n
+
+beta0_star <- sum(y_0[I_u])/n+
+                 (sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
+                   (MS_nu-SS_nu)*sum(nu)/n-
+                sum(nu)/(MS_nu-SS_nu)/n*
+                 sum((mu_i+sigma*H_i)*(sum(nu)/n-1/(sum(nu)/(MS_nu-SS_nu))-nu_i))
+               
+beta1_star <- -(sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
+                 (MS_nu-SS_nu)+
+              1/(MS_nu-SS_nu)*sum((mu_i+sigma*H_i)*(sum(nu)/n-nu_i))
+
+mu_j <- beta0_star+beta1_star*nu_j
+ D_j <- y_0[I_u]-mu_j  
+
+mu_i_star <- beta0_star+beta1_star*nu_i 
+# H_i_star<-   dnorm((y[index_censored]-mu_i_star)/sigma)/(1-pnorm((y[index_censored]-mu_i_star)/sigma))
+sigma_star <- (sum((y_0[I_u]-beta0_star-beta1_star*nu_j)^2)+
+                 sum(sigma^2+H_i*sigma*2*(mu_i-mu_i_star)+(mu_i-mu_i_star)^2)
+               )/n
+
+# E step
+# Get Q
+k <-  k+1  
+Q[k] <-  
+ -n*log(2*pi)/2-
+  n*log(sigma_star)-
+ (1/(2*sigma_star^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
+ (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
+                     mu_i^2+       # mu_i_star^2+
+                     sigma^2+       # sigma_star^2+                         
+                     sigma*(        # sigma_star*(
+  y_0[I_c]+mu_i-2*mu_i_star #      w_i+mu_i_star-2mu_i
+                            )*H_i-   #            )*H)-
+                     2*mu_i*mu_i_star+    # 2*mu_i*mu_i_star+
+                     mu_i_star^2               # mu_i^2
+                    )                   #                   )
+# Update THETA
+ THETA[k,2] <- beta0_star
+ THETA[k,3] <- beta1_star
+ THETA[k,4] <- sigma_star
+THETA[k,5:7]<-unique(mu_i_star+ sigma_star*H_i)
+THETA[k,1] <- k
+
+ if(abs(Q[k]-Q[k-1])<=delta) break
+}
+```
+
+
+
+
+```{r,echo=F}
+plot(nu,y_0,main="EM Method without 150c",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.5),ylim=c(2.5,5),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(THETA[,1],na.rm =T)))
+abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(1/max(THETA[,1],na.rm =T)))
+abline(fit_c,lwd=0.5,lty=1,col="red")
+abline(fit_u,lwd=0.5,lty=1,col="blue")
+text(2.48,4.5, labels = "24th");text(2.45,4.4, labels = "1st")
+legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
+```
+
+```{r,echo=F}
+kable(THETA)
+# pander::pander(Q)
+EM_no150<- THETA[max(THETA[,1],na.rm =T),]
+```
+
+## Summary
+
+Using Maximum Likelihood Mehtod, both Schmee & Hahn (1979), and Aitkin (1981) get a smaller $\hat\beta_0=-6.019$, a larger $\hat\beta_1=4.311$, and larger estimate of the expected log time to failure times. I cannot reproduce these results. The estimates of removing 150c were not closer to each other too.  In my attempts, Least Square Method and EM Method give similar results that ignoring the 150c data make $\hat\beta_1$ and $\hat\mu$ smaller.
+
+```{r,echo=F}
+
+compare<- dplyr::bind_rows(LS_full,EM_full,LS_no150,EM_no150)
+rownames(compare) <- c("LS_full","EM_full","LS_no150","EM_no150")
+kable(compare)
+```
+
+
+
+
+
+\pagebreak
 
 - E-step
 
@@ -156,138 +594,6 @@ $$\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\sum_{i=m+1}^n\left\{\mu_i^{\star2}+\
 	
 \caption{EM algorithm}
 \end{algorithm}
-
-## EM Code
-
-```{r,echo=F}
-rm(list=ls())
-```
-
-
-
-```{r,echo=T}
-temp <- c(150,170,190,220) #temperature levels 
-trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
-nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10))
-# index_nu <- c(rep(-2,7),rep(-3,5),rep(-4,5),rep(1,10),rep(2,3),rep(3,5),rep(4,5))
-cen <- c(8064,5448,1680,528) #censoring times 
-w <- log10(cen) #log10 censoring times: last time still working
-y_uncensored <-log10(c(rep(1,10),
-                     1764,2772,3444,3542,3780,4860,5196,rep(1,3),
-                     408,408,1344,1344,1440,rep(1,5),
-                     408,408,504,504,504,rep(1,5)))
-y_censored <- c(rep(w[1],10),
-                rep(0,7),rep(w[2],3),
-                rep(0,5),rep(w[3],5),
-                rep(0,5),rep(w[4],5))
-
-y <-  (y_uncensored+y_censored)
-
-index_censored <- which(y %in% w)
-index_uncensored <- which(!(y %in% w))
-
-m <- length(index_uncensored)
-n<-length(index_censored)+m
-
-# initial value
-fit0 <- lm(y~nu) #linear model 
-sigma <- sigma(fit0) #standard error of residuals 
-beta0 <- as.numeric(coef(fit0)[1]) #intercept 
-beta1 <- as.numeric(coef(fit0)[2]) #slope 
-
-nu_i <- nu[index_censored]
-nu_j <- nu[index_uncensored]
-
-mu_i <- beta0+beta1*nu_i
-mu_j <- beta0 + beta1 * nu_j
-
-H_i <- dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
-# H_i <-dnorm(0)/(1-pnorm(0))
-D_j <- y[index_uncensored]-mu_j  # difference between uncensored y and mean_j
-ET  <- unique(mu_i+ sigma*H_i) 
-
-S <- 60
-THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL,
-       c('Intercept','Slope','Sigma','mu150','mu170','mu190','mu220','Iteration')))
-THETA[1,]<-c(beta0,beta1,sigma,unique(ET),1)
-Q <- 0
-k=1
-delta = 1e-4
-repeat {  
-beta0<- THETA[k,1]
-beta1<- THETA[k,2]
-sigma<- THETA[k,3]
-
-# M step    
-mu_i <- beta0+beta1*nu_i
-# H_i<-   dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
-
-beta0_star <- 7.012488+3.601233*sum((mu_i+sigma*H_i)*(2.208376-nu_i))
-beta1_star <- -2.586712-1/.6113*sum((mu_i+sigma*H_i)*(2.201434-nu_i))
-
-mu_j <- beta0_star+beta1_star*nu_j
- D_j <- y[index_uncensored]-mu_j  
- 
-mu_i_star <- beta0_star+beta1_star*nu_i 
-# H_i_star<-   dnorm((y[index_censored]-mu_i_star)/sigma)/(1-pnorm((y[index_censored]-mu_i_star)/sigma))
-sigma_star <- (sum((y[index_uncensored]-beta0_star-beta1_star*nu_j)^2)+sum(sigma^2+H_i*sigma*2*(mu_i-mu_i_star)+(mu_i-mu_i_star)^2))/40
-
-# E step
-# Get Q
-k <-  k+1  
-Q[k] <-  
- -n*log(2*pi)/2-
-  n*log(sigma_star)-
- (1/(2*sigma_star^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
- (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
-                     mu_i^2+       # mu_i_star^2+
-                     sigma^2+       # sigma_star^2+                         
-                     sigma*(        # sigma_star*(
-  y[index_censored]+mu_i-2*mu_i_star #      w_i+mu_i_star-2mu_i
-                            )*H_i-   #            )*H)-
-                     2*mu_i*mu_i_star+    # 2*mu_i*mu_i_star+
-                     mu_i_star^2               # mu_i^2
-                    )                   #                   )
-# Update THETA
- THETA[k,1] <- beta0_star
- THETA[k,2] <- beta1_star
- THETA[k,3] <- sigma_star
- THETA[k,4:7]<-unique(mu_i_star+ sigma_star*H_i) 
- THETA[k,8] <- k
-
- if(abs(Q[k]-Q[k-1])<=delta) break
-}
-# THETA
-```
-
-
-
-
-## EM figure
-
-```{r,echo=F}
-plot(nu,y,main="EM Method",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
-     xlim=c(2,2.4),ylim=c(2.5,4),
-     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
-for (i in (1:max(THETA[,8],na.rm =T)))
-abline(THETA[i,1:2],lwd=0.5,lty=1,col=i)
-text(2.3,3.95, labels = "");text(2.32,3.65, labels = "")
-```
-
-## The results of THETA
-
-```{r,echo=F}
-# kableExtra::kable(THETA)
-pander::pander(THETA)
-```
-
-
-## The results of Q
-
-```{r,echo=F}
-pander::pander(Q)
-```
-
 
 
 # Reference

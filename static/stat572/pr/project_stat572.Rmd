@@ -1,13 +1,13 @@
 ---
-title: 'STAT 661: Project'
+title: 'STAT 572: Project'
 author: "Geovani Bautista, Simon Lee, Shen Qu"
 date: Dec, 2019
 subtitle: "Chapter 10: Nonconjugate priors and Metropolis-Hastings algorithms"
 output:
-  word_document:
   pdf_document:
     toc: no
     number_sections: no
+  word_document:
   beamer_presentation:
     includes:
       in_header: "preamble.tex"
@@ -16,28 +16,48 @@ output:
   slidy_presentation: default
 header-includes:
  - \usepackage[ruled,vlined]{algorithm2e}
-
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=100)
+options(digits=3)
 
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+# special installation process for printr as it is not available on CRAN
+pacman::p_load(tidyverse, knitr, readr, pander, ggplot2)
+library(e1071) 
+panderOptions("digits", 2)
+panderOptions('round', 2)
+panderOptions('keep.trailing.zeros', TRUE)
+panderOptions('keep.line.breaks', TRUE)
+```
+
+
+# Appendix
 
 ## 10.1 Generalized linear models
 
 Example: Song sparrow reproductive success
 
 
-```{r, height=3.5,width=7}
+```{r,echo=F, height=3.5,width=7}
 #### Sparrow data
 load("sparrows.RData")  
 fledged<-sparrows[,1] ; age<-sparrows[,2] ; age2<-age^2
+```
 
 
-
+```{r,eval=F,include=F, height=3.5,width=7}
 #### Figure 10.1 
 # pdf("fig10_1.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 plot(fledged~as.factor(age),range=0,xlab="age",ylab="offspring",
       col="gray")
+```
+
+
+```{r,echo=F,include=F}
 summary(glm(fledged~age+age2,family="poisson"))
 ```
 
@@ -58,8 +78,6 @@ beta1<-seq(.27-2.5,.27+2.5,length=gs)
 beta2<-seq(.68-2,.68+2,length=gs)
 beta3<-seq(-.13-.5,-.13+.5,length=gs)
 
-
-
 for(i in 1:gs) { for(j in 1:gs) { for(k in 1:gs) {
   theta<-beta1[i]+beta2[j]*age+beta3[k]*age^2
   LPB[i,j,k]<-dnorm(beta1[i],beta0[1],sqrt(S0[1,1]),log=TRUE)  +
@@ -78,7 +96,6 @@ PB2<-apply(PB,2,sum)
 PB3<-apply(PB,3,sum)
 PB23<-apply(PB,c(2,3),sum)
 
-
 ## Simulation from grid approximation
 S<-50000
 BETAg<-matrix(nrow=S,ncol=3)
@@ -89,9 +106,15 @@ k<-sample(1:gs,1,prob=PB[,i,j] )
 BETAg[s,]<-c(beta1[k],beta2[i],beta3[j])  }
 ```
 
+
+
 ## 10.2 The Metropolis algorithm
 
-```{r, height=1.75,width=5}
+
+
+
+
+```{r,eval=F,include=F, height=1.75,width=5}
 #### Figure 10.2
 # pdf("fig10_2.pdf",family="Times",height=1.75,width=5)
 par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
@@ -109,9 +132,41 @@ plot.hdr2d(BETAg[,2:3],bw=c(15,15),xlab=expression(beta[2]),
 ```
 
 
-```{r, out.width='100%'}
-#### MH algorithm for one-sample normal problem with 
 
+\begin{algorithm}[H]
+ \KwData{$Y\sim p(\theta)$}
+ \KwResult{generates $\theta^{(1)},...,\theta^{(s)} \sim\text{iid }p(\theta|y)$}
+ initialization\;
+ Choose $\delta$ to make the approximation algorithm run efficiently\; 
+ \While{not convergentcy}{
+  \For{Symmetric: $J(\theta_b|\theta_a) = J(\theta_a|\theta_b)$}{
+  
+1. Sample $\theta^\star \sim J(\theta|\theta^{(s)})$; such as \;
+ $$J(\theta^\star|\theta^{(s)}) = \text{uniform}(\theta^{(s)}-\delta,\theta^{(s)}+\delta)$$ OR 
+ $$J(\theta^\star|\theta^{(s)})=\text{normal}(\theta^{(s)},\delta^2)$$
+
+2. Compute the acceptance ratio
+$$r=\frac{p(\theta^\star|y)}{p(\theta^{(s)}|y)}=\frac{p(y|\theta^\star)p(\theta^\star)}{p(y|\theta^{(s)})p(\theta^{(s)})}$$
+
+3. Sampling $u \sim \text{uniform}(0,1)$\;
+ 
+  \If{the ratio $r >1,(u)$}
+   {$\theta^{(s+1)}\longleftarrow\theta^\star$ with probability $\min(r,1)$\;}
+   
+  \If{the ratio $r <1,(u)$}
+   {$\theta^{(s+1)}\longleftarrow\theta^{(s)}$ with probability $1-\min(r,1)$\;}{}
+   generates a value $\theta^{(s+1)}$ given $\theta^{(s)}$\; 
+   }
+ }
+ \caption{The Metropolis algorithm}
+\end{algorithm}
+
+
+
+
+
+```{r,eval=T, out.width='100%'}
+#### MH algorithm for one-sample normal problem with 
 ## Setup
 s2<-1 
 t2<-10 ; mu<-5
@@ -130,14 +185,12 @@ theta<-0 ; delta<-2 ; S<-10000 ; THETA<-NULL ; set.seed(1)
 
 for(s in 1:S)
 {
-
   theta.star<-rnorm(1,theta,sqrt(delta))
 
   log.r<-( sum(dnorm(y,theta.star,sqrt(s2),log=TRUE)) +
                dnorm(theta.star,mu,sqrt(t2),log=TRUE) )  -
          ( sum(dnorm(y,theta,sqrt(s2),log=TRUE)) +
                dnorm(theta,mu,sqrt(t2),log=TRUE) ) 
-
   if(log(runif(1))<log.r) { theta<-theta.star }
 
   THETA<-c(THETA,theta)
@@ -145,9 +198,9 @@ for(s in 1:S)
 ```
 
 
-```{r, height=3.5,width=7}
+```{r,eval=F,include=F, height=3.5,width=7}
 #### Figure 10.3
-pdf("fig10_3.pdf",family="Times",height=3.5,width=7)
+# pdf("fig10_3.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
@@ -179,22 +232,20 @@ for(s in 1:S)
   log.r<-sum( dnorm(y,theta.star,sqrt(s2),log=TRUE)-
               dnorm(y,theta,sqrt(s2),log=TRUE)  )  +
       dnorm(theta.star,mu,sqrt(t2),log=TRUE)-dnorm(theta,mu,sqrt(t2),log=TRUE) 
-
   if(log(runif(1))<log.r)  { theta<-theta.star ; acs<-acs+1 }
   THETA<-c(THETA,theta) 
 
 }
-plot(THETA[1:1000],col = alpha("blue", 0.1))
-
+# plot(THETA[1:1000],col = alpha("blue", 0.1))
 ACR<-c(ACR,acs/s) 
 ACF<-c(ACF,acf(THETA,plot=FALSE)$acf[2]  )
 THETAA<-cbind(THETAA,THETA)
 }
-plot(ACR,ACF) ; lines(ACR,ACF)
+# plot(ACR,ACF) ; lines(ACR,ACF)
 ```
 
 
-```{r, height=1.75,width=5}
+```{r,eval=F,include=F,  height=1.75,width=5}
 #### Figure 10.4 
 # pdf("fig10_4.pdf",family="Times",height=1.75,width=5)
 par(mfrow=c(1,3),mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
@@ -208,15 +259,12 @@ abline(h=mu.n,lty=2)
 ```
 
 
-```{r, out.width='100%'}
+```{r,eval=T, out.width='100%'}
 THCM<-apply(THETAA,2,cumsum)
 THCM<- THCM/(1:dim(THCM)[1]) 
-
-
-
 #### Back to sparrow data
 fit.mle<-glm(fledged~age+age2,family="poisson")
-summary(fit.mle)
+# summary(fit.mle)
 
 y<-fledged ; X<-cbind(rep(1,length(y)),age,age^2)
 yX<-cbind(y,X)
@@ -243,9 +291,7 @@ rmvnorm<-function(n,mu,Sigma)
 
 ## MCMC
 for(s in 1:S) {
-
 #propose a new beta
-
 beta.p<- t(rmvnorm(1, beta, var.prop ))
 
 lhr<- sum(dpois(y,exp(X%*%beta.p),log=T)) -
@@ -264,12 +310,12 @@ apply(BETA,2,effectiveSize)
 ```
 
 
-
+<!--
 ## 10.3 The Metropolis algorithm for Poisson regression
 
+-->
 
-
-```{r, height=1.75,width=5}
+```{r,eval=F,include=F, height=1.75,width=5}
 #### Figure 10.5 
 # pdf("fig10_5.pdf",family="Times",height=1.75,width=5)
 par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
@@ -282,11 +328,12 @@ abline(h=mean(BETA[,j]) )
 
 acf(BETA[,j],ci.col="gray",xlab="lag")
 acf(BETA[thin,j],xlab="lag/10",ci.col="gray")
+
 ```
 
 ## 10.4 Metropolis, Metropolis-Hastings and Gibbs
 
-```{r, height=1.75,width=5}
+```{r,eval=F,include=F, height=1.75,width=5}
 #### Figure 10.6
 # pdf("fig10_6.pdf",family="Times",height=1.75,width=5)
 par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
@@ -309,17 +356,129 @@ lines( qE[2,],col="black",lwd=2)
 lines( qE[3,],col="black",lwd=1)
 ```
 
-## 10.4 Metropolis, Metropolis-Hastings and Gibbs
+
+
+### 10.4.1 The Metropolis-Hastings algorithm
+
+
+\begin{algorithm}[H]
+ \KwData{$Y\sim p(u,v)$}
+ \KwResult{$p_0(u,v)$ such as $=p(\theta,\sigma^2|y)$}
+ initialization\;
+
+ \While{not convergentcy}{
+  \For{$J_u$ and $J_v$ are separate symmetric proposal distributions for $U$ and $V$}{
+  
+1. update $U$\: 
+
+  a) sample $u^\star \sim J_u(u|u^{(s)})$\; 
+  b) compute $$r = \frac{p_0(u^\star,v^{(s)})}{p_0(u^{(s)},v^{(s)})}$$
+  c) set 
+  \eIf{the ratio $r >1$}
+   {$u^{(s+1)}\longleftarrow u^\star$ with probability $\min(1,r)$}
+   {$u^{(s+1)}\longleftarrow u^{(s)}$ with probability $\max(0,1-r)$}
+   
+2. update $V$\: 
+   a) sample $v^\star \sim J_v(v|v^{(s)})$\; 
+   b) compute $$r = \frac{p_0(u^{(s+1)},v^\star)}{p_0(u^{(s+1)},v^{(s)})}$$
+   c) set  
+  \eIf{the ratio $r >1$}
+   {$v^{(s+1)}\longleftarrow v^\star$ with probability $\min(1,r)$}
+   {$v^{(s+1)}\longleftarrow v^{(s)}$ with probability $\max(0,1-r)$}
+   }
+ }
+ \caption{The Metropolis-Hastings algorithm}
+\end{algorithm}
+
+
+
+
+\begin{algorithm}[H]
+ \KwData{$Y\sim p(u,v)$}
+ \KwResult{$p_0(u,v)$ such as $=p(\theta,\sigma^2|y)$}
+ initialization\;
+
+ \While{not convergentcy}{
+  \For{ $J_u,J_v$ do not depend on $U$ and $V$ values in the sequence previous to the most current values (ensures it is a Markov chain) }{
+  
+1. Update $U$\: 
+
+  a) Sample $u^\star \sim J_u(u|u^{(s)},v^{(s)})$\; 
+  b) Compute 
+  $$r = \frac{p_0(u^\star,v^{(s)})}{p_0(u^{(s)},v^{(s)})}\times \frac{J_u(u^{(s)}|u^\star,v^{(s)})}{ J_u(u^\star|u^{(s)},v^{(s)})}$$
+  
+  c) Set 
+  \eIf{the ratio $r >1$}
+   {$u^{(s+1)}\longleftarrow u^\star$ with probability $\min(1,r)$}
+   {$u^{(s+1)}\longleftarrow u^{(s)}$ with probability $\max(0,1-r)$}
+   
+2. Update $V$\: 
+   a) Sample $v^\star \sim J_v(v|u^{(s+1)},v^{(s)})$\; 
+   b) Compute the acceptance ratio  
+   $$r = \frac{p_0(u^{(s+1)},v^\star)}{p_0(u^{(s+1)},v^{(s)})}\times \frac{J_v(v^{(s)}|u^{(s+1)},v^\star)}{ J_v(v^\star|u^{(s+1)},v^{(s)})}$$
+   c) Set  
+  \eIf{the ratio $r >1$}
+   {$v^{(s+1)}\longleftarrow v^\star$ with probability $\min(1,r)$}
+   {$v^{(s+1)}\longleftarrow v^{(s)}$ with probability $\max(0,1-r)$}
+   }
+ }
+ \caption{The M-H algorithm for approximating $p_0(u,v)$ }
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]
+ \KwData{$Y\sim \text{multivariate normal}(\mathbf{X}\beta_n,\sigma^2\mathbf{I})$}
+ \KwResult{$\{\beta^{(s)},\sigma^{2(s)},\rho^{(s)}\}$}
+ initialization\;
+
+ \While{not convergentcy}{
+  
+1. Update $\beta$\: 
+
+  Sample $\beta^{(s+1)} \sim\text{multivariate normal}(\beta_n,\Sigma_n)$\; 
+        where $\beta_n$ and $\Sigma_n$ depend on $\sigma^{2(s)}$ and $\rho^{(s)}$\;
+   
+2. Update $\sigma^2$\: 
+
+  Sample $\sigma^{2(s+1)}\sim\text{inverse-gamma}([\nu_0+n]/2,[\nu_0\sigma^2_0 +SSR_\rho]/2)$\;
+        where $SSR_\rho$ depends on $\beta^{(s)}$ and $\rho^{(s)}$\; 
+
+3. Update $\rho$\;
+
+  a) Propose $\rho^\star \sim \text{uniform}(\rho^{(s)} -\delta,\rho^{(s)} + \delta)$\; 
+  
+  \If {$\rho^\star < 0$}{reassign it to be $|\rho^\star|$}
+  
+  \If {$\rho^\star > 1$}{reassign it to be $2-\rho^\star$}
+  
+  b) Compute the acceptance ratio 
+  $$r = \frac{p(y|\mathbf{X},\beta^{(s+1)},\sigma^{2(s+1)},\rho^\star)p(\rho^\star)}{p(y|\mathbf{X},\beta^{(s+1)},\sigma^{2(s+1)},\rho^{(s)})p(\rho^{(s)})}$$
+ 
+
+  Sample $u \sim \text{uniform}(0,1)$\; 
+     
+  \eIf{$u < r$}{set $\rho^{(s+1)}\longleftarrow \rho^\star$}
+      {set $\rho^{(s+1)}\longleftarrow \rho^{(s)}$}
+ }
+ \caption{The M-H algorithm for longitudinal regression model }
+\end{algorithm}
+
+
+
+## 10.5 Combining the Metropolis and Gibbs algorithms
 
 Example: Historical CO2 and temperature data
 
 
-```{r, height=1.75,width=5}
+```{r,echo=F, height=1.75,width=5}
 #### Ice core example
-load("icecore.RData") 
+load("icecore.RData")
+```
 
+
+```{r,eval=F,include=F,  height=1.75,width=5}
 # pdf("fig10_7.pdf",family="Times",height=1.75,width=5)
-
 par(mar=c(2.75,2.75,.5,.5),mgp=c(1.7,.7,0))
 layout(matrix( c(1,1,2),nrow=1,ncol=3) )
 
@@ -334,19 +493,23 @@ lines(icecore[,1],  (icecore[,2]-mean(icecore[,2]))/sd(icecore[,2]),
 plot(icecore[,2], icecore[,3],xlab=expression(paste(CO[2],"(ppmv)")),ylab="temperature difference (deg C)")
 ```
 
+```{r}
+lmfit<-lm(icecore$tmp~icecore$co2)
+```
 
-```{r,height=3.5,width=7}
+
+```{r,eval=F,include=F, height=3.5,width=7}
 #### Figure 10.8
 # pdf("fig10_8.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
 par(mfrow=c(1,2))
 
-lmfit<-lm(icecore$tmp~icecore$co2)
 hist(lmfit$res,main="",xlab="residual",ylab="frequency")
 acf(lmfit$res,ci.col="gray",xlab="lag")
+```
 
 
-
+```{r,eval=F, height=3.5,width=7}
 #### Starting values for MCMC
 n<-dim(icecore)[1]
 y<-icecore[,3]
@@ -358,15 +521,16 @@ beta<-lmfit$coef
 s2<-summary(lmfit)$sigma^2
 phi<-acf(lmfit$res,plot=FALSE)$acf[2]
 nu0<-1 ; s20<-1 ; T0<-diag(1/1000,nrow=2)
+```
 
 
+```{r,eval=F,include=F, height=3.5,width=7}
 ## MCMC - 1000 scans saving every scan
 set.seed(1)
 S<-1000 ; odens<-S/1000
 OUT<-NULL ; ac<-0 ; par(mfrow=c(1,2))
 for(s in 1:S)
 {
-
   Cor<-phi^DY  ; iCor<-solve(Cor)
   V.beta<- solve( t(X)%*%iCor%*%X/s2 + T0)
   E.beta<- V.beta%*%( t(X)%*%iCor%*%y/s2  )
@@ -384,7 +548,8 @@ for(s in 1:S)
 
   if(s%%odens==0)
     {
-      cat(s,ac/s,beta,s2,phi,"\n") ; OUT<-rbind(OUT,c(beta,s2,phi))
+      #cat(s,ac/s,beta,s2,phi,"\n") ; 
+    OUT<-rbind(OUT,c(beta,s2,phi))
     }
 }
 
@@ -394,7 +559,7 @@ apply(OUT.1000,2,effectiveSize )
 ```
 
 
-```{r,eval=T, out.width='100%'}
+```{r,eval=F, out.width='100%'}
 ## MCMC - 25000 scans saving every 25th scan
 set.seed(1)
 S<-25000 ; odens<-S/1000
@@ -419,23 +584,28 @@ for(s in 1:S)
 
   if(s%%odens==0)
     {
-      cat(s,ac/s,beta,s2,phi,"\n") ; OUT<-rbind(OUT,c(beta,s2,phi))
+     # cat(s,ac/s,beta,s2,phi,"\n") ; 
+    OUT<-rbind(OUT,c(beta,s2,phi))
     }
 }
+```
 
+
+```{r,eval=F, out.width='100%'}
 OUT.25000<-OUT
 library(coda)
 apply(OUT.25000,2,effectiveSize )
 ```
 
+<!--
+
 ### 10.5.1 A regression model with correlated errors
-
-
 
 ### 10.5.2 Analysis of the ice core data
 
+-->
 
-```{r,height=3.5,width=7}
+```{r,eval=F,include=F, height=3.5,width=7}
 #### Figure 10.9
 # pdf("fig10_9.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
@@ -445,7 +615,7 @@ acf(OUT.1000[,4],ci.col="gray",xlab="lag")
 ```
 
 
-```{r,height=3.5,width=7}
+```{r,eval=F,include=F, height=3.5,width=7}
 #### Figure 10.10
 # pdf("fig10_10.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
@@ -457,7 +627,7 @@ acf(OUT.25000[,4],ci.col="gray",xlab="lag/25")
 ## 10.6 Discussion and further references
 
 
-```{r,height=3.5,width=7}
+```{r,eval=F,include=F, height=3.5,width=7}
 #### Figure 10.11
 # pdf("fig10_11.pdf",family="Times",height=3.5,width=7)
 par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
@@ -473,9 +643,11 @@ legend(180,2.5,legend=c("GLS estimate","OLS estimate"),bty="n",
       lwd=c(2,2),col=c("black","gray"))
 ```
 
+<!--
+
 # Reference
 
 Hoff, P. D. (2009). A first course in Bayesian statistical methods (Chapter 10). New York: Springer.
 
-
+-->
 
