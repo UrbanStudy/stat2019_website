@@ -27,6 +27,8 @@ pacman::p_load(tidyverse, knitr, readr, pander, ggplot2,kableExtra)
 
 ```
 
+
+
 # Appendix
 
 ```{r,echo=F}
@@ -289,6 +291,68 @@ kableExtra::kable(PHI)
 ## EM Method with full data
 
 
+$$\log(f(\beta_0,\beta_1,\sigma|y,z))=-\frac{n}2\ln(2\pi)-n\ln(\sigma)-\frac1{2\sigma^2}\sum_{i=1}^n(t_i-\beta_0-\beta_1\nu_i)^2$$
+
+$\mu_i=\beta_0-\beta_1\nu_i$;
+$\mu_j=\beta_0-\beta_1\nu_j$;
+$z^{\star}_i=\frac{w_i-\mu_i^{\star}}{\sigma^{\star}}$
+
+- E-step
+Let $\vec\theta=(\beta_0,\beta_1,\sigma)$
+
+$$E[T_i|T_i>w_i,\vec\theta^\star]=\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})$$
+
+$$E[T_i^2|T_i>w_i,\vec\theta^\star]=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star})H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})$$
+
+$$E[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star})H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-2(\beta_0+\beta_1\nu_i)[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})]+(\beta_0+\beta_1\nu_i)^2$$
+
+$$E[(T_i-\mu_i)^2|T_i>w_i,\vec\theta^\star]=(\mu_i^{\star}-\mu_i)^2+\sigma^{\star2}+\sigma^{\star}H(z^{\star}_i)(w_i+\mu_i^{\star}-2\mu_i)$$
+
+
+$$Q(\vec\theta,\vec\theta^\star)=-\frac{n}2\ln(2\pi)-n\ln(\sigma)-\frac1{2\sigma^2}\sum_{j=1}^m(t_j-\beta_0-\beta_1\nu_j)^2-\frac1{2\sigma^2}\sum_{i=m+1}^nE[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]$$
+
+$$=-\frac{n}2\ln(2\pi)-n\ln(\sigma)-\frac1{2\sigma^2}\sum_{j=1}^m(t_j-\mu_j)^2-\frac1{2\sigma^2}\sum_{i=m+1}^n[(\mu_i^{\star}-\mu_i)^2+\sigma^{\star2}+\sigma^{\star}H(z^{\star}_i)(w_i+\mu_i^{\star}-2\mu_i)]$$
+
+
+- M-step
+
+$$\frac{\partial Q}{\partial\beta_0}=-\frac1{\sigma^2}\left\{\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-\beta_0-\beta_1\nu_i]\right\}=0$$
+
+$$n\beta_0=\sum_{j=1}^mt_j+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(z^{\star}_i)]-\beta_1n\bar\nu$$
+
+
+$$\frac{\partial Q}{\partial\beta_1}=-\frac1{\sigma^2}\left\{\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]\nu_j+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-\beta_0-\beta_1\nu_i]\nu_i\right\}=0$$
+
+$$n\beta_0\bar\nu+\beta_1\sum_{i=1}^n\nu_i^2=\sum_{j=1}^mt_j\nu_j+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(z^{\star}_i)]\nu_i$$
+
+$$\beta_1(\sum_{i=1}^n\nu_i^2-n\bar\nu^2)=\sum_{j=1}^mt_j(\nu_j-\bar\nu)+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(z^{\star}_i)](\nu_i-\bar\nu)$$
+
+
+$$\frac{\partial Q}{\partial\sigma^2}=\frac1{2\sigma^2}\left\{-n+\frac1{\sigma^2}\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\frac1{\sigma^2}\sum_{i=m+1}^nE[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]\right\}=0$$
+$$\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\sum_{i=m+1}^n\left\{\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star}-2\mu_i)H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-2\mu_i\mu_i^\star+\mu_i^2\right\}=n\sigma^2$$
+
+$$\sigma^2=\frac1n\sum_{j=1}^m[t_j-\mu_j]^2+\frac1n\sum_{i=m+1}^n\left\{(\mu_i^{\star}-\mu_i)^2+\sigma^{\star2}+\sigma^{\star}H(z^{\star}_i)(w_i+\mu_i^{\star}-2\mu_i)\right\}$$
+
+## the EM algorithm's pseudo code
+
+\begin{algorithm}[htbp]
+    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+    \Input{observed data $\mathcal{D}=\{\vec{x}_1,\vec{x}_2,\cdots, \vec{x}_N$\},joint distribution $P(\vec{x},\vec{z}|\vec{\theta})$}
+	\Output{model's parameters $\vec{\theta}$}
+
+	// 1. identify hidden variables $\vec{z}$, write out the log likelihood function $\ell(\vec{x},\vec{z}|\vec{\theta})$ \\
+	$\vec{\theta}^{(0)}$ = ... // initialize \\
+	
+	\While{(!convergency)} {
+	    // 2. E-step: plug in $P(\vec{x},\vec{z}|\vec{\theta})$, derive the formula of $Q(\vec{\theta}, \vec{\theta}^{t-1})$ \\
+	    $Q(\vec{\theta}, \vec{\theta}^{t-1})=\mathbb{E}\left[\ell_c(\vec{\theta})| \mathcal{D},\theta^{t-1}\right]$ \\
+	    // 3. M-step: find $\vec{\theta}$ that maximizes the value of $Q(\vec{\theta}, \vec{\theta}^{t-1})$ \\
+		$\vec{\theta}^t=\arg\max\limits_{\vec{\theta}} Q(\vec{\theta}, \vec{\theta}^{t-1})$ \\
+	}
+	
+\caption{EM algorithm}
+\end{algorithm}
+
 
 ```{r,echo=F}
 I_u <- c(11:17,21:25,31:35)
@@ -296,39 +360,45 @@ I_c <- c(1:10,18:20,26:30,36:40)
 temp <- c(150,170,190,220) #temperature levels 
 trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
 nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10))
-y<- y_0<-log10(c(                          rep(8064,10),
+t<- t_0<-log10(c(                          rep(8064,10),
          1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
                      408,408,1344,1344,1440,rep(1680,5),
                         408,408,504,504,504,rep(528,5)))
+
 # initial value
 m <- length(I_u)
 n<-length(I_c)+m
-w<- unique(y_0[I_c])
+w<- unique(t_0[I_c])
 
-S <- 60
-THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
-     c('Iteration','Intercept','Slope','Sigma','mu150','mu170','mu190','mu220')))
+nu_i <- nu[I_c]
+nu_j <- nu[I_u]
+nu_bar <- mean(nu)
 
-fit0 <- lm(y~nu) 
-fit_c <- lm(y[I_c]~nu[I_c])
-fit_u <- lm(y[I_u]~nu[I_u])
+t_i<- t[I_c]
+t_j<- t[I_u]
+
+
+fit0 <- lm(t~nu) 
+fit_c <- lm(t_i~nu_i)
+fit_u <- lm(t_j~nu_j)
 
 sigma <- sigma(fit0) #standard error of residuals 
 beta0 <- coef(fit0)[1] #intercept 
 beta1 <- coef(fit0)[2] #slope 
 
-nu_i <- nu[I_c]
-nu_j <- nu[I_u]
 
-mu_i <- beta0+beta1*nu_i
 mu_j <- beta0 + beta1 * nu_j
-
-H_i <- dnorm((y_0[I_c]-mu_i)/sigma)/(1-pnorm((y_0[I_c]-mu_i)/sigma))
+SS_nu <- sum(nu^2)-n*nu_bar^2
+mu_i <- beta0 + beta1 * nu_i
+z_i=(t_i-mu_i)/sigma
+H_i <- dnorm(z_i)/(1-pnorm(z_i))
 # H_i <-dnorm(0)/(1-pnorm(0))
-D_j <- y_0[I_u]-mu_j  # difference between uncensored y and mean_j
-ET  <- unique(mu_i+ sigma*H_i) 
+ET_i  <- mu_i+ sigma*H_i
 
-THETA[1,]<-theta<-c(1, beta0, beta1,sigma,ET)
+S <- 60
+THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu150','mu170','mu190','mu220')))
+THETA[1,]<-theta<-c(1, beta0, beta1,sigma,unique(ET_i))
 Q <- 0
 k=1
 delta = 1e-4
@@ -341,30 +411,25 @@ beta1<- THETA[k,3]
 sigma<- THETA[k,4]
 
 # M step    
-mu_i <- beta0+beta1*nu_i
-# H_i<-   dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
 
-SS_nu <- sum((nu_j)^2)+sum((nu_i)^2)
-MS_nu <- sum(nu)^2/n
+mu_i <- beta0 + beta1 * nu_i
+#z_i=(t_i-mu_i)/sigma
+#H_i <- dnorm(z_i)/(1-pnorm(z_i))
+ET_i <- mu_i+ sigma*H_i
 
-beta0_star <- sum(y_0[I_u])/n+
-                 (sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
-                   (MS_nu-SS_nu)*sum(nu)/n-
-                sum(nu)/(MS_nu-SS_nu)/n*
-                 sum((mu_i+sigma*H_i)*(sum(nu)/n-1/(sum(nu)/(MS_nu-SS_nu))-nu_i))
+beta0_star <- sum(t_j)/n+sum(ET_i)/n-
+              nu_bar/SS_nu*(sum(t_j*(nu_j-nu_bar))+sum(ET_i*(nu_i-nu_bar)))
                
-beta1_star <- -(sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
-                 (MS_nu-SS_nu)+
-              1/(MS_nu-SS_nu)*sum((mu_i+sigma*H_i)*(sum(nu)/n-nu_i))
-
-mu_j <- beta0_star+beta1_star*nu_j
- D_j <- y_0[I_u]-mu_j  
+beta1_star <- (sum(t_j*(nu_j-nu_bar))+sum(ET_i*(nu_i-nu_bar)))/SS_nu
 
 mu_i_star <- beta0_star+beta1_star*nu_i 
-# H_i_star<-   dnorm((y[index_censored]-mu_i_star)/sigma)/(1-pnorm((y[index_censored]-mu_i_star)/sigma))
-sigma_star <- (sum((y_0[I_u]-beta0_star-beta1_star*nu_j)^2)+
-                 sum(sigma^2+H_i*sigma*2*(mu_i-mu_i_star)+(mu_i-mu_i_star)^2)
+mu_j_star <- beta0_star+beta1_star*nu_j
+
+sigma_star <- (sum((t_j-mu_j_star)^2)+
+                 sum(sigma^2+sigma*H_i*(ET_i+mu_i-2*mu_i_star)+(mu_i-mu_i_star)^2)
                )/n
+
+ET_i_star <- mu_i_star+ sigma_star*H_i
 
 # E step
 # Get Q
@@ -372,21 +437,18 @@ k <-  k+1
 Q[k] <-  
  -n*log(2*pi)/2-
   n*log(sigma_star)-
- (1/(2*sigma_star^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
+ (1/(2*sigma_star^2))*sum((t_j-mu_j_star)^2)-# 1/2sigma^2*sum(j uncensored)-
  (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
-                     mu_i^2+       # mu_i_star^2+
-                     sigma^2+       # sigma_star^2+                         
-                     sigma*(        # sigma_star*(
-  y_0[I_c]+mu_i-2*mu_i_star #      w_i+mu_i_star-2mu_i
-                            )*H_i-   #            )*H)-
-                     2*mu_i*mu_i_star+    # 2*mu_i*mu_i_star+
-                     mu_i_star^2               # mu_i^2
-                    )                   #                   )
+                      sigma^2+       # sigma^2+                         
+                      sigma*H_i*(    # sigma*H*(
+          ET_i+mu_i-2*mu_i_star)+     # w_i+mu_i_star-2mu_i)
+             (mu_i-mu_i_star)^2)     # (mu_i-mu_i_star)^2)
+        
 # Update THETA
  THETA[k,2] <- beta0_star
  THETA[k,3] <- beta1_star
  THETA[k,4] <- sigma_star
-THETA[k,5:8]<-unique(mu_i_star+ sigma_star*H_i)
+THETA[k,5:8]<-unique(ET_i_star)
 THETA[k,1] <- k
 
  if(abs(Q[k]-Q[k-1])<=delta) break
@@ -397,11 +459,11 @@ Using the EM method, the results of $\hat\beta_0$,$\hat\beta_1$,$\hat\sigma$ are
 
 
 ```{r,echo=F}
-plot(nu,y_0,main="EM Method with full data",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+plot(nu,t_0,main="EM Method with full data",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
      xlim=c(2,2.5),ylim=c(2.5,5),
      panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
 for (i in (1:max(THETA[,1],na.rm =T)))
-abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(1/max(THETA[,1],na.rm =T)))
+abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(i/max(THETA[,1],na.rm =T)))
 abline(fit_c,lwd=0.5,lty=1,col="red")
 abline(fit_u,lwd=0.5,lty=1,col="blue")
 text(2.48,4.6, labels = "58th");text(2.45,4.35, labels = "1st")
@@ -416,43 +478,51 @@ EM_full<- THETA[max(THETA[,1],na.rm =T),]
 ## EM Method removing 150c data
 
 ```{r,echo=F}
+rm(list=ls())
 I_c<-c(8:10,16:20,26:30)
 I_u<-c(1:7,11:15,21:25)
-temp <- c(170,190,220) #temperature levels 
-trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
+temp <- c(170,190,220) 
+trec <- 1000/(temp+273.2) 
 nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10))
-y<- y_0<-log10(c(                         
-         1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
-                     408,408,1344,1344,1440,rep(1680,5),
-                        408,408,504,504,504,rep(528,5)))
+t<- t_0<-log10(c(                         
+  1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
+  408,408,1344,1344,1440,rep(1680,5),
+  408,408,504,504,504,rep(528,5)))
+
 # initial value
 m <- length(I_u)
 n<-length(I_c)+m
-w<- unique(y_0[I_c])
+w<- unique(t_0[I_c])
 
-S <- 25
-THETA<-matrix(nrow=S,ncol=7,dimnames=list(NULL, 
-     c('Iteration','Intercept','Slope','Sigma','mu170','mu190','mu220')))
+nu_i <- nu[I_c]
+nu_j <- nu[I_u]
+nu_bar <- mean(nu)
+nu_bar_i <- mean(nu_i)
+nu_bar_j <- mean(nu_j)
 
-fit0 <- lm(y~nu) 
-fit_c <- lm(y[I_c]~nu[I_c])
-fit_u <- lm(y[I_u]~nu[I_u])
+t_i<- t[I_c]
+t_j<- t[I_u]
+
+
+fit0 <- lm(t~nu) 
+fit_c <- lm(t_i~nu_i)
+fit_u <- lm(t_j~nu_j)
 
 sigma <- sigma(fit0) #standard error of residuals 
 beta0 <- coef(fit0)[1] #intercept 
 beta1 <- coef(fit0)[2] #slope 
 
-nu_i <- nu[I_c]
-nu_j <- nu[I_u]
-
-mu_i <- beta0+beta1*nu_i
 mu_j <- beta0 + beta1 * nu_j
-
-H_i <- dnorm((y_0[I_c]-mu_i)/sigma)/(1-pnorm((y_0[I_c]-mu_i)/sigma))
+SS_nu <- sum((nu_j)^2)+sum((nu_i)^2)-n*nu_bar^2
+mu_i <- beta0 + beta1 * nu_i
+H_i <- dnorm((t_i-mu_i)/sigma)/(1-pnorm((t_i-mu_i)/sigma))
 # H_i <-dnorm(0)/(1-pnorm(0))
-D_j <- y_0[I_u]-mu_j  # difference between uncensored y and mean_j
+
 ET  <- unique(mu_i+ sigma*H_i) 
 
+S <- 25
+THETA<-matrix(nrow=S,ncol=7,dimnames=list(NULL, 
+                                          c('Iteration','Intercept','Slope','Sigma','mu170','mu190','mu220')))
 THETA[1,]<-theta<-c(1, beta0, beta1,sigma,ET)
 Q <- 0
 k=1
@@ -461,60 +531,51 @@ delta = 1e-4
 
 ```{r,echo=F}
 repeat {  
-beta0<- THETA[k,2]
-beta1<- THETA[k,3]
-sigma<- THETA[k,4]
+  beta0<- THETA[k,2]
+  beta1<- THETA[k,3]
+  sigma<- THETA[k,4]
+  
+  # M step    
+mu_i <- beta0 + beta1 * nu_i
+#z_i=(t_i-mu_i)/sigma
+#H_i <- dnorm(z_i)/(1-pnorm(z_i))
+ET_i <- mu_i+ sigma*H_i
 
-# M step    
-mu_i <- beta0+beta1*nu_i
-# H_i<-   dnorm((y[index_censored]-mu_i)/sigma)/(1-pnorm((y[index_censored]-mu_i)/sigma))
-
-SS_nu <- sum((nu_j)^2)+sum((nu_i)^2)
-MS_nu <- sum(nu)^2/n
-
-beta0_star <- sum(y_0[I_u])/n+
-                 (sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
-                   (MS_nu-SS_nu)*sum(nu)/n-
-                sum(nu)/(MS_nu-SS_nu)/n*
-                 sum((mu_i+sigma*H_i)*(sum(nu)/n-1/(sum(nu)/(MS_nu-SS_nu))-nu_i))
+beta0_star <- sum(t_j)/n+sum(ET_i)/n-
+              nu_bar/SS_nu*(sum(t_j*(nu_j-nu_bar))+sum(ET_i*(nu_i-nu_bar)))
                
-beta1_star <- -(sum(nu_j*y_0[I_u])-sum(nu)*sum(y_0[I_u])/n)/
-                 (MS_nu-SS_nu)+
-              1/(MS_nu-SS_nu)*sum((mu_i+sigma*H_i)*(sum(nu)/n-nu_i))
-
-mu_j <- beta0_star+beta1_star*nu_j
- D_j <- y_0[I_u]-mu_j  
+beta1_star <- (sum(t_j*(nu_j-nu_bar))+sum(ET_i*(nu_i-nu_bar)))/SS_nu
 
 mu_i_star <- beta0_star+beta1_star*nu_i 
-# H_i_star<-   dnorm((y[index_censored]-mu_i_star)/sigma)/(1-pnorm((y[index_censored]-mu_i_star)/sigma))
-sigma_star <- (sum((y_0[I_u]-beta0_star-beta1_star*nu_j)^2)+
-                 sum(sigma^2+H_i*sigma*2*(mu_i-mu_i_star)+(mu_i-mu_i_star)^2)
+mu_j_star <- beta0_star+beta1_star*nu_j
+
+sigma_star <- (sum((t_j-mu_j_star)^2)+
+                 sum(sigma^2+sigma*H_i*(ET_i+mu_i-2*mu_i_star)+(mu_i-mu_i_star)^2)
                )/n
 
-# E step
-# Get Q
-k <-  k+1  
-Q[k] <-  
- -n*log(2*pi)/2-
-  n*log(sigma_star)-
- (1/(2*sigma_star^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
- (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
-                     mu_i^2+       # mu_i_star^2+
-                     sigma^2+       # sigma_star^2+                         
-                     sigma*(        # sigma_star*(
-  y_0[I_c]+mu_i-2*mu_i_star #      w_i+mu_i_star-2mu_i
-                            )*H_i-   #            )*H)-
-                     2*mu_i*mu_i_star+    # 2*mu_i*mu_i_star+
-                     mu_i_star^2               # mu_i^2
-                    )                   #                   )
-# Update THETA
- THETA[k,2] <- beta0_star
- THETA[k,3] <- beta1_star
- THETA[k,4] <- sigma_star
-THETA[k,5:7]<-unique(mu_i_star+ sigma_star*H_i)
-THETA[k,1] <- k
-
- if(abs(Q[k]-Q[k-1])<=delta) break
+ET_i_star <- mu_i_star+ sigma_star*H_i
+  
+  # E step
+  # Get Q
+  k <-  k+1  
+  Q[k] <-  
+    -n*log(2*pi)/2-
+    n*log(sigma_star)-
+    (1/(2*sigma_star^2))*sum((t_j-mu_j_star)^2)-# 1/2sigma^2*sum(j uncensored)-
+    (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
+                            sigma^2+       # sigma^2+                         
+                            sigma*H_i*(    # sigma*H*(
+                ET_i+mu_i-2*mu_i_star)+     # w_i+mu_i_star-2mu_i)
+                   (mu_i-mu_i_star)^2)     # (mu_i-mu_i_star)^2)
+  
+  # Update THETA
+  THETA[k,2] <- beta0_star
+  THETA[k,3] <- beta1_star
+  THETA[k,4] <- sigma_star
+  THETA[k,5:7]<-unique(ET_i_star)
+  THETA[k,1] <- k
+  
+  if(abs(Q[k]-Q[k-1])<=delta) break
 }
 ```
 
@@ -522,15 +583,16 @@ THETA[k,1] <- k
 
 
 ```{r,echo=F}
-plot(nu,y_0,main="EM Method without 150c",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+plot(nu,t_0,main="EM Method without 150c",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
      xlim=c(2,2.5),ylim=c(2.5,5),
      panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
 for (i in (1:max(THETA[,1],na.rm =T)))
-abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(1/max(THETA[,1],na.rm =T)))
+  abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(1/max(THETA[,1],na.rm =T)))
 abline(fit_c,lwd=0.5,lty=1,col="red")
 abline(fit_u,lwd=0.5,lty=1,col="blue")
 text(2.48,4.5, labels = "24th");text(2.45,4.4, labels = "1st")
 legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
+
 ```
 
 ```{r,echo=F}
@@ -554,46 +616,6 @@ kable(compare)
 
 
 
-\pagebreak
-
-- E-step
-
-$$Q(\vec\theta,\vec\theta^\star)=-\frac{n}2\ln(2\pi)-n\ln(\sigma)-\frac1{2\sigma^2}\sum_{j=1}^m(t_j-\beta_0-\beta_1\nu_j)^2-\frac1{2\sigma^2}\sum_{i=m+1}^nE[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]$$
-
-$$E[T_i|T_i>w_i,\vec\theta^\star]=\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})$$
-
-$$E[T_i^2|T_i>w_i,\vec\theta^\star]=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star})H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})$$
-
-$$E[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star})H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-2(\beta_0+\beta_1\nu_i)[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})]+(\beta_0+\beta_1\nu_i)^2$$
-
-- M-step
-
-$$\frac{\partial Q}{\partial\beta_0}=-\frac1{\sigma^2}\left\{\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-\beta_0-\beta_1\nu_i]\right\}=0$$
-$$\frac{\partial Q}{\partial\beta_1}=-\frac1{\sigma^2}\left\{\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]\nu_j+\sum_{i=m+1}^n[\mu_i^\star+\sigma^{\star}H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-\beta_0-\beta_1\nu_i]\nu_i\right\}=0$$
-
-$$\frac{\partial Q}{\partial\sigma^2}=\frac1{2\sigma^2}\left\{-n+\frac1{\sigma^2}\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\frac1{\sigma^2}\sum_{i=m+1}^nE[(T_i-\beta_0-\beta_1\nu_i)^2|T_i>w_i,\vec\theta^\star]\right\}=0$$
-$$\sum_{j=1}^m[t_j-\beta_0-\beta_1\nu_j]^2+\sum_{i=m+1}^n\left\{\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(w_i+\mu_i^{\star}-2\mu_i)H(\frac{w_i-\mu_i^{\star}}{\sigma^{\star}})-2\mu_i\mu_i^\star+\mu_i^2\right\}=n\sigma^2$$
-
-
-## the EM algorithm's pseudo code
-
-\begin{algorithm}[htbp]
-    \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
-    \Input{observed data $\mathcal{D}=\{\vec{x}_1,\vec{x}_2,\cdots, \vec{x}_N$\},joint distribution $P(\vec{x},\vec{z}|\vec{\theta})$}
-	\Output{model's parameters $\vec{\theta}$}
-
-	// 1. identify hidden variables $\vec{z}$, write out the log likelihood function $\ell(\vec{x},\vec{z}|\vec{\theta})$ \\
-	$\vec{\theta}^{(0)}$ = ... // initialize \\
-	
-	\While{(!convergency)} {
-	    // 2. E-step: plug in $P(\vec{x},\vec{z}|\vec{\theta})$, derive the formula of $Q(\vec{\theta}, \vec{\theta}^{t-1})$ \\
-	    $Q(\vec{\theta}, \vec{\theta}^{t-1})=\mathbb{E}\left[\ell_c(\vec{\theta})| \mathcal{D},\theta^{t-1}\right]$ \\
-	    // 3. M-step: find $\vec{\theta}$ that maximizes the value of $Q(\vec{\theta}, \vec{\theta}^{t-1})$ \\
-		$\vec{\theta}^t=\arg\max\limits_{\vec{\theta}} Q(\vec{\theta}, \vec{\theta}^{t-1})$ \\
-	}
-	
-\caption{EM algorithm}
-\end{algorithm}
 
 
 # Reference
@@ -607,102 +629,6 @@ Aitkin, M. (1981). A Note on the Regression Analysis of Censored Data. Technomet
 
 
 <!--
-
-
-mu_i0 <- beta0_0 + beta1_0 * nu[index_censored]
-mu_j0 <- beta0_0 + beta1_0 * nu[index_uncensored]
-D_j <- y[index_uncensored]-mu_j0 
-
-beta0 <- beta0_0
-beta1 <- beta1_0
-sigma <- sigma_0  
-
-
-Y<-matrix(nrow=S,ncol=40)
-
-Q[1] <- -n*log(2*pi)/2-n*log(sigma_0)-(1/(2*sigma_0^2))*(sum((D_j)^2)+sum(ER))
-
-par=c(beta0_star,beta1_star,sigma_star)
-
-# define mu_i function
-mu_i_F <- function (beta0,beta1) {
-  beta0+beta1*nu[index_censored]
-}
-
-# define H function
-HF <- function (beta0,beta1,sigma) {
-  dnorm((y_censored[index_censored]-mu_i_F(beta0,beta1))/sigma
-       )/( 
-1-pnorm((y_censored[index_censored]-mu_i_F(beta0,beta1))/sigma
-       ) )
-}
-
-par=c(beta0,beta1,sigma)
-
-ET <- mu_i_F(par[1],par[2])+ par[3]*HF(par[1],par[2],par[3])
-ET_sq <- mu_i_F(par[1],par[2])^2+ 
-         sigma_star^2+
-         sigma_star*(y[index_censored]+mu_i_F(par[1],par[2]))*HF(par[1],par[2],par[3])
-ER <- ET_sq-2*mu_i0*ET+mu_i0^2
-
-# Update y
-y[index_censored] <- ET
-y[index_uncensored] <- y_uncensored[index_uncensored]
-
-
-Q_theta <- function(par){ 
- -n*log(2*pi)/2-
-  n*log(sigma)-
- (1/(2*sigma^2))*sum((D_j)^2)-          # 1/2sigma^2*sum(j uncensored) -
- (1/(2*sigma^2))*sum(                   # 1/2sigma^2*sum(i censored  
-  (mu_i_F(par[1],par[2]))^2+            # mu_i_star^2+
-   par[3]*(                                # sigma_star*(
-           y[index_censored]+              #             w_i+
-           mu_i_F(par[1],par[2])-          #             mu_i_star-
-           2*mu_i                          #             2mu_i
-           )*HF(par[1],par[2],par[3])-     #            )*H)-
-   2*mu_i*mu_i_F(par[1],par[2])+           # 2*mu_i*mu_i_star+
-   mu_i^2                                  # mu_i^2
-                   )+                      #            )+
-  (1/(2*sigma^2))*(n-m)*(par[3]^2)      # 1/2sigma^2*(n-m)*sigma_star^2+  
-}
-
-
-############ from Jacob
-# par <- optim(par,
-#            Q_theta,
-#            control=list(fnscale=-1),
-#            method="L-BFGS-B", 
-#             lower=c(-10,2,0.1),
-#             upper=c(-2,10,1))$par
-
-############ cheat
-fit <- lm(y~nu)   # fit a new model
-par[1] <- coef(fit)[1] #intercept 
-par[2] <- coef(fit)[2] #slope 
-par[3] <- sigma(fit)  
-############ 
-
-
-
-# Update ET
-ET <- mu_i_F(par[1],par[2])+ par[3]*HF(par[1],par[2],par[3])
-
-# Update Q
-Q[k]<- Q_theta(par)
-
-# Update THETA
- THETA[k,1] <- par[1]
- THETA[k,2] <- par[2]
- THETA[k,3] <- par[3]
- THETA[k,4:7]<-unique(ET) 
- THETA[k,8] <- k
-# par=c(beta0,beta1,sigma)
- 
- # Update Y
-Y[k,] <- y  
- 
-
 
 
 
@@ -749,248 +675,9 @@ $\hat\mu^{\star(17)}_{2.26}=3.87676$
 
 
 
-```{r, eval=F, include=F}
-# Robin's Code
-y <- c(rep(8064,10),1764,2772,3444,3542,3780,4860,5196,rep(5448,3),408,408,1344,1344,1440,rep(1680,5),408,408,504,504,504,rep(528,5)) 
-x <- c(rep(150,10),rep(170,10),rep(190,10),rep(220,10)) 
-rec <- 1000/(x+273.2) #reciprocal of the absolute temperature T 
-temp <- c(150,170,190,220) #temperature levels 
-trec <- 1000/(temp+273.2) #reciprocal of the temperature levels 
-logy <- log10(y) #log10 of the observed life time
-
-#Iteration 0 
-fit0 <- lm(logy~rec) #linear model between log10 of observed life time for different r eciprocal values
-plot(rec,logy,main="Scatterplot",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
-     xlim=c(2,2.4),ylim=c(2.5,4),
-     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
-abline(fit0,lwd=2,lty=2,col="red")
-
-
-se <- sigma(fit0) #standard error of residuals 
-beta00 <- coef(fit0)[1] #intercept 
-beta01 <- coef(fit0)[2] #slope 
-m0 <- beta00 + beta01*trec #mean log time to failure 
-cen <- c(8064,5448,1680,528) #censoring times 
-logcen <- log10(cen) #log10 censoring times 
-z <- (logcen-m0)/se #z-vector 
-e0 <- m0 + se*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
-
-
-#Iteration 1 
-logynew1 <- c(rep(e0[1],10),log10(1764),log10(2772),log10(3444),log10(3542),log10(3780),log10(4860),log10(5196),rep(e0[2],3),log10(408),log10(408),log10(1344),log10(1344), log10(1440),rep(e0[3],5),log10(408),log10(408),log10(504),log10(504),log10(504),rep(e0 [4],5)) 
-fit1 <- lm(logynew1~rec) 
-se1 <- sigma(fit1) 
-beta10 <- coef(fit1)[1] 
-beta11 <- coef(fit1)[2] 
-m1 <- beta10 + beta11*trec 
-z1 <- (logcen-m1)/se1 
-e1 <- m1 + se1*dnorm(z1)/(1-pnorm(z1)) 
-
-et <- e0 
-ek <- e1 
-c<-1 
-while(max(ek-et)>0.00001){
-  logynewk <- c(rep(ek[1],10),log10(1764),log10(2772),log10(3444),log10(3542),log10(3780),log10(4860),log10(5196),rep(ek[2],3),log10(408),log10(408),log10(1344),log10(1344),log10(1440),rep(ek[3],5),log10(408),log10(408),log10(504),log10(504),log10(504),rep (ek[4],5))
-  fitk <- lm(logynewk~rec)
-  sek <- sigma(fitk)
-  betak0 <- coef(fitk)[1]
-  betak1 <- coef(fitk)[2]
-  mk <- betak0 + betak1*trec
-  zk <- (logcen-mk)/sek
-  et <- ek
-  ek <- mk + sek*dnorm(zk)/(1-pnorm(zk))
-  c <- c+1 
-}
-```
 
 
 
-```{r,echo=F}
-# y_censored_150 <- c(rep(logcen[1],10),rep(0,30))
-# y_censored_170 <- c(rep(0,17),rep(logcen[2],3),rep(0,20))
-# y_censored_190 <- c(rep(0,25),rep(logcen[3],5),rep(0,10))
-# y_censored_220 <- c(rep(0,35),rep(logcen[4],5))
-# index <- which(y_0 %in% logcen)
-# y<-log10(c(rep(8064,10),1764,2772,3444,3542,3780,4860,5196,rep(5448,3),408,408,1344,1344,1440,rep(1680,5),408,408,504,504,504,rep(528,5))) #log10 of the observed life time
-# type <- c(rep(1,10),rep(0,7),rep(1,3),rep(0,5),rep(1,5),rep(0,5),rep(1,5))
-# 
-# index <- 1:(size-1)
-
-nu_uncensored <-c(rep(trec[2],7),rep(trec[3],5),rep(trec[4],5))
-nu_censored <- c(rep(trec[1],10),rep(trec[2],3),rep(trec[3],5),rep(trec[4],5))
-nu <- c(nu_uncensored,nu_censored) 
-index_nu <- c(rep(-2,7),rep(-3,5),rep(-4,5),rep(1,10),rep(2,3),rep(3,5),rep(4,5))
-n<-length(nu); m <- length(nu_uncensored)
-cen <- c(8064,5448,1680,528) #censoring times 
-w <- log10(cen) #log10 censoring times: last time still working
-y_uncensored <-log10(c(1764,2772,3444,3542,3780,4860,5196,408,408,1344,1344,1440,408,408,504,504,504))
-y_censored <- c(rep(w[1],10),rep(w[2],3),rep(w[3],5),rep(w[4],5))
-
-
-x <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10)) 
-cen <- c(8064,5448,1680,528) #censoring times 
-logcen <- log10(cen) #log10 censoring times 
-y_uncensored <-log10(c(rep(1,10),1764,2772,3444,3542,3780,4860,5196,rep(1,3),408,408,1344,1344,1440,rep(1,5),408,408,504,504,504,rep(1,5)))
-y_censored <- c(rep(logcen[1],10),rep(0,7),rep(logcen[2],3),rep(0,5),rep(logcen[3],5),rep(0,5),rep(logcen[4],5))
-
-
-```
-
-
-
-
-```{r, eval=F}
-# Jacob's Code
-#Starting off with slightly modified definitions from Iterative_LS code. We only need the 170 temp group :)
-y <- c(1764,2772,3444,3542,3780,4860,5196,rep(5448,3))
-x <- rep(170,10)
-rec <- 1000/(x+273.2) #reciprocal of the absolute temperature T
-temp <- 170 #temperature level
-trec <- 1000/(temp+273.2) #reciprocal of the temperature level
-logy <- log10(y) #log10 of the observed life time
-
-
-
-#might as well use the ptimized values from the Iterative_LS script as the prior parameter values
-delta <- 10^-7 #desired precision
-betak0 <- -5.818023  #betak0 from "fitk"
-betak1 <-  4.204138  #betak1 from "fitk"
-sigk   <-  0.2043    #Residual standard error from "fitk"
-n      <- 10
-m      <-  7
-HF <- function (a){
-  dnorm(a)/(1-pnorm(a))
-} #hazard function
-
-#Initializing starting values
-theta.star <- c(sigk,betak0,betak1) #initial parameter estimates
-c <- -1 #counter
-err<-delta+1 
-while(err>delta){
-
-muk<-betak0+betak1*trec
-H<-HF((logy-muk)/sigk)
-
-#Q function is from bottom of page 5, 11/20 notes
-#It must be defined w.r.t. par vector in order to use optim() for maximization
-#the format is:   par = c(sig, beta0, beta1)
-#optimize -> optimal values assigned to sigk betak0, betak1 
-#         -> repeat 
-Q <- function(par){
-  -n*log(2*pi)/2
-  -n*log(par[1])
-  -(1/(2*par[1]^2))*sum((logy[1:m]-par[2]-par[3]*trec[1:m])^2)
-  -(1/(2*par[1]^2))*sum(muk^2+sigk^2+sigk*(logy+muk)*H-2*(par[2]+par[3]*trec)*(muk+sigk*H)+(par[2]+par[3]*trec)^2)
-}
-
-#Q(c(sigk,betak0,betak1)) #Confirming Q evaluates at initialization. No NA -> good to go!
-
-theta <- optim(par=c(sigk,betak0,betak1),
-               Q,
-               control=list(fnscale=-1),
-               method="L-BFGS-B", 
-               lower=c(0,-Inf,-Inf),
-               upper=c(Inf,Inf,Inf))$par
-#note fnscale=-1 makes function values negative -> maximizes instead of minimizes Q, as desired
-
-#evaluate err and update par estimates
-err<-sqrt(sum((theta-theta.star)^2)) #finds norm of err vector
-theta.star <- theta #update to optimized values
-sigk   <- theta.star[1]
-betak0 <- theta.star[2]
-betak1 <- theta.star[3]
-c <- c+1
-}
-
-#results
-theta.star
-c
-err
-```
-
-
-
-```{r,eval=F}
-# Scratch code
-#############  
-z <- (Y[k,index_censored]-mu_i_star)/sigma_star
-H <- dnorm(z)/(1-pnorm(z))
-ET <- mu_i_star+ sigma_star*H
-ET_sq <- mu_i_star^2+ sigma_star^2+sigma_star*(Y[k,index_censored]+mu_i_star)*H
-ER <- ET_sq-2*mu_i*ET+mu_i^2
-Q[k] <- -n*log(2*pi)/2-n*log(sigma)-(1/(2*sigma^2))*(sum(D_j^2)+sum(ER))
-
-# partial derivative with beta0
-sum(D_j)+sum(ET-mu_i)=0
-# partial derivative with beta1
-sum(D_j*nu[index_uncensored])+sum((ET-mu_i)*nu[index_uncensored])=0
-# partial derivative with sigma
-sum(D_j^2)+sum(ER)=n*sigma^2
-
-################
-
-Q_theta <- function(beta0_star,beta1_star,sigma){ -n*log(2*pi)/2-n*log(sigma)
-  -(1/(2*sigma^2))*sum((D_j)^2)
-  -(1/(2*sigma^2))*sum((mu_i_star)^2
-                       +sigma_star^2
-                       +sigma_star*(Y[k,index_censored]+mu_i_star)*H(dnorm((Y[k,index_censored]-mu_i_star)/sigma_star)/(1-pnorm((Y[k,index_censored]-mu_i_star)/sigma_star)))
-                       -2*mu_i*(mu_i_star+ sigma_star*H(dnorm((Y[k,index_censored]-mu_i_star)/sigma_star)/(1-pnorm((Y[k,index_censored]-mu_i_star)/sigma_star))))
-                       +mu_i^2)
-
-
-
-
-
-  -(1/(2*sigma^2))*sum((Y[k,index_uncensored]-mu(THETA[k,5],THETA[k,6],nu[index_uncensored]))^2)
-  -(1/(2*sigma^2))*sum(muk^2+sigk^2+sigk*(logy+muk)*H
-                            -2*(THETA[5]+THETA[6]*trec)*(muk+sigk*H)
-                            +(THETA[k,5]+THETA[k,6]*nu[index_censored])^2)  
-  
-library("rootSolve")
-  
-model2 <- function(x, parms) 
-      c(F1 = x[1] + x[2] + x[3]^2 - parms[1],
-        F2 = x[1]^2 - x[2] + x[3] - parms[2],
-        F3 = 2 * x[1] - x[2]^2 + x[3] - parms[3])
-
-# first solution
-parms <- c(12, 2, 1)
-multiroot(model2, c(1, 1, 1), parms = parms)
-multiroot(model2, c(0, 0, 0), parms = parms*2)
-
-
-
-  # function mean log time to failure 
-mu <- function(beta0,beta1,nu) {beta_00 + beta_10*nu} 
-mu_0 <- mu(beta00,beta10,unique(nu))
-# function z
-z <- function(mu,sigma) {(y_censored-mu)/sigma}
-# functionn H
-H <- function(z){dnorm(z)/(1-pnorm(z))}
-# Expected mean log times to failure
-Test <- function(beta0,beta1,sigma,nu){mu(beta0,beta1,nu)+ sigma*H(z(y_censored,mu(beta0,beta1,nu),sigma))}
-mu_uncensored <- function(beta0,beta1,nu){mu(beta0,beta1,nu[index_uncensored])}
-SS_uncensored <- function(){sum((Y-mu_uncensored)^2)}
-
-# Subsequent iteration
-repeat { 
- theta[8] <- theta[8]+1     
- y_censored <- c(rep(theta[1],10),rep(theta[2],3),rep(theta[3],5),rep(theta[4],5))
- y<- y_uncensored+y_censored
- Y[theta[8],]<-y   # Replace the new censored values
- fit <- lm(y~trec)   # fit a new model
- theta[5] <- coef(fit)[1] #intercept 
- theta[6] <- coef(fit)[2] #slope 
- theta[7] <- sigma(fit) #standard error of residuals  
- 
- mu <- theta[5] + theta[6]*trec    
- z <- (w-mu)/theta[7] #z-vector 
- theta[1:4] <- mu + theta[7]*dnorm(z)/(1-pnorm(z)) #new expected mean log times to failure
- conv <- dist(rbind(THETA[theta[8]-1,1:4],theta[1:4])) 
- if(conv < delta) break 
-  THETA[theta[8],]<-theta         
-}
-```
 
 
 \section{The EM algorithm}
