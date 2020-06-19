@@ -1,0 +1,715 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+    latex_engine: xelatex
+  html_document:
+    toc: no
+    toc_float: no
+header-includes:
+ - \usepackage{multicol}
+ - \usepackage{multirow}
+ - \usepackage{caption}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{Courtney Crisp, Helen Huston, Shen Qu, Linchuan Zhang}
+ - \lhead{STAT 662 Final Project}
+ - \chead{}
+ - \rfoot{Page \thepage}
+ - \usepackage{graphicx}
+ - \usepackage{amssymb}
+ - \usepackage{unicode-math}
+ - \usepackage[ruled,vlined]{algorithm2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=4)
+library(scales)
+```
+
+##
+
+\begin{algorithm}[H]
+ \KwData{$Y\sim p(\vec\theta)$, $\vec\theta=(\lambda_{1:n},\beta)$}
+ \KwResult{generates $\vec\theta_k^{(1)},...,\vec\theta_k^{(s)} \sim\text{iid }p(\vec\theta|y)$}
+Initialization: $\alpha=1.802, \gamma=0.01, \delta=1$; 
+                 $\lambda_{1:n}^{(0)}=d_{1:n}/t_{1:n}$;
+                 $\tilde\beta=\beta^{(0)}= 2.459$\;
+ \For{the number of chains $k\leftarrow 1$ \KwTo K}{
+  \For{a chain $s\leftarrow 1$ \KwTo S}{
+1.Select two separate symmetric proposal distributions for $\lambda_{1:n}$ and $\beta$ \;
+
+$$\lambda_{1:n} \sim Gamma (\alpha+d_{1:n},\tilde\beta+t_{1:n})$$
+$$\beta \sim Gamma (\gamma+n\alpha,\delta+\sum\lambda)$$
+
+$$\pi(\lambda,\beta)=\prod_{i=1}^{10}\left\{ \frac{\lambda_i^{\alpha+d_i-1}(\beta+t_i)^{\alpha+d_i}}{\Gamma(\alpha+d_i)}\exp\left[-(\beta+t_i)\lambda_i\right]\right\}\cdot\frac{(\sum\lambda+\delta)^{\gamma+10\alpha}\beta^{\gamma+10\alpha-1}}{\Gamma({\gamma+10\alpha})}\exp\left\{-(\sum\lambda+\delta)\beta\right\}$$
+$$\frac{\pi(\lambda^\star,\beta^\star)}{\pi(\lambda,\beta)}=\prod_{i=1}^{10}\left\{(\frac{\lambda_i^\star}{\lambda_i})^{\alpha+d_i-1} (\frac{\beta^\star+t_i}{\beta+t_i})^{\alpha+d_i}\exp\left[-(\beta^\star+t_i)\lambda_i^\star+(\beta+t_i)\lambda_i\right]\right\}(\frac{\sum\lambda+\delta}{\sum\lambda^\star+\delta})^{\gamma+10\alpha}$$
+$$\cdot(\frac{\beta^\star}{\beta})^{\gamma+10\alpha-1}\cdot\exp\left\{-(\sum\lambda+\delta)\beta^\star+(\sum\lambda+\delta)\beta\right\}$$
+
+ Let  $$q(\theta^\star|\theta^{(s)}) =g(\theta^\star)=\prod_{i=1}^{10}\left\{ \frac{\lambda_i^{\alpha+d_i-1}(\tilde\beta+t_i)^{\alpha+d_i}}{\Gamma(\alpha+d_i)}\exp\left[-(\tilde\beta+t_i)\lambda_i\right]\right\}\cdot\frac{(\sum\lambda+\delta)^{\gamma+10\alpha}\beta^{\gamma+10\alpha-1}}{\Gamma({\gamma+10\alpha})}\exp\left\{-(\sum\lambda+\delta)\beta\right\}$$ 
+
+OR $g(\theta^\star)=\text{dNormal}(\theta|\mu,\sigma^2)$ OR $g(\theta^\star)=1$ \;
+
+$$r=\frac{\pi(\lambda^\star,\beta^\star)g(\lambda,\beta)}{\pi(\lambda,\beta)g(\lambda^\star,\beta^\star)}=\prod_{i=1}^{10}\left\{ (\frac{\beta^\star+t_i}{\beta+t_i})^{\alpha+d_i}\right\}\cdot\exp\left\{(\beta-\tilde\beta)\lambda+(\tilde\beta-\beta^\star)\lambda^\star\right\}$$
+
+
+2. update $\lambda_{1:n}$\; 
+   {
+  a) sample $\lambda_{1:n}^\star \sim Gamma (\alpha+d_{1:n},\beta^{(s)}+t_{1:n})$\; 
+  b) compute $r(\lambda_{1:n},\lambda_{1:n}^\star,\tilde\beta,\beta)$\;
+  c) set \eIf{the ratio $r >1$}
+   {$\lambda_{1:n}^{(s+1)}\longleftarrow \lambda_{1:n}^\star$ with probability $\min(1,r)$}
+   {$\lambda_{1:n}^{(s+1)}\longleftarrow \lambda_{1:n}^{(s)}$ with probability $\max(0,1-r)$}
+   }
+3. update $\beta$\; 
+   {
+   a) sample $\beta^\star \sim Gamma (\gamma+n\alpha,\delta+\sum\lambda^\star)$\; 
+   b) compute $r = (\lambda_{1:n},\lambda_{1:n}^\star,\beta,\beta^\star)$\;
+   c) set  \eIf{the ratio $r >1$}
+      {$\beta^{(s+1)}\longleftarrow \beta^\star$ with probability $\min(1,r)$}
+      {$\beta^{(s+1)}\longleftarrow \beta^{(s)}$ with probability $\max(0,1-r)$}
+   }
+   }
+      generates a set of $\theta^{(s+1)}$ given $\theta^{(s)}$\; 
+ }
+ \caption{The Metropolis-Hastings algorithm}
+\end{algorithm}
+
+
+### The initial setting
+
+```{r, echo=T}
+pump <- matrix(c(5, 94.320,1, 15.720,5, 62.880,14, 125.760,3, 5.240,
+                 19, 31.440,1, 1.048,1, 1.048,4, 2.096,22, 10.480),2,10)
+pump <-t(pump)
+colnames(pump) <- c("Failures", "Times")
+d <- pump[,1]
+t <- pump[,2]
+n <- length(d)
+
+alpha<-1.802; gamma <- 0.01; delta<- 1 #def hyperparameters
+beta <- beta0 <- gamma/delta #initialize lambda and beta
+lambda <- lambda0 <- d/t; lambda.star <- rep(NA,n)
+beta_true  <- 2.459 
+lambda_true<-  c(0.065757300, 0.136413079, 0.098165113, 0.121128692, 0.57794838, 0.60457447, 0.70749039, 0.71815569, 1.20537403, 1.8124373)
+S <- 10000; # set.seed(121)
+K <-  100
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20)
+burnin <- 1:(S/2)
+THETA_0 <- THETA_g <- THETA_n<-THETA_u <- THETA_e <- THETA_1<- matrix(NA,K,12)
+par.names <- c("Beta", "Lambda1","Lambda2","Lambda3","Lambda4","Lambda5","Lambda6","Lambda7","Lambda8","Lambda9","Lambda10","Acceptance Rate")
+colnames(THETA_0)<-colnames(THETA_g)<-colnames(THETA_e)<-colnames(THETA_n)<-colnames(THETA_u)<-colnames(THETA_1) <-par.names
+```
+
+### The kernel setting
+
+\begin{table}
+\centering
+\caption{The list of function setting}
+\begin{tabular}{|c|c||c|c|c||c|c|}
+\toprule
+Distribution & Candidate & \multicolumn{3}{|c||}{ transition probability kernel $g(x)$} & \multicolumn{2}{c|}{Sampler} \\ 
+\cline{3-7}  &         & Initial values  &  Shape &   Rate    &    Shape    &     Rate       \\ 
+\midrule
+\multirow{2}{*}{Note} & $\lambda_{1:n}$ &  $\lambda_0=(\tilde\lambda,100\tilde\lambda,\tilde\lambda/100,\lambda_0)$ & / & / & $d+\alpha$ & $\beta^\star+t$\\ 
+\cline{2-7}  & $\beta$ & $\beta_0=(\tilde\beta,100\tilde\beta,\tilde\beta/100,\beta_0)$ & / & / & $\gamma+n\alpha$ & $\delta+\sum\lambda^\star$\\
+\midrule
+\multirow{2}{*}{Gamma} & $\lambda_{1:n}$ &  $\lambda_0=(\tilde\lambda,8\tilde\lambda,\tilde\lambda/8,\lambda_0)$ & $d+\alpha$ & $\beta_0+t$ & $d+\alpha$ & $\beta^\star+t$\\ 
+\cline{2-7}  & $\beta$ & $\beta_0=(\tilde\beta,2\tilde\beta,\tilde\beta/8,\tilde\beta/4)$ & $\gamma+n\alpha$ & $\delta+\sum\lambda$ & $\gamma+n\alpha$ & $\delta+\sum\lambda^\star$\\
+\midrule
+\multicolumn{3}{|c|}{ }    &\multicolumn{2}{|c||}{Rate}& \multicolumn{2}{|c|}{Rate}\\ 
+\midrule
+\multirow{2}{*}{Expo} & $\lambda_{1:n}$ &  $(\tilde\lambda,10\tilde\lambda,\tilde\lambda/10,\lambda_0)$ & \multicolumn{2}{|c||}{$\lambda_0$} & \multicolumn{2}{|c|}{$(d+\alpha)/(\beta^\star+t)$}\\ 
+\cline{2-7}  & $\beta$ & $(\tilde\beta,10\tilde\beta,\tilde\beta/10,\beta_0)$ & \multicolumn{2}{|c||}{$\beta_0$}  & \multicolumn{2}{|c|}{$(\gamma+n\alpha)/(\delta+\sum\lambda^\star)$}\\
+\midrule
+\multicolumn{3}{|c|}{ }    &  mean &   sd    &    mean    &     sd       \\ 
+\midrule
+\multirow{2}{*}{Normal} & $\lambda_{1:n}$ &  $(\tilde\lambda,10\tilde\lambda,\tilde\lambda/10,\lambda_0)$ & $\lambda_0$ & $1$ & $\frac{d+\alpha}{\beta^\star+t}$ & $1$\\ 
+\cline{2-7}  & $\beta$ & $(\tilde\beta,10\tilde\beta,\tilde\beta/10,\beta_0)$ & $\beta_0$ & $1$ & $\frac{\gamma+n\alpha}{\delta+\sum\lambda^\star}$ & $1$\\
+\midrule
+\multicolumn{3}{|c|}{ }    &\multicolumn{2}{|c||}{Range}& \multicolumn{2}{|c|}{Range}\\ 
+\midrule
+\multirow{2}{*}{Uniform} & $\lambda_{1:n}$ &  $(\tilde\lambda,10\tilde\lambda,\tilde\lambda/10,\lambda_0)$ & \multicolumn{2}{|c||}{$(0,2\lambda_0)$} & \multicolumn{2}{|c|}{$(0,2\frac{d+\alpha}{\beta^\star+t})$}\\ 
+\cline{2-7}  & $\beta$ & $(\tilde\beta,10\tilde\beta,\tilde\beta/10,\beta_0)$ & \multicolumn{2}{|c||}{$(0,2\beta_0)$} & \multicolumn{2}{|c|}{$(0,2\frac{\gamma+n\alpha}{\delta+\sum\lambda^\star})$}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+```{r,echo=T, fig.width=6, fig.height=12, fig.align='center'}
+lambda_0 <- matrix(c(lambda_true,lambda_true*100,lambda_true/100,lambda0),10,4) 
+beta_0 <- c(beta_true,beta_true*100,beta_true/100,beta0)
+lambda_g <- matrix(c(lambda_true,lambda_true*8,lambda_true/8,lambda0),10,4) 
+beta_g <- c(beta_true,beta_true*2,beta_true/8,beta_true/4)
+lambda_e <- matrix(c(lambda_true,lambda_true*2,lambda_true*3/4,lambda0),10,4)  # matrix(c(lambda0/2,lambda0,2*lambda0,10*lambda0),10,4) 
+beta_e <- c(beta_true,beta_true*2,beta_true*3/4,beta0) # c(beta0,beta0,beta0,beta0) 
+lambda_n <- matrix(c(lambda_true,lambda_true*2,lambda_true/2,lambda0),10,4) 
+beta_n <- c(beta_true,beta_true*2,beta_true/2,beta0)
+lambda_u <- matrix(c(lambda_true,lambda_true/2,lambda_true/8,lambda0),10,4) 
+beta_u <- c(beta_true,beta_true/2,beta_true/8,beta0)
+```
+
+
+
+
+### Define Pi function
+
+```{r}
+pi <- function(a,b){
+d.lambda<- dgamma(a,(d+alpha),(b+t)) 
+d.beta <-dgamma(b,(gamma+n*alpha),(delta+sum(a)))
+return(prod(d.lambda)*d.beta)
+}
+```
+
+
+### Conduct Gibbs Algorithm
+
+
+```{r,eval=T}
+Gibbs_G <- function(lambda_g,beta_g,S){ #Gibbs Sampler
+Theta<-matrix(NA,S,11) ;  set.seed(121)
+lambda <- lambda0; beta <- beta0
+Theta.gibbs <- matrix(NA,ncol=(n+1),nrow=S) #Gibbs Sampelr variables
+for(s in 1:S){  
+lambda<- rgamma(n,shape=(d+alpha),rate=(beta+t))  # sample lambda  
+beta <-  rgamma(1,shape=(gamma+n*alpha),rate=(delta+sum(lambda)))  # sample beta
+Theta.gibbs[s,] <- c(beta,lambda)   # store draws
+}
+return(Theta.gibbs)
+}
+Theta.gibbs<- Gibbs_G(lambda_g[,4],beta_g[4],10000)
+```
+
+
+### Use $g(.)$ in the notes
+
+- One Chain
+
+```{r}
+ratio<- function(lambda,lambda.star,beta,beta.star){
+for(i in 1:n){  
+lik <- ((beta.star+t[i])/(beta+t[i]))^(alpha+d[i])
+expo <- exp((beta-beta_0)*lambda+(beta_0-beta.star)*lambda.star)
+return(prod(lik)*expo)
+}}
+MH_0 <- function(lambda_0,beta_0,S){ 
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ;  set.seed(121)
+lambda <- lambda_0; beta <-beta_0
+for(s in 1:S) {
+lambda.star <- rgamma(n,(d+alpha),(beta+t)) # sample lambda 
+r_lambda<-ratio(lambda,lambda.star,beta,beta) 
+  if((runif(1))<r_lambda) { lambda<-lambda.star; acs<-acs+1 
+beta.star <- rgamma(1,(gamma+n*alpha),(delta+sum(lambda)))  # sample beta  
+r_beta<-ratio(lambda,lambda,beta,beta.star) 
+  if((runif(1))<r_beta) { beta<-beta.star ; acs<-acs+1}}
+    if(s%%50==0) {acr <- acs/100; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+```{r, eval=F}
+# ONE STEP version
+ratio<- function(lambda,lambda.star,beta,beta.star){
+for(i in 1:n){  
+lik <- ((beta.star+t[i])/(beta+t[i]))^(alpha+d[i])
+expo <- exp((beta-beta_0)*lambda+(beta_0-beta.star)*lambda.star)
+return(prod(lik)*expo)
+}}
+
+MH_0 <- function(lambda_0,beta_0,S){ 
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ; # set.seed(121)
+lambda <- lambda_0; beta <-beta_0
+for(s in 1:S) 
+{
+lambda.star <- rgamma(n,(d+alpha),(beta+t)) # sample lambda 
+beta.star <- rgamma(1,(gamma+n*alpha),(delta+sum(lambda.star)))  # sample beta  
+  r<-ratio(lambda,lambda.star,beta,beta.star) 
+  if((runif(1))<r) { beta<-beta.star; lambda<-lambda.star;acs<-acs+1 }
+  if(s%%50==0) {acr <- acs/50; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+```{r,echo=F, fig.width=9, fig.height=12, fig.align='center'}
+for (S in c(1000,10000)){
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20)
+burnin <- 1:(S/2)
+par(mfrow=c(4,2),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+for (i in 1:4){
+THETA_0 <- MH_0(lambda_0[,i],beta_0[i],S) # Plot of one chain on function in note
+plot(skeep,THETA_0[skeep,1],type="l",xlab=paste("iteration on g(lambda_1=",round(lambda_0[1,i],4),"beta=",beta_0[i],")"),ylab=expression(beta),col="dodgerblue4",ylim = c(0,8)) # 
+lines(skeep,THETA_0[skeep,12],lty=3,col=alpha(1, 1) )
+abline(h=beta_true,lty=2)
+plot(skeep2,THETA_0[skeep2,11],type="n",xlab=paste("iteration on g(lambda_1=",round(lambda_0[1,i],4),"beta=",beta_0[i],")"),ylab=expression(lambda[1:10]),ylim = c(0,2.5)) # 
+for (j in 2:11){lines(skeep2,THETA_0[skeep2,j],lty=1,col=alpha(j,1) )
+abline(h=lambda_true[j-1],lty=2,col=alpha(j,1) )}
+mtext(paste("the M-H with kernel in Note,length of chain =",S), side =1, line =-2, outer = TRUE)
+}}
+pumps.quant <- apply(THETA_0[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(THETA_0[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- par.names
+pander::pander(round(t(pumps.par[,1:12]),4))
+```
+
+```{r,eval=T}
+S <- 1000; K <-  100
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20); burnin <- 1:(S/2)
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by Hint function g(.)
+THETA_0[k,] <- MH_0(lambda_0[,4],beta_0[4],S)[S,]
+}
+ptm_0 <- proc.time() - ptm
+```
+
+- Comparing with Gibbs
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+par(mfrow=c(4,3),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+plot(density(Theta.gibbs[,1]),type="l",main="",xlab=expression(paste("est. density for ",beta)),ylab="Density",lwd=5,lty=3,col=alpha(1, 0.2)) # ,ylim = c(0,5)
+lines(density(THETA_0[,1]),col="dodgerblue4" )
+legend(max(density(THETA_0[,j])$x*1/2),max(density(Theta.gibbs[,1])$y), legend=c("MH", "Gibbs"),col=c(1,alpha(1, 0.2)), lty=1:2, cex=0.8)
+for (j in 2:11){
+plot(density(THETA_0[,j]),type="l",main="",xlab=paste("lambda",j-1),lty=1,ylab="Density",col=alpha(j,1)) # ,xlim = c(0,1)
+lines(density(Theta.gibbs[,j]),lwd=5,lty=3,col=alpha(1, 0.2) )
+legend(max(density(THETA_0[,j])$x*3/5),max(density(THETA_0[,j])$y), legend=c("MH", "Gibbs"),col=c(j,alpha(1, 0.2)), lty=1:2, cex=0.8)
+}
+mtext(paste("Comparing Gibbs and M-H with kernel in Note"), side =1, line =-2, outer = TRUE)
+```
+
+### The kenel of Gamma version 
+
+
+```{r}
+MH_G <- function(lambda_g,beta_g,S){ # Gamma version
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ;  set.seed(121)
+lambda <- lambda_g; beta <-beta_g
+g <- function(a,b){
+d.lambda<- dgamma(a,(d+alpha),(beta_g+t)) 
+d.beta <-dgamma(b,(gamma+n*alpha),(delta+sum(a)))
+return(prod(d.lambda)*d.beta)
+}
+for(s in 1:S) {
+lambda.star <- rgamma(n,(d+alpha),(beta+t)) # sample lambda 
+r_lambda <- pi(lambda.star,beta)/pi(lambda,beta)*g(lambda,beta)/g(lambda.star,beta)
+  if((runif(1))<g(lambda.star,beta)*min(r_lambda,1)) { lambda<-lambda.star; acs<-acs+1 
+  
+beta.star <- rgamma(1,(gamma+n*alpha),(delta+sum(lambda)))  # sample beta  
+r_beta<- pi(lambda,beta.star)/pi(lambda,beta)*g(lambda,beta)/g(lambda,beta.star)
+  if((runif(1))<g(lambda,beta.star)*min(r_beta,1)) { beta<-beta.star ; acs<-acs+1}}
+    if(s%%50==0) {acr <- acs/100; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+```{r,echo=F, fig.width=9, fig.height=12, fig.align='center'}
+
+for (S in c(1000,10000)){
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20)
+burnin <- 1:(S/2)
+par(mfrow=c(4,2),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+for (i in 1:4){
+THETA_g <- MH_G(lambda_g[,i],beta_g[i],S) # Plot of one chain on Gamma
+plot(skeep,THETA_g[skeep,1],type="l",xlab=paste("iteration on g(lambda_1=",round(lambda_g[1,i],4),"beta=",beta_g[i],")"),ylab=expression(beta),col="dodgerblue4",ylim = c(0,5)) # 
+lines(skeep,THETA_g[skeep,12],lty=3,col=alpha(1, 1) )
+abline(h=beta_true,lty=2)
+plot(skeep2,THETA_g[skeep2,11],type="n",xlab=paste("iteration on g(lambda_1=",round(lambda_g[1,i],4),"beta=",beta_g[i],")"),ylab=expression(lambda[1:10]),ylim = c(0,2.5)) # 
+for (j in 2:11){lines(skeep2,THETA_g[skeep2,j],lty=1,col=alpha(j,1) )
+abline(h=lambda_true[j-1],lty=2,col=alpha(j,1) )}
+mtext(paste("the M-H sampling with Gamma kernel"), side =1, line =-2, outer = TRUE)
+}}
+pumps.quant <- apply(THETA_g[-burnin,],2,quantile,probs=c(0.025,0.5,0.975),na.rm=T)
+mean <- colMeans(THETA_g[-burnin,],na.rm=T)
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- par.names
+pander::pander(round(t(pumps.par[,1:12]),4))
+
+```
+
+
+```{r,eval=T}
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Gamma
+THETA_g[k,] <- MH_G(lambda_g[,4],beta_g[4],S)[S,]
+}
+ptm_g <- proc.time() - ptm
+```
+- Comparing with Gibbs
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+par(mfrow=c(4,3),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+plot(density(Theta.gibbs[,1]),type="l",main="",xlab=expression(paste("est. density for ",beta)),ylab="Density",lwd=5,lty=3,col=alpha(1, 0.2)) # ,ylim = c(0,5)
+lines(density(THETA_g[,1]),col="dodgerblue4" )
+legend(max(density(THETA_g[,j])$x*4/5),max(density(Theta.gibbs[,1])$y), legend=c("MH", "Gibbs"),col=c(1,alpha(1, 0.2)), lty=1:2, cex=0.8)
+for (j in 2:11){
+plot(density(THETA_g[,j]),type="l",main="",xlab=paste("lambda",j-1),lty=1,ylab="Density",col=alpha(j,1)) # ,xlim = c(0,1)
+lines(density(Theta.gibbs[,j]),lwd=5,lty=3,col=alpha(1, 0.2) )
+legend(max(density(THETA_g[,j])$x*3/5),max(density(THETA_g[,j])$y), legend=c("MH", "Gibbs"),col=c(j,alpha(1, 0.2)), lty=1:2, cex=0.8)
+}
+mtext(paste("Comparing Gibbs and M-H with Gamma kernel"), side =1, line =-2, outer = TRUE)
+```
+
+### The kenel of Uniform version 
+
+
+```{r,eval=T}
+MH_U <- function(lambda_u,beta_u,S){ # Uniform version
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ;  set.seed(121)
+lambda <- lambda_u; beta <-beta_u
+g <- function(a,b){
+d.lambda<- dunif(a,0,2*(d+alpha)/(beta_u+t)) #(d+alpha)/(beta0+t),beta0
+d.beta <-dunif(b, 0, 2*(gamma+n*alpha)/(delta+sum(a))) #(gamma+n*alpha)/(delta+sum(lambda)),beta0
+return(prod(d.lambda)*d.beta)
+}
+for(s in 1:S) {
+lambda.star <- runif(n,0,2*(d+alpha)/(beta+t)) # sample lambda 
+r_lambda <- pi(lambda.star,beta)/pi(lambda,beta)*g(lambda,beta)/g(lambda.star,beta)
+  if((runif(1))<g(lambda.star,beta)*min(r_lambda,1)) { lambda<-lambda.star; acs<-acs+1 }
+beta.star <- runif(1,0,2*(gamma+n*alpha)/(delta+sum(lambda)))  # sample beta  
+r_beta<- pi(lambda,beta.star)/pi(lambda,beta)*g(lambda,beta)/g(lambda,beta.star)
+  if((runif(1))<g(lambda,beta.star)*min(r_beta,1)) { beta<-beta.star ; acs<-acs+1}
+  acr <- acs/S/2
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+for (S in c(1000,10000)){
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20)
+burnin <- 1:(S/2)
+par(mfrow=c(4,2),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+for (i in 1:4){
+THETA_u <- MH_U(lambda_u[,i],beta_u[i],S)  # 
+# Plot of one chain on Uniform
+plot(skeep,THETA_u[skeep,1],type="l",xlab=paste("iteration on g(lambda_1=",round(lambda_u[1,i],4),"beta=",beta_u[i],")"),ylab=expression(beta),ylim = c(0,5),col="dodgerblue4") # 
+lines(skeep,THETA_u[skeep,12],lty=3,col=alpha(1, 1) )
+abline(h=beta_true,lty=2)
+plot(skeep2,THETA_u[skeep2,11],type="n",xlab=paste("iteration on g(lambda_1=",round(lambda_u[1,i],4),"beta=",beta_u[i],")"),ylab=expression(lambda[1:10]),ylim = c(0,2.5)) # 
+for (j in 2:11){lines(skeep2,THETA_u[skeep2,j],lty=1,col=alpha(j,1) )
+abline(h=lambda_true[j-1],lty=2,col=alpha(j,1) )}
+mtext("the M-H sampling with Uniform kernel", side =1, line =-2, outer = TRUE)
+}}
+pumps.quant <- apply(THETA_u[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(THETA_u[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- par.names
+pander::pander(round(t(pumps.par[,1:12]),4))
+```
+
+```{r,eval=T}
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Uniform
+THETA_u[k,] <- MH_U(lambda_u[,4],beta_u[4],S)[S,]
+}
+ptm_u <- proc.time() - ptm
+```
+
+
+- Comparing with Gibbs
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+par(mfrow=c(4,3),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+plot(density(Theta.gibbs[,1]),type="l",main="",xlab=expression(paste("est. density for ",beta)),ylab="Density",lwd=5,lty=3,col=alpha(1, 0.2)) # ,ylim = c(0,5)
+lines(density(THETA_u[,1]),col="dodgerblue4" )
+legend(max(density(THETA_u[,j])$x*9/10),max(density(Theta.gibbs[,1])$y), legend=c("MH", "Gibbs"),col=c(1,alpha(1, 0.2)), lty=1:2, cex=0.8)
+for (j in 2:11){
+plot(density(THETA_u[,j]),type="l",main="",xlab=paste("lambda",j-1),lty=1,ylab="Density",col=alpha(j,1)) # ,xlim = c(0,1)
+lines(density(Theta.gibbs[,j]),lwd=5,lty=3,col=alpha(1, 0.2) )
+legend(max(density(THETA_u[,j])$x*4/5),max(density(THETA_u[,j])$y), legend=c("MH", "Gibbs"),col=c(j,alpha(1, 0.2)), lty=1:2, cex=0.8)
+}
+mtext(paste("Comparing Gibbs and M-H with Uniform kernel"), side =1, line =-2, outer = TRUE)
+```
+
+
+### The kenel of Exponential version 
+
+
+```{r,eval=F,include=F}
+# Back up
+MH_E <- function(lambda_e,beta_e,S){ # Expo version
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ;  set.seed(121)
+lambda <- lambda_e; beta <-beta_e
+g <- function(a,b){
+d.lambda<- dexp(a,rate=(b+t)/(d+alpha)) # 1/lambda_true 
+d.beta <-dexp(b,rate=(delta+sum(lambda_e))/(gamma+n*alpha))     #    1/b
+return(prod(d.lambda)*d.beta)
+}
+for(s in 1:S) {
+lambda.star <- rexp(n,(beta+t)/(d+alpha)) # sample lambda  & lambda.star<=1
+r_lambda <- pi(lambda.star,beta)/pi(lambda,beta)*g(lambda,beta)/g(lambda.star,beta)
+  if((runif(1))<g(lambda.star,beta)*min(r_lambda,1)) { lambda<-lambda.star; acs<-acs+1 
+
+beta.star <- rexp(1,(delta+sum(lambda))/(gamma+n*alpha))  # sample beta  
+r_beta<- pi(lambda,beta.star)/pi(lambda,beta)*g(lambda,beta)/g(lambda,beta.star)
+  if((runif(1))<g(lambda,beta.star)*min(r_beta,1)) { beta<-beta.star ; acs<-acs+1}}
+    if(s%%50==0) {acr <- acs/100; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+```{r}
+MH_E <- function(lambda_e,beta_e,S){ # Expo version
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ;  set.seed(121)
+lambda <- lambda_e; beta <-beta_e
+g <- function(a,b){
+d.lambda<- dexp(a,rate=(b+t)/(d+alpha)) # 1/lambda_true 
+d.beta <-dexp(b,rate=(delta+sum(lambda_e))/(gamma+n*alpha))     #    1/b
+return(prod(d.lambda)*d.beta)
+}
+for(s in 1:S) {
+lambda.star <- rexp(n,(beta+t)/(d+alpha)) # sample lambda  & lambda.star<=1
+beta.star <- rexp(1,(delta+sum(lambda))/(gamma+n*alpha))  # sample beta  
+r<- pi(lambda.star,beta.star)/pi(lambda,beta)*g(lambda,beta)/g(lambda.star,beta.star)
+  if((runif(1))<g(lambda.star,beta.star)*min(r,1)) {lambda<-lambda.star; beta<-beta.star ; acs<-acs+1}
+    if(s%%50==0) {acr <- acs/100; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+
+
+```{r,echo=F, fig.width=9, fig.height=12, fig.align='center'}
+for (S in c(1000,10000)){
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20)
+burnin <- 1:(S/2)
+par(mfrow=c(4,2),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+for (i in 1:4){
+THETA_e <- MH_E(lambda_e[,i],beta_e[i],S) # Plot of one chain on Expo
+plot(skeep,THETA_e[skeep,1],type="l",xlab=paste("iteration on g(lambda_1=",round(lambda_e[1,i],4),"beta=",beta_e[i],")"),ylab=expression(beta),col="dodgerblue4",ylim = c(0,5)) # 
+lines(skeep,THETA_e[skeep,12],lty=3,col=alpha(1, 1) )
+abline(h=beta_true,lty=2)
+plot(skeep2,THETA_e[skeep2,11],type="n",xlab=paste("iteration on g(lambda_1=",round(lambda_e[1,i],4),"beta=",beta_e[i],")"),ylab=expression(lambda[1:10]),ylim = c(0,2.5)) # 
+for (j in 2:11){lines(skeep2,THETA_e[skeep2,j],lty=1,col=alpha(j,1) )
+abline(h=lambda_true[j-1],lty=2,col=alpha(j,1) )}
+mtext(paste("the M-H with Expoential kernel"), side =1, line =-2, outer = TRUE)
+}}
+
+pumps.quant <- apply(THETA_e[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(THETA_e[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- par.names
+pander::pander(round(t(pumps.par[,1:12]),4))
+```
+
+```{r,eval=T}
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Uniform
+THETA_e[k,] <- MH_E(lambda_e[,4],beta_e[4],S)[S,]
+}
+ptm_e <- proc.time() - ptm
+```
+
+- Comparing with Gibbs
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+par(mfrow=c(4,3),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+plot(density(Theta.gibbs[,1]),type="l",main="",xlab=expression(paste("est. density for ",beta)),ylab="Density",lwd=5,lty=3,col=alpha(1, 0.2)) # ,ylim = c(0,5)
+lines(density(THETA_e[,1]),col="dodgerblue4" )
+legend(max(density(THETA_e[,j])$x*9/10),max(density(Theta.gibbs[,1])$y), legend=c("MH", "Gibbs"),col=c(1,alpha(1, 0.2)), lty=1:2, cex=0.8)
+for (j in 2:11){
+plot(density(THETA_e[,j]),type="l",main="",xlab=paste("lambda",j-1),lty=1,ylab="Density",col=alpha(j,1)) # ,xlim = c(0,1)
+lines(density(Theta.gibbs[,j]),lwd=5,lty=3,col=alpha(1, 0.2) )
+legend(max(density(THETA_e[,j])$x*4/5),max(density(THETA_e[,j])$y), legend=c("MH", "Gibbs"),col=c(j,alpha(1, 0.2)), lty=1:2, cex=0.8)
+}
+mtext(paste("Comparing Gibbs and M-H with Uniform kernel"), side =1, line =-2, outer = TRUE)
+```
+
+
+
+### The Normal version of $g(.)$
+
+```{r,eval=F,include=F}
+MH_N <- function(lambda_n,beta_n,S){ # Normal version
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ; # set.seed(121)
+lambda <- lambda_n; beta <-beta_n
+g <- function(a,b){
+d.lambda<- dnorm(a,(d+alpha)/(beta_n+t),1) # lambda_n
+d.beta <-dnorm(b,(gamma+n*alpha)/(delta+sum(a)),1)  # beta_n
+return(abs(prod(d.lambda)*d.beta))
+}
+for(s in 1:S) {
+lambda.star <- abs(rnorm(n,(d+alpha)/(beta+t),1)) # sample lambda d/t
+r_lambda <- pi(lambda.star,beta)/pi(lambda,beta)*g(lambda,beta)/g(lambda.star,beta)
+  if((runif(1))<g(lambda.star,beta)*min(r_lambda,1)) { lambda<-lambda.star; acs<-acs+1 
+  
+beta.star <- abs(rnorm(1,(gamma+n*alpha)/(delta+sum(lambda)),1))  # sample beta ) beta0
+r_beta<- pi(lambda,beta.star)/pi(lambda,beta)*g(lambda,beta)/g(lambda,beta.star)
+  if((runif(1))<g(lambda,beta.star)*min(r_beta,1)) { beta<-beta.star ; acs<-acs+1}}
+    if(s%%50==0) {acr <- acs/100; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+
+```{r,eval=F,include=F}
+MH_N <- function(lambda_n,beta_n,S){ # Normal version
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ;  set.seed(121)
+lambda <- lambda_n; beta <-beta_n
+g <- function(a,b){
+d.lambda<- dnorm(a,(d+alpha)/(beta_n+t),1) # lambda_n,0.5
+d.beta <-dnorm(b,(gamma+n*alpha)/(delta+sum(a)),1)  # beta_n,0.5
+return(abs(prod(d.lambda)*d.beta))
+}
+for(s in 1:S) {
+lambda.star <- abs(rnorm(n,(d+alpha)/(beta+t),1)) # sample lambda d/t
+r_lambda <- pi(lambda.star,beta)/pi(lambda,beta)*g(lambda,beta)/g(lambda.star,beta)
+beta.star <- abs(rnorm(1,(gamma+n*alpha)/(delta+sum(lambda)),1))  # sample beta ) beta0
+r<- pi(lambda,beta.star)/pi(lambda,beta)*g(lambda,beta)/g(lambda,beta.star)
+  if((runif(1))<g(lambda.star,beta.star)*min(r,1)) {lambda<-lambda.star; beta<-beta.star ; acs<-acs+1}
+    if(s%%50==0) {acr <- acs/100; acs<-0}
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+
+```{r,eval=F,include=F, fig.width=9, fig.height=12, fig.align='center'}
+for (S in c(1000,10000)){
+skeep<-seq(1,S,by=10); skeep2<-seq(1,S,by=20)
+burnin <- 1:(S/2)
+par(mfrow=c(4,2),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+for (i in 1:4){
+THETA_n <- MH_N(lambda_n[,i],beta_n[i],S) # Plot of one chain on Normal
+plot(skeep,THETA_n[skeep,1],type="l",xlab=paste("iteration on g(lambda_1=",round(lambda_n[1,i],4),"beta=",beta_n[i],")"),ylab=expression(beta),col="dodgerblue4",ylim = c(0,5)) # 
+lines(skeep,THETA_n[skeep,12],lty=3,col=alpha(1, 1) )
+abline(h=beta_true,lty=2)
+plot(skeep2,THETA_n[skeep2,11],type="n",xlab=paste("iteration on g(lambda_1=",round(lambda_n[1,i],4),"beta=",beta_n[i],")"),ylab=expression(lambda[1:10]),ylim = c(0,2.5)) # 
+for (j in 2:11){lines(skeep2,THETA_n[skeep2,j],lty=1,col=alpha(j,1) )
+abline(h=lambda_true[j-1],lty=2,col=alpha(j,1) )}
+mtext(paste("the M-H with Normal kernel"), side =1, line =-2, outer = TRUE)
+}}
+
+pumps.quant <- apply(THETA_n[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(THETA_n[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- par.names
+pander::pander(round(t(pumps.par[,1:12]),4))
+```
+
+
+
+```{r,eval=F,include=F}
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Normal
+THETA_n[k,] <- MH_N(lambda_n[,4],beta_n[4],S)[S,]
+}
+ptm_n <- proc.time() - ptm
+```
+
+
+### The version of $g(.)=1$
+
+```{r}
+#g_b <- function(x){dbeta(x,beta0,5)}
+MH_1 <- function(S){ 
+Theta<-matrix(NA,S,12) ; acr <- acs<-0 ; # set.seed(121)
+# g <- function(lambda,beta){1}   
+for(s in 1:S) {
+lambda.star <- rgamma(n,shape=(d+alpha),rate=(beta+t)) # sample lambda 
+r_lambda <- pi(lambda.star,beta)/pi(lambda,beta)  #  *g(lambda,beta)/g(lambda.star,beta)
+  if((runif(1))<r_lambda) { lambda<-lambda.star; acs<-acs+1 }
+beta.star <- rgamma(1,shape=(gamma+n*alpha),rate=(delta+sum(lambda)))  # sample beta  
+r_beta<- pi(lambda,beta.star)/pi(lambda,beta)  #  *g(lambda,beta)/g(lambda,beta.star)
+  if((runif(1))<r_beta) { beta<-beta.star ; acs<-acs+1}
+  acr <- acs/S/2
+  Theta[s,]<-c(beta,lambda,acr)
+}
+return(Theta)
+}
+```
+
+
+```{r,echo=F, fig.width=6, fig.height=4, fig.align='center'}
+lambda <- d/t
+beta <- beta0
+THETA_1 <- MH_1(S) # Plot of one chain on g(.)=1
+par(mfrow=c(1,1),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+plot(skeep,THETA_1[skeep,1],type="l",xlab="iteration",ylab=expression(beta),ylim = c(0,5),col="dodgerblue4") # 
+lines(skeep,THETA_1[skeep,12],lty=3,col=alpha(1, 1) )
+abline(h=2.459,lty=2)
+mtext("the M-H with kernel g(.)=1", side =1, line =-2, outer = TRUE)
+
+pumps.quant <- apply(THETA_1[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(THETA_1[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- par.names
+pander::pander(round(t(pumps.par[,1:11]),4))
+```
+
+```{r,eval=T}
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Uniform
+THETA_1[k,] <- MH_1(S)[S,]
+}
+ptm_1 <- proc.time() - ptm
+```
+
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+par(mfrow=c(4,3),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+plot(density(Theta.gibbs[,1]),type="l",main="",xlab=expression(paste("est. density for ",beta)),ylab="Density",lwd=5,lty=3,col=alpha(1, 0.2)) # ,ylim = c(0,5)
+lines(density(THETA_1[,1]),col="dodgerblue4" )
+legend(max(density(THETA_1[,j])$x*9/10),max(density(Theta.gibbs[,1])$y), legend=c("MH", "Gibbs"),col=c(1,alpha(1, 0.2)), lty=1:2, cex=0.8)
+for (j in 2:11){
+plot(density(THETA_1[,j]),type="l",main="",xlab=paste("lambda",j-1),lty=1,ylab="Density",col=alpha(j,1)) # ,xlim = c(0,1)
+lines(density(Theta.gibbs[,j]),lwd=5,lty=3,col=alpha(1, 0.2) )
+legend(max(density(THETA_1[,j])$x*4/5),max(density(THETA_1[,j])$y), legend=c("MH", "Gibbs"),col=c(j,alpha(1, 0.2)), lty=1:2, cex=0.8)
+}
+mtext(paste("Comparing Gibbs and M-H with kernel g(.)=1"), side =1, line =-2, outer = TRUE)
+```
+
+
+Comparison histogram
+
+```{r,echo=F, fig.width=10, fig.height=6, fig.align='center'}
+par(mfrow=c(2,3),mar=c(3,3,1,1),mgp=c(1.75,0.75,0))
+hist(THETA_0[,1],  xlab=expression(paste("distribution of est. for ",beta[k],"by Note")),breaks = 20,freq = T,main="",col="cornflowerblue",xlim = c(1,5))
+hist(THETA_g[,1],  xlab=expression(paste("distribution of est. for ",beta[k],"by Gamma")),breaks = 20,freq = T,main="",col="cornflowerblue",xlim = c(1,5))
+hist(THETA_e[,1],  xlab=expression(paste("distribution of est. for ",beta[k],"by Expo")),breaks = 20,freq = T,main="",col="cornflowerblue",xlim = c(1,5))
+# hist(THETA_n[,1],  xlab=expression(paste("distribution of est. for ",beta[k],"by Normal")),breaks = 20,freq = T,main="",col="cornflowerblue",xlim = c(1,5))
+hist(THETA_u[,1],  xlab=expression(paste("distribution of est. for ",beta[k],"by Uniform")),breaks = 20,freq = T,main="",col="cornflowerblue",xlim = c(1,5))
+hist(THETA_1[,1],  xlab=expression(paste("distribution of est. for ",beta[k],"by 1")),breaks = 20,freq = T,main="",col="cornflowerblue",xlim = c(1,5))
+```
+
+
+Comparison table
+
+```{r,eval=T}
+library(HDInterval)
+g0 <- c(mean(THETA_0[,1]),quantile(THETA_0[,1],c(0.025,0.5,0.975)),hdi(THETA_0[,1], credMass=0.95),mean(THETA_0[,12]),ptm_0[1])
+gg <- c(mean(THETA_g[,1]),quantile(THETA_g[,1],c(0.025,0.5,0.975)),hdi(THETA_g[,1], credMass=0.95),mean(THETA_g[,12]),ptm_g[1])
+ge <- c(mean(THETA_e[,1]),quantile(THETA_e[,1],c(0.025,0.5,0.975)),hdi(THETA_e[,1], credMass=0.95),mean(THETA_e[,12]),ptm_e[1])
+# gn <- c(mean(THETA_n[,1]),quantile(THETA_n[,1],c(0.025,0.5,0.975)),hdi(THETA_n[,1], credMass=0.95),mean(THETA_n[,12]),ptm_n[1])
+gu <- c(mean(THETA_u[,1]),quantile(THETA_u[,1],c(0.025,0.5,0.975)),hdi(THETA_u[,1], credMass=0.95),mean(THETA_u[,12]),ptm_u[1])
+g1 <- c(mean(THETA_1[,1]),quantile(THETA_1[,1],c(0.025,0.5,0.975)),hdi(THETA_1[,1], credMass=0.95),mean(THETA_1[,12]),ptm_1[1])
+pumps.par <- rbind(g0,gg,ge,gu,g1) # gn,
+colnames(pumps.par) <- c('mean','2.5%','median','97.5%','95% HPD U', '95% HPD L','Acceptance Rate','running time')
+kableExtra::kable(round(pumps.par,4))
+```
+
+
+
+
+
+

@@ -2,7 +2,7 @@
 
 Source code for course website for STAT651-6 at Portland State University, Fall 2018.
 
-Course website is at https://stat564.netlify.com/
+Course website is at https://stat2019.netlify.com/
 
 # Steps seting up a new course website
 

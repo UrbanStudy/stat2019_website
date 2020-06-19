@@ -1,0 +1,349 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    toc_float: no
+  word_document:
+    toc: no
+header-includes:
+- \usepackage{multicol}
+- \usepackage{multirow}
+- \usepackage{caption}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \rhead{Shen Qu}
+- \lhead{Final}
+- \chead{STAT 663}
+- \rfoot{Page \thepage}
+- \usepackage{graphicx}
+- \usepackage{amssymb}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=4)
+```
+
+## Q1
+
+(a) $S\sim Bin(n,\theta)$
+
+$E[\bar X]=E[\frac{S}{n}]=\theta<\infty$, $nVar[\bar X]=nVar[\frac{S}{n}]=\theta(1-\theta)<\infty$. 
+
+By the Central Limit Theorem, $\sqrt{n}\left(\bar X-\theta\right)\sim N(0,\theta(1-\theta))$
+
+Let $h(\theta)=2\sin^{-1}(\sqrt\theta)$ is a continuous function at $E[\bar X]=\theta$ and differenciable $\forall\theta\in(0,1)$
+
+$h'(\theta)=\frac{1}{\sqrt{\theta(1-\theta)}}\neq0$ when $\theta\in(0,1)$;
+<!--
+$h''(\theta)=-\frac{1-2\theta}{2\left(\theta\left(1-\theta\right)\right)^{\frac{3}{2}}}\neq0$.
+
+In the case $\theta= 1/2$, this does not give the asymptotic distribution. 
+-->
+By Delta Method
+
+$\sqrt{n}(h(\bar X)-h(\theta))=2\sqrt{n}(\sin^{-1}(\sqrt{\bar X})-\sin^{-1}(\sqrt\theta))$
+
+$nVar[\bar X][h'(\theta)]^2=(\theta-\theta^2)\left[\frac{1}{\sqrt{\theta(1-\theta)}}\right]^2=1$
+
+Therefore, the asymptotic distribution of $\sin^{-1}(\sqrt{\bar X})$ is $2\sqrt{n}\left(\sin^{-1}(\sqrt{\bar X})-\sin^{-1}(\sqrt\theta)\right)\sim N(0,1)$
+
+$P(|2\sqrt{n}\left(\sin^{-1}(\sqrt{\bar X})-\sin^{-1}(\sqrt\theta)\right)|\le Z_{\alpha/2})=1-\alpha$
+
+$P(\sin^{-1}(\sqrt{\bar X})-\sin^{-1}(\sqrt\theta)\le\frac{Z_{\alpha/2}}{2\sqrt{n}}\ \text{or}\sin^{-1}(\sqrt\theta)-\sin^{-1}(\sqrt{\bar X})\le\frac{Z_{\alpha/2}}{2\sqrt{n}})=1-\alpha$
+
+$P(\sin^{-1}(\sqrt{\bar X})-\frac{Z_{\alpha/2}}{2\sqrt{n}}\le\sin^{-1}(\sqrt\theta)\le\sin^{-1}(\sqrt{\bar X})+\frac{Z_{\alpha/2}}{2\sqrt{n}})=1-\alpha$
+
+$I_n=\sin^{-1}(\sqrt{\bar X})\pm\frac{Z_{\alpha/2}}{2\sqrt{n}}$ is an approximate $(1-\alpha)$ 100% confidence interval for $\sin^{-1}(\sqrt\theta)$. $\hfill\square$
+
+(b) When $n = 100$ and $\bar X = .1$, 
+
+the approximate 95% confidence interval for $\theta$ is $(\sin(\sin^{-1}(\sqrt{\bar X})\pm\frac{Z_{\alpha/2}}{2\sqrt{n}}))^2=(0.0492,0.1661)$. $\hfill\blacksquare$
+
+```{r,echo=F,include=F}
+n=100
+x.bar=0.1
+# qnorm(1-alpha/2)
+# sin(pi/6)
+# LCL <- 1/sin(sqrt(x.bar))-1.96/2/sqrt(n)
+# UCL <- 1/sin(sqrt(x.bar))+1.96/2/sqrt(n)
+# (asin(1/LCL))^2
+# (asin(1/UCL))^2
+
+LCL <- asin(sqrt(x.bar))-1.96/2/sqrt(n)
+UCL <- asin(sqrt(x.bar))+1.96/2/sqrt(n)
+(sin(LCL))^2
+(sin(UCL))^2
+
+```
+
+
+
+(c) $P(|\frac{\sqrt{n}(\bar X-\theta)}{\sqrt{\theta(1-\theta)}}|\le Z_{1-\alpha/2})\approx1-\alpha$
+
+$|\frac{\sqrt{n}(\bar X-\theta)}{\sqrt{\theta(1-\theta)}}|\le Z_{1-\alpha/2}\implies n(\bar X-\theta)^2\le \theta(1-\theta)Z^2_{1-\alpha/2}\implies (n+Z^2_{1-\alpha/2})\theta^2-(2n\bar X+Z^2_{1-\alpha/2})\theta+n\bar X^2\le 0$
+
+For fixed $0\le\bar X\le1$,this a quadratic polynomial with two real roots.
+
+$\frac{2n\bar X+Z^2_{\alpha/2}\pm\sqrt{(2n\bar X+Z^2_{\alpha/2})^2-4n\bar X^2(n+Z^2_{\alpha/2})}}{2(n+Z^2_{\alpha/2})}=\frac{2n\bar X+Z^2_{\alpha/2}\pm Z_{\alpha/2}\sqrt{Z^2_{\alpha/2}+4n\bar X-4n\bar X^2}}{2(n+Z^2_{\alpha/2})}$
+
+It is confirmed by $0\le\lim_{n\to\infty}\frac{2\bar X+\frac{Z^2}n\pm Z\sqrt{\frac{Z^2}n+\frac{4\bar X}n-\frac{4\bar X^2}n}}{2+\frac{2Z^2}n}\le1$
+
+$I_n=\frac{2n\bar X+Z^2_{1-\alpha/2}\pm Z_{1-\alpha/2}\sqrt{Z^2_{1-\alpha/2}+4n\bar X-4n\bar X^2}}{2(n+Z^2_{1-\alpha/2})}$ is an approximate $(1-\alpha)$ 100% confidence interval for $\theta$. $\hfill\square$
+
+Note: Normal distribution is symmetric. $|Z_{1-\alpha/2}|=|Z_{\alpha/2}|$ doesn't change the interval.
+
+```{r,echo=F,include=F}
+
+(2*n*x.bar+1.96^2-1.96*sqrt(1.96^2+4*n*x.bar-4*n*x.bar^2))/2/(n+1.96^2)
+
+(2*n*x.bar+1.96^2+1.96*sqrt(1.96^2+4*n*x.bar-4*n*x.bar^2))/2/(n+1.96^2)
+```
+
+
+(d) The approximate 95% confidence interval for $\theta$ is $(0.0552, 0.1744)$. $\hfill\blacksquare$
+
+\pagebreak
+
+## Q2
+
+(a) $X\sim Pois(\theta)$
+
+$p({x};\theta)=\frac{\theta^{x}e^{-\theta}}{x!}$ $x\in\mathbb{N}_0$, $\theta\in\mathbb{R}^+$,
+
+$\frac{\partial}{\partial\theta}\log p(\theta)=\frac{x-\theta}{\theta}$ exists and is finite, Regularity Assumptions I holds. 
+
+Suppose $\psi(\theta)=e^{-\theta}$, $p_\theta(x=0)=\frac{\theta^{0}e^{-\theta}}{0!}=e^{-\theta}$
+
+$T(x)=\mathbf{1}_{\{x=0\}}\sim Bern(e^{-\theta})$
+ 
+$E[T]=e^{-\theta}<\infty$. $T(x)$ is an unbiased estimator for $e^{-\theta}$. 
+
+The operations of integration and differentiation by $\theta$ can be interchanged in $\frac{\partial}{\partial\theta}E[T(x)]$, Regularity Assumptions II holds. 
+
+By Theorem 3.4.1. Information Inequality $E[T(x)]=e^{-\theta}$ is differentiable $\forall\theta$,
+
+$$I(\theta)=E[(\frac{\partial}{\partial\theta}\log p(\theta))^2]=E[\frac{(x-\theta)^2}{\theta^2}]=\frac{Var[x]}{\theta^2}=\frac{\theta}{\theta^2}=\frac{1}{\theta}$$
+
+$$CRLB=\frac{(\psi'(\theta))^2}{I(\theta)}=\frac{(\psi'(\theta))^2}{I(\theta)}=\frac{(-e^{-\theta})^2}{\frac{1}{\theta}}=\theta e^{-2\theta}$$
+For $\theta>0$, $e^{\theta}=\sum_{k=1}^\infty\frac{\theta^k}{k!}=1+\theta+\frac{\theta^2}2+...$ then, $e^{\theta}-1>\theta$
+
+$Var_\theta[T]=e^{-\theta}(1-e^{-\theta})=e^{-2\theta}(e^{\theta}-1)>e^{-2\theta}\cdot\theta$.
+
+This shows that UMVUE $T(x)$ doesn't attain the C-R lower bound. $\hfill\blacksquare$
+
+(b) 
+
+As a canonical 1-parameter exponential family, $p({x};\theta)=\frac{\theta^{x}e^{-\theta}}{x!}=\exp[x\log\theta-\theta]\frac{\mathbf{1}_{x\in\mathbb{N}_0}}{x!}$
+
+This shows that $T(x)=\mathbf{1}_{\{x=0\}}$ is a function (not linear) of complete sufficient statistic $X$.
+
+By Lehman-Scheffe Theorem, the unbiased estimator $T$ is UMVUE for its expectation, $e^{-\theta}$. $\hfill\blacksquare$
+
+
+## Q3 $X\sim Unif(0,1)$
+
+Let $Y=-\log X\sim Expo(1)$, $E[Y]=1<\infty$, $Var[Y]=1<\infty$. 
+
+By Law of Large Number, $\lim\limits_{n\to\infty}P(|\frac1n\sum_{i=1}^n Y_i-1|>\varepsilon)=0$, then $\bar Y_n\overset{\mathcal{P}}{\to}1$
+
+$\bar Y_n=-\frac1n\sum_{i=1}^n\log x_i=-log(Z_n)$, then $Z_N=(\prod_{i=1}^n x_i)^{\frac1n}=h(\bar Y_n)=e^{-\bar Y_n}$
+
+By Theorem 4/29, if $\bar Y_n\overset{\mathcal{P}}{\to}1$ is a constant, and $h:\mathbb{R}^k\to\mathbb{R}^p$ is continuous in $1\subseteq\mathbb{R}^k$
+
+Then $Z_N=h(\bar Y_n)=e^{-\bar Y_n}\overset{\mathcal{P}}{\to}e^{-1}$, that means $c=e^{-1}$ $\hfill\blacksquare$
+
+\pagebreak
+
+## Q4 $F_n(x)=\begin{cases}1 & x\ge n\\\frac{x+n}{2n}=\frac{x-(-n)}{n-(-n)} & -n\le x<n\\0 & x< -n\end{cases}$
+
+
+
+$X_k\sim Unif(-k,k)$, $k=1,2,...,n$ do not converge in distribution to any random variable when $n\to\infty$
+
+The characteristic function of $X_n$ is $\phi_n(t)=\int_{-\infty}^\infty e^{itx}dF_n(x)=\int_{-n}^n e^{itx}\frac{x+n}{2n}dx=\begin{cases}\frac{\sin(nt)}{nt}& t\neq0\\1 & t=0\end{cases}$
+
+$\lim\limits_{n\to\infty}\phi_n(t)=\begin{cases}0& t\neq0\\1 & t=0\end{cases}$; $\lim\limits_{n\to\infty}F_n(x)=\frac{1}{2},\ \forall x\in\mathbb{R}$   $\hfill\square$
+
+- Try Lindeberg Central Limit Theorem
+
+$X_1$,.. are continuous and independent random variables with density $f_{k}$'s $f(x;k)=\frac1{2k},\ -k\le x<k$, 
+
+$E[X_k]=0=\mu_k$,  $\qquad Var[X_k]=\frac{(2k)^2}{12}=\frac13k^2=\sigma^2_k<\infty$
+
+$S_n^2=\sigma^2_1+...+\sigma^2_n=\frac13\sum_{k=1}^nk^2\to\infty$ ,as $n\to\infty$.
+
+Assume $|k|<m,\forall k=1,2,...,n$ is bounded. For all $\varepsilon>0$, 
+
+\[
+\begin{aligned}
+\lim\limits_{n\to\infty}\frac{1}{S_n^2}\sum_{k=1}^n\int_{|x_{k}-\mu_k|>\varepsilon S_n}(x_{k}-\mu_k)^2\cdot f_{k}(x)&=\lim\limits_{n\to\infty}\frac{1}{S_n^2}\sum_{k=1}^n\int_{|X_k|>\varepsilon S_n}x_k^2\cdot \frac1{2k}\\
+\le\sum_{k=1}^n\int_{|X|>\varepsilon S_n}\frac{m^2}{2k}=m^2\sum_{k=1}^nP(|X_{k}|>\varepsilon S_n)
+&\le \lim\limits_{n\to\infty}\frac{m^2}{S_n^2}\sum_{k=1}^n\frac{Var[X_k]}{\varepsilon^2 S_n^2}=\lim\limits_{n\to\infty}\frac{m^2}{\varepsilon^2S_n^2}=0&& \text{by Chebyshev's inequality}
+\end{aligned}
+\]
+
+The assumption holds. Therefore, Lindeberg condition is satisfied. $\frac{\sum_{k=1}^nX_k}{S_n}\overset{\mathcal{D}}{\to}N(0,1)$ $\hfill\square$
+
+The limiting points include $x=0$, the distribution is zero symmetric, and
+
+$\sup\frac{\sum_{k=1}^nX_k}{S_n}=\frac{\sum_{k=1}^nk}{\sqrt{\frac13\sum_{k=1}^nk^2}}=\frac{\frac1{2}n(n+1)}{\sqrt{\frac1{18}n(n+1)(2n+1)}}=3\sqrt{\frac{n(n+1)}{2(2n+1)}}=\frac32\mathcal{O}(n^{\frac12})$
+
+$\inf\frac{\sum_{k=1}^nX_k}{S_n}=-3\sqrt{\frac{n(n+1)}{2(2n+1)}}=-\frac32\mathcal{O}(n^{\frac12})$
+
+```{r}
+Lindeberg.CLT4 <- function(n){
+X <- S <- x <- sigma.sq <- lindberg<- NULL
+out <- matrix(rep(0,5*n),nrow=n,ncol=5)
+for (k in 1:n){
+set.seed(k) 
+x[k] <- (runif(1,-k,k))
+X[k] <- sum(x[1:k])
+sigma.sq[k] <- k^2/3
+S[k] <- sqrt(sum(sigma.sq[1:k]))
+lindberg[k] <- X[k]/S[k]
+out[k,] <- c(k,x[k],X[k],S[k],lindberg[k])
+}
+colnames(out) <- c("k","x_k","X","S","Lindeberg")
+return(out)
+}
+```
+
+```{r,echo=F}
+test <- Lindeberg.CLT4(10000)
+head(test,n=10L)
+hist(test[,5],breaks =30,freq =F,xlim = range(-3,3),main = "n=10000")
+curve(dnorm(x, 0,1), col = 2, lty = 2, lwd = 2, add = TRUE)
+```
+
+The histogram shows the simulated values converge weakly to a standard normal distribution.
+
+\pagebreak
+
+## Q5.
+
+$P(X_n=\pm2^{n+1})=\frac1{2^{n+3}}$;  $P(X_n=0)=1-\frac1{2^{n+2}}$
+
+$E[X_n]=-2^{n+1}\cdot\frac1{2^{n+3}}+2^{n+1}\cdot\frac1{2^{n+3}}+0\cdot(1-\frac1{2^{n+2}})=0=\mu_n$
+
+$Var[X_n]=E[(X_n-0)^2]=(-2^{n+1})^2\cdot\frac1{2^{n+3}}+(2^{n+1})^2\cdot\frac1{2^{n+3}}+0^2\cdot(1-\frac1{2^{n+2}})=2^n=\sigma^2_n$
+
+$S_n^2=\sigma^2_1+...+\sigma^2_n=\sum_{k=1}^n2^k=2^{n+1}-2\to\infty$,as $n\to\infty$
+
+$S_n=\sqrt{2},\sqrt{6},\sqrt{14},...,\sqrt{2^{n+1}-2}$
+
+$X_1$,.. are discrete with jump points $X_{kl}=-2^{k+1},0,2^{k+1}$ $(l=1,2,3)$ and jumps $p_{kl}=\frac1{2^{k+3}},1-\frac1{2^{k+2}},\frac1{2^{k+3}}$.
+
+$|X_{k1,k3}|=4,8,16,...,2^{k+1}$.
+
+
+Let $A=\{k=1,..,n\mid |x_{kl}|>\varepsilon S_n\}$; $\qquad B=\{k=1,..,n\}$
+
+When $k=\frac{n}2$, $\frac{|X_{k1,k3}|}{S_n}=\frac{2^{k+1}}{\sqrt{2^{n+1}-2}}=\sqrt2\sqrt{\frac{2^{n}}{2^{n}-1}}>\sqrt2$. That means, 
+
+given $\varepsilon=\sqrt2$, the set $A$ contains the terms of $k\ge\frac{n}2$, $\emptyset\subset A\subset B$, $\sum_{k=n/2}^{n}\sigma^2_k<\sum_{k=1}^n\sigma^2_k$
+
+$0<\frac{\sum_{k=n/2}^{n}\sigma^2_k}{\sum_{k=1}^n\sigma^2_k}<1$. This inequality holds for all n.
+
+$$\lim\limits_{n\to\infty}\frac{1}{S_n^2}\sum_{k=1}^n\sum\limits_{|x_{kl}|>\varepsilon S_n}x_{kl}^2\cdot p_{kl}=\lim\limits_{n\to\infty}\frac{1}{S_n^2}\sum_{k=\frac{n}2}^n\left[\sigma^2_k\right]=\lim\limits_{n\to\infty}\frac{\sum_{k=n/2}^{n}\sigma^2_k}{S_n^2}>0$$
+
+If $\varepsilon$ is smaller, the set $A$ will be larger. Until $\varepsilon\le\frac{2\sqrt2}{\sqrt{2^{n}-1}}$, $A=B$,
+
+$\lim\limits_{n\to\infty}\frac{1}{S_n^2}\sum_{k=1}^n\sum\limits_{|x_{kl}|>\varepsilon S_n}x_{kl}^2\cdot p_{kl}=1$.
+
+If $\varepsilon$ is larger, the set $A$ will be smaller. Until $\varepsilon\ge\sqrt2\sqrt{\frac{2^{2n}}{2^{n}-1}}$, $A$ is an empty set,
+
+$\lim\limits_{n\to\infty}\frac{1}{S_n^2}\sum_{k=1}^n\sum\limits_{|x_{kl}|>\varepsilon S_n}x_{kl}^2\cdot p_{kl}=0$
+
+Therefore, the assumption doesn't holds, Lindeberg condition is not satisfied.
+
+By Feller Theorem: 
+"The triangular array satisfies Lindebergs Condition,... implies that the maximum contribution to the variance from any of the individual terms in a row becomes negligible as you go down the rows."
+
+$$\lim\limits_{n\to\infty}\frac{1}{S_n^2}\max_lE[x_{nl}^2]=\lim\limits_{n\to\infty}\frac14\cdot\frac{2^n}{2^n-1}=\frac14\neq0$$
+The condition of uniformly asymptotically negligible (UAN) doesn't hold in this case.  $\hfill\blacksquare$
+
+<!--
+Assume $|k|<m,\forall k$ is bounded. $k=1,2,...,n$
+
+For all $\varepsilon>0$, $|X_{k1}|=|X_{k3}|=2^{k+1}>S_n=2^{n+1}-2$
+
+The probability of $X_i\neq0$ is $\frac18,\frac{1}{16},\frac{1}{32},...,\frac{1}{2^{n+2}}$
+
+$$\lim\limits_{n\to\infty}P(|X_n|>\varepsilon)=\lim\limits_{n\to\infty}[P(X_n=-2^{n+1})+P(X_n=2^{n+1})]=\lim\limits_{n\to\infty}\frac1{2^{n+2}}=0$$
+Then $X_n\overset{\mathcal{P}}{\to}0$, $\frac{\sum_{k=1}^nX_k}{S_n}\overset{\mathcal{P}}{\to}0$
+-->
+
+
+```{r}
+Lindeberg.CLT5 <- function(n){
+x.upper<- p.upper <- X <- S <- x <- sigma.sq <- lindberg<- NULL
+out <- matrix(rep(0,7*n),nrow=n,ncol=7)
+# x <- matrix(rep(0,n*n),nrow=n,ncol=n)
+for (k in 1:n){
+set.seed(k)   
+x.upper[k] <- 2*2^k
+p.upper[k] <- 1/2^k/8
+x[k] <- sample(c(-2*2^k,0,2*2^k),1,prob=c(1/2^k/8,(1-1/2^k/4),1/2^k/8),replace=T)
+sigma.sq[k] <- 2^k
+X[k] <- sum(x[1:k])
+S[k] <- sqrt(sum(sigma.sq[1:k]))
+lindberg[k] <- X[k]/S[k]
+out[k,] <- c(k,x[k],x.upper[k],p.upper[k],X[k],S[k],lindberg[k])
+}
+colnames(out) <- c("k","x_k","x.upper","p.upper","X","S","Lindberg")
+return(out)
+}
+```
+
+```{r,echo=F}
+test <- Lindeberg.CLT5(10000)
+head(test,n=10L)
+hist(test[,7],breaks =30,freq =F,xlim = range(-3,3),main = "n=10000")
+curve(dnorm(x, 0,1), col = 2, lty = 2, lwd = 2, add = TRUE)
+```
+
+The histogram shows the simulated values don't converge to a standard normal distribution. They concentrated around $x=0$.
+
+
+```{r,eval=F,echo=F}
+Lindeberg.CLT5.rep <- function(n,B){
+X <- S <- x <- sigma.sq <- lindberg<- NULL
+out <- matrix(rep(0,4*B),nrow=B,ncol=4)
+x <- matrix(rep(0,n*B),nrow=n,ncol=B)
+
+for (k in 1:n){
+for (i in 1:B){
+set.seed(i)  
+x[k,i] <- sample(c(-2*2^k,0,2*2^k),1,prob=c(1/2^k/8,(1-1/2^k/4),1/2^k/8),replace=T)
+sigma.sq[k] <- 2^k
+}
+X[k] <- sum(x[1:k,])
+S[k] <- sqrt(sum(sigma.sq[1:k]))
+lindberg[k] <- X[k]/S[k]
+out[k,] <- c(i,X[k],S[k],lindberg[k])
+}
+colnames(out) <- c("i","X","S","Lindberg")
+return(out)
+}
+
+test <- Lindeberg.CLT5.rep(100,1000)
+head(test,n=10L)
+hist(test[,4],breaks =30,freq =F,xlim = range(-3,3))
+curve(dnorm(x, 0,1), col = 2, lty = 2, lwd = 2, add = TRUE)
+plot(density(test[,4]))
+```
+
+
+
+
+
+
+
+

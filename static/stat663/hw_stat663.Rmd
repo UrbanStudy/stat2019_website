@@ -1,0 +1,1123 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    toc_float: no
+  word_document:
+    toc: no
+header-includes:
+- \usepackage{multicol}
+- \usepackage{multirow}
+- \usepackage{caption}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \rhead{Shen Qu}
+- \lhead{Homework}
+- \chead{STAT 663}
+- \rfoot{Page \thepage}
+- \usepackage{graphicx}
+- \usepackage{amssymb}
+- \usepackage[ruled,vlined]{algorithm2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=8)
+library(pander)
+```
+
+
+
+## HW1 (Due 4/08/20)
+
+1. Prove $Var[X]=Var(E[X|Y]+E(Var[X|Y]))$ (Conditional variance identity)
+
+$X=S(x)$ is an unbiased estimator of $q(\theta)$. $Y=T(x)$ is a sufficient statistic for $\theta$. 
+
+Let $E[X]=\mu_X$ is a constant. 
+Using Law of iterated Expectation, $E(E[X|Y])=E[X]=\mu_X$.
+
+$$
+\begin{aligned}
+Var[X] & =E[(X-\mu_X)^2]=E\left\{(X-E[X|Y]+E[X|Y]-\mu_X)^2\right\} \\
+& =E\left\{(X-E[X|Y])^2\right\}+E\left\{(E[X|Y]-\mu_X)^2\right\}+2E\left\{(X-E[X|Y])(E[X|Y]-\mu_X)\right\} \\
+& =E\left\{E[(X-E[X|Y])^2|Y]\right\}+Var(E[X|Y])+0 \\
+& =E(Var[X|Y])+Var(E[X|Y])
+\end{aligned}
+$$
+
+Proof $E\left\{(X-E[X|Y])(E[X|Y]-\mu_X)\right\}=0$
+
+For $E[X|Y]$ is a constant,
+
+\[
+\begin{aligned}
+E[(X-E[X|Y])(E[X|Y]-\mu_X)] & =\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}(X-E[X|Y])(E[X|Y]-\mu_X)f(X,Y)dXdY \\
+& =\int_{-\infty}^{\infty}(E[X|Y]-\mu_X)\left\{\int_{-\infty}^{\infty}(X-E[X|Y])f(X,Y)dX\right\}dY\\
+& =\int_{-\infty}^{\infty}(E[X|Y]-\mu_X)\cdot 0\ dY=0
+\end{aligned}
+\]
+
+Proof $\int_{-\infty}^{\infty}(X-E[X|Y])f(X,Y)dX=0$
+
+\[
+\begin{aligned}
+\int_{-\infty}^{\infty}(X-E[X|Y])f(X,Y)dX & =\int_{-\infty}^{\infty}Xf(X,Y)dX-E[X|Y]\int_{-\infty}^{\infty}f(X,Y)dX \\
+& =\int_{-\infty}^{\infty}Xf(X|Y)g(Y)dX-E[X|Y]g(Y)\\
+& =g(Y)E[X|Y]-E[X|Y]g(Y)=0
+\end{aligned}
+\]
+
+Thus $Var[X]=E(Var[X|Y])+Var(E[X|Y])$
+
+
+2. $Cov(X,Y)\le\sqrt{Var(X)Var(Y)}$. 
+
+BY Cauchy-Schwarz inequality $|EXY|\le E|XY|\le \sqrt{E|X|^2E|Y|^2}$, then
+
+$$|E(X-\mu_X)(Y-\mu_Y)|\le \sqrt{E(X-\mu_X)^2E(Y-\mu_Y)^2}\implies Cov(X,Y)\le\sqrt{Var(X)Var(Y)}$$
+
+
+Or for $\sqrt{Var(X)Var(Y)}\ge0$,
+
+$$|Corr(X,Y)|=|\frac{Cov(X,Y)}{\sqrt{Var(X)Var(Y)}}|\le1\implies Cov(X,Y)\le\sqrt{Var(X)Var(Y)}$$
+
+\pagebreak
+
+3. Problem 3.4.22 (Bickel and Doksum). *Regularity Conditions are Needed for the Information Inequality*. Let $X\sim U(0,\theta)$ be the uniform distribution on $(0,\theta)$. Note that $\log p(x,\theta)$ is differentiable for all $\theta > x$, that is, with probability $1$ for each $\theta$, and we can thus define moments of $T = \partial/\partial\theta\log p(X,\theta)$. Show that, however, 
+
+(i) $E\left(\frac{\partial}{\partial\theta}\log p(X,\theta)\right)=-\frac1 \theta \neq0$ 
+
+For $p(x,\theta)=\frac1\theta,0<x<\theta$, 
+
+$$E\left(\frac{\partial}{\partial\theta}\log p(X,\theta)\right)=E\left(\frac{\partial}{\partial\theta}\log \frac1\theta\right)=E\left(-\frac{\partial}{\partial\theta}\log\theta\right)=E\left(-\frac1 \theta\right)=-\frac1\theta\neq0$$
+
+(ii) $Var\left(\frac{\partial}{\partial\theta}\log p(X,\theta)\right)= 0$ and $I(\theta) = ET^2 = VarT + (ET)^2 = 1/\theta^2$. 
+
+$$I(\theta)=E\left([\frac{\partial}{\partial\theta}\log p(X,\theta)]^2\right)=E\left([-\frac1\theta]^2\right)=\frac1{\theta^2}$$
+$$Var\left(\frac{\partial}{\partial\theta}\log p(X,\theta)\right)=E\left([\frac{\partial}{\partial\theta}\log p(X,\theta)]^2\right)-E\left(\frac{\partial}{\partial\theta}\log p(X,\theta)\right)^2=\frac1{\theta^2}-\frac1{\theta^2}= 0$$
+
+
+(iii) $2X$ is unbiased for $\theta$ and has variance $(1/3)\theta^2 < (1/I(\theta)) = \theta^2$.
+
+Let $Y=2X$,$\frac{dx}{dy}=\frac12$, $p_Y(y,\theta)=p(x,\theta)|\frac{dx}{dy}|=\frac1{2\theta},0<y<2\theta$
+
+$E_\theta Y=\int_0^{2\theta}\frac{y}{2\theta} dy=\frac{1}{2\theta}\cdot\frac12y^2|_0^{2\theta}=\theta$
+
+$E[2X]-\theta=0$, hence $2X$ is unbiased for $\theta$.
+
+$$Var[Y]=\frac{(2\theta)^2}{12}=\frac{1}{3}\theta^2<\frac1{I(\theta)} = \theta^2$$
+
+This indicates that the Cramer-Rao Theorem is not applicable to this pdf.
+
+Theorem 3.4.1. (Information Inequality) and Corollary 3.4.1. need two regularity assumptions on the family $\{P_\theta: \theta\in\Theta\}$:
+
+(I) The set $A = \{x: p(x,\theta) > 0\}$ does not depend on $\theta$, $\forall x\in A, \theta\in\Theta$, $\partial/\partial\theta\log p(X,\theta)$ exists and is finite. 
+
+*support depend on $\theta$*
+
+(II) If $T$ is any statistic such that $E\theta(|T|) <\infty, \theta\in\Theta$, then the operations of integration and differentiation by $\theta$ can be interchanged in $\int T(x)p(x,\theta)dx$.
+
+*(the mean of score has to be always 0) *
+
+When I and II fail to hold, or even I and II are satisfied and UMVUE of $\psi(\theta)$ exist, the variance of the best estimate is not equal to the bound in many situations.
+
+<!--
+$E\left(\frac{\partial}{\partial\theta}\log p(Y,\theta)\right)=E\left(\frac{\partial}{\partial\theta}\log \frac1{2\theta}\right)=E\left(-\frac{\partial}{\partial\theta}\log{2\theta}\right)=E\left(-\frac1 \theta\right)=-\frac1\theta$
+
+$I_Y(\theta)=E\left([\frac{\partial}{\partial\theta}\log p(Y,\theta)]^2\right)=E\left([-\frac1\theta]^2\right)=\frac1{\theta^2}$
+-->
+
+\pagebreak
+
+4. Let X be a $N(\theta,1)$ variable and consider the estimate $T_{a,b}(X) = aX + b$ of $\theta$. 
+
+a. Calculate the MSE of $T_{a,b}(X)$. Use the form in Proposition 1.3.1. (Bickel and Doksum). 
+
+$$MSE(T_{a,b}(X)) = Bias^2(T_{a,b}(X)) + Var(T_{a,b}(X))=(E(aX + b)-\theta)^2+Var(aX + b)$$
+$$=(aEX + b-\theta)^2+a^2Var(X)=(a\theta + b-\theta)^2+a^2$$
+
+b. Plot MSE of $T_{1/2,0}(X)$ and of the "natural" estimate $T_{1,0}(X) = X$ as a function of $\theta$ and show that neither estimate improves the other for all $\theta$. 
+
+$MSE(T_{1/2,0}(X))=(\frac12\theta -\theta)^2+(\frac12)^2=\frac14\theta^2+\frac14$
+
+$MSE(T_{1,0}(X))=(\theta -\theta)^2+1=1$
+
+```{r,echo=F,out.width='50%'}
+mse1 = function(x){x^2/4+1/4}
+plot(-4:4,mse1(-4:4), type='n',xlab =expression(theta),ylab ="MSE" ) # ,xlim = c(-1,10),ylim = c(-1,10)
+curve(mse1,-5,5,col="red",add = T)
+abline(h=1, col="blue")
+text(2.5,3,expression(T[1/2-0](X)))
+text(3,1.2,expression(T[1-0](X)))
+```
+$MSE(T_{1,0}(X))=1, \forall\theta\in R$ is a horizontal line, which doesn't depend on $\theta$. $MSE(T_{1/2,0}(X))$ is a parabola opening upward and depend on $\theta$.
+
+$MSE(T_{1/2,0}(X))$ crosses $MSE(T_{1,0}(X))$ and is smaller than $MSE(T_{1,0}(X))$ only when $\theta\in(-\sqrt3,\sqrt3)$. Hence they do not improve each other.
+
+c. Is there any estimate of the form $aX + b$ which improves on $X$ for all $\theta$? 
+
+Only when $a=1$, $MSE(T_{1,b}(X))=b^2+1$ is free of $\theta$ and it reaches the lower bound when $b=0$. There is not any estimate of the form $aX + b$ which improves on $X$ for all $\theta$.
+
+d. Show that $X$ is the only unbiased estimate of the form $aX + b$. 
+
+$$Bias\ T_{a,b}(X)=a\theta + b-\theta=0 \iff \theta=\frac{b}{1-a}$$
+Only when $T_{1,0}(X) = X$, $Bias(T_{a,b}(X))=0$, $\forall\theta\in R$, the form $aX + b$ is an unbiased estimator of $\theta$. 
+
+By Rao-Blackwell Theorem, $T_{1,0}(X)$ is a sufficient statistic for $\theta$, $X$ is a function of $T$. Hence it is the only unbiased estimate of the form $aX + b$.
+
+*not proof unique*
+
+5. Let $X_1,\cdots,X_n$ be a sample from a population with mean $\mu$ and variance $\sigma^2$ both of which are unknown. Let $T(\underline {X}) =\sum^n_{i=1} c_iX_i$. 
+
+a. Show that $T$ is unbiased for $\mu$, if and only if,$\sum^n_{i=1} c_i= 1$. 
+
+$$E[T(\underline{X})]=E[\sum^n_{i=1} c_iX_i]=\sum^n_{i=1} c_iE[X_i]=\mu\sum^n_{i=1} c_i=\mu\ \iff \sum^n_{i=1}c_i=1,\ \forall\mu\in R$$
+
+<!--
+$$MSE(T(\underline{X}),\mu)=E[T(\underline{X})-\mu]^2=Var[T(\underline{X}]+(E[T(\underline{X})]-\mu)^2=\sigma^2+(\mu\sum^n_{i=1} c_i-\mu)^2=\sigma^2+\mu^2(\sum^n_{i=1} c_i-1)^2$$
+
+-->
+
+Hence $T$ is unbiased for $\mu$, if and only if $\sum^n_{i=1} c_i= 1$.
+
+b. Show that $\bar X$ has uniformly smallest variance among all unbiased estimates of this form.
+
+$T(\underline{X})=\sum^n_{i=1}c_iX_i$ is a sufficient statistic for $\mu$ when $\sum^n_{i=1} c_i=1$.
+
+Let $S(\underline{X})=\bar X=\frac1n\sum^n_{i=1}X_i$, $E[S(\underline{X})]=E[\frac1nT(\underline{X})]=\mu$. $S(\underline{X})$ is an unbiased estimator of $\mu$.
+
+
+By Rao-Blackwell Theorem,  $Var[\tilde S(\underline{X})]\le Var[S(\underline{X})],\ \forall\mu\in R$, $\tilde S(\underline{X})=E[S(\underline{X})|T(\underline{X})]$ is a better unbiased statistic for $\mu$.
+
+Since $S(\underline{X})=\frac1nT(\underline{X})$, $Var[S(\underline{X})|T(\underline{X})]=0$ then $\tilde S(\underline{X})=S(\underline{X})=\bar X$ is the UMVUE of $\mu$ when $\sum^n_{i=1} c_i=1$.
+
+\pagebreak
+
+## HW2. (Due 4/15/20)
+
+1. Let $X_1,\cdots,X_n$ be a sample from $U(\theta_1,\theta_2)$ where $\theta_1$ and $\theta_2$ are unknown. 
+
+a. Show that $T(\underline X)=(\min(X_1,\cdots,X_n),\max(X_1,\cdots,X_n))$ is sufficient. 
+
+Let $X_{(1)}=\min X_i$, $X_{(n)}=\max X_i$, $f_{X}(x|\theta_1,\theta_2)=\frac{1}{\theta_2-\theta_1}$,
+
+$$f(\mathbf{x}|\theta_1,\theta_2)=\prod_{i=1}^n\frac{1}{\theta_2-\theta_1}\mathbf{1}_{[\theta_1,\theta_2]}(x_i)=\frac{1}{(\theta_2-\theta_1)^n}\cdot\mathbf{1}_{x_{(1)}\in[\theta_1,\infty)}\cdot\mathbf{1}_{x_{(n)}\in(-\infty,\theta_2]}$$
+
+$\mathbf{1}_{x_{(1)}\in[\theta_1,\infty)}$ is free of $\theta_2$, $\mathbf{1}_{x_{(n)}\in(-\infty,\theta_2]}$ is free of $\theta_1$. By Facotrization Theorem, $T(\underline X)$ are sufficient statistic
+
+b. Assuming that $T(\underline X)$ is complete, find a UMVUE of $(\theta_1 + \theta_2)/2$. 
+
+$F_{X}(x|\theta_1,\theta_2)=\frac{x-\theta_1}{\theta_2-\theta_1}$
+
+Let $Y=\frac{X-\theta_1}{\theta_2-\theta_1}\sim U(0,1)$, $f_{Y}(y)=1$, $F_{Y}(y)=y$
+
+$$f_{Y_{(1)}}(y)=\frac{n!}{(1-1)!(n-1)!}f_{Y}(y)[F_{Y}(y)]^{1-1}[1-F_{Y}(y)]^{n-1}=n\left(1-y\right)^{n-1},\ 0\le y\le1$$
+$$f_{Y_{(n)}}(y)=\frac{n!}{(n-1)!(n-n)!}f_{Y}(y)[F_{Y}(y)]^{n-1}[1-F_{Y}(y)]^{n-n}=ny^{n-1},\ 0\le y\le1$$
+$Y_{(1)}\sim Beta(1,n)$, $Y_{(n)}\sim Beta(n,1)$. 
+
+$$E[Y_{(1)}]=E[\frac{X_{(1)}-\theta_1}{\theta_2-\theta_1}]=\frac{E[X_{(1)}]-\theta_1}{\theta_2-\theta_1}=\frac{1}{n+1}$$
+
+$$E[Y_{(n)}]=E[\frac{X_{(n)}-\theta_1}{\theta_2-\theta_1}]=\frac{E[X_{(n)}]-\theta_1}{\theta_2-\theta_1}=\frac{n}{n+1}$$
+
+$$E[\frac{X_{(1)}+X_{(n)}}2]=\frac12\left(\frac{\theta_2-\theta_1}{n+1}+\theta_1+\frac{n(\theta_2-\theta_1)}{n+1}+\theta_1\right)=\frac{\theta_1 + \theta_2}{2}$$
+
+By Lehmann-Scheffe theorem $\frac{X_{(1)}+X_{(n)}}2$ is a UMVUE of $(\theta_1 + \theta_2)/2$.
+
+2. Let $X_1,\cdots,X_n$ be a sample from a $\Gamma(p,\lambda)$ population where both $p$ and $\lambda$ are unknown. Find the UMVUE of $p/\lambda$. 
+
+For Gamma Distribution, $E(\bar X)=E(X)=p/\lambda$. $\bar X$ is an unbiased estimator of $g(p,\lambda)=p/\lambda$.
+
+$$f_{p,\lambda}(\mathbf{x})=\exp[\underbrace{-\lambda\sum_{i=1}^{n}x_i+(p-1)\sum_{i=1}^{n}\log x_i}
+    _{\eta(p,\lambda)T(x)}
+    -\underbrace{-n\log(\frac{\lambda^p}{\Gamma{(p)}})}_{B(p,\lambda)}]
+    \underbrace{\mathbf{1}_{\{x\in(0,\infty)\}}}_{h(x)}$$
+
+Gamma is a exponential family. $T=(\sum_{i=1}^{n} X_i, \sum_{i=1}^{n} \log X_i)$ is a complete sufficient statistic for $(\lambda,p)$ where $x\in\mathcal{X}\subset\mathbb{R}^2_+$. 
+
+By Lehman-Scheffe Theorem, $\bar X$ is the UMVUE of $p/\lambda$.
+
+
+
+3. Let  $\underline X =X_1,\cdots,X_n$ be a sample from $N(\mu,\sigma^2)$. Show that if $n\ge 2$, $\underline X$ though sufficient is not complete. Hint: Consider $g(\underline X) = X_2 -X_1$.
+
+$$f_{\mu}(x_{1:n})=\exp[\underbrace{\frac{\mu}{\sigma^2}}_{\eta(\mu)}
+    \underbrace{\sum_{i=1}^nx_i}_{T(x)}
+    -\underbrace{n(\frac{\mu^2}{2\sigma^2}+\ln{(\sqrt{2\pi}\sigma)})}_{B(\mu)}]
+    \underbrace{\exp[-\frac{\sum_{i=1}^nx_i^2}{2\sigma^2}]\mathbf{1}_{\{x\in\mathbb{R}\}}}_{h(x)}$$
+
+$T(X_{1:n})=\sum_{i=1}^n X_i$ is sufficient for $\mu$.
+
+$g(\underline X) = X_2 -X_1$ is a function of $T$ where $g: \mathbb{R}^2\to\mathbb{R}$ given by $(x_1,x_2)\mapsto x_1-x_2$
+
+If $E_\mu g(T)=0$ for all $\mu$, $g(X_1,X_2)\sim N(0,2\sigma^2)$.
+
+$P_\mu( g(T)=0)=0\neq1$ $\forall\mu$ since the random variables are continuous.
+
+Thus the statistic $T(\underline X)$ is not complete for all $\mu$.
+
+- Proof $g\sim N(0,2\sigma^2)$
+
+Let $Y_1=-X_1\sim N(-\mu,\sigma^2)$ and $Y_2=X_2\sim N(\mu,\sigma^2)$ are independent random variables with moment generating functions $M_{Y_1}(t)=\exp(-\mu t + \sigma^2t/2)$ and $M_{Y_2}(t)=\exp(\mu t + \sigma^2t/2)$. 
+
+Then the moment generating function of the random variable $g(\underline X) = Y_2 +Y_1$ is given by 
+
+$M_G(t)=M_{Y_1}(t)M_{Y_2}(t)=\exp(\mu t + \sigma^2t/2-\mu t + \sigma^2t/2)=\exp(\sigma^2t)$. Hence $g\sim N(0,2\sigma^2)$.
+
+- Or by Location family ancillary statistic.
+
+Let $X_1=Z_1+\mu$, $X_2=Z_2+\mu$. $Z_1,Z_2\sim N(0,\sigma^2)$ is free of $\mu$. $g(\underline X) = X_2 -X_1$.
+
+$$F_G(g|\mu)=P_\mu(G\le g)=P_\mu(X_2 -X_1\le g)=P_\mu((Z_2+\mu)-(Z_1+\mu)\le g)=P_\mu(Z_2-Z_1\le g)$$
+The C.D.F. of $g(\underline X)$ does not depend on $\mu$. $g(\underline X)$ is an ancillary statistic and is not a complete sufficient statistic.
+
+\pagebreak
+
+## HW3. (Due 4/22/20)
+
+1. Suppose that $X_1,\cdots,X_n$ is a sample from a population with density $f(x,\theta) = \theta x^{\theta-1}, 0 < x < 1, \theta > 0$, and let $T(\underline X) = (-1/n)\sum^n_{i=1}\log X_i$. (Note that $X_i\sim Beta(\theta,1)$.) 
+
+a. Use Theorem 1.6.2 (Bickel and Doksum) to show that $E(T(\underline X)) = 1/\theta, Var(T(\underline X)) = 1/n\theta^2$.
+
+By Theorem 1.6.2, $X$ is distributed according to 
+
+$q_{\theta}(\mathbf{x}) = \exp[\underbrace{-n(\theta-1)}_{\eta(\theta)}\underbrace{(-\frac1n\sum_{i=1}^n\log(x_i))}_{T(x)}-\underbrace{(-n\log(\theta))}_{A(\eta)}]\underbrace{\prod_{i=1}^n\mathbf{1}_{\{x_i\in(0,1)\}}}_{h(x)}$, $x\in\mathcal{X}\subset\mathbb{R}^q$ $\hfill\square$
+
+$\eta=-n(\theta-1)\implies\theta=\frac{n-\eta}{n}\implies A(\eta)=-n\log(\theta)=-n\log(n-\eta)+n\log(n)$
+
+$\eta$ is an interior point of the natural parameter space $\varepsilon$. $\hfill\square$
+
+$$E(T(\underline X))=A'(\eta)=\frac{n}{n-\eta}=\frac{n}{n+n(\theta-1)}=\frac{1}{\theta}$$
+$$Var(T(\underline X))=A''(\eta)=\frac{n}{(n-\eta)^2}=\frac{n}{[n+n(\theta-1)]^2}=\frac{1}{n\theta^2} \qquad\blacksquare$$
+b. Show that $I_1(\theta) = 1/\theta^2$ and that $T(\underline X)$ is an UMVUE of $q(\theta) = 1/\theta$. 
+
+$\{P\theta\}$ is an exponential family and $\eta(\theta)$ has a nonvanishing continuous derivative on $\Theta$, then I and II hold. (Proposition 3.4.1.)
+
+$I_1(\theta)=-E\left(\frac{\partial^2}{\partial\theta^2}\log p(X,\theta)\right)=-E\left(\frac{\partial^2}{\partial\theta^2}[(\theta-1)\log(x)+\log(\theta)]\right)=-E\left(\frac{\partial}{\partial\theta}[\log(x)+\frac1\theta]\right)=\frac1{\theta^2}$  $\hfill\square$
+
+$Var_\theta(T(X))$ is finite and $0<I(\theta)<\infty$ for all $\theta$. $E_\theta(T(X))=\psi(\theta)$ is differentiable. (Theorem 3.4.1)
+
+$X_1,\cdots,X_n$ is a sample from a population with density $f(x,\theta) = \theta x^{\theta-1}, 0 < x < 1, \theta > 0$, $I(\theta)=nI_1(\theta)$ (Proposition 3.4.2)
+
+$CRLB=\frac{(\frac{\partial}{\partial\theta}(E(T(X))))^2}{nI_1(\theta)}=\frac{(\frac{\partial}{\partial\theta}(\frac{1}{\theta}))^2}{n\frac1{\theta^2}}=\frac{1}{n\theta^2}$
+
+
+- By Theorem 3.4.2.
+
+$\{P\theta\}$ is a one-parameter exponential family of the form $p(x,\theta)=h(x)\exp\{\eta(\theta)T(x)-B(\theta)\}$ $\hfill\square$
+
+$T({X})=-\frac1n\sum_{i=1}^n\log(x_i)$ is a function of natural sufficient statistic $\sum_{i=1}^n\log(x_i)$ $\hfill\square$
+
+$\eta(\theta)=-n(\theta-1)$ has a continuous nonvanishing derivative on $\theta$ $\hfill\square$
+
+Then $T(X)$ achieves the information inequality bound and is a UMVUE of $E_\theta(T(X))=1/\theta$. $\hfill\blacksquare$
+
+
+- Or By Lehman-Scheffe Theorem?
+
+$Beta(\theta,1)$ is a canonical 1-parameter exponential family. $T(\underline{X})=-\frac1n\sum_{i=1}^n\log(x)$ is a function of complete sufficient statistic for $\theta$, $T(\underline{X})$ is the UMVUE of $\theta$.
+
+
+2. Do problem 1 with $f(x,\theta)$ replaced by the Weibull density $f(x,\theta) = cx^{c-1}\theta\exp(-\theta x^c), x > 0, \theta > 0, c > 0$, and $T$ replaced by $T(\underline X) = (1/n)\sum^n_{i=1} X_i^c$. 
+
+By Theorem 1.6.2, $X$ is distributed according to 
+
+$f_{\theta}(\mathbf{x}) = \exp[\underbrace{-n\theta}_{\eta(\theta)}\underbrace{(\frac1n\sum_{i=1}^nx_i^c)}_{T(x)}-\underbrace{(-n\log(\theta))}_{A(\eta)}]\underbrace{\prod _{i=1}^ncx^{c-1}\mathbf{1}_{\{x_i>0\}}}_{h(x)}$ $\hfill\square$
+
+$\eta=-n\theta\implies\theta=\frac{-\eta}{n}\implies A(\eta)=-n\log(\theta)=-n\log(-\eta)+n\log(n)$
+
+$\eta$ is an interior point of the natural parameter space $\varepsilon$. $\hfill\square$
+
+$$E(T(\underline X))=A'(\eta)=\frac{-n}{\eta}=\frac{-n}{-n\theta}=\frac{1}{\theta}$$
+$$Var(T(\underline X))=A''(\eta)=\frac{n}{\eta^2}=\frac{n}{(-n\theta)^2}=\frac{1}{n\theta^2}  \qquad\blacksquare$$
+
+$\{P\theta\}$ is an exponential family and $\eta(\theta)$ has a nonvanishing continuous derivative on $\Theta$, then I and II hold. (Proposition 3.4.1.)
+
+
+$I_1(\theta)=-E\left(\frac{\partial^2}{\partial\theta^2}\log p(X,\theta)\right)=-E\left(\frac{\partial^2}{\partial\theta^2}[-\theta x^c+\log(\theta)]\right)=-E\left(\frac{\partial}{\partial\theta}[-x^c+\frac1\theta]\right)=\frac1{\theta^2}$ $\hfill\square$
+
+$Var_\theta(T(X))$ is finite and $0<I(\theta)<\infty$ for all $\theta$. $E_\theta(T(X))=\psi(\theta)$ is differentiable. (Theorem 3.4.1)
+
+$X_1,\cdots,X_n$ is a sample from a population with density $f(x,\theta) = \theta x^{\theta-1}, 0 < x < 1, \theta > 0$, $I(\theta)=nI_1(\theta)$ (Proposition 3.4.2)
+
+$CRLB=\frac{(\frac{\partial}{\partial\theta}(E(T(X))))^2}{nI_1(\theta)}=\frac{(\frac{\partial}{\partial\theta}(\frac{1}{\theta}))^2}{n\frac1{\theta^2}}=\frac{1}{n\theta^2}$
+
+
+- By Theorem 3.4.2.
+
+$\{P\theta\}$ is a one-parameter exponential family of the form $p(x,\theta)=h(x)\exp\{\eta(\theta)T(x)-B(\theta)\}$ $\hfill\square$
+
+$T({X})=\frac1n\sum_{i=1}^nx_i^c$ is a function of natural sufficient statistic $\sum_{i=1}^nx_i^c$ $\hfill\square$
+
+$\eta(\theta)=-n\theta$ has a continuous nonvanishing derivative on $\theta$ $\hfill\square$
+
+Then $T(X)$ achieves the information inequality bound and is a UMVUE of $E_\theta(T(X))=1/\theta$. $\hfill\blacksquare$
+
+
+- Or By Lehman-Scheffe Theorem
+
+When c is known, $Weibull(\theta,c)$ is a canonical 1-parameter exponential family. $T(\underline{X})=\frac1n\sum_{i=1}^nx_i^c$ is a function of complete sufficient statistic for $\theta$, $T(\underline{X})$ is the UMVUE of $\theta$.
+
+
+3. Show that the information inequality bound is unchanged by a smooth reparametrization. That is, suppose $P_\theta,\theta\in \Theta$ satisfies I and II. Let $h$ be a function from $\Theta$ to R such that $h_0$ is a continuous and nonvanishing on $\Theta$. Let $\eta = h(\theta)$ and define $Q_\eta = P_\theta$. Then the information inequality bound obtained from $Q_\eta$ evaluated at $\eta = h(\theta)$ is the same as the bound obtained from $P_\theta$. 
+
+Hint: $\frac{\partial}{\partial\eta}\log q(x,\eta) =\left[\frac{\partial}{\partial\theta}\log p(x,\theta)\right]\frac{\partial\theta}{\partial\eta}, \frac{\partial}{\partial\eta} E_\eta(T(X))=\left( \frac{\partial}{\partial\theta} \psi(\theta)\right)\frac{\partial\theta}{\partial\eta}$, where $\psi(\theta) = E_\theta(T(X))$.
+
+$Q_\eta = P_\theta\implies\frac{\partial}{\partial\eta}\ Q_\eta= \frac{\partial}{\partial\theta}P_\theta\frac{\partial\theta}{\partial\eta}$
+
+$$\left[\frac{\partial}{\partial\eta} E_\eta(T(X))\right]^2=\left[\left( \frac{\partial}{\partial\theta} \psi(\theta)\right)\frac{\partial\theta}{\partial\eta}\right]^2=\left[\left( \frac{\partial}{\partial\theta} E_\theta(T(X))\right)^2\right](\frac{\partial\theta}{\partial\eta})^2$$
+$$I(\eta)=E\left[\left(\frac{\partial}{\partial\eta}\log q(x,\eta)\right)^2 \right]=E\left[\left(\left\{\frac{\partial}{\partial\theta}\log p(x,\theta)\right\}\frac{\partial\theta}{\partial\eta}\right)^2 \right]=E\left[\left(\frac{\partial}{\partial\theta}\log p(x,\theta))\right)^2\right](\frac{\partial\theta}{\partial\eta})^2$$
+
+$$\frac{\left[\frac{\partial}{\partial\eta} E_\eta(T(X))\right]^2}{I(\eta)}=\frac{\left[\left( \frac{\partial}{\partial\theta} E_\theta(T(X))\right)^2\right](\frac{\partial\theta}{\partial\eta})^2}{E\left[\left(\frac{\partial}{\partial\theta}\log p(x,\theta))\right)^2\right](\frac{\partial\theta}{\partial\eta})^2}=\frac{\left[\frac{\partial}{\partial\theta} E_\theta(T(X))\right]^2}{I(\theta)}$$
+
+Hence, the information inequality bound obtained from $Q_\eta$ evaluated at $\eta = h(\theta)$ is the same as the bound obtained from $P_\theta$
+
+
+\pagebreak
+
+## HW4. (Due 4/29/20)
+
+1. Let $X_1,\cdots,X_n$ be a sample from a population with frequency distribution $f(1,\theta) = (1/3)(1-\theta), f(2,\theta) = (1/3)(1 + c\theta), f(3,\theta) = (1/3)[1 + \theta(1-c)]$, where c is a constant. Give two frequency substitution estimates of $\theta$ and compute their asymptotic variances. 
+<!--
+$$\forall\varepsilon>0, P(|x_n-2|>\varepsilon)=P(x_n>2+\varepsilon)+P(x_n<2-\varepsilon)=\frac13[1 + \theta(1-c)]+\frac13(1-\theta)=1-\frac13(1 + c\theta)$$
+-->
+
+Let $N_1=np_1$, $N_2=np_2$, $N_3=np_3$, $\sum_{i=1}^3 N_i=n$
+
+$\frac{3(p_2-p_1)}{c+1}=\frac{(1 + c\theta)-(1-\theta)}{c+1}=\theta\implies T_1=\frac{3}{c+1}(\frac{N_2}n-\frac{N_1}n)$
+
+$\frac{3(p_1-p_3)}{c-2}=\frac{(1-\theta)-(1 + \theta(1-c))}{c-2}=\theta\implies T_2=\frac{3}{c-2}(\frac{N_1}n-\frac{N_3}n)$
+
+$\frac{3(p_2-p_3)}{2c-1}=\frac{(1 + c\theta)-(1 + \theta(1-c))}{2c-1}=\theta\implies T_3=\frac{3}{2c-1}(\frac{N_2}n-\frac{N_3}n)$
+
+The frequency substitution estimates of $\theta$ are $T_{1,2,3}=h(\frac{\mathbf{N}}n)$ satisfies $h(\mathbf{p}(\theta))=\theta$ for all $\theta\in\Theta$ where $\mathbf{p}(\theta)=(p_1,p_2,p_3)^T=(f(1,\theta),f(2,\theta),f(3,\theta))^T$
+
+$h(\mathbf{p}(\theta))$ are 3 continuous functions at $\mathbf{p}(\theta)$ and are differentiable.
+
+- By Delta Method (Theorem 5.4.1),
+
+$$\sqrt{n}(h(\frac{\mathbf{N}}n)-\theta)\overset{\mathcal{D}}{\to} N(0,\sigma^2(\theta,h(\mathbf{p}(\theta))$$
+
+$\sigma^2(\theta,h(p_1,p_2))=\left([\frac{3}{c+1}]^2\frac{1+c\theta}{3}+[\frac{-3}{c+1}]^2\frac{1-\theta}{3}\right)-\left(\frac{3}{c+1}\frac{1+c\theta}{3}+\frac{-3}{c+1}\frac{1-\theta}{3}\right)^2=\frac{6-3(1-c)\theta}{(c+1)^2}-\theta^2$
+
+$\sigma^2(\theta,h(p_1,p_3))=\left([\frac{3}{c-2}]^2\frac{1-\theta}{3}+[\frac{-3}{c-2}]^2\frac{1+(1-c)\theta}{3}\right)-\left(\frac{3}{c-2}\frac{1-\theta}{3}+\frac{-3}{c-2}\frac{1+(1-c)\theta}{3}\right)^2=\frac{6-3c\theta}{(c-2)^2}-\theta^2$
+
+$\sigma^2(\theta,h(p_2,p_3))=\left([\frac{3}{2c-1}]^2\frac{1+c\theta}{3}+[\frac{-3}{2c-1}]^2\frac{1+(1-c)\theta}{3}\right)-\left(\frac{3}{2c-1}\frac{1+c\theta}{3}+\frac{-3}{2c-1}\frac{1+(1-c)\theta}{3}\right)^2=\frac{6+3\theta}{(2c-1)^2}-\theta^2$
+
+- Note: (Example 1.6.7; Example 2.1.3; Example 2.1.4; Example 2.2.8; Example 2.3.3; Example 3.4.4; Example 3.4.7; Example 4.1.1; Example 4.3.1; Section 5.4.1)
+
+By Theorem 5.3.2 
+
+$$\sqrt{n}\left(h(\frac{\mathbf{N}}n)-h(\mathbf{p}(\theta))\right)=\sqrt{n}\sum_{j=1}^3\frac{\partial h}{\partial p_j}(\mathbf{p}(\theta))\left(\frac{N_j}n-p(x_j,\theta)\right)+\mathcal{O}_p(1)$$	
+Using the definition of $N_j$
+
+$$\sum_{j=1}^3\frac{\partial h}{\partial p_j}(\mathbf{p}(\theta))\left(\frac{N_j}n-p(x_j,\theta)\right)=\frac1n\sum_{i=1}^n\sum_{j=1}^3\frac{\partial h}{\partial p_j}(\mathbf{p}(\theta))(\mathbf{1}_{(x_1=x_j)}-p(x_j,\theta))$$
+
+
+Thus, $\sqrt{n}\left(h(\frac{\mathbf{N}}n)-h(\mathbf{p}(\theta))\right)$ is asymptotically normal with mean 0,
+
+Its asymptotic variance is 
+
+$$\sigma^2(\theta,h)=Var_\theta\left[\sum_{j=1}^3\frac{\partial h}{\partial p_j}(\mathbf{p}(\theta))\mathbf{1}_{(x_1=x_j)}\right]=\sum_{j=1}^3\left[\frac{\partial h}{\partial p_j}(\mathbf{p}(\theta))\right]^2p(x_j,\theta)-\left[\sum_{j=1}^3\frac{\partial h}{\partial p_j}(\mathbf{p}(\theta))p(x_j,\theta)\right]^2$$
+
+- Or by the property of Multi-nomial Distribution
+
+$Var(N_1)=n(p_1)(1-p_1)=\frac{n}{3^2}(1-\theta)(2+\theta)$
+
+$Var(N_2)=n(p_2)(1-p_2)=\frac{n}{3^2}(1+c\theta)(2-c\theta)$
+
+$Var(N_3)=n(p_3)(1-p_3)=\frac{n}{3^2}(1+(1-c)\theta)(2-\theta+c\theta)$
+
+$Cov(N_1,N_2)=-np_1p_2=-\frac{n}{3^2}(1-\theta)(1+c\theta)$
+
+$Cov(N_1,N_3)=-np_1p_3=-\frac{n}{3^2}(1-\theta)(1+(1-c)\theta)$
+
+$Cov(N_2,N_3)=-np_2p_3=-\frac{n}{3^2}(1+c\theta)(1+(1-c)\theta)$
+
+$nVarT_1=\frac{3^2(VarN_1+VarN_2-2Cov(N_1,N_2))}{(c+1)^2n}=\frac{(1-\theta)(2+\theta)+(1+c\theta)(2-c\theta)+2(1-\theta)(1+c\theta)}{(c+1)^2}=\frac{6-3(1-c)\theta}{(c+1)^2}-\theta^2$
+
+$nVarT_2=\frac{3^2(VarN_1+VarN_3-2Cov(N_1,N_3))}{(c-2)^2n}=\frac{(1-\theta)(2+\theta)+(1+(1-c)\theta)(2-\theta+c\theta)+2(1-\theta)(1+(1-c)\theta)}{(c-2)^2}=\frac{6-3c\theta}{(c-2)^2}-\theta^2$
+
+$nVarT_3=\frac{3^2(VarN_2+VarN_3-2Cov(N_2,N_3))}{(2c-1)^2n}=\frac{(1+c\theta)(2-c\theta)+(1+(1-c)\theta)(2-\theta+c\theta)+2(1+c\theta)(1+(1-c)\theta)}{(2c-1)^2}=\frac{6+3\theta}{(2c-1)^2}-\theta^2$
+
+
+2. Let $X_1,\cdots,X_n$ be a sample from a population with the density $f(x,\theta) = \theta(\theta + 1)x^{\theta-1}(1-x), 0 < x < 1, \theta > 0$. 
+
+a. Show that $T_n = \frac{2\bar X}{1-\bar X}$ is a method of moments estimate of $\theta$. 
+
+For $X\sim Beta(\theta, 2)$,  
+
+$$EX=\frac{\theta}{\theta+2}\overset{set}{=}\frac1n\sum_iX_i=\bar X \implies\hat\theta_{MOM}=\frac{2\bar X}{1-\bar X}$$
+
+$T_n = \frac{2\bar X}{1-\bar X}$ is a method of moments estimate of $\theta$.
+
+b. Show that $\frac{\sqrt{n}(T_n -\mu_n(\theta))}{\sigma_n(\theta)}\to N(0,1)$ in distribution, where $\mu_n(\theta) = \theta$, $\sigma_n^2(\theta) = \theta(\theta + 2)^2/2(\theta + 3)$. 
+
+$E[\bar X]=\mu=\frac{\theta}{\theta+2}$, $nVar[\bar X]=\sigma^2=\frac{2\theta}{(\theta+2)^2(\theta+3)}$. By the Central Limit Theorem, $\frac{\sqrt{n}(\bar X -\mu)}{\sigma}\overset{\mathcal{D}}{\to} N(0,1)$
+
+Let $T_n=\frac{2\bar X}{1-\bar X}=\frac{2}{1-\bar X}-2=h(\bar X)$.
+
+$h(\mu)=\frac{2}{1-\mu}-2$ is a continuous function at $\frac{\theta}{\theta+2}$ and differentiable.
+
+$h'(\mu)=\frac{2}{(1-\mu)^2}=\frac{2}{(1-\frac{\theta}{\theta+2})^2}=\frac{(\theta+2)^2}{2}\neq0$ and exist.
+
+
+By Delta Method
+
+$\sqrt{n}(h(\bar X)-h(\mu))=\sqrt{n}(T_n -\frac{2}{1-\mu}+2)=\sqrt{n}(T_n -\frac{2}{1-\frac{\theta}{\theta+2}}+2)=\sqrt{n}(T_n -\theta)$
+
+
+$\sigma^2[h'(\mu)]^2=\frac{2\theta}{(\theta+2)^2(\theta+3)}\left[\frac{(\theta+2)^2}{2}\right]^2=\frac{\theta(\theta+2)^2}{2(\theta+3)}$
+
+$$\sqrt{n}(T_n -\theta)\overset{\mathcal{D}}{\to} N(0,\frac{\theta(\theta+2)^2}{2(\theta+3)})\implies\frac{\sqrt{n}(T_n -\theta)}{\sqrt{\frac{\theta(\theta+2)^2}{2(\theta+3)}}}\overset{\mathcal{D}}{\to} N(0,1)$$
+Therefore, $\frac{\sqrt{n}(T_n -\mu_n(\theta))}{\sigma_n(\theta)}\to N(0,1)$ in distribution, where $\mu_n(\theta) = \theta$, $\sigma_n^2(\theta) = \frac{\theta(\theta+2)^2}{2(\theta+3)}$
+
+
+c. Show that $T_n$ is not efficient by calculating the information bound.
+
+ $T_n$ is an unbiased estimator of $\theta$. $Var[T_n]=\frac1n\sigma_n^2(\theta) = \frac{\theta(\theta+2)^2}{2n(\theta+3)}$
+
+
+$\log f(x|\theta)=\log\theta+\log(\theta+1)+(\theta-1)\log x+\log(1-x)$
+
+$\frac{\partial^2}{\partial\theta^2}\log f(x|\theta)=\frac\partial{\partial\theta}\left(\frac{1}{\theta}+\frac{1}{\theta+1}+\log x\right)=-\frac{1}{\theta^2}-\frac{1}{(\theta+1)^2}$
+
+$I(\theta)=-E[\frac{\partial^2}{\partial\theta^2}\log f(\mathbf{x}|\theta)]=-E[-\frac{1}{\theta^2}-\frac{1}{(\theta+1)^2}]=\frac{2\theta^2+2\theta+1}{\theta^2(\theta+1)^2}$
+
+$CRLB=\frac{1}{nI(\theta)}=\frac{\theta^2(\theta+1)^2}{n(2\theta^2+2\theta+1)}$
+
+$$\frac{CRLB}{Var[T_n]}=\frac{\frac{\theta^2(\theta+1)^2}{n(2\theta^2+2\theta+1)}}{\frac{\theta(\theta+2)^2}{2n(\theta+3)}}=\frac{2\theta(\theta+3)(\theta+1)^2}{(\theta+2)^2(2\theta^2+2\theta+1)}=\frac{2\theta^4+10\theta^3+14\theta^2+6\theta}{2\theta^4+10\theta^3+17\theta^2+12\theta+4}<1$$
+Thus, $T_n$ is not efficient.
+
+
+\pagebreak
+
+## HW5. (Due 5/13/20)
+
+1. Let $X_n ~ Bin(n,p)$, $p\in(0,1)$. Example 5.2.2. Section 5.3
+
+- Recall the moment-generating function
+
+$X_n$ be binomial with $n$ trials and success probability $p$. $X_n= \sum_{i = 1} ^ n X_i$ where the $X_i$ are iid Bernoulli with success probability $p$
+
+$f(x)=\binom{n}{x}p^x(1-p)^{n-x}=\frac{n!}{x!(n-x)!}\cdot\exp\left\{x\ln(\frac{p}{1-p})+n\log(1-p)\right\}$
+
+$\eta=\ln(\frac{p}{1-p})$ is an interior point of $\varepsilon$, By Theorem 1.6.2 the moment-generating function of T(X) exist and is given by
+
+$M_X(t)=\exp\left[A(t+\eta)-A(\eta)\right]=\left[pe^t+1-p\right]^n$
+
+$M_X'(t)=\frac{n!}{(n-1)!}\left[pe^t+1-p\right]^{n-1}pe^t$
+
+$M_X''(t)=\frac{n!}{(n-2)!}\left[pe^t+1-p\right]^{n-2}(pe^t)^2+\frac{n!}{(n-1)!}\left[pe^t+1-p\right]^{n-1}pe^t$
+
+$M_X'''(t)=\frac{n!}{(n-3)!}\left[pe^t+1-p\right]^{n-3}(pe^t)^3+\frac{3n!}{(n-2)!}\left[pe^t+1-p\right]^{n-1}(pe^t)^2+\frac{n!}{(n-1)!}\left[pe^t+1-p\right]^{n-1}pe^t$
+
+$M_X''''(t)=\frac{n!}{(n-4)!}\left[pe^t+1-p\right]^{n-4}(pe^t)^4+\frac{6n!}{(n-3)!}\left[pe^t+1-p\right]^{n-3}(pe^t)^3+\frac{7n!}{(n-2)!}\left[pe^t+1-p\right]^{n-1}(pe^t)^2+\frac{n!}{(n-1)!}\left[pe^t+1-p\right]^{n-1}pe^t$
+
+$\mu_1=E[X^1]=np$
+
+$\mu_2=E[X^2]=n(n-1)p^2+np$
+
+$\mu_3=E[X^3]=n(n-1)(n-2)p^3+3n(n-1)p^2+np$
+
+$\mu_4=E[X^4]=n(n-1)(n-2)(n-3)p^4+6n(n-1)(n-2)p^3+7n(n-1)p^2+np$
+
+a. Find the UMVUE of $p^2$. 
+
+Each $X_i$'s are iid Bernoulli random variables. $(x_i\in\mathbb{N_0^+})$ is the natural sufficient statistic for $p$. 
+ 
+Binomial distribution is a 1-parameter exponential family. When $n$ is known, the total number of successes $X_n$ is the complete sufficient statistic for $p$. 
+
+Let $T(X_n)$ is a function of c.s.s,
+
+$$E[T(X_n)]=E\left[\frac{X_n^2-X_n}{n(n-1)}\right]=\frac{E[X_n^2]-E[X_n]}{n(n-1)}=\frac{n(n-1)p^2+np-np}{n(n-1)}=p^2$$
+$T(X_n)$ is an unbiased estimator for $p^2$, By Lehmann Scheffe Theorem, $T=\frac{X_n^2-X_n}{n(n-1)}$ the UMVUE of $p^2$.
+
+b. Find the asymptotic distribution of your estimator found in a. 
+
+$E[\frac{X_n}{n}]=\mu=p$, $nVar[\frac{X_n}{n}]=\sigma^2=p(1-p)$. 
+
+By the Central Limit Theorem, $\sqrt{n}(\frac{X_n}{n} -p)\overset{\mathcal{D}}{\to} N(0,p(1-p))$
+
+Let $T_n=\frac{X_n^2-X_n}{n(n-1)}=\frac{n(\frac{X_n}{n})^2-\frac{X_n}{n}}{n-1}=h(\frac{X_n}{n})$.
+
+$h(\mu)=\frac{n\mu^2-\mu}{n-1}$ is a continuous function at $p$ and differenciable; 
+
+$h'(\mu)=\frac{2n\mu-1}{n-1}\neq0$ when $\mu\neq\frac{1}{2n}$; $h''(\mu)=\frac{2n}{n-1}\neq0$; $h'''(\mu)=0$.
+
+In the case $np=1/2$, this does not give the asymptotic distribution.
+
+By Delta Method
+
+$$\sqrt{n}(h(\frac{X}{n})-h(\mu)-\frac{1}{2n}h''(\mu)\sigma^2)=\sqrt{n}(h(\frac{X}{n})-\frac{np^2-p}{n-1}-\frac{1}{2n}\frac{2n}{n-1}(p-p^2))=\sqrt{n}(T -p^2)$$
+
+$$\lim_{n\to\infty}\sigma^2[h'(\mu)]^2=(p-p^2)\lim_{n\to\infty}\left[\frac{2np-1}{n-1}\right]^2=4p^3(1-p)$$
+
+Therefore, the asymptotic distribution of $T(\frac{X_n}{n})$ is
+
+$$\sqrt{n}\left(T -p^2\right)\overset{\mathcal{D}}{\to}N(0,4p^3(1-p))\qquad\blacksquare$$
+
+
+
+> Try using Multivariate Central Limit Theorem. It might be unnecessary.
+
+$E[{X_n}]={\mu_1}=np$, $E[{X_n^2}]={\mu_2}=n(n-1)p^2+np$. 
+
+${\mu_4}=E[{X_n^4}]=n(n-1)(n-2)(n-3)p^4+6n(n-1)(n-2)p^3+7n(n-1)p^2+np$ is finite.
+
+By Multivariate Central Limit Theorem, $\sqrt{n}(({X_n},{X_n^2})-({\mu_1},{\mu_2}))\overset{\mathcal{D}}{\to} N(0,\Sigma)$
+
+where $\Sigma=\begin{bmatrix}Var(X_1)&Cov(X_1,X_1^2)\\Cov(X_1,X_1^2)&Var(X_1^2)\end{bmatrix}=\begin{bmatrix}{\mu_2}-{\mu_1}^2&{\mu_3}-{\mu_1}{\mu_2}\\{\mu_3}-{\mu_1}{\mu_2}&{\mu_4}-{\mu_2}^2\end{bmatrix}$
+
+$Var[X_1]=\mu_2-\mu_1^2=[n(n-1)p^2+np]-[n^2p^2]=np(1-p)$
+
+$Cov[X_1,X_1^2]={\mu_3}-{\mu_1}{\mu_2}=\left[n(n-1)(n-2)p^3+3n(n-1)p^2+np\right]-[np][n(n-1)p^2+p]$
+
+$=-2n(n-1)p^3+n(2n-3)p^2+np$
+
+$Var[X_1^2]={\mu_4}-{\mu_2}^2=\left[n(n-1)(n-2)(n-3)p^4+6n(n-1)(n-2)p^3+7n(n-1)p^2+p\right]-\left[n(n-1)p^2+np\right]^2$
+
+$=-2n(n-1)(2n-3)p^4+4n(n-1)(n-3)p^3+n(6n-7)p^2+np$
+
+$J({\mu_1},{\mu_2})=\left.(\frac{\partial f}{\partial t_1},\frac{\partial f}{\partial t_2})\right|_{(t_1,t_2)=(\mu_1,\mu_2)}=\begin{bmatrix}-1&1\end{bmatrix}$, $f(t_1,t_2)=t_2-t_1$
+
+$J\Sigma J'=\begin{bmatrix}-1&1\end{bmatrix}\begin{bmatrix}{\mu_2}-{\mu_1}^2&{\mu_3}-{\mu_1}{\mu_2}\\{\mu_3}-{\mu_1}{\mu_2}&{\mu_4}-{\mu_2}^2\end{bmatrix}\begin{bmatrix}-1\\1\end{bmatrix}={\mu_4}-{\mu_2}^2-2({\mu_3}-{\mu_1}{\mu_2})+{\mu_2}-{\mu_1}^2$
+$$=2n(n-1)p^2(2np-3p+1)(1-p)=\eta^2$$
+Let $T({X_n},{X_n^2})=\frac{X_n^2-X_n}{n(n-1)}=\frac{f({X_n},{X_n^2})}{n-1}$, where $f(u,v)=v-u$. By Delta Method,
+
+$\sqrt{n}(T -p^2)=\sqrt{n}\left(\frac{X_n^2-X_n}{n(n-1)}-\frac{(n-1)p^2+p-p}{n-1}\right)=\frac1{n(n-1)}{\sqrt{n}\left(f({X_n},{X_n^2})-f({\mu_1},{\mu_2})\right)}$
+
+$E[\frac1{n(n-1)}{\sqrt{n}\left(f({X_n},{X_n^2})-f({\mu_1},{\mu_2})\right)}]=0$
+
+$\lim_{n\to\infty}nVar[\frac1{n(n-1)}{\sqrt{n}\left(f(\overline{X_n},\overline{X_n^2})-f(\overline{\mu_1},\overline{\mu_2})\right)}]]=\lim_{n\to\infty}\frac{\eta^2}{n(n-1)^2}=\lim_{n\to\infty}\frac{2p^2(2np-3p+1)(1-p)}{n-1}=4p^3(1-p)$
+
+Therefore,
+$\sqrt{n}(T -p^2)=\frac{\sqrt{n}}{n-1}(f({X_n},{X_n^2})-f({\mu_1},{\mu_2}))\overset{\mathcal{D}}{\to}N\left(0,4p^3(1-p)\right)$
+
+
+c. Find an MLE of $p$ and use it to find an MLE of $p^2$. Find the asymptotic distribution of the MLE of $p^2$. Is it asymptotically efficient?
+
+The likelihood function to be maximized for binomial distribution is given as
+
+$$L(p)=\binom{n}{X_n}p^{X_n}(1-p)^{n-X_n}$$
+
+$$l(p)=\log\binom{n}{X_n}X_n\log (p)-X_n\log(1-p)+n\log(1-p)$$
+$$\frac{\partial l(p)}{\partial p}=\frac{X_n}{p}+\frac{X_n}{1-p}-\frac{n}{1-p}\overset{set}{=}0\implies\hat p_{MLE}=\frac{X_n}{n}$$
+$E[\hat p_{MLE}]=\frac{E[X_n]}{n^2}=\frac{np}{n}=p$, $Var[\hat p_{MLE}]=\frac{Var[X_n]}{n^{2}}=\frac{np(1-p)}{n^{2}}=\frac{p-p^2}{n}$
+
+In the Bernoulli case $I(p)=\frac1{p(1-p)}$, $0<p<1$.
+
+the estimating sequence $\hat p =\begin{cases}c, & \text{if}\ X = 0, n, \\\frac{X_n}n, & \text{if}\ 0<X<n\end{cases}$,
+
+Under the Cramer-Rao conditions for asymptotic normality, $\sqrt{n}(\hat p_{MLE} -p)\overset{\mathcal{L}}{\to} N(0,I(p)^{-1})=N(0,p(1-p))$
+
+$$E[\hat p^2_{MLE}]\approx \lim_{n\to\infty}\left(Var[\hat p_{MLE}]+E[\hat p_{MLE}]^{2}\right)=\lim_{n\to\infty}\left(\frac{p-p^2}{n}+p^{2}\right)=p^2$$
+
+Let the asymptoticlly unbiased estimator $E[\hat p^2_{MLE}]\approx p^2=\psi(p)$, $\psi'(p)=2p$
+
+$$nVar[\hat p^2_{MLE}]\approx n(\psi'(p))^{2}Var[\frac{X_n}{n}]=4np^{2}\cdot\frac{p-p^{2}}{n}=4p^3(1-p)$$
+
+$$\sqrt{n}\left(\hat p^2_{MLE} -p^{2}\right)\overset{a}{\to}N(0,4p^3(1-p))$$
+
+
+$$I(p)=-E\left[\frac{\partial^2 }{\partial p^2}\log f(x,p)\right]=-E\left[\frac{\partial}{\partial p}(\frac{X_n}{p}-\frac{X_n-n}{1-p})\right]$$
+$$=\frac{E[X_n]}{p^2}+\frac{n-E[X_n]}{(1-p)^2}=\frac{np}{p^2}+\frac{n-np}{(1-p)^2}=\frac{n}{p(1-p)}$$
+
+$$CRLB=\frac{(\psi'(p))^{2}}{I(p)}=\frac{4p^{2}}{\frac{n}{p(1-p)}}=\frac{4p^{3}(1-p)}{n}$$
+
+
+$$\frac{CRLB}{Var_p[\hat p^2_{MLE}]}=\frac{\frac{4p^{3}(1-p)}{n}}{\frac{4p^3(1-p)}{n}}=1$$
+
+The the MLE of $p^2$ is efficient.
+
+
+
+
+
+
+\pagebreak
+
+## HW6. (Due 5/27/20)
+
+1. Define $(Z_i,\Delta_i) \equiv (\min(X_i,Y_i),1_{\{X_i<Y_i\}})$, where $X_i$’s and $Y_i$’s are statistically independent, and $X_i \overset{iid}{\sim}f_\lambda(x) = \lambda e^{-\lambda x}1_{R+}(x),\lambda>0$; $Y_i \overset{iid}{\sim}g_{\mu_0}(y) = \mu_0e^{-\mu_0y}1_{R+}(y),\mu_0 > 0$, where $\mu_0$ is known.
+\[
+\begin{aligned}
+P(\Delta=1)&=P(X\le Y)=\int_0^{\infty}\int_0^{y}f_{X,Y}(x,y)dxdy \\
+&\underset{X\perp Y}{=}\int_0^{\infty}\int_0^{y}\lambda e^{-\lambda x}\cdot \mu_0 e^{-\mu_0 y}dxdy=\int_0^{\infty}\mu_0 e^{-\mu_0 y}(\int_0^{y}\lambda e^{-\lambda x}\ dx)dy=\int_0^{\infty}\mu_0 e^{-\mu_0 y}(-e^{-\lambda x}|_0^{y})dy \\
+&=\int_0^{\infty}\mu_0 e^{-\mu_0 y}(1-e^{-\lambda y})dy=\int_0^{\infty}\mu_0 e^{-\mu_0 y}dy-\frac{\mu_0}{\mu_0+\lambda}\int_0^{\infty}(\mu_0+\lambda) e^{-(\mu_0+\lambda)y}dy\\
+&=1-\frac{\mu_0}{\mu_0+\lambda}(-e^{-(\mu_0+\lambda)y}|_0^{\infty})=1-\frac{\mu_0}{\mu_0+\lambda}=\frac{\lambda}{\mu_0+\lambda}
+\end{aligned}
+\]
+
+Then, $P(\Delta=0)=1-\frac{\lambda}{\mu_0+\lambda}=\frac{\mu_0}{\mu_0+\lambda}$
+
+$\Delta\sim Bernoulli(\frac{\lambda}{\mu_0+\lambda})$;    $f_\Delta(\delta)=(\frac{\lambda}{\mu_0+\lambda})^\delta(\frac{\mu_0}{\mu_0+\lambda})^{1-\delta}$
+
+$D_n=\sum_{i=1}^n\Delta_i\sim Bino(n,\frac{\lambda}{\mu_0+\lambda})$   $\hfill\square$
+
+$E[D_n]=\frac{n\lambda}{\mu_0+\lambda}$;
+
+$V[D_n]=\frac{n\lambda}{\mu_0+\lambda}(1-\frac{\lambda}{\mu_0+\lambda})=\frac{n\lambda\mu_0}{(\mu_0+\lambda)^2}$
+
+$E[D_n^2]=V[D_n]+(E[D_n])^2=\frac{n\lambda\mu_0}{(\mu_0+\lambda)^2}+(\frac{n\lambda}{\mu_0+\lambda})^2=\frac{n^2\lambda^2+n\lambda\mu_0}{(\mu_0+\lambda)^2}$    $\hfill\square$
+
+\dotfill
+
+\[
+\begin{aligned}
+F_Z(z)&=P(X\le z\cup Y\le z)=1-P(X\ge z\cap Y\ge z) \underset{X\perp Y}{=}1-P(X\ge z)(Y\ge z)\\
+&=1-\int_z^{\infty}\lambda e^{-\lambda x}dx\cdot \int_z^{\infty}\mu_0 e^{-\mu_0 y}dy=1-(-e^{-\lambda x}|_z^{\infty})\cdot (-e^{-\mu_0 y}|_z^{\infty})=1-e^{-(\lambda+\mu_0) z}\\
+\end{aligned}
+\]
+
+$f(z)=(\mu_0+\lambda) e^{-(\mu_0+\lambda)z}$;     $Z\sim Expo(\lambda+\mu_0)=Gamma(1,(\lambda+\mu_0)^{-1})$
+
+$T_n=\sum_{i=1}^nZ_i\sim Gamma(n,(\lambda+\mu_0)^{-1})$   $\hfill\square$
+
+\[
+\begin{aligned}
+E[T_n^{-1}]&=\int_0^{\infty}w^{-1}\frac{(\lambda+\mu_0)^n}{\Gamma(n)}w^{n-1}e^{-(\lambda+\mu_0)w}dw \\
+&=\frac{(\lambda+\mu_0)\Gamma(n-1)}{\Gamma(n)}\underbrace{\int_0^{\infty}\frac{(\lambda+\mu_0)^{n-1}}{\Gamma(n-1)}w^{n-1-1}e^{-(\lambda+\mu_0)w}dw}_{=1}=\frac{\lambda+\mu_0}{n-1} \\
+E[T_n^{-2}]&=\int_0^{\infty}w^{-2}\frac{(\lambda+\mu_0)^n}{\Gamma(n)}w^{n-1}e^{-(\lambda+\mu_0)w}dw \\
+&=\frac{(\lambda+\mu_0)^2\Gamma(n-2)}{\Gamma(n)}\underbrace{\int_0^{\infty}\frac{(\lambda+\mu_0)^{n-2}}{\Gamma(n-2)}w^{n-2-1}e^{-(\lambda+\mu_0)w}dw}_{=1}=\frac{(\lambda+\mu_0)^2}{(n-1)(n-2)}
+\end{aligned}
+\]
+
+Or by $T_n^{-1}\sim Inverse-Gamma(n,(\lambda+\mu_0)^{-1})$, 
+
+$E[T_n^{-1}]=\frac{(\lambda+\mu_0)\Gamma(n-1)}{\Gamma(n)}=\frac{\lambda+\mu_0}{n-1}$;
+
+$E[T_n^{-2}]=\frac{(\lambda+\mu_0)^2\Gamma(n-2)}{\Gamma(n)}=\frac{(\lambda+\mu_0)^2}{(n-1)(n-2)}$
+
+$Var[T_n^{-1}]=E[T_n^{-2}]-(E[T_n^{-1}])^2=\frac{(\lambda+\mu_0)^2}{(n-1)(n-2)}-(\frac{\lambda+\mu_0}{n-1})^2=\frac{(\lambda+\mu_0)^2}{(n-1)^2(n-2)}$    $\hfill\square$
+
+\dotfill
+
+\[
+\begin{aligned}
+P(\Delta=1,Z\le z)&=P(X\le Y\cap Z\le z)=P(X\le Y\cap X\le z) \\
+&=\int_0^{z}\int_x^{\infty}f_{X,Y}(x,y)dydx=\int_0^z\lambda e^{-\lambda x} (\int_x^{\infty}\mu_0 e^{-\mu_0 y}dy)dx \\
+&=\int_0^z\lambda e^{-\lambda x}(-e^{-\mu_0 y}|_x^{\infty})dx=\int_0^{z}\lambda e^{-(\mu_0+\lambda)x}dx=\frac{\lambda}{\mu_0+\lambda}\int_0^{z}(\mu_0+\lambda) e^{-(\mu_0+\lambda)x}dx \\
+&=\frac{\lambda}{\mu_0+\lambda}(-e^{-(\mu_0+\lambda)x}|_0^{z})=\frac{\lambda}{\mu_0+\lambda}(1-e^{-(\mu_0+\lambda)z})=P(\Delta=1)\cdot P(Z\le z) \\
+P(\Delta=0,Z\le z)&=P(Y\le X\cap Z\le z)=P(Y\le X\cap Y\le z) \\
+&=\int_0^{z}\int_y^{\infty}f_{X,Y}(x,y)dxdy=\int_0^z\mu_0 e^{-\mu_0 y} (\int_y^{\infty}\lambda e^{-\lambda x}dx)dy \\
+&=\int_0^z\mu_0 e^{-\mu_0 y}(-e^{-\lambda x}|_y^{\infty})dy=\int_0^{z}\mu_0 e^{-(\mu_0+\lambda)y}dy=\frac{\mu_0}{\mu_0+\lambda}\int_0^{z}(\mu_0+\lambda) e^{-(\mu_0+\lambda)y}dy \\
+&=\frac{\mu_0}{\mu_0+\lambda}(-e^{-(\mu_0+\lambda)y}|_0^{z})=\frac{\mu_0}{\mu_0+\lambda}(1-e^{-(\mu_0+\lambda)z})=P(\Delta=0)\cdot P(Z\le z) 
+\end{aligned}
+\]
+
+Therefore, $Z\perp \Delta$.  $\hfill\square$
+
+\dotfill
+
+For $\sum_{i=1}^n\Delta_i\perp\sum_{i=1}^nZ_i$
+
+
+$E[\hat\lambda_n]=E[\frac{D_n}{T_n}]=E[D_n]E[(T_n)^{-1}]=\frac{n\lambda}{\mu_0+\lambda}\cdot\frac{\lambda+\mu_0}{n-1}=\frac{n\lambda}{n-1}$
+
+$E[\hat\lambda_n^2]=E[(D_n)^2]E[(T_n)^{-2}]=\frac{n^2\lambda^2+n\lambda\mu_0}{(\mu_0+\lambda)^2}\cdot\frac{(\lambda+\mu_0)^2}{(n-1)(n-2)}=\frac{n^2\lambda^2+n\lambda\mu_0}{(n-1)(n-2)}$
+
+$V[\hat\lambda_n]=E[\hat\lambda_n^2]-(E[\hat\lambda_n])^2=\frac{n^2\lambda^2+n\lambda\mu_0}{(n-1)(n-2)}-(\frac{n\lambda}{n-1})^2=\frac{n\lambda(n\lambda+n\mu_0-\mu_0)}{(n-1)^2(n-2)}$  $\hfill\square$
+
+
+
+\dotfill
+
+a. Show that the likelihood function for $\lambda$ based on $(Z_1,\Delta_1),...,(Z_n,\Delta_n)$ is proportional to $L(\lambda)\sim \lambda^{D_n}e^{-\lambda T_n}$, where $D_n\equiv\sum^n_{i=1} \Delta_i$ and $T_n \equiv\sum^n_{i=1} Zi$. 
+
+For $Z\perp \Delta$
+
+
+$f(z,\delta)=\begin{cases}f_\Delta(\delta)\cdot f_Z(z)=\frac{\lambda}{\mu_0+\lambda}(\mu_0+\lambda) e^{-(\mu_0+\lambda)z}=\lambda e^{-(\mu_0+\lambda)z},&X\le Y\\f_\Delta(\delta)\cdot f_\Delta(\delta)=\frac{\mu_0}{\mu_0+\lambda}(\mu_0+\lambda) e^{-(\mu_0+\lambda)z}=\mu_0 e^{-(\mu_0+\lambda)z},&X>Y\end{cases}$
+
+For $\mu_0$ is known,
+
+\[
+\begin{aligned}
+L(z_i,\delta_i,\lambda)&=\prod_{i=1}^n(\frac{\lambda}{\mu_0+\lambda})^{\delta_i}(\frac{\mu_0}{\mu_0+\lambda})^{1-\delta_i}(\mu_0+\lambda) e^{-(\mu_0+\lambda)z_i}=(\frac{\lambda}{\mu_0+\lambda})^{\sum\delta_i}(\frac{\mu_0}{\mu_0+\lambda})^{n-\sum\delta_i}(\mu_0+\lambda)^n e^{-(\mu_0+\lambda)\sum z_i}\\
+&=\lambda^{\sum_{i=1}^n\delta_i}\mu_0^{n-\sum_{i=1}^n\delta_i}e^{-(\mu_0+\lambda)\sum_{i=1}^nz_i}=\mu_0^{n-D_n}e^{-\mu_0T_n}\cdot\lambda^{D_n}e^{-\lambda T_n}\\
+L(\lambda)&\propto \lambda^{D_n}e^{-\lambda T_n}&& \blacksquare
+\end{aligned}
+\]
+
+
+b. Find the MLE of $\lambda$,$\hat\lambda_n$. 
+
+$l(\lambda)=\log C+D_n\log\lambda-\lambda T_n$
+
+$\frac{\partial}{\partial\lambda}l(\lambda)=\frac{1}{\lambda}D_n-T_n\overset{set}{=}0$
+
+$\frac{\partial^2}{\partial\lambda^2}l(\lambda)=\frac{-D_n}{\lambda^2}<0,\,\forall D_n>0$
+
+Therefore, $\hat\lambda_n=\frac{D_n}{T_n}$   $\hfill\blacksquare$
+
+c. Show that $\hat\lambda_n$ is a consistent estimator of $\lambda$. 
+
+By Law of Large Number, $\frac{D_n}n\overset{\mathcal{P}}{\to}E[\Delta]=\frac{\lambda}{\mu_0+\lambda}$
+
+By the same way, $\frac{T_n}n\overset{\mathcal{P}}{\to}E[Z]=\frac{1}{\lambda+\mu_0}$; 
+
+$y=\frac{1}x$ is a continuous function at $x=\frac{1}{\lambda+\mu_0}$,$\lambda>0$,$\mu_0>0$. Then, $\frac{n}{T_n}\overset{\mathcal{P}}{\to}\lambda+\mu_0$
+
+Then, 
+$\hat\lambda_n=\frac{D_n}n\frac{n}{T_n}\overset{\mathcal{P}}{\to}\frac{\lambda}{\mu_0+\lambda}(\lambda+\mu_0)=\lambda$, for all $\lambda$,
+
+Thus, the sequence of r.v.'s  $\hat\lambda_n$ is consistent for $\lambda$   $\hfill\blacksquare$
+
+
+d. Find the joint asymptotic distribution of $(D_n,T_n)$ and use this to find the limiting distribution of $\sqrt{n}(\hat \lambda_n-\lambda)$.
+
+$E[D_n]=\frac{n\lambda}{\mu_0+\lambda}$, 
+$Var[D_n]=\frac{n\lambda\mu_0}{(\mu_0+\lambda)^2}$
+
+$E[T_n^{-1}]=\frac{\lambda+\mu_0}{n-1}$,
+$Var[T_n^{-1}]=\frac{(\lambda+\mu_0)^2}{(n-1)^2(n-2)}$
+
+For $D_n\perp T_n$, $Cov(D_n,T_n^{-1})=0$
+
+By Multivariate Central Limit Theorem, $\sqrt{n}((D_n,T_n^{-1})-(\frac{n\lambda}{\mu_0+\lambda},\frac{\lambda+\mu_0}{n-1})\overset{\mathcal{D}}{\to} N(0,\Sigma)$
+
+where $\Sigma=\begin{bmatrix}Var(D_n)&Cov(D_n,T_n^{-1})\\Cov(D_n,T_n^{-1})&Var(T_n^{-1})\end{bmatrix}=\begin{bmatrix}\frac{n\lambda\mu_0}{(\mu_0+\lambda)^2}&0\\0&\frac{(\lambda+\mu_0)^2}{(n-1)^2(n-2)}\end{bmatrix}$
+
+
+
+$J(\frac{n\lambda}{\mu_0+\lambda},\frac{\lambda+\mu_0}{n-1})=\left.(\frac{\partial f}{\partial t_1},\frac{\partial f}{\partial t_2})\right|_{(t_1,t_2)=(\mu_1,\mu_2)}=\begin{bmatrix}\frac{n-1}{n}\frac{\lambda+\mu_0}{n-1}&\frac{n-1}{n}\frac{n\lambda}{\mu_0+\lambda}\end{bmatrix}=\begin{bmatrix}\frac{\lambda+\mu_0}{n}&\frac{(n-1)\lambda}{\mu_0+\lambda}\end{bmatrix}$, $f(t_1,t_2)=\frac{n-1}{n}t_1t_2$
+
+$J\Sigma J'=\begin{bmatrix}\frac{\lambda+\mu_0}{n}&\frac{(n-1)\lambda}{\mu_0+\lambda}\end{bmatrix}\begin{bmatrix}\frac{n\lambda\mu_0}{(\mu_0+\lambda)^2}&0\\0&\frac{(\lambda+\mu_0)^2}{(n-1)^2(n-2)}\end{bmatrix}\begin{bmatrix}\frac{\lambda+\mu_0}{n}\\\frac{(n-1)\lambda}{\mu_0+\lambda}\end{bmatrix}=\frac{\lambda\mu_0}{n}+\frac{\lambda^2}{n-2}$
+
+
+$\lim_{n\to\infty}nVar\left[f(D_n,T_n^{-1})-f(\frac{n\lambda}{\mu_0+\lambda},\frac{\lambda+\mu_0}{n-1})\right]=\lim_{n\to\infty}(\lambda\mu_0+\frac{n\lambda^2}{n-2})=\lambda\mu_0+\lambda^2$
+
+Therefore,
+$\sqrt{n}(\hat\lambda_n-\lambda)=\sqrt{n}(\frac{D_n}{T_n}-\lambda)\overset{\mathcal{D}}{\to}N(0, J\Sigma J')={\mathcal{D}}{\to}N(0, \lambda^2+\lambda\mu_0)$              $\hfill\blacksquare$
+
+The previous results can confirm this:
+
+$\lim_{n\to\infty}E[\hat\lambda_n]=\lim_{n\to\infty}\frac{n\lambda}{n-1}=\lambda$
+
+$\lim_{n\to\infty}nVar[\hat\lambda_n]=\lim_{n\to\infty}n\frac{n\lambda(n\lambda+n\mu_0-\mu_0)}{(n-1)^2(n-2)}=\lambda^2+\lambda\mu_0$
+
+
+
+
+
+
+
+
+## HW7. (Due 6/03/20)
+
+1. Consider the family of exponential distributions with unknown mean, $f(x;\theta)=\frac1\theta e^{-x/\theta}$, where $x > 0, \theta > 0$.
+
+(a) Find a central $1-\alpha$ asymptotic CI for $\theta$ based on the sample average. 
+
+$f(\mathbf{x};\theta)=\prod_{i=1}^n\frac1\theta e^{-x_i/\theta}=\exp\left[-\frac1\theta\sum_{i=1}^nx_i-n\log\theta\right]$
+
+$T(\mathbf{x})=\sum_{i=1}^nx_i$ is a complete sufficient statistic, $\eta=-\frac1\theta$, $\theta=-\frac1\eta$, $A(\eta)=-n\log(-\eta)$, 
+$\varepsilon=\mathbb{R_-}$, $\dot\varepsilon=\mathbb{R_-}$
+
+$E[\bar X]=\frac1n\dot A(\eta)=\frac{-n}{n\eta}=\theta$
+
+$Var[\bar X]=\frac1{n^2}\ddot A(\eta)=\frac{n}{n^2\eta^2}=\frac{\theta^2}n$
+
+$\hat\eta=\frac{-1}{\bar X}\in\dot\varepsilon$ is the unique MLE. Then, 
+$\hat\theta=\bar X$ is the unique MLE of $\theta$
+
+$\bar X\overset{\mathcal{P}}{\to}E[X]=\theta$, $\hat\theta=\bar X$ is consistent for $\theta$. 
+
+$CRLB=\frac{1}{I(\theta)}=\frac{1}{E[(\frac{\partial}{\partial\theta}\log p(\theta))^2]}=\frac{1}{E[\frac{(x-\theta)^2}{\theta^4}]}=\frac{1}{\frac{1}{\theta^2}}=\theta^{2}$
+
+By Theorem 10.1.12 Asymptotic efficiency of MLEs (Casella and Berger), $\sqrt{n}(\bar X-\theta)\overset{\mathcal{D}}{\to}N(0,\theta^2)$
+
+In practice, we replace $\theta^2$ by $\hat\theta^2=\bar X^2$
+
+$P(|\sqrt{n}\left(\bar X-\theta\right)|\le Z_{\alpha/2})=1-\alpha$
+
+$P(\bar X-Z_{\alpha}\frac{\bar X}{\sqrt{n}}\le\theta\le\bar X+ Z_{\alpha}\frac{\bar X}{\sqrt{n}})=1-\alpha$
+
+95% Asymptotic Confidence Interval for $\theta$ is $\bar X\pm Z_{\alpha}\frac{\bar X}{\sqrt{n}}$ $\hfill\blacksquare$
+
+(b) Use a variance-stabilizing transform.
+
+Make a transform with $f(\theta)=\log\theta$, $f'(\theta)=\frac1\theta$, then
+$\sqrt{n}(\log\bar X-\log\theta)\overset{\mathcal{D}}{\to}N(0,\theta^2\cdot\frac1{\theta^2})=N(0,1)$
+
+$P(|\sqrt{n}(\log\bar X-\log\theta)|\le Z_{\alpha})=1-\alpha$
+
+$P(\log\bar X-\frac{Z_{\alpha}}{\sqrt{n}}\le\log\theta\le\log\bar X+\frac{Z_{\alpha}}{\sqrt{n}})=1-\alpha$
+
+95% Asymptotic Confidence Interval for $\log\theta$ is $\log\bar X\pm \frac{Z_{\alpha}}{\sqrt{n}}$
+
+For $\theta$, that is $\bar X\exp[\pm \frac{Z_{\alpha}}{\sqrt{n}}]$ $\hfill\blacksquare$
+
+
+2. Simulate 30 independent exponential random variables with mean $\theta = 2$. Compare the confidence intervals in problem1 with a bootstrap percentile confidence interval. Do the same calculation for various values of $\theta$ of your choice. Comment on the differences or similarities.
+
+```{r,echo=F,include=F}
+
+set.seed(123)
+x<-rexp(30, 1/2)
+
+paste("CI range=",2.478-1.251)
+```
+
+
+```{r,echo=F}
+library(boot)
+# failure=c(3,5,7,18,43,85,91,98,100,130,230,487)
+CI.Compar <- function(n,theta){
+set.seed(123)  
+x <- rexp(n,1/theta)
+x.bar <- mean(x)
+LCL<- x.bar-qnorm(0.975)*x.bar/sqrt(n)
+UCL <- x.bar+qnorm(0.975)*x.bar/sqrt(n)
+CI <- round(c(LCL,x.bar,UCL,UCL-LCL),4) 
+LCL.log <- x.bar*exp(-qnorm(0.975)/sqrt(n))
+UCL.log <- x.bar*exp(qnorm(0.975)/sqrt(n))
+CI.log <- round(c(LCL.log,x.bar,UCL.log,UCL.log-LCL.log),4) 
+
+mean.boot=function(data,i){return(mean(data[i]))}
+x.boot = boot(x,mean.boot,R=1e+4)
+ci.b<- boot.ci(x.boot,conf = .95,type = "perc")
+CI.B <- round(c(ci.b$percent[4],ci.b$t0,ci.b$percent[5],ci.b$percent[5]-ci.b$percent[4]),4) 
+out <- rbind(c("Asym Normal",CI),c("Log Transform",CI.log),c("Bootstrap Perc",CI.B))
+colnames(out) <- c(paste("theta:",theta,"size:",n,"alpha:0.05"),"LCL","Mean","UCL","length")
+return(out)
+}
+```
+
+```{r,echo=F}
+pander(CI.Compar(30,2))
+```
+
+The result shows that, based on Delta Method, the Confidence Interval is right shift after log transformation.
+
+The reason is that the true exponential distribution is right skewness, not symmetric around mean value. The Asymptotic Confidence Interval is biased.
+
+```{r,echo=F}
+CI.Odds <- function(n,B,alpha){
+# set.seed(123)    
+theta <- round(10^seq(-3,3,by=0.5),4)  
+K <- length(theta)
+out <- matrix(rep(0,3*K),nrow=K,ncol=3)
+for (k in 1:K){
+
+X = replicate(B, rexp(n,1/theta[k]))
+x.bar =apply(X, 2, mean)
+
+LCL<- x.bar-qnorm(1-alpha/2)*x.bar/sqrt(n)
+UCL <- x.bar+qnorm(1-alpha/2)*x.bar/sqrt(n)
+odds = mean(theta[k]>=LCL & theta[k]<=UCL)
+
+LCL.log <- x.bar*exp(-qnorm(1-alpha/2)/sqrt(n))
+UCL.log <- x.bar*exp(qnorm(1-alpha/2)/sqrt(n))
+odds.log = mean(theta[k]>=LCL.log & theta[k]<=UCL.log)
+
+out[k,] <- c(theta[k],odds, odds.log)
+}
+colnames(out) <- c("theta","Odds of\nAsym Normal CI","Odds of\nLog-Trans CI")
+return(out)
+}
+```
+
+- Various $\theta$
+
+The exponential distribution has a positive skewness that does not rely upon the value of the parameter $\theta$.
+
+$E[X^3]=\int_0^\infty x^3f(x)dx=6\theta^3$
+
+Skewness is $E[\frac{(X-\mu)^3}{\sigma^3}]=\frac{1}{\theta^3}(E[X^3]-3\theta E[X^2]+3\theta^2E[X]-\theta^3)=6-4=2$
+
+This test proves that various values of $\theta$ doesn't change the right-shift trend and distance. The coverage probabilities of Log transform always win but cannot reach 95%.
+
+```{r,echo=F}
+pander(CI.Odds(30,10^4,0.05),caption="size=30,Rep=10^4,alpha=0.05")
+```
+
+- Various sample size
+
+The asymptotic distribution of sample average holds when sample size is large enough. 
+
+When setting a small sample size, the coverage probability will decline, the odds of asymptotic normal CI declines faster than the variance stabilizing transform. 
+
+When increasing the sample size, the two methods tend to have similar performance. The first 95% coverage probability happens when sample size is 500.
+
+```{r,echo=F}
+CI.Odds.size <- function(theta,B,alpha){
+# set.seed(123)    
+n <- c(5,10,15,30,60,100,500,1000)
+K <- length(n)
+out <- matrix(rep(0,3*K),nrow=K,ncol=3)
+for (k in 1:K){
+
+X = replicate(B, rexp(n[k],1/theta))
+x.bar =apply(X, 2, mean)
+
+LCL<- x.bar-qnorm(1-alpha/2)*x.bar/sqrt(n[k])
+UCL <- x.bar+qnorm(1-alpha/2)*x.bar/sqrt(n[k])
+odds = mean(theta>=LCL & theta<=UCL)
+
+LCL.log <- x.bar*exp(-qnorm(1-alpha/2)/sqrt(n[k]))
+UCL.log <- x.bar*exp(qnorm(1-alpha/2)/sqrt(n[k]))
+odds.log = mean(theta>=LCL.log & theta<=UCL.log)
+
+out[k,] <- c(n[k],odds, odds.log)
+}
+colnames(out) <- c("n","Odds of \n Asym Normal CI","Odds of \n Log-Trans CI")
+return(out)
+}
+```
+
+
+
+```{r,echo=F}
+pander(CI.Odds.size(2,10^4,0.05),caption="theta=2,Rep=10^4,alpha=0.05")
+```
+
+
+- Various $\alpha$ level
+
+The coverage probability changes with $\alpha$ setting. We found that, with higher confidence level, the performance of Log-transform CI is better than asymptotic normal CI. 
+
+
+```{r,echo=F}
+CI.Odds.alpha <- function(n,B,theta){
+# set.seed(123)    
+alpha <- c(0.3,0.2,0.15,0.1,0.05,0.01)
+K <- length(alpha)
+out <- matrix(rep(0,3*K),nrow=K,ncol=3)
+for (k in 1:K){
+X = replicate(B, rexp(n,1/theta))
+x.bar =apply(X, 2, mean)
+LCL<- x.bar-qnorm(1-alpha[k]/2)*x.bar/sqrt(n)
+UCL <- x.bar+qnorm(1-alpha[k]/2)*x.bar/sqrt(n)
+odds = mean(theta>=LCL & theta<=UCL)
+LCL.log <- x.bar*exp(-qnorm(1-alpha[k]/2)/sqrt(n))
+UCL.log <- x.bar*exp(qnorm(1-alpha[k]/2)/sqrt(n))
+odds.log = mean(theta>=LCL.log & theta<=UCL.log)
+out[k,] <- c(alpha[k],odds, odds.log)
+}
+colnames(out) <- c("alpha","Odds of\n Asym Normal CI","Odds of\n Log-Trans CI")
+return(out)
+}
+```
+
+
+```{r,echo=F}
+pander(CI.Odds.alpha(30,10^4,2),caption="size=30,Rep=10^4,theta=2")
+```
+
+
+Above tests show that variance stabilizing transform has higher coverage probability than asymptotic normal method, especially when we need a higher confidence level and can only afford limited sample size.
+
+- Bootstrap inference
+
+The plots with various sample size show similar results by the three methods.
+
+Comparing the lower bound, bootstrap inference (black line) is close to Log transform (red line). 
+
+Comparing the upper bound, bootstrap inference is close to the asymptotic normality method (green line). 
+
+In practice, we don't use infinitely large dataset. Is a new confidence interval combined with two methods (asymptotic normality based and log transformed) legitimate?
+
+Another question is, in which situations, this method is appropriate? When residuals have non-constant variance? Or we already know the data follow an asymmetric distribution?
+
+
+```{r,echo=F}
+CI.Compar <- function(theta,alpha){
+set.seed(123)
+n <- seq(5,100,by=1)
+K <- length(n)
+out <- matrix(rep(0,7*K),nrow=K,ncol=7)
+
+bootsamp <- function(x,nsamp=1e+4){
+x = as.matrix(x)
+nx = nrow(x)
+bsamp = replicate(nsamp,x[sample.int(nx,replace=TRUE),])
+}
+
+bootse <- function(bsamp,myfun,...){
+if(is.matrix(bsamp)){
+theta = apply(bsamp,2,myfun,...)
+} else {
+theta = apply(bsamp,3,myfun,...)
+}
+if(is.matrix(theta)){
+return(list(theta=theta,cov=cov(t(theta))))
+} else{
+return(list(theta=theta,se=sd(theta)))
+}
+}
+
+for (k in 1:K){
+x<-rexp(n[k], 1/theta)
+bsamp = bootsamp(x)
+bse = bootse(bsamp,mean)
+mean(x)
+LCL.N <- mean(x)-qnorm(1-alpha/2)*mean(x)/sqrt(n[k])
+UCL.N <- mean(x)+qnorm(1-alpha/2)*mean(x)/sqrt(n[k])
+LCL.logN <- mean(x)*exp(-qnorm(1-alpha/2)/sqrt(n[k]))
+UCL.logN <- mean(x)*exp(qnorm(1-alpha/2)/sqrt(n[k]))
+# CI.T<- c(mean(x)-qt(0.975,df=n-1)*sd(x)/sqrt(n),mean(x)-qt(0.025,df=n-1)*sd(x)/sqrt(n))
+CI.B <- quantile(bse$theta,c(alpha/2,1-alpha/2))
+LCL.B <- CI.B[1]
+UCL.B <- CI.B[2]
+out[k,] <- c(n[k], LCL.N, LCL.logN, LCL.B, UCL.N, UCL.logN, UCL.B) #,CI.T
+# par(mfrow=c(1,3),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+# hist(x,main = "",probability=T,breaks=n)
+# curve(dexp(x,1/theta),col = 2, lty = 2, lwd = 2,add=T)
+}
+colnames(out) <- c("n","LCL.N", "LCL.logN", "LCL.B", "UCL.N", "UCL.logN", "UCL.B")# ,"T"
+return(out)
+}
+test <- CI.Compar(2,0.05)
+```
+
+```{r,echo=F}
+pander(test[c(1,6,11,26,56,96),])
+```
+
+```{r,echo=F,out.width='70%', fig.align='center',fig.show='hold'} 
+plot(test[,c(1,2)],type="l",ylim = c(1,4),xlab="Sample size",ylab="estimate",col=3,lty=4)
+for(i in 1:3){ # min(test[,2]),max(test[,6])
+lines(test[,c(1,5-i)],col=i, lty=i,lwd=1)
+lines(test[,c(1,8-i)],col=i, lty=i,lwd=1)
+}
+abline(h=2,col=1,lty = 4,lwd = 1)
+legend(75,4,c("Bootstrap.Quantil","Log.Trans","Asym.Normal"),col=1:3,lty=1:3,cex=0.7)
+mtext("theta=2,alpha=0.05",side=3,line=-1)
+#hist(bse$theta,main = "",freq=T)
+#abline(v=c(CI.N,CI.logN,CI.Q),lty=2,col=rep(2:4,each=2)) #,CI.T
+
+```
+
+
+
+
+
+```{r,eval=F,include=F}
+set.seed(123)
+n = 30
+B = 10^4
+X = replicate(B, rexp(n,1/2))
+xbar = apply(X, 2, mean)
+xsd = apply(X, 2, sd)
+cilo = xbar - qnorm(0.975)*(xbar/sqrt(n))
+ciup = xbar + qnorm(0.975)*(xbar/sqrt(n))
+
+#CI.Normal <- c(mean(x)-qnorm(0.975)*mean(x)/sqrt(n),mean(x)+qnorm(0.975)*mean(x)/sqrt(n))
+#CI.logNormal <- c(mean(x)*exp(-qnorm(0.975)/sqrt(n)),mean(x)*exp(qnorm(0.975)/sqrt(n)))
+#CI.T<- c(mean(x)-qt(0.975,df=n-1)*sd(x)/sqrt(n),mean(x)-qt(0.025,df=n-1)*sd(x)/sqrt(n))
+
+ci95 = (2>=cilo & 2<=ciup)
+mean(ci95)
+summary(ci95)
+```
+
+
+

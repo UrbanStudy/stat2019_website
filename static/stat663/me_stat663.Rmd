@@ -1,0 +1,240 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    toc_float: no
+  word_document:
+    toc: no
+header-includes:
+- \usepackage{multicol}
+- \usepackage{multirow}
+- \usepackage{caption}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \rhead{Shen Qu}
+- \lhead{Homework}
+- \chead{STAT 663}
+- \rfoot{Page \thepage}
+- \usepackage{graphicx}
+- \usepackage{amssymb}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=8)
+```
+
+
+
+## Q1. Let $X_1,X_2,...,X_n$ be i.i.d. $U(0,\theta)$ r.v.’s. 
+
+
+(a) Show that $X_{(n)}= \max\{X_1,X_2,...,X_n\}\overset{\mathcal{P}}{\to}\theta$. 
+
+$X_1,X_2,...,X_n\overset{iid}{\sim} U(0,\theta)$, $0\le X_{(1)},X_{(2)},...,X_{(n)}\le\theta$
+
+$f_{X}(x|\theta)=\frac{1}{\theta}$; $F_{X}(x|\theta)=\frac{x}{\theta}$
+
+$f_{X_{(n)}}(x)=\frac{n!}{(n-1)!(n-n)!}f_{X}(y)[F_{X}(x)]^{n-1}[1-F_{X}(x)]^{n-n}=\frac{n}{\theta^n}x^{n-1},\ 0\le x\le\theta$
+
+$F_{X_{(n)}}(x)=\int_0^x\frac{n}{\theta^n}t^{n-1}dt=\frac{1}{\theta^n}x^{n}$
+
+For arbitrary $\varepsilon>0$, $P(X_{(n)}-\theta>\varepsilon)=P(X_{(n)}>\theta+\varepsilon>\theta)=0$
+
+If $\varepsilon>\theta>0$, $P(X_{(n)}-\theta<-\varepsilon)=P(X_{(n)}<\theta-\varepsilon<0)=0$
+
+If $\theta\ge\varepsilon>0$, 
+
+$\lim_{n\to\infty}P(X_{(n)}-\theta<-\varepsilon)=\lim_{n\to\infty}P(X_{(n)}<\theta-\varepsilon)=\lim_{n\to\infty}F_{X_{(n)}}(\theta-\varepsilon)=\lim_{n\to\infty}(\frac{\theta-\varepsilon}{\theta})^{n}=0$
+
+- Therefore, $\lim_{n\to\infty}P(|X_{(n)}-\theta|>\varepsilon)=0$, $X_{(n)}\overset{\mathcal{P}}{\to}\theta$
+
+
+(b) Show that $X_{(1)} = \min\{X_1,X_2,...,X_n\}\overset{\mathcal{P}}{\to}0$. 
+
+$f_{X}(x|\theta)=\frac{1}{\theta}$; $F_{X}(x|\theta)=\frac{x}{\theta}$
+
+$f_{X_{(1)}}(x)=\frac{n!}{(1-1)!(n-1)!}f_{X}(x)[F_{X}(x)]^{1-1}[1-F_{X}(x)]^{n-1}=\frac{n}{\theta}\left(1-\frac{x}{\theta}\right)^{n-1},\ 0\le x\le\theta$
+
+$F_{X_{(1)}}(x)=\int_0^x\frac{n}{\theta}(1-\frac{t}{\theta})^{n-1}dt=1-(1-\frac{x}{\theta})^{n}$
+
+For arbitrary $\varepsilon>0$, $P(X_{(1)}-0<-\varepsilon)=P(X_{(1)}<-\varepsilon<0)=0$
+
+If $\varepsilon>\theta>0$, $P(X_{(1)}>\varepsilon)=P(X_{(1)}>\varepsilon>\theta)=0$
+
+If $\theta>\varepsilon>0$, 
+
+$\lim_{n\to\infty}P(X_{(1)}>\varepsilon)=\lim_{n\to\infty}[1-P(X_{(1)}<\varepsilon)]=\lim_{n\to\infty}[1-F_{X_{(1)}}(\varepsilon)]=\lim_{n\to\infty}[1-1+(1-\frac{\varepsilon}{\theta})^{n}]=0$
+
+- Therefore, $\lim_{n\to\infty}P(|X_{(1)}-0|>\varepsilon)=0$, $X_{(1)}\overset{\mathcal{P}}{\to}0$
+
+
+(c) Show that $\frac{X_{(1)}+X_{(n)}}2\overset{\mathcal{P}}{\to}\frac{\theta}{2}$
+
+$X_{(1)}\overset{\mathcal{P}}{\to}0$ and $0$ is constant. $X_{(n)}\overset{\mathcal{P}}{\to}\theta$. 
+
+By the Theorem1 in Note page39, $X_{(1)}+X_{(n)}\overset{\mathcal{P}}{\to}\theta+0=\theta$
+
+By the Theorem2, $y=\frac12x$ is a continuous function, $\frac12(X_{(1)}+X_{(n)})\overset{\mathcal{P}}{\to}\frac12\theta$
+
+Or by the Corollary, for $\frac12$ is a constant, $\frac12(X_{(1)}+X_{(n)})\overset{\mathcal{P}}{\to}\frac12\theta$
+
+
+
+\pagebreak
+
+## Q2. Let $S_n =\sum^n_i X_i$, where $X_1,X_2,...,X_n$ are i.i.d. Bernoulli(p) r.v.’s. 
+That is, $S_n$ has Binomial distribution with parameters $n$ and $p$. Suppose $n\to\infty$, $p\to0$, and $np =\lambda$. Then show that $S_n\overset{\mathcal{D}}{\to}S$, where $S$ has a Poisson distribution with $\lambda$.
+
+For $np =\lambda$, $S_n=\sum^n_i X_i\sim Bino(n,p)=Bino(n,\frac{\lambda}{n})$
+
+\[
+\begin{aligned}
+p(x;n,\lambda)&=\binom{n}{x}(\frac{\lambda}{n})^x(1-\frac{\lambda}{n})^{n-x}=\binom{n}{x}(\frac{\lambda}{n})^x(\frac{n-\lambda}{n})^{-x}(1-\frac{\lambda}{n})^{n}\\
+&=\frac{n!}{x!(n-x)!}(\frac{\lambda^x}{n^x})(\frac{n^{x}}{(n-\lambda)^x})(1-\frac{\lambda}{n})^{n}=\frac{\lambda^x}{x!}(\frac{n!}{(n-x)!(n-\lambda)^x})(1-\frac{\lambda}{n})^{n}
+\end{aligned}
+\]
+
+$\lim_{n\to\infty}(1-\frac{\lambda}{n})^{n}=e^{-\lambda}$
+
+$\lim_{n\to\infty}\frac{n!}{(n-x)!(n-\lambda)^x}=\lim_{n\to\infty}\frac{n(n-1)\cdots(n-x+1)}{(n-\lambda)^x}=\lim_{n\to\infty}\frac{1(1-\frac1n)\cdots(1-\frac{x-1}n)}{(1-\frac{\lambda}n)^x}=1$
+
+$$\lim_{n\to\infty}p(x;n,\lambda)=\lim_{n\to\infty}\frac{\lambda^x}{x!}(\frac{n!}{(n-x)!(n-\lambda)^x})(1-\frac{\lambda}{n})^{n}=\frac{\lambda^xe^{-\lambda}}{x!}$$
+
+By Scheffe's Theorem, if $S_n$ has a pdf $f_n(x)\to f(x)$,$\forall x\in$ support, 
+
+$f(x)$ is a Poisson pdf of a r.v $x$, then $S_n\overset{\mathcal{D}}{\to}S$
+
+
+
+\pagebreak
+
+## Q3 Suppose that $X_1,X_2,...,X_n$ be i.i.d. $X$, where $X$ has the following pdf:
+
+$f({x})=\begin{cases}\frac{\beta^{\alpha_0}x^{\alpha_0-1}}{\Gamma{(\alpha_0)}})\exp[-\beta x],&x>0\\0& o.w.\end{cases}$, $\alpha_0 > 0$ known, and $\beta > 0$ unknown.
+
+
+(a) Determine UMVUE of $\beta^{-1}$. 
+
+For Gamma Distribution $(\alpha_0,\beta^{-1})$, $\bar X\sim\Gamma(n\alpha_0,(n\beta)^{-1})$, $\alpha_0 > 0$ known
+
+$E(\bar X)=E(X)=\alpha_0\cdot\beta^{-1}$, then $(\alpha_0)^{-1}\bar X$ is an unbiased estimator of $\beta^{-1}$.
+
+$$f_{\beta}(\mathbf{x})=\exp[\underbrace{-\beta\sum_{i=1}^{n}x_i}_{\eta(\beta)T(x)}
+    -\underbrace{-n\alpha_0\log(\beta)}_{A(\beta)}]
+    \underbrace{\prod_{i=1}^{n}\frac{x_i^{\alpha_0-1}}{\Gamma{(\alpha_0)}}\mathbf{1}_{\{x_i\in(0,\infty)\}}}_{h(x)}$$
+
+When $\alpha_0$ known, Gamma is a canonical 1-parameter exponential family.  $\sum_{i=1}^{n}x_i$ is the natural sufficient statistic where $x\in\mathcal{X}\subset\mathbb{R}_+$. 
+
+$(\alpha_0)^{-1}\bar X$ is a function of n.s.s and it is a complete sufficient statistic for $\beta^{-1}$.
+
+By \textbf{Lehman-Scheffe Theorem}, $(\alpha_0)^{-1}\bar X$ is the UMVUE of $\beta^{-1}$.
+
+(b) Determine the information lower bound for the estimation of $\beta^{-1}$ using unbiased estimators, and determine if the UMVUE obtained in (a) attains this.
+
+Use \textbf{Theorem 1.6.2} (Bickel and Doksum)
+
+$\eta=-\beta\implies\beta=-\eta\implies A(\eta)=-n\alpha_0\log(\beta)=-n\alpha_0\log(-\eta)$
+
+$\eta$ is an interior point of the natural parameter space $\varepsilon$. 
+
+$$E((\alpha_0)^{-1}\bar X)=(n\alpha_0)^{-1}E[\sum_{i=1}^{n}x_i]=(n\alpha_0)^{-1}A'(\eta)=(n\alpha_0)^{-1}\frac{n\alpha_0}{-\eta}=\beta^{-1}$$
+$$Var((\alpha_0)^{-1}\bar X)=(n\alpha_0)^{-2}Var(\sum_{i=1}^{n}x_i)=(n\alpha_0)^{-2}A''(\eta)=(n\alpha_0)^{-2}\frac{n\alpha_0}{\eta^2}=\frac{1}{n\alpha_0\beta^2}$$
+
+- Therefore, The UMVUE of $\beta^{-1}$, $(\alpha_0)^{-1}\bar X$ has variance $\frac{1}{n\alpha_0\beta^2}$
+
+\textbf{Regularity Assumptions} on the family $\{P: \beta\in\Theta\}$:
+
+(I) The set $\mathcal{X} = \{x: p(x,\alpha_0,\beta) > 0\}$ does not depend on $\alpha_0,\beta$, $\forall x\in \mathcal{X}, \alpha_0>0,\beta>0$, score function $\frac{\partial}{\partial\beta}\log p(X,\beta)=-x+\frac{\alpha_0}\beta$ exists and is finite. 
+
+
+(II) If $T$ is any statistic such that $E_\beta(|T|)=\beta^{-1}<\infty,\alpha_0>0,\beta>0$, then the operations of integration and differentiation by $\beta$ can be interchanged in
+$\frac{\partial}{\partial\beta}E_\beta(T(X)))=\frac{\partial}{\partial\beta}\int T(x)p(x,\beta)dx=\int T(x)\frac{\partial}{\partial\beta}p(x,\beta)dx$
+
+\textbf{Theorem 3.4.1. Information Inequality} $\{P_\beta: \beta\in\Theta\}$ has density $p(x,\beta)$,$x\in\mathcal{X} \subseteq\mathbb{R}^q$, $E_\beta(T(X))=\beta^{-1}$ is differentiable$\forall\beta$
+
+I and II hold $0<I(\beta)<\infty$ $\forall\beta$, 
+
+$$I_1(\beta)=-E\left(\frac{\partial^2}{\partial\beta^2}\log p(X,\beta)\right)=-E\left(\frac{\partial^2}{\partial\beta^2}[-\beta x
+    +\alpha_0\log(\beta)]\right)=-E\left(\frac{\partial}{\partial\beta}[-x+\frac{\alpha_0}\beta]\right)=\frac{\alpha_0}{\beta^2}$$
+
+$$Var_\theta(T(X))\ge\frac{(\frac{\partial}{\partial\beta}[E(\alpha_0)^{-1}\bar X])^2}{nI_1(\beta)}=\frac{(\frac{\partial}{\partial\beta}(\frac{1}{\beta}))^2}{n\frac{\alpha_0}{\beta^2}}=\frac{1}{n\alpha_0\beta^2}$$
+
+- Therefore, the UMVUE $(\alpha_0)^{-1}\bar X$ attains the information lower bound for the estimation of $\beta^{-1}$.
+
+Note: \textbf{Theorem 3.4.2.} also works. $\{P_\theta: \theta\in\Theta\}$ satisfies assumptions (I) and (II). There exists u.b. est. $T^*$ of $\psi(\theta)$, which achieves the information lower bound $\forall\theta$.
+
+Then $\{P\theta\}$ is a one-parameter exponential family of the form $p(x,\theta)=h(x)\exp\{\eta(\theta)T(x)-B(\theta)\}$
+
+Conversely, if $\{P_\theta\}$ a one-para exp family of the form (*) with n.s.s. $T({X})$.
+
+$\eta(\theta)$ has a continuous nonvanishing derivative on $\theta$,
+
+Then $T(X)$ achieves the information lower bound and is a UMVUE of $E_\theta(T(X))$
+
+
+
+## Q4. Let $X_1,X_2,...,X_n$ be a sample from $U(\theta_1,\theta_2)$ where $\theta_1$ and $\theta_2$ are unknown. Show that $T(\underline{X}) = (\min(X_1,...,X_n),\max(X_1,...,X_n))$ is complete for $(\theta_1,\theta_2)$.
+
+$f_{X}(x|\theta_1,\theta_2)=\frac{1}{\theta_2-\theta_1}$; $F_{X}(x|\theta_1,\theta_2)=\frac{x-\theta_1}{\theta_2-\theta_1}$
+
+Let $T(\underline{X})= (\min(X_1,...,X_n),\max(X_1,...,X_n))=(X_{(1)},X_{(n)})=(U,V)$. $\theta_1\le u<v\le\theta_2$
+
+$$f_{U,V}(u,v)=\frac{n!}{(1-1)!(n-1-1)!(n-n)!}f_X(u)f_X(v)[F_X(u)]^{1-1}[F_X(v)-F_X(u)]^{n-1-1}[1-F_X(v)]^{n-n}$$
+$$=n(n-1)f_X(u)f_X(v)[F_X(v)-F_X(u)]^{n-2}=\frac{n(n-1)}{(\theta_2-\theta_1)^2}\left[\frac{v-\theta_1}{\theta_2-\theta_1}-\frac{u-\theta_1}{\theta_2-\theta_1}\right]^{n-2}=\frac{n(n-1)}{(\theta_2-\theta_1)^n}\left[v-u\right]^{n-2}$$
+
+Suppose a Riemann-integrable $g(u,v)$ is a function satisfying $E[g(u,v)]=0$ $\forall(\theta_1,\theta_2)$.
+
+$$E[g(u,v)]=\int_{\theta_1}^{\theta_2}\int_{\theta_1}^{v} g(u,v)f_{U,V}(u,v)dudv=\frac{n(n-1)}{(\theta_2-\theta_1)^n}\int_{\theta_1}^{\theta_2}\int_{\theta_1}^{v} g(u,v)\left[v-u\right]^{n-2}dudv=0$$
+Let
+\[
+\begin{aligned}
+h(\theta_1,v)&=\int_{\theta_1}^{v} g(u,v)\left[v-u\right]^{n-2}du \\
+&=-g(\theta_1,v)\frac{(v-\theta_1)^{n-1}}{n-1}-\int_{\theta_1}^{v} \left[\frac{d}{du}g(u,v)\right]\frac{(v-u)^{n-1}}{n-1}du
+\end{aligned}
+\]
+
+
+
+
+For $\frac{n(n-1)}{(\theta_2-\theta_1)^n}\neq0$, then
+
+$$\int_{\theta_1}^{\theta_2}\int_{\theta_1}^{v} g(u,v)\left[v-u\right]^{n-2}dudv=\int_{\theta_1}^{\theta_2}h(\theta_1,v)dv=0$$
+
+Moreover,
+
+\[
+\begin{aligned}
+0&=\frac{\partial^2}{\partial\theta_1\partial\theta_2}\int_{\theta_1}^{\theta_2}h(\theta_1,v)dv\\
+&=\frac{\partial^2}{\partial\theta_1\partial\theta_2}\left[\int_{0}^{\theta_2}h(\theta_1,v)dv-\int_{0}^{\theta_1}h(\theta_1,v)dv\right]\\
+&=\frac{\partial}{\partial\theta_2}\int_{0}^{\theta_2}\left[\frac{\partial}{\partial\theta_1}h(\theta_1,v)\right]dv-\frac{\partial}{\partial\theta_1}\int_{0}^{\theta_1}\left[\frac{\partial}{\partial\theta_2}h(\theta_1,v)\right]dv\\
+&=\frac{\partial}{\partial\theta_1}h(\theta_1,\theta_2)+\int_{0}^{\theta_2}\left[\frac{\partial}{\partial\theta_2}\frac{\partial}{\partial\theta_1}h(\theta_1,v)\right]dv\\
+&=\frac{\partial}{\partial\theta_1}\left[-g(\theta_1,\theta_2)\frac{(\theta_2-\theta_1)^{n-1}}{n-1}-\int_{\theta_1}^{\theta_2} \left(\frac{\partial}{\partial u}g(u,\theta_2)\right)\frac{(\theta_2-u)^{n-1}}{n-1}du\right]\\
+&=-\frac{\partial}{\partial\theta_1}\left[g(\theta_1,\theta_2)\frac{(\theta_2-\theta_1)^{n-1}}{n-1}\right]+\frac{\partial}{\partial\theta_1}\int_{\theta_2}^{\theta_1} \left(\frac{\partial}{\partial u}g(u,\theta_2)\right)\frac{(\theta_2-u)^{n-1}}{n-1}du\\
+&=-\left[\frac{\partial}{\partial\theta_1}g(\theta_1,\theta_2)\right]\frac{(\theta_2-\theta_1)^{n-1}}{n-1}+g(\theta_1,\theta_2)(\theta_2-\theta_1)^{n-2}\\
+&\quad+ \left[\frac{\partial}{\partial\theta_1}g(\theta_1,\theta_2)\right]\frac{(\theta_2-\theta_1)^{n-1}}{n-1}+\int_{\theta_2}^{\theta_1}\frac{\partial}{\partial\theta_1} \left[\left(\frac{\partial}{\partial u}g(u,\theta_2)\right)\frac{(\theta_2-u)^{n-1}}{n-1}\right]du\\
+&=g(\theta_1,\theta_2)(\theta_2-\theta_1)^{n-2}
+\end{aligned}
+\]
+
+For $\theta_1\neq\theta_2$, the solution to $E[g(T(X))]=0$, $\theta\in\Theta$ is $g(u,v)=0$ almost sure.
+
+That is, if $E[g(u,v)]=0$,$\forall(\theta_1,\theta_2)$ implies $P(g(u,v)=0)=1$,$\forall(\theta_1,\theta_2)$.
+
+Thus, $T(\underline{X}) = (\min(X_1,...,X_n),\max(X_1,...,X_n))$ is complete for $(\theta_1,\theta_2)$.
+
+
+
+
+
+
+
+
+
+

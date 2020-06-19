@@ -1,0 +1,94 @@
+---
+title: "Discrete Choice Modeling"
+subtitle: "USP 657"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
+---
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## SIC
+
+A Self Instructing Course in Mode Choice Modeling: Multinomial and Nested Logit Models 
+
+### 1 Introduction
+
+### 2 Elements of the choice decision process
+
+### 3 Utility-based choice theory
+
+### 4 The Multinomial Logit Model
+
+Gumbel_pmf|Gumbel_cdf
+|---|---
+![Gumbel_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Gumbel-Density.svg/600px-Gumbel-Density.svg.png)|![Gumbel_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Gumbel-Cumulative.svg/600px-Gumbel-Cumulative.svg.png)
+
+
+`p.8-10` Example: 
+
+
+
+## DCM
+
+Discrete choice methods with simulation 
+
+### Common Distributions
+
+
+\begin{tabular}{ l|l|l|p{0.2\linewidth}|l }
+   $D$   &$E;EX^2;V$&$f(x);F(x),P(X\le x)$&$MLE;T;I$&$M_x(t);M'(t);M''(t);M^n(t)$\\\hline
+   
+$Bern(p)$&$p$;$p$;$pq$&$p^xq^{1-x},x=1,0;0\le p\le1$&\shortstack{$\bar X$;$\sum x_i\sim Bin(n,p)$;$\frac1{pq}$;\\$Ep_{mle}=p$,$Vp_{mle}=\frac{pq}{n}$}&$pe^t+q$\\\hline
+
+$Bino(n,p)$&$np$;$np(np+q)$;$npq$&$\binom{n}{x}p^x q^{n-x}$,$x=0,1..n;0\le p\le1$;&$\bar X$or$k\ge X_{(n)}$;$\sum x_i\sim Bino(n,p)$;$1/pq$&$(pe^t+q)^n$\\\hline
+
+$Geom(p)$&$1/p$;${(p+2q)}/{p^2}$;$q/p^2$&$pq^{x-1}$,$x=1,2,..;0\le p\le1$;$1-q^x$&$1/\bar X$;$\sum x_i$;&$\frac{pe^t}{1-qe^t},t<-\ln{q}$;$\frac{pqe^t}{(1-qe^t)^2}$;$\frac{2pqe^t}{(1-qe^t)^3}-M'(t)$\\\hline
+
+$NBino(r,p)$&$r/p$; ;$rq/p^2$;$0\le p\le1$&$\binom{x-1}{r-1}p^rq^{x-r}$,$x=r,r+1..$&$\bar X$;$\sum x_i$&$(\frac{pe^t}{1-qe^t})^r,t<\ln q$\\\hline
+
+$HGeom(N,m,k)$&$\frac{km}N$;;$\mu\frac{(N-m)(N-k)}{N(N-1)}$;$N,m,k\ge0$ &${\binom{m}{x}\binom{N-m}{k-x}}/{\binom{N}{k}}$;&$m-(N-k)\le x\le m$\\\hline
+
+$Pois(\mu)$&$\mu$;$\mu^2+\mu$;$\mu$;$\mu\ge0$&$\frac{\mu^x}{x!}e^{-\mu}$,$x=0,1..$;$e^{-\mu}\sum_{i=0}^x\frac{\mu^i}{i!}$&$\bar X$;$\sum x_i$;$\frac1\mu$;$P(x+1)=\frac\lambda{\lambda+1}P(x)$&$e^{\mu(e^t-1)}$;$\mu e^tM(t)$;$\mu e^t(1+\mu e^t)M(t)$\\\hline
+
+$Unif(n)$&$\frac{n+1}2$;$\frac{(n+1)(2n+1)}{6}$;$\frac{n^2-1}{12}$&$\frac{1}n$,$x=1,2..n$,$n=b-a+1$;$\frac{x-a+1}n$&;$X_n$Comp&$\frac1n\sum_{i=1}^n{e^{ti}}$,$\frac{e^{at}-e^{(b+1)t}}{n(1-e^t)}$\\\hline
+
+$Unif(a,b)$&$\frac{a+b}{2}$; ;$\frac{(b-a)^2}{12}$&$\frac{1}{b-a}$,$a\le x\le b$;$\frac{x-a}{b-a}$&$\min{x_{(1)},x_{(n)}}$;R ancillary&$\frac{e^{tb}-e^{ta}}{t(b-a)}$\\\hline
+
+$Norm(\mu,\sigma^2)$&$\mu$;$\mu^2+\sigma^2$;$\sigma^2$&$\frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$,$\sigma>0$&\shortstack{$\bar X$,$\frac{\sum(x_i-\bar x)^2}n$;;$I_\mu=\frac1{\sigma^2}$,$I_{\sigma^2}=\frac1{2\sigma^4}$,$I_{\sigma}=\frac2{\sigma^2}$\\$E\hat\sigma^2_{mle}=\frac{(n-1)\sigma^2}{n}$,$V\hat\sigma_{mle}=\frac{2(n-1)\sigma^4}{n^2}$} &$e^{\mu t +\frac{\sigma^2t^2}2}$; $(\mu+\sigma^2t)M(t)$;$[(\mu+\sigma^2t)^2+\sigma^2]M(t)$\\\hline
+
+$SNorm(0,1)$&$0$;$1$;$1$&$\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}2}$&&$e^{\frac{t^2}2}$\\\hline
+
+$LNorm(\mu,\sigma^2)$&$e^{\mu+\frac{\sigma^2}2}$;$e^{2\mu+2\sigma^2}$;$E^2X(e^{\sigma^2}-1)$&$\frac{1}{x\sigma \sqrt{2\pi}}e^{\frac{-(\ln x-\mu)^2}{2\sigma^2}}$,$x\ge0$,$\sigma>0$&$\hat\mu=\frac1n\sum\ln x_i$,$\hat\sigma^2=\frac1n\sum\ln(x_i-\hat\mu)^2$&$EX^n=e^{n\mu+n^2\sigma^2/2}$\\\hline
+
+$Cauchy(\theta,\sigma)$&&$\frac{1}{\pi\sigma}\frac1{1+(\frac{x-\theta}{\sigma})^2}$;;$\sigma>0$&=$t_1$;=$\frac{Z_1}{Z_2}$&\\\hline
+
+$DExpo(\mu,\sigma^2)$&$\mu$;$\mu^2+2\sigma^2$;$2\sigma^2$&$\frac{1}{2\sigma} e^{-|\frac{x-\mu}{\sigma}|}$,$\sigma>0$;&$\hat\mu=median$,$\hat\sigma=\frac1n\sum|x_i|$&$\frac{e^{\mu t}}{1-\sigma^2t^2}$\\\hline
+
+$Expo(\beta)$&$\beta$; ;$\beta^2$,$\beta>0$&$\frac1{\beta} e^{-\frac{x}\beta},x\ge0$;$1-e^{-\lambda x}$&\shortstack{$\frac1{\bar X}$;$\sum x_i$;$\frac1{\lambda^2}$;$E\lambda_{mle}=\frac{\lambda}{n-1}$,\\$V\lambda_{mle}=\frac{n^2\lambda^2}{(n-1)^2(n-2)}$,$V\lambda_{u}=\frac{\lambda^2}{n-2}$}&$\frac{\lambda}{\lambda-t},t<\lambda$,$\frac{1}{1-\beta t}$;$\frac{\beta}{(1-\beta t)^2}$;$\frac{2\beta^2}{(1-\beta t)^3}$\\\hline
+
+$Gamm(\alpha,\beta)$&$\alpha\beta$; ;$\alpha\beta^2$;$\alpha,\beta>0$&$\frac{1}{\Gamma(a)\beta^{\alpha}}x^{a-1}e^{-x/\beta}$,$x\ge0$&$\prod x_i$,$\sum x_i$&$(\frac{1}{1-\beta t})^a, t <\frac1\beta$;$EX^n=\frac{\beta^n\Gamma(\alpha+n)}{\Gamma\alpha}$\\\hline
+
+$Beta(a,b)$&$\frac{a}{a+b}$;$\frac{a(a+1)}{(a+b)(a+b+1)}$;$\frac{ab}{(a+b)^2(a+b+1)}$&$\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}x^{a-1}(1-x)^{b-1}$;$0\le x\le1$&$\alpha>0,\beta>0$&$B(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$,$x\in(0,1)$;$\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}$\\\hline
+
+$\chi_p^2$&$p$;$2p+p^2$;$2p$&$\frac{1}{\Gamma \frac{p}2 2^{\frac{p}2}}x^{\frac{p}2-1}e^{-\frac{x}2}$,$x\ge0;p=1,2..$&;$\sum\ln x_i$;&$(1-2t)^{-p/2}, t<\frac12$\\\hline
+
+$t_p$&$0,p>1$; ;$\frac{p}{p-2},p>2$&$\frac{\Gamma(\frac{p+1}2)}{\Gamma(\frac{p}2)\sqrt{p\pi}}(1+\frac{x^2}{p})^{-\frac{p+1}2}$&\\\hline
+
+$F_{p,q}$&$\frac{q}{q-2},q>2$;;$2(\frac{q}{q-2})^2\frac{p+q-2}{p(q-4)},q>4$&$\frac{\Gamma(\frac{p+q}2)}{\Gamma(\frac{p}2)\Gamma (\frac{q}2)}(\frac{p}q)^{\frac{p}2}\frac{x^{\frac{p}2-1}}{(1+\frac{p}qx)^{\frac{p+q}2}}$,$x\ge0$&$F_{p,q}=\frac{\chi^2_p/p}{\chi^2_q/q}$;$F_{1,q}=t_q^2$&\\\hline
+
+$Arcsine$&$\frac{1}2$; ;$\frac{1}8$&$\frac{1}{\pi\sqrt{x(1-x)}}$,$x\in[0,1]$;$\frac{1}{\pi\arcsin\sqrt x}$&&$Beta(\frac{1}2,\frac{1}2)$\\\hline
+
+$Dirichlet$&$\frac{a_i}{\sum_ka_k}$$\sum_{i=1}^kx_i=1$;;$\frac{a_i(a_0-a_i)}{a_0^2(a_0+1)}$&$\frac1{B(a)}\Pi_{i=1}^kx_i^{a_i-1}$,$x\in(0,1)$&$B(a)=\frac{\Pi_{i=1}^k\Gamma(a_i)}{\Gamma(\sum_{i=1}^ka_i)}$&$Cov(X_i,X_j)=\frac{-a_ia_j}{a_0^2(a_0+1)}$,$a_0=\sum_{i=1}^ka_i$\\\hline
+
+$Weibull(\gamma,\beta)$&\shortstack{$\beta^{1/\gamma}\Gamma(1+1/\gamma)$;;\\$\beta^{2/\gamma}[\Gamma(1+2/\gamma)-\Gamma^2(1+1/\gamma)]$}&\shortstack{$\frac\gamma\beta x^{\gamma-1}e^{-\frac{x^\gamma}\beta}$,$x\ge0$,$\gamma>0,\beta>0$;\\$1-e^{-(\frac{x}\beta)^\gamma}$}&$x^\gamma$,$\sum x^\gamma$,$\sum\ln x$&;;$\beta^{\frac{n}\gamma}\Gamma(1+\frac{n}\gamma)$\\\hline
+
+$Pareto(\alpha,\beta)$&$\frac{\beta\alpha}{\beta-1}$,$\beta>1$;;$\frac{\beta\alpha^2}{(\beta-1)^2(\beta-2)}$,$\beta>2$&$\frac{\beta\alpha^\beta}{x^{\beta+1}}$;$1-(\frac{\alpha}{x})^\beta$,$x>\alpha$,$\alpha,\beta>0$&\shortstack{$\hat\alpha=\min x_i$,$\hat\beta=\frac{n}{\sum\ln(x_i/x_{(1)})}$;\\$\sum x_i$comp/suff;$1/\beta^2$}&
+\end{tabular}
+

@@ -1,0 +1,1178 @@
+---
+title: ""
+subtitle: ""
+date: ''
+author: ""
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+    latex_engine: xelatex
+# bibliography: biblio.bib
+# mainfont: Times New Roman
+geometry: margin=1in
+spacing: single
+# fontsize: 12pt
+header-includes:
+- \usepackage{multicol}
+- \usepackage{multirow}
+- \usepackage{caption}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \rfoot{Page \thepage}
+- \usepackage{graphicx}
+- \usepackage{amssymb}
+- \usepackage{unicode-math}
+- \usepackage[ruled,vlined]{algorithm2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=6)
+options(digits=4)
+
+library(survival)
+library(epiR)
+library(survminer)
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(ggfortify)
+library(kableExtra)
+library(pander)
+library(GGally)
+library(flexsurv)
+library(reshape2)
+```
+
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+STAT 578 Final Project: Framingham Heart Study
+
+Allyson Meyers, Christopher Young, Shen Qu
+
+June 11, 2020
+
+\section*{Appendices}
+
+\tiny
+
+```{r,echo=F}
+Framingham <- read_excel("frmgham2.xls")
+panderOptions('table.split.table', 120)
+pander(head(Framingham),caption ="Original Framingham Longitudinal Data")
+```
+
+\footnotesize
+
+```{r,echo=F}
+# Modified data structure
+heart <- Framingham
+heart$SEX <- Framingham$SEX-1
+heart$age.group <- ifelse(Framingham$AGE<=54,0,1)
+heart$bmi.group <- ifelse(Framingham$BMI<25,0,1)
+# heart$tod <-ifelse(heart$DEATH==1|heart$TIMECVD==8766,0,1)
+times <- heart[,c(20,32:39)]
+
+heart1<- heart[heart$PERIOD==1,]
+charac<- heart1[,c(1:14,40,41)]
+
+ap<- heart1[heart1$ANGINA==1&heart1$PREVAP==0,]
+hospmi<- heart1[heart1$HOSPMI==1&heart1$PREVMI==0,]
+mifc<- heart1[heart1$MI_FCHD==1&heart1$PREVMI==0,]
+chd<- heart1[heart1$ANYCHD==1&heart1$PREVCHD==0,]
+strk<- heart1[heart1$STROKE==1&heart1$PREVSTRK==0,]
+cvd<- heart1[heart1$CVD==1&heart1$TIMECVD!=0,]
+death<- heart1[heart1$DEATH==1,]
+hyp<- heart1[heart1$HYPERTEN==1&heart1$PREVHYP==0,]
+
+non.cvd <- heart[heart$CVD==0,]
+charac.cvd<- cvd[,c(1:14,40,41)]
+charac.cvd<- subset(charac.cvd,!is.na(cvd$bmi.group)) 
+cvd[,c(2,7,10,11,14:19,21,25:31,40,41)] <- lapply(cvd[,c(2,7,10,11,14:19,21,25:31,40,41)], factor)
+# is.na(cvd[,c(1,2,4,7,9,10,11,14:21,24:31,37,40,41)])==TRUE
+#cvd1<- cvd[cvd$PERIOD==1,]
+# cvd<- na.omit(cvd[,c(1,2,4,7,9,10,11,14:21,24:31,37,40,41)]) 
+# cvd[is.na(cvd[,c(2,7,10,37,40,41)]),]
+# cvd<- subset(cvd,!is.na(cvd$bmi.group)) 
+### str(cvd)
+```
+
+
+```{r,eval=F,include=F}
+#sub_Framingham <- Framingham[,c(2:14,27,34,38)]
+# str(sub_Framingham)
+
+# heart$tod <- sub_Framingham$MI_FCHD
+# heart$tod <- ifelse((sub_Framingham$TIMEDTH<8766|sub_Framingham$TIMEMIFC==8766)&sub_Framingham$MI_FCHD==0,0,1)
+# there are only 5 sample with TIMEMIFC>TIMEDTH
+#sum(heart$tod)
+# heart$tod <- ifelse(sub_Framingham$TIMEMIFC==sub_Framingham$TIMEDTH,0,1) 
+
+# heart[,c(1,15,21)]
+# heart[heart$tod==0,] 
+
+#ap<- heart[heart$ANGINA==1&heart$TIMEAP!=0,]
+#hospmi<- heart[heart$HOSPMI==1&heart$TIMEMI!=0,]
+#mifc<- heart[heart$MI_FCHD==1&heart$TIMEMIFC!=0,]
+#chd<- heart[heart$ANYCHD==1&heart$TIMECHD!=0,]
+#strk<- heart[heart$STROKE==1&heart$TIMESTRK!=0,]
+#cvd<- heart[heart$CVD==1&heart$TIMECVD!=0,]
+#death<- heart[heart$DEATH==1&heart$TIMEDTH!=0,]
+#hyp<- heart[heart$HYPERTEN==1&heart$TIMEHYP!=0,]
+
+```
+
+
+```{r,echo=F}
+r1 <- c("RANDID","Unique identification number for each participant","","2448-9999312")
+r2 <- c("SEX","Participant sex","1=Men 2=Women", "n=5022 n=6605")
+r3 <- c("PERIOD", "Examination Cycle", "1=Period 1;2=Period 2; 3=Period 3", "n=4434 n=3930 n=3263")
+r4 <- c("TIME","Number of days since baseline exam","","0-4854")
+r5 <- c("AGE","Age at exam (years)","","32-81")
+r6 <- c("SYSBP","Systolic Blood Pressure (mean of last two of three measurements) (mmHg)","","83.5-295")
+r7 <- c("DIABP","Diastolic Blood Pressure (mean of last two of three measurements) (mmHg)","","30-150")
+r8 <- c("BPMEDS", "Use of Anti-hypertensive medication at exam", "0=Not currently used 1=Current Use", "n=10090 n=944")
+r9 <- c("CURSMOKE", "Current cigarette smoking at exam", "0=Not current smoker 1=Current smoker", "n=6598 n=5029")
+r10 <- c("CIGPDAY", "Number of cigarettes smoked each day", "0=Not current smoker 1-90 cigarettes per day")
+r11 <- c("TOTCHOL", "Serum Total Cholesterol (mg/dL)","", "107-696")
+r12 <- c("HDLC", "High Density Lipoprotein Cholesterol (mg/dL)", "available for period 3 only", "10-189")
+r13 <- c("LDLC", "Low Density Lipoprotein Cholesterol (mg/dL)", "available for period 3 only", "20-565")
+r14 <- c("BMI", "Body Mass Index, weight in kilograms/height meters squared", "","14.43-56.8")
+r15 <- c("GLUCOSE", "Casual serum glucose (mg/dL)", "","39-478")
+r16 <- c("DIABETES", "Diabetic according to criteria of first exam treated or first exam with casual glucose of 200 mg/dL or more", "0=Not a diabetic 1=Diabetic", "n=11097 n=530")
+characteristics <- rbind(r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16)
+colnames(characteristics) <- c("Variable", "Description", "Units", "Range or count")
+row.names(characteristics) <- NULL
+panderOptions('table.split.table', 100)
+set.alignment('left', row.names = 'right')
+pander(characteristics, split.cells =c(1,40,18,1) ,keep.line.breaks =F,style = "grid",
+       caption = "The characteristics data are provided in the dataset")
+```
+
+
+```{r,echo=F,out.width='50%'}
+bin.index.charac <- c(2,7,10,15,16) #,11,14
+# binary.charac<-data.frame(lapply(charac[,bin.index.charac] , factor))
+melt.binary.charac <- melt(charac.cvd[,bin.index.charac])
+melt.binary.charac$value <- as.factor(melt.binary.charac$value)
+ggplot(melt.binary.charac, aes(variable)) + geom_bar(aes(fill =value)) + 
+  scale_fill_brewer() #+
+# geom_text(aes(label=value), position=position_dodge(width=0.9), vjust=-0.25)
+binary.charac<-data.frame(lapply(charac.cvd[,bin.index.charac], factor))  # heart$PERIOD==1
+count.binary.charac <- do.call(rbind, lapply(binary.charac, summary))[,1:2]
+pander(count.binary.charac)
+```
+
+Analysis of AGE and BMI
+
+Based on the sample distribution and relevant definition, we choose 54 years old and 25 BMI as the values to classify.
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+plot(cvd[,c(37,4)],col="steelblue3")
+abline(h=54,col= "red3",lty = 1,lwd = 2)
+text(-180,55, "54", col = 1)
+# abline(lm(heart$AGE ~heart$TIMECVD ))
+paste("median of age =",median(heart$AGE))
+
+plot(cvd[,c(37,9)],col="steelblue3")
+abline(h=25,col= "red3",lty = 1,lwd = 2)
+text(-180,26, "25", col = 1)
+# abline(lm(heart$BMI ~heart$TIMECVD ))
+paste("median of BMI =",median(heart$BMI[!is.na(heart$BMI)]))
+```
+
+- Status data
+
+```{r,echo=F}
+r1 <- c("HEARTRTE","Heart rate (Ventricular rate) in beats/min","","37-220")
+r2 <- c("PREVAP","Prevalent Angina Pectoris at exam","0=Free of disease 1=Prevalent disease","n=11000 n=627")
+r3 <- c("PREVCHD","Prevalent Coronary Heart Disease defined as pre-existing Angina Pectoris, Myocardial Infarction (hospitalized, silent or unrecognized), or Coronary Insufficiency (unstable angina)","0=Free of disease 1=Prevalent disease","n=10785 n=842")
+r4 <- c("PREVMI","Prevalent Myocardial Infarction","0=Free of disease 1=Prevalent disease","n=11253 n=374")
+r5 <- c("PREVSTRK","Prevalent Stroke","0=Free of disease 1=Prevalent disease","n=11475 n=152")
+r6 <- c("PREVHYP","Prevalent Hypertensive. Subject was defined as hypertensive if treated or if second exam at which mean systolic was >=140 mmHg or mean Diastolic >=90 mmHg","0=Free of disease 1=Prevalent disease","n=6283 n=534")
+
+characteristics <- rbind(r1,r2,r3,r4,r5,r6)
+colnames(characteristics) <- c("Variable", "Description", "Units", "Range or count")
+row.names(characteristics) <- NULL
+panderOptions('table.split.table', 100)
+set.alignment('left', row.names = 'right')
+pander(characteristics, split.cells =c(1,40,18,5) ,keep.line.breaks =F,
+       caption = "The risk factor data")
+```
+
+
+- Event selection
+
+```{r,echo=F}
+r1 <- c("ANGINA", "Angina Pectoris")
+r2 <- c("HOSPMI", "Hospitalized Myocardial Infarction")
+r3 <- c("MI_FCHD", "Hospitalized Myocardial Infarction or Fatal Coronary Heart Disease")
+r4 <- c("ANYCHD", "Angina Pectoris, Myocardial infarction (Hospitalized and silent or unrecognized), Coronary Insufficiency (Unstable Angina), or Fatal Coronary Heart Disease")
+r5 <- c("STROKE", "Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease")
+r6 <- c("CVD", "Myocardial infarction (Hospitalized and silent or unrecognized), Fatal Coronary Heart Disease, Atherothrombotic infarction, Cerebral Embolism, Intracerebral Hemorrhage, or Subarachnoid Hemorrhage or Fatal Cerebrovascular Disease")
+r7 <- c("HYPERTEN", "Hypertensive. Defined as the first exam treated for high blood pressure or second exam in which either Systolic is 140 mmHg or Diastolic 90mmHg")
+r8 <- c("DEATH", "Death from any cause")
+characteristics <- rbind(r1,r2,r3,r4,r5,r6,r7,r8)
+colnames(characteristics) <- c("Variable", "Description")
+row.names(characteristics) <- NULL
+panderOptions('table.split.table', Inf)
+set.alignment('left', row.names = 'right')
+pander(characteristics, split.cells =c(1,99) ,keep.line.breaks =F,
+       caption = "The event data")
+```
+
+
+
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+bin.index <- c(15:19,24:31)
+melt.binary <- melt(heart[,bin.index])
+# melt.binary$variable <- with(melt.binary, reorder(variable,value,mean))
+melt.binary$value <- as.factor(melt.binary$value)
+ggplot(melt.binary, aes(variable, fill =value)) + geom_bar() + 
+  geom_hline(yintercept=4434, linetype="dashed", color = "steelblue",label=4434) +
+  scale_fill_brewer() + geom_text(aes(y=4800, label=4434, x=1),size =3)+
+  theme(axis.text.x = element_text(size=8, angle=30)) # face="bold", 
+
+binary<-data.frame(lapply(heart[,bin.index] , factor))  # heart$PERIOD==1
+count.binary <- do.call(rbind, lapply(binary, summary))[,1:2]
+count.binary <- melt(count.binary)
+count.binary$Var2 <- as.factor(count.binary$Var2)
+names(count.binary) <- c("variable","value","count")
+# count.binary$count <- count.binary$count/3
+ggplot(count.binary, aes(x=value,y=count,fill=value)) + geom_bar(stat = "identity") + facet_wrap( ~variable) +scale_fill_brewer()
+```
+
+
+- Event time
+
+```{r,echo=F}
+r1 <- c("TIMEAP", "Number of days from Baseline exam to first Angina during the followup or Number of days from Baseline to censor date. Censor date may be end of followup, death or last known contact date if subject is lost to followup")
+r2 <- c("TIMEMI", "Defined as above for the first HOSPMI event during followup")
+r3 <- c("TIMEMIFC", "Defined as above for the first MI_FCHD event during followup")
+r4 <- c("TIMECHD", "Defined as above for the first ANYCHD event during followup")
+r5 <- c("TIMESTRK", "Defined as above for the first STROKE event during followup")
+r6 <- c("TIMECVD", "Defined as above for the first CVD event during followup")
+r7 <- c("TIMEHYP", "Defined as above for the first HYPERTEN event during followup")
+r8 <- c("TIMEDTH", "Number of days from Baseline exam to death if occurring during followup or Number of days from Baseline to censor date. Censor date may be end of followup, or last known contact date if subject is lost to followup")
+characteristics <- rbind(r1,r2,r3,r4,r5,r6,r7,r8)
+colnames(characteristics) <- c("Variable", "Description")
+row.names(characteristics) <- NULL
+panderOptions('table.split.table', Inf)
+set.alignment('left', row.names = 'right')
+pander(characteristics, split.cells =c(1,99),keep.line.breaks =F,caption = "The event time data")
+```
+
+
+```{r,echo=F}
+melt.times <- melt(times)
+ggplot(melt.times, aes(x=variable,y=value)) + geom_jitter(size=0.1,alpha=0.3,col="steelblue3")
+```
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+ggplot(melt.times, aes(x=reorder(variable,value,mean),y=value)) + geom_violin(adjust = 1.0)
+ggplot(cvd, aes(TIMECVD),fontface ="plain") + geom_histogram(size=1,alpha=0.5,fill="steelblue3")+ 
+  geom_vline(xintercept=c(0,2128,4192), linetype="dashed", color = "steelblue4") +
+  geom_text(aes(x=2600, label="Period2\n2128 days", y=5),size =2.5) +
+  geom_text(aes(x=4600, label="Period3\n4192 days",fontface ="plain", y=5),size =2.5)
+```
+
+```{r,eval=F,include=F}
+library(ggstatsplot)
+set.seed(123)
+ggstatsplot::ggbetweenstats(
+  data = melt.times,
+  x = variable,
+  y = value,
+  title = "Distribution of time length across events",
+  messages = FALSE
+) 
+```
+
+```{r,eval=F,include=F}
+plotList <- list()
+for(i in 1:length(bin.index)){
+plotList[[i]] <-ggplot(binary, aes(x=binary[,i],fill=binary[,i])) + geom_bar()
+}
+ggmatrix(plotList, 3, 6,showStrips=F) # 
+ggplot(binary, aes(x=binary[,2],fill=binary[,2])) + geom_bar()+ facet_wrap(.~.)
+data.frame(summary(binary))
+table(binary[,1])[1]
+```
+
+
+
+- The censored observations
+
+In this data, 'death' represents non-censoring. Both of the number of "DEATH=1" and "TIMEDTH<8766" are 3527. The number of records of alive is 8100. However, there are more than one 'DEATH' records for a patient. The numbers of death records by period are
+
+```{r,echo=F, include=F}
+4434-sum(heart$DEATH==1)
+table(heart$PERIOD)
+331+461+758
+331+461*2+758*3
+```
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+#table(heart$DEATH)
+table(heart[,c(21,24)])
+freq.death <-data.frame(tapply(heart$DEATH, heart$RANDID, FUN=sum))
+names(freq.death) <- "freq"
+freq.death$id<- as.numeric(row.names(freq.death))
+death1.id<- freq.death[which(freq.death$freq==1),"id"]
+death2.id<- freq.death[which(freq.death$freq==2),"id"]
+death3.id<- freq.death[which(freq.death$freq==3),"id"]
+
+death1 <- filter(heart,RANDID%in%death1.id)
+death1 <- heart[heart$RANDID%in%death1.id,]
+death2 <- heart[heart$RANDID%in%death2.id,]
+death3 <- heart[heart$RANDID%in%death3.id,]
+
+ggplot(freq.death,aes(freq))+geom_histogram(binwidth=1,stat="count",fill="lightblue2")+theme_light()+
+  stat_bin(binwidth=1,geom="text", aes(label=..count..), vjust=1.5)+scale_fill_brewer()+xlab("Frequency of death records")
+```
+
+Frequency of death records for a patient by period
+
+```{r,echo=F}
+death.period<- c(table(death1$PERIOD),table(death2$PERIOD),table(death3$PERIOD))
+names(death.period) <- c("Once in per1","twice in per1","twice in per2","twice in per3","3 times in per1","3 times in per2","3 times in per3")
+pander(death.period)
+```
+
+The real number of death is $331+461+758=1550$. We can confirm the number of death records by $331+461*2+758*3=3527$
+
+- Investigate CVD event
+
+The number of records of CVD is 2899. The numbers of CVD records by period are
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+# table(heart$CVD)
+table(heart[,c(21,30)])
+recurrent.cvd <-data.frame(tapply(heart$CVD, heart$RANDID, FUN=sum))
+names(recurrent.cvd) <- "freq"
+recurrent.cvd$id<- as.numeric(row.names(recurrent.cvd))
+cvd1.id<- recurrent.cvd[which(recurrent.cvd$freq==1),"id"]
+cvd2.id<- recurrent.cvd[which(recurrent.cvd$freq==2),"id"]
+cvd3.id<- recurrent.cvd[which(recurrent.cvd$freq==3),"id"]
+
+cvd1 <- filter(heart,RANDID%in%cvd1.id)
+cvd1 <- heart[heart$RANDID%in%cvd1.id,]
+cvd2 <- heart[heart$RANDID%in%cvd2.id,]
+cvd3 <- heart[heart$RANDID%in%cvd3.id,]
+
+ggplot(recurrent.cvd,aes(freq))+geom_histogram(binwidth=1,stat="count",fill="lightblue2")+theme_light()+
+  stat_bin(binwidth=1,geom="text", aes(label=..count..), vjust=1.5)+scale_fill_brewer()
+# sum(heart1$TIMECVD==0)
+# 162+248+747-161
+# 162+248*2+747*3)
+```
+
+Frequency of CVD records for a patient by period
+
+```{r,echo=F}
+cvd.period<- c(table(cvd1$PERIOD),table(cvd2$PERIOD),table(cvd3$PERIOD))
+names(cvd.period) <- c("Once in per1","twice in per1","twice in per2","twice in per3","3 times in per1","3 times in per2","3 times in per3")
+pander(cvd.period)
+```
+
+The real number of CVD is $162+248+747-161=996$ (There are 161 observation have zero CVD time). We can confirm the number of death records by $162+248*2+747*3=2899$
+
+- Investigate ANGINA event
+
+The number of records of ANGINA is 1902. The numbers of ANGINA records by period are
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+# table(heart$ANGINA)
+table(heart[,c(21,25)])
+freq.ap <-data.frame(tapply(heart$ANGINA, heart$RANDID, FUN=sum))
+names(freq.ap) <- "freq"
+freq.ap$id<- as.numeric(row.names(freq.ap))
+ap1.id<- freq.ap[which(freq.ap$freq==1),"id"]
+ap2.id<- freq.ap[which(freq.ap$freq==2),"id"]
+ap3.id<- freq.ap[which(freq.ap$freq==3),"id"]
+
+ap1 <- filter(heart,RANDID%in%ap1.id)
+ap1 <- heart[heart$RANDID%in%ap1.id,]
+ap2 <- heart[heart$RANDID%in%ap2.id,]
+ap3 <- heart[heart$RANDID%in%ap3.id,]
+
+ggplot(freq.ap,aes(freq))+geom_histogram(binwidth=1,stat="count",fill="lightblue2")+theme_light()+
+  stat_bin(binwidth=1,geom="text", aes(label=..count..), vjust=1.5)+scale_fill_brewer()
+# 67+139+519
+# 67+139*2+519*3
+```
+
+```{r,echo=F}
+ap.period<- c(table(ap1$PERIOD),table(ap2$PERIOD),table(ap3$PERIOD))
+names(ap.period) <- c("Once in per1","twice in per1","twice in per2","twice in per3","3 times in per1","3 times in per2","3 times in per3")
+pander(ap.period)
+```
+
+The real number of CVD is $67+139+519=725$. We can confirm the number of ANGINA records by $67+139*2+519*3=1902$
+
+
+The calculation show that both CVD an ANGINA events contain the whole event number in the first period. So, we can filter the data by period 1 to get the unique observations for each patient.
+
+The total number of CVD is 1157. There are 161 patient who dead at once have zero TIMECVD value. There are 996 patients have a positive TIMECVD value.
+
+
+### Non-parameter: Kaplan-Meier Method
+
+- Comparing the 8 kinds of events by Kaplan-Meier (K-M) estimate
+
+```{r,echo=F}
+km.fit.ap<- survfit(Surv(TIMEAP,DEATH)~1,type="kaplan-meier", data=ap) 
+km.fit.hospmi <- survfit(Surv(TIMEMI,DEATH)~1,type="kaplan-meier", data=hospmi) 
+km.fit.mifc<- survfit(Surv(TIMEMIFC,DEATH)~1,type="kaplan-meier", data=mifc) 
+km.fit.chd<- survfit(Surv(TIMECHD,DEATH)~1,type="kaplan-meier", data=chd) 
+km.fit.strk<- survfit(Surv(TIMESTRK,DEATH)~1,type="kaplan-meier", data=strk) 
+km.fit.cvd <- survfit(Surv(TIMECVD,DEATH)~1,type="kaplan-meier", data=cvd) 
+km.fit.death<-survfit(Surv(TIMEDTH,DEATH)~1,type="kaplan-meier", data=death) 
+km.fit.hyp<-survfit(Surv(TIMEHYP,DEATH)~1,type="kaplan-meier", data=hyp) 
+
+cvd.fit.km.mult <- survfit(Surv(TIMECVD,DEATH)~SEX+bmi.group+CURSMOKE+age.group+DIABETES,type="kaplan-meier", data=cvd) 
+```
+
+
+```{r,echo=F,out.width='100%'}
+plot(km.fit.death,conf.int=F,xlab="Time",ylab="Surv",col=1,lty=1)
+lines(km.fit.cvd, conf.int=F,col=2, lty=2)
+lines(km.fit.hospmi, conf.int=F,col=3, lty=3)
+lines(km.fit.mifc, conf.int=F,col=4, lty=4)
+lines(km.fit.strk, conf.int=F,col=5, lty=5)
+lines(km.fit.chd, conf.int=F,col=6, lty=6)
+lines(km.fit.ap, conf.int=F,col=7, lty=7)
+lines(km.fit.hyp, conf.int=F,col=8, lty=8)
+legend(0,0.8,c("death","cvd","mi","mifc","strk","chd","ap","hyp"),col=1:8,lty=1:8)
+```
+
+- Overall K-M curve of CVD patients
+
+```{r,eval=T,echo=F,out.width='100%'}
+ggsurvplot(km.fit.cvd, data =cvd, 
+  size = 0.5, palette = 'dodgerblue3',
+  conf.int = T, risk.table = T, pval = T,
+  censor.shape="|", censor.size = 1, 
+  risk.table.height = 0.25, ggtheme = theme_bw() )
+```
+
+```{r,eval=F,echo=F,out.width='100%'}
+km.fit.noncvd <- survfit(Surv(TIMECVD,DEATH)~1,type="kaplan-meier", data=non.cvd) 
+ggsurvplot(km.fit.noncvd, data =cvd, 
+  size = 0.5, palette = 'dodgerblue3',
+  conf.int = T, risk.table = T, pval = T,
+  censor.shape="|", censor.size = 1, 
+  risk.table.height = 0.25, ggtheme = theme_bw() )
+```
+
+The mean and median survival times. 
+```{r,echo=F}
+print(km.fit.cvd, print.rmean = T)
+# print(km.fit.hospmi, print.rmean = T)
+```
+
+
+- the K-M survival curve and cumulative hazard for a specific group.
+
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+cvd.fit.km.diab <- survfit(Surv(TIMECVD,DEATH)~DIABETES,type="kaplan-meier", data=cvd) 
+ggsurvplot(cvd.fit.km.diab, data =cvd, 
+  size = 0.5, palette = c('darkcyan','blue'),
+  conf.int = F, pval = T,risk.table = T, risk.table.col = "strata",
+  censor.shape="|", censor.size = 1, legend.labs = c("non-diabetic","diabetic"), 
+  risk.table.height = 0.25, ggtheme = theme_bw() 
+)
+ggsurvplot(cvd.fit.km.diab, data =cvd, 
+  size = 0.5, palette = c('darkcyan','blue'),fun = "cumhaz",
+  conf.int = F, pval = T,risk.table = T, risk.table.col = "strata",
+  censor.shape="|", censor.size = 1, legend.labs = c("non-diabetic","diabetic"), 
+  risk.table.height = 0.25, ggtheme = theme_bw() 
+)
+```
+
+```{r,echo=F}
+survdiff(Surv(TIMECVD,DEATH)~DIABETES, data=cvd) 
+```
+
+```{r,eval=F,echo=F,out.width='100%'}
+cvd.fit.km.diab1 <- survfit(Surv(TIMECVD,DEATH)~1,type="kaplan-meier", data=cvd[cvd$DIABETES==1,]) 
+ggsurvplot(cvd.fit.km.diab1, data =cvd[cvd$DIABETES==1,], 
+  size = 0.5, #palette = c('darkcyan','blue'),
+  conf.int = F, pval = T,risk.table = T, risk.table.col = "strata",
+  censor.shape="|", censor.size = 1, #legend.labs = c("non-diabetic","diabetic"), 
+  risk.table.height = 0.25, ggtheme = theme_bw() 
+)
+```
+
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+cvd.fit.km.bmi <- survfit(Surv(TIMECVD,DEATH)~bmi.group,type="kaplan-meier", data=cvd) 
+ggsurvplot(cvd.fit.km.bmi, data =cvd, 
+  size = 0.5, palette = c('darkcyan','blue'),
+  conf.int = F, pval = T,risk.table = T, risk.table.col = "strata",
+  censor.shape="|", censor.size = 1, legend.labs = c("Low BMI", "High BMI"), 
+  risk.table.height = 0.25, ggtheme = theme_bw() 
+)
+ggsurvplot(cvd.fit.km.bmi, data =cvd, 
+  size = 0.5, palette = c('darkcyan','blue'),fun = "cumhaz",
+  conf.int = F, pval = T,risk.table = T, risk.table.col = "strata",
+  censor.shape="|", censor.size = 1, legend.labs = c("Low BMI", "High BMI"), 
+  risk.table.height = 0.25, ggtheme = theme_bw() 
+)
+```
+
+```{r,echo=F}
+survdiff(Surv(TIMECVD,DEATH)~bmi.group, data=cvd) 
+```
+
+```{r,eval=F,echo=F,out.width='100%'}
+ggsurvplot(km.fit.hospmi, data =hospmi, 
+  size = 0.5, palette = 'dodgerblue3',
+  conf.int = F, pval = T,risk.table = T, 
+  censor.shape="|", censor.size = 1, 
+  risk.table.height = 0.25, ggtheme = theme_bw() 
+)
+```
+
+
+- Stratify by two factors. 
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+table(data.frame(cvd$SEX,cvd$CURSMOKE)) 
+survdiff(Surv(TIMECVD,DEATH)~CURSMOKE+strata(SEX), data=cvd)
+fit.SEX <- survfit(Surv(TIMECVD,DEATH)~CURSMOKE+strata(SEX), data=cvd)
+print(fit.SEX, print.rmean = T)
+plot(fit.SEX,conf.int=F,xlab="Time",ylab="Surv",col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(2,1))
+legend(0,0.4,c("non-smoke male","non-smoke female","smoke male","smoke female"),col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(2,1))
+
+table(data.frame(cvd$age.group,cvd$DIABETES)) 
+survdiff(Surv(TIMECVD,DEATH)~DIABETES+strata(age.group), data=cvd)
+fit.age <- survfit(Surv(TIMECVD,DEATH)~DIABETES+strata(age.group), data=cvd)
+print(fit.age, print.rmean = T)
+plot(fit.age,conf.int=F,xlab="Time",ylab="Surv",col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(1,2))
+legend(0,0.4,c("non-diabetic <54","non-diabetic >54","diabetic <54","diabetic >54"),col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(1,2))
+```
+
+```{r,echo=F,out.width='100%'}
+cvd.fit.km.mult1 <- survfit(Surv(TIMECVD,DEATH)~SEX+DIABETES+CURSMOKE+age.group,type="kaplan-meier", data=cvd) 
+ggsurv <- ggsurvplot(cvd.fit.km.mult1, data =cvd, 
+  size = 0.5, fontsize =3, # palette = 'dodgerblue3',
+  conf.int = F, pval = T,risk.table = T, 
+  censor.shape="|", censor.size = 1, 
+  risk.table.height = 1, ggtheme = theme_bw() 
+)
+curv_facet <- ggsurv$plot + facet_grid(DIABETES ~ age.group, scales = "free",labeller = label_both)+theme(legend.position = "none")
+curv_facet
+ggsurv$table + theme(legend.position = "none")
+```
+
+```{r,echo=F,out.width='100%'}
+ggsurv <- ggsurvplot(cvd.fit.km.mult1, data =cvd, 
+  size = 0.5, fontsize =3, # palette = 'dodgerblue3',
+  conf.int = F, pval = T,risk.table = T, 
+  censor.shape="|", censor.size = 1, 
+  risk.table.height = 1, ggtheme = theme_bw() 
+)
+curv_facet <- ggsurv$plot + facet_grid(CURSMOKE ~ SEX, scales = "free",labeller = label_both)+theme(legend.position = "none")
+curv_facet
+ggsurv$table + theme(legend.position = "none")
+```
+
+
+
+### Variable Reduction: The Cox Proportional Hazards Model
+
+```{r,echo=F}
+cvd<- subset(cvd,!is.na(cvd$bmi.group)) # remove BMI=NA observation
+cvd.cox <- coxph(Surv(TIMECVD,DEATH) ~ 1, cvd)
+cvd.cox.mult <- coxph(Surv(TIMECVD,DEATH) ~ SEX+DIABETES+CURSMOKE+age.group+bmi.group, cvd) # ,na.action=na.exclude
+summary(cvd.cox.mult) 
+# cvd.cox.mult.con <- coxph(Surv(TIMECVD,DEATH) ~ SEX+DIABETES+CURSMOKE+AGE+BMI, cvd) 
+# summary(cvd.cox.mult.con) 
+```
+
+```{r,echo=F}
+ggforest(cvd.cox.mult,main= "Hazard ratio for the first Cox Model")
+```
+
+- Simplify (reduce) the model using AIC method
+
+```{r,echo=F,include=F}
+cvd.cox.AIC<- MASS::stepAIC(cvd.cox.mult,~.^2) 
+```
+
+```{r,echo=F}
+cvd.cox.AIC$anova
+```
+
+The stepwise method evaluated all the two-way interaction effects. The reduced model retains two significant interaction effects.
+
+
+```{r,echo=F}
+cvd.cox2 <- coxph(Surv(TIMECVD, DEATH)~SEX + DIABETES + CURSMOKE + age.group + 
+    bmi.group + SEX:CURSMOKE + DIABETES:age.group, cvd) 
+summary(cvd.cox2) 
+```
+- Step II: LRT Further Reduce
+
+```{r,echo=F}
+cvd.cox3 <- coxph(Surv(TIMECVD,DEATH) ~ SEX + DIABETES + CURSMOKE + age.group + bmi.group + SEX:CURSMOKE, data=cvd) 
+summary(cvd.cox3) 
+```
+
+```{r,echo=F}
+1-pchisq(-2*cvd.cox3$loglik[2]+2*cvd.cox2$loglik[2],1)
+```
+
+When we try to remove interaction between diabetes and age, the LRT tests show no evidence against the models without interaction effect of DIABETES and age.group (p-value = 0.1385).
+
+Thus, we choose the model as $Time=SEX + CURSMOKE +DIABETES + age.group + bmi.group + SEX:CURSMOKE$
+
+Bothstep elimination gives the same result.
+
+```{r,echo=F,include=F}
+cvd.cox2.AIC <- MASS::stepAIC(cvd.cox.mult,~.^2,direction = "both") 
+```
+
+```{r,echo=F}
+cvd.cox2.AIC$anova
+```
+
+
+- Stratified Cox PH regression
+
+If the log of cumulative hazard functions from different strata are parallel, this supports the Cox PH model without stratification with 'age.group'.
+
+The period from 350 to 7500 days show some parallel patterns with gender, BMI, and Diabetes.
+
+```{r,eval=T,echo=F,out.width='45%',fig.show='hold'}
+# the log-log cumulative hazards. 
+plot(survfit(coxph(Surv(TIMECVD,DEATH) ~ strata(SEX), data=cvd) ), #xlim = c(50,8766),ylim = c(-6,1),
+     conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",
+     col=c('cyan','steelblue3'),lty=2:1)
+legend(30,1,c("female","male"),col=c('cyan','steelblue3'),lty=2:1)
+abline(v=c(350,7500),lty=2)
+
+
+plot(survfit(coxph(Surv(TIMECVD,DEATH) ~ strata(CURSMOKE), data=cvd) ), #xlim = c(50,8766),ylim = c(-6,1),
+     conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",
+     col=c('cyan','steelblue3'),lty=2:1)
+legend(30,1,c("nosmoke","smoke"),col=c('cyan','steelblue3'),lty=2:1)
+abline(v=c(350,7500),lty=2)
+
+plot(survfit(coxph(Surv(TIMECVD,DEATH) ~ strata(age.group), data=cvd) ), #xlim = c(50,8766),ylim = c(-6,1),
+     conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",
+     col=c('cyan','steelblue3'),lty=2:1)
+legend(30,1,c("age<54","age>54"),col=c('cyan','steelblue3'),lty=2:1)
+
+
+plot(survfit(coxph(Surv(TIMECVD,DEATH) ~ strata(bmi.group), data=cvd) ), #xlim = c(50,8766),ylim = c(-6,1),
+     conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",
+     col=c('cyan','steelblue3'),lty=2:1)
+legend(30,1,c("BMI<25","BMI>25"),col=c('cyan','steelblue3'),lty=2:1)
+abline(v=c(350,7500),lty=2)
+
+plot(survfit(coxph(Surv(TIMECVD,DEATH) ~ strata(DIABETES), data=cvd) ), #xlim = c(50,8766),ylim = c(-6,1),
+     conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",
+     col=c('cyan','steelblue3'),lty=2:1)
+legend(30,1,c("Non-Diabetes","Diabetes"),col=c('cyan','steelblue3'),lty=2:1)
+abline(v=c(350,7500),lty=2)
+
+#plot(survfit(cvd.cox4), #xlim = c(50,8766),ylim = c(-6,1),
+#     conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",
+#     col=rep(c('cyan','steelblue3'),2),lty=rep(2:1, each=2))
+#legend(30,1,c("female nosmoke","male nosmoke","female smoke","male smoke"),col=rep(c('cyan','steelblue3'),2),lty=rep(2:1, each=2))
+
+#ggsurvplot(survfit(coxph(Surv(TIMECVD,DEATH) ~ strata(SEX), data=cvd) ), data=cvd, conf.int =F, xlim = c(100,8766),ylim = c(-6,1),
+#          fun="cloglog",risk.table =F, risk.table.col = "strata")
+```
+
+```{r,echo=F}
+cvd<- subset(cvd,!is.na(cvd$bmi.group)) # remove BMI=NA observation
+cvd.int<- cvd[cvd$TIMECVD>350&cvd$TIMECVD<7500,] # cut a time duration
+# nrow(cvd.int[cvd.int$CURSMOKE==1&cvd.int$SEX==1,])
+```
+
+Another form of the final model is $Time=SEX + strata(CURSMOKE) + DIABETES + age.group + bmi.group$.
+
+```{r,echo=T}
+cvd.cox4 <- coxph(Surv(TIMECVD,DEATH) ~ SEX+strata(CURSMOKE)+DIABETES+age.group+bmi.group, data=cvd) 
+(cvd.cox4) 
+cvd.cox5 <- coxph(Surv(TIMECVD,DEATH) ~ SEX+DIABETES+age.group+bmi.group, data=cvd[cvd$CURSMOKE==1,]) 
+(cvd.cox5) 
+cvd.cox6 <- coxph(Surv(TIMECVD,DEATH) ~ DIABETES+age.group+bmi.group, data=cvd[cvd$CURSMOKE==1&cvd$SEX==1,])
+(cvd.cox6) 
+```
+
+```{r,echo=F}
+ggforest(cvd.cox5,main= "Hazard ratio for the final Cox Model")
+```
+
+### Model Checking
+
+- QQ plot
+
+```{r,echo=F}
+qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0, adjpb = 
+	0.025, ...)
+{
+	## Purpose: qqplot for distributions that satisfy a log-linear form
+	## for one sample.  It fits each sample with own intercept and slope 
+	## (location and scale).
+	##-------------------------------------------------------------------
+	## Arguments
+	## =========
+	## time:   observed time
+	## status: censoring indicator
+	##
+	## Options
+	## =======
+	## pdgy:   Flag to generate for pedagogical purposes additional lines
+	##         incorporating the effect of how we treat censored
+	##         observations on the MLE's (equivalently estimated line).
+	##         pdgy=0 is the default, for no additional lines. 
+	##         pdgy=1 generates additional lines.
+	## distribution:  Distribution for fit.
+	##         May take values "weibull", "loglogistic", or "lognormal".
+	##         The default is "weibull" distribution (exponential model with
+	##         scale=1).  Enter "loglogistic" to fit loglogistic distribution;
+	##         Enter "lognormal" to fit lognormal distribution. 
+	## scale:  Scale parameter.  scale=0 is the default. This estimates 
+	##         the scale. With distribution "weibull", scale=1 fits the 
+	##         exponential model. 
+	## adjpb:  Replaces the zero survival probability when the max is exact.
+	##         Or when the min is censored, it replaces the survival 
+	##         probability by 1 - adjpb.  Default is 0.025. 
+	##         This has nothing to do with the MLE line, but is solely for 
+	##         plotting the point on the graph.
+	##-------------------------------------------------------------------
+	## Author: Jong Sung Kim, Date: 8/10/2004
+	## Edited by D. Leif Rustvold, Date: 6/7/2006
+	d <- data.frame(time, status)
+	# data frame 
+	d <- na.exclude(d)
+	# Missing observations excluded
+	d <- d[order(d$time),  ]
+	# Rearranging the observed times into a nondecreasing order
+	# Unordered times sometimes mess up QQ-plots. 
+	time <- d$time
+	# sorted time
+	status <- d$status
+	# status corresponding to sorted time
+	data <- Surv(time, status)
+	# Surv object
+	t.c <- class(data)
+	if((!is.null(t.c)) && t.c == "Surv")
+		data <- list(data)
+	t.s <- summary(survfit(Surv(time, status)~1, type = "kaplan-meier",
+		na.action = na.exclude))
+	survp <- t.s$surv
+	survtime <- t.s$time
+	rare <- F
+	# rare = T indicates that the smallest observation is censored
+	if(time[1] < survtime[1]) {
+		print("Smallest observation is censored!")
+		survp <- c(1 - adjpb, survp)
+		survtime <- c(time[1], survtime)
+		rare <- T
+	}
+	############
+	############
+	xlabs <- ifelse(distribution == "weibull", 
+		"Standard Extreme Value Quantiles", ifelse(distribution == 
+		"loglogistic", "Standard Log-logistic Quantiles", ifelse(
+		distribution == "lognormal", "Standard Lognormal Quantiles",
+		"")))
+	if(pdgy == 1) {
+		###############
+		t.s.exactall <- summary(survfit(Surv(time, status >= 0)~1, type
+			 = "kaplan-meier", na.action = na.exclude))
+		exactall.survp <- t.s.exactall$surv
+		exactall.survtime <- t.s.exactall$time
+		exactall.length <- length(exactall.survtime)
+		exactall.survp[exactall.length] <- adjpb
+		t.ss.exactall <- exactall.survp
+		#quant.exactall <- qweibull(1 - t.ss.exactall, 1)
+		quant.exactall <- switch(distribution,
+			weibull = qweibull(1 - t.ss.exactall, 1),
+			lognormal = qlnorm(1 - t.ss.exactall),
+			loglogistic = exp(logis((1 - t.ss.exactall))))
+		exactall.sevq <- log(quant.exactall)
+		# standard extreme value quantile
+		exactall.logtime <- log(exactall.survtime)
+##	print(data.frame(exactall.logtime, exactall.sevq))
+		############### 
+		ok <- status == 1
+		t.s.exact <- summary(survfit(Surv(time[ok], status[ok])~1, type
+			 = "kaplan-meier", na.action = na.exclude))
+		exact.survp <- t.s.exact$surv
+		exact.survtime <- t.s.exact$time
+		exact.length <- length(exact.survtime)
+		exact.survp[exact.length] <- adjpb
+		t.ss.exact <- exact.survp
+		#quant.exact <- qweibull(1 - t.ss.exact, 1)
+		quant.exact <- switch(distribution,
+			weibull = qweibull(1 - t.ss.exact, 1),
+			lognormal = qlnorm(1 - t.ss.exact),
+			loglogistic = exp(qlogis(1 - t.ss.exact)))
+		exact.sevq <- log(quant.exact)
+		# standard extreme value quantile
+		exact.logtime <- log(exact.survtime)
+##	print(data.frame(exact.logtime, exact.sevq))
+		###############
+		n <- length(time)
+		t.ss <- rep(0, n)
+		for(i in 1:n) {
+			# This loop assigns probabilities to censored time points, 
+			# and takes care of tied observations as well
+			idx <- time[i] >= survtime
+			t.ss[i] <- min(survp[idx], na.rm = T)
+		}
+		#sevq <- log(qweibull(1 - t.ss, 1))
+		sevq <- log(switch(distribution,
+			weibull = qweibull(1 - t.ss, 1),
+			lognormal = qlnorm(1 - t.ss),
+			loglogistic = exp(qlogis(1 - t.ss))))
+		# standard extreme value quantile
+		logtime <- log(time)
+##	print(data.frame(logtime, sevq))
+		######## Multiple Plot starts ##########
+		xrange <- range(c(exactall.sevq, exact.sevq, sevq))
+		yrange <- range(c(exactall.logtime, exact.logtime, logtime))
+		par(mar = c(5, 5, 2, 2))
+		plot(sevq, logtime, type = "n", lty = 1, xlim = xrange, ylim
+			 = yrange, xlab = xlabs, ylab = "Ordered Log Time",
+			...)
+		points(sevq[ok], logtime[ok], pch = 1)
+		# exact points portion
+		points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+		# censored points portion
+		points(exactall.sevq, exactall.logtime, pch = 3, col = 6)
+		# exactall
+		exactallfit <- survreg(Surv(time, status >= 0) ~ 1, dist = 
+			distribution, scale = scale)
+		# treating censored as exac
+		t
+		abline(exactallfit$coef, exactallfit$scale, lty = 3, col = 6)
+		points(exact.sevq, exact.logtime, pch = 5, col = 5)
+		# exact points only
+		exactonlyfit <- survreg(Surv(time[ok], status[ok]) ~ 1, dist
+			 = distribution, scale = scale)
+		# deleting censored
+		abline(exactonlyfit$coef, exactonlyfit$scale, lty = 2, col = 5
+			)
+		fit <- survreg(Surv(time, status) ~ 1, dist = "weibull", scale
+			 = scale)
+		# censoring taken into account
+		abline(fit$coef, fit$scale, lty = 1, col = 1)
+	}
+	else {
+		n <- length(time)
+		t.ss <- rep(0, n)
+		for(i in 1:n) {
+			# This loop assigns probabilities to censored time points, 
+			# and takes care of tied observations as well
+			idx <- time[i] >= survtime
+			t.ss[i] <- min(survp[idx], na.rm = T)
+		}
+		#sevq <- log(qweibull(1 - t.ss, 1))
+		sevq <- log(switch(distribution,
+			weibull = qweibull(1 - t.ss, 1),
+			lognormal = qlnorm(1 - t.ss),
+			loglogistic = exp(qlogis(1 - t.ss))))
+		# standard extreme value quantile
+		logtime <- log(time)
+##	print(data.frame(logtime, sevq))
+		par(mar = c(5, 5, 2, 2))
+		plot(sevq, logtime, type = "n", xlab = xlabs, ylab = 
+			"Ordered Log Time", ...)
+		ok <- status == 1
+		# exact status only 
+		points(sevq[ok], logtime[ok], pch = 1)
+		# exact points only
+		points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+		# censored points only
+		fit <- survreg(Surv(time, status) ~ 1, dist = distribution,
+			scale = scale)
+		# censoring taken into account
+		abline(fit$coef, fit$scale, lty = 1, col = 1)
+	}
+	ymax <- max(logtime)
+	yrange <- diff(range(logtime))
+	yn <- ymax - yrange * seq(0, by = 0.05, length = 5)
+	if(pdgy == 1) {
+		xmin <- min(c(sevq, exact.sevq, exactall.sevq))
+		xrange <- diff(range(c(sevq, exact.sevq, exactall.sevq)))
+	}
+	else {
+		xmin <- min(sevq)
+		xrange <- diff(range(sevq))
+	}
+	x1 <- xmin + 0.05 * xrange
+	x2 <- xmin + 0.1 * xrange
+	x3 <- xmin + 0.15 * xrange
+	points(x1, yn[1], pch = "\255", font = 8)
+	text(x3, yn[1], "censored", adj = 0)
+	points(x1, yn[2], pch = 1)
+	text(x3, yn[2], "exact", adj = 0)
+	if(pdgy == 1) {
+		lines(c(x1, x2), rep(yn[3], 2), lty = 1, col = 1, lwd = 3)
+		text(x3, yn[3], "censoring taken into account", adj = 0)
+		lines(c(x1, x2), rep(yn[4], 2), lty = 3, col = 6, lwd = 3)
+		text(x3, yn[4], "treating censored as exact", adj = 0)
+		lines(c(x1, x2), rep(yn[5], 2), lty = 2, col = 5, lwd = 3)
+		text(x3, yn[5], "deleting censored", adj = 0)
+	}
+	on.exit()
+#	paste("Q-Q plot for", distribution, "done")
+}
+```
+
+```{r, echo=F,out.width='45%',fig.show='hold'}
+qq.surv(cvd.int$TIMECVD,cvd.int$DEATH,distribution = "weibull", scale =0) #
+qq.surv(cvd.int$TIMECVD,cvd.int$DEATH,distribution = "lognormal", scale =0) #
+```
+
+```{r,echo=F,out.width='30%',fig.show='hold'}
+par(mfrow=c(2,3),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+ggcoxzph(cox.zph(cvd.cox3)[1],point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+ggcoxzph(cox.zph(cvd.cox3)[2],point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+ggcoxzph(cox.zph(cvd.cox3)[3],point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+ggcoxzph(cox.zph(cvd.cox3)[4],point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+ggcoxzph(cox.zph(cvd.cox3)[5],point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+ggcoxzph(cox.zph(cvd.cox3)[6],point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+```
+
+```{r,eval=F, echo=F,out.width='100%'}
+cvd.cox.res <- coxph(Surv(TIMECVD,DEATH) ~ BMI + log(BMI) + I(BMI^2) + AGE + I(log(AGE)^2) + I(sqrt(AGE)),cvd)
+ggcoxfunctional(cvd.cox.res,cvd, point.col = "steelblue3", point.size =0.3, point.shape = 19,point.alpha =1)
+```
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+ggcoxdiagnostics(cvd.cox4,type = "martingale",ox.scale = "linear.predictions",point.col = "steelblue3", point.size = 0.3,title ="Diagnostics of Cox Model for VCD gruop",subtitle ="Martingale residuals",caption ="")
+ggcoxdiagnostics(cvd.cox4,type = "deviance",ox.scale = "time",point.col = "steelblue3", point.size = 0.1,subtitle ="Deviance",caption ="")
+```
+
+```{r,echo=F,out.width='80%',fig.show='hold'}
+ggcoxdiagnostics(cvd.cox3,type = "dfbetas",ox.scale = "time",point.col = "steelblue3", point.size = 0.1,subtitle ="Dfbetas",caption ="")
+```
+
+
+
+### Model Comparison
+
+```{r,echo=F}
+cvd.fit.weib <- survreg(Surv(TIMECVD,DEATH)~1,dist="weib", data=cvd.int) 
+# "gengamma","gengamma.orig","genf","genf.orig","weibull","gamma","exp","llogis","lnorm","gompertz"
+cvd.flexfit.weib  <- flexsurvreg(Surv(TIMECVD,DEATH)~1, data=cvd.int,dist="weibull")
+cvd.flexfit.gamma <- flexsurvreg(Surv(TIMECVD,DEATH)~1, data=cvd.int,dist="gengamma")
+cvd.flexfit.ll <- flexsurvreg(Surv(TIMECVD,DEATH)~1, data=cvd.int, dist="llogis")
+cvd.flexfit.ln <- flexsurvreg(Surv(TIMECVD,DEATH)~1, data=cvd.int, dist="lnorm")
+cvd.flexfit.exp <- flexsurvreg(Surv(TIMECVD,DEATH)~1, data=cvd.int, dist="exp")
+cvd.flexfit.spl <- flexsurvspline(Surv(TIMECVD,DEATH) ~ 1, data=cvd.int, k=2, scale="odds")
+
+summary(cvd.fit.weib)
+cvd.flexfit.weib
+cvd.flexfit.gamma
+cvd.flexfit.spl
+```
+
+- Compare these models 
+
+```{r, echo=F,out.width='100%',fig.show='hold'}
+km.fit.cvd.int <- survfit(Surv(TIMECVD,DEATH)~1,type="kaplan-meier", data=cvd.int) 
+cen <- cbind(km.fit.cvd.int$time,km.fit.cvd.int$surv)[km.fit.cvd.int$n.censor==1,]
+plot(cvd.flexfit.spl,conf.int=F,xlab="Time",ylab="Surv",lwd.ci=0,lty=2,col=2,lwd=1)
+lines(cvd.flexfit.gamma,conf.int=F,lwd.ci=0, lty=3,col=3,lwd=1)
+lines(cvd.flexfit.weib,conf.int=F,lwd.ci=0, lty=4,col=4,lwd=1)
+lines(cvd.flexfit.ll,conf.int=F,lwd.ci=0, lty=5,col=5,lwd=1)
+lines(cvd.flexfit.ln,conf.int=F,lwd.ci=0, lty=6,col=6,lwd=1)
+lines(cvd.flexfit.exp,conf.int=F,lwd.ci=0, lty=7,col=7,lwd=1)
+points(cen,pch=3,cex=.2,col=1)
+legend(1,0.6,c("K-M","Spline","Gamma","Weibull","LLogis","LNorm","Exp"),col=1:7,lty=1:7)
+```
+
+
+
+```{r, echo=F,out.width='100%',fig.show='hold'}
+plot(cvd.flexfit.spl,conf.int=T,xlab="Time",ylab="Surv",lwd.ci=1,lty=1,col=2,lwd=1,xlim=c(3000,6000))
+lines(cvd.flexfit.gamma,conf.int=T,lwd.ci=1, lty=1,col=3)
+lines(cvd.flexfit.weib,conf.int=T,lwd.ci=1, lty=1,col=4,lwd=1)
+points(cen,pch=3,cex=.5,col=1)
+legend(3000,0.5,c("K-M","Spline","Gamma","Weibull"),col=1:4,lty=1)
+```
+
+```{r,echo=F,out.width='45%',fig.show='hold'}
+cvd.diab.flexfit.weib <- flexsurvreg(Surv(TIMECVD,DEATH)~DIABETES,dist="weibull", data=cvd)
+cvd.diab.flexfit.gamma  <- flexsurvreg(Surv(TIMECVD,DEATH)~DIABETES,dist="gengamma", data=cvd)
+cvd.diab.flexfit.spl <- flexsurvspline(Surv(TIMECVD,DEATH) ~ DIABETES, data=cvd, k=2, scale="odds")
+
+plot(cvd.diab.flexfit.spl,conf.int=F,xlab="Time",ylab="Surv",lwd.ci=0,lty=2,col=2,lwd=1)
+lines(cvd.diab.flexfit.gamma, col=3, lwd.ci=0, lty=3,lwd=1)
+lines(cvd.diab.flexfit.weib, col=4, lwd.ci=0, lty=4,lwd=1)
+legend(1,0.5,c("K-M","Spline","Gamma","Weibull"),col=1:4,lty=1:4)
+mtext("non-diabetic and diabetic",side = 3, line =-1 )
+
+cvd.age.flexfit.weib <- flexsurvreg(Surv(TIMECVD,DEATH)~age.group,dist="weibull", data=cvd)
+cvd.age.flexfit.gamma  <- flexsurvreg(Surv(TIMECVD,DEATH)~age.group,dist="gengamma", data=cvd)
+cvd.age.flexfit.spl <- flexsurvspline(Surv(TIMECVD,DEATH) ~age.group, data=cvd, k=2, scale="odds")
+
+plot(cvd.age.flexfit.spl,conf.int=F,xlab="Time",ylab="Surv",lwd.ci=0,lty=2,col=2,lwd=1)
+lines(cvd.age.flexfit.gamma, col=3, lwd.ci=0, lty=3,lwd=1)
+lines(cvd.age.flexfit.weib, col=4, lwd.ci=0, lty=4,lwd=1)
+legend(1,0.5,c("K-M","Spline","Gamma","Weibull"),col=1:4,lty=1:4)
+mtext("age <=54 and >54",side = 3, line =-1 )
+```
+
+The best fitted models are Flexible parametric model, Gamma model, and Weibull model.
+
+Flexible parametric survival model. Flexible parametric survival regression was proposed by Royston and Parmar in 2002. It is an extension of the Weibull model, and models the log baseline cumulative hazard using restricted cubic splines. 
+
+Spline functions make the Weibull model more flexible to accommodate the survival distributions, rather than restriction to just monotonically increasing or decreasing trend.
+
+Reasons for choosing the flexible parametric survival model 
+
+- Easier survival predictions: By harvesting information from the baseline hazard, the flexible parametric model can predict survival more easily.
+
+- Extrapolation of survival estimates: Unlike the Cox model, the flexible parametric model allows extrapolation of survival estimates outside the study observation time. This means that it can predict survival outside the time range of the model that it was based on. However, accuracy of this prediction depends on the assumed (modelled) survival distribution in the upper tail of follow-up time.
+
+-	More flexible than other parametric models: the flexible parametric models are more flexible than other parametric models such as Weibull and exponential as it does not impose strong assumptions on the baseline hazard. 
+
+-	Less sensitive to random variations due to sparse data: Since the fit from the Cox model very closely matches the data, it picks up artefacts (due by sparse data) that are specific features to the data it is based on, whilst the flexible parametric regression models the overall trend of the baseline hazard function without picking up random variations. Supplementary figure 1 (reproduced and modified from “Flexible Parametric Survival Analysis Using Stata Beyond The Cox Model”: Chapter 1, page 4) shows differences in the hazard function fitted by the flexible parametric model and the Cox regression model. The curves from the Cox model were not smooth thus making them hard to interpret compared to the flexible parametric model. The latter does not pick up the sharp increase in the mortality rate post 4.5 years caused by a small number of deaths at the end of follow-up having an undue influence on the mortality rate whereas the Cox model does. Whilst this will not cause problems when calculating hazard ratios (since these sparse points will not be given much emphasis), it is an issue when calculating absolute risk as such points will lead to “wild” estimates, particularly in situations where a small number of patients remain at risk at the end of the study period.
+
+(Berhane,	S., Fox, R., García-Fiñana, M., Cucchetti, A. and Johnson, P.,	Using prognostic and predictive clinical features to make	personalised survival prediction in advanced hepatocellular	carcinoma patients undergoing sorafenib treatment. British	journal of cancer,	p.1. 2019)
+
+
+
+### Regression models
+
+- Fit regression model with Weibull, Gamma, and Spline.
+
+```{r,echo=F}
+cvd.fit.weib.mult <- survreg(Surv(TIMECVD,DEATH)~SEX+strata(CURSMOKE)+DIABETES+age.group+bmi.group,dist="weib", data=cvd) 
+#cvd.fit.weib.mult.con <- survreg(Surv(TIMECVD,DEATH)~SEX+CIGPDAY+DIABP+AGE+BMI,dist="weib", data=cvd[is.na(cvd$CIGPDAY)==F,]) 
+
+cvd.flexfit.weib.mult  <- flexsurvreg(Surv(TIMECVD,DEATH)~SEX+strata(CURSMOKE)+DIABETES+age.group+bmi.group, data=cvd.int,dist="weibull")
+cvd.flexfit.gamma.mult <- flexsurvreg(Surv(TIMECVD,DEATH)~SEX+strata(CURSMOKE)+DIABETES+age.group+bmi.group, data=cvd.int,dist="gengamma")
+cvd.flexfit.spl.mult <- flexsurvspline(Surv(TIMECVD,DEATH) ~SEX+strata(CURSMOKE)+DIABETES+age.group+bmi.group, data=cvd.int, k=2, scale="odds")
+
+# summary(cvd.fit.weib.mult)
+# summary(cvd.fit.weib.mult.con)
+cvd.flexfit.weib.mult
+cvd.flexfit.gamma.mult
+cvd.flexfit.spl.mult
+```
+
+
+
+### Extended Cox model
+
+```{r, echo=F,out.width='100%'}
+cvd.aa<- aareg(Surv(TIMECVD,DEATH) ~ SEX + DIABETES+ CURSMOKE + age.group + bmi.group, data=cvd) #[cvd$TIMECVD<7500,]
+cvd.aa
+autoplot(cvd.aa) #+ SEX:CURSMOKE+ DIABETES:age.group
+```
+
+The Aalen model assumes that the cumulative hazard $H(t)$ for a subject can be expressed as $a(t) + X B(t)$, where $a(t)$ is a time-dependent intercept term, $X$ is the vector of covariates for the subject (possibly time-dependent), and $B(t)$ is a time-dependent matrix of coefficients. 
+
+
+### Multi-state models
+
+The properties of recurrent event models:
+
+- For each event type, recurrent or terminal, there exist separate event processes that might be correlated or not.
+
+- The event-specific treatment effects related to the different event types may deviate.
+
+- After occurrence of an event, the instantaneous baseline risk for a subsequent event, fatal or non-fatal, increases.
+
+- The instantaneous risk for a subsequent event depends on the time when the previous event occurred.
+
+- After occurrence of an event, the relative treatment effect for a subsequent event (in terms of the hazard ratio) may change.
+
+The most simple analysis approach in a recurrent event setting is to count the events observed within a given time period. These counts may, for example, follow a Poisson, a quasi-Poisson or a negative binomial distribution
+
+The Andersen-Gill model assumes independence between all observed event times irrespective whether these event times correspond to the same patient or to different patients.
+
+The Prentice-Williams-Peterson model is a stratified Cox-based conditional model which incorporate the order of events. Based on different time scales, the gap time approach investigates the time since the last event whereas the calendar or total time scale considers the time since study entry.
+
+Wei-Lin-Weissfeld model is an unconditional marginal model. It ignores the order of occurrence of the events. Therefore, for each subsequent event all individuals are at risk independent of a proceeding event.
+
+(Ozga, A., Kieser, M. & Rauch, G. A systematic comparison of recurrent event models for application to composite endpoints. BMC Med Res Methodol 18, 2 (2018). https://doi.org/10.1186/s12874-017-0462-x)
+
+```{r,echo=F}
+library(timereg)
+cvd.cox.aa.con<-cox.aalen(Surv(TIMECVD,DEATH)~prop(AGE)+prop(SEX)+prop(GLUCOSE)+prop(BMI)+prop(CIGPDAY),data=cvd[!is.na(cvd$CIGPDAY),c(2,4,8,9,13,24,37)])# ,max.time=1,n.sim=100)
+cvd.cox.aa.con
+cvd.cox.aa<-cox.aalen(Surv(TIMECVD,DEATH)~prop(SEX)+prop(DIABETES)+prop(CURSMOKE)+prop(age.group)+prop(bmi.group),data=cvd[,c(2,7,10,24,37,40,41)]) # ,max.time=1,n.sim=100
+cvd.cox.aa
+car::vif(lm(TIMECVD~AGE+SEX+GLUCOSE+BMI+CIGPDAY,cvd))
+```
+
+```{r,eval=F,echo=F}
+heart2<- heart[heart$PERIOD==2,]
+heart3<- heart[heart$PERIOD==3,]
+#cvd2<- heart2[heart1$CVD==0&heart2$CVD==1&heart2$TIMECVD!=0,]
+#cvd3<- heart3[heart1$CVD==0&heart2$CVD==1&heart3$CVD==1&heart3$TIMECVD!=0,]
+# <- heart %>% group_by(RANDID)%>%mutate(events=sum(CVD)) # heart[,25:31]
+#count(heart, vars = CVD, wt_var = RANDID)
+# cvd1<- select(filter(recurrent.cvd, freq==1),"freq")
+# cvd1<- subset(recurrent.cvd, freq==1, select = "freq")
+
+tmat <- trans.illdeath()
+tg <- data.frame(illt=c(1,1,6,6,8,9),ills=c(1,0,1,1,0,1),
+        dt=c(5,1,9,7,8,12),ds=c(1,1,1,1,1,1),
+        x1=c(1,1,1,0,0,0),x2=c(6:1))
+# data in long format using msprep
+tglong <- msprep(time=c(NA,"illt","dt"),status=c(NA,"ills","ds"),
+		data=tg,keep=c("x1","x2"),trans=tmat)
+# events
+events(tglong)
+table(tglong$status,tglong$to,tglong$from)
+# expanded covariates
+tglong <- expand.covs(tglong,c("x1","x2"))
+# Cox model with different covariate
+cx <- coxph(Surv(Tstart,Tstop,status)~x1.1+x2.2+strata(trans),
+	data=tglong,method="breslow")
+summary(cx)
+# new data, to check whether results are the same for transition 1 as
+# those in appendix E.1 of Therneau & Grambsch (2000)
+newdata <- data.frame(trans=1:3,x1.1=c(0,0,0),x2.2=c(0,1,0),strata=1:3)
+msfit(cx,newdata,trans=tmat)
+```
+
+
+```{r,eval=F,echo=F}
+crexp <- flexsurvreg(Surv(TIMECVD,DEATH) ~ PERIOD, data = cvd, dist = "exp") 
+crwei <- flexsurvreg(Surv(TIMECVD,DEATH) ~ PERIOD + shape(PERIOD), data = cvd, dist = "weibull") 
+# cfwei <- flexsurvreg(Surv(Tstart, Tstop, status) ~ PERIOD + shape(PERIOD),data = cvd, dist = "weibull")
+crcox <- coxph(Surv(TIMECVD,DEATH) ~SEX+ strata(PERIOD), data = cvd) # 
+# cfcox <- coxph(Surv(Tstart, Tstop, status) ~ strata(PERIOD), data = cvd)
+
+library(mstate)
+crwei.list <- vector(3, mode="list")
+for (i in 1:3) {
+crwei.list[[i]] <- flexsurvreg(Surv(TIMECVD,DEATH) ~ 1, subset=(PERIOD==i), data =cvd, dist = "weibull")}
+
+tmat <- rbind(c(NA, 1, 2), c(NA, NA, 3), c(NA, NA, NA)) 
+mrcox <- msfit(crcox, trans = tmat) 
+# mfcox <- msfit(cfcox, trans = tmat)
+
+tgrid <- seq(0, 8766, by = 100) 
+mrwei <- msfit.flexsurvreg(crwei, t = tgrid, trans = tmat)
+mrexp <- msfit.flexsurvreg(crexp, t = tgrid, trans = tmat) 
+# mfwei <- msfit.flexsurvreg(cfwei, t = tgrid, trans = tmat)
+
+
+```
+
+
+
+

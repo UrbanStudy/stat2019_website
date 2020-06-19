@@ -1,0 +1,493 @@
+---
+title: ''
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    toc_float: no
+header-includes:
+ - \usepackage{multicol}
+ - \usepackage{multirow}
+ - \usepackage{booktabs} 
+ - \usepackage{caption}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{R,R,L,S}
+ - \lhead{Salmon Habitat}
+ - \chead{STAT 570}
+ - \rfoot{Page \thepage}
+always_allow_html: true
+---
+
+\footnotesize
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=6)
+options(digits=8)
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+pacman::p_load(tidyverse,GGally,MASS,olsrr,car, knitr, readr, pander,xtable,export, ggplot2,huxtable,networkD3,GauPro)
+```
+
+
+### Importing data 
+
+```{r echo=T}
+rm(list = ls())
+# Import data
+table_habitat <- read.csv("Willamette_habitat_features.csv")
+
+# fix some wrong values
+table_habitat[42,]$Slope <- 0.000732
+table_habitat[42,]$Floodplain_elevation<- 4.214
+table_habitat[41,]$Slope <- 0.000586
+
+# Add tiny value for NA
+table_habitat[is.na(table_habitat)] <- 1e-8
+
+# Reassign the index (Optional)
+# table_habitat <-table_habitat[order(table_habitat$RKM_2008,decreasing = F),]
+# table_habitat$RKM_2008 <- 1:178
+
+# Add new columns
+table_habitat <- table_habitat%>%mutate(ConnectedWet_area=AllWetArea-DisconnectedWater_Area)%>% #Creat ConnectedWet_area
+                 mutate(perc_1_2m=perc_2m-perc_1m)%>% #Creat pure Area_2m
+                 mutate(Habitat_level=as.integer(ntile(table_habitat$Habitat_area, 3))) #Creat Habitat Area level
+
+# Change to short names (Optional)
+# original_name <- names(table_habitat) 
+# names(table_habitat) <- c("No","H_A","D1_A","D2_A","D1_P","D2_P","W_m_A","W_s_A","W_a_A","L_b_A","L_v_A","W_d_A","W_ia_A","W_r_A","W_L","W_A","W_m_L","S","FE","A","W_c_A","D12_P","H_A_L")
+# pander(table <- cbind(original_name[1:23],names(table_habitat)[1:23]))
+
+
+# Transfor to proportion area  (Optional)
+table_habitat_perc<- table_habitat[,-c(3,4)]
+table_habitat_perc[,c(2, 5:12,14,18,19)]<- table_habitat[,c(2, 7:14,16,20,21)]/table_habitat[,21]
+names(table_habitat_perc) <- c("No","H_P","D1_P","D2_P","W_m_P","W_s_P","W_a_P","L_b_P","L_v_P","W_d_P","W_ia_P","W_r_P","W_L","W_P","W_m_L","S","FE","P","W_c_P","D12_P","H_A_L")
+glimpse(table_habitat_perc)
+
+# Normalize the variables  (Optional)
+# table_habitat[,3:22] <- scale(table_habitat[,3:22], center = T, scale = F)
+# table_habitat_perc[,3:20] <- scale(table_habitat_perc[,3:20], center = T, scale = F)
+
+
+# Remove some aliased coefficients
+ table_habitat_16 <- table_habitat[,c(1,2,3,4,7,8,9,10,11,13,14,15,17,18,19,20,21,22)]
+ glimpse(table_habitat_16)
+
+```
+
+### Preliminary studies
+
+```{r,eval=F,echo=F}
+ library(dplyr)
+ library(networkD3)
+# A connection data frame is a list of flows with intensity for each flow
+links <- data.frame(
+  source=c("Total Area", "Total Area", 
+           "Wet Area", "Wet Area", "Land Area", "Land Area",
+           "Conneted", "Conneted","Conneted","Conneted",
+           "Main Channel","Main Channel","Side Channel","Side Channel","Alcove","Alcove","Inverse Alcove","Inverse Alcove",
+           "BareBar", "VegetateBar",
+           "Depth", "Slope","BedRock", "Floodplain Elevation"), 
+  target=c("Wet Area", "Land Area", 
+           "DisConneted","Conneted", "BareBar", "VegetateBar",
+           "Main Channel","Side Channel","Alcove","Inverse Alcove",
+           "Habitat","Non Habitat","Habitat","Non Habitat","Habitat","Non Habitat","Habitat","Non Habitat",
+           "Habitat","Habitat",
+           "Habitat","Habitat","Habitat","Habitat"), 
+  value=c(60,40,
+          10,50,10,30,
+          30,10,5,5,
+          5,25,5,5,2,3,2,3,
+          1,1,
+          1,1,1,1)
+  )
+nodes <- data.frame(
+  name=c(as.character(links$source), as.character(links$target)) %>% unique()
+)
+# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
+links$IDsource <- match(links$source, nodes$name)-1 
+links$IDtarget <- match(links$target, nodes$name)-1
+# Make the Network
+p <- sankeyNetwork(Links = links, Nodes = nodes,
+              Source = "IDsource", Target = "IDtarget",
+              Value = "value", NodeID = "name", 
+              units = "Perc",fontSize = 18, nodeWidth = 30,
+              sinksRight=F)
+p
+library(htmlwidgets)
+saveWidget(p, file=paste0( getwd(), "/stat570sankeyBasic1.html"))
+```
+
+
+### fitting full model
+
+- The full model
+
+```{r, echo=F}
+model_full <- lm(Habitat_area ~ .,data=table_habitat_16)
+#write.csv(cbind(model_full$model[,1:2],model_full$fitted.values),"prediction_full.csv", row.names = F)
+
+# ols_regress(model_full)
+# summary(model_full)
+```
+
+
+- multicollinearity Diagnostics 
+
+```{r, echo=T}
+model_vif <- lm(Habitat_area ~ RKM_2008 + area_1m + perc_1_2m +MainChannel_Area +SideChannel_Area +Alcove_Area +BareBar_Area + VegetatedBar_Area+ InverseAlcove_Area +Bedrock_Area + AllWetLength +MainChannelLength+ Slope + Floodplain_elevation,data=table_habitat_16)
+# ols_vif_tol(model_full)
+# ols_coll_diag(model_full)
+# table <- as.table(vif(model_full))
+# table <- as.table(vif(model_vif))
+# print(xtable((table)),floating=FALSE,latex.environments=NULL,booktabs=TRUE)
+#write.csv(cbind(model_vif$model[,1:2],model_vif$fitted.values),"prediction_vif.csv", row.names = F)
+```
+
+
+### Elimination regression
+
+- Stepwise Variable selection
+
+Removing any predictor can draw down the VIF. We can take more diagnostics and comparisons, gather sufficient evidents to decide the final elimination plan.
+
+Use Stepwise AIC Regression
+
+```{r, eval=T, out.width='100%'}
+# Stepwise AIC Regression
+k <- ols_step_both_aic(model_full)
+# plot(k,cex=0.2)
+```
+
+Use Stepwise  Regression based on p values (use alpha=0.05)
+
+```{r, eval=T, out.width='33%'}
+# Stepwise Regression based on p values
+k <- ols_step_both_p(model_full)
+# plot(k)
+```
+
+
+### Bayesian Feature selection
+
+```{r,eval=F,warning=F}
+ind.insample <- sample(1:178,120)
+X <- data.frame(table_habitat[-c(2,23)])
+# y <- table_habitat[23]
+y <- table_habitat[2]
+
+y_perc <- y/X$W_c_A
+X_perc <- X[c(6:13,15,19,20)]/X$W_c_A
+X_perc[12:19] <- X[c(1,4,5,14,16:18,21)]
+names(X_perc) <- c("W_m_P","W_s_P","W_a_P","L_b_P","L_v_P","W_d_P","W_ia_P","W_r_P","W_P","P","W_c_P","No","D1_P","D2_P","W_L","W_m_L","S","FE","D12_P")
+glimpse(X_perc)
+
+source("VarSelectHC.R")
+source("summaryout.R")
+
+####################################################
+# 14 Length no fixed
+# vtest <- c('RKM_2008','area_1m','perc_1_2m','MainChannel_Area','SideChannel_Area','Alcove_Area','BareBar_Area','VegetatedBar_Area','InverseAlcove_Area','Bedrock_Area','AllWetLength','MainChannelLength','Slope','Floodplain_elevation')
+
+# 7 Length no fixed
+vtest <- c("W_c_A","W_s_A","No","S","W_m_A","W_L","A")
+#----------------------------------------------------------------
+#with habitat area as a response
+datain <- data.frame(y=y[ind.insample,],X[ind.insample,vtest])  # c(vbase,vtest)
+data.holdout <- data.frame(y=y[-ind.insample,],X[-ind.insample,vtest])  # c(vbase,vtest)
+modpriorvec=c("HOP","HIP","HUP")
+
+# baseformula <- as.formula(paste(".~ ",paste0(vbase,collapse="+"))) # This can fix some variables
+theformula <- as.formula(paste("y ~",paste0(vtest,collapse="+"))) # c(vbase,vtest)
+
+res=VarSelectHC(full.formula=theformula,
+                data=datain,
+                base.formula=as.formula(. ~ 1),#baseformula,#
+                maxdeg=2,
+                nodes.to.remove=NULL,
+                SH = T,
+                model.prior.type=modpriorvec,
+                model.prior.pars = "children",
+                beta.prior.type = "IP",
+                beta.prior.pars = list(alpha=1,nu=1),
+                niter=5000)
+
+summary.res <- summaryout(mcmc.out=res,insampledata=datain,modelprior.nams=modpriorvec,
+                          shr.adj=T,outsampledata=data.holdout,respnam="y",top.ave=10,betaprtype="IP",
+                          parsprbeta=list(alpha=1,nu=1))
+
+#----------------------------------------------------------------
+vtest <- c("W_c_P","W_s_P","No","S","W_m_P","W_L","P")
+#with proportion of habitat area and other variables
+datain.prop <- data.frame(y=y_perc[ind.insample,],X_perc[ind.insample,vtest]) # c(vbase,vtest)
+data.holdout.prop <- data.frame(y=y_perc[-ind.insample,],X_perc[-ind.insample,vtest]) # c(vbase,vtest)
+
+theformula <- as.formula(paste("y ~",paste0(vtest,collapse="+"))) # c(vbase,vtest)
+
+res.prop=VarSelectHC(full.formula=theformula,
+                 data=datain.prop,
+                 base.formula=as.formula(. ~ 1),#baseformula,#
+                 maxdeg=2,
+                 nodes.to.remove=NULL,
+                 model.prior.type=modpriorvec,
+                 model.prior.pars = "children",
+                 beta.prior.type = "IP",
+                 beta.prior.pars = list(alpha=1,nu=1),
+                 niter=5000)
+
+summary.res.prop <- summaryout(mcmc.out=res.prop,insampledata=datain.prop,modelprior.nams=modpriorvec,
+                               shr.adj=T,outsampledata=data.holdout.prop,respnam="y",top.ave=10,betaprtype="IP",
+                               parsprbeta=list(alpha=1,nu=1))
+
+save(file="7plan.RData",
+     list=c("res","summary.res","res.prop","summary.res.prop"))
+```
+
+
+### Model Fit Assessment
+
+Compare and suggest one best model
+
+```{r, eval=T}
+model_stepwise_aic <- lm(Habitat_area ~ ConnectedWet_area + MainChannel_Area + SideChannel_Area + RKM_2008 + Slope + AllWetLength + Polygon_area, data=table_habitat)
+model_stepwise_p<- lm(Habitat_area ~ ConnectedWet_area + SideChannel_Area + RKM_2008 + Slope, data=table_habitat)
+
+model_bayes1<- lm(Habitat_area ~ MainChannel_Area+SideChannel_Area+Alcove_Area+Floodplain_elevation+MainChannel_Area*Alcove_Area+SideChannel_Area*Floodplain_elevation, data = table_habitat)
+model_bayes2<- lm(Habitat_area ~ConnectedWet_area + SideChannel_Area+AllWetLength+SideChannel_Area*AllWetLength, data=table_habitat) 
+model_bayes3<- lm(Habitat_area ~ ConnectedWet_area + SideChannel_Area, data=table_habitat)
+
+model_bayes_perc<- lm(H_P ~ W_s_P+W_m_P+P+W_s_P^2+W_s_P*W_m_P+W_s_P*P+W_m_P^2, data=table_habitat_perc) 
+model_bayes_perc_cate<- lm(H_A_L ~ W_s_P+W_m_P+P+W_s_P^2+W_s_P*W_m_P+W_s_P*P+W_m_P^2, data=table_habitat_perc) 
+
+# write.csv(cbind(model_stepwise_aic$model[,c("Habitat_area","RKM_2008")],model_stepwise_aic$fitted.values),"prediction_stepwise_aic.csv", row.names = F)
+# write.csv(cbind(model_stepwise_p$model[,c("Habitat_area","RKM_2008")],model_stepwise_p$fitted.values),"prediction_stepwise_p.csv", row.names = F)
+# write.csv(cbind(model_bayes1$model[,1],table_habitat$RKM_2008,model_bayes1$fitted.values),"prediction_bayes1.csv", row.names = F)
+# write.csv(cbind(model_bayes2$model[,1],table_habitat$RKM_2008,model_bayes2$fitted.values),"prediction_bayes2.csv", row.names = F)
+# write.csv(cbind(model_bayes3$model[,1],table_habitat$RKM_2008,model_bayes3$fitted.values),"prediction_bayes3.csv", row.names = F)
+```
+
+
+```{r, echo=F}
+# Comparison
+huxreg(model_stepwise_aic, model_stepwise_p,model_bayes1,model_bayes2,model_bayes3)
+#sprintf("model_7: R^2= %f; Adj R^2= %f ",summary(model_7)$r.squared,summary(model_7)$adj.r.squared)
+#sprintf("model_4: R^2= %f; Adj R^2= %f ",summary(model_4)$r.squared,summary(model_4)$adj.r.squared)
+#sprintf("model_bayes: R^2= %f; Adj R^2= %f ",summary(model_bayes)$r.squared,summary(model_bayes)$adj.r.squared)
+#sprintf("model_bayes_perc: R^2= %f; Adj R^2= %f ",summary(model_bayes_perc)$r.squared,summary(model_bayes_perc)$adj.r.squared)
+#sprintf("model_bayes_perc_cate: R^2= %f; Adj R^2= %f ",summary(model_bayes_perc_cate)$r.squared,summary(model_bayes_perc_cate)$adj.r.squared)
+```
+
+
+```{r, eval=F,collapse=T}
+vif(model_stepwise_aic)
+# print(xtable((table_habitat[40:44,c(1,2,7:9,19)])),floating=FALSE,latex.environments=NULL,booktabs=TRUE)
+```
+
+
+```{r, eval=T, include = T}
+ols_regress(model_stepwise_aic)
+ols_plot_obs_fit(model_stepwise_aic)
+
+ols_regress(model_stepwise_p)
+ols_plot_obs_fit(model_stepwise_p)
+
+ols_regress(model_bayes1)
+ols_plot_obs_fit(model_bayes1)
+
+ols_regress(model_bayes2)
+ols_plot_obs_fit(model_bayes2)
+
+ols_regress(model_bayes3)
+ols_plot_obs_fit(model_bayes3)
+
+ols_regress(model_bayes_perc)
+ols_plot_obs_fit(model_bayes_perc)
+
+```
+
+
+```{r ,eval=T,echo=FALSE,, out.width='75%'}
+# The matrix of scatterplots and the correlation matrix
+# hist(table_habitat_perc$P)
+ggpairs(data=table_habitat[c(2,21,8,15)])
+ggplot(table_habitat, aes(RKM_2008,Habitat_area))  + geom_text(aes(label=RKM_2008)) # + geom_point()
+```
+
+
+```{r, eval=F, include = F}
+# Anova(model_full)
+Anova(model_bayes2)
+# Anova(model_2v)
+# Anova(model_perc)
+```
+
+
+### Residual diagnostics
+
+```{r, eval=T, include =T, collapse=F, out.width='45%'}
+plot(model_bayes2)
+# ols_plot_diagnostics(model_2)
+# print(xtable(summary(model_4)),floating=FALSE,latex.environments=NULL,booktabs=TRUE)
+```
+
+
+
+```{r, eval=T, include =T, collapse=F, out.width='45%'}
+ols_plot_resid_hist(model_bayes2)
+ols_test_normality(model_bayes2) 
+ols_plot_resid_qq (model_bayes2)
+ols_plot_resid_fit(model_bayes2)
+```
+
+
+- DFBETAs Panel
+
+DFBETAs measure the difference in each parameter estimate with and without the influential observation.
+
+```{r, eval=T, include =T, collapse=F, out.width='45%'}
+ols_plot_dfbetas(model_bayes2)
+```
+
+- Collinearity Diagnostics
+
+Plot to detect non-linearity, influential observations and outliers.
+
+```{r, eval=T, include =T, collapse=F, out.width='45%'}
+ols_plot_resid_fit_spread(model_bayes2)
+```
+
+
+```{r, eval=T, include =T, collapse=F, out.width='45%'}
+ols_plot_cooksd_chart(model_bayes2)
+```
+
+
+```{r, eval=F, echo=F}
+# Part & Partial Correlations
+ols_correlations(model_bayes2) # Correlation between observed residuals and expected residuals under normality.
+# print(xtable(ols_correlations(model_4)),floating=FALSE,latex.environments=NULL,booktabs=TRUE)
+
+# Residual Normality Test
+ols_test_normality(model_bayes2) # Test for detecting violation of normality assumption. #If p-value is bigger, then no problem of non-normality
+
+ols_plot_resid_stand(mmodel_bayes2) # detecting outliers. Standardized residual (internally studentized) is the residual divided by estimated standard deviation.
+
+ols_plot_resid_lev(model_bayes2) # detecting influential observations.
+```
+
+-  The partial regression and nonlinear diagnostics
+
+```{r, eval=T, include =F}
+ols_plot_added_variable(model_bayes2)
+# Residual Plus Component Plot
+ols_plot_comp_plus_resid(model_bayes2)
+```
+
+
+```{r,eval=F,include=F}
+# Part & Partial Correlations
+ols_test_correlation(model_bayes2) 
+```
+
+
+### Transformation
+
+```{r, eval=T,out.width='45%',fig.show='hold'}
+model_2_sqrt<- lm(sqrt(Habitat_area) ~ConnectedWet_area + SideChannel_Area+AllWetLength+SideChannel_Area*AllWetLength, data=table_habitat) 
+model_2_log<- lm(log(Habitat_area) ~ConnectedWet_area + SideChannel_Area+AllWetLength+SideChannel_Area*AllWetLength, data=table_habitat) 
+summary(model_bayes2)
+summary(model_2_sqrt)
+summary(model_2_log)
+# ols_regress(model_2_log)
+# ols_regress(model_2_sqrt)
+ols_plot_resid_qq (model_bayes2)
+ols_plot_resid_qq (model_2_sqrt)
+ols_plot_resid_qq (model_2_log)
+```
+```{r,eval=F,include=F, echo=F}
+# Comparison
+huxreg(model_bayes2,model_2_log)
+```
+
+
+### GauPro
+
+```{r, eval=F,include=F}
+library(GauPro)
+gp_H <- GauPro(table_habitat$No,table_habitat$H_A, parallel=FE)
+plot(table_habitat$No,table_habitat$H_A)
+curve(gp_H$predict(x), add=T, col=2)
+curve(gp_H$predict(x)+2*gp_H$predict(x, se=T)$se, add=T, col=4)
+curve(gp_H$predict(x)-2*gp_H$predict(x, se=T)$se, add=T, col=4)
+if (requireNamespace("MASS", quietly = TRUE)) {
+  plot(gp_H)
+}
+curve(sapply(x, gp_H$deviance_theta_log),-10,10, n = 300)
+
+gp_FE <- GauPro(table_habitat$No,table_habitat$FE, parallel=FALSE)
+plot(table_habitat$No,table_habitat$FE)
+curve(gp_FE$predict(x), add=T, col=2)
+if (requireNamespace("MASS", quietly = TRUE)) {
+  plot(gp_FE)
+}
+curve(sapply(x, gp_FE$deviance_theta_log),-10,10, n = 300)
+
+gp_S <- GauPro(table_habitat$No,table_habitat$S, parallel=FALSE)
+plot(table_habitat$No,table_habitat$S)
+curve(gp_S$predict(x), add=T, col=2)
+if (requireNamespace("MASS", quietly = TRUE)) {
+  plot(gp_S)
+}
+curve(sapply(x, gp_S$deviance_theta_log),-10,10, n = 300)
+
+gp_C <- GauPro(table_habitat$No,table_habitat$W_c_A, parallel=FALSE)
+plot(table_habitat$No,table_habitat$W_c_A)
+curve(gp_C$predict(x), add=T, col=2)
+if (requireNamespace("MASS", quietly = TRUE)) {
+  plot(gp_C)
+}
+curve(sapply(x, gp_C$deviance_theta_log),-10,10, n = 300)
+
+
+gp_sc <- GauPro(table_habitat$No,table_habitat$W_s_A, parallel=FALSE)
+plot(table_habitat$No,table_habitat$W_s_A)
+curve(gp_sc$predict(x), add=T, col=2)
+if (requireNamespace("MASS", quietly = TRUE)) {
+  plot(gp_sc)
+}
+curve(sapply(x, gp_sc$deviance_theta_log),-10,10, n = 300)
+```
+
+```{r, eval=F,include=F}
+kern <- Matern52$new(0)
+kern.exp <- Exponential$new(0)
+kern.gau <- Gaussian$new(0)
+trend.0 <- trend_0$new()
+gpk.exp <- GauPro_kernel_model$new(matrix(table_habitat$RKM_2008, ncol=1), table_habitat$Habitat_area, kernel=kern,parallel=FALSE) #  trend=trend.0, 
+if (requireNamespace("MASS", quietly = TRUE)) {
+  plot(gpk.exp)
+}
+```
+
+
+
+### Random Forest
+
+```{r,eval=F,echo=F}
+library(randomForest)
+set.seed(123)
+#run with out of the box parameters
+model_RF<-randomForest(H_A ~ ., data = table_habitat, proximity = FALSE)
+
+#Summarize/view model results
+model_RF
+varImpPlot(model_RF)
+plot(model_RF)
+
+```
+
+

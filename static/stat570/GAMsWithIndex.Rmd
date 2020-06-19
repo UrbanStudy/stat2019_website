@@ -1,0 +1,43 @@
+---
+title: "Using GAMs for predicting Salmon Habitat"
+author: "Robin Muegge"
+date: "2/25/2020"
+output: html_document
+---
+
+Here is something I have tried with GAMs:
+
+```{r, warning=FALSE}
+library(ggplot2)
+library(mgcv)
+```
+
+```{r}
+all.data <- read.csv("C:/Users/mugge/Desktop/Statistics/Winter 2020/Consulting/Willamette_habitat_features.csv")
+
+Index <- c(178:1)
+all.data <- cbind(all.data,Index)
+
+train.id <- sample(1:178,120)
+train.data <- all.data[train.id,] 
+test.data <- all.data[-train.id,]
+
+ct1 <- gam(Habitat_area ~ s(MainChannel_Area) + s(SideChannel_Area)
+          + s(Alcove_Area) + s(Floodplain_elevation) + ti(MainChannel_Area,Alcove_Area) 
+          + ti(SideChannel_Area,Floodplain_elevation)+s(Index),family=Gamma(link=log),data=train.data)
+ct1
+plot(ct1,residuals=TRUE,pch=16)
+gam.check(ct1)
+plot(fitted(ct1),residuals(ct1))
+summary(ct1)
+
+pred <- predict(ct1,test.data,type="link",se.fit=FALSE)
+predhab <- exp(pred)
+test.data$logHabitat_area <- log(test.data$Habitat_area)
+ggplot(test.data,aes(logHabitat_area,pred)) + 
+  geom_point() + xlab("observed habitat") + ylab("predicted habitat") +
+  ggtitle("Plot of observed vs. fitted habitat") + theme(plot.title = element_text(hjust = 0.5)) +
+  geom_abline(intercept = 0, slope = 1, color="red", size=.75)
+
+sd(test.data$logHabitat_area - pred)
+```

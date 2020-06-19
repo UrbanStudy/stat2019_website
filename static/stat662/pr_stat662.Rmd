@@ -1,0 +1,324 @@
+---
+title: ''
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: no
+    toc_float: no
+header-includes:
+ - \usepackage{multicol}
+ - \usepackage{multirow}
+ - \usepackage{caption}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{Courtney Crisp, Sanjeewa Nagulendran, Shen Qu}
+ - \lhead{STAT 662 Midterm Project}
+ - \chead{}
+ - \rfoot{Page \thepage}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=8)
+```
+
+- Pre-calculation
+
+$(y_i,p_i),\ i=1,..m$ is the data with $z=1$; $m=\sum\limits_{z_i=1}z_i$ is the number of $z=1$; 
+
+$(y_j,p_j)\ j=m+1,..n$ is the data with $z=0$; $n-m$ is the number of $z=0$.
+
+Mixing proportions $p_i=Pr(z=1)$; $u=\frac{y-\mu_2}{\sigma}$; $1-p_j=Pr(z=0)$; $v=\frac{y-\mu_1}{\sigma}$. $\vec\theta=(\mu_1,\mu_2,\sigma)$
+
+$$\phi(u;\theta)=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\mu_2}{\sigma})^{2}};\ \quad\phi(v;\theta)=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\mu_1}{\sigma})^{2}}$$
+$$\frac{\partial\phi(u)}{\partial(\mu_1,\mu_2,\sigma)}=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\mu_2}{\sigma})^{2}}(\frac{y-\mu_2}{\sigma})\begin{bmatrix}0\\1/\sigma\\u/\sigma\end{bmatrix}=\phi(u)\frac{u}{\sigma}\begin{bmatrix}0\\1\\u\end{bmatrix}$$
+
+$$\frac{\partial\phi(v)}{\partial(\mu_1,\mu_2,\sigma)}=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\mu_1}{\sigma})^{2}}(\frac{y-\mu_1}{\sigma})\begin{bmatrix}1/\sigma\\0\\v/\sigma\end{bmatrix}=\phi(v)\frac{v}{\sigma}\begin{bmatrix}1\\0\\v\end{bmatrix}$$
+
+i)  EM Algorithm: 
+
+E-Step
+
+$$Pr(\vec\theta|\vec y,\vec z)=\prod_{i=1}^{n}\left(\frac{z_i}{\sigma}\phi(\frac{y_i-\mu_2}{\sigma})^{z_i}p_i^{z_i}+\frac{1-z_i}{\sigma}\phi(\frac{y_j-\mu_1}{\sigma})^{1-z_i}(1-p_i)^{1-z_i}\right)=\prod_{i=1}^{m}\frac{1}{\sigma}\phi(u_i)^{1}p_i^{1}\cdot\prod_{j=m+1}^{n}\frac{1}{\sigma}\phi(v_j)^{1}(1-p_j)^{1}$$
+
+$$\log(Pr(\vec\theta|\vec y,\vec z^{\star}))=\sum_{i=1}^{m}\left[\log Pr(\vec\theta|y_i,z_i^{\star}=1) \right]+\sum_{j=m+1}^n\left[\log Pr(\vec\theta|y_j,z_j^{\star}=0)\right]$$
+
+$$=C-n\log(\sigma)+\sum_{i=1}^{m}\log\phi(u_i)+\sum_{j=m+1}^n\log\phi(v_j)+\sum_{i=1}^{m}\log p_i+\sum_{j=m+1}^n\log(1-p_j)$$
+
+$$Q(\vec\theta,\vec\theta^{\star})=\frac1S\sum_{s=1}^S\log(Pr(\vec\theta|\vec y,\vec z^{(s)}))=C-n\log(\sigma)+\sum_{i=1}^{\bar{m}}\log\phi(u_i)+\sum_{j=\bar{m}+1}^n\log\phi(v_j)+\sum_{i=1}^{\bar{m}}\log p_i+\sum_{j=\bar{m}+1}^n\log(1-p_j)$$
+where $\bar{m}=\frac1S\sum_{s=1}^S\sum_{z_i=1}z_i^{(s)}$
+
+M-Step
+ 
+$$\frac{\partial Q(\vec\theta,\vec\theta^{\star})}{\partial\theta}=\begin{bmatrix}0\\0\\\frac{-n}{\sigma}\end{bmatrix}+\sum_{i=1}^{m}\frac{\phi(u_i)}{\phi(u_i)}\begin{bmatrix}0\\u_i/\sigma\\u_i^2/\sigma\end{bmatrix}+\sum_{j=m+1}^n\frac{\phi(v_j)}{\phi(v_j)}\begin{bmatrix}v_j/\sigma\\0\\v_j^2/\sigma\end{bmatrix}=\frac1\sigma\begin{bmatrix}\sum_{j=m+1}^nv_j\\\sum_{i=1}^{m}u_i\\\sum_{i=1}^{m}u_i^2+\sum_{j=m+1}^nv_j^2-n\end{bmatrix}\overset{set}{=}0$$
+
+$$\begin{bmatrix}\hat\mu_1=&\frac{1}{n-m}\sum_{j=m+1}^ny_j\\
+\hat\mu_2=&\frac{1}{m}\sum_{i=1}^{m}y_j\\
+\hat\sigma^2=&\frac{1}{n}\left(\sum_{i=1}^{m}(y_i-\mu_2)^2+\sum_{j=m+1}^n(y_j-\mu_1)^2\right)\end{bmatrix}$$
+
+$$r=Pr(z=1|\vec y,\vec\theta^{\star})=\frac{\phi(u^{\star})p}{\phi(u^{\star}) p+\phi(v^{\star})(1- p)}$$
+
+
+```{r, echo=F}
+rm(list=ls())
+w=c(101.76,124.76,85.96,72.29,112.69,98.99,127.63,125.54,126.32,121.04,123.06,127.73,117.89,109.12,123.65,123.75,134.77,88.54,103.99,110.73)
+p=c(.79,.59,.70,.40,.32,.52,.26,.44,.62,.17,.91,.69,.24,.51,.64,.44,.73,.87,.23,.95)
+y <- cbind(w,p)
+n <- length(w)
+S=1e+6
+```
+
+
+```{r}
+EM_Mix_Normal<- function(y,S,crit,itera)
+{
+## "y" (w,p) is the data; "n" is the data size
+## "theta" is the parameter vector: mu1,mu2, sigma.
+## "thetastar" is the current parameter estimate.
+## "itera" is the upper limit of iterations.  
+##########################################################
+s <- 0 ; set.seed(121) # iteration counter
+n <- nrow(y)
+z <- ifelse (p>=median(p),1,0)
+V<- w[which(z==0)]
+U<- w[which(z==1)]
+mu <- c(mean(V),mean(U))
+sigma <- sd(w)
+thetastar <- c(mu,sigma)# initial parameter values
+repeat {
+v <- (w-mu[1])/sigma 
+u <- (w-mu[2])/sigma 
+r <- dnorm(u)*p/(dnorm(v)*(1-p)+dnorm(u)*p)
+Z <- replicate(S,rbinom(20, 1, r))
+W <- replicate(S,w)
+U <- W*Z
+V <- W*(1-Z)
+V <- V[which(V!=0)]
+U <- U[which(U!=0)]
+mu <- c(mean(V),mean(U))
+sigma <- sqrt(sum(c(V-mu[1],U-mu[2])^2)/n/S)
+theta <- c(mu,sigma)
+s <- s +1
+if( (abs(thetastar[1]-theta[1])< crit)| (s > itera)) #  # (sum(thetastar-theta)^2< crit)|
+break
+thetastar <- theta
+}
+return(list(s,theta,cbind(y,z,r)))
+}
+Theta<- EM_Mix_Normal(y,S,crit=1e-4,itera=100)
+```
+
+```{r,echo=F}
+# mu <- c(sum(V)/sum(Z==0),sum(U)/sum(Z))
+# sigma <- sqrt((mu[1]^2*sum(Z==0)+mu[2]^2*sum(Z)-2*mu[1]*sum(V)-2*mu[2]*sum(U)+S*sum(w^2))/n/S)
+# sigma <- sd(c(U,V))
+
+# Estimated values of variable and parameters
+r <- Theta[[3]][,4]
+z <- Theta[[3]][,3]
+theta <- Theta[[2]]
+mu <- Theta[[2]][1:2]
+sigma <- Theta[[2]][3]
+```
+
+In previous approach, if responsibilities $r\ge p_i$, this observation is more likely $z=1$ given $y$ and $\theta$ values. Else, let $z_j=0$. 
+
+Then update the $\theta$ with preivous $\vec z$.Repeat the iteration until converge.
+
+In current approach, we draw many times of $\vec z$ from Bernoulli$(\vec r)$ (or, equivalently, Binomial $(1, \vec r)$) and get the mean values. The convergent result is $\theta=(\mu_1,\mu_2,\sigma)=$ `r theta` respectively.
+
+
+
+```{r, echo=F}
+names(Theta[[1]]) <- c("Iterations")
+names(Theta[[2]]) <- c("mu1", "mu2", "sigma")
+kableExtra::kable((Theta))
+```
+
+```{r,echo=F, out.width='50%'}
+hist(Theta[[3]][,1],breaks = 20,freq = F, density=10,angle= Theta[[3]][,3]*45)
+x<- rnorm(100,Theta[[2]][1],Theta[[2]][3])
+curve(dnorm(x,Theta[[2]][1],Theta[[2]][3]), col = 8, lty = 2, lwd = 2, add = TRUE)
+x<- rnorm(100,Theta[[2]][2],Theta[[2]][3])
+curve(dnorm(x,Theta[[2]][2],Theta[[2]][3]), col = 6, lty = 2, lwd = 2, add = TRUE)
+```
+
+```{r, eval=F,include=F}
+ths<-seq(50,150,length=100)
+#### MC Sampling
+set.seed(121)
+th<-rnorm(1000,mu[z+1],sigma)
+THD.MC<-cbind(th,z)
+### Plot MC marginal density for theta and compare to true marginal
+par(mfrow=c(1,1),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+ths<-seq(50,150,length=500)
+plot(ths, (1-z)*dnorm(ths,mu[1],sigma)+z*dnorm(ths,mu[2],sigma),type="l" , xlab=expression(w),ylab=
+       expression( paste( italic("p("),w,")",sep="") ),lwd=2,col="gray" ,ylim=c(0,.05))
+hist(THD.MC[,1],add=TRUE,prob=TRUE,nclass=100)
+hist(THD.MC[,1],prob=TRUE,nclass=100,col="gray")
+x <-seq(50,150,length=1)
+curve((1-z)*dnorm(x,mu[1],sigma)+z*dnorm(x,mu[2],sigma), col ="red", lty = 2, lwd = 2, add = TRUE)
+```
+
+```{r,echo=F, out.width='50%'}
+#### MCMC sampling
+th<-0; ths<-seq(50,150,length=500)
+THD.MCMC<-NULL
+set.seed(121)
+for(s in 1:1000) {  
+for(i in 1:n){  
+  d <- rbinom(1, 1,r[i])  
+  th<-rnorm(1,mu[d+1],sigma )
+  THD.MCMC<-rbind(THD.MCMC,c(th,d,i) )
+}}
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+Smax=20000
+plot( THD.MCMC[1:Smax,1] ,ylim=c(50,150),ylab="weights" ,cex=0.1,col=THD.MCMC[,3])
+points(mu[THD.MCMC[1:Smax,2]+1],cex=0.1 ,col=THD.MCMC[,2]+1)
+plot(ths, (1-z)*dnorm(ths,mu[1],sigma)+z*dnorm(ths,mu[2],sigma) ,type="l" , xlab=expression(W),ylab=
+       expression( paste( italic("p("),Weights,")",sep="") ),lwd=0.5 ,col="gray",ylim=c(0,.03))
+hist(THD.MCMC[1:Smax,1],add=TRUE,prob=TRUE,nclass=20)
+#lines( ths, (V[,2]*dnorm(ths,mu[1],sd)+U[,2]*dnorm(ths,mu[2],sd)),lwd=2 )
+```
+
+
+ii) Louis'Method:
+
+By simulation method, We draw $S$ times of $\vec z\sim$ Binomial $(1,\vec r)$.
+
+Then we can approximate the complete information and missing information.
+
+-  Complete Information: 
+
+$$\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))=\frac1\sigma\begin{bmatrix}\sum_{j=m+1}^nv_j\\
+\sum_{i=1}^{m}u_i\\
+\sum_{i=1}^{m}u_i^2+\sum_{j=m+1}^nv_j^2-n\end{bmatrix}$$
+
+$$\frac{\partial^2}{\partial\theta^2}\log(p(\vec\theta|y,z))=\frac{-1}{\sigma^2}\begin{bmatrix}
+n-m&0&2\sum_{j=m+1}^nv_j\\
+0&m&2\sum_{i=1}^{m}u_i\\
+2\sum_{j=m+1}^nv_j&2\sum_{i=1}^{m}u_i&3(\sum_{i=1}^{m}u_i^2+\sum_{j=m+1}^nv_j^2)-n\end{bmatrix}$$
+
+
+$$E[\frac{\partial^2}{\partial\theta^2}\log(p(\vec\theta|y,z))]=\frac{1}{S}\sum_{1}^{S}\frac{-1}{\sigma^2}\begin{bmatrix}
+n-m&0&2\sum_{j=m+1}^nv_j\\
+0&m&2\sum_{i=1}^{m}u_i\\
+2\sum_{j=m+1}^nv_j&2\sum_{i=1}^{m}u_i&3(\sum_{i=1}^{m}u_i^2+\sum_{j=m+1}^nv_j^2)-n\end{bmatrix}$$
+
+```{r,collapse=T}
+set.seed(121)
+# r <- dnorm(u)*p/(dnorm(v)*(1-p)+dnorm(u)*p)
+Z <- replicate(S,rbinom(20, 1, r))
+W <- replicate(S,w)
+V <- W*(1-Z)
+U <- W*Z
+V <- V[which(V!=0)]
+U <- U[which(U!=0)]
+v <- (V-mu[1])/sigma 
+u <- (U-mu[2])/sigma 
+(Compy <- matrix(c(sum(Z==0),   0      , 2*sum(v),
+                     0,   sum(Z)     , 2*sum(u),
+              2*sum(v), 2*sum(u) , 3*(sum(u^2)+sum(v^2))-n*S
+),3,3,)/S/sigma^2)  # Complete Information
+```
+
+\pagebreak
+
+- Missing Information:
+
+
+$$Var\left[\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))\right]=\frac{1}{S}\sum_{1}^{S}\left(\left.\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))\right|_{\hat\theta}\right)^2=
+\frac{1}{S}\sum_{1}^{S}\frac1{\sigma^2}\begin{bmatrix}\sum_{j=m+1}^nv_j\\\sum_{i=1}^{m}u_i\\\sum_{i=1}^{m}u_i^2+\sum_{j=m+1}^nv_j^2-n\end{bmatrix}^2$$
+
+
+```{r, collapse=T}
+set.seed(121)  # MC simulation
+M1<-M2<-M3<-matrix(NA,S,1)
+M <- matrix(NA,S,3)
+for (s in 1:S){
+z_sim<-rbinom(20,1,r)  
+u_sim <- (w[which(z_sim==1)]-mu[2])/sigma
+v_sim <- (w[which(z_sim==0)]-mu[1])/sigma
+M1[s,] <- sum(v_sim) 
+M2[s,] <- sum(u_sim) 
+M3[s,] <- sum(u_sim^2)+sum(v_sim^2)
+M[s,] <- c(M1[s],M2[s],M3[s]-n)
+}
+(Miss <- var(M)/sigma^2) # Missing Information
+```
+
+
+```{r,collapse=T}
+(I <- Compy-Miss) # Apply the Louis' method
+interval <- pnorm(0.975)*sqrt(diag(solve(I))) # Calculate Confidence Interval
+CI <- matrix(c(theta-interval,theta+interval),3,2,dimnames =list(c("mu1","mu2","sigma"),c("CI-L","CI-U")))
+```
+
+```{r,echo=F}
+colnames(I) <- rownames(I) <- c("mu1","mu2","Sigma")
+pander::pander(cbind(solve(I),CI), caption = "Louis' Method: Var-Cov Matrix and Confidence intervals")
+```
+
+We get the point-wise 95% confidence intervals for the parameters by Louis' method.
+
+\pagebreak
+
+iii) Compute the observed information matrix directly and obtain its inverse. Find out 95% conﬁdence intervals for the parameters.
+
+
+$$r_i=\frac{p_i\phi(u_i)}{p_i\phi(u_i) +(1- p_i)\phi(v_i)}$$
+
+$$\frac{\partial}{\partial\theta}r_i=\frac{[p_i\phi(u_i) +(1- p_i)\phi(v_i)]p_i\phi(u_i)\frac{u_i}{\sigma}\begin{bmatrix}0\\1\\u_i\end{bmatrix}-p_i\phi(u_i)\left(p_i\phi(u_i)\frac{u_i}{\sigma}\begin{bmatrix}0\\1\\u_i\end{bmatrix}+(1- p_i)\phi(v_i)\frac{v_i}{\sigma}\begin{bmatrix}1\\0\\v_i\end{bmatrix}\right)}{[p_i\phi(u_i) +(1- p_i)\phi(v_i)]^2}=r_i[1-r_i]\frac1\sigma \begin{bmatrix}-v_i\\u_i\\u_i^2-v_i^2\end{bmatrix}$$
+
+
+
+$$\log(Pr(\vec\theta|\vec y))=\sum_{i=1}^{n}\log\left( \frac{1-p_i}{\sigma}\phi(v_i)+\frac{p_i}{\sigma}\phi(u_i)\right)=C-n\log(\sigma)+\sum_{i=1}^{n}\log \left((1-p_i)\phi(v_i)+p_i\phi(u_i)\right)$$
+
+
+$$\frac{\partial }{\partial\theta}\log(p(\vec\theta|y))=\frac1\sigma\sum_{i=1}^{n}\begin{bmatrix}\frac{(1-p_i)\phi(v_i)}{p_i\phi(u_i)+(1-p_i)\phi(v_i)}v_i\\
+\frac{p_i\phi(u_i)}{p_i\phi(u_i)+(1-p_i)\phi(v_i)}u_i\\
+\frac{p_i\phi(u_i)u_i^2+(1-p_j)\phi(v_i)v_i^2}{p_i\phi(u_i)+(1-p_i)\phi(v_i)}-1\end{bmatrix}=\frac1\sigma\sum_{i=1}^{n}\begin{bmatrix}(1-r_i)v_i\\
+r_iu_i\\
+r_iu_i^2+(1-r_i)v_i^2-1\end{bmatrix}$$
+
+
+
+\resizebox{1.1\hsize}{!}{$\frac{\partial^2\log(p(\vec\theta|y))}{\partial\theta^2}=\frac{1}{\sigma^2}\sum_{i=1}^{n}\begin{bmatrix}
+(1-r_i)(r_iv_i^2-1)&-r_i(1-r_i)u_iv_i&-(1-r_i)v_i[r_i(u_i^2-v_i^2)+2]\\
+-r_i(1-r_i)u_iv_i&r_i((1-r_i)u_i^2-1)&r_iu_i[(1-r_i)(u_i^2-v_i^2)-2]\\
+-(1-r_i)v_i[r_i(u_i^2-v_i^2)+2]&r_iu_i[(1-r_i)(u_i^2-v_i^2)-2]&r_i(1-r_i)(u_i^2-v_i^2)^2-3(r_iu_i^2+(1-r_i)v_i^2)+1\end{bmatrix}$}
+
+```{r,echo=F}
+# Estimated values of variable and parameters
+mu <- Theta[[2]][1:2]
+sigma <- Theta[[2]][3]
+u <- (w-mu[2])/sigma
+v <- (w-mu[1])/sigma
+r <- dnorm(u)*p/(dnorm(v)*(1-p)+dnorm(u)*p)
+```
+
+
+```{r,collapse=T}
+(I_o <- matrix(c(sum((1-r)*(r*v^2-1)), sum(-r*(1-r)*u*v)  , sum(-(1-r)*v*(r*(u^2-v^2)+2)) ,
+            sum(-r*(1-r)*u*v),       sum(r*((1-r)*u^2-1)) ,  sum(r*u*((1-r)*(u^2-v^2)-2)) ,
+sum(-(1-r)*v*(r*(u^2-v^2)+2)),sum(r*u*((1-r)*(u^2-v^2)-2)),sum(r*(1-r)*(u^2-v^2)^2-3*(r*u^2+(1-r)*v^2)+1)
+),nrow = 3, ncol = 3)/(sigma^2)) # Observed exact data
+```
+
+```{r,echo=T,collapse=T}
+interval <- pnorm(0.975)*sqrt(diag(solve(-I_o))) # Calculate Confidence Interval
+CI_o <- matrix(c(theta-interval,theta+interval),3,2,dimnames =list(c("mu1","mu2","sigma"),c("CI-L","CI-U")))
+```
+
+
+```{r,echo=F,collapse=T}
+colnames(I_o) <- rownames(I_o) <- c("mu1","mu2","Sigma")
+pander::pander(cbind(solve(-I_o),CI_o), caption = "Direct Method: Var-Cov Matrix and Confidence intervals")
+```
+which gives the 95% confidence intervals for $\mu_1, \mu_2$, and $\sigma$. Two methods give same result.
+
+
+

@@ -1,0 +1,1740 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+    latex_engine: xelatex
+  html_document:
+    toc: no
+    toc_float: no
+header-includes:
+ - \usepackage{multicol}
+ - \usepackage{multirow}
+ - \usepackage{caption}
+ - \usepackage{fancyhdr}
+ - \pagestyle{fancy}
+ - \fancyhf{}
+ - \rhead{Shen Qu}
+ - \lhead{Homework}
+ - \chead{STAT 662}
+ - \rfoot{Page \thepage}
+ - \usepackage{graphicx}
+ - \usepackage{amssymb}
+ - \usepackage{unicode-math}
+ - \usepackage[ruled,vlined]{algorithm2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=8)
+```
+
+pdflatex, xelatex, and lualatex
+
+## HW1
+
+EM and Regression. For $X =\{(Z_i,Y_i):i=1,...,n\}$, consider the model 
+ 
+$Y_i = \beta_1 + \beta_2Z_i + \varepsilon_i$
+ 
+ where $\varepsilon_1,...,\varepsilon_n$ are i.i.d. $N(0,\sigma^2)$, $Z_1,...,Z_n$ are i.i.d. $N(\mu_1,\sigma^2_1)$ and independent of $\varepsilon_1,...,\varepsilon_n$. Suppose that for $1\le i\le m$ we observe both $Z_i$ and $Y_i$ and for $m+1\le i\le n$, we observe only $Y_i$. Complete the E- and M-steps of the EM algorithm for estimating ($\mu_1,\beta_1,\sigma^2_1,\sigma^2,\beta_2$).
+
+\pagebreak
+
+## HW2. Due Jan. 29.
+
+i) P76: Genetic Linkage (continued) (Missing Information Principle). Verify the result. 
+
+
+
+```{r,collapse=T}
+y <- c(125,18,20,34)
+EM_Rao<- function(y, theta= 0.5, conv = 0.0001)
+{
+## This is an example of E-M algorithm for multinomial distribution
+## "y" is the observed data represented by a vector
+## use "theta"=0.5 is the starting value
+## "conv" is the convergence criterion number
+est<-NULL
+repeat {
+prob <- theta/(theta + 2)
+num <- y[4] + y[1] * prob
+den <- sum(y[2:4]) + y[ 1] * prob
+thetahat <- num/den # This is an updated theta
+est <- c( est, thetahat)
+if(abs(thetahat - theta)< conv)
+break
+else theta <- thetahat
+}
+return(est)
+}
+EM_Rao(y, theta= 0.5, conv = 0.0001)
+```
+For this model, 
+$$\frac{\partial \log p(\theta| Y, Z)}{\partial\theta}=
+\frac{x_2 + x_5}{\theta}-\frac{x_3 + x_4}{1-\theta}$$
+
+while 
+
+$$\left.\frac{-\partial^2 Q(\theta, \hat\theta)}{\partial\theta^2}\right|_{\hat\theta}=
+\frac{E(x_2|\hat\theta,Y)+ x_5}{\hat\theta^2}+\frac{x_3 + x_4}{(1-\hat\theta)^2}$$
+
+For the data set listed in the sample of Section 4.1 
+
+$$-\left.\frac{\partial^2 Q(\theta, \hat\theta)}{\partial\theta^2}\right|_{\hat\theta}=
+\frac{29.83+ 34}{0.6268^2}+\frac{38}{(1-0.6268)^2}=435.3$$
+
+Now
+
+$$Var\left(\left.\frac{\partial \log p(\theta| Y, Z)}{\partial\theta}\right|_{\hat\theta}\right)=
+\frac{Var(x_2|\hat\theta)}{\hat\theta^2}=\frac{125\left(\frac{\hat\theta}{2+\hat\theta}\right)\left(\frac{2}{2+\hat\theta}\right)}{\hat\theta^2}= 22.71/0.6268^2 = 57.8$$
+
+Hence, it follows that 
+
+$$\left.\frac{-\partial^2 \log p(\theta|Y)}{\partial\theta^2}\right|_{\hat\theta}=
+435.3-57.8 = 377.5 $$
+
+and the standard error of $\hat\theta$ is equal to $\sqrt{(1/377.5)} = 0.05$. 
+
+```{r,collapse=T}
+thetahat <- 0.6268156
+## Missing Information Principle
+## Observed Information = Complete Information - Missing Information
+prob <- thetahat/(thetahat + 2)
+Q_dd <- (y[1]*prob+y[4])/thetahat^2+(y[2]+y[3])/(1-thetahat)^2
+H_dd <- y[1]*prob*(1-prob)/thetahat^2
+(se <- sqrt(1/(Q_dd-H_dd)))
+```
+
+The result is coordinated with the textbook.
+
+ii) P78: Genetic Linkage (continued) (Monte Carlo Variance estimation). Verify the result by writing your own code. 
+
+Method I:
+
+$$Var\left(\left.\frac{\partial \log p(\theta| Y, z_j)}{\partial\theta}\right|_{\hat\theta}\right)=
+\frac{Var(x_{2j}|\hat\theta)}{\hat\theta^2}\approx57.87179,\ j=1,..,10^6$$
+
+Method II:
+
+$$\frac{1}{10^6}\sum_{j=1}^{10^6}\left(\left.\frac{\partial \log p(\theta| Y, Z)}{\partial\theta}\right|_{\hat\theta}\right)^2=
+\frac{1}{10^6}\sum_{j=1}^{10^6}\left(\frac{x_{2j} + x_5}{\theta}-\frac{x_3 + x_4}{1-\theta}\right)^2\approx57.87183$$
+
+```{r, collapse=T}
+## Monte Carlo Variance Estimation
+set.seed(123)
+S <- 1e+6
+z_draw <- rbinom(S, 125, prob)
+var(z_draw)/thetahat^2 # Method I
+mean(((z_draw+y[4])/thetahat-(y[2]+y[3])/(1-thetahat))^2) # Method II
+```
+
+Both of the results are coordinated with the textbook.
+
+iii) P81: Genetic Linkage (continued) (Monte Carlo implementation of E-step). Verify the result by writing your own code. 
+
+
+```{r, collapse=T}
+MCEM_Rao<- function(y,S,theta,conv)
+{
+## This is an example of Monte Carlo implementation of E-step
+## "conv" is the convergence criterion number
+est<-NULL
+repeat {
+prob <- theta/(theta + 2)
+set.seed(121)
+z_draw <- rbinom(S, 125, prob)
+num <- y[4] + mean(z_draw)
+den <- sum(y[2:4]) + mean(z_draw)
+thetahat <- num/den # This is an updated theta
+est <- c( est, thetahat)
+if(abs(thetahat - theta)< conv)
+break
+else theta <- thetahat
+}
+return(est)
+}
+MCEM_Rao(y,1e+1, 0.4, conv = 1e-4) ## use "theta"=0.4 as the starting value
+MCEM_Rao(y,1e+2, 0.4, conv = 1e-5) 
+MCEM_Rao(y,1e+3, 0.4, conv = 1e-6) ## try smaller convergence criterion number
+MCEM_Rao(y,1e+4, 0.4, conv = 1e-4)
+MCEM_Rao(y,1e+5, 0.4, conv = 1e-4) ## try lager sample size
+```
+The starting value is $\theta=0.4$. All the setting of sample size and will converge
+
+The results show that the sample size drawed from Binomial distribution decides the outcomes.
+
+If the size is large enough ($S=100000$), the value of $\theta\approx0.6268$ after 5 iterations, which is same with textbook.
+
+The smaller convergence criterion number will add more times of iteration but it doesn't give more precise results.
+
+\pagebreak
+
+### HW2 Extra 
+
+```{r,echo=F}
+n_xy <- 4
+n_x <- 4
+n_y <- 4
+rho0 <- 0
+crit <- 0.0001
+itera <- 50
+rm(list=ls())
+```
+
+
+```{r,eval=T,collapse=T}
+x <- c(1,1,-1,-1,2,2,-2,-2) 
+y <- c(1,-1,1,-1,2,2,-2,-2)
+
+EM_Bivariate_Normal<- function(x,y,n_xy,n_x,n_y,rho0,crit,itera)
+{
+## "x","y" is the data
+## "theta" is the parameter vector: sigma_sq_x, sigma_sq_y, and rho.
+## "thetastar" is the current parameter estimate.
+## "n_xy" is the data size with both x and y
+## "n_x"  is the data size with only x
+## "n_y"  is the data size with only y
+## "itera" is the upper limit of iterations.  
+##########################################################
+s <- 0 # iteration counter
+n <- n_xy+n_x+n_y
+i <- 1:n_xy
+j <- (n_xy+1):(n_xy+n_x)
+k <- (n_xy+1):(n_xy+n_y)
+
+sigma_x <- sqrt(mean(x^2)) # initial parameter values
+sigma_y <- sqrt(mean(y^2))  
+thetastar <- c(sigma_x,sigma_y,rho0)
+
+repeat {
+# Computing conditional mean
+x_star <- thetastar[1]/thetastar[2]*thetastar[3]*y[k]
+y_star <- thetastar[2]/thetastar[1]*thetastar[3]*x[j]
+# set unconditional mean = conditional
+sigma_x <- sqrt(mean(c(x^2,x_star^2+rep(thetastar[1]^2*(1-thetastar[3]^2),n_y))))
+sigma_y <- sqrt(mean(c(y^2,y_star^2+rep(thetastar[2]^2*(1-thetastar[3]^2),n_x))))
+rho <- mean(c(x[i]*y[i],x[j]*y_star,x_star*y[k]))/(sigma_x*sigma_y)
+theta <- c(sigma_x,sigma_y,rho)
+s <- s +1
+if((sqrt(sum((thetastar-theta)^2)) < crit)| (s > itera))
+break
+thetastar <- theta
+}
+return(c(s,theta))
+}
+EM_Bivariate_Normal(x,y, n_xy=4,n_x=4,n_y=4,rho0=0,crit=1e-4,itera=10)
+EM_Bivariate_Normal(x,y, n_xy=4,n_x=4,n_y=4,rho0=0.25,crit=1e-6,itera=100)
+EM_Bivariate_Normal(x,y, n_xy=4,n_x=4,n_y=4,rho0=-0.8,crit=1e-6,itera=100)
+```
+
+
+\pagebreak
+
+## HW3. Due Feb. 12.
+
+i) Apply Louis’ method to ﬁnd an estimate of Fisher information matrix in the Schmee and Hahn (1979). Your assignment is to write a program to estimate $\beta0, \beta1$, and $\sigma^2$ by the EM algorithm. (We did this last term.) Then, you should ﬁnd point-wise conﬁdence intervals for the parameters by evaluating at the estimate of parameters provided by the EM algorithm
+$-\frac{\partial^2\log p(\beta_0,\beta_1,\sigma^2|y)}{\partial^2(\beta_0,\beta_1,\sigma^2)}$
+,where y is the observed data . This evaluation should be done by Louis’ method, as explained in class. That is, you have to simulate the right-censored values from the ﬁtted normal distribution, conditional on being larger than ci.
+
+The estimate of $\beta0, \beta1$, and $\sigma$ by the EM algorithm. (detail omitted)
+
+```{r,echo=F}
+# Prepare the data
+D <-  matrix( 
+c(1764,2772,3444,3542,3780,4860,5196,408,408,1344,1344,1440,408,408,504,504,504,
+  rep(8064,10),rep(5448,3),rep(1680,5),rep(528,5),
+  rep(170,7),rep(190,5),rep(220,5),
+  rep(150,10),rep(170,3),rep(190,5),rep(220,5)),
+nrow=40,              
+ncol=2,             
+byrow = F)
+```
+
+```{r,echo=F,collapse=T}
+EM_censored<- function(D, n, m, crit, itera = 50)
+{
+##"D" is the data, which have exact part and right censored part.
+##This algorithm computes the MLE of parameters in the simple linear regression with right censored data.
+##"theta" is the parameter vector, that is, betaO, beta I, and sigma.
+##"thetastar" is the current parameter estimate.
+##In this special project temperatures and failure times had specific transformations.
+##"itera" is the upper limit of iterations. That is, if the algorithm doesn't converge until this upper limit,
+## we have to stop at this moment and treat our current estimate as the limit point we are trying to obtain.
+##"n" is the sample size
+##"m" is the exact data size.
+##########################################################
+thetastar <- rep(0,3)
+theta<- rep(0,3)
+i <- 0 # iteration counter
+D[,1] = log10(D[,1]) # transformed time
+D[,2] = 1000/(D[,2]+273.2) # transformed temperature
+exact<- D[1:m,] # exact data (uncensored data)
+censored<- D[(m+1):n,] # censored data
+out<- lm(D[,1]~ D[,2])
+# the least squares method based on the data where we assume
+# the censored are exact
+thetastar[1:2] <- out$coefficients
+thetastar[3] <- sqrt(sum(out$residuals^2)/(m - 2))
+repeat {
+############ E Step ##############
+# Computing Q function
+mustar <- thetastar[1] + thetastar[2]*censored[, 2]
+sigmastar <- thetastar[3]
+zscore <- (censored[,1]-mustar)/sigmastar # standardized score
+
+num <- dnorm(zscore)
+denom <- 1-pnorm(zscore)
+H <- num/denom # hazard rate function of standard normal dist'n
+tstar <- mustar + sigmastar*H # estimated failure times
+############ M Step ##############
+cmpy <- c( exact[, 1], tstar) # complete data augmented by
+# estimated failure times
+out<- lm( cmpy~ D[, 2])
+theta[1:2] <- out$coefficients # new estimates of reg. coeff.
+mu<- theta[1]+ theta[2]*D[, 2] # new mean
+S1 <- sum((exact[,1]-mu[1 :m])^2) # exact part
+# S2, S3, S4 are for the censored part
+S2 <- sum(sigmastar^2+mustar^2+sigmastar*( censored[, 1 ]+mustar-
+2*mu[(m+ 1):n])*H)
+S3 <- sum(mu[(m+1):n]*mustar)
+S4 <- sum(mu[(m+1):n]^2)
+rssq <- S1 + S2 - 2*S3 + S4 # total residul sum of squares
+theta[3] <- sqrt(rssq/n) # new estimate of residual std
+if((sqrt(sum((thetastar-theta)^2)) < crit)| (i > itera))
+break
+else {
+i <- i +1
+thetastar <- theta
+}
+}
+return(theta)
+}
+EM_censored(D,n=40,m=17,crit=0.0001)
+```
+
+- Pre-calculation
+
+$\mu=\beta_0+\beta_1x$; $\vec\theta=(\beta_0,\beta_1,\sigma)$
+
+$(y_j,x_j),\ j=1,..m$ is the observed data; $u=\frac{y-\mu}{\sigma}$.
+
+$(c_i,x_i)\ i=m+1,..n$ is the censored data; $v=\frac{c-\mu}{\sigma}$.
+
+$z_i$ is the expected values. $w=\frac{z-\mu}{\sigma}$
+
+$$\phi(u;\theta)=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\mu}{\sigma})^{2}}=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\beta_0-\beta_1x}{\sigma})^{2}}$$
+$$\frac{\partial\phi(u)}{\partial(\theta)}=\frac{1}{\sqrt{2\pi}}e^{-\frac12(\frac{y-\mu}{\sigma})^{2}}(\frac{y-\mu}{\sigma})\begin{bmatrix}1/\sigma\\x/\sigma\\u/\sigma\end{bmatrix}=\phi(u)\frac{u}{\sigma}\begin{bmatrix}1\\x\\u\end{bmatrix}$$
+
+$$\frac{\partial}{\partial(\theta)}(1-\Phi(v))=-\phi(v)\begin{bmatrix}-1/\sigma\\-x/\sigma\\-v/\sigma\end{bmatrix}=\phi(v)\frac{1}{\sigma}\begin{bmatrix}1\\x\\v\end{bmatrix}$$
+$$\frac{\partial}{\partial\theta}H(v)=\frac{\partial}{\partial\theta}\frac{\phi(v)}{1-\Phi(v)}=\frac{(1-\Phi(v))\phi(v)\frac{v}{\sigma}\begin{bmatrix}1\\x\\v\end{bmatrix}-\phi(v)\phi(v)\frac{1}{\sigma}\begin{bmatrix}1\\x\\v\end{bmatrix}}{(1-\Phi(v))^2}=H(v)[v-H(v)]\frac1\sigma \begin{bmatrix}1\\x\\v\end{bmatrix}$$
+
+$$\frac{\partial }{\partial\theta}(\frac1\sigma \begin{bmatrix}1\\x\\v\end{bmatrix})=\frac{\partial }{\partial\theta}(\begin{bmatrix}\frac{1}{\sigma}\\\frac{x}{\sigma}\\\frac{c-\mu}{\sigma^2}\end{bmatrix})=\frac{-1}{\sigma^2}\begin{bmatrix}0&0&1\\0&0&x\\1&x&2v\end{bmatrix}$$
+
+$$\frac{\partial }{\partial\theta}(\frac{u}\sigma \begin{bmatrix}1\\x\\u\end{bmatrix})=\frac{\partial }{\partial\theta}(\begin{bmatrix}\frac{u}{\sigma}\\\frac{xu}{\sigma}\\\frac{(y-\mu)^2}{\sigma^3}\end{bmatrix})=\frac{-1}{\sigma^2}\begin{bmatrix}1&x&2u\\x&x^2&2xu\\2u&2xu&3u^2\end{bmatrix}$$
+
+
+
+\begin{align*}
+E[\varepsilon_i|Z_i>c_i,\vec\theta^\star]&==\frac{\phi(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})}{1-\Phi(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})}=H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})&&\square\\
+E[\varepsilon_i^2|Z_i>c_i,\vec\theta^\star]&=
+\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{\varepsilon_i^2\phi(\varepsilon_i)}{1-\Phi(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})}d\varepsilon_i\\
+&=\frac{1}{1-\Phi(\cdot)}\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty }\varepsilon_i^2\frac{1}{\sqrt{2\pi }}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\\
+&=\frac{-1}{1-\Phi(\cdot)}\left\{\left[\varepsilon_i\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}\right]_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}-\int_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\right\}\\
+&=\frac{-1}{1-\Phi(\cdot)}\left\{-\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}\frac{1}{\sqrt{2\pi }}e^{\frac{-(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2}{2}}-(1-\Phi(\cdot))\right\}\\
+&=\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1&&\square
+\end{align*}
+
+
+\begin{align*}
+E[Z_i|Z_i>c_i,\vec\theta^\star]
+&=E[\mu_i^\star+\sigma^{\star}\varepsilon_i|.]=\mu_i^\star+\sigma^{\star}E[\varepsilon_i|.]=\mu_i^\star+\sigma^{\star}H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})&&\square\\
+E[Z_i^2|Z_i>c_i,\vec\theta^\star]
+&=\mu_i^{\star2}+2\mu_i^{\star}\sigma^{\star}E[\varepsilon_i|.]+\sigma^{\star2}E[\varepsilon_i^2|.]\\
+&=\mu_i^{\star2}+2\mu_i^{\star}\sigma^{\star}H(\cdot)+\sigma^{\star2}[\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1]&&\square\\
+\end{align*}
+
+
+
+$$E[w|z>c,\vec\theta^\star]=\frac{E[z|z>c,\vec\theta^\star]-\mu}{\sigma}=\frac{\mu+\sigma H(v)-\mu}{\sigma}=H(v)$$
+$$E[w^2|z>c,\vec\theta^\star]=\frac1{\sigma^2}(E[z^2|\cdot]-2\mu E[z|\cdot]+\mu^2)=\frac1{\sigma^2}(\mu^{2}+2\mu\sigma H(\cdot)+\sigma^{2}[vH(\cdot)+1]-2\mu [\mu+\sigma H(v)]+\mu^2)=vH(v)+1$$
+\pagebreak
+
+- Complete Information: 
+
+$$\log(p(\beta_0,\beta_1,\sigma|y,z))=-\frac{n}2\log(2\pi)-n\log(\sigma)-\frac1{2}\sum_{j=1}^m(\frac{y_j-\beta_0-\beta_1x_j}{\sigma})^2-\frac1{2}\sum_{i=m+1}^n(\frac{z_i-\beta_0-\beta_1x_i}{\sigma})^2$$
+$$=C-n\log(\sigma)+\sum_{j=1}^m\log\phi(u_j)+\sum_{i=m+1}^n\log\phi(w_i)$$
+
+$$\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))=\begin{bmatrix}0\\0\\\frac{-n}{\sigma}\end{bmatrix}+\sum_{j=1}^m\frac{\phi(u_j)}{\phi(u_j)}\begin{bmatrix}u_j/\sigma\\x_ju_j/\sigma\\u_j^2/\sigma\end{bmatrix}+\sum_{i=m+1}^n\frac{\phi(w_i)}{\phi(w_i)}\begin{bmatrix}w_i/\sigma\\x_iw_i/\sigma\\w_i^2/\sigma\end{bmatrix}=\frac1\sigma\begin{bmatrix}\sum_1^mu_j+\sum_{m+1}^nw_i\\\sum_1^mu_jx_j+\sum_{m+1}^nw_ix_i\\\sum_1^mu_j^2+\sum_{m+1}^nw_i^2-n\end{bmatrix}$$
+
+$$E[\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))|\cdot]=\frac1\sigma\begin{bmatrix}\sum_1^mu_j+\sum_{m+1}^nH(v_i)\\\sum_1^mu_jx_j+\sum_{m+1}^nH(v_i)x_i\\\sum_1^mu_j^2+\sum_{m+1}^n[v_iH(v_i)+1]-n\end{bmatrix}$$
+
+$$\frac{\partial^2}{\partial\theta^2}\log(p(\vec\theta|y,z))=\begin{bmatrix}0&0&0\\0&0&0\\0&0&\frac{n}{\sigma^2}\end{bmatrix}-\frac{1}{\sigma^2}\sum_{j=1}^m\begin{bmatrix}1&x_j&2u_j\\x_j&x_j^2&2x_ju_j\\2u_j&2x_ju_j&3u_j^2\end{bmatrix}-\frac{1}{\sigma^2}\sum_{i=m+1}^n\begin{bmatrix}1&x_i&2w_i\\x_i&x_i^2&2x_iw_i\\2w_i&2x_iw_i&3w_i^2\end{bmatrix}$$
+
+$$=-\frac1{\sigma^2}\begin{bmatrix}n&\sum_{1}^nx_i&2(\sum_{1}^mu_j+\sum_{m+1}^nw_i)\\\sum_{1}^nx_i&\sum_{1}^nx_i^2&2(\sum_{1}^mu_jx_j+\sum_{m+1}^nw_ix_i)\\2(\sum_{1}^mu_j+\sum_{m+1}^nw_i)&2(\sum_{1}^mu_jx_j+\sum_{m+1}^nw_ix_i)&3(\sum_{1}^mu_j^2+\sum_{m+1}^nw_i^2)-n\end{bmatrix}$$
+
+$$E[\frac{\partial^2}{\partial\theta^2}\log(p(\vec\theta|y,z))|\cdot]=-\frac1{\sigma^2}\begin{bmatrix}n&\sum\limits_{1}^nx_i&2(\sum\limits_{1}^mu_j+\sum\limits_{m+1}^nH(v_i))\\\sum\limits_{1}^nx_i&\sum\limits_{1}^nx_i^2&2(\sum\limits_{1}^mu_jx_j+\sum\limits_{m+1}^nH(v_i)x_i)\\2(\sum\limits_{1}^mu_j+\sum\limits_{m+1}^nH(v_i))&2(\sum\limits_{1}^mu_jx_j+\sum\limits_{m+1}^nH(v_i)x_i)&3(\sum\limits_{1}^mu_j^2+\sum\limits_{m+1}^n[v_iH(v_i)+1])-n\end{bmatrix}$$
+```{r,echo=F}
+D <-  matrix( # Prepare the data
+c(1764,2772,3444,3542,3780,4860,5196,408,408,1344,1344,1440,408,408,504,504,504,
+  rep(8064,10),rep(5448,3),rep(1680,5),rep(528,5),
+  rep(170,7),rep(190,5),rep(220,5),
+  rep(150,10),rep(170,3),rep(190,5),rep(220,5)),
+  nrow=40, ncol=2)
+n=40; m=17
+D[,1] = log10(D[,1]) # transformed time
+D[,2] = 1000/(D[,2]+273.2) # transformed temperature
+exact<- D[1:m,] # exact data (uncensored data)
+censored<- D[(m+1):n,] # censored data
+beta0 <- -6.0190338;beta1 <- 4.3111376;sigma <- 0.2591598
+theta <- c(beta0,beta1,sigma)# Estimated values of variable and parameters
+mu_j <- beta0 + beta1*exact[,2]
+mu_i <- beta0 + beta1*censored[,2]
+u <- (exact[,1]-mu_j)/sigma
+v <- (censored[,1]-mu_i)/sigma  # standardized score of Observed censored data
+H <- dnorm(v)/(1-pnorm(v)) # hazard rate function of standard normal dist'n
+```
+
+```{r,collapse=T}
+Compy <- matrix(c(n, sum(D[,2])         , 2*(sum(u)+sum(H)),
+          sum(D[,2]), sum(D[,2]^2)       , 2*(sum(u*exact[,2])+sum(H*censored[,2])),
+            2*(sum(u)+sum(H)), 2*(sum(u*exact[,2])+sum(H*censored[,2])), 3*(sum(u^2)+sum(H*v+1))-n
+                                      ),nrow = 3, ncol = 3,)/sigma^2  # Complete Information
+```
+
+- Missing Information:(By simulation method)
+
+We can approximate
+
+$$Var\left[\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))\right]=\frac{1}{S}\sum_{j=1}^{S}\left(\left.\frac{\partial }{\partial\theta}\log(p(\vec\theta|y,z))\right|_{\hat\theta}\right)^2=
+\frac{1}{S}\sum_{j=1}^{S}\frac1{\sigma^2}\begin{bmatrix}\sum_1^mu_j+\sum_{m+1}^nw_i\\\sum_1^mu_jx_j+\sum_{m+1}^nw_ix_i\\\sum_1^mu_j^2+\sum_{m+1}^nw_i^2-n\end{bmatrix}^2$$
+
+where $w\sim$ Truncated Normal $(0,1)$ distribution given $z>c$.
+
+```{r, collapse=T}
+set.seed(121) # MC simulation
+S=1e+3
+C1<-C2<-C3<-matrix(NA,nrow = S,ncol = n)
+M <- matrix(NA,nrow = S,ncol = 3)
+for (s in 1:S){
+u_draw <- rnorm(n,mean=0,sd=1)
+w_draw <- truncnorm::rtruncnorm(n-m,a=(censored[,1]-mu_i)/sigma,b=Inf,mean=0,sd=1)
+C1[s,] <- u_draw
+C2[s,] <- u_draw*exact[,2]
+C3[s,] <- u_draw^2
+M_1 <- sum(w_draw)
+M_2 <- sum(w_draw*censored[,2])
+M_3 <- sum(w_draw^2)
+M[s,] <- c(M_1,M_2,M_3)
+}
+Compy_sim <- matrix(c(n,   sum(D[,2])        , 2*sum(colMeans(C1)),
+              sum(D[,2]),   sum(D[,2]^2)      , 2*sum(colMeans(C2)),
+     2*sum(colMeans(C1)), 2*sum(colMeans(C2)) , 3*sum(colMeans(C3))-n
+          ),nrow = 3, ncol = 3)/sigma^2    # Complete Information
+Miss <- var(M)/sigma^2 # Missing Information
+#(t(M)%*%M)/S-c(mean(M[,1]),mean(M[,2]),mean(M[,3]))%*%t(c(mean(M[,1]),mean(M[,2]),mean(M[,3])))
+```
+
+
+```{r,collapse=T}
+I <- Compy-Miss # Apply the Louis' method
+interval <- qnorm(0.975)*sqrt(diag(solve(I))) # Calculate Confidence Interval
+CI <- matrix(c(theta-interval,theta+interval),3,2,dimnames =list(c("beta0","beta1","sigma"),c("CI-L","CI-U")))
+```
+
+```{r,echo=F,collapse=T}
+colnames(I) <- rownames(I) <- c("Beta0","Beta1","Sigma")
+pander::pander(cbind(solve(I),CI), caption = "Louis' Method: Var-Cov Matrix and Confidence intervals")
+```
+
+We get the point-wise 95% confidence intervals for the parameters by Louis' method.
+
+
+ii) Now compute the observed information matrix directly and obtain its inverse. Find out 95% conﬁdence intervals for the parameters. Compare your results based on i) and ii).
+
+Observed Information
+
+$$\log(p(\vec\theta|y))=C-m\log(\sigma)+\sum_{j=1}^m\log\phi(u_j)+\sum_{i=m+1}^n\log(1-\Phi(v_i))$$
+
+$$\frac{\partial }{\partial\theta}\log(p(\vec\theta|y))=\underbrace{\begin{bmatrix}0\\0\\\frac{-m}{\sigma}\end{bmatrix}+\sum_{j=1}^m\begin{bmatrix}u_j/\sigma\\x_ju_j/\sigma\\u_j^2/\sigma\end{bmatrix}}_{(U)}+\underbrace{\sum_{i=m+1}^nH(v_i)\frac1\sigma\begin{bmatrix}1\\x_i\\v_i\end{bmatrix}}_{(V)}$$
+
+$$\frac{\partial}{\partial\theta}(U)=\begin{bmatrix}0&0&0\\0&0&0\\0&0&\frac{m}{\sigma^2}\end{bmatrix}-\frac{1}{\sigma^2}\sum_{j=1}^m\begin{bmatrix}1&x_j&2u_j\\x_j&x_j^2&2u_jx_j\\2u_j&2u_jx_j&3u_j^2\end{bmatrix}=-\frac{1}{\sigma^2}\sum_{j=1}^m\begin{bmatrix}1&x_j&2u_j\\x_j&x_j^2&2u_jx_j\\2u_j&2u_jx_j&3u_j^2-1\end{bmatrix}$$
+
+$$\frac{\partial}{\partial\theta}(V)=\sum_{i=m+1}^nH(v_i)\frac{\partial }{\partial\theta}(\frac1\sigma\begin{bmatrix}1\\x_i\\v_i\end{bmatrix})+\sum_{i=m+1}^n\frac1\sigma\begin{bmatrix}1\\x_i\\v_i\end{bmatrix}\frac{\partial H(v_i)}{\partial\theta}$$
+$$=\sum_{i=m+1}^nH(v_i)(\frac{-1}{\sigma^2})\begin{bmatrix}0&0&1\\0&0&x_i\\1&x_i&2v_i\end{bmatrix}+\sum_{i=m+1}^n\frac{1}{\sigma^2}H(v_i)[v_i-H(v_i)]\begin{bmatrix}1\\x_i\\v_i\end{bmatrix}\begin{bmatrix}1&x_i&v_i\end{bmatrix}$$
+
+
+$$=\sum_{i=m+1}^nH(v_i)(\frac{-1}{\sigma^2})\begin{bmatrix}0&0&1\\0&0&x_i\\1&x_i&2v_i\end{bmatrix}+\sum_{i=m+1}^n\frac1{\sigma^2}H(v_i)[v_i-H(v_i)]\begin{bmatrix}1&x_i&v_i\\x_i&x_i^2&x_iv_i\\v_i&x_iv_i&v_i^2\end{bmatrix}$$
+
+$$=\sum_{i=m+1}^nH\frac{1}{\sigma^2}\begin{bmatrix}v_i-H&x_i(v_i-H)&v_i(v_i-H)-1\\x_i(v_i-H)&x_i^2(v_i-H)&x_i[v_i(v_i-H)-1]\\v_i(v_i-H)-1&x_i[v_i(v_i-H)-1]&v_i[v_i(v_i-H)-2]\end{bmatrix}$$
+
+
+$$\frac{\partial^2}{\partial\theta^2}\log(p(\vec\theta|y))=\frac{\partial}{\partial\theta}(U)+\frac{\partial}{\partial\theta}(V)$$
+
+```{r,collapse=T}
+I_u <- matrix(c(   m         , sum(exact[,2])     , 2*sum(u),
+               sum(exact[,2]), sum(exact[,2]^2) , 2*sum(u*exact[,2]),
+                 2*sum(u)    , 2*sum(u*exact[,2]) , 3*sum(u^2)-m
+),nrow = 3, ncol = 3)/(sigma^2) # Observed exact data
+I_v <- matrix(c(sum((v-H)*H) , sum(H*(v-H)*censored[,2])       , sum(H*(v*(v-H)-1)),
+   sum(censored[,2]*(v-H)*H) , sum(H*(v-H)*censored[,2]^2)     , sum(H*(v*(v-H)-1)*censored[,2]),
+           sum(-H+v*(v-H)*H) , sum(H*(v*(v-H)-1)*censored[,2]) , sum(H*(v*(v-H)-2)*v)
+                ),nrow = 3, ncol = 3)/(sigma^2) # Observed censored data
+I_o <- I_u-I_v
+```
+
+
+```{r,echo=T,collapse=T}
+interval <- qnorm(0.975)*sqrt(diag(solve(I_o))) # Calculate Confidence Interval
+CI_o <- matrix(c(theta-interval,theta+interval),3,2,dimnames =list(c("beta0","beta1","sigma"),c("CI-L","CI-U")))
+```
+
+
+```{r,echo=F,collapse=T}
+colnames(I_o) <- rownames(I_o) <- c("Beta0","Beta1","Sigma")
+pander::pander(cbind(solve(I_o),CI_o), caption = "Direct Method: Var-Cov Matrix and Confidence intervals")
+```
+
+which gives the 95% conﬁdence intervals for $\beta0, \beta1$, and $\sigma$. Two methods give same result.
+
+\pagebreak
+
+### Detailed Steps
+
+
+```{r,eval=F}
+exp<-expression(x^2+y^2+2*x*y-3*x+4*y+4)
+dx<-D(exp,"x"); dx
+dy<-D(exp,"y"); dy
+dxy<-deriv(exp,c("x","y"));dxy;typeof(dxy)
+x<-seq(-pi,pi,pi/4)
+y<-pi
+eval(dxy)
+pp<-deriv(exp,c("x","y"),func=T)
+pp(x,y)
+
+integrate(f,0,1)
+
+library(cubature) # load the package "cubature" 
+## Warning: package 'cubature' was built under R version 3.3.3
+f <- function(x) { 2/3 * (x[1] + x[2] + x[3]) } 
+# "x" is vector x[1], x[2], x[3] are referring to x1, x2 and x3 respectively.
+adaptIntegrate(f, lowerLimit = c(0, 0, 0), upperLimit = c(0.5, 0.5, 0.5))
+
+x<-c(10,20,30,20,12,20,20)
+diff(x)
+cumsum(x)
+
+```
+
+
+
+
+$$\frac{-\partial^2 Q}{\partial\theta^2}-VarCov\left[\frac{\partial \log(p(\theta|y,z)}{\partial\theta}\right]=\begin{cases}
+\frac{n}{\sigma^2}-\frac{n-m}{\sigma^2}=\frac{m}{\sigma^2}\\
+\frac1{\sigma^2}\sum_{i=1}^nx_i^2-\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i^2=\frac1{\sigma^2}\sum_{i=1}^mx_i^2\\
+-\frac{n}{2\sigma^4}+\frac1{\sigma^6}\sum_{j=1}^m[y_j-\mu_j]^2+\frac{n-m}{\sigma^4}-\frac{n-m}{2\sigma^4}=-\frac{m}{2\sigma^4}+\frac1{\sigma^6}\sum_{j=1}^m[y_j-\mu_j]^2
+\end{cases}$$
+
+
+\begin{align*}
+\frac{\partial Q}{\partial\beta_0}&=\frac1{\sigma^2}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]+\frac1{\sigma^2}\sum_{i=m+1}^n[z_i-\beta_0-\beta_1x_i]\\
+\frac{\partial^2 Q}{\partial\beta_0^2}&=-\frac{m}{\sigma^2}-\frac{n-m}{\sigma^2}=-\frac{n}{\sigma^2} && \square\\
+\frac{\partial^2 Q}{\partial\beta_0\partial\beta_1}&=-\frac{1}{\sigma^2}\sum_{j=1}^mx_j-\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i=-\frac{1}{\sigma^2}\sum_{i=1}^nx_i && \square\\
+\frac{\partial^2 Q}{\partial\beta_0\partial\sigma^2}&=-\frac1{\sigma^4}\sum_{j=1}^m[y_j-\mu_j]-\frac1{\sigma^4}\sum_{i=m+1}^n[z_i-\mu_i] && \square
+\end{align*}
+\dotfill
+
+\begin{align*}
+\frac{\partial Q}{\partial\beta_1}&=\frac1{\sigma^2}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]x_j+\frac1{\sigma^2}\sum_{i=m+1}^n[c_i-\beta_0-\beta_1x_i]x_i\\
+\frac{\partial^2 Q}{\partial\beta_1\partial\beta_0}&=-\frac{1}{\sigma^2}\sum_{j=1}^mx_j-\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i=-\frac{1}{\sigma^2}\sum_{i=1}^nx_i && \square\\
+\frac{\partial^2 Q}{\partial\beta_1^2}&=-\frac1{\sigma^2}\sum_{j=1}^mx_j^2-\frac1{\sigma^2}\sum_{i=m+1}^nx_i^2=-\frac1{\sigma^2}\sum_{i=1}^nx_i^2 && \square\\
+\frac{\partial^2 Q}{\partial\beta_1\partial\sigma^2}&=-\frac1{\sigma^4}\sum_{j=1}^m[y_j-\mu_j]x_j-\frac1{\sigma^4}\sum_{i=m+1}^n[z_i-\mu_i]x_i && \square
+\end{align*}
+\dotfill
+
+\begin{align*}
+\frac{\partial Q}{\partial\sigma^2}&=-\frac{n}{2\sigma^2}+\frac1{2\sigma^4}\sum_{j=1}^m[y_j-\mu_j]^2+\frac1{2\sigma^4}\sum_{i=m+1}^n[(\mu_i^{\star}-\mu_i)^2+\sigma^{\star2}+\sigma^{\star}H(\cdot)(z_i+\mu_i^{\star}-2\mu_i)]\\
+&=-\frac{n}{2\sigma^2}+\frac1{2\sigma^4}\sum_{j=1}^m[y_j-\mu_j]^2+\frac1{2\sigma^4}\sum_{i=m+1}^n[(z_i-\mu_i)^2]\\
+\frac{\partial^2 Q}{\partial\sigma^2\partial\beta_0}&=-\frac1{\sigma^4}\sum_{j=1}^m[y_j-\mu_j]-\frac1{\sigma^4}\sum_{i=m+1}^n[Z_i-\mu_i] && \square\\
+\frac{\partial^2 Q}{\partial\sigma^2\partial\beta_1}&=-\frac1{\sigma^4}\sum_{j=1}^m[y_j-\mu_j]x_j-\frac1{\sigma^4}\sum_{i=m+1}^n[Z_i-\mu_i]x_i && \square\\
+\frac{\partial^2 Q}{\partial(\sigma^2)^2}&=\frac{n}{2\sigma^4}-\frac1{\sigma^6}\sum_{j=1}^m[y_j-\mu_j]^2-\frac1{\sigma^6}\sum_{i=m+1}^nE[(z_i-\mu_i)^2]&& \square\\
+\end{align*}
+
+
+
+Missing Information: H function
+
+$$\log(p(\beta_0,\beta_1,\sigma|y,z))=-\frac{n}2\ln(2\pi)-\frac{n}2\ln(\sigma^2)-\frac1{2\sigma^2}\sum_{j=1}^m(y_j-\beta_0-\beta_1x_j)^2-\frac1{2\sigma^2}\sum_{i=m+1}^n(Z_i-\beta_0-\beta_1x_i)^2$$
+
+\begin{align*}
+\frac{\partial \log(p(\beta_0,\beta_1,\sigma|y,z)}{\partial\beta_0}&=\frac1{\sigma^2}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]+\frac1{\sigma^2}\sum_{i=m+1}^n[Z_i-\beta_0-\beta_1x_i]\\
+\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_1}&=\frac1{\sigma^2}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]x_j+\frac1{\sigma^2}\sum_{i=m+1}^n[Z_i-\beta_0-\beta_1x_i]x_i\\
+\frac{\partial \log(p(\vec\theta|y,z)}{\partial\sigma^2}&=-\frac{n}{2\sigma^2}+\frac1{2\sigma^4}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]^2+\frac1{2\sigma^4}\sum_{i=m+1}^n[Z_i-\beta_0-\beta_1x_i]^2\\
+\end{align*}
+
+\begin{align*}
+Var\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_0}\right]&=\frac{1}{\sigma^4}\sum_{i=m+1}^nVar[Z_i]=\frac{n-m}{\sigma^2}&& \text{details down below}\\
+Cov\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_0},\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_1}\right]&=\frac{1}{\sigma^2}\sum_{j=1}^mx_j+\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i=\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i && \square\\
+Cov\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_0},\frac{\partial \log(p(\vec\theta|y,z)}{\partial\sigma^2}\right]&=\frac1{\sigma^4}\sum_{i=m+1}^n[z_i-\mu_i] && \square \\
+\end{align*}
+
+\dotfill
+
+\begin{align*}
+Cov\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_1},\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_0}\right]&=\frac{1}{\sigma^2}\sum_{j=1}^mx_j+\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i=\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i && \square\\
+Var\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_1}\right]&=\frac{1}{\sigma^4}\sum_{i=m+1}^nVar[x_iZ_i]=\frac{1}{\sigma^4}\sum_{i=m+1}^nx_i^2Var[Z_i]=\frac{1}{\sigma^2}\sum_{i=m+1}^nx_i^2 && \square\\
+Cov\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_1},\frac{\partial \log(p(\vec\theta|y,z)}{\partial\sigma^2}\right]&=\frac1{\sigma^4}\sum_{i=m+1}^n[z_i-\mu_i]x_i && \square \\
+\end{align*}
+
+\dotfill
+
+\begin{align*}
+Cov\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\sigma^2},\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_0}\right]&=\frac1{\sigma^4}\sum_{i=m+1}^n[z_i-\mu_i] && \square \\
+Cov\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\sigma^2},\frac{\partial \log(p(\vec\theta|y,z)}{\partial\beta_1}\right]&=\frac1{\sigma^4}\sum_{i=m+1}^n[z_i-\mu_i]x_i && \square \\
+Var\left[\frac{\partial \log(p(\vec\theta|y,z)}{\partial\sigma^2}\right]&=\frac1{4\sigma^8}\sum_{j=m+1}^nVar[(z_i-\mu_i)^2]=\frac1{4\sigma^8}\sum_{j=m+1}^n\left\{4\sigma^2E[(z_i-\mu_i)^2]-2\sigma^4\right\}\\
+&=-\frac{n-m}{2\sigma^4}+\frac{1}{\sigma^6}\sum_{j=m+1}^nE[(z_i-\mu_i)^2] && \square \\
+\end{align*}
+
+
+
+
+\begin{align*}
+\frac{\partial \log(p(\vec\theta|y)}{\partial\beta_0}
+&=\frac1{\sigma^2}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]
+& \frac{\partial^2 \log(p(\vec\theta|y)}{\partial\beta_0^2}
+&=-\frac{m}{\sigma^2} \\
+\frac{\partial \log(p(\vec\theta|y)}{\partial\beta_1}
+&=\frac1{\sigma^2}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]x_j
+& \frac{\partial^2 \log(f(\beta_0,\beta_1,\sigma|y)}{\partial\beta_1^2}
+&=-\frac1{\sigma^2}\sum_{j=1}^mx_j^2 \\
+\frac{\partial \log(p(\vec\theta|y)}{\partial\sigma^2}
+&=-\frac{m}{2\sigma^2}+\frac1{2\sigma^4}\sum_{j=1}^m[y_j-\beta_0-\beta_1x_j]^2 
+& \frac{\partial^2 \log(p(\vec\theta|y)}{\partial(\sigma^2)^2}
+&=\frac{m}{2\sigma^4}-\frac1{\sigma^6}\sum_{j=1}^m[y_j-\mu_j]^2
+\end{align*}
+
+
+
+
+
+\hrulefill
+
+\begin{align*}
+E[\varepsilon_i|Z_i>c_i,\vec\theta^\star]&==\frac{\phi(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})}{1-\Phi(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})}=H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})&&\square\\
+E[\varepsilon_i^2|Z_i>c_i,\vec\theta^\star]&=
+\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{\varepsilon_i^2\phi(\varepsilon_i)}{1-\Phi(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})}d\varepsilon_i\\
+&=\frac{1}{1-\Phi(\cdot)}\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty }\varepsilon_i^2\frac{1}{\sqrt{2\pi }}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\\
+&=\frac{-1}{1-\Phi(\cdot)}\left\{\left[\varepsilon_i\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}\right]_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}-\int_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\right\}\\
+&=\frac{-1}{1-\Phi(\cdot)}\left\{-\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}\frac{1}{\sqrt{2\pi }}e^{\frac{-(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2}{2}}-(1-\Phi(\cdot))\right\}\\
+&=\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1&&\square
+\end{align*}
+
+\begin{align*}
+E[\varepsilon_i^3|Z_i>c_i,\vec\theta^\star]&=
+ \frac{1}{1-\Phi(\cdot)}\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\varepsilon_i^3\frac{1}{\sqrt{2\pi }}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\\
+&=\frac{2}{1-\Phi(\cdot)}\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{-\varepsilon_i^2}{2}\frac{1}{\sqrt{2\pi }}e^{\frac{-\varepsilon_i^2}{2}}d(\frac{-\varepsilon_i^2}{2})\\
+&=\frac{2}{1-\Phi(\cdot)}\left\{\left[\frac{-\varepsilon_i^2}{2}\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}\right]_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}-\int_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{1}{\sqrt{2\pi }}e^{\frac{-\varepsilon_i^2}{2}}d(\frac{-\varepsilon_i^2}{2})\right\}\\
+&=\frac{2}{1-\Phi(\cdot)}\left\{-(-\frac12)(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2\frac{1}{\sqrt{2\pi }}e^{\frac{-(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2}{2}}-\left[\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}\right]_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\right\}\\
+&=\frac{1}{1-\Phi(\cdot)}\left[(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2+2\right]\frac{1}{\sqrt{2\pi}}e^{-\frac{(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2}{2}}\\
+&=\left[(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2+2\right]H(\cdot)&&\square
+\end{align*}
+
+\begin{align*}
+E[\varepsilon_i^4|Z_i>c_i,\vec\theta^\star]&=
+\frac{-1}{1-\Phi(\cdot)}\int _{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty }\varepsilon_i^3\frac{-\varepsilon_i}{\sqrt{2\pi }}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\\
+&=\frac{-1}{1-\Phi(\cdot)}\left\{\left[\varepsilon_i^3\frac{1}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}\right]_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}-\int_{\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}}^{\infty}\frac{3\varepsilon_i^2}{\sqrt{2\pi}}e^{\frac{-\varepsilon_i^2}{2}}d\varepsilon_i\right\}\\
+&=\frac{-1}{1-\Phi(\cdot)}\left\{-(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^3\frac{1}{\sqrt{2\pi }}e^{\frac{-(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2}{2}}\right\}+3[\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1]\\
+&=(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^3H(\cdot)+3[\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1]\\
+&=[(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^3+3\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}]H(\cdot)+3&&\square
+\end{align*}
+
+
+\dotfill
+
+
+\begin{align*}
+E[Z_i|Z_i>c_i,\vec\theta^\star]
+&=E[\mu_i^\star+\sigma^{\star}\varepsilon_i|.]=\mu_i^\star+\sigma^{\star}E[\varepsilon_i|.]=\mu_i^\star+\sigma^{\star}H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})&&\square\\
+E[Z_i^2|Z_i>c_i,\vec\theta^\star]
+&=\mu_i^{\star2}+2\mu_i^{\star}\sigma^{\star}E[\varepsilon_i|.]+\sigma^{\star2}E[\varepsilon_i^2|.]\\
+&=\mu_i^{\star2}+2\mu_i^{\star}\sigma^{\star}H(\cdot)+\sigma^{\star2}[\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1]\\
+&=\mu_i^{\star2}+\sigma^{\star}(c_i+\mu_i^{\star})H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})+\sigma^{\star2}&&\square\\
+E[Z_i^4|Z_i>c_i,\vec\theta^\star]
+&=\mu_i^{\star4}+4\mu_i^{\star3}\sigma^{\star}E[\varepsilon_i|.]+6\mu_i^{\star2}\sigma^{\star2}E[\varepsilon_i^2|.]+4\mu_i^{\star}\sigma^{\star3}E[\varepsilon_i^3|.]+\sigma^{\star4}E[\varepsilon_i^4|.]\\
+&=\mu_i^{\star4}+4\mu_i^{\star3}\sigma^{\star}H(\cdot)+6\mu_i^{\star2}\sigma^{\star2}\left[\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}H(\cdot)+1\right]+4\mu_i^{\star}\sigma^{\star3}\left[(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^2+2\right]H(\cdot)\\
+&\quad+\sigma^{\star4}\left\{[(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})^3+3\frac{c_i-\mu_i^{\star}}{\sigma^{\star}}]H(\cdot)+3\right\}\\
+&=\mu_i^{\star4}+6\mu_i^{\star2}\sigma^{\star2}+3\sigma^{\star4}+H(\cdot)\left[3\mu_i^{\star3}\sigma^{\star}-5\mu_i^{\star2}\sigma^{\star}c_i+\mu_i^{\star}\sigma^{\star}c_i^2+5\mu_i^{\star}\sigma^{\star3}+3\sigma^{\star3}c_i+\sigma^{\star}c_i^3\right]&&\square
+\end{align*}
+
+
+\begin{align*}
+Var[Z_i|Z_i>c_i,\vec\theta^\star]&=E[Z^2|.]-(E[Z|.])^2\\
+&=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(c_i+\mu_i^{\star})H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})-\left[\mu_i^\star+\sigma^{\star}H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})\right]^2\\
+&=\sigma^{\star2}[1-H^2(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})]+\sigma^{\star}(c_i-\mu_i^\star)H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})\\
+Var[Z_i]&=\sigma^2&& \square\\
+\end{align*}
+
+\begin{align*}
+Var[Z_i^2|Z_i>c_i,\vec\theta^\star]&=E[Z^4|.]-(E[Z^2|.])^2\\
+&=\mu_i^{\star4}+6\mu_i^{\star2}\sigma^{\star2}+3\sigma^{\star4}+H(\cdot)\left[3\mu_i^{\star3}\sigma^{\star}-5\mu_i^{\star2}\sigma^{\star}c_i+\mu_i^{\star}\sigma^{\star}c_i^2+5\mu_i^{\star}\sigma^{\star3}+3\sigma^{\star3}c_i+\sigma^{\star}c_i^3\right]\\
+&\quad-\left[\mu_i^{\star2}+\sigma^{\star}(c_i+\mu_i^{\star})H(\cdot)+\sigma^{\star2}\right]^2\\
+&=\mu_i^{\star4}+6\mu_i^{\star2}\sigma^{\star2}+3\sigma^{\star4}+H(\cdot)\left[3\mu_i^{\star3}\sigma^{\star}-5\mu_i^{\star2}\sigma^{\star}c_i+\mu_i^{\star}\sigma^{\star}c_i^2+5\mu_i^{\star}\sigma^{\star3}+3\sigma^{\star3}c_i+\sigma^{\star}c_i^3\right]\\
+&\quad-\left\{\mu_i^{\star4}+\sigma^{\star4}+\sigma^{\star2}(c_i+\mu_i^{\star})^2H^2(\cdot)+H(\cdot)[2\mu_i^{\star2}\sigma^{\star}c_i+2\mu_i^{\star3}\sigma^{\star}+2\sigma^{\star3}c_i+2\mu_i^{\star}\sigma^{\star3}]+2\mu_i^{\star2}\sigma^{\star2}\right\}\\
+&=2\sigma^{\star4}+4\mu_i^{\star2}\sigma^{\star2}+\sigma^{\star2}(c_i+\mu_i^{\star})^2H^2(\cdot)+H(\cdot)[\mu_i^{\star3}\sigma^{\star}-7\mu_i^{\star2}\sigma^{\star}c_i+\mu_i^{\star}\sigma^{\star}c_i^2+3\mu_i^{\star}\sigma^{\star3}+\sigma^{\star3}c_i+\sigma^{\star}c_i^3]\\
+Var[Z_i^2]&=2\sigma^{4}+4\mu_i^{2}\sigma^{2}&&\square
+\end{align*}
+
+
+\dotfill
+\begin{align*}
+E[Z_i-\beta_0-\beta_1x_i|Z_i>c_i,\vec\theta^\star]&=\mu_i^\star+\sigma^{\star}H(\frac{c_i-\mu_i^{\star}}{\sigma^{\star}})-(\beta_0+\beta_1x_i)&&\square\\
+E[(Z_i-\beta_0-\beta_1x_i)^2|Z_i>c_i,\vec\theta^\star]&=\mu_i^{\star2}+\sigma^{\star2}+\sigma^{\star}(c_i+\mu_i^{\star})H(\cdot)-2(\beta_0+\beta_1x_i)[\mu_i^\star+\sigma^{\star}H(\cdot)]+(\beta_0+\beta_1x_i)^2&&\square
+\end{align*}
+
+
+
+\pagebreak
+
+### HW3 Extra
+
+
+
+\begin{align*}
+f(\mathbf{y},\boldsymbol{\alpha}|\boldsymbol{\mu},\Sigma) &=\exp\frac{-1}{2}\left\{(\begin{bmatrix}\mathbf{y}\\\boldsymbol{\alpha}\end{bmatrix}-\boldsymbol{\mu})'\Sigma^{-1}(\begin{bmatrix}\mathbf{y}\\\boldsymbol{\alpha}\end{bmatrix}-\boldsymbol{\mu})+(N+a)\log(2\pi)+\log(|\Sigma|)\right\}\\
+&=\exp\frac{-1}{2}\left\{\begin{bmatrix}\mathbf{y}-\boldsymbol{1\beta}\\\boldsymbol{\alpha}\end{bmatrix}'\Sigma^{-1}\begin{bmatrix}\mathbf{y}-\boldsymbol{1\beta}\\\boldsymbol{\alpha}\end{bmatrix}+C+\log(|\Sigma|)\right\}\\
+&=\exp\frac{-1}{2}\left\{\begin{bmatrix}\mathbf{y}-\boldsymbol{1\beta}\\\boldsymbol{\alpha}\end{bmatrix}'
+\begin{bmatrix} I & 0 \\
+-\Sigma_{22}^{-1}\Sigma_{21} & I\end{bmatrix}
+\begin{bmatrix} (\frac{\Sigma}{\Sigma_{22}})^{-1} & 0 \\ 0 & \Sigma_{22}^{-1}\end{bmatrix}
+\begin{bmatrix} I & -\Sigma_{12}\Sigma_{22}^{-1} \\ 0 & I\end{bmatrix}
+ \begin{bmatrix}\mathbf{y}-\boldsymbol{1\beta}\\\boldsymbol{\alpha}\end{bmatrix}+C+\log(|\Sigma|)\right\}\\
+&=\exp\frac{-1}{2}\left\{(\mathbf{y}-\boldsymbol{1\beta}-\Sigma_{12}\Sigma_{22}^{-1}\boldsymbol{\alpha})'(\frac{\Sigma}{\Sigma_{22}})^{-1}(\mathbf{y}-\boldsymbol{1\beta}-\Sigma_{12}\Sigma_{22}^{-1}\boldsymbol{\alpha})+\boldsymbol{\alpha'}\Sigma_{22}^{-1}\boldsymbol{\alpha}+C+\log(|\Sigma|)\right\}\\
+&=\exp\frac{-1}{2}\left\{(\mathbf{y}-Z\boldsymbol{\alpha}-\boldsymbol{1\beta})'\frac{I_{3}}{\sigma^2_{\varepsilon}}(\mathbf{y}-Z\boldsymbol{\alpha}-\boldsymbol{1\beta})+\boldsymbol{\alpha'}\frac{I_{a}}{\sigma^2_{\alpha}}\boldsymbol{\alpha}+\log(\sigma^{2N}_{\varepsilon}\sigma^{2a}_{\alpha})+C\right\}\\
+&=\exp\frac{-1}{2}\left\{(\frac{\mathbf{y}-Z\boldsymbol{\alpha})'I_N(\mathbf{y}-Z\boldsymbol{\alpha})}{\sigma^2_{\varepsilon}}-\frac{2(\mathbf{y}-Z\boldsymbol{\alpha})'I_N\boldsymbol{1\beta}}{\sigma^2_{\varepsilon}}+\frac{\boldsymbol{1'\beta}I_N\boldsymbol{1\beta}}{\sigma^2_{\varepsilon}}+\frac{\boldsymbol{\alpha'}I_a\boldsymbol{\alpha}}{\sigma^2_{\alpha}}+N\log(\sigma^{2}_{\varepsilon})+a\log(\sigma^{2}_{\alpha})+C\right\}\\
+&=\exp\frac{-1}{2}\left\{\frac{1}{\sigma^2_{\varepsilon}}(\mathbf{y}-Z\boldsymbol{\alpha})'(\mathbf{y}-Z\boldsymbol{\alpha})'-\frac{2\beta}{\sigma^2_{\varepsilon}}(\mathbf{y}-Z\boldsymbol{\alpha})'\boldsymbol{1}+\frac{\beta^2}{\sigma^2_{\varepsilon}}+N\log(\sigma^{2}_{\varepsilon})+\frac{1}{\sigma^2_{\alpha}}\boldsymbol{\alpha'}\boldsymbol{\alpha}+a\log(\sigma^{2}_{\alpha})+C\right\}\\
+\end{align*}
+
+Therefore, the sufficient statistics are $\frac1{N}(\mathbf{y}-Z\boldsymbol{\alpha})'(\mathbf{y}-Z\boldsymbol{\alpha})$, $\frac1{a}\boldsymbol{\alpha'}\boldsymbol{\alpha}$, and 
+$\frac1{N}(\mathbf{y}-Z\boldsymbol{\alpha})'\boldsymbol{1}$.
+
+
+Let $\frac{\partial f(\mathbf{y},\boldsymbol{\alpha}|\boldsymbol{\mu},\Sigma)}{\partial\beta}=0$
+
+$$\frac{2}{\sigma^2_{\varepsilon}}(\mathbf{y}-Z\boldsymbol{\alpha}-\boldsymbol{1\beta})=0\implies\hat\beta=\frac1{N}(\mathbf{y}-Z\boldsymbol{\alpha})'\boldsymbol{1}$$
+
+Let $\eta_{\varepsilon}=1/\sigma^2_{\varepsilon}$;
+$\eta_{\alpha}=1/\sigma^2_{\alpha}$.
+
+$\sigma^2_{\varepsilon}=1/\eta_{\varepsilon}$;
+$\sigma^2_{\alpha}=1/\eta_{\alpha}$.
+
+$B(\sigma^2_{\varepsilon},\sigma^2_{\alpha},\beta)=-N\log(\sigma^{2}_{\varepsilon})-a\log(\sigma^{2}_{\alpha})$
+
+$$E[(\mathbf{y}-Z\boldsymbol{\alpha})'(\mathbf{y}-Z\boldsymbol{\alpha})]=A'(\eta_{\varepsilon})=N/\eta_{\varepsilon}=N\sigma^2_{\varepsilon}$$
+$$E[\boldsymbol{\alpha'}\boldsymbol{\alpha}]=A'(\eta_{\alpha})=a/\eta_{\alpha}=a\sigma^2_{\alpha}$$
+
+Therefore,
+$E[\frac1{N}(\mathbf{y}-Z\boldsymbol{\alpha})'(\mathbf{y}-Z\boldsymbol{\alpha})]=\sigma^2_{\varepsilon}$, $E[\frac1{a}\boldsymbol{\alpha'}\boldsymbol{\alpha}]=\sigma^2_{\alpha}$, and 
+$E[\frac1{N}(\mathbf{y}-Z\boldsymbol{\alpha})'\boldsymbol{1}]=\beta$
+
+
+\dotfill
+
+Details of Matrix operation
+
+$$\Sigma=\begin{bmatrix}
+ \Sigma_{11}=V & \Sigma_{12}=\sigma^2_{\alpha}Z \\
+ \Sigma_{21}=\sigma^2_{\alpha}Z' & \Sigma_{22}=\sigma^2_{\alpha}I_{a}
+\end{bmatrix},\qquad |\Sigma|=\sigma^{2N}_{\varepsilon}\sigma^{2a}_{\alpha}\qquad \square$$
+
+$$\Sigma_{11}=\begin{bmatrix}
+ \sigma^2_{\varepsilon}I_{1}+\sigma^2_{\alpha}J_{1} & 0 \\
+ 0 & \sigma^2_{\varepsilon}I_{2}+\sigma^2_{\alpha}J_{2}
+\end{bmatrix}$$
+
+By $(aI_k+bJ_k)^{-1}=\frac{I_k}{a}-\frac{bJ_k}{a(a+kb)}$,
+
+$$\Sigma_{11}^{-1}=\begin{bmatrix}
+ (\sigma^2_{\varepsilon}I_{1}+\sigma^2_{\alpha}J_{1})^{-1} & 0 \\
+ 0 & (\sigma^2_{\varepsilon}I_{2}+\sigma^2_{\alpha}J_{2})^{-1}
+\end{bmatrix}
+=\begin{bmatrix}
+ \frac{I_{1}}{\sigma^2_{\varepsilon}}-\frac{\sigma^2_{\alpha}J_{1}}{\sigma^2_{\varepsilon}+\sigma^2_{\alpha}} & 0 \\
+ 0 & \frac{I_{2}}{\sigma^2_{\varepsilon}}-\frac{\sigma^2_{\alpha}J_{2}}{\sigma^2_{\varepsilon}+2\sigma^2_{\alpha}}
+\end{bmatrix}
+=\begin{bmatrix}
+ \frac{1}{\sigma^2_{\varepsilon}+\sigma^2_{\alpha}} & 0 & 0 \\
+ 0 & \frac{\sigma^2_{\varepsilon}+\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}(\sigma^2_{\varepsilon}+2\sigma^2_{\alpha})} & \frac{-\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}(\sigma^2_{\varepsilon}+2\sigma^2_{\alpha})}\\
+ 0 & \frac{-\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}(\sigma^2_{\varepsilon}+2\sigma^2_{\alpha})} & \frac{\sigma^2_{\varepsilon}+\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}(\sigma^2_{\varepsilon}+2\sigma^2_{\alpha})}
+\end{bmatrix}$$
+
+\begin{align*}
+\Sigma_{22}^{-1}=\frac{I_{a}}{\sigma^2_{\alpha}} & \Sigma_{12}\Sigma_{22}^{-1}\alpha=Z\alpha&& \square
+\end{align*}
+
+The partitional matrices
+
+$$\underbrace{\begin{bmatrix}
+ I & -\Sigma_{12}\Sigma_{22}^{-1} \\
+ 0 & I
+\end{bmatrix}}_{X}\underbrace{\begin{bmatrix}
+ \Sigma_{11} & \Sigma_{12} \\
+\Sigma_{21} & \Sigma_{22}
+\end{bmatrix}}_{\Sigma}\underbrace{\begin{bmatrix}
+ I & 0 \\
+-\Sigma_{22}^{-1}\Sigma_{21} & I
+\end{bmatrix}}_{Y}=\begin{bmatrix}
+\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21} & 0 \\
+ 0 & \Sigma_{22}
+\end{bmatrix}
+=\underbrace{\begin{bmatrix}
+ \frac{\Sigma}{\Sigma_{22}} & 0 \\
+ 0 & \Sigma_{22}
+\end{bmatrix}}_{Z}$$
+
+By Schur decomplement of $\Sigma$ w.r.t $\Sigma_{22}$ is $\frac{\Sigma}{\Sigma_{22}}=\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}$ and it is invertible.
+
+$$\frac{\Sigma}{\Sigma_{11}}=\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}$$
+
+$$\Sigma^{-1}=YZ^{-1}X=\begin{bmatrix}
+ I & 0 \\
+-\Sigma_{22}^{-1}\Sigma_{21} & I
+\end{bmatrix}\begin{bmatrix}
+ (\frac{\Sigma}{\Sigma_{22}})^{-1} & 0 \\
+ 0 & \Sigma_{22}^{-1}
+\end{bmatrix}\begin{bmatrix}
+ I & -\Sigma_{12}\Sigma_{22}^{-1} \\
+ 0 & I
+\end{bmatrix}$$
+$$=\begin{bmatrix}
+(\frac{\Sigma}{\Sigma_{22}})^{-1} & -(\frac{\Sigma}{\Sigma_{22}})^{-1}\Sigma_{12}\Sigma_{22}^{-1} \\
+-\Sigma_{22}^{-1}\Sigma_{21}(\frac{\Sigma}{\Sigma_{22}})^{-1} & (\frac{\Sigma}{\Sigma_{22}})^{-1}+\Sigma_{22}^{-1}\Sigma_{21}(\frac{\Sigma}{\Sigma_{22}})^{-1}\Sigma_{12}\Sigma_{22}^{-1}
+\end{bmatrix}$$
+
+Alternatively,
+
+$$\Sigma^{-1}=\begin{bmatrix}
+(\frac{\Sigma}{\Sigma_{11}})^{-1}+\Sigma_{11}^{-1}\Sigma_{12}(\frac{\Sigma}{\Sigma_{11}})^{-1}\Sigma_{21}\Sigma_{11}^{-1} & -\Sigma_{11}^{-1}\Sigma_{12}(\frac{\Sigma}{\Sigma_{11}})^{-1} \\
+-(\frac{\Sigma}{\Sigma_{11}})^{-1}\Sigma_{21}\Sigma_{11}^{-1} & 
+(\frac{\Sigma}{\Sigma_{11}})^{-1}\end{bmatrix}$$
+
+
+\begin{align*}
+C_{11}&=(\frac{\Sigma}{\Sigma_{22}})^{-1}&=&(\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21})^{-1}= \begin{bmatrix}
+ \sigma^2_{\varepsilon}I_{1}+\sigma^2_{\alpha}J_{1} & 0 \\
+ 0 & \sigma^2_{\varepsilon}I_{2}+\sigma^2_{\alpha}J_{2}
+\end{bmatrix}-\sigma^2_{\alpha}Z\frac{I_{a}}{\sigma^2_{\alpha}}\sigma^2_{\alpha}Z' &=&\frac{I_{3}}{\sigma^2_{\varepsilon}} \\
+C_{12}&=-(\frac{\Sigma}{\Sigma_{22}})^{-1}\Sigma_{12}\Sigma_{22}^{-1}&=&(\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}-\Sigma_{11})^{-1}\Sigma_{12}\Sigma_{22}^{-1}=-\frac{1}{\sigma^2_{\varepsilon}}Z \\
+C_{21}&=-(\frac{\Sigma}{\Sigma_{11}})^{-1}\Sigma_{21}\Sigma_{11}^{-1}&=&(\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}-\Sigma_{22})^{-1}\Sigma_{21}\Sigma_{11}^{-1}=-\frac{1}{\sigma^2_{\varepsilon}}Z' \\
+C_{22}&=(\frac{\Sigma}{\Sigma_{11}})^{-1}&=&(\Sigma_{22}-\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12})^{-1}=\begin{bmatrix}
+ \frac{\sigma^2_{\varepsilon}+\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}\sigma^2_{\alpha}} & 0 \\
+ 0 & \frac{\sigma^2_{\varepsilon}+2\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}\sigma^2_{\alpha}}\end{bmatrix}
+\end{align*}
+
+$$\Sigma^{-1}=\begin{bmatrix}
+ C_{11} & C_{12} \\
+ C_{21} & C_{22}
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1/\sigma^2_{\varepsilon} & 0 & 0 & -1/\sigma^2_{\varepsilon} & 0 \\
+    0 & 1/\sigma^2_{\varepsilon} & 0 & 0 & -1/\sigma^2_{\varepsilon} \\
+    0 & 0 & 1/\sigma^2_{\varepsilon} & 0 & -1/\sigma^2_{\varepsilon} \\
+    -1/\sigma^2_{\varepsilon} & 0 & 0 & \frac{\sigma^2_{\varepsilon}+\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}\sigma^2_{\alpha}} &    0  \\
+    0 & -1/\sigma^2_{\varepsilon} & -1/\sigma^2_{\varepsilon} &    0   & \frac{\sigma^2_{\varepsilon}+2\sigma^2_{\alpha}}{\sigma^2_{\varepsilon}\sigma^2_{\alpha}} \\
+\end{bmatrix}$$
+
+
+\pagebreak
+
+## HW4. Due Mar. 04.
+
+1. Suppose (X1,...,Xk) follows a multinomial distribution with parameters (n,p1,...,pk). We wish to simulate this distribution by Gibbs sampling. What are the conditional distribution of any Xj given the rest of the variables? Does Gibbs sampling work in this case? Justify your answer.
+
+\begin{align*}
+f(x_{1:k})&=\dfrac{n!}{x_1!x_2!\cdots x_k!}p_1^{x_1} p_2^{x_2} \cdots p_k^{x_k}\\
+&=\left(\dfrac{n!}{x_1!\cdot x_2!\cdots x_{(j-1)}!\cdot x_{(j+1)}!\cdots x_k!}p_1^{x_1}\cdot p_2^{x_2}\cdots p_{(j-1)}^{x_{(j-1)}}\cdot p_{(j+1)}^{x_{(j+1)}} \cdots p_k^{x_k}\right)\cdot\dfrac{p_j^{x_j}}{x_j!}&& \text{or}\\
+Pr(p_{j}|p_{i\neq j},x_{1:k})&=\frac{Pr(p_{1:k},x_{1:k})}{Pr(p_{1:(j-1)},p_{(j+1):k},x_{1:k})}=\frac{\dfrac{n!}{\prod_{i=1}^kx_i!}\prod_{i=1}^kp_i^{x_i}}{\dfrac{(n-1)!}{\prod_{i=1}^{j-1}x_i!\prod_{i=j+1}^kx_i!}\prod_{i=1}^{j-1}p_i^{x_i}\prod_{i=j+1}^kp_i^{x_i}}=\frac{np_j^{x_j}}{x_j!}
+\end{align*}
+
+
+Given the rest of the variables, $x_j=n-\sum_{i\neq j}x_i$ is a constant, all the variable values are known. It doesn't has a strictly positive density on $E_j$ (Asymptotic Behavior of Gibbs Sampler). After estimating the parameter values, the variable values would not change anymore. Thus, Gibbs sampling doesn't work in this case.
+
+I simulate a multinomial data $(n=50,p_1=0.1,,p_1=0.2,p_1=0.3,p_1=0.4)$ data set. $x_{1:4}=(9,27,28,36)$ and put it into a Gibbs sampler. The result shows the estimated parameters will not change with iterations. It confirm that Gibbs sampling doesn't work for this case.
+
+
+
+
+<!--
+
+$$(p_{j}|p_{1:(j-1)},p_{(j+1):k},x_{1:k})\sim \frac{n}{\exp(-p_j)}\cdot Poisson(p_j)$$
+
+
+```{r,eval=F,include=F,}
+library(gtools) ;library(tidyverse)
+# print(head(thetas))
+
+#ds %>% group_by(id) %>% summarise(
+#  tokens = paste(icon, collapse = ' ')
+# ) %>% kable(col.names = c('Bag', 'type'))
+
+# Alpha: Vector containing shape parameters.
+# k=4 number of sides on the die
+# n - number of times the die will be rolled  
+```
+
+```{r,eval=F,include=F,collapse=T}
+n <- 100; i=1 ; k=4 ;  set.seed(121)
+index <- tibble(label = c('blue', 'green', 'orange', 'red'), 
+                code = c('\U1F4D8', '\U1F4D7', '\U1F4D9', '\U1F4D5'), 
+                props = c(.1, .2, .3, .4)) 
+x <- t(rmultinom (i,n,index$props))
+colnames(x) <- index$label
+x
+```
+
+Secondly, we get initial estimated parameter valus using the data set.
+Then we generate a new data set from Poisson distribution with this parameter.
+
+```{r,eval=F,include=F,out.width='45%',fig.show='hold'}
+S = 200 ; burnin = S/4
+Theta = matrix(0, nrow = (S-burnin), ncol=nrow(index), 
+                dimnames = list(NULL, index$label))
+p<- x/n
+for (s in 1:S){
+  x = dpois(1,p)*n/exp(-p)
+  p<- x/n
+  if (s >= burnin){
+    Theta[(s-burnin), ] = p
+  }
+}
+Gibbs <- as.tibble(Theta) %>% gather(type, p)
+ggplot(Gibbs, aes(y=p, x = type, fill=type)) + geom_violin() + 
+  scale_fill_manual(values=c('#0057e7', '#008744', '#ff9933','#d62d20'))
+```
+
+
+
+```{r,eval=F,include=F,echo=F}
+library(gtools) ;library(tidyverse)
+# print(head(thetas))
+
+#ds %>% group_by(id) %>% summarise(
+#  tokens = paste(icon, collapse = ' ')
+# ) %>% kable(col.names = c('Bag', 'type'))
+
+# Alpha: Vector containing shape parameters.
+# k=4 number of sides on the die
+# n - number of times the die will be rolled  
+```
+
+```{r,eval=F,include=F,collapse=T}
+n <- 100; i=1 ; k=4 ; set.seed(121)
+index <- tibble(label = c('blue', 'green', 'orange', 'red'), 
+                code = c('\U1F4D8', '\U1F4D7', '\U1F4D9', '\U1F4D5'), 
+                props = c(.1, .2, .3, .4)) 
+x <- t(rmultinom (i,n,index$props))
+colnames(x) <- index$label
+x
+```
+
+
+```{r,eval=F,include=F,out.width='45%',fig.show='hold'}
+S = 2000 ; burnin = S/4
+Theta = matrix(0, nrow = (S-burnin), ncol=nrow(index), 
+                dimnames = list(NULL, c(names(x))))
+p<- x/n
+j=4
+for (s in 1:S){
+for (j in 1:k){
+  x[j] = rpois(1,p[j])*prod(1:n)/exp(-p[j])
+}
+
+  if (s >= burnin){
+    Theta[(s-burnin), ] = theta
+  }
+}
+Gibbs <- as.tibble(Theta) %>% gather(type, theta)
+ggplot(Gibbs, aes(y=theta, x = type, fill=type)) + geom_violin() + 
+  scale_fill_manual(values=c('#0057e7', '#008744', '#ff9933','#d62d20'))
+```
+
+
+
+$(\theta_1,\ldots,\theta_k)\sim \mbox{Dirichlet}(\alpha_1,\ldots,\alpha_k)$
+\begin{align*}
+\mbox{Dirichlet}(\vec{\theta}|\vec{\alpha})=
+{ 
+  {\Gamma {\bigl (}\sum _{i=1}^{k}\alpha _{i}{\bigr )}}
+  \over{\prod _{i=1}^{k}\Gamma (\alpha _{i})}
+}
+\prod _{i=1}^{k}\theta_{i}^{\alpha _{i}-1}
+\end{align*}
+\begin{align*}
+p(\theta_{1:k}|x_{1:k}) &\propto p(x_{1:k}|\theta_{1:k})p(\theta_{1:k})\\
+&\propto \prod _{i=1}^{k}\theta_i^{x_i} { 
+  {\Gamma {\bigl (}\sum _{i=1}^{k}\alpha _{i}{\bigr )}}
+  \over{\prod _{i=1}^{k}\Gamma (\alpha _{i})}
+}
+\prod _{i=1}^{k}\theta_{i}^{\alpha _{i}-1} \\
+&\propto{ 
+  {\Gamma {\bigl (}\sum _{i=1}^{k}\alpha _{i}{\bigr )}}
+  \over{\prod _{i=1}^{k}\Gamma (\alpha _{i})}
+}\prod _{i=1}^{k}\theta_{i}^{\alpha _{i}+n_{k}-1} \\
+&\propto \mbox{Dirichlet}(\vec{\alpha} + \vec{n})
+\end{align*}
+$$(\theta_1,\ldots,\theta_k)\Big|(x_1,\ldots,x_k)\sim \mbox{Dirichlet}(\alpha_1+x_1,\ldots,\alpha_k+x_k)$$.
+
+
+
+
+
+```{r,eval=F,include=F,out.width='45%',fig.show='hold'}
+n<- 50; j=10 ; set.seed(121)
+index <- tibble(label = c('blue', 'green', 'orange', 'red'), 
+                code = c('\U1F4D8', '\U1F4D7', '\U1F4D9', '\U1F4D5'), 
+                props = c(.1, .2, .3, .4)) 
+thetas <- rdirichlet(n*j, index$props)
+obs <- apply(thetas, 1, function(x) which(rmultinom(1,1,x)==1))
+Obs <- tibble(id = rep(1:j, each = n),type = index$label[obs],
+              p  =index$props[obs]   ,icon = index$code[obs])
+(x <- table(Obs$type)) 
+
+
+S = 2000 ; burnin = S/4
+Alpha <- rep(1,nrow(index)) 
+Theta = matrix(0, nrow = (S-burnin), ncol=nrow(index), 
+                dimnames = list(NULL, c(names(x))))
+for (s in 1:S){
+  theta = rdirichlet(1,x+Alpha)
+  if (s >= burnin){
+    Theta[(s-burnin), ] = theta
+  }
+}
+Gibbs <- as.tibble(Theta) %>% gather(type, theta)
+ggplot(Gibbs, aes(y=theta, x = type, fill=type)) + geom_violin() + 
+  scale_fill_manual(values=c('#0057e7', '#008744', '#ff9933','#d62d20'))
+################## not loop ##########################
+Theta = rdirichlet(S,x+Alpha)
+Theta = Theta[1:(s-burnin), ]
+Gibbs <- as.tibble(Theta) %>% gather(type, theta)
+ggplot(Gibbs, aes(y=theta, x = type, fill=type)) + geom_violin() + 
+  scale_fill_manual(values=c('#0057e7', '#008744', '#ff9933','#d62d20'))
+```
+
+-->
+
+2. Reconsider the example with the pump failures at the nuclear plants. Write your own program to carry out the Gibbs sampling algorithm for the double gamma prior, and report the posterior estimates and 95% Bayesian percentile confidence intervals. Discuss the simulation in detail.
+
+Let $d_i$ denote the failures for the $i^{th}$ pump, $d_i| \lambda_i,t_i \sim Poisson(\lambda_it_i)$.
+
+And $\lambda_i| \alpha, \beta \sim Gamma(\alpha=1.802, \beta)$; $\beta \sim Gamma(\gamma=0.01, \delta=1)$.
+
+$\theta=(\lambda_1,.., \lambda_{10}, \alpha=1.802, \beta, \gamma=0.01, \delta=1)$. The Posterior Distribution is
+\begin{align*}
+\pi(\lambda_{1:n}, \alpha, \beta,\gamma, \delta | d_{1:n},t_{1:n})
+=& Pr(d_{1:n},t_{1:n} | \lambda_{1:n},\alpha, \beta)\cdot Pr(\lambda_{1:n}, \alpha, \beta)
+= Pr(d_{1:n},t_{1:n} | \lambda_{1:n})\cdot Pr(\lambda_{1:n} | \alpha, \beta,\gamma, \delta)\cdot Pr(\alpha, \beta|\gamma, \delta)\\
+=& Pr(d_{1:n},t_{1:n} | \lambda_{1:n})\cdot Pr(\lambda_1 | \alpha, \beta,\gamma, \delta)\cdots Pr(\lambda_{n} | \alpha, \beta,\gamma, \delta)\cdot Pr(\beta|\gamma, \delta)\\
+=& \left(\prod_{i=1}^n \frac{(\lambda_it_i)^{d_i}\exp{(-\lambda_it_i)}}{d_i!}\right) \left(\prod_{i=1}^n\frac{\beta^\alpha}{\Gamma(\alpha)}\lambda_i^{\alpha-1}\exp{(-\beta\lambda_i)}\mathbf{1}_{\theta>0}\right)\beta^{\gamma-1}\exp(-\delta\beta)\\
+=& \left(\frac{t_i^{d_i}}{\Gamma^n(\alpha)d_i!}\cdot\prod_{i=1}^n\lambda_i^{d_i+\alpha-1}\exp{[-\lambda_it_i]}\right)\beta^{n\alpha+\gamma-1}\exp[-(\delta+\sum\lambda_i)\beta]&& (1)\\
+=& \left(\frac{t_i^{d_i}}{\Gamma^n(\alpha)d_i!}\beta^{n\alpha+\gamma-1}\cdot\prod_{i\neq j}\lambda_i^{d_i+\alpha-1}\exp{[-(\delta+\sum_{i\neq j}\lambda_i)\beta]}\right)\lambda_j^{d_j+\alpha-1}\exp[-(\beta+t_j)\lambda_j]&& (2)
+\end{align*}
+
+$$(1)\implies\beta | \lambda_{1:10}, \alpha \sim Gamma(n\alpha + \gamma, \delta+\sum \lambda_i)$$
+$$(2)\implies(\lambda_{j}|\Lambda_1=\lambda_1,..,\Lambda_{j-1}=\lambda_{j-1},\Lambda_{j+1}=\lambda_{j+1},..,\lambda_{10}, B=\beta) \sim Gamma (\alpha+d_j,\beta+t_j)$$
+
+
+
+```{r, echo=T}
+pump <- matrix(c(5, 94.320,1, 15.720,5, 62.880,14, 125.760,3, 5.240,
+                 19, 31.440,1, 1.048,1, 1.048,4, 2.096,22, 10.480),2,10)
+pump <-t(pump)
+colnames(pump) <- c("Failures", "Times")
+d <- pump[,1]
+t <- pump[,2]
+n <- length(d)
+```
+
+```{r}
+alpha<-1.802; gamma <- 0.01; delta<- 1 #def hyperparameters
+beta <- gamma/delta #initialize lambda and beta
+lambda <- d/t 
+S <- 10000; set.seed(121)
+gibbs.mat <- matrix(NA,ncol=(n+1),nrow=S) #Gibbs Sampelr variables
+for(k in 1:S){  #Gibbs Sampler
+for(j in 1:n){  
+lambda[j]<- rgamma(1,shape=(d[j]+alpha),rate=(beta+t[j]))  # sample lambda  
+}
+beta <-  rgamma(1,shape=(gamma+n*alpha),rate=(delta+sum(lambda)))  # sample beta
+gibbs.mat[k,] <- c(lambda,beta)   # store draws
+}
+```
+
+
+```{r,echo=F, message=T, warning=F}
+burnin <- 1:(S/2)
+pumps.quant <- apply(gibbs.mat[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(gibbs.mat[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- c("Lambda1","Lambda2","Lambda3","Lambda4","Lambda5","Lambda6","Lambda7","Lambda8","Lambda9","Lambda10", "Beta")
+pander::pander(round(t(pumps.par[,1:11]),4))
+```
+
+
+```{r,echo=F,include=T, message=F, warning=F, fig.width=6, fig.height=3, fig.align='center'}
+par(mfrow=c(2,3),mar=c(3,3,.5,.5),mgp=c(1.70,.70,0))
+plot(gibbs.mat[-burnin,(n+1)],  ylab=expression(beta^{(k)}),main="",pch=20,cex=0.3,
+     xlab="Gibbs iteration (k)",col="cornflowerblue")
+plot(cumsum(gibbs.mat[-burnin,(n+1)])/(1:(S/2)),  ylab=expression(E(beta)),main="",
+     type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
+hist(gibbs.mat[-burnin,(n+1)],  xlab=expression(paste("distribution of est. for ",beta)),
+     main="",col="cornflowerblue")
+abline(v=quantile(gibbs.mat[-burnin,(n+1)],c(0.025,0.975)),col="red",lwd=1)
+
+u <- seq(0.01,4,length=1000)
+d <- dgamma(u,shape=alpha,rate=pumps.par["50%","Beta"])
+plot(u,d,type="l",xlab=expression(lambda),ylab="density",col="cornflowerblue",lwd=2,pch=20,cex=0.7)
+abline(v=pumps.quant["50%",1:10],col="grey",lwd=1)
+
+par(las=1,mar=c(3,5,.5,.5))
+plot(c(0,4),c(1,10),type="n",xlab=expression(lambda),ylab=" ",axes=FALSE)
+axis(side=1)
+axis(side=2,at=1:10,labels=paste("Pump #",10:1,sep=""))
+segments(pumps.quant["2.5%",1:10],10:1,pumps.quant["97.5%",1:10],10:1,col="cornflowerblue",lwd=2,pch=20,cex=0.7)
+segments(pumps.quant["50%",1:10],(10:1)-0.25,pumps.quant["50%",1:10],(10:1)+0.25,col="cornflowerblue",lwd=2,pch=20,cex=0.7)
+```
+
+```{r,echo=F,include=F, message=F, warning=F, fig.width=9, fig.height=15, fig.align='center'}
+par(mfrow=c(5,3),mar=c(3,3,.5,.5),mgp=c(1.70,.70,0))
+for(j in 1:n){
+plot(gibbs.mat[-burnin,j],  ylab=expression(lambda[j]^{(k)}),main="",pch=1,cex=0.3,
+     xlab="Gibbs iteration (k)",col="cornflowerblue")  
+plot(cumsum(gibbs.mat[-burnin,j])/(1:(S/2)),  ylab=expression(E(lambda[j])),main="",
+     type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
+hist(gibbs.mat[-burnin,j],  xlab=paste("est. density for ",expression(lambda),j),
+     main="",col="cornflowerblue")
+abline(v=quantile(gibbs.mat[-burnin,j],c(0.025,0.975)),col="red",lwd=1)
+}
+```
+
+The table gives mean, median, and 95% credible intervals for the individual failure rates.
+
+The figure of Gibbs iterations shows that the estimate will be stable after 1000 iterations and converge after 2000 iterations.
+
+The histogram and density of estimate of $\beta$ show a Gamma distribution. The same is for $\lambda_{1:10}$.
+
+When using thousand hours as the unit of observed times, the range of median of $\lambda_{1:10}$ is 0.0658 - 1.812 and they evenly locate in the density plot. From the box-plot, pump 1-4 have a similar performance, which have significant difference with pump 5-10. The 95% Bayesian percentile confidence intervals of pump 5-10 are overlapping except between pump 6 and 10.
+
+When using hours as the unit of observed times, the range of median of $\lambda_{1:10}$ is 0.000067 - 0.002602. It is reasonable because $\lambda_it_i$ will not change for the observation. The shape of density of $\lambda$ keep the same but be scaled a lot. The shape of density of $\beta$ changed with $\sum\lambda_i$ in the Gibbs sampling.  An important change is that the medians of estimate of $\lambda$ locate in the extremely low region in this case. Therefore, Choosing thousand hours as the unit of observed times is more reliable.
+
+
+
+```{r, echo=F}
+pump <- matrix(c(5, 94.320,1, 15.720,5, 62.880,14, 125.760,3, 5.240,
+                 19, 31.440,1, 1.048,1, 1.048,4, 2.096,22, 10.480),2,10)
+pump <-t(pump)
+colnames(pump) <- c("Failures", "Times")
+d <- pump[,1]
+t <- pump[,2]*1000
+n <- length(d)
+```
+
+```{r, echo=F}
+alpha<-1.802; gamma <- 0.01; delta<- 1 #def hyperparameters
+beta <- gamma/delta #initialize lambda and beta
+lambda <- d/t 
+S <- 10000; set.seed(121)
+gibbs.mat <- matrix(NA,ncol=(n+1),nrow=S) #Gibbs Sampelr variables
+for(k in 1:S){  #Gibbs Sampler
+for(j in 1:n){  
+lambda[j]<- rgamma(1,shape=(d[j]+alpha),rate=(beta+t[j]))  # sample lambda  
+}
+beta <-  rgamma(1,shape=(gamma+n*alpha),rate=(delta+sum(lambda)))  # sample beta
+gibbs.mat[k,] <- c(lambda,beta)   # store draws
+}
+```
+
+
+```{r,echo=F, message=T, warning=F}
+burnin <- 1:(S/2)
+pumps.quant <- apply(gibbs.mat[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
+mean <- colMeans(gibbs.mat[-burnin,])
+pumps.par<- rbind(mean,pumps.quant)
+colnames(pumps.par) <- c("Lambda1","Lambda2","Lambda3","Lambda4","Lambda5","Lambda6","Lambda7","Lambda8","Lambda9","Lambda10", "Beta")
+pander::pander(round(t(pumps.par[,1:11]),6))
+```
+
+The table gives mean, median, and 95% credible intervals for the individual failure rates.
+
+```{r,echo=F,include=T, message=F, warning=F, fig.width=6, fig.height=3, fig.align='center'}
+par(mfrow=c(2,3),mar=c(3,3,.5,.5),mgp=c(1.70,.70,0))
+hist(gibbs.mat[-burnin,(n+1)],  xlab=expression(paste("est. density for ",beta)),
+     main="",col="cornflowerblue")
+abline(v=quantile(gibbs.mat[-burnin,(n+1)],c(0.025,0.975)),col="red",lwd=1)
+
+u <- seq(0,0.5,length=1000)
+d <- dgamma(u,shape=alpha,rate=pumps.par["50%","Beta"])
+plot(u,d,type="l",xlab=expression(lambda),ylab="density",col="cornflowerblue",lwd=2,pch=20,cex=0.7)
+abline(v=pumps.quant["50%",1:10],col="grey",lwd=1)
+
+par(las=1,mar=c(3,5,.5,.5))
+plot(c(0,0.01),c(1,10),type="n",xlab=expression(lambda),ylab=" ",axes=FALSE)
+axis(side=1)
+axis(side=2,at=1:10,labels=paste("Pump #",10:1,sep=""))
+segments(pumps.quant["2.5%",1:10],10:1,pumps.quant["97.5%",1:10],10:1,col="cornflowerblue",lwd=2,pch=20,cex=0.7)
+segments(pumps.quant["50%",1:10],(10:1)-0.25,pumps.quant["50%",1:10],(10:1)+0.25,col="cornflowerblue",lwd=2,pch=20,cex=0.7)
+```
+
+```{r,echo=F,include=F, message=F, warning=F, fig.width=9, fig.height=15, fig.align='center'}
+par(mfrow=c(5,3),mar=c(3,3,.5,.5),mgp=c(1.70,.70,0))
+for(j in 1:n){
+plot(gibbs.mat[-burnin,j],  ylab=expression(lambda[j]^{(k)}),main="",pch=1,cex=0.3,
+     xlab="Gibbs iteration (k)",col="cornflowerblue")  
+plot(cumsum(gibbs.mat[-burnin,j])/(1:(S/2)),  ylab=expression(E(lambda[j])),main="",
+     type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
+hist(gibbs.mat[-burnin,j],  xlab=paste("est. density for ",expression(lambda),j),
+     main="",col="cornflowerblue")
+abline(v=quantile(gibbs.mat[-burnin,j],c(0.025,0.975)),col="red",lwd=1)
+}
+```
+
+
+```{r,eval=F,include=F, out.width='45%'}
+# https://cran.r-project.org/web/packages/bang/vignettes/bang-hef-vignette.html
+library(bang)
+pump_res <- hef(model = "gamma_pois", data = pump, hpars = c(1, 0.01, 0.01,1))
+plot(pump_res)
+plot(pump_res, ru_scale = TRUE)
+summary(pump_res)
+```
+
+
+
+
+
+\pagebreak
+
+### HW4 Extra
+
+```{r}
+rm(list =ls() )
+## generate data with 100 sample size
+n_i <- c(10,10,10,10,20,20,20,30,30,30)
+a <- length(n_i)
+N <- sum(n_i)
+sigma_a<-0.1 # give the ture parameter values
+sigma_e<-0.3
+beta<-2
+set.seed(123)
+I_a<-diag(a)
+I_N<-diag(N)
+SIGMA_a_sq<-(sigma_a^2)*I_a
+SIGMA_e_sq<-(sigma_e^2)*I_N
+Alpha<-MASS::mvrnorm(n = 1, rep(0,a), SIGMA_a_sq) # generate alpha
+Epsilon<-MASS::mvrnorm(n = 1, rep(0,N), SIGMA_e_sq) # generate epsilon
+Z<-matrix(0,nrow=N,ncol=a)
+for (i in 1:a){
+Z[(sum(n_i[1:i])-n_i[i]+1):sum(n_i[1:i]),i] <-1 # Z%*%t(Z)
+}
+N1<-rep(1,N)
+Y<-N1*beta+Z%*%Alpha+Epsilon # generate Y
+sigma_a<-sigma_e<-beta<-NULL
+```
+
+
+```{r}
+## find MLE
+EM_oneway<- function(Y, n_i, crit, itera)
+{
+i <- 0 # iteration counter
+a <- length(n_i)
+N <- sum(n_i)
+beta <- y_bar <- mean(Y)
+Y_ibar <- rep(NA,a)
+for (i in 1:a){
+Y_ibar[i] <- mean(Y[(sum(n_i[1:i])-n_i[i]+1):sum(n_i[1:i])])
+}
+
+sigma_a_sq <- sum((Y_ibar-y_bar)^2)/(a-1)
+sigma_e_sq <- sum((Y-Y_ibar)^2)/(N-a)
+theta <- c(sigma_a_sq,sigma_e_sq,beta)
+repeat {
+tau<-theta[1]/theta[2]
+sigma_a_sq <- (tau^2*sum(((Y_ibar-theta[3])/(tau+1/n_i))^2)-
+               theta[1]*sum(tau/(tau+1/n_i))+
+               a*theta[1])/a
+sigma_e_sq <- ( -tau*sum(((Y_ibar-theta[3])/(tau+1/n_i))^2*(2+n_i*tau))+
+               theta[2]*sum(tau/(tau+1/n_i))+
+               sum((Y-theta[3])^2))/N
+beta       <- sum((Y_ibar+n_i*tau*theta[3])/(tau+1/n_i))/N  
+theta_new <- c(sigma_a_sq,sigma_e_sq,beta) # new estimate of parameters
+if((abs(theta[1]-theta_new[1]) < crit)| (i > itera)) # (sqrt(sum((theta-theta_new)^2))
+break
+else {
+i <- i +1
+theta <- theta_new
+}
+}
+return(c(sqrt(theta[1:2]),theta[3],i))
+}
+EM_oneway(Y, n_i, crit=1e-8, itera = 50)
+```
+$\hat\sigma_\alpha=0.082789227\approx0.1$, $\hat\sigma_\varepsilon=0.285368751\approx0.3$, and $\hat\beta=2.008143570\approx2$.
+
+After 35 iterations, the results are very close to the true parameter values. 
+
+
+
+
+\pagebreak
+
+## HW5. Due March 11.
+Do the Genetic Linkage example in page 177 of the textbook. Write your own code using candidate values sampled from either unif(0,1) or normal distribution centered at the current value with standard deviation of your choice, and analyze your result. Draw a density plot of the $\theta$ values.
+
+
+\begin{algorithm}[H]
+ \KwData{$Y\sim p(\theta)$}
+ \KwResult{generates $\theta_k^{(1)},...,\theta_k^{(s)} \sim\text{iid }p(\theta|y)$}
+ Initialization\; Choose $\sigma$ to make the approximation algorithm run efficiently\; 
+ \For{the number of chains $k\leftarrow 1$ \KwTo K}{
+  \For{a chain $s\leftarrow 1$ \KwTo S}{
+ 1.Select a symmetric $q(\theta_b|\theta_a) = q(\theta_a|\theta_b)$ \;
+ 
+   Let  $q(\theta^\star|\theta^{(s)}) =g(\theta^\star)=1$  \; 
+
+ 2.Sample $\theta^\star \sim \text{uniform}(0,1)$ or $\text{normal}(\theta^{(s)},\sigma^2)$ \;
+
+
+ 3.Compute the acceptance ratio \;
+$$r=\frac{\pi(\theta^\star|y)g(\theta^{(s)})}{\pi(\theta^{(s)}|y)g(\theta^\star)}=\frac{\pi(\theta^\star|y)}{\pi(\theta^{(s)}|y)}$$
+3. Sampling $u \sim \text{uniform}(0,1)$\;
+ 
+  \If{the ratio $r >1,(u)$}
+   {$\theta^{(s+1)}\longleftarrow\theta^\star$ with probability $\min(r,1)$\;}
+   
+  \If{the ratio $r <1,(u)$}
+   {$\theta^{(s+1)}\longleftarrow\theta^{(s)}$ with probability $1-\min(r,1)$\;}{}
+   generates a value $\theta^{(s+1)}$ given $\theta^{(s)}$\; 
+   }
+   
+ }
+ \caption{The Metropolis algorithm}
+\end{algorithm}
+
+The Metropolis algorithm works with the observed posterior:
+
+$$\pi(\theta)=(2+\theta)^{125}(1-\theta)^{38}\theta^{34}\propto p(\theta|Y),\quad\theta\in [0, 1]$$
+
+The starting value of $\theta=0.1$. For this example, we can set $q(\theta^{\star}|\theta^{(s)})=1$. That is, candidate values were generated from Uniform(0,1).
+
+When using the uniform to drive the Metropolis algorithm, it doesn't need $\theta^{(s)}$ and $\sigma$ in general case $q(\theta^\star|\theta^{(s)}) = \text{uniform}(\theta^{(s)}-\sigma,\theta^{(s)}+\sigma)$.
+
+Uniform distribution itself covers the whole parameter space. Thus, there isn't starting point to "forget". The acceptance rate for this chain is very low and the chain quickly move into the region where the posterior mass is located. 
+
+```{r}
+pi <- function(y,theta){(2+theta)^y[1]*(1-theta)^y[2]*theta^y[3]}
+# generate from Uniform
+ratio<-function(y,theta,theta.star){pi(y,theta.star)/pi(y,theta)} 
+
+Metro_Multi_unif <- function(y,S,theta){
+THETA<-matrix(NA,S,2) ; acr <- acs<-0; # set.seed(121)
+for(s in 1:S) {
+  theta.star<-runif(1)
+  r<-ratio(y,theta,theta.star)
+  if((runif(1))<r) { theta<-theta.star; acs<-acs+1 }
+  if(s%%50==0) {acr <- acs/50; acs<-0}
+  THETA[s,]<-c(theta,acr)
+}
+return(THETA)
+}
+```
+
+
+```{r,echo=F, fig.width=6, fig.height=3, fig.align='center'}
+library(scales)
+y<-c(125, 38, 34); S <- 1000
+skeep<-seq(1,S,by=10)
+par(mfrow=c(1,1),mar=c(5,3,1,1),mgp=c(1.75,.75,0))
+THETA <- Metro_Multi_unif(y,S,0.1)
+plot(skeep,THETA[skeep,2],type="l",ylim = c(0,1),xlab="iteration",ylab=expression(theta),lty=3,col=alpha(1, 1))
+lines(skeep,THETA[skeep,1],col="dodgerblue4" )
+abline(h=0.63,lty=2)
+mtext("One chain of Metropolis algorithm for the multinomial model from Uniform ", side =1, line =-2, outer = TRUE)
+```
+
+When using the normal to drive the Metropolis algorithm, the candidate values were generated from three symmetric transition functions: Normal ($\theta^\star,\sigma^2$) with $\sigma=(0.01, 0.05, 0.12)$. It leads to  $\theta^\star$ values outside the range [0,1]. The candidate is accepted only when $\theta^\star\le1$.
+
+The figures show that the variance of the first driver is grossly under specified, leading to a highly correlated sequence of values that require many iterations to "forget" the starting point and reach the equilibrium distribution. The acceptance rate for this chain tends to be very high, suggesting that the chain is moving up the hill of the posterior density rather than quickly exploring the parameter space. The two other chains quickly move into the region where the posterior mass is located.
+
+
+```{r}
+# generate from Normal
+ratio<-function(y,theta,theta.star){pi(y,theta.star)/pi(y,theta)}
+Metro_Multi_norm <- function(y,S,theta,sd){
+THETA<-matrix(NA,S,2) ; acr <- acs<-0;  # set.seed(121)
+for(s in 1:S) 
+{
+  theta.star<-abs(rnorm(1,theta,sd))
+  r<-ratio(y,theta,theta.star)
+  if((runif(1))<r & theta.star<=1) { theta<-theta.star; acs<-acs+1 }
+  if(s%%50==0) {acr <- acs/50; acs<-0}
+  THETA[s,]<-c(theta,acr)
+}
+return(THETA)
+}
+```
+
+```{r,echo=F, fig.width=6, fig.height=9, fig.align='center'}
+par(mfrow=c(3,1),mar=c(3,1,1,1),mgp=c(1.75,.75,0))
+for(sd in c(0.01,0.05,0.12) ) { # under three different proposal distributions
+THETA <- Metro_Multi_norm(y,S,0.1,sd)
+plot(skeep,THETA[skeep,2],type="l",ylim = c(0,1),xlab="iteration",ylab=expression(theta),lty=3,col=alpha(1, 1))
+lines(skeep,THETA[skeep,1],col="dodgerblue4" )
+abline(h=0.63,lty=2)
+}
+mtext("One chain of Metropolis algorithm for the multinomial model \n from Normal with sd=(0.01, 0.05, 0.12)", side =1, line =-4, outer = TRUE)
+```
+
+```{r,echo=T}
+THETA_u <- THETA_n<-matrix(NA,S,2); K <- 1000
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Uniform
+THETA_u[k,] <- Metro_Multi_unif(y,S,0.1)[S,]
+}
+ptm_u <- proc.time() - ptm
+ptm <- proc.time()
+for(k in 1:K) { # Run K Number of chains by drawing from Normal
+THETA_n[k,] <- Metro_Multi_norm(y,S,0.1,0.12)[S,]
+}
+ptm_n <- proc.time() - ptm
+```
+
+```{r,echo=T}
+logpi <- function(theta){125*log(2+theta) + 38*log(1-theta) + 34*log(theta)}
+alpha <- function(theta,r) {min(exp(logpi(r)-logpi(theta)),1)}
+ptm <- proc.time()
+THETA_l<-matrix(NA,S,2)
+for(k in 1:K) {
+  theta<-runif(1); acs<-0
+for(s in 1:S) {  
+  r <- runif(1)
+  i <- rbinom(1,1,alpha(theta,r)) # Using the log of path weight
+  theta <- theta + i*(r-theta)  
+  acs <- acs+i
+}
+  acr <- acs/S
+  THETA_l[k,]<-c(theta,acr)
+}
+ptm_l <- proc.time() - ptm
+```
+
+
+```{r,echo=F, fig.width=9, fig.height=3, fig.align='center'}
+par(mfrow=c(1,3),mar=c(3,1,1,1),mgp=c(1.75,.75,0))
+hist(THETA_u[,1],  xlab=expression(paste("distribution of est. for ",theta[k]),"by Uniform"),breaks = 20,freq = T,main="",col="cornflowerblue")
+hist(THETA_l[,1],  xlab=expression(paste("distribution of est. for ",theta[k]),"by Log_Unif"),breaks = 20,freq = T,main="",col="cornflowerblue")
+hist(THETA_n[,1],  xlab=expression(paste("distribution of est. for ",theta[k]),"by Normal"),breaks = 20,freq = T,main="",col="cornflowerblue")
+```
+
+```{r,echo=F}
+library(HDInterval)
+Uniform <- c(mean(THETA_u[,1]),quantile(THETA_u[,1],c(0.025,0.5,0.975)),hdi(THETA_u[,1], credMass=0.95),mean(THETA_u[,2]),ptm_u[1])
+Log_Unif<- c(mean(THETA_l[,1]),quantile(THETA_l[,1],c(0.025,0.5,0.975)),hdi(THETA_l[,1], credMass=0.95),mean(THETA_l[,2]),ptm_l[1])
+Normal  <- c(mean(THETA_n[,1]),quantile(THETA_n[,1],c(0.025,0.5,0.975)),hdi(THETA_n[,1], credMass=0.95),mean(THETA_n[,2]),ptm_n[1])
+pumps.par <- rbind(Uniform,Log_Unif,Normal)
+colnames(pumps.par) <- c('mean','2.5%','median','97.5%','95% HPD U', '95% HPD L','Acceptance Rate','running time')
+kableExtra::kable(round(pumps.par,4))
+```
+In this example, the three setting of the Metropolis Algorithm have similar results with EM Algorithm ($\theta=0.6268$).
+
+To drive the Metropolis algorithm,
+drawing $\theta$ from Uniform is the most accurate;
+Using the log of path weight and drawing $\theta$ from Uniform is the most efficient;
+Drawing $\theta$ from Normal to drive the Metropolis algorithm is the most Robust.
+
+
+
+- backup
+
+
+Note: the normalizing constant for $p(\theta|Y)$ is not required for implementing the Metropolis algorithm. 
+
+
+In such instances, we recall that $\pi(\theta) = 0$ for values of $\theta$ outside the interval $[0,1]$. 
+
+One long chain, starting from $\theta= 0.1$, was created for each driver, and the results are presented in Figures 6.18, 6.19 and 6.20. 
+
+In each figure, the solid line represents the path of the chain, while the dotted/dashed line represents the proportion of accepted jumps for the Metropolis algorithm (computed over contiguous blocks of 50 iterations).
+
+The horizontal bar is located at $Y = 0.63$, the posterior mean. 
+
+Note that the variance of the first driver is grossly underspecified, leading to a highly correlated sequence of values that require many iterations to "forget" the starting point and reach the equilibrium distribution.
+
+The acceptance rate for this chain tends to be quite high, suggesting that the chain is moving up the hill of  the posterior density rather than quickly exploring the parameter space. 
+
+The two other chains quickly move into the region where the posterior mass is located. 
+
+Gelman et al. (1995) suggest that the optimal variance on the normal driver is $c^2\Sigma$;, where $c\approx2.4\sqrt{d}$ ($d$ is the dimension of the parameter vector) and $\Sigma$ is the variance-covariance matrix (i.e. based on the curvature of the posterior at the mode). 
+
+In the present case $\Sigma= 0.052$ and $c = 2.4$, implying that the optimal standard deviation for the normal driver is 0.12. 
+
+Gelman et al. (1995) also suggest that the optimal jumping rule has an acceptance rate of about $0.44$ for one dimensional problems, decreasing to $0.23$ for problems where the dimension of the parameter vector exceeds 5.
+
+
+\pagebreak
+
+
+## Backup
+
+```{r,eval=T}
+# Backup
+motorette <-  matrix( 
+c(1764,2772,3444,3542,3780,4860,5196,408,408,1344,1344,1440,408,408,504,504,504,
+  rep(8064,10),rep(5448,3),rep(1680,5),rep(528,5),
+  rep(170,7),rep(190,5),rep(220,5),
+  rep(150,10),rep(170,3),rep(190,5),rep(220,5)),
+nrow=40,              
+ncol=2,             
+byrow = F)
+```
+
+
+```{r,eval=T}
+# Backup
+
+EM<- function(D, n, m, crit = 0.000001, itera = 50)
+{
+##"D" is the data, which have exact part and right censored part.
+##This algorithm computes the MLE of parameters in the simple linear
+##regression with right censored data.
+##"theta" is the parameter vector, that is, betaO, beta I, and sigma.
+##"thetastar" is the current parameter estimate.
+##In this special project temperatures and failure times
+##had specific transformations. ·
+##
+##"itera" is the upper limit of iterations. That is, if the algorithm
+##doesn't converge until this upper limit, we have to stop at this
+##moment and treat our current estimate as the limit point we are
+##trying to obtain.
+##"n" is the sample size
+##"m" is the exact data size.
+##########################################################
+thetastar <- rep(0,3)
+theta<- rep(0,3)
+i <- 0 # iteration counter
+D[,1] = log10(D[,1]) # transformed time
+D[,2] = 1000/(D[,2]+273.2) # transformed temperature
+exact<- D[1:m,] # exact data (uncensored data)
+censored<- D[(m+1):n,] # censored data
+out<- lm(D[,1]~ D[,2])
+# the least squares method based on the data where we assume
+# the censored are exact
+thetastar[1:2] <- out$coefficients
+thetastar[3] <- sqrt(sum(out$residuals^2)/(m - 2))
+repeat {
+############ E Step ##############
+# Computing Q function
+mustar <- thetastar[1] + thetastar[2]*censored[, 2]
+sigmastar <- thetastar[3]
+zscore <- (censored[,1]-mustar)/sigmastar # standardized score
+num <- dnorm(zscore)
+denom <- 1-pnorm(zscore)
+H <- num/denom # hazard rate function of standard normal dist'n
+tstar <- mustar + sigmastar*H # estimated failure times
+############ M Step ##############
+cmpy <- c( exact[, 1], tstar) # complete data augmented by
+# estimated failure times
+out<- lm( cmpy~ D[, 2])
+theta[1:2] <- out$coefficients # new estimates of reg. coeff.
+mu<- theta[1]+ theta[2]*D[, 2] # new mean
+S1 <- sum((exact[,1]-mu[1 :m])^2) # exact part
+# S2, S3, S4 are for the censored part
+S2 <- sum(sigmastar^2+mustar^2+sigmastar*( censored[, 1 ]+mustar-
+2*mu[(m+ 1):n])*H)
+S3 <- sum(mu[(m+1):n]*mustar)
+S4 <- sum(mu[(m+1):n]^2)
+rssq <- S1 + S2 - 2*S3 + S4 # total residul sum of squares
+theta[3] <- sqrt(rssq/n) # new estimate of residual std
+if((sqrt(sum((thetastar-theta)^2)) < crit)| (i > itera))
+break
+else {
+i <- i +1
+thetastar <- theta
+}
+}
+return(list(theta,i))
+}
+EM(motorette,n=40,m=17,crit=0.0001)
+```
+
+
+
+
+```{r,eval=F}
+I_u <- c(11:17,21:25,31:35)
+I_c <- c(1:10,18:20,26:30,36:40)
+temp <- c(150,170,190,220) #temperature levels 
+trec <- 1000/(temp+273.2) #reciprocal of the absolute temperature T 
+nu <- c(rep(trec[1],10),rep(trec[2],10),rep(trec[3],10),rep(trec[4],10))
+t<- t_0<-log10(c(                          rep(8064,10),
+         1764,2772,3444,3542,3780,4860,5196,rep(5448,3),
+                     408,408,1344,1344,1440,rep(1680,5),
+                        408,408,504,504,504,rep(528,5)))
+# initial value
+m <- length(I_u)
+n<-length(I_c)+m
+w<- unique(t_0[I_c])
+
+nu_i <- nu[I_c]
+nu_j <- nu[I_u]
+nu_bar <- mean(nu)
+
+t_i<- t[I_c]
+t_j<- t[I_u]
+
+fit0 <- lm(t~nu) 
+fit_c <- lm(t_i~nu_i)
+fit_u <- lm(t_j~nu_j)
+
+sigma <- sigma(fit0) #standard error of residuals 
+beta0 <- coef(fit0)[1] #intercept 
+beta1 <- coef(fit0)[2] #slope 
+
+mu_j <- beta0 + beta1 * nu_j
+SS_nu <- sum(nu^2)-n*nu_bar^2
+mu_i <- beta0 + beta1 * nu_i
+z_i=(t_i-mu_i)/sigma
+H_i <- dnorm(z_i)/(1-pnorm(z_i))
+# H_i <-dnorm(0)/(1-pnorm(0))
+ET_i  <- mu_i+ sigma*H_i
+
+S <- 60
+THETA<-matrix(nrow=S,ncol=8,dimnames=list(NULL, 
+     c('Iteration','Intercept','Slope','Sigma','mu150','mu170','mu190','mu220')))
+THETA[1,]<-theta<-c(1, beta0, beta1,sigma,unique(ET_i))
+Q <- 0
+k=1
+delta = 1e-4
+```
+
+```{r,eval=F}
+repeat {  
+beta0<- THETA[k,2]
+beta1<- THETA[k,3]
+sigma<- THETA[k,4]
+
+# M step    
+
+mu_i <- beta0 + beta1 * nu_i
+z_i=(t_i-mu_i)/sigma
+H_i <- dnorm(z_i)/(1-pnorm(z_i))
+ET_i <- mu_i+ sigma*H_i
+
+beta0_star <- sum(t_j)/n+sum(ET_i)/n-
+              nu_bar/SS_nu*(sum(t_j*(nu_j-nu_bar))+sum(ET_i*(nu_i-nu_bar)))
+               
+beta1_star <- (sum(t_j*(nu_j-nu_bar))+sum(ET_i*(nu_i-nu_bar)))/SS_nu
+
+mu_i_star <- beta0_star+beta1_star*nu_i 
+mu_j_star <- beta0_star+beta1_star*nu_j
+
+sigma_star <- sqrt((sum((t_j-mu_j_star)^2)+
+                 sum(sigma^2+sigma*H_i*(ET_i+mu_i-2*mu_i_star)+(mu_i-mu_i_star)^2)
+               )/n)
+
+ET_i_star <- mu_i_star+ sigma_star*H_i
+
+# E step
+# Get Q
+k <-  k+1  
+Q[k] <-  
+ -n*log(2*pi)/2-
+  n*log(sigma_star)-
+ (1/(2*sigma_star^2))*sum((t_j-mu_j_star)^2)-# 1/2sigma^2*sum(j uncensored)-
+ (1/(2*sigma_star^2))*sum(                   # 1/2sigma^2*sum(i censored  
+                      sigma^2+       # sigma^2+                         
+                      sigma*H_i*(    # sigma*H*(
+          ET_i+mu_i-2*mu_i_star)+     # w_i+mu_i_star-2mu_i)
+             (mu_i-mu_i_star)^2)     # (mu_i-mu_i_star)^2)
+        
+# Update THETA
+ THETA[k,2] <- beta0_star
+ THETA[k,3] <- beta1_star
+ THETA[k,4] <- sigma_star
+THETA[k,5:8]<-unique(ET_i_star)
+THETA[k,1] <- k
+
+ if(abs(Q[k]-Q[k-1])<=delta) break
+}
+```
+
+Using the EM method, the results of $\hat\beta_0$,$\hat\beta_1$,$\hat\sigma$ are r THETA[max(THETA[,1],na.rm =T),2:4] after 58th iterations. Although the estimates are smaller than SL method, Thay shows a same trend: $\hat\beta_1$ and $\hat\mu$  grow larger and converges.
+
+
+```{r,eval=F}
+plot(nu,t_0,main="EM Method with full data",xlab="reciprocal of the absolute temperature",ylab="log10 of failure time",
+     xlim=c(2,2.5),ylim=c(2.5,5),
+     panel.first=abline(h=c(3.577492,3.906551),v=c(2.027575,2.158895,2.256318,2.362949),lty=3,col="gray"))
+for (i in (1:max(THETA[,1],na.rm =T)))
+abline(THETA[i,2:3],lwd=0.1,lty=1,col=gray(i/max(THETA[,1],na.rm =T)))
+abline(fit_c,lwd=0.5,lty=1,col="red")
+abline(fit_u,lwd=0.5,lty=1,col="blue")
+text(2.48,4.6, labels = "58th");text(2.45,4.35, labels = "1st")
+legend(2.2,3.2,legend=c("regression line after iterations","initial censored data","initial uncensored data"),bty="n",lwd=c(2,2),col=c("black","red","blue"))
+```
+
+```{r,eval=F}
+kable(THETA[c(1:10,48:58),])%>%footnote(general = "The first and last 10 rows")
+EM_full<- THETA[max(THETA[,1],na.rm =T),]
+```
+
+
+
+http://statisticalrecipes.blogspot.com/2012/03/em-algorithm-and-confidence-intervals.html
+
+Say you have some sample data $X_1, X_2, \ldots, X_n$ that are iid and follow some distribution $f(X|\theta)$ (e.g. Binomial$(n,p)$). &nbsp;Finding the maximum likelihood estimate (MLE) and confidence interval of $\theta$ is fairly straightforward. &nbsp;To find the MLEs, just compute the gradient of the log likelihood, set equal to 0 and solve for $\theta$. &nbsp;Let $\hat{\theta}$ be the MLE of $\theta$ and let the&nbsp;Fisher Information matrix of the sample be given by
+
+$$I(\theta) = E_{\theta}((\frac{\partial}{\partial \theta} \log f(\mathbf{X} | \theta) )^2 ) = -E_{\theta}(\frac{\partial^2}{\partial \theta^2} \log f(\mathbf{X} | \theta) )$$
+An important property of MLEs is the distribution of the estimators is asymptotically normal with mean $\theta$ and the Var($\theta$) being approximated by the inverse of the Fisher Information matrix $I(\theta)$.
+
+To calculate a $100(1-\alpha)\%$ confidence interval for $\theta$, compute the Fisher Information matrix&nbsp;from the sample and<br />
+$$[\hat{\theta} - Z_{\alpha/2} (\frac{1}{\sqrt{I(\theta)}}) ,\hat{\theta} + Z_{\alpha/2} (\frac{1}{\sqrt{I(\theta)}}) ]$$
+The confidence intervals calculated above are when your data is complete and does not contain any missing data. When there is missing information, the <a href="http://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm">Expectation-Maximization Algorithm</a> is commonly used to estimate the parameters. &nbsp;There are several good guides out there including one of my favorites (<a href="http://crow.ee.washington.edu/people/bulyko/papers/em.pdf">here</a>). &nbsp;A question I recently came across was, how do we calculate the confidence intervals for MLEs of incomplete data out of the EM algorithm? How do we compute the observed information matrix of the incomplete data? &nbsp;<a href="http://statgen.ucr.edu/download/course/STAT288/louis82.pdf">Louis (1982)</a>,&nbsp;<a href="http://www.jstor.org/stable/2345847">Meilijson (1989)</a>,&nbsp;<a href="http://www3.stat.sinica.edu.tw/statistica/oldpdf/A5n11.pdf">Lange (1995)</a>,&nbsp;<a href="http://www.jstor.org/stable/2680653">Oakes (1999)</a>&nbsp;were a few of the references I found on the topic.
+
+First, we must introduce a little notation. &nbsp;Let $y$ be the observed data, $z$ be the missing data and $x = (y,z)$ be the complete data. &nbsp;Define $L(\theta | y)$ as the observed (or incomplete) likelihood and $L_0(\theta|x)$ as the complete likelihood with the full data. &nbsp;In the EM algorithm, we want to maximize $L(\theta | y)$ in $\theta$, but we do this using a conditional expectation
+
+$$Q(\theta | \theta^{(t)}) = E_{X|Y,\theta^{(t)}} [\log L_0(\theta | X) ]$$
+where $\theta^{(t)}$ is the parameter estimate for $\theta$ at the $t$th iteration. &nbsp;The EM algorithm moves in iterations between two steps:
+
+1) Expectation Step: take the expectation of the complete data $X$ conditional on the observed data $y$ and the current parameter estimates $\theta^{(t)}$.
+
+2) Maximization Step: find the new $\theta^{(t+1)}$ that maximizes $Q(\theta|\theta^{(t)})$.
+Louis (1982) defines the notation of the gradient and the negative of the second derivatives of the complete likelihood,
+$$S(X,\theta) = \frac{\partial \log L_0(\theta | X) }{ \partial \theta } \text{ and }\hspace{5mm} B(X,\theta) = - \frac{\partial^2 \log L_0(\theta | X) }{ \partial \theta^2 }$$
+and the gradient of the observed likelihood
+
+$$S^*(Y,\theta) = \frac{\partial \log L(\theta | Y) }{ \partial \theta }$$
+where&nbsp;$S^*(y,\theta) = E_{X|Y,\theta}[S(X,\theta)]$ and $S^*(y,\hat{\theta}) = 0$. Then, the observed information matrix of the incomplete data can be obtained using
+
+$$I_Y(\theta) = E_{X|Y,\theta}[B(X,\theta)] - E_{X|Y,\theta}[S(X,\theta)S^{T}(X,\theta)] + S^*(y,\theta)S^{*T}(y,\theta)$$
+
+or another way to think about it is
+
+$$I_Y = I(\hat{\theta}) = I_X(\theta) - I_{X | Y}$$
+
+The authors note <a href="http://www.jstor.org/stable/2335893">Efron and Hinkley (1978)</a> define $I_Y$ as the observed information and say it is "a more appropriate measure of information than the <i>a priori</i> expectation $E_{\theta}[B^*(Y,\theta)]$".
+
+Oakes (1999) shows the function $Q(\theta | \theta^{(t)})$ can be used in the maximization of the observed likelihood $L(\theta | y)$. &nbsp;Therefore, when calculating the observed information matrix of the incomplete data, it is sufficient to use
+
+$$I(\theta) = - \frac{\partial^2 Q}{\partial \theta^2 } |_{\theta = \hat{\theta} }$$
+
+To calculate&nbsp;a $100(1-\alpha)\%$ confidence interval for $\theta$, we then use the same formula as above
+
+$$\hat{\theta} - Z_{\alpha/2} (\frac{1}{\sqrt{I(\theta)}}) ,\ \hat{\theta} + Z_{\alpha/2} (\frac{1}{\sqrt{I(\theta)}}) ]$$
+
+
+

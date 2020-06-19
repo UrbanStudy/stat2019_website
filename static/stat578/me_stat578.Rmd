@@ -1,0 +1,817 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+    latex_engine: xelatex
+  html_document:
+    toc: no
+    toc_float: no
+  word_document:
+    toc: no
+always_allow_html: true
+header-includes:
+- \usepackage{multicol}
+- \usepackage{multirow}
+- \usepackage{caption}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \rhead{Shen Qu}
+- \lhead{Midexam}
+- \chead{STAT 578}
+- \rfoot{Page \thepage}
+- \usepackage{graphicx}
+- \usepackage{amssymb}
+- \usepackage{unicode-math}
+# - \usepackage[ruled,vlined]{algorithm2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=4)
+
+library(survival)
+library(epiR)
+library(survminer)
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(ggfortify)
+library(kableExtra)
+library(pander)
+```
+
+
+
+## Q1 Prove that Greenwood’s formula for the estimate of the variance of the Kaplan-Meier survivor function estimator
+
+reduces to $\frac{1}{n}S_n(t)(1-S_n(t))$ , where $S_n(t)$ is the empirical survivor function, provided there are neither censored observations nor ties.
+
+The estimate of the variance
+
+$$Var(\hat S(t))=S^2(t)Var(\log(\hat S(t)))=\hat S^2(t)\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}$$
+
+For a survival time $t$, $k$ represents the number of event happened before $t$, $i=1,2,..,k-1,k$. the number of in risk $n_i=n,n-1,..,n-k+2,n-k+1$. There isn't censored observations means $d_i=1$.
+
+$$\hat S(t)=\prod_{i=1}^k\frac{n_i-d_i}{n_i}=\prod_{i=1}^k\frac{n_i-1}{n_i}=\frac{n_1-1}{n_1}\cdot\frac{n_2-1}{n_2}\cdots\frac{n_{k-1}-1}{_{k-1}}\cdot\frac{n_{k}-1}{n_{k}}=\frac{n-1}{n}\cdot\frac{n-2}{n-1}\cdots\frac{n-k+1}{n-k+2}\cdot\frac{n-k}{n-k+1}=\frac{n-k}{n}$$
+$$\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}=\sum_{i=1}^k\frac{1}{(n_i-1)n_i}=\sum_{i=1}^k(\frac{1}{n_i-1}-\frac{1}{n_i})=\frac{1}{n_1-1}-\frac{1}{n_1}+\frac{1}{n_2-1}-\frac{1}{n_2}+..+\frac{1}{n_{k-1}-1}-\frac{1}{n_{k-1}}+\frac{1}{n_k-1}-\frac{1}{n_k}$$
+$$=\frac{1}{n-1}-\frac{1}{n}+\frac{1}{n-2}-\frac{1}{n-1}+..+\frac{1}{n-k+1}-\frac{1}{n-k+2}+\frac{1}{n-k}-\frac{1}{n-k+1}=\frac{1}{n-k}-\frac{1}{n}$$
+$$\hat S^2(t)\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}=(\frac{n-k}{n})^2(\frac{1}{n-k}-\frac{1}{n})=\frac{1}{n}(\frac{n-k}{n})(1-\frac{n-k}{n})=\frac{1}{n}S_n(t)(1-S_n(t))$$
+
+## Q2 Suppose that the mean residual life of a continuous survival time
+
+$T$ at $\mu$ is given by $mrl(u) = u + 10$.
+
+(a) Find the mean of $T$
+
+$$E(T)=\operatorname{mrl}(0)=0+10=10$$
+(b) Find $S(t)$
+
+$$-\int_0^t\frac{1}{mrl(u)}du=-\int_0^t\frac{1}{u+10}du=-\log{(u+10)}|^t_0=\log\frac{10}{(t+10)}$$
+
+$$S(t)=\frac{mrl(0)}{mrl(t)}\cdot e^{-\int_0^t\frac{1}{mrl(u)}du}=\frac{10}{t+10}\cdot e^{\log\frac{10}{(t+10)}}=(\frac{10}{t+10})^2$$
+(c) Find $h(t)$
+
+$$h(t)=-\frac{d}{dt}{\log S(t)}=-\frac{d}{dt}\log(\frac{10}{t+10})^2=-\frac{d}{dt}(2\log(10)-2\log{(t+10)})=\frac{2}{t+10}$$
+\pagebreak
+
+## Q3 Derive the Greenwood’s variance formula for the Kaplan-Meier survivor function estimator using Delta method. 
+
+Hint: See what happens if you take a log-transformation of $\hat S(t)$. 
+
+By Delta Method, $X\sim\mu,\sigma^2$, $f(x)=f(\mu)+f'(\mu)(x-\mu)$
+
+$E[f(x)]=f(\mu)$, $Var[f(x)]\approx\sigma^2[f'(\mu)]^2$
+
+Let $f(x)=\log(x)$, $X=\hat S(t)$, then $\log(\hat S(t))=\log(S(t))+\frac1{S(t)}(\hat S(t)-S(t))$
+
+$E[\log(\hat S(t))]=\log(S(t))$, $Var[\log(\hat S(t))]\approx Var(\hat S(t))[\frac1{S(t)}]^2$
+
+Hence
+
+$$Var(\hat S(t))\approx S^2(t)Var(\log(\hat S(t)))=S^2(t)\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}$$
+
+
+- Proof $Var(\log(\hat S(t)))=\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}$
+
+$n_i-d_i\sim Bino(n_i,p_i)$
+
+$Var(\hat p_i)=\frac{1}{n_i^2}Var(n_i-d_i)=\frac{1}{n_i}p_i(1-p_i)$
+
+Let $f(x)=\log(\hat p_i)$, $f(\mu)=\log(p_i)$, $f'(\mu)=\frac1{p_i}$
+
+Therefore,
+
+$$Var(\log(\hat S(t)))=Var(\log(\prod_{i=1}^k\hat p_i))=\sum_{i=1}^kVar(\log\hat p_i)=\sum_{i=1}^k\frac{1}{p_i^2}Var(\hat p_i)$$
+
+$$=\sum_{i=1}^k\frac{(1-p_i)}{p_in_i}=\sum_{i=1}^k\frac{q_i}{p_in_i}=\sum_{i=1}^k\frac{\frac{d_i}{n_i}}{(1-\frac{d_i}{n_i})n_i}=\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}$$
+
+
+
+
+\pagebreak
+
+## Q4 The data below are remission times, in weeks, for a group of 30 patients with leukemia who received similar treatment.
+
+(a) Obtain and plot the Kaplan-Meier estimate $\hat S(t)$ of the survivor function for remission time. 
+
+```{r,echo=F}
+time <- c(1,1,2,4,4,6,6,6,7,8,9,9,10,12,13,14,18,19,24,26,29,31,42,45,50,57,60,71,85,91)
+status <- c(rep(1,21),0,1,0,0,1,1,0,0,1)
+```
+
+```{r,echo=T}
+me_km.fit <- survfit(Surv(time,status)~1,type="kaplan-meier")
+summary(me_km.fit)
+```
+
+```{r,echo=F,out.width='50%' }
+autoplot(me_km.fit,conf.int=T, surv.linetype =1, surv.colour = 'dodgerblue3',
+  conf.int.fill = 'dodgerblue3', conf.int.alpha = 0.1,censor.colour = 'blue') + theme_light() +
+  scale_x_continuous(breaks = seq(from=0,to=100,by=10))+ geom_segment(aes(x=9,y=0,xend=9,yend=0.5),lty=5,lwd=.2) + 
+  geom_segment(aes(x=42,y=0,xend=42,yend=0.5),lty=5,lwd=.2) + 
+  geom_hline(yintercept =0.5,lty=5,lwd=.2)+
+  annotate(geom="text", x=c(12,38), y=c(0.03,0.03), label=c("t=9","t=42"))+  
+  geom_segment(aes(x=26,y=0.201,xend=26,yend=0.553),lty=2,lwd=.2,col=4)+
+  annotate(geom="text", x=c(32,32), y=c(0.6,0.15), label=c("UCI=0.553","LCI=0.201"),col=4)
+```
+
+(b) Obtain approximate .95 confidence intervals for the median remission time and for the probability that remission lasts over 26 weeks. 
+
+```{r,echo=T}
+me_km.fit
+pander(data.frame(summary(me_km.fit)[c(2,6,7,14,15)])[15,])
+```
+
+The approximate .95 confidence intervals for the median remission time ($t=13.5$) is $[9,42]$
+
+The probability of remission lasts over 26 weeks is $S(26)=0.333$. Its .95 confidence intervals is $[0.201,0.553]$
+
+
+(c) Plot $\log(−\log(\hat S(t)))$ and $\log(\hat H(t))$ on the same graph, where $\hat H(t)$ is the Nelson-Aalen estimate, (2.9). Is there much difference?
+
+```{r,echo=F,out.width='50%' }
+km.table<- data.frame(summary(me_km.fit)[c(2:4,6)])
+km.table <- km.table%>%mutate(tilde.H=cumsum(n.event/n.risk))
+plot(km.table[,1],log(-log(km.table[,4])),type="l",xlab = "time",ylab = "Estimate values",col="steelblue")
+lines(km.table[,1],log(km.table[,5]),col="cyan",lty=2)
+legend(60,-2,legend = c("log(-log(hat S(t)))","log(tilde H(t))"),col=c("steelblue","cyan"),lty=c(1,2))
+```
+
+The two curves are almost the same. It shows that Nelson-Aalen estimate is the cumulative summation of the estimated probability.
+
+
+## Q5
+
+(a) Estimate the median remission time by assuming that the underlying distribution of remission times is exponential. Compute approximate 95% confidence interval for the median remission time. Compare confidence intervals based on the nonparametric method in problem 4(b) and the confidence interval that you just computed. 
+
+```{r,echo=F,out.width='50%' }
+weib.fit <- survreg(Surv(time,status)~1,dist="weib",scale = 1) 
+me<- predict(weib.fit,type="uquantile",p=0.5,se.fit= T)[[1]][1]
+se<- predict(weib.fit,type="uquantile",p=0.5,se.fit= T)[[2]][1]
+CI.exp <- matrix(exp(c(me,me-qnorm(0.975)*se,me+qnorm(0.975)*se)),1,3,dimnames =list("hat.Median",c("estimator","CI-L","CI-U")))
+pander(CI.exp)
+```
+
+Using Weibull Distribution, the estimated median remission time is `r CI.exp[1]`
+
+The confidence interval is (`r CI.exp[2:3]`), which is narrow than CI in K-M estimate.
+
+(b) Similarly, compare estimate of $S(26)$, the probability a remission lasts more than 26 weeks, using the nonparametric Kaplan-Meier estimate and the parametric model, respectively. 
+
+```{r, echo=T}
+mu<- weib.fit$coef # Intercept
+(weib.Shat <- 1 - pweibull(26,1,exp(mu)) )
+```
+
+Using the parametric model, $S(26)=$`r weib.Shat`. It is greater than Kaplan-Meier estimated median remission time (0.3333)
+
+(c) Is there any evidence against the parametric model?
+
+```{r,echo=F}
+qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0, adjpb = 
+	0.025, ...)
+{
+	## Purpose: qqplot for distributions that satisfy a log-linear form
+	## for one sample.  It fits each sample with own intercept and slope 
+	## (location and scale).
+	##-------------------------------------------------------------------
+	## Arguments
+	## =========
+	## time:   observed time
+	## status: censoring indicator
+	##
+	## Options
+	## =======
+	## pdgy:   Flag to generate for pedagogical purposes additional lines
+	##         incorporating the effect of how we treat censored
+	##         observations on the MLE's (equivalently estimated line).
+	##         pdgy=0 is the default, for no additional lines. 
+	##         pdgy=1 generates additional lines.
+	## distribution:  Distribution for fit.
+	##         May take values "weibull", "loglogistic", or "lognormal".
+	##         The default is "weibull" distribution (exponential model with
+	##         scale=1).  Enter "loglogistic" to fit loglogistic distribution;
+	##         Enter "lognormal" to fit lognormal distribution. 
+	## scale:  Scale parameter.  scale=0 is the default. This estimates 
+	##         the scale. With distribution "weibull", scale=1 fits the 
+	##         exponential model. 
+	## adjpb:  Replaces the zero survival probability when the max is exact.
+	##         Or when the min is censored, it replaces the survival 
+	##         probability by 1 - adjpb.  Default is 0.025. 
+	##         This has nothing to do with the MLE line, but is solely for 
+	##         plotting the point on the graph.
+	##-------------------------------------------------------------------
+	## Author: Jong Sung Kim, Date: 8/10/2004
+	## Edited by D. Leif Rustvold, Date: 6/7/2006
+	d <- data.frame(time, status)
+	# data frame 
+	d <- na.exclude(d)
+	# Missing observations excluded
+	d <- d[order(d$time),  ]
+	# Rearranging the observed times into a nondecreasing order
+	# Unordered times sometimes mess up QQ-plots. 
+	time <- d$time
+	# sorted time
+	status <- d$status
+	# status corresponding to sorted time
+	data <- Surv(time, status)
+	# Surv object
+	t.c <- class(data)
+	if((!is.null(t.c)) && t.c == "Surv")
+		data <- list(data)
+	t.s <- summary(survfit(Surv(time, status)~1, type = "kaplan-meier",
+		na.action = na.exclude))
+	survp <- t.s$surv
+	survtime <- t.s$time
+	rare <- F
+	# rare = T indicates that the smallest observation is censored
+	if(time[1] < survtime[1]) {
+		print("Smallest observation is censored!")
+		survp <- c(1 - adjpb, survp)
+		survtime <- c(time[1], survtime)
+		rare <- T
+	}
+	############
+	############
+	xlabs <- ifelse(distribution == "weibull", 
+		"Standard Extreme Value Quantiles", ifelse(distribution == 
+		"loglogistic", "Standard Log-logistic Quantiles", ifelse(
+		distribution == "lognormal", "Standard Lognormal Quantiles",
+		"")))
+	if(pdgy == 1) {
+		###############
+		t.s.exactall <- summary(survfit(Surv(time, status >= 0)~1, type
+			 = "kaplan-meier", na.action = na.exclude))
+		exactall.survp <- t.s.exactall$surv
+		exactall.survtime <- t.s.exactall$time
+		exactall.length <- length(exactall.survtime)
+		exactall.survp[exactall.length] <- adjpb
+		t.ss.exactall <- exactall.survp
+		#quant.exactall <- qweibull(1 - t.ss.exactall, 1)
+		quant.exactall <- switch(distribution,
+			weibull = qweibull(1 - t.ss.exactall, 1),
+			lognormal = qlnorm(1 - t.ss.exactall),
+			loglogistic = exp(logis((1 - t.ss.exactall))))
+		exactall.sevq <- log(quant.exactall)
+		# standard extreme value quantile
+		exactall.logtime <- log(exactall.survtime)
+		print(data.frame(exactall.logtime, exactall.sevq))
+		############### 
+		ok <- status == 1
+		t.s.exact <- summary(survfit(Surv(time[ok], status[ok])~1, type
+			 = "kaplan-meier", na.action = na.exclude))
+		exact.survp <- t.s.exact$surv
+		exact.survtime <- t.s.exact$time
+		exact.length <- length(exact.survtime)
+		exact.survp[exact.length] <- adjpb
+		t.ss.exact <- exact.survp
+		#quant.exact <- qweibull(1 - t.ss.exact, 1)
+		quant.exact <- switch(distribution,
+			weibull = qweibull(1 - t.ss.exact, 1),
+			lognormal = qlnorm(1 - t.ss.exact),
+			loglogistic = exp(qlogis(1 - t.ss.exact)))
+		exact.sevq <- log(quant.exact)
+		# standard extreme value quantile
+		exact.logtime <- log(exact.survtime)
+		print(data.frame(exact.logtime, exact.sevq))
+		###############
+		n <- length(time)
+		t.ss <- rep(0, n)
+		for(i in 1:n) {
+			# This loop assigns probabilities to censored time points, 
+			# and takes care of tied observations as well
+			idx <- time[i] >= survtime
+			t.ss[i] <- min(survp[idx], na.rm = T)
+		}
+		#sevq <- log(qweibull(1 - t.ss, 1))
+		sevq <- log(switch(distribution,
+			weibull = qweibull(1 - t.ss, 1),
+			lognormal = qlnorm(1 - t.ss),
+			loglogistic = exp(qlogis(1 - t.ss))))
+		# standard extreme value quantile
+		logtime <- log(time)
+		print(data.frame(logtime, sevq))
+		######## Multiple Plot starts ##########
+		xrange <- range(c(exactall.sevq, exact.sevq, sevq))
+		yrange <- range(c(exactall.logtime, exact.logtime, logtime))
+		par(mar = c(5, 5, 2, 2))
+		plot(sevq, logtime, type = "n", lty = 1, xlim = xrange, ylim
+			 = yrange, xlab = xlabs, ylab = "Ordered Log Time",
+			...)
+		points(sevq[ok], logtime[ok], pch = 1)
+		# exact points portion
+		points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+		# censored points portion
+		points(exactall.sevq, exactall.logtime, pch = 3, col = 6)
+		# exactall
+		exactallfit <- survreg(Surv(time, status >= 0) ~ 1, dist = 
+			distribution, scale = scale)
+		# treating censored as exac
+		t
+		abline(exactallfit$coef, exactallfit$scale, lty = 3, col = 6)
+		points(exact.sevq, exact.logtime, pch = 5, col = 5)
+		# exact points only
+		exactonlyfit <- survreg(Surv(time[ok], status[ok]) ~ 1, dist
+			 = distribution, scale = scale)
+		# deleting censored
+		abline(exactonlyfit$coef, exactonlyfit$scale, lty = 2, col = 5
+			)
+		fit <- survreg(Surv(time, status) ~ 1, dist = "weibull", scale
+			 = scale)
+		# censoring taken into account
+		abline(fit$coef, fit$scale, lty = 1, col = 1)
+	}
+	else {
+		n <- length(time)
+		t.ss <- rep(0, n)
+		for(i in 1:n) {
+			# This loop assigns probabilities to censored time points, 
+			# and takes care of tied observations as well
+			idx <- time[i] >= survtime
+			t.ss[i] <- min(survp[idx], na.rm = T)
+		}
+		#sevq <- log(qweibull(1 - t.ss, 1))
+		sevq <- log(switch(distribution,
+			weibull = qweibull(1 - t.ss, 1),
+			lognormal = qlnorm(1 - t.ss),
+			loglogistic = exp(qlogis(1 - t.ss))))
+		# standard extreme value quantile
+		logtime <- log(time)
+		print(data.frame(logtime, sevq))
+		par(mar = c(5, 5, 2, 2))
+		plot(sevq, logtime, type = "n", xlab = xlabs, ylab = 
+			"Ordered Log Time", ...)
+		ok <- status == 1
+		# exact status only 
+		points(sevq[ok], logtime[ok], pch = 1)
+		# exact points only
+		points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+		# censored points only
+		fit <- survreg(Surv(time, status) ~ 1, dist = distribution,
+			scale = scale)
+		# censoring taken into account
+		abline(fit$coef, fit$scale, lty = 1, col = 1)
+	}
+	ymax <- max(logtime)
+	yrange <- diff(range(logtime))
+	yn <- ymax - yrange * seq(0, by = 0.05, length = 5)
+	if(pdgy == 1) {
+		xmin <- min(c(sevq, exact.sevq, exactall.sevq))
+		xrange <- diff(range(c(sevq, exact.sevq, exactall.sevq)))
+	}
+	else {
+		xmin <- min(sevq)
+		xrange <- diff(range(sevq))
+	}
+	x1 <- xmin + 0.05 * xrange
+	x2 <- xmin + 0.1 * xrange
+	x3 <- xmin + 0.15 * xrange
+	points(x1, yn[1], pch = "\255", font = 8)
+	text(x3, yn[1], "censored", adj = 0)
+	points(x1, yn[2], pch = 1)
+	text(x3, yn[2], "exact", adj = 0)
+	if(pdgy == 1) {
+		lines(c(x1, x2), rep(yn[3], 2), lty = 1, col = 1, lwd = 3)
+		text(x3, yn[3], "censoring taken into account", adj = 0)
+		lines(c(x1, x2), rep(yn[4], 2), lty = 3, col = 6, lwd = 3)
+		text(x3, yn[4], "treating censored as exact", adj = 0)
+		lines(c(x1, x2), rep(yn[5], 2), lty = 2, col = 5, lwd = 3)
+		text(x3, yn[5], "deleting censored", adj = 0)
+	}
+	on.exit()
+#	paste("Q-Q plot for", distribution, "done")
+}
+```
+
+```{r,echo=F}
+qq.weibull<-function(data,scale, xlab = "standard extreme value quantiles", ylab = 
+	"ordered log data", pch = NULL, lty = NULL, col = NULL)
+{
+	on.exit(browser())
+	t.c <- class(data)
+	if((!is.null(t.c)) & t.c == "Surv")
+		data <- list(data)
+	t.k <- length(data)
+	if(is.null(pch))
+		pch <- 1:t.k
+	if(is.null(lty))
+		lty <- 1:t.k
+	if(is.null(col))
+		col <- 1 + 1:t.k
+	t.sf <- lapply(data, function(s)
+	{
+		t.s <- summary(survfit(s~1, type = "kaplan-meier"))
+		t.ss <- t.s$surv
+		t.s$surv <- (t.ss + c(1, t.ss[ - length(t.ss)]))/2
+		t.s
+	}
+	)
+	t.rgs <- range(sapply(t.sf, function(s)range(s$surv)))
+	t.rgt <- range(sapply(t.sf, function(s)range(s$time)))
+	plot(log(qweibull(1 - t.rgs, 1)), log(t.rgt), type = "n", xlab= xlab, ylab = ylab)
+	for(t.g in 1:t.k) {
+		points(log(qweibull(1 - t.sf[[t.g]]$surv, 1)), 
+		log(t.sf[[t.g]]$time), pch = pch[t.g],col='steelblue4')
+		t.r <- survreg(data[[t.g]] ~ 1, dist = "weibull",scale=scale)
+		abline(t.r$coef, t.r$scale, lty = lty[t.g], col = 1)
+	}
+	on.exit()
+#	"qq.weibull:done"
+}
+```
+
+```{r, echo=T,out.width='45%',fig.show='hold'}
+qq.weibull(Surv(time,status),scale = 1)
+mtext("(By 'qq.weibull')",side=3,line=-1)
+qq.surv(time,status,distribution = "weibull", scale =1)
+mtext("(By 'qq.surv')",side=3,line=-1)
+```
+
+The QQ plot shows that some point are away from the line. If the proposed model fits the data adequately, the point should lie close to the straight line.
+
+
+## Q6  Suppose that the time to death $T$ has an exponential distribution 
+
+with hazard rate $\lambda$ and that the right-censoring time C is exponential with hazard rate $\theta$. 
+
+Let  $Y=\min(T,C)$ and $\delta=\begin{cases}1&T\le C\\0&T>C\end{cases}$.  Assume that $T$ and $C$ are independent.
+
+(a). Find $P(\delta=1)$. Hint: $P(\delta=1= P(T \le C))$
+
+$T\sim Expo(\lambda)$, $C\sim Expo(\theta)$.$f_T(t)=\lambda e^{-\lambda t}$, $f_C(c)=\theta e^{-\theta c}$. 
+
+$T\perp C$, then $f_{T,C}(t,c)=\lambda e^{-\lambda t}\cdot \theta e^{-\theta c}$
+
+\[
+\begin{aligned}
+P(\delta=1)&=P(T\le C)=\int_0^{\infty}\int_0^{c}f_{T,C}(t,c)dtdc \\
+&=\int_0^{\infty}\int_0^{c}\lambda e^{-\lambda t}\cdot \theta e^{-\theta c}dtdc=\int_0^{\infty}\theta e^{-\theta c}(\int_0^{c}\lambda e^{-\lambda t}\ dt)dc=\int_0^{\infty}\theta e^{-\theta c}(-e^{-\lambda t}|_0^{c})dc \\
+&=\int_0^{\infty}\theta e^{-\theta c}(1-e^{-\lambda c})dc=\int_0^{\infty}\theta e^{-\theta c}dc-\frac{\theta}{\theta+\lambda}\int_0^{\infty}(\theta+\lambda) e^{-(\theta+\lambda)c}dc\\
+&=1-\frac{\theta}{\theta+\lambda}(-e^{-(\theta+\lambda)c}|_0^{\infty})=1-\frac{\theta}{\theta+\lambda}=\frac{\lambda}{\theta+\lambda}&& \blacksquare
+\end{aligned}
+\]
+
+(b). Find the distribution of $Y$ . Hint: Consider $P(Y > y)$
+
+\[
+\begin{aligned}
+F_Y(y)&=P(T\le y\cup C\le y)=1-P(T\ge y\cap C\ge y) \\
+&\underset{T\perp C}{=}1-P(T\ge y)(C\ge y)=1-\int_y^{\infty}\lambda e^{-\lambda t}dt\cdot \int_y^{\infty}\theta e^{-\theta c}dc \\
+&=1-(-e^{-\lambda t}|_y^{\infty})\cdot (-e^{-\theta c}|_y^{\infty})=1-e^{-(\lambda+\theta) y}\\
+&\implies Y\sim Expo(\lambda+\theta) && \blacksquare
+\end{aligned}
+\]
+
+(c). Show that $\delta$ and Y are independent. Hint: Consider $\lim_{\Delta y\to0^+}\frac{P(y\le Y<y+\Delta y, \delta=0)}{\Delta y}$ which can be written in terms of C and T and we know the joint pdf of C and T. 
+
+\[
+\begin{aligned}
+P(\delta=1,Y\le y)&=P(T\le C\cap Y\le y)=P(T\le C\cap T\le y) \\
+&=\int_0^{y}\int_t^{\infty}f_{T,C}(t,c)dcdt=\int_0^y\lambda e^{-\lambda t} (\int_t^{\infty}\theta e^{-\theta c}dc)dt \\
+&=\int_0^y\lambda e^{-\lambda t}(-e^{-\theta c}|_t^{\infty})dt=\int_0^{y}\lambda e^{-(\theta+\lambda)t}dt=\frac{\lambda}{\theta+\lambda}\int_0^{y}(\theta+\lambda) e^{-(\theta+\lambda)t}dt \\
+&=\frac{\lambda}{\theta+\lambda}(-e^{-(\theta+\lambda)t}|_0^{y})=\frac{\lambda}{\theta+\lambda}(1-e^{-(\theta+\lambda)y})=P(\delta=1)\cdot P(Y\le y) && \square \\
+P(\delta=0,Y\le y)&=P(C\le T\cap Y\le y)=P(C\le T\cap C\le y) \\
+&=\int_0^{y}\int_c^{\infty}f_{T,C}(t,c)dtdc=\int_0^y\theta e^{-\theta c} (\int_c^{\infty}\lambda e^{-\lambda t}dt)dc \\
+&=\int_0^y\theta e^{-\theta c}(-e^{-\lambda t}|_c^{\infty})dc=\int_0^{y}\theta e^{-(\theta+\lambda)c}dc=\frac{\theta}{\theta+\lambda}\int_0^{y}(\theta+\lambda) e^{-(\theta+\lambda)c}dc \\
+&=\frac{\theta}{\theta+\lambda}(-e^{-(\theta+\lambda)c}|_0^{y})=\frac{\theta}{\theta+\lambda}(1-e^{-(\theta+\lambda)y})=P(\delta=0)\cdot P(Y\le y) && \square
+\end{aligned}
+\]
+
+Therefore, $Y\perp \delta$
+
+(d). Let $(Y_1,\delta_1), (Y_2,\delta_2),..,(Y_n,\delta_n)$ be a random sample from this model. The Maximum Likelihood Estimator of $\lambda$, $\hat\lambda$ is $\sum_{i=1}^n\delta_i/\sum_{i=1}^nY_i$
+Hint: Use (a) - (c) to write down the joint log-likelihood function for the random sample
+
+$f(Y_i,\delta_i)=\begin{cases}\frac{\lambda}{\theta+\lambda}(\theta+\lambda) e^{-(\theta+\lambda)y_i}&T\le C\\\frac{\theta}{\theta+\lambda}(\theta+\lambda) e^{-(\theta+\lambda)y_i}&T>C\end{cases}$
+
+$L(Y_i,\delta_i)=\prod_{i=1}^n(\frac{\lambda}{\theta+\lambda})^{\delta_i}(\frac{\theta}{\theta+\lambda})^{1-\delta_i}(\theta+\lambda) e^{-(\theta+\lambda)y_i}$
+
+$=(\frac{\lambda}{\theta+\lambda})^{\sum\delta_i}(\frac{\theta}{\theta+\lambda})^{n-\sum\delta_i}(\theta+\lambda)^n e^{-(\theta+\lambda)\sum y_i}=\lambda^{\sum_{i=1}^n\delta_i}\theta^{n-\sum_{i=1}^n\delta_i}e^{-(\theta+\lambda)\sum_{i=1}^ny_i}$
+
+$l(Y_i,\delta_i)=\sum_{i=1}^n\delta_i\log\lambda+(n-\sum_{i=1}^n\delta_i)\log\theta-(\theta+\lambda)\sum_{i=1}^ny_i$
+
+$$\frac{\partial}{\partial\lambda}l(Y_i,\delta_i)=\frac{1}{\lambda}\sum_{i=1}^n\delta_i-\sum_{i=1}^ny_i\overset{set}{=}0\implies\hat\lambda=\frac{\sum_{i=1}^n\delta_i}{\sum_{i=1}^nY_i}\qquad \blacksquare$$
+
+(e).  Use part (a) - (d) to find the mean and variance of $\hat\lambda$. Hint: Use the independence between $\delta_i$ and $Y$. Determine the distribution of $\sum_{i=1}^n\delta_i$. Remember that exponential distribution with a parameter $\lambda+\theta$ is the same as Gamma distribution with parameters 1 and $\lambda+\theta$. Then what would be the distribution of $\sum_{i=1}^nY_i$
+
+$\begin{cases}p(\delta_i=1)=\frac{\lambda}{\theta+\lambda}&T\le C\\ p(\delta_i=0)=\frac{\theta}{\theta+\lambda}&T>C\end{cases}$, $\sum_{i=1}^n\delta_i\sim Bino(n,\frac{\lambda}{\theta+\lambda})$
+
+$E[\sum_{i=1}^n\delta_i]=\frac{n\lambda}{\theta+\lambda}$;
+$V[\sum_{i=1}^n\delta_i]=\frac{n\lambda}{\theta+\lambda}(1-\frac{\lambda}{\theta+\lambda})=\frac{n\lambda\theta}{(\theta+\lambda)^2}$
+
+$E[(\sum_{i=1}^n\delta_i)^2]=V[\sum_{i=1}^n\delta_i]+(E[\sum_{i=1}^n\delta_i])^2=\frac{n\lambda\theta}{(\theta+\lambda)^2}+(\frac{n\lambda}{\theta+\lambda})^2=\frac{n^2\lambda^2+n\lambda\theta}{(\theta+\lambda)^2}$
+
+$Y\sim Expo(\lambda+\theta)=Gamma(1,(\lambda+\theta)^{-1})$, Let $X=\sum_{i=1}^nY_i\sim Gamma(n,(\lambda+\theta)^{-1})$
+
+\[
+\begin{aligned}
+E[(\sum_{i=1}^nY_i)^{-1}]&=E[X^{-1}]=\int_0^{\infty}x^{-1}\frac{(\lambda+\theta)^n}{\Gamma(n)}x^{n-1}e^{-(\lambda+\theta)x}dx \\
+&=\frac{(\lambda+\theta)\Gamma(n-1)}{\Gamma(n)}\underbrace{\int_0^{\infty}\frac{(\lambda+\theta)^{n-1}}{\Gamma(n-1)}x^{n-1-1}e^{-(\lambda+\theta)x}dx}_{=1}=\frac{\lambda+\theta}{n-1} \\
+E[(\sum_{i=1}^nY_i)^{-2}]&=E[X^{-2}]=\int_0^{\infty}x^{-2}\frac{(\lambda+\theta)^n}{\Gamma(n)}x^{n-1}e^{-(\lambda+\theta)x}dx \\
+&=\frac{(\lambda+\theta)^2\Gamma(n-2)}{\Gamma(n)}\underbrace{\int_0^{\infty}\frac{(\lambda+\theta)^{n-2}}{\Gamma(n-2)}x^{n-2-1}e^{-(\lambda+\theta)x}dx}_{=1}=\frac{(\lambda+\theta)^2}{(n-1)(n-2)}
+\end{aligned}
+\]
+
+Or by $X\sim Inverse-Gamma(n,(\lambda+\theta)^{-1})$, 
+
+$E[X^{-1}]=\frac{(\lambda+\theta)\Gamma(n-1)}{\Gamma(n)}=\frac{\lambda+\theta}{n-1}$; $E[X^{-2}]=\frac{(\lambda+\theta)^2\Gamma(n-2)}{\Gamma(n)}=\frac{(\lambda+\theta)^2}{(n-1)(n-2)}$
+
+For $\sum_{i=1}^n\delta_i\perp\sum_{i=1}^nY_i$
+
+\[
+\begin{aligned}
+E[\hat\lambda]&=E[\frac{\sum_{i=1}^n\delta_i}{\sum_{i=1}^nY_i}]=E[\sum_{i=1}^n\delta_i]E[(\sum_{i=1}^nY_i)^{-1}]=\frac{n\lambda}{\theta+\lambda}\cdot\frac{\lambda+\theta}{n-1}=\frac{n\lambda}{n-1}& \blacksquare \\
+E[\hat\lambda^2]&=E[(\sum_{i=1}^n\delta_i)^2]E[(\sum_{i=1}^nY_i)^{-2}]=\frac{n^2\lambda^2+n\lambda\theta}{(\theta+\lambda)^2}\cdot\frac{(\lambda+\theta)^2}{(n-1)(n-2)}=\frac{n^2\lambda^2+n\lambda\theta}{(n-1)(n-2)}\\
+V[\hat\lambda]&=E[\hat\lambda^2]-(E[\hat\lambda])^2=\frac{n^2\lambda^2+n\lambda\theta}{(n-1)(n-2)}-(\frac{n\lambda}{n-1})^2=\frac{n\lambda(n\lambda+n\theta-\theta)}{(n-1)^2(n-2)} & \blacksquare
+\end{aligned}
+\]
+
+## Q7
+
+(a) Write the self-consistency algorithm for a current status data set and create a function to compute the MLE of the survivor function. Define your notations in detail. 
+
+- Notation:
+
+For current status data, we observe only the iid times $u_i,i=1,...,n$ and $\delta_i = I\{T_i \le U_i\}$. 
+$\delta = \begin{cases}1&\text{Event }T \le U \text{ Occurred}\\0&\text{Event }T \le U \text{ Not occurred}\end{cases}$ but the exact time is unknown
+
+$u_i$ denote a grid of time points by $0 < u_1 < u_2 <..< t_m$ at which subjects are observed. the $u_i$'s are not all event times 
+
+$d_i$ be the number of deaths at time $u_i$, $d_i$ may be zero for some points 
+
+$r_i$ be the number of individuals right-censored at time $u_i$, $\delta_i=0$.
+
+$l_i$ be the number of left-censored observations at $u_i$, $\delta_i=1$. The event of interest has occurred at some $t_j\le u_i$
+
+The self-consistent estimator estimates the probability that this event occurred at each possible $t_j$ less or more than $u_i$ based on an initial estimate of the survival function.
+
+Using this estimate, we compute an expected number of deaths at $t_j$, which is then used to update the estimate of the survival function 
+
+The procedure is repeated until the estimated survival function stabilizes.
+
+
+- Algorithm:
+
+Combine K-M estimator and self-consistent estimator based on an iterative procedure
+
+Step 0: Produce an initial estimate of the survival function at each $t_j$, $\widehat{SC}(t_j)^{(0)}$
+
+Step 1: By ignoring the left-censored observations, compute the usual K-M estimator or self-consistent estimator (By Theorem 1, K-M estimator is the unique self-consistent estimator for $u<t_n$) based on the estimated right-censored data.
+  
+$\widehat{S(t)}=\prod_{j=1}^k\left[\frac{n_j- d_j}{n_j}\right]$ Or
+
+$\widehat{SC(u)}=\frac1n\left[\sum_{j=1}^n1I(t_j> u,\delta_j=0)+\sum_{j=1}^n\mathbb{0}I(t_j\le u,\delta_j=1)+\sum_{j=1}^n\frac{SC(u)}{SC(t_j)}I(t_j\le u,\delta_j=0)\right]$
+
+$=\frac1n\left[N(t_j)+\sum_{j=1}^n(1-\delta_j)\frac{SC(u)}{SC(t_j)}\right]$
+
+Step 2: Using the current estimate of $\widehat{SC}^{(k)}$, for $j \le i$,estimate 
+
+$$p_{ij} = P[t_{j−1} < X ≤t_j|X\le u_i] = \frac{\widehat{SC}(t_{j−1})^{(k)}−\widehat{SC}(t_j)^{(k)}}{1−\widehat{SC}(u_i)^{(k)}}$$
+
+Step 3: Using the results of the previous step, estimate the number of events at time $t_j$ by
+
+$$\hat d_j = d_j +\sum^n_{i=j} l_ip_{ij}$$
+
+Step 4:  Compute the usual K-M estimator based on the estimated right-censored data with $\hat d_j$ events and $r_j$ right-censored observations at $t_j$, ignoring the left-censored data 
+
+
+Step 5:  If this estimate, $\widehat{SC}(t)^{(k+1)}$, is close to $\widehat{SC}(t)^{(k)}$ for all $u_i$, stop the procedure; if not, go to step 2.
+
+
+
+
+
+```{r,echo=F}
+time <- c(1.5,2.8,3.2,4.9,5.1)
+status <- c(1,0,1,1,0)
+```
+
+```{r,echo=F,out.width='45%'}
+plot.new()
+plot.window(xlim=c(0,6), xaxs="i",ylim=c(0,2), yaxs="i")
+axis(side=1, at=seq(0,5.1, by=0.1), labels =T, cex.axis=0.5)
+abline(v=c(0,1.5,2.8,3.2,4.9,5.1),lty=2 )
+text(x=c(0,1.5,2.8,3.2,4.9,5.1),y=1,labels = c("U=",1.5,2.8,3.2,4.9,5.1), srt = 90, pos = 2, xpd = T,cex=0.8)
+text(x=c(1.2,3,4.6),par("usr")[3], labels = c("t1<--","t3<-","t4<--"), srt = 0, pos =3, xpd = T,cex=0.9)
+text(x=c(3,5.3),y=0.3, labels = c("-->t2","-->t5"), srt = 0, pos =3, xpd = T,cex=0.9)
+```
+
+(b) Using the following data, find the MLE of the survivor function: $(\mu_1 = 1.5, \delta_1 = 1), (\mu_2 = 2.8, \delta_2 = 0), (\mu_3 = 3.2, \delta_3 = 1), (\mu_4 = 4.9, \delta_4 = 1), and (\mu_5 = 5.1, \delta_5 = 0)$
+
+```{r,eval=T}
+SC_Est_CS <- function(time,status){ # For current status data
+n <- length(status)  
+df <- data.frame(time,status)
+df.distinct<- df %>% mutate(status=1-status)%>% group_by_all %>% count %>% as.data.frame()
+names(df.distinct) <- c("u_i","status","event")
+df.distinct<- df.distinct %>% mutate(status=1-status)
+df.distinct<- df.distinct %>% mutate(l_i= ifelse(status==1,event,0))%>%
+  mutate(r_i= ifelse(status==0,event,0))%>%select(-2,-3)%>% 
+  add_row(u_i=0,l_i=0,r_i=0, .before = 1)
+k <- nrow(df.distinct)
+n_i <- n_i.hat <- n
+u_i <- df.distinct[,1]; l_i <- df.distinct[,2]; r_i <- df.distinct[,3]
+
+d_i <- d_i.hat <- 0
+
+for (i in 2:k) {
+d_i[i] <- 0 # sum(t_j<=u_i[i])-1  
+n_i[i] <- n_i[i-1]-l_i[i-1]-r_i[i-1]
+}
+
+p_i <- (n_i-l_i)/n_i  # Probability of surviving through I_i | alive at beginning I_i
+s_i0 <- s_i <- s_i.hat <-  1              # K-M estimator of the survivor function
+for (i in 2:k) { s_i0[i]<- s_i[i]<-prod(p_i[1:i])}
+
+conv <- 1e-3; iter <- 1
+repeat{
+p_ij <- matrix(rep(0,k^2),nrow = k, ncol = k,dimnames =list(c(paste("i",0:n)),c(paste("j",0:n))))  
+for (i in 2:k) {
+  for (j in i:k) {  
+p_ij[i,j] <- (s_i[j-1]-s_i[j])/(1-s_i[i])
+}}# d_i.hat <- l_i*rowSums(p_ij)#+l_i[i] 
+for (i in 2:k) {
+d_i[i] <- sum(l_i[1:i])
+d_i.hat[i] <- l_i[i]*sum(p_ij[i,])#+l_i[i] 
+n_i.hat[i] <- n_i.hat[i-1]-d_i.hat[i-1]#-r_i[i] 
+}
+p_i.hat <- (n_i-d_i.hat)/n_i
+
+for (i in 1:k) {s_i.hat[i]<- prod(p_i.hat[1:i])}
+
+  if(sum(abs(s_i.hat - s_i))< conv)
+break
+else s_i <- s_i.hat; iter <- iter+1
+}
+out <- list(cbind(u_i,l_i,d_i,r_i,n_i,p_i,s_i0),p_ij,
+            cbind(u_i,d_i.hat,n_i.hat,p_i.hat,s_i.hat))
+names(out) <- c("Initial Values","p_ij", paste("Iteration times=",iter))
+return(out)
+}
+```
+
+```{r,echo=F}
+pander(SC_Est_CS(time,status))
+```
+
+```{r,eval=F,include=F}
+#cum_c <- cum_d <- D_i <- 0
+#sc_f <- sc_g <-1 # 
+
+# d_i[2] <- sum(d_i[1:2])
+# sc_f[2] <- (n-d_i[2])/n  
+# cum_d[2] <- (d_i[2])/2
+# cum_c[2] <- (c_i[2])/(sc_f[2])
+# sc_g[2]<- (n-sum(cum_d))/(n-0+sum(cum_c))
+
+#for (i in 3:k) {    # The rest of the self-consistency estimator
+#D_i[i] <- sum(d_i[1:i])
+ 
+#sc_f[i] <-(n-D_i[i])/n  
+#  cum_d[i] <- (d_i[i])/(1-sc_f[i])
+#  cum_c[i] <- (c_i[i])/(sc_f[i])
+#  sc_g[i]<- (n-sum(cum_d))/(n-sum(cum_d)+sum(cum_c)) }
+
+# cum_d[2] <- (d_i[2])/2
+# sc_f[i] <- (n-D_i[i])/n  
+ # sc_g[i]<- (n-sum(cum_d))/(n-sum(cum_d)+sum(cum_c)) both side censored
+ # sc_g[i]<- (N_i[i])/(n-sum(cum_c)) right censored
+```
+
+
+<!--
+
+- Note
+
+Let $T\sim F$ denote a lifetime with c.d.f. $F$ and survivor function $S_f$ and $U\sim G$ denote a random censor time with c.d.f. $G$, p.d.f. $g$, and survivor function $S_g$. Each individual has a lifetime $T_i$ and a censor time $U_i$.
+
+Assuming the support (the interval over which the distribution has positive probability) of $U$ is contained in the support of $T$. 
+
+Assuming $T$ and $U$ are independent random times. The joint p.d.f.: 
+
+$P(U = u,\delta = 0) =P(\delta =0 |U = u)P(U = u)= P(T>u )P(U = u)=S_f(u)g(u)$
+
+$P(U = u,\delta = 1) =P(\delta =1 |U = u)P(U = u)= P(T\le u)P(U = u)=F(u)g(u)$
+
+$P(u,\delta)=(S_f(u))^{1−\delta}F(u)^\delta g(u)$.
+
+The likelihood of the n iid pairs $(U_i,\delta_i)$.
+
+Let $k$ is the number of $\delta_i=1$; $n-k$ is the number of $\delta_i=0$,
+
+$$L=\prod_{i=1}^nP(u_i,\delta_i)=\prod_{i=1}^nF(u_i)^{\delta_i}(S_f(u_i))^{1−\delta_i} g(u_i)=\prod_{i=1}^kF(u_i)\prod_{i=n-k+1}^{n}(S_f(u_i)) \prod_{i=1}^ng(u_i)$$
+
+
+$$l=\sum_{k}\log F(u_i)+\sum_{n-k}\log(S_f(u_i))+\sum_{n}\log g(u_i)$$
+$$\frac{\partial l}{\partial u_i}=\sum_{k}\frac{f(u_i)}{F(u_i)}+\sum_{n-k}\frac{-f(u_i)}{S_f(u_i)}+\sum_{n}\frac{g'(u_i)}{g(u_i)}$$
+If the distribution of $U$ does not involve any parameters of interest, then the $g(.)$ factor plays no role in the maximization process. Hence, the likelihood function can be taken to be
+
+$$\sum_{k}\frac{f(u_i)}{F(u_i)}-\sum_{n-k}\frac{f(u_i)}{S_f(u_i)}=\sum_{k}\frac{f(u_i)}{1-S_f(u_i)}-\sum_{n-k}\frac{f(u_i)}{S_f(u_i)}\overset{set}{=}0$$
+
+The solution is MLE of the survivor function.
+
+- self-consistency algorithm
+
+
+$E[\widehat{SC_f(u_i)}]=S_f(u_i)$; $E[1-\widehat{SC_f(u_i)}]=F(u_i)$; $E[-\widehat{SC_f(u_i)}']=f(u_i)$
+
+$E[\widehat{SC_g(u_i)}]=S_g(u_i)$; $E[-\widehat{SC_g(u_i)}']=g(u_i)$
+
+to get a solution of $\max\frac{\partial l}{\partial u_i}$, we need to find $\widehat{SC_f(u_i)}$, $\widehat{SC_g(u_i)}$
+
+The self-consistency estimator of the survivor function is
+
+- Discussion (if we want to find $g(.)$)
+
+where $\frac{SC_g(u_i)}{SC_f(u_i)}$ estimates the conditional probability of surviving beyond $u_i$ given onset happened at $t_i$, $\frac{1-SC_g(u_i)}{1-SC_f(u_i)}$ estimates the conditional probability of surviving inside $u_i$ given onset happened at $t_i$.
+
+
+If $\delta_1=0$, without more information, we assume all the samples live at time $u_1$
+
+$\widehat{SC_g(u_1)}=1$
+
+If $\delta_1=1$, the first event may happened between time 0 to $u_1$, $SC_g(u_1)\sim Unif(\frac{n-1}{n},1)$
+
+$$\widehat{SC_g(u_1)}=\min\{1,\frac{n-1}{n}\}$$
+
+$$\widehat{SC_g(u)}=\frac{n-\sum_{i=1}^n\frac{\delta_i}{1-SC_f(t_i)}}{n-\sum_{i=1}^n\frac{\delta_i}{1-SC_f(t_i)}+\sum_{i=1}^n\frac{1-\delta_i}{SC_f(t_i)}}\text{if }t_{(k)}\le u< t_{(k+1)}$$
+
+
+
+$$\widehat{SC_g(u_i)}=\frac1n\left[n-\sum_{i=1}^n\frac{1-SC_g(u_i)}{1-SC_f(u_i)}\mathbb{1}(t_i\le u_i,\delta_i=1)-\sum_{i=1}^n\frac{SC_g(u_i)}{SC_f(u_i)}\mathbb{1}(t_i> u_i,\delta_i=0)\right]$$
+
+
+
+- backup
+
+The only information we have for each individual is that their event time falls in an interval $(L_i,R_i], i = 1,··· ,n$ but the exact time is unknown
+
+An estimate of the self-consistency can be found by an iterative procedure 
+
+Let $0=\tau_0 < \tau_1 < ··· < \tau_m$ be a grid of time points which includes all the points $L_i,R_i for i = 1,··· ,n$
+
+For the $i^{th}$ observation, define a weight $αij$ to be 1 if the interval $(\tau_{j−1},\tau_j]$ is contained in the interval $(L_i,R_i]$, and 0 otherwise 
+
+$\tau_{ij}$ is an indicator of whether the event which occurs in the interval $(L_i,R_i]$ could have occurred at $\tau_j$
+
+An initial value at $S(\tau_j)$ 
+
+Step 1: Compute the probability of an event’s occurring at time $\tau_j$, $p_j = S(\tau_{j−1})−S(\tau_j),j = 1,··· ,m$ 
+
+Step 2: Estimate the number of events which occurred at $\tau_j$ by $dj =Pn i=1 αijpj Pk αikpkI$ 
+
+Note the denominator is the total probability assigned to possible event times in the interval $(L_i,R_i]$
+
+Step 3: Compute the estimated number at risk at time $\tau_j$ by $Y_j =\sum_{k=j}^m d_k$
+
+Step 4: Compute the updated Product-Limit estimator using the pseudo data found in steps 2 and 3 
+
+Stop if the updated estimate of S is close to the old version of S for all $\tau_i$'s
+
+To ﬁnd $\hat S(t)$ starts with any estimate of S and substitutes this in the right hand side of to get an updated estimate of S 
+
+this new estimate of $\hat S(t)$ is used in the next step to obtain a revised estimate 
+
+continues until convergence 
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+

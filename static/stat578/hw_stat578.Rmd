@@ -1,0 +1,1625 @@
+---
+title: ''
+fontfamily: mathpazo
+output:
+  pdf_document:
+    toc: no
+    latex_engine: xelatex
+  html_document:
+    toc: no
+    toc_float: no
+  word_document:
+    toc: no
+always_allow_html: true
+header-includes:
+- \usepackage{multicol}
+- \usepackage{multirow}
+- \usepackage{caption}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhf{}
+- \rhead{Shen Qu}
+- \lhead{Homework}
+- \chead{STAT 578}
+- \rfoot{Page \thepage}
+- \usepackage{graphicx}
+- \usepackage{amssymb}
+- \usepackage{unicode-math}
+- \usepackage[ruled,vlined]{algorithm2e}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=T, message=FALSE, warning=F,fig.align='center')
+options(scipen=10)
+options(digits=4)
+
+library(survival)
+library(epiR)
+library(survminer)
+# library(ranger) # A Fast Implementation of Random Forests
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(ggfortify)
+library(kableExtra)
+library(pander)
+```
+
+https://cran.r-project.org/web/packages/ggfortify/vignettes/plot_surv.html
+
+## HW1 1.6 Exercises -A. Applications
+
+Identify the data types of the following cases:
+
+1.1 Suppose that six rats have been exposed to carcinogens by injecting tumor cells into their foot-pads. The times to develop a tumor of a given size are observed. The investigator decides to terminate the experiment after 30 weeks. Rats A, B, and D develop tumors after 10, 15, and 25 weeks, respectively. Rats C and E do not develop by the end of the study. Rat F died accidentally without any tumors after 19 weeks of observation.(Source: Lee, E.T. (1992, page 2). Statistical Methods for Survival Data Analysis, 2nd ed., New York: John Wiley & Sons.) 
+
+- **Type I censoring**. The experiment terminated at a prespecified time. The endpoint is a fixed value and the number of observed failure times is a random variable which assumes a value in the set $\{0,1,2,..,n\}$
+
+1.2 In Exercise 1.1, the investigator may decide to terminate the study after four of the six rats have developed tumors. Rats A, B ,and D develop tumors after 10, 15, and 25 weeks, respectively. Rat F died accidentally without any tumors after 19 weeks of observation. Rat E develops tumor after 35 weeks but Rats C does not develop by that time. How would the data set in Exercise 1.1 change? (Source: pages 2-3).
+
+- **Type II censoring**. The observations terminate after the $r^{th}$ failure occurs. The number of failure time $T_r$ is a fixed value whereas the endpoint is a random observation. Hence we could wait possibly a very long time to observe the $r$ failures.
+
+1.3 Suppose that six patients with acute leukemia enter a clinical study during a total study period of one year. Suppose also that all six respond to treatment and achieve remission. Patients A, C, and E achieve remission at the beginning of the second, fourth, and ninth months and relapse after four, six, and three months, respectively. Patient B achieves remission at the beginning of the third month but is lost to follow-up four months later. Patients D and F achieve remission at the beginning of the fifth and tenth month, respectively, and are still in remission at the end of the study. Find out the remission times of the six patients. (Source: pages 3-4).
+
+- **Right censoring**. The censoring occurred for dropping out ($t_A=4, t_C=6, t_E=3$), losing to follow-up (remission times $t_B=4+$ months), termination of study ($t_D=8+,t_F=3+$).
+
+
+1.4 Survival/sacrifice experiments are designed to determine whether a suspected agent accelerates the time until tumor onset in experimental animals. For such studies, each animal is assigned to a prespecified dose of a suspected carcinogen, and examined at sacrifice or death, for the presence or absence of a tumor. Since a lung tumor is occult, the time until tumor onset is not directly observable. Instead, we observe only a time of sacrifice or death. (Source: Hoel, D.G. and Walburg, H.E., Jr. (1972). Statistical analysis of survival experiments. J. Natl. Cancer Inst., 49, 361-372.) 
+
+- **Case I Interval censored data: current status data**. The only available observed time is $U$, the censoring time. The endpoint of interest is $T$.
+
+1.5 An annual survey on 196 girls recorded whether or not, at the time of the survey, sexual maturity had developed. Development was complete in some girls before the first survey, some girls were lost before the last survey and before development was complete, and some girls had not completed development at the last survey. (Source: Peto, R. (1973). Empirical survival curves for interval censored data. Appl. Statist., 22, 86-91.) 
+
+- **Interval censoring**. The time-to-event $T$ is known only to occur within an interval. Such censoring occurs when the longitudinal study has periodic follow-up.
+
+1.6 Woolson (1981) has reported survival data on 26 psychiatric inpatients admitted to the University of Iowa hospitals during the years 1935 – 1948. This sample is part of a larger study of psychiatric inpatients discussed by Tsuang and Woolson (1977). Data for each patient consists of age at first admission to the hospital, sex, number of years of follow-up (years from admission to death or censoring), and patient status at the followup time. The main goal is to compare the survival experience of these 26 patients to the standard mortality of residents of Iowa to determine if psychiatric patients tend to have shorter lifetimes. (Source: Klein, J.P. and Moeschberger, M.L. (1997, page 15). Survival Analysis: Techniques for Censored and Truncated Data. New York: Springer.) 
+
+- **Left-truncated & right censored data**. The data include: $T$ exact death time is observed (uncensored), $T^-$ the main event of interest, death time, is left-truncated as the death patient are excluded from the study, $T^+$ death time is right-censored since the patient did not die during the study period. 
+
+
+1.7 The US Centers for Disease Control maintains a database of reported AIDS cases. We consider the 1,927 cases who were infected by contaminated blood transfusions and developed AIDS by November 1989. For our data, the earliest reported infection date was January 1975. For our analysis, we give a code of 0 for young children (ages 0 – 12) and 1 for older children and adults (ages 13 and up). We wish to test whether the induction periods for the two groups have the same latency distribution. (Source: Finkelstein, D.M., Moore, D.F., and Schoenfeld, D.A. (1993). A proportional hazards model for truncated AIDS data. Biometrics, 49, 731-740.) 
+
+- **Right-truncated**. Only individuals who have developed AIDS prior to the end of the study are included in the study. Infected individuals who have yet to develop AIDS are excluded from the sample; unknown to the investigator.
+
+1.8 Leiderman et al. wanted to establish norms for infant development for a community in Kenya in order to make comparisons with known standards in the United States and the United Kingdom. The sample consisted of 65 children born between July 1 and December 31, 1969. Starting in January 1970, each child was tested monthly to see if he had learned to accomplish certain standard tasks. Here the variable of interest T would represent the time from birth to first learn to perform a particular task. Late entries occurred when it was found that, at the very first test, some children could already perform the task, whereas losses occurred when some infants were still unsuccessful by the end of the study. (Source: Leiderman, P.H., Babu, D., Kagia, J., Kraemer, H.C., and Leiderman, G.F. (1973). African infant precocity and some social inﬂuences during the first year. Nature, 242, 247-249.) 
+
+- **Doubly-censored data**. The recored values include: $T^-$ age is left-censored as the child already knew the task when s/he was initially tested in the study, $T$ exact age is observed u(ncensored), and $T^+$ age is right-censored since the child did not learn the task during the study period.
+
+\pagebreak
+
+
+## HW2 
+
+- 1.9 Show expression (1.8) 
+
+$$E(T)=\int_{t=0}^\infty(\int_{x=0}^t1dx)f(t)dt=\int_{x=0}^\infty\left\{\int_{t=x}^\infty f(t)dt\right\}dx=\int_{x=0}^\infty\left\{F(\infty)-F(x)\right\}dx$$
+$$=\int_{x=0}^\infty\left\{1-F(x)\right\}dx=\int_{0}^\infty S(x)dx=\int_0^\infty S(t)dt$$
+
+- 1.10 Cerify expression (1.9) Mean residual life
+
+For $\int_0^\infty tf(t)dt=E[T]=\int_0^\infty S(t)dt$
+
+\[
+\begin{aligned}
+mrl(u)&=E[T-u|T>u]=E[T|T>u]-E[u|T>u]=E[f(t|T>u)]-u &\\
+&=\int_u^\infty t\frac{f(t)}{S(u)}dt-u=\frac{1}{S(u)}\int_u^\infty tf(t)dt-u &\\
+&=\frac{1}{S(u)}\left\{\int_0^\infty tf(t)dt-\int_0^u tf(t)dt\right\}-u &\\
+&=\frac{1}{S(u)}\left\{\int_0^\infty S(t)dt-\left[tF(t)|_0^u-\int_0^u F(t)dt\right]\right\}-u &\\
+&=\frac{1}{S(u)}\left\{\int_0^\infty S(t)dt-\left[uF(u)-\int_0^u (1-S(t))dt\right]\right\}-u &\\
+&=\frac{1}{S(u)}\left\{\int_0^\infty S(t)dt-\left[u(1-S(u))-\int_0^udt+\int_0^u S(t)dt\right]\right\}-u &\\
+&=\frac{1}{S(u)}\left\{\int_0^\infty S(t)dt+uS(u)-\int_0^u S(t)dt\right\}-u &\\
+&=\frac{1}{S(u)}\left\{\int_0^\infty S(t)dt-\int_0^u S(t)dt\right\}=\frac{\int_u^\infty S(t)dt}{S(u)} && \blacksquare
+\end{aligned}
+\]
+
+Proof: $f(t|T>u)=\frac{f(t)}{S(u)}$
+
+$$f(t|T>u)=\lim_{\Delta t\to0^+}\frac{P(t<T<t+\Delta t|T>u)}{\Delta t}=\lim_{\Delta t\to0^+}\frac{P(t<T<t+\Delta t\cap T>u)}{\Delta t\cdot P(T>u)}$$
+
+$$=\frac{1}{S(u)}\lim_{\Delta t\to0^+}\frac{P(t<T<t+\Delta t)}{\Delta t}=\frac{1}{S(u)}\lim_{\Delta t\to0^+}\frac{F(t+\Delta t)-F(t)}{\Delta t}=\begin{cases}\frac{f(t)}{S(u)}& t>u\\0 & o.w.\end{cases}\quad\square$$
+\pagebreak
+
+- 1.11 Derive expression (1.11)
+
+$f(t_{(1)},\cdots, t_{(n)})=\begin{cases}n!f(t_{(1)})\cdots f(t_{(n)})& 0<t_{(1)}<\cdots<t_{(n)}\\0 & o.w.\end{cases}$
+
+$\frac{[1-F(t_{(n-1)})]^{1}}{1!}=\int_{n-1}^\infty\left\{f(t_{(n)})\right\}dt_{(n)}$
+
+$\frac{[1-F(t_{(n-2)})]^2}{2!}=\int_{n-2}^\infty\left\{f(t_{(n-1)})\frac{[1-F(t_{(n-1)})]^{1}}{1!}\right\}dt_{(n-1)}$
+
+$\frac{[1-F(t_{(n-3)})]^3}{3!}=\int_{n-3}^\infty\left\{f(t_{(n-2)})\frac{[1-F(t_{(n-2)})]^2}{2!}\right\}dt_{(n-2)}$
+
+$\cdots$
+
+$\frac{[1-F(t_{(r+1)})]^{n-r-1}}{(n-r-1)!}=\int_{r+1}^\infty\left\{f(t_{(r+2)})\frac{[1-F(t_{(r+2)})]^{n-r-2}}{(n-r-2)!}\right\}dt_{(r+2)}$
+
+$\frac{[1-F(t_{(r)})]^{n-r}}{(n-r)!}=\int_{r}^\infty\left\{f(t_{(r+1)})\frac{[1-F(t_{(r+1)})]^{n-r-1}}{(n-r-1)!}\right\}dt_{(r+1)}$
+
+Integrate out the $n-r$ order statistics
+
+$$\int_{r}^\infty\int_{r+1}^\infty \cdots\int_{n-2}^\infty\int_{n-1}^\infty\left\{f(t_{(n)})f(t_{(n-1)})\cdots f(t_{(r+2)})f(t_{(r+1)})\right\}dt_{(n)}dt_{(n-1)}\cdots dt_{(r+2)}dt_{(r+1)}=\frac{[1-F(t_{(r)})]^{n-r}}{(n-r)!}$$
+
+Hence, the Type II censoring likelihood function is:
+
+$$L=n!f(t_{(1)})\cdots f(t_{(r)})\frac{[1-F(t_{(r)})]^{n-r}}{(n-r)!}=\frac{n!}{(n-r)!}f(t_{(1)})\cdots f(t_{(r)})[S(t_{(r)})]^{n-r}$$
+
+
+<!--
+Joint distribution of first $r$ order statistics $L=g(t_{(1)},\cdots, t_{(r)})$
+
+$L=n!f(t_{(1)})\cdots f(t_{(r)})\int_{n-1}^\infty\int_{n-2}^\infty\cdots\int_{r+1}^\infty\int_{r}^\infty \left\{f(t_{(r+1)})f(t_{(r+2)})\cdots f(t_{(n-1)})f(t_{(n)})\right\}dt_{(r+1)}dt_{(r+2)}\cdots dt_{(n-1)}dt_{(n)}$
+
+$=n!f(t_{(1)})\cdots f(t_{(r)})\int_{n-2}^\infty\cdots\int_{r+1}^\infty\int_{r}^\infty \left\{f(t_{(r+1)})f(t_{(r+2)})\cdots f(t_{(n-1)})[1-F(t_{(n-1)})]\right\}dt_{(r+1)}dt_{(r+2)}\cdots dt_{(n-2)}dt_{(n-1)}$
+
+$=n!f(t_{(1)})\cdots f(t_{(r)})\int_{n-2}^\infty\cdots\int_{r}^\infty \left\{f(t_{(r+1)})\cdots f(t_{(n-1)})(-1)[1-F(t_{(n-1)})]\right\}dt_{(r+1)}\cdots dt_{(n-2)}d[1-F(t_{(n-1)})]$
+
+$=n!f(t_{(1)})\cdots f(t_{(r)})\int_{n-3}^\infty\cdots\int_{r+1}^\infty\int_{r}^\infty \left\{f(t_{(r+1)})f(t_{(r+2)})\cdots f(t_{(n-2)})\frac{[1-F(t_{(n-2)})]^2}2\right\}dt_{(r+1)}dt_{(r+2)}\cdots dt_{(n-2)}$
+
+$=\cdots=n!f(t_{(1)})\cdots f(t_{(r)})\frac{[1-F(t_{(r)})]^{n-r}}{(n-r)!}$
+
+Therefore, -->
+
+
+- Proof:$S(y)=\frac{mrl(0)}{mrl(y)}e^{-\int_0^y\frac{1}{mrl(t)}dt}$
+
+$$-\frac{1}{mrl(t)}=\frac{d}{dt}\log{\int_t^\infty S(u)du}$$
+$$\implies-\int_0^t\frac{1}{mrl(u)}du+c=\log{\int_t^\infty S(u)du}$$
+
+$$\implies c=\log{\int_0^\infty S(u)du}=\log{(mrl(0))}$$
+
+$$\implies \log\frac{\int_t^\infty S(u)du}{mrl(0)}=-\int_0^t\frac{1}{mrl(u)}du$$
+$$\implies \frac{\int_t^\infty S(u)du}{mrl(0)}=e^{-\int_0^t\frac{1}{mrl(u)}du}$$
+
+$$\implies \int_t^\infty S(u)du=mrl(t)S(t)=mrl(0)\cdot e^{-\int_0^t\frac{1}{mrl(u)}du}$$
+
+$$\implies S(t)=\frac{mrl(0)}{mrl(t)}\cdot e^{-\int_0^t\frac{1}{mrl(u)}du}$$
+\pagebreak
+
+- Extra Exercise 1
+
+```{r}
+SC_Estimator <- function(time,status){
+df <- data.frame(time,status)
+df.distinct<- df %>% mutate(status=1-status)%>% group_by_all %>% count %>% as.data.frame()
+names(df.distinct) <- c("y_i","status","event")
+df.distinct<- df.distinct %>% mutate(status=1-status)
+df.distinct<- df.distinct %>% mutate(d_i= ifelse(status==1,event,0))%>%
+  mutate(c_i= ifelse(status==0,event,0))%>%select(-2,-3)%>% 
+  add_row(y_i=0,d_i=0,c_i=0, .before = 1)
+y_i <- df.distinct[,1]
+d_i <- df.distinct[,2]
+c_i <- df.distinct[,3]
+n <- length(status)
+k <- nrow(df.distinct)
+n_i <- N_i <- n
+for (i in 2:k) {
+n_i[i] <- n_i[i-1]-d_i[i-1]-c_i[i-1]
+N_i[i] <- N_i[i-1]-d_i[i]-c_i[i]
+}
+p_i <- (n_i-d_i)/n_i  # Probability of surviving through I_i | alive at beginning I_i
+s_i <- 1              # K-M estimator of the survivor function
+for (i in 1:k) {s_i[i]<- prod(p_i[1:i])}
+
+sc_i <-  1            # Initial self-consistency estimator
+cum<-0     #  (1-d_i[1])/sc_i
+sc_i[1] <-(N_i[1])/(n-sum(cum))
+for (i in 2:k) {    # The rest of the self-consistency estimator
+  cum[i] <- (c_i[i])/(sc_i[i-1])
+  sc_i[i]<- (N_i[i])/(n-sum(cum)) }
+if (d_i[k]==0){
+cum[k] <- (1-c_i[k])/(sc_i[k-1]) # force the largest observed time to be uncensored
+sc_i[k]<- (n_i[k])/(n-sum(cum)) }# and calculate separately
+
+return(cbind(y_i,d_i,c_i,n_i,N_i,p_i,s_i,sc_i))
+}
+```
+
+```{r}
+aml1 <- read_excel("~/qushen26/stat2019_website/static/stat578/aml1.xls")
+pander(SC_Estimator(aml1$weeks,aml1$status))
+```
+
+```{r,echo=T}
+time <- c(1, 1 , 2, 4, 4, 4, 6, 9)
+status <- c(1, 0, 1, 1, 1, 0, 1, 1)
+pander(SC_Estimator(time,status))
+```
+
+```{r}
+diabetes <- read_excel("~/qushen26/stat2019_website/static/stat578/diabetes.xls")
+time <- diabetes[diabetes$diab==1,]$lzeit
+status <- diabetes[diabetes$diab==1,]$tod
+pander(SC_Estimator(time,status))
+```
+
+The result shows that the self-consistency estimator coincides with the K-M estimator.
+
+- Extra Exercise 2
+
+For current status data, the self-consistency estimator of the survivor function is
+
+
+$$\widehat{SC(t)}=\frac1n\left[\sum_{i=1}^n1\cdot\mathbb{1}(u_{(i)}>t,\delta_{(i)}=0)+\sum_{i=1}^n\frac{\widehat{SC(t)}-\widehat{SC(u_{(i)})}}{1-\widehat{SC(u_{(i)})}}\mathbb{1}(u_{(i)}>t,\delta_{(i)}=1)\right.$$
+$$\left.+\sum_{i=1}^n\frac{\widehat{SC(t)}}{\widehat{SC(u_{(i)})}}\mathbb{1}(u_{(i)}\le t,\delta_{(i)}=0)+\sum_{i=1}^n0\cdot\mathbb{1}(u_{(i)}\le t,\delta_{(i)}=1)\right]$$
+
+where $\frac{\widehat{SC(t)}}{\widehat{SC(u_{(i)})}}$ estimates the conditional probability of surviving beyond t given alive at $u_i$, $\frac{\widehat{SC(t)}-\widehat{SC(u_{(i)})}}{1-\widehat{SC(u_{(i)})}}$ estimates the conditional probability of surviving inside $t$ given dead at $u_{(i)}$.
+
+```{r,echo=F}
+time <- c(1.5,2.8,3.2,4.9,5.1)
+status <- c(1,0,1,1,0)
+```
+
+
+```{r,eval=F,include=F}
+SC_Est_CS <- function(time,status){ # For current status data
+n <- length(status)  
+df <- data.frame(time,status)
+df.distinct<- df %>% mutate(status=1-status)%>% group_by_all %>% count %>% as.data.frame()
+names(df.distinct) <- c("u_i","status","event")
+df.distinct<- df.distinct %>% mutate(status=1-status)
+df.distinct<- df.distinct %>% mutate(l_i= ifelse(status==1,event,0))%>%
+  mutate(r_i= ifelse(status==0,event,0))%>%select(-2,-3)%>% 
+  add_row(u_i=0,l_i=0,r_i=0, .after = n) %>% 
+  add_row(u_i=0,l_i=0,r_i=0, .before = 1) 
+k <- nrow(df.distinct)
+u_i <- df.distinct[,1]; d_i <- l_i <- df.distinct[,2]; r_i <- df.distinct[,3]
+n_i <- N_i <- n
+sc_t <- sc_t.hat <- s_i <- p_i <-  1    
+for (i in 2:k) {
+n_i[i] <- n_i[i-1]-l_i[i-1]-r_i[i-1]
+N_i[i] <- n_i[i-1]-l_i[i]-r_i[i] 
+p_i[i] <- (n_i[i]-d_i[i])/n_i[i]; p_i[k] <-0
+sc_u[i]<-s_i[i]<-prod(p_i[1:i])
+sc_t[i]<-sc_t.hat[i] <- (s_i[i]+s_i[i-1])/2
+}
+cum_l <- cum_r <- matrix(0,k*k,nrow=k,ncol=k)
+conv <- 1e-1; iter <- 1
+repeat{
+  
+for (i in 2:k) {   
+  for (j in 2:k) {   
+  cum_l[i,j]<- l_i[j]*(sc_t[i]-sc_u[j])/(1-sc_u[j])
+  cum_r[i,j] <-r_i[j]*(sc_t[i])/(sc_u[j]);cum_r[i,k] <- 0}
+sc_t.hat[i]<-(sum(r_i[i:k])+sum(l_i[i]*cum_l[i,i:k])+sum(r_i[i]*cum_r[i,1:i]))/n
+  }
+  
+
+  if(sum(abs(sc_t.hat-sc_t))< conv)
+break
+else sc_t <- sc_t.hat; iter <- iter+1
+}
+out <- list(cbind(u_i,l_i,d_i,r_i,n_i,p_i,s_i,sc_u,sc_t))
+names(out) <- paste("Iteration times=",iter)
+return(out)
+}
+#######################
+
+```
+
+```{r,eval=F,include=F}
+pander(SC_Est_CS(time,status))
+```
+
+I don't get a converge code yet. Quote Klein J.P. and Moeschberger M.L. (2003, p.143)
+
+In some applications the data may be interval-censored. Here the only information we have for each individual is that their event time falls in an interval $(L_i,R_i],i,1,...,n$, but the exact time is unknown. An estimate of the survival function can be found by a modification of above iterative procedure as proposed by Turnbull (1976). 
+
+Let $0=\tau_0<\tau_1<..<\tau_m$ be a grid of time points which includes all the points $L_i,R_i$ for $i=1,...,n$. For the $i^{th}$ observation, define a weight $\alpha_{ij}$ to be 1 if the interval $(\tau_{j-1},\tau_j]$ is contained in the interval $(L_i,R_i]$, and 0 otherwise. Note that $\alpha_{ij}$is an indicator of whether the event which occurs in the interval $(L_i,R_i]$ could have occurred at$\tau_j$. An initial guess at $S(\tau_j)$ is made. The algorithm is as follows:
+
+Step 1: Compute the probability of an event's occurring at time $\tau_j$, $p_j=S(\tau_{j-1})-S(\tau_j), j=1,...,m$
+
+Step 2: Estimate the number of events which occurred at $\tau_i$ by $d_i =\sum^n_{i=1}\frac{\alpha_{ij}p_j}{\sum_k\alpha_{ik}p_k}$
+
+Note the denominator is the total probability assigned to possible event times in the interval $(L_i,R_i]$. 
+
+Step 3: Compute the estimated number at risk at time $\tau_i$ by $Y_i=\sum^m_{k=j}d_k$. 
+
+Step 4: Compute the updated Product-Limit estimator using the pseudo data found in steps 2 and 3. If the updated estimate of $S$ is close to the old version of S for all $\tau_i$’s, stop the iterative process, otherwise repeat steps 1–3 using the updated estimate of $S$.
+
+\pagebreak
+
+- Extra Exercise 3
+
+Proof $Var(\hat H(t))=\sum\limits_{y_{(i)}\le t}\frac{d_i}{(n_i-d_i)n_i}$; $Var(\hat S(t))\approx S^2(t)\left[\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}\right]$
+
+Let $f(x)=\log(\hat p_i)$, $f(\mu)=\log(p_i)$, $f'(\mu)=\frac1{p_i}$
+
+$Var(\log(\hat p_i))=\frac1{p_i^2}Var(\hat p_i)$
+
+$$Var(\hat H(t))=Var(\log(\hat S(t)))=Var(\log(\prod_{i=1}^k\hat p_i))=\sum_{i=1}^kVar(\log\hat p_i)=\sum_{i=1}^k\frac{1}{p_i^2}Var(\hat p_i)=\sum_{i=1}^k\frac{1}{p_i^2}\frac{n_ip_i(1-p_i)}{n_i^2}$$
+
+$$=\sum_{i=1}^k\frac{q_i}{p_in_i}=\sum_{i=1}^k\frac{\frac{d_i}{n_i}}{(1-\frac{d_i}{n_i})n_i}=\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}$$
+
+Let $f(x)=\log(\hat S(t))=f(\mu)+f'(\mu)(x-\mu)=\log(S(t))+\frac1{S(t)}(\hat S(t)-S(t))$
+
+$Var(\log(\hat S(t)))=\frac1{S^2(t)}Var(\hat S(t))$
+
+$Var(\hat S(t))=S^2(t)Var(\log(\hat S(t)))=S^2(t)\sum_{i=1}^k\frac{d_i}{(n_i-d_i)n_i}$
+
+
+
+\pagebreak
+
+## HW3 2.1, 2.3, 2.4, 2.5, and 2.7.
+
+2.1 Use only hand-held calculator. No need for computer. 
+
+(a) Calculate the following table and sketch the Kaplan-Meier (K-M) estimate of survival for the data set y: 1, 1 +, 2, 4, 4, 4 +, 6, 9. ("+" denotes censored observation.) The s.e.($\hat S(t)$) is computed using Greenwood's formula (2.3) for the estimated (asymptotic) variance of the K-M curve at time t.
+
+```{r,echo=F,out.width='50%' }
+t <- 1:8
+y_i <- c(0, 1, 1 , 2, 4, 4, 6, 9)
+d <- c(0, 1, 0 , 1, 2, 0, 1, 1)
+n <- c(8, 8, 7 , 6, 5, 3, 2, 1)
+p <- (n-d)/n
+se <- s <- NA
+for (i in t) {s[i]<- prod(p[1:i])}
+for (i in t) {se[i]<- s[i]*sqrt(sum(d[1:i]/(n[1:i]-d[1:i])/n[1:i]))}
+pander(cbind(y_i,d,n,p,s,se)) # %>% kable_styling(bootstrap_options = "striped", full_width = F)
+
+y <- c(1, 1 , 2, 4, 4, 4, 6, 9)
+status <- c(1, 0, 1, 1, 1, 0, 1, 1)
+# Surv(y,status)
+km.fit <- survfit(Surv(y,status)~1,type="kaplan-meier") #  , "plain""log",conf.type="plain",conf.type="log-log"
+# summary(km.fit)
+autoplot(km.fit,conf.int=T, surv.linetype =1, surv.colour = 'dodgerblue3',
+         conf.int.fill = 'dodgerblue3', conf.int.alpha = 0.1,censor.colour = 'blue') + theme_light()+
+         scale_x_continuous(breaks = seq(from=0,to=9,by=1))  
+#    theme(plot.title = element_text(hjust = 0.5)) +  ggtitle("K-M") + xlab("Time") + ylab("S(t)") +
+```
+
+
+(b) Calculate a 95% confidence interval for $S(t)$ at $t = 3$. Use the **default interval** given in Remark 4, expression (2.16). Is is necessary to use the C.I. in expression (2.18)? If yes, use it to report a 95% C.I. 
+
+```{r,echo=F}
+Var.hat.H.t3 <- sum(d[1:4]/n[1:4]/(n[1:4]-d[1:4]))
+CI.t3 <- c(exp(log(s[4])-qnorm(0.975)*sqrt(Var.hat.H.t3)),exp(log(s[4])+qnorm(0.975)*sqrt(Var.hat.H.t3))) # K-M
+W <- log(-log(s[4])) # log-log
+Var.W <- Var.hat.H.t3/(log(s[4])^2)
+CI.t3.log <- c(s[4]^(exp(qnorm(0.975)*sqrt(Var.W))),s[4]^(exp(-qnorm(0.975)*sqrt(Var.W)))) 
+tilde.h.t3 <- d[4]/n[4]  # Nelson-Aalen
+tilde.H.t3 <- sum(d[1:4]/n[1:4])
+Var.tilde.H.t3 <- sum(d[1:4]/n[1:4]^2)
+CI.tilde.H.t3 <- c(exp(log(s[4])-qnorm(0.975)*sqrt(Var.tilde.H.t3)),exp(log(s[4])+qnorm(0.975)*sqrt(Var.tilde.H.t3)))
+Var.tilde.W <- Var.tilde.H.t3/(log(s[4])^2)
+CI.tilde.H.t3.log <- c(s[4]^(exp(qnorm(0.975)*sqrt(Var.tilde.W))),s[4]^(exp(-qnorm(0.975)*sqrt(Var.tilde.W)))) 
+se.M.t4 <- se[5]*(4-2)/(s[4]-s[5])
+CI.M.t4 <- c(4-qnorm(0.975)*se.M.t4,4+qnorm(0.975)*se.M.t4)
+```
+
+$\widehat{Var}(\hat H(3))=\sum\limits_{y_{(i)}\le3}^{}\frac{d_i}{n_i(n_i-s_i)}=$ `r Var.hat.H.t3`
+
+$\exp(\log(\hat S(3))\pm 1.96se(\hat H(3)))=\exp(\log(0.7292)\pm 1.96*\sqrt{0.0512}=$ (`r CI.t3`)
+
+The interval exceed (0,1). Use the C.I. in expression (2.18) by *log-log* transformation
+
+$W=\log(-\log(\hat S(3)))=$ `r W`
+
+$\widehat{Var}(W)=\frac{1}{(\log(\hat S(3))^2}\widehat{Var}(\hat H(3))=$ `r Var.W`
+
+$\hat S(3)^{\exp(\pm1.96se(W))}=$ (`r CI.t3.log`)
+
+(c) Compute the estimated hazard (2.5) $\tilde h(t_i)$ at$t_i = 2$. Then compute a 95% C.I. for $H(t)$ at $t = 3$ using the Nelson-Aalen estimate (2.9). 
+
+
+```{r,echo=T}
+tilde.h.t3 <- d[4]/n[4]  # Nelson-Aalen
+tilde.H.t3 <- sum(d[1:4]/n[1:4])
+Var.tilde.H.t3 <- sum(d[1:4]/n[1:4]^2)
+CI.tilde.H.t3 <- c(exp(log(s[4])-qnorm(0.975)*sqrt(Var.tilde.H.t3)),exp(log(s[4])+qnorm(0.975)*sqrt(Var.tilde.H.t3)))
+Var.tilde.W <- Var.tilde.H.t3/(log(s[4])^2)
+CI.tilde.H.t3.log <- c(s[4]^(exp(qnorm(0.975)*sqrt(Var.tilde.W))),s[4]^(exp(-qnorm(0.975)*sqrt(Var.tilde.W)))) 
+```
+
+
+At $t_3=2$, $\tilde h(t_3)=d_3/n_3=$ `r tilde.h.t3`
+
+$\tilde H(3)=\sum\limits_{y_{(i)}\le3}^{}\frac{d_i}{n_i}=$ `r tilde.H.t3`
+
+$\widehat{Var}[\tilde H(3)]=\sum\limits_{y_{(i)}\le3}^{}\frac{d_i}{n_i^2}=$ `r Var.tilde.H.t3`
+
+$\exp(\log(\hat S(3))\pm 1.96se(\tilde H(3)))=$ (`r CI.tilde.H.t3`)
+
+The interval exceed (0,1). Using *log-log* transformation,
+
+$\widehat{Var}(W)=\frac{1}{(\log(\hat S(3))^2}\widehat{Var}(\tilde H(3))=$ `r Var.tilde.W`
+
+$\hat S(3)^{\exp(\pm1.96se(W))}=$ (`r CI.tilde.H.t3.log`)
+
+(d) Provide a point and 95% C.I. estimate of the median survival time. See page 34.
+
+$\widehat{Var}[\hat t_p]=\frac{\widehat{Var}[\hat S(\hat t_p)]}{(\hat f(\hat t_p))^2}$, where $\widehat{Var}[\hat S(\hat t_p)]$ is Greenwood's formula for the estimate of the variance of the K-M estimator, and  $\hat f(\hat t_p)$ is the estimated probability density at $\hat t_p$.
+
+$\hat f(\hat t_p)=\frac{\hat S(\hat u_p)-\hat S(\hat l_p)}{\hat l_p-\hat u_p}$, where $\hat u_p=\max\{t_i|\hat S(t_i)\ge1-p+\epsilon\}$, $\hat l_p=\min\{t_i|\hat S(t_i)\le1-p-\epsilon\}$, for $i=1,..,r\le n$ with $r$ being the number of distinct death times, and take $\epsilon=0.05$.
+
+The median $\hat t_{0.5}=4$. 
+
+$\hat u_{0.5}=\max\{t_i|\hat S(t_i)\ge0.55\}=2$
+
+$\hat l_{0.5}=\min\{t_i|\hat S(t_i)\le0.45\}=4$
+
+$se(4)=\frac{se(\hat S(4))}{\frac{\hat S(2)-\hat S(4)}{4-2}}=$ `r se.M.t4`
+
+$4\pm1.96se(4)=$ (`r CI.M.t4`)
+
+2.3 Use S or R for this exercise. 
+
+In this study the survival times (in days) of 66 patients after a particular operation were observed. The data frame diabetes contains for each patient the following variables:
+Variable Key sex gender (m=0, f=1) diab diabetic (1=yes, 0=no) alter age in years altgr age group in years = 0 if age ≤64, or 1 if age > 64 lzeit survival times in days (number of days to death) after operation tod 0 = censored, 1 = uncensored (dead)
+
+(a) Following the S code on page 35 of the text, obtain a summary of the K-M survival curve for the diabetic group only. survfit is the main function. 
+
+```{r,echo=F}
+diabetes <- read_excel("~/qushen26/stat2019_website/static/stat578/diabetes.xls")
+```
+
+```{r,echo=F}
+diabetes1 <- diabetes[diabetes$diab==1,]
+km.fit.diabetes1 <- survfit(Surv(lzeit,tod)~1,type="kaplan-meier", data=diabetes1) 
+summary(km.fit.diabetes1)
+```
+
+
+(b) Report the mean and median survival times. 
+
+```{r,echo=F}
+print(km.fit.diabetes1, print.rmean = T)
+```
+
+(c) Plot the K-M curve for this group. 
+
+```{r,echo=F,out.width='50%'}
+# plot(km.fit,lty=1)
+autoplot(km.fit.diabetes1,conf.int=T, surv.linetype =1, surv.colour = 'dodgerblue3',
+         conf.int.fill = 'dodgerblue3', conf.int.alpha = 0.1,censor.colour = 'blue') + theme_light() +
+         scale_x_continuous(breaks = seq(from=0,to=2900,by=500))  
+```
+
+(d) Use the function hazard.km (page 38) to give a summary of the various estimates of hazard and cumulative hazard. 
+
+```{r,echo=F}
+hazard.km <-function(data){
+## Author: Mara Tableman  Date: 20 November 2002 
+## Purpose:  To compute the two types of empirical hazards,
+##           and the cumulative hazards along their s.e.'s
+## Arguments:  data is survfit object
+	time <- summary(data)$time
+	ni <- summary(data)$n.risk
+	di <- summary(data)$n.event
+	surv <- summary(data)$surv
+	stderr <- summary(data)$std.err
+	hitilde <- di/ni
+	tau <- diff(time, lag = 1)	#length of interval to right of ti
+	tau[length(tau) + 1] <- NA
+	hihat <- hitilde/tau
+	Hhat <-  -log(surv)
+	Htilde <- cumsum(hitilde)
+	sqri <- di/(ni^2)
+	se.Hhat <- stderr/surv
+	se.Htilde <- sqrt(cumsum(sqri))
+	hazardtable <- round(data.frame(time, ni, di, hihat, hitilde, Hhat,se.Hhat, Htilde, se.Htilde),4)
+        return(hazardtable)
+	}
+# epi.insthaz(km.fit, conf.level = 0.95)
+pander(hazard.km(km.fit.diabetes1))
+```
+
+(e) Use the function quantile.km (page 38) to provide point and 95% confidence interval estimates for the .25th and .80th quantiles. 
+
+```{r,echo=F}
+quantile.km <-function(data, p, eps, z)
+{
+## data is survfit object, p is between 0 and 1
+## eps is epsilon 0f 0.05 or bigger, 
+## z iz z-score for confidence coefficient
+time <- summary(data)$time
+ni <- summary(data)$n.risk
+di <- summary(data)$n.event
+surv <- summary(data)$surv
+stderr <- summary(data)$std.err
+qp <- min(time[surv <= 1 - p])
+## The point estimate of pth-quantile 
+se.S.qp <- stderr[surv == max(surv[surv <= 1 - p])]
+## S.qp is the standard error of the estimated survival
+   ## probability at qp.
+u.p <- max(time[surv >= 1 - p + eps])
+# the largest time at which surv >= 1-p+eps
+l.p <- min(time[surv <= 1 - p - eps])
+# the smallest time at which surv <=1-p-eps
+S.u.p <- surv[time == u.p]# survival probability at u.p
+S.l.p <- surv[time == l.p]# survival probability at l.p
+f.qp <- (S.u.p - S.l.p)/(l.p - u.p)
+## estimated probability density at pth-quantile
+se.qp <- se.S.qp/f.qp
+## estimated standard error of the sample pth-quantile
+LCL <- qp - z * se.qp
+UCL <- qp + z * se.qp
+out <- round(data.frame(qp, se.S.qp, f.qp, se.qp, LCL, UCL), 4)
+# print("summary")
+# print(out, invisible(1))
+##print("An approximate 1-alpha confidence interval for the true pth-quantile")
+return(out)
+}
+quantile_25 <- quantile.km(km.fit.diabetes1,.25,.05,1.96)
+quantile_80 <- quantile.km(km.fit.diabetes1,.8,.05,1.96)
+pander(rbind(c("25th",quantile_25),c("80th",quantile_80)))
+```
+2.4 We continue with the diabetes data. 
+
+(a) Plot the K-M curves for the data of the diabetic group and the nondiabetic. Comment briefly! Be sure to give a legend so we know which line corresponds to which group. See page 39. 
+
+```{r,echo=F,out.width='50%'}
+km.fit.diabetes <- survfit(Surv(lzeit,tod)~diab,type="kaplan-meier", data=diabetes) 
+autoplot(km.fit.diabetes,conf.int=T, surv.linetype =1, conf.int.alpha = 0.3) + theme_light() + theme(legend.position = c(0.8, 0.8)) +
+        scale_colour_manual(values = c('darkcyan','blue'),labels = c("non-diabetic","diabetic")) + 
+        scale_fill_manual(values = c('cyan3','steelblue3'),labels = c("non-diabetic","diabetic")) + 
+        scale_x_continuous(breaks = seq(from=0,to=5500,by=1000)) 
+```
+
+The non-diabetic group has longer survival time than diabetic group.
+
+(b) Is there a statistically significant difference in survival between the two groups - diabetic and nondiabetic? What weaknesses (shortcomings) does this global analysis have? See page 46 for example. 
+
+```{r,echo=F}
+print(km.fit.diabetes, print.rmean = T)
+survdiff(Surv(lzeit,tod)~diab, data=diabetes) 
+```
+
+There is significant difference in survival between the two groups (the p-value is 0.02/2=0.01). The mean and median of survival time in non-diabetic group is longer than diabetic group.
+
+
+(c) Stratifying on known prognostic factor(s) can improve an analysis.
+
+i. Stratify by sex. Judge now the difference in survival between the diabetic and nondiabetic groups. Tips: 
+
+```{r,echo=F,out.width='50%'}
+table(data.frame(diabetes$sex,diabetes$diab)) 
+survdiff(Surv(lzeit,tod)~diab+strata(sex), data=diabetes)
+fit.sex <- survfit(Surv(lzeit,tod)~diab+strata(sex), data=diabetes)
+print(fit.sex, print.rmean = T)
+plot(fit.sex,conf.int=F,xlab="Time",ylab="Surv",col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(2,1))
+legend(3200,1,c("non-diabetic female","non-diabetic male","diabetic female","diabetic male"),col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(1,2))
+```
+
+There is significant difference in survival between the two groups (the p-value is 0.03/2=0.015). The survival time in non-diabetic group is longer than diabetic group. However, taking into account the variation due to sex, the difference between two groups is small in male, while it is large in female.
+
+It should be noted that the data are unbalanced. There are only three non-diabetic female. That may explain why diabetic female has less survival time than diabetic male.
+
+ii. Stratify by altgr (age group). Judge now the difference in survival between the diabetic and nondiabetic groups. 
+
+```{r,echo=F,out.width='50%'}
+table(data.frame(diabetes$altgr,diabetes$diab)) 
+survdiff(Surv(lzeit,tod)~diab+strata(altgr), data=diabetes)
+fit.age <- survfit(Surv(lzeit,tod)~diab+strata(altgr), data=diabetes)
+print(fit.age, print.rmean = T)
+plot(fit.age,conf.int=F,xlab="Time",ylab="Surv",col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(1,2))
+legend(3200,1,c("non-diabetic <64","non-diabetic >64","diabetic <64","diabetic >64"),col=c(rep('cyan',2),rep('steelblue3',2)),lty=c(1,2))
+```
+
+There is significant difference in survival between the two groups (the p-value is 0.04/2=0.02). Based on the figure, taking into account the variation due to age, the younger ($\le 64$) non-diabetic group is much longer than other groups but survival time in the younger ($\le 64$) diabetic group get down faster than other groups.
+
+(d) Refer to the Hazard ratio as a measure of effect discussion starting on page 45. Does it appear that the hazard ratio between the two groups, diabetic and nondiabetic, is constant over time? That is, are the two empirical hazard functions proportional? 
+
+
+```{r,eval=F,include=F}
+ g.emphaz<-function(data = NULL,type="hhat",legend = NULL, main = NULL)
+{
+	## Purpose:  1. draw empirical hazards
+	##           2. prints out actual hazard values in the order hitilde, hihat 
+	## ------------------------------------------------------------------------
+	## Arguments:
+	##   data     a Surv object or a list of Surv objects 
+	##   type     what should be drawn? "ht" for hitilde or "hhat" for hihat
+	##   main     main title
+	##   legend   
+	## ------------------------------------------------------------------------
+	## Author: Werner Stahel, Date:  2 Aug 2004, 17:21 / WSt Aug 04
+	## Second Author:  Mara Tableman, Date: 30 October 2004
+	f.emphaz<-function(w)
+   { ## creates a list of data.frames with "time","ht" for hitilde,"hhat" for hihat
+     ##    for two different treatment groups.
+     	f.f <- function(s)
+	{
+		sf <- summary(survfit(Surv(s[,1], s[,2])~1, type = "kaplan-meier"))
+		time <- sf$time
+		hitilde <- round(sf$n.event/sf$n.risk,digits=3)
+		hihat <- round(hitilde/c(diff(time), NA),digits=3)
+		hihat[length(time)] <- hihat[(length(time) - 1)]
+		data.frame(time = sf$time, ht = hitilde, hhat = hihat)
+	}
+	if(length(dim(data)) == 2)
+		f.f(w)
+	else lapply(w, f.f)
+   }
+	if(!is.null(data)) emphaz <- f.emphaz(data)
+	print(emphaz)
+	if(is.data.frame(emphaz))
+		emphaz <- list(emphaz)
+		 xrg <- range(sapply(emphaz, function(x)range(x[, "time"])))
+		yrg <- range(sapply(emphaz, function(x)range(x[, "ht"])))
+		if (type =="hhat"){ 
+		yrg <- range(sapply(emphaz, function(x)range(x[,  "hhat" ])))}
+		
+	plot(xrg, yrg, type = "n", xlab = "observed failure times", ylab = "hazard at time i")
+	nds <- length(emphaz)
+	for(li in 1:nds) {
+		ldat <- emphaz[[li]]
+		lines(ldat[, "time"], ldat[, type],type="s", lty = li)
+		points(ldat[, "time"], ldat[, type], pch = 16, cex = 0.5)
+	}
+	if(!is.null(legend)) {
+		usr <- par("usr")
+		legend(0.9 * usr[1] + 0.1 * usr[2], 0.05 * usr[3] + 0.95 *
+			usr[4], rep(legend, length = nds), lty = 1:2)
+	}
+	title(main)
+	box()
+ }
+
+Surv0 <- Surv(diabetes$lzeit[diabetes$diab==0],diabetes$tod[diabetes$diab==0])
+Surv1 <- Surv(diabetes$lzeit[diabetes$diab==1],diabetes$tod[diabetes$diab==1])
+surv.list <- list(Surv0,Surv1)
+g.emphaz(data=surv.list,type="ht",main="hitilde", legend=c("nondiabetic","diabetic")) 
+g.emphaz(data=surv.list,type="hhat",main="hihat", legend=c("nondiabetic","diabetic"))
+```
+
+
+```{r,echo=F}
+emphaz <- function(data){ 
+my<-lapply(data,function(s){
+out <- summary(survfit(s,type="kaplan-meier"))
+ni<-out$n.risk
+di<-out$n.event
+time<-out$time
+surv<-out$surv
+hitilde<-di/ni
+tau<-diff(time,lag=1) #Length of interval to right of ti
+tau[length(tau)+1]<-NA
+hihat<-hitilde/tau
+hihat[length(time)]<-hihat[(length(time)-1)]
+# survtable<-data.frame(time,hitilde,hihat)
+# print(round(survtable,3))
+hitilde<-round(hitilde,3)
+hihat<-round(hihat,3)
+my.try<-list(data.frame(time,hitilde,hihat))
+}
+)
+}
+
+Surv0 <- Surv(diabetes$lzeit[diabetes$diab==0],diabetes$tod[diabetes$diab==0])
+Surv1 <- Surv(diabetes$lzeit[diabetes$diab==1],diabetes$tod[diabetes$diab==1])
+surv.list <- list(Surv1~1,Surv0~1)
+my <- emphaz(surv.list)
+pander(my[[2]][[1]])
+pander(my[[1]][[1]])
+```
+
+
+```{r,echo=F, fig.width=9, fig.height=4, fig.align='center'}
+t.k<-length(surv.list)
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+lty<-c(5,1)
+col <- c('steelblue3','cyan')
+t.rg<-range(sapply(my, function(s) range(s[[1]]$time)))
+h.rg.tilde<-range(sapply(my, function(s) range(s[[1]]$hitilde)))
+h.rg.hat<-range(sapply(my, function(s) range(s[[1]]$hihat)))
+
+plot(t.rg,h.rg.tilde,type="n",axes=T,xlab="observed failure times ",ylab=" ")
+for(t.g in 1:t.k){
+lines(my[[t.g]][[1]]$time,my[[t.g]][[1]]$hitilde,type="s",col=col[t.g],lwd=2) #lty=lty[t.g],
+points(my[[t.g]][[1]]$time,my[[t.g]][[1]]$hitilde,pch=3,cex=0.5,col=col[t.g])
+#axis(1,at=my[[t.g]][[1]]$time,outer=F,lab=paste(my[[t.g]][[1]]$time))
+#axis(2,at=my[[t.g]]$hitilde,outer=F,lab=paste(my[[t.g]]$hitilde),tck=.02,cex=.5)
+mtext("hazard at time i (hitilde)",side=2,line=2)
+# mtext("hitilde at ti",side=3,line=-1)
+# mtext(text,side=3,line=-1.3)
+legend(0,1,c("diabetic","non-diabetic"),col=c('steelblue3','cyan'),lty=1)
+}
+plot(t.rg,h.rg.hat,type="n",axes=T,xlab="observed failure times ",ylab=" ")
+for(t.g in 1:t.k){
+lines(my[[t.g]][[1]]$time,my[[t.g]][[1]]$hihat,type="s",col=col[t.g],lwd=2)
+points(my[[t.g]][[1]]$time,my[[t.g]][[1]]$hihat,pch=3,cex=.5,col=col[t.g])
+#axis(1,at=my[[t.g]][[1]]$time,outer=F,lab=paste(my[[t.g]][[1]]$time))
+#axis(2,at=my[[t.g]]$hihat,outer=F,lab=paste(my[[t.g]]$hihat),tck=.02,cex=.5)
+mtext("hazard at time i (hihat)",side=2,line=2)
+# mtext("hihat", side=3,line=-1)
+# mtext(text,side=3,line=-1.3)
+legend(1500,0.08,c("diabetic","non-diabetic"),col=c('steelblue3','cyan'),lty=1)
+}
+```
+Both plots cross over time and don't display roughly parallel curves over time, which implies one group's risk is not always lower than another with respect to time.
+
+Both plots indicate the hazard ratio between the two groups, diabetic and non-diabetic, is not constant with respect to time, which says the two empirical hazard functions of the two groups are not proportional. 
+
+As the April-30th lecture introduced, the kernel estimator of $h(t)$ can examine the hazard ratio better with larger data sets. It raises a question, how straight a hazard ratio curve is can be considered as constant? Since most of realistic data cannot give a perfect straight line.
+
+2.5 Answer the WHY! on page 39.
+
+```{r,echo=F,out.width='50%'}
+aml1 <- read_excel("~/qushen26/stat2019_website/static/stat578/aml1.xls")
+# Surv(aml1$weeks,aml1$status)
+km.fit.aml1 <- survfit(Surv(weeks,status) ~ 1,type="kaplan-meier",data=aml1) #,conf.type="log-log",conf.type="plain"
+autoplot(km.fit.aml1,conf.int=T, surv.linetype =1, surv.colour = 'dodgerblue3',
+         conf.int.fill = 'dodgerblue3', conf.int.alpha = 0.1,censor.colour = 'blue') + theme_light() +
+         scale_x_continuous(breaks = seq(from=0,to=161,by=10)) + geom_segment(aes(x=13,y=0,xend=13,yend=0.75),lty=5,lwd=.2) + geom_hline(yintercept =0.75,lty=5,lwd=.2)
+```
+
+Use survfit graphical method to find a confidence interval for the $25^{th}$ quantile, draw a horizontal line at $0.75$ on the graph of the survival curve, and use intersections of this line with the curve and its upper and lower confidence bands. The lower confidence limit is the smallest time (t=13) at which the lower confidence limit for $S(t)\le 0.75$.
+
+However, the upper confidence limit for S(t) never less than $0.75$, then the corresponding confidence limit for the $25^{th}$ quantile is unknown and it is represented as an NA. 
+
+2.7 On the data given in Exercise 2.1, compute by hand the truncated mean survival time (2.15) and its estimated variance (2.19). Check your answer using the appropriate S function. 
+
+```{r, echo=F, collapse=T}
+pander(cbind(y_i,d,n,p,s,se))
+print(km.fit,print.rmean=T)
+```
+
+```{r, eval=F, include=F}
+(1-0)*1+(2-1)*0.8750+(4-2)*0.7292+(6-4)*0.4375+(9-6)*0.2188
+
+((2-1)*0.875+(4-2)*0.7292+(6-4)*0.4375+(9-6)*0.2188)^2/(8*7)+
+  ((4-2)*0.7292+(6-4)*0.4375+(9-6)*0.2188)^2/(6*5)+
+  ((6-4)*0.4375+(9-6)*0.2188)^2*2/(5*3)+
+  ((9-6)*0.2188)^2/2
+
+((9-1)*0.875)^2/(8*7)+((9-2)*0.7292)^2/(6*5)+((9-4)*0.4375)^2*2/(5*3)+((9-6)*0.2188)^2/2
+(9*0-1*0.875)^2/(8*7)+(-2*0.7292)^2/(6*5)+(-4*0.4375)^2*2/(5*3)+(-6*0.2188)^2/2
+1+(0-0.875)^2/(8*7)+(0-0.7292)^2/(6*5)+(0-0.4375)^2*2/(5*3)+(0-0.2188)^2/2
+(1.05)^2
+```
+$$\widehat{mean}=\sum_{i=1}^{n'}\left(y_{(i)}-y_{(i-1)}\right)\hat S(y_{(i-1)})$$
+$$=(1-0)\times1+\underbrace{(2-1)\times0.8750}_{e_1}+\underbrace{(4-2)\times0.7292}_{e_2}+\underbrace{(6-4)\times0.4375}_{e_3}+\underbrace{(9-6)\times0.2188}_{e_4}=4.865$$
+
+$$\widehat{Var}(\widehat{mean})=\sum_{i=1}^{n'}\left(\int^{y_{(n)}}_{y_{(i)}}\hat S(u)du\right)^2\frac{d_i}{n_i(n_i-d_i)}$$
+$$=(\sum_{i=1}^4e_i)^2\frac1{8(8-1)}+(e_2+e_3+e_4)^2\frac1{6(6-1)}+(e_3+e_4)^2\frac2{5(5-2)}+(e_4)^2\frac1{2(2-1)}=1.093$$
+
+
+## HW4 3.1 and 3.2.
+
+3.1 Let T denote survival time of an experimental unit with survivor function $S(t) = \exp(-t/\theta)$ for $t>0$ and $\theta>0$. In this experiment n experimental units were observed and their lengths of life (in hours) were recorded. Let $t_1,...,t_k$ denote the completely observed (uncensored) lifetimes, and let $c_{k+1},c_{k+2},...,c_n$ denote the $n-k$ censored times. That is, this data set contains randomly right-censored data points. 
+
+(a) Derive the maximum likelihood estimate (MLE) $\hat\theta_{ML}$ for $\theta$. Describe this in words. Refer to expression (3.8) and pages 70- 71. 
+
+$S(t) = \exp(-\frac{t}{\theta})$, $f(t) =\frac{1}{\theta}\exp(-\frac{t}{\theta})$
+
+$$\log L(\theta)=\log\prod_{i=1}^nf^{\delta_i}(t_i|\theta)S_f^{1-\delta_i}(c_i|\theta)=\log\left(\prod_{i=1}^kf(t_i|\theta)\prod_{i=k+1}^nS_f(c_i|\theta)\right)=\sum_k\log f(t_i|\theta)+\sum_{n-k}\log S_f(c_i|\theta)$$
+
+$$=\sum_k\log (\frac{1}{\theta}\exp(-\frac{t_i}{\theta}))+\sum_{n-k}\log \exp(-\frac{c_i}{\theta})=-k\log\theta-\frac{\sum_kt_i}{\theta}-\frac{\sum_{n-k}c_i}{\theta}$$
+
+$$\frac{\partial\log L(\theta)}{\partial\theta}=-\frac{k}{\theta}+\frac{\sum_kt_i+\sum_{n-k}c_i}{\theta^2}\overset{set}{=}0\implies\hat\theta_{ML}=\frac{\sum_kt_i+\sum_{n-k}c_i}{k}$$
+
+The maximum likelihood estimator (MLE) $\hat\theta_{ML}$ is the total sum of survival time with censored and uncensored obervations divided by the number of uncensored observations.
+
+
+(b) Referring to the observed information matrix $i(\theta)$ (3.11), we derive the following expression for the (estimated) asymptotic variance of $\hat\theta_{ML}$: 
+$\widehat{var}_a(\hat\theta_{ML})=\frac{(\hat\theta_{ML})^2} k$, 
+where $k$ is the number of uncensored data points $n_u$. 
+
+```{r,eval=F, include=F}
+(1+4+7+9+12+3+3+4+6+6)/5
+11^2/5
+exp(log(11)-1.96/sqrt(5))
+exp(log(11)+1.96/sqrt(5))
+
+-2*(-5*log(10)-55/10)+2*(-5*log(11)-55/11)
+
+pchisq(0.0469, 1, ncp = 0, lower.tail = F)
+
+5.5^3/(2*55-10*5.5)
+-2*(-10*log(10)-55/10)+2*(-10*log(5.5)-55/5.5)
+pchisq(2.957, 1, ncp = 0, lower.tail = F)
+
+pchisq(11, 20, ncp = 0, lower.tail = T)
+
+qchisq(0.025, 20, lower.tail = F)
+qchisq(0.975, 20, lower.tail = F)
+
+2*10*5.5/34.17
+2*10*5.5/9.591
+```
+
+i. Calculate for $t_1,...,t_5 =1,4,7,9,12$ and $c_6,c_7,...,c_{10}=3,3,4,6,6$ the value of the estimate $\hat\theta_{ML}$ and $\widehat{var}_a(\hat\theta_{ML})$. 
+
+$\hat\theta_{ML}=\frac{1+4+7+9+12+3+3+4+6+6}{5}=11$
+
+$\widehat{var}_a(\hat\theta_{ML})=\frac{(\hat\theta_{ML})^2}k=\frac{11^2}{5}=24.2$
+
+ii. Provide an asymptotic 95% confidence interval for $\theta$, the true mean lifetime of the experimental units. Refer to expression (3.18) and Table 3.2. 
+
+$\log(\hat\theta)\overset{a}{\sim}N(\log(\theta),\frac1{n_u})=N(\log(11),\frac1{5})=N(2.398,\frac1{5})$
+
+$\log(11)\pm1.96\times\frac1{\sqrt{5}}=(1.521, 3.274)$
+
+The asymptotic 95% confidence interval for $\theta$ is $(e^{1.521},e^{3.274})=(4.578, 26.43)$.
+
+(c) Refer to expression (3.14). Give the expression for Neyman-Pearson/ Wilks Likelihood Ratio Test (LRT) statistic $r^*(t)$ to test the hypothesis $H_0:\theta = \theta_0$. Then calculate its value on the data in part (b) with $\theta_0 = 10$. Use the asymptotic distribution of $r^*(t)$ to test the hypothesis $H_0:\theta=10$ against $H_A:\theta\neq10$. Also see page 75. 
+
+$\log(L(\theta_0))=-k\log\theta_0-\frac{\sum_kt_i}{\theta_0}-\frac{\sum_{n-k}c_i}{\theta_0}=-5\log10-\frac{55}{10}=-17.01$
+
+$\log(L(\hat\theta))=-k\log\hat\theta-\frac{\sum_kt_i}{\hat\theta}-\frac{\sum_{n-k}c_i}{\hat\theta}=-5\log11-\frac{55}{11}=-16.99$
+
+Under $H_0$, the Likelihood Ratio Test (LRT) $r^*(t)\overset{a}{\sim}\chi^2_{d}$ where the degrees of freedom equal to the difference in dimensionality of $\Theta$ and $\Theta_0$.
+
+$r^*(t)=-2\log(L(\theta_0))+2\log(L(\hat\theta))=-2(-17.01)+2(-16.99)=0.0469$
+
+$T^*_1\sim\chi^2_{1}$. (Casella and Berger, 2002, Theorem 10.3.1) The p-value $=P(r^*(t)\ge 0.0469)=0.8285$. 
+
+Therefore, we fail to reject $H_0:\theta=10$ at 95% confidence level.
+
+(d) Suppose now that all $n$ lifetimes are completely observed; that is, no censored times. Then $t1,...,t5 =1 ,4,7,9,12$ and $t6,...,t10 =3,3,4,6,6$. Compute $\hat\theta_{ML}$ and $\widehat{var}_a(\hat\theta_{ML})$. See page 68 and expression (3.11). 
+
+$\log L(\theta)=\log\prod_{i=1}^nf(t_i|\theta)=\sum_{i=1}^n\log (\frac{1}{\theta}\exp(-\frac{t_i}{\theta}))=-n\log\theta-\frac{\sum_{i=1}^nt_i}{\theta}$
+
+$\frac{\partial\log L(\theta)}{\partial\theta}=-\frac{n}{\theta}+\frac{\sum_{i=1}^nt_i}{\theta^2}\overset{set}{=}0\implies\hat\theta_{ML}=\frac{\sum_{i=1}^nt_i}{n}=\frac{55}{10}=5.5$
+
+$i(\theta)=-\frac{\partial^2\log L(\theta)}{\partial\theta^2}=-\frac{n}{\theta^2}+\frac{2\sum_{i=1}^nt_i}{\theta^3}$
+
+$\widehat{var}_a(\hat\theta_{ML})=(i(\hat\theta))^{-1}=\frac{5.5^3}{2\times55-10\times5.5}=3.025$
+
+(e) For the complete data case in part (d), calculate the LRT statistic to test $H_0:\theta = \theta_0$. Denote the LRT statistic by $T^*_1$. Use the asymptotic distribution of $T^*_1$ to test $H_0:\theta=10$ against $H_A:\theta\neq10$ with data from part (d). See page 71. Note that $T^*_1=r^*(\underline{t})$. 
+
+$\log(L(\theta_0))=-10\log\theta_0-\frac{\sum_{i=1}^nt_i}{\theta_0}=-10\log10-\frac{55}{10}=-17.01$
+
+$\log(L(\hat\theta))=-n\log\hat\theta-\frac{\sum_{i=1}^nt_i}{\hat\theta}=-10\log5.5-\frac{55}{5.5}=-27.05$
+
+Under $H_0$, $r^*(t)=-2\log(L(\theta_0))+2\log(L(\hat\theta))=-2(-28.53)+2(-27.05)=2.957$
+
+$T^*_1\sim\chi^2_{1}$. The p-value $=P(r^*(t)\ge 2.957)=0.08551$. 
+
+Therefore, we fail to reject $H_0:\theta=10$ at 95% confidence level.
+
+
+(f) In the complete data case there exists a test statistic $T^*_2$, equivalent to the LRT statistic $T^*_1$, to test $H_0:\theta = \theta_0$:
+$T^*_2=\frac{2\sum_{i=1}{n}t_i}{\theta_0}$. 
+The exact distribution of $T^*_2$ under $H_0$ is $\chi^2_{(2n)}$. 
+
+i. Conduct an analogous test to part (e) and compare results.
+
+$T^*_2=\frac{2\sum_{i=1}{n}t_i}{\theta_0}=\frac{2\times55}{10}=11$
+
+Using two-sided test, $P(T^*_2\ge 11)=0.9462$, $P(T^*_2<11)=0.05378$. We use exact confidence interval.
+
+$\chi^2_{(0.025,20)}=9.591$, $\chi^2_{(0.975,20)}=34.17$.
+
+$9.591<T^*_2<34.17$, then we fail to reject $H_0:\theta=10$ at 95% confidence level.
+
+Hence, $T^*_2$ is equivalent to the LRT statistic  $T^*_1$.
+
+ii. Construct an exact 95% confidence interval for the true mean lifetime $\theta$. Hint: Refer to page 70. 
+
+$T^*_2=\frac{2\sum_{i=1}{n}t_i}{\theta}=\frac{2n\hat\theta}{\theta}\in[9.591,34.17]$
+
+The exact 95% confidence interval for the true mean lifetime $\theta$ is
+
+$\theta\in[\frac{2n\hat\theta}{34.17},\frac{2n\hat\theta}{9.591}]=[3.219,11.47]$.
+
+
+3.2 The diabetes data in Exercise 2.3. We consider only the diabetic group. Refer to Section 3.4.2.
+
+(a) Fit the data to the Weibull model. Then: 
+
+```{r,echo=F}
+diabetes <- read_excel("~/qushen26/stat2019_website/static/stat578/diabetes.xls")
+diabetes1 <- diabetes[diabetes$diab==1,]
+```
+
+```{r,echo=F}
+weib.fit.diabetes1 <- survreg(Surv(lzeit,tod)~1,dist="weib", data=diabetes1) 
+summary(weib.fit.diabetes1)
+```
+
+
+i. Obtain point and 95% C.I. estimates for the three quartiles. 
+
+```{r,echo=F}
+me<- predict(weib.fit.diabetes1,type="uquantile",p=c(0.25,0.5,0.75),se.fit= T)[[1]][1,]
+se<- predict(weib.fit.diabetes1,type="uquantile",p=c(0.25,0.5,0.75),se.fit= T)[[2]][1,]
+CI <- matrix(exp(c(me,me-qnorm(0.975)*se,me+qnorm(0.975)*se)),3,3,dimnames =list(c("1st Quartile","2nd Quartile","3rd Quartile"),c("estimator","CI-L","CI-U")))
+pander(CI)
+```
+
+ii. Compute point estimates for S(t) at the uncensored survival times lzeit. 
+
+```{r, echo=F}
+mu<- weib.fit.diabetes1$coef # Intercept
+alphahat <- 1/weib.fit.diabetes1$scale # Scale
+lzeit.u <- sort(diabetes1$lzeit[diabetes1$tod==1]) 
+weib.Shat <- 1 - pweibull(lzeit.u,alphahat,exp(mu)) 
+kable(format(rbind(lzeit.u,weib.Shat),digits=1, drop0trailing = TRUE)[,1:16])
+kable(format(rbind(lzeit.u,weib.Shat),digits=1, drop0trailing = TRUE)[,17:31])
+```
+
+iii. Plot the Kaplan-Meier curve and the estimated Weibull survivor function ($\hat S_W(t)$) Shat on the same plot. 
+
+```{r,echo=F}
+qq.weibull<-function(data,scale=0, xlab = "standard extreme value quantiles", ylab = 
+	"ordered log data", pch = NULL, lty = NULL, col = NULL)
+{
+## Purpose: qqplot for Weibull distribution for one or several samples 
+## It fits each sample with own intercept and slope (location and scale).
+##-------------------------------------------------------------------
+## Arguments: ##  data  A Surv object, or a list of such objects
+##       options:  scale=0 is the default. This estimates the scale.
+##                 scale=1 fits the exponential model. 
+##-------------------------------------------------------------------
+## Author: Werner Stahel, Date: 15 Aug 2002, 18:41  Revised by Mara Tableman 16 February 2015
+	on.exit(browser())
+	t.c <- class(data)
+	if((!is.null(t.c)) & t.c == "Surv")
+		data <- list(data)
+	t.k <- length(data)
+	if(is.null(pch))
+		pch <- 1:t.k
+	if(is.null(lty))
+		lty <- 1:t.k
+	if(is.null(col))
+		col <- 1 + 1:t.k
+	t.sf <- lapply(data, function(s)
+	{
+		t.s <- summary(survfit(s~1, type = "kaplan-meier"))
+		t.ss <- t.s$surv
+		t.s$surv <- (t.ss + c(1, t.ss[ - length(t.ss)]))/2
+		t.s
+	}
+	)
+	t.rgs <- range(sapply(t.sf, function(s)range(s$surv)))
+	t.rgt <- range(sapply(t.sf, function(s)range(s$time)))
+	plot(log(qweibull(1 - t.rgs, 1)), log(t.rgt), type = "n", xlab= xlab, ylab = ylab)
+	for(t.g in 1:t.k) {
+		points(log(qweibull(1 - t.sf[[t.g]]$surv, 1)), 
+		log(t.sf[[t.g]]$time), pch = pch[t.g],col='steelblue4')
+		t.r <- survreg(data[[t.g]] ~ 1, dist = "weibull",scale=scale)
+		abline(t.r$coef, t.r$scale, lty = lty[t.g], col = 1)
+	}
+	on.exit()
+#	"qq.weibull:done"
+}
+```
+
+iv. Produce a Q-Q plot. 
+
+```{r, echo=F,out.width='45%',fig.show='hold'}
+cen <- cbind(km.fit.diabetes1$time,km.fit.diabetes1$surv)[km.fit.diabetes1$n.censor==1,]
+plot(km.fit.diabetes1,conf.int=F,xlab="Time",ylab="Surv",col='steelblue3',lty=3,lwd=3)
+lines(lzeit.u,weib.Shat, type="l", lty=1,col='cyan',lwd=2)
+points(cen,pch=3,cex=.5,col='steelblue4')
+legend(2000,1,c("K-M","Weibull"),col=c('steelblue3','cyan'),lty=c(3,1))
+
+qq.weibull(Surv(diabetes1$lzeit,diabetes1$tod))
+mtext("(By qq.weibull)",side=3,line=-1)
+```
+
+```{r,echo=F}
+qq.surv <- function(time, status, pdgy = 0, distribution = "weibull", scale = 0, adjpb = 
+	0.025, ...)
+{
+	## Purpose: qqplot for distributions that satisfy a log-linear form
+	## for one sample.  It fits each sample with own intercept and slope 
+	## (location and scale).
+	##-------------------------------------------------------------------
+	## Arguments
+	## =========
+	## time:   observed time
+	## status: censoring indicator
+	##
+	## Options
+	## =======
+	## pdgy:   Flag to generate for pedagogical purposes additional lines
+	##         incorporating the effect of how we treat censored
+	##         observations on the MLE's (equivalently estimated line).
+	##         pdgy=0 is the default, for no additional lines. 
+	##         pdgy=1 generates additional lines.
+	## distribution:  Distribution for fit.
+	##         May take values "weibull", "loglogistic", or "lognormal".
+	##         The default is "weibull" distribution (exponential model with
+	##         scale=1).  Enter "loglogistic" to fit loglogistic distribution;
+	##         Enter "lognormal" to fit lognormal distribution. 
+	## scale:  Scale parameter.  scale=0 is the default. This estimates 
+	##         the scale. With distribution "weibull", scale=1 fits the 
+	##         exponential model. 
+	## adjpb:  Replaces the zero survival probability when the max is exact.
+	##         Or when the min is censored, it replaces the survival 
+	##         probability by 1 - adjpb.  Default is 0.025. 
+	##         This has nothing to do with the MLE line, but is solely for 
+	##         plotting the point on the graph.
+	##-------------------------------------------------------------------
+	## Author: Jong Sung Kim, Date: 8/10/2004
+	## Edited by D. Leif Rustvold, Date: 6/7/2006
+	d <- data.frame(time, status)
+	# data frame 
+	d <- na.exclude(d)
+	# Missing observations excluded
+	d <- d[order(d$time),  ]
+	# Rearranging the observed times into a nondecreasing order
+	# Unordered times sometimes mess up QQ-plots. 
+	time <- d$time
+	# sorted time
+	status <- d$status
+	# status corresponding to sorted time
+	data <- Surv(time, status)
+	# Surv object
+	t.c <- class(data)
+	if((!is.null(t.c)) && t.c == "Surv")
+		data <- list(data)
+	t.s <- summary(survfit(Surv(time, status)~1, type = "kaplan-meier",
+		na.action = na.exclude))
+	survp <- t.s$surv
+	survtime <- t.s$time
+	rare <- F
+	# rare = T indicates that the smallest observation is censored
+	if(time[1] < survtime[1]) {
+		print("Smallest observation is censored!")
+		survp <- c(1 - adjpb, survp)
+		survtime <- c(time[1], survtime)
+		rare <- T
+	}
+	############
+	############
+	xlabs <- ifelse(distribution == "weibull", 
+		"Standard Extreme Value Quantiles", ifelse(distribution == 
+		"loglogistic", "Standard Log-logistic Quantiles", ifelse(
+		distribution == "lognormal", "Standard Lognormal Quantiles",
+		"")))
+	if(pdgy == 1) {
+		###############
+		t.s.exactall <- summary(survfit(Surv(time, status >= 0)~1, type
+			 = "kaplan-meier", na.action = na.exclude))
+		exactall.survp <- t.s.exactall$surv
+		exactall.survtime <- t.s.exactall$time
+		exactall.length <- length(exactall.survtime)
+		exactall.survp[exactall.length] <- adjpb
+		t.ss.exactall <- exactall.survp
+		#quant.exactall <- qweibull(1 - t.ss.exactall, 1)
+		quant.exactall <- switch(distribution,
+			weibull = qweibull(1 - t.ss.exactall, 1),
+			lognormal = qlnorm(1 - t.ss.exactall),
+			loglogistic = exp(logis((1 - t.ss.exactall))))
+		exactall.sevq <- log(quant.exactall)
+		# standard extreme value quantile
+		exactall.logtime <- log(exactall.survtime)
+		print(data.frame(exactall.logtime, exactall.sevq))
+		############### 
+		ok <- status == 1
+		t.s.exact <- summary(survfit(Surv(time[ok], status[ok])~1, type
+			 = "kaplan-meier", na.action = na.exclude))
+		exact.survp <- t.s.exact$surv
+		exact.survtime <- t.s.exact$time
+		exact.length <- length(exact.survtime)
+		exact.survp[exact.length] <- adjpb
+		t.ss.exact <- exact.survp
+		#quant.exact <- qweibull(1 - t.ss.exact, 1)
+		quant.exact <- switch(distribution,
+			weibull = qweibull(1 - t.ss.exact, 1),
+			lognormal = qlnorm(1 - t.ss.exact),
+			loglogistic = exp(qlogis(1 - t.ss.exact)))
+		exact.sevq <- log(quant.exact)
+		# standard extreme value quantile
+		exact.logtime <- log(exact.survtime)
+		print(data.frame(exact.logtime, exact.sevq))
+		###############
+		n <- length(time)
+		t.ss <- rep(0, n)
+		for(i in 1:n) {
+			# This loop assigns probabilities to censored time points, 
+			# and takes care of tied observations as well
+			idx <- time[i] >= survtime
+			t.ss[i] <- min(survp[idx], na.rm = T)
+		}
+		#sevq <- log(qweibull(1 - t.ss, 1))
+		sevq <- log(switch(distribution,
+			weibull = qweibull(1 - t.ss, 1),
+			lognormal = qlnorm(1 - t.ss),
+			loglogistic = exp(qlogis(1 - t.ss))))
+		# standard extreme value quantile
+		logtime <- log(time)
+		print(data.frame(logtime, sevq))
+		######## Multiple Plot starts ##########
+		xrange <- range(c(exactall.sevq, exact.sevq, sevq))
+		yrange <- range(c(exactall.logtime, exact.logtime, logtime))
+		par(mar = c(5, 5, 2, 2))
+		plot(sevq, logtime, type = "n", lty = 1, xlim = xrange, ylim
+			 = yrange, xlab = xlabs, ylab = "Ordered Log Time",
+			...)
+		points(sevq[ok], logtime[ok], pch = 1)
+		# exact points portion
+		points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+		# censored points portion
+		points(exactall.sevq, exactall.logtime, pch = 3, col = 6)
+		# exactall
+		exactallfit <- survreg(Surv(time, status >= 0) ~ 1, dist = 
+			distribution, scale = scale)
+		# treating censored as exac
+		t
+		abline(exactallfit$coef, exactallfit$scale, lty = 3, col = 6)
+		points(exact.sevq, exact.logtime, pch = 5, col = 5)
+		# exact points only
+		exactonlyfit <- survreg(Surv(time[ok], status[ok]) ~ 1, dist
+			 = distribution, scale = scale)
+		# deleting censored
+		abline(exactonlyfit$coef, exactonlyfit$scale, lty = 2, col = 5
+			)
+		fit <- survreg(Surv(time, status) ~ 1, dist = "weibull", scale
+			 = scale)
+		# censoring taken into account
+		abline(fit$coef, fit$scale, lty = 1, col = 1)
+	}
+	else {
+		n <- length(time)
+		t.ss <- rep(0, n)
+		for(i in 1:n) {
+			# This loop assigns probabilities to censored time points, 
+			# and takes care of tied observations as well
+			idx <- time[i] >= survtime
+			t.ss[i] <- min(survp[idx], na.rm = T)
+		}
+		#sevq <- log(qweibull(1 - t.ss, 1))
+		sevq <- log(switch(distribution,
+			weibull = qweibull(1 - t.ss, 1),
+			lognormal = qlnorm(1 - t.ss),
+			loglogistic = exp(qlogis(1 - t.ss))))
+		# standard extreme value quantile
+		logtime <- log(time)
+		print(data.frame(logtime, sevq))
+		par(mar = c(5, 5, 2, 2))
+		plot(sevq, logtime, type = "n", xlab = xlabs, ylab = 
+			"Ordered Log Time", ...)
+		ok <- status == 1
+		# exact status only 
+		points(sevq[ok], logtime[ok], pch = 1)
+		# exact points only
+		points(sevq[!ok], logtime[!ok], pch = "\255", font = 8)
+		# censored points only
+		fit <- survreg(Surv(time, status) ~ 1, dist = distribution,
+			scale = scale)
+		# censoring taken into account
+		abline(fit$coef, fit$scale, lty = 1, col = 1)
+	}
+	ymax <- max(logtime)
+	yrange <- diff(range(logtime))
+	yn <- ymax - yrange * seq(0, by = 0.05, length = 5)
+	if(pdgy == 1) {
+		xmin <- min(c(sevq, exact.sevq, exactall.sevq))
+		xrange <- diff(range(c(sevq, exact.sevq, exactall.sevq)))
+	}
+	else {
+		xmin <- min(sevq)
+		xrange <- diff(range(sevq))
+	}
+	x1 <- xmin + 0.05 * xrange
+	x2 <- xmin + 0.1 * xrange
+	x3 <- xmin + 0.15 * xrange
+	points(x1, yn[1], pch = "\255", font = 8)
+	text(x3, yn[1], "censored", adj = 0)
+	points(x1, yn[2], pch = 1)
+	text(x3, yn[2], "exact", adj = 0)
+	if(pdgy == 1) {
+		lines(c(x1, x2), rep(yn[3], 2), lty = 1, col = 1, lwd = 3)
+		text(x3, yn[3], "censoring taken into account", adj = 0)
+		lines(c(x1, x2), rep(yn[4], 2), lty = 3, col = 6, lwd = 3)
+		text(x3, yn[4], "treating censored as exact", adj = 0)
+		lines(c(x1, x2), rep(yn[5], 2), lty = 2, col = 5, lwd = 3)
+		text(x3, yn[5], "deleting censored", adj = 0)
+	}
+	on.exit()
+#	paste("Q-Q plot for", distribution, "done")
+}
+```
+
+```{r, echo=F,out.width='45%'}
+qq.surv(diabetes1$lzeit,diabetes1$tod,distribution = "weibull", scale =0) #
+mtext("(By qq.surv)",side=3,line=-1)
+```
+
+(b) Fit the data to the log-normal model. Repeat all of part (a).
+
+```{r, echo=F}
+lognorm.fit.diabetes1<-survreg(Surv(lzeit,tod)~1,dist="lognormal", data=diabetes1) 
+summary(lognorm.fit.diabetes1)
+```
+
+```{r,echo=F}
+mu<- predict(lognorm.fit.diabetes1,type="uquantile",p=c(0.25,0.5,0.75),se.fit= T)[[1]][1,]
+se<- predict(lognorm.fit.diabetes1,type="uquantile",p=c(0.25,0.5,0.75),se.fit= T)[[2]][1,]
+CI <- matrix(exp(c(mu,mu-qnorm(0.975)*se,mu+qnorm(0.975)*se)),3,3,dimnames =list(c("1st Quartile","2nd Quartile","3rd Quartile"),c("estimator","CI-L","CI-U")))
+pander(CI)
+```
+
+```{r, echo=F}
+mu<- lognorm.fit.diabetes1$coef # Intercept
+alphahat <- 1/lognorm.fit.diabetes1$scale # Scale
+lzeit.u <- sort(diabetes1$lzeit[diabetes1$tod==1]) 
+lognorm.Shat <- 1 - pnorm(log(lzeit.u),lognorm.fit.diabetes1$coeff, lognorm.fit.diabetes1$scale) 
+kable(format(rbind(lzeit.u,lognorm.Shat),digits=2, drop0trailing = TRUE)[,1:16])
+kable(format(rbind(lzeit.u,lognorm.Shat),digits=2, drop0trailing = TRUE)[,17:31])
+```
+
+Plot Shat against lzeit.u (on the time axis). You must create your own qq.lognormal function. This is easy. Just read qq.loglogistic. Make minor changes. 
+
+```{r,echo=F}
+ qq.lognormal <- function(data, xlab = "Log-Normal quantiles", ylab = 
+	"ordered log data", pch = NULL, lty = NULL, col = NULL)
+{
+	on.exit(browser())
+	t.c <- class(data)
+	if((!is.null(t.c)) & t.c == "Surv")
+		data <- list(data)
+	t.k <- length(data)
+	if(is.null(pch))
+		pch <- 1:t.k
+	if(is.null(lty))
+		lty <- 1:t.k
+	if(is.null(col))
+		col <- 1 + 1:t.k
+	t.sf <- lapply(data, function(s)
+	{
+		t.s <- summary(survfit(s~1, type = "kaplan-meier"))
+		t.ss <- t.s$surv
+		t.s$surv <- (t.ss + c(1, t.ss[ - length(t.ss)]))/2
+		t.s
+	}
+	)
+	t.rgs <- range(sapply(t.sf, function(s)
+	range(s$surv)))
+	t.rgt <- range(sapply(t.sf, function(s)
+	range(s$time)))
+	plot(qnorm(1 - t.rgs, 0, 1), log(t.rgt), type = "n", xlab = xlab, ylab = ylab)
+	for(t.g in 1:t.k) {
+		points(qnorm(1 - t.sf[[t.g]]$surv, 0, 1), log(t.sf[[t.g]]$time), pch = pch[t.g], col ='steelblue4')
+		t.r <- survreg(data[[t.g]] ~ 1, dist = "lognormal")
+		abline(t.r$coef, t.r$scale, lty = lty[t.g], col = 1)
+	}
+	on.exit()
+ }
+
+```
+
+
+```{r, echo=F,out.width='45%',fig.show='hold'}
+plot(km.fit.diabetes1,conf.int=F,xlab="Time",ylab="Surv",lty=3,col='steelblue3',lwd=3)
+lines(lzeit.u,weib.Shat, type="l", lty=2,col='cyan',lwd=2)
+lines(lzeit.u,lognorm.Shat, type="l", lty=1,col=1)
+points(cen,pch=3,cex=.5,col='steelblue4')
+legend(2000,1,c("K-M","Weibull","Log-Normal"),col=c('steelblue3','cyan',1),lty=c(3,2,1))
+
+qq.lognormal(Surv(diabetes1$lzeit,diabetes1$tod))
+mtext("(By qq.lognormal)",side=3,line=-1)
+```
+
+```{r, echo=F,out.width='45%'}
+qq.surv(diabetes1$lzeit,diabetes1$tod,distribution = "lognormal", scale =0) #
+mtext("(By qq.surv)",side=3,line=-1)
+```
+
+(c) Compare your plots and comment as to how these models fit the data. 
+
+The plots of survival function show that Weibull distribution can fit the K-M curve better. The Log-Normal distribution underestimates the probability at the first half of time and overestimates it at the second half of time.
+
+The QQ plots also show that Weibull model is closer to the straight line than Log-Normal model. Therefore, Weibull distribution is better than Log-Normal distribution for model adequacy in this case.
+
+
+
+
+\pagebreak
+
+## HW5 3.4, 3.5, and 3.8.
+
+3.4 Derive the (estimated) asymptotic variance of the MLE$\theta_{ML}$ $\widehat{var}_a(\hat\theta_{ML})= \frac{(\hat\theta_{ML})^2} k$ , which was stated back in Exercise 3.1(b). 
+
+$\hat\theta_{ML}=\frac{\sum_kt_i+\sum_{n-k}c_i}{k}\overset{a}{\sim}MVN(\theta,I^{-1}(\theta))$, $\sum_kt_i+\sum_{n-k}c_i=k\hat\theta_{ML}$
+
+$$\log L(\theta)=\log\prod_{i=1}^nf^{\delta_i}(t_i|\theta)S_f^{1-\delta_i}(c_i|\theta)=\sum_k\log (\frac{1}{\theta}\exp(-\frac{t_i}{\theta}))+\sum_{n-k}\log \exp(-\frac{c_i}{\theta})=-k\log\theta-\frac{\sum_kt_i}{\theta}-\frac{\sum_{n-k}c_i}{\theta}$$
+
+$$i(\theta)=-\frac{\partial}{\partial\theta}\frac{\partial\log L(\theta)}{\partial\theta}=-\frac{\partial}{\partial\theta}\left[-\frac{k}{\theta}+\frac{\sum_kt_i}{\theta}+\frac{\sum_{n-k}c_i}{\theta}\right]=-\frac{k}{\theta^2}+\frac{2(\sum_kt_i+\sum_{n-k}c_i)}{\theta^3}$$
+
+$$\widehat{Var}_a(\hat\theta_{ML})=i(\hat\theta_{ML})^{-1}=\left[-\frac{k}{\hat\theta_{ML}^2}+\frac{2k\hat\theta_{ML}}{\hat\theta_{ML}^3}\right]^{-1} =\frac{\hat\theta_{ML}^2} k$$
+
+
+3.5 Show that the LRT based on the statistic $T^*_1$ in Exercise 3.1(e) is equivalent to the test based on the test statistic $T^*_2$ presented in Exercise 3.1(f). Hint: Show $T^*_1$, which is $r^*(t)$, is some convex function of $T^*_2$. 
+
+Let $\sum_kt_i+\sum_{n-k}c_i=k\hat\theta$; $T^*_2=2\frac{\sum_kt_i+\sum_{n-k}c_i}{\theta_0}=\frac{2k\hat\theta}{\theta_0}$
+
+$$T^*_1=r^*(t)=-2\log(L(\theta_0))+2\log(L(\hat\theta))=2\left(k\log\theta_0+\frac{\sum_kt_i+\sum_{n-k}c_i}{\theta_0}-k\log\hat\theta-\frac{\sum_kt_i+\sum_{n-k}c_i}{\hat\theta}\right)$$
+$$=2k\log(\frac{\theta_0}{\hat\theta})+2\frac{\sum_kt_i+\sum_{n-k}c_i}{\theta_0}-2k=2k\log(\frac{2k}{T^*_2})+T^*_2-2k=2k\log(2k)-2k\log(T^*_2)+T^*_2-2k$$
+
+$\frac{\partial^2 T^*_1}{\partial T^{*2}_2}=\frac{2k}{T^{*2}_2}>0$, $T^*_1$ is a convex function of $T^*_2$, the unique solution is 
+
+$$\frac{\partial T^*_1}{\partial T^*_2}=-\frac{2k}{T^*_2}+1\overset{set}{=}0 \implies T^*_2=2k, T^*_1=0$$
+$T^*_1=-2\log(L(\theta_0))+2\log(L(\hat\theta))=0 \implies \hat\theta=\theta_0$
+
+$T^*_2=\frac{2k\hat\theta}{\theta_0}=2k \implies \hat\theta=\theta_0$
+
+Hence, $T^*_1$ is equivalent to $T^*_2$.
+
+3.8 Show expression (3.15). 
+Hint: Refer to the Example 6 in Hogg and Craig (1995, page 136). 
+
+$$T_i\sim Expo(\lambda)\implies \sum T_i\sim Gamma(n,\frac1\lambda)$$
+$$2\lambda\sum T_i\sim Gamma(n,2)=\chi^2_{(2n)}$$
+For $\sum_{i=1}^nT_i=\frac{n}{\hat\lambda}$
+
+$$2\lambda\sum_{i=1}^nT_i=2n\frac{\lambda}{\hat\lambda}\sim\chi^2_{(2n)}$$
+
+- Note: By moment generating functions. Let $X_i\sim Expo(\lambda)$
+
+$$M_{(2\lambda\sum_{i=1}^nx_i)}(t)\underbrace{=}_{\perp}\prod_{i=1}^n(\underbrace{\frac{\lambda}{\lambda-2\lambda t}}_{Expo(\lambda)})=\underbrace{(1-2t)^{-n}}_{\Gamma(n,2)}=\underbrace{(1-2t)^{-\frac{2n}2}}_{\chi^2(2n)}$$
+
+
+
+
+
+## HW6 4.1 and 4.2.
+
+4.1 We work with the diabetes data set again. Refer to Exercise 2.3. Consider the Weibull regression model 
+
+$$Y = log(\text{lzeit})=\beta^*_0 + \beta^*_1x^{(1)} + \beta^*_2x^{(2)} + \beta^*_3x^{(3)} + \sigma Z$$
+where $Z\sim$ standard extreme value and
+
+$x^{(1)} =\begin{cases} 0 &\text{man} \\1 &\text{woman}\end{cases}$
+$x^{(2)} =\begin{cases} 0 &\text{nondiabetic} \\1 &\text{diabetic}\end{cases}$
+$x^{(3)} = \text{age in years}$
+
+(a) Estimate $\sigma$ and the coefficients $\beta^*_j$. Which covariates are significant? 
+
+```{r,echo=F}
+fit.a <- survreg(Surv(lzeit,tod) ~ sex+diab+alter, dist="weibull",data=diabetes) 
+summary(fit.a)
+```
+
+The result shows that  $\sigma=1.13$, $\beta^*_0=10.2306$, $\beta^*_1=-0.0912$, $\beta^*_2=-0.6518$, $\beta^*_3=-0.0381$. Age is significant at 95% significance level. ($P_{alter}=0.014$)
+
+(b) We now add two additional covariates which models in the possible dependence of diabetic or not with age. That is, we replace $x^{(3)}$ with the following interaction variables: 
+
+$x^{(4)} =\begin{cases} \text{age}, &\text{if diabetic} \\ 0& \text{otherwise}\end{cases}$
+$x^{(5)} =\begin{cases} \text{age}, &\text{if nondiabetic} \\ 0& \text{otherwise}\end{cases}$
+
+Describe the results of the analysis with the four covariates now. Which covariates are significant? 
+
+
+```{r,echo=T}
+diabetes$x4 <- diabetes$x5 <- diabetes$alter 
+diabetes$x4[diabetes$diab==0] <- 0 
+diabetes$x5[diabetes$diab==1] <- 0 
+fit.b <- survreg(Surv(lzeit,tod) ~ sex+diab+x4+x5, data=diabetes) 
+summary(fit.b) 
+```
+
+The result shows that  $\sigma=1.12$. The covariates of age and diabetes is significant at 95% significance level. ($P_{x5}=0.016$)
+
+
+
+(c) Simplify the model fit in part (b) as much as possible. Draw conclusions (as much as possible as you are not diabetes specialists, etc.). For the remaining parts, use the fitted additive model fit.a (part (a)) with just sex, diab, and alter in the model. 
+
+```{r,echo=F}
+fit.diab.cox <- coxph(Surv(lzeit,tod) ~ sex+diab+x4+x5, diabetes) 
+MASS::stepAIC(fit.diab.cox) 
+```
+
+```{r,echo=F}
+MASS::stepAIC(fit.b) 
+```
+
+The simplified model includes only diabetes and interaction between diabetes and age.
+
+The survival time after the operation is significantly affect by whether you are diabetic or not, and older age with diabetes accelarate the change in survival time.
+
+(d) Report the estimated hazard function for those who are men and nondiabetic.
+
+Tip: See the summary on page 105. 
+
+```{r,echo=T}
+hat.sigma <- fit.a$scale
+(hat.alpha <- 1/hat.sigma)
+(coef <- fit.a$coefficients)
+```
+
+```{r,echo=F}
+tilde.h <- coef[1]+coef[2]*0+coef[3]*0+coef[4]*diabetes$alter
+```
+
+Estimated hazard function $\hat h(t|age)=0.8846t^{0.8846-1}(e^{-10.23+0.038age})^{0.8846}$ 
+
+(e) Report the estimated hazard ratio comparing diabetic men to nondiabetic men all of whom have the same age. Interpret this ratio. 
+
+```{r,echo=T}
+(beta3 <- -hat.alpha*coef[3])
+exp((1-0)*beta3)
+```
+
+The estimated coefficient for diabetic status is `r beta3`. The diabetic men has higher estimated hazard than non-diabetic men with the same age (1.78 times).
+
+
+(f) A 50-year-old nondiabetic man is operated on today. What is the estimated probability that he is still alive in ten years?
+
+```{r,echo=T}
+lambda.tilde.h <- exp(-coef[1]-coef[2]*0-coef[3]*0-coef[4]*50)
+1-pweibull(365*10,hat.alpha,1/lambda.tilde.h)
+```
+
+The estimated probability of surviving in ten years after operation is 40.77% for a 50-year-old non-diabetic man.
+
+(g) With the help of the predict function, calculate the survival duration (in days or years) after the operation within which half (50%) of the 50-year-old diabetic men have died and then, similarly, for nondiabetic men. Report both point and interval estimates. 
+
+Tips: Use the preferred C.I. approach (Table 3.2 on Chapter 3); that is, type= "uquantile". Use the help routine in S or R to look up predict. Be sure to study the example given there. See the S code to compute the medhat for Model 2 on page 85. 
+
+```{r}
+hat.t.diab<- predict(fit.a,data.frame(sex=0,diab=c(1,0),alter=50),se.fit = T,type="uquantile",p=0.5)
+CI <- matrix(exp(c(hat.t.diab[[1]],hat.t.diab[[1]]-qnorm(0.975)*hat.t.diab[[2]],
+      hat.t.diab[[1]]+qnorm(0.975)*hat.t.diab[[2]])),2,3,
+      dimnames=list(c("diabetic","non-diabetic"),c("estimator","CI-L","CI-U")))
+pander(CI)
+```
+
+The predict survival duration is 1421 days after the operation within half of the 50-year-old non-diabetic men have died. The 95% confidence interval is $(1299, 5720)$ days.
+
+It is 2726 days for non-diabetic men. The 95% confidence interval is $(663.8, 3040)$ days.
+
+4.2 In order to better understand the age dependence of survival "lzeit", plot now the survival times against "$x^{(5)}$" and then against "$x^{(4)}$". Comment. Is there something here that helps explain what it is you are observing?
+
+Tips: To investigate the age structure inherent in the raw data set, split the data set in to two sets: one with data corresponding to diabetics, the other with nondiabetics. 
+
+```{r,echo=F, fig.width=9, fig.height=4, fig.align='center'}
+nondiab <- diabetes[diabetes$diab==0,] 
+diab <- diabetes[diabetes$diab==1, ] 
+par(mfrow=c(1,2),mar=c(3,3,1,1),mgp=c(1.75,.75,0)) 
+plot(nondiab$alter,nondiab$lzeit,type="none", ylim=range(diabetes$lzeit),ylab="Survival duration", xlab="Alter (Non-Diabetic)") 
+text(jitter(nondiab$alter),jitter(nondiab$lzeit), labels=nondiab$tod,cex=0.5,col='steelblue3') 
+lines(smooth.spline(nondiab$alter,nondiab$lzeit)) 
+plot(diab$alter,diab$lzeit,type="none", ylim=range(diabetes$lzeit),ylab="Survival duration", xlab="Alter (Diabetic)") 
+text(jitter(diab$alter),jitter(diab$lzeit),labels=diab$tod,cex=0.5,col='steelblue3')
+lines(smooth.spline(diab$alter,diab$lzeit))
+legend(70,5000,c("0=censored","1=uncensored"),col='steelblue3',cex = 0.75)
+```
+
+The plot show that, in the non-diabetic group, the younger patients can survive longer post operation. However, in the diabetic group, the longest survival duration happened for the 60-65 age old patients. It can be explained that the young diabetic patient is more vunerable than the 60-65 age old patients.
+
+\pagebreak
+
+## HW7 5.1.
+
+5.1 We work with the diabetes data again. Refer to Exercise 2.3. Instead of a stratified analysis, we will now fit a Cox proportional hazards model: 
+$h(t;x^{(1)},x^{(2)},x^{(3)})=h_0(t)\cdot e^{\beta_1x^{(1)}+\beta_2x^{(2)}+\beta_3x^{(3)}}$
+
+where
+$x^{(1)} =\begin{cases} 0 &\text{man} \\1 &\text{woman}\end{cases}$
+$x^{(2)} =\begin{cases} 0 &\text{nondiabetic} \\1 &\text{diabetic}\end{cases}$
+$x^{(3)} = \text{age in years}$
+
+
+
+(a) Describe the results of the analysis with all three covariates x(1), x(2), and x(3). Which covariates are significant?
+
+```{r,echo=F}
+diab.cox <- coxph(Surv(lzeit,tod) ~ sex+diab+alter, diabetes) 
+summary(diab.cox) 
+```
+
+The coefficient of 'sex', 'diab', and 'alter' is 0.1402, 0.5302, and 0.0293 respectively. Age (alter) is the significant covariate at 95% cignificance level.
+
+(b) Stay with estimated full model in part (a) regardless of whether or not the coefficients of the covariates are statistically significantly different from zero. 
+
+i. Use the hazard ratio to estimate the gender effect when the other covariates are held constant. Put woman in the numerator. Interpret! 
+
+```{r,echo=T}
+exp((1-0)*diab.cox$coefficients[1])
+```
+
+When the other covariates are held constant, the hazard for women is 1.151 times of men.
+
+ii. Use the hazard ratio to estimate the effect of $x^{(2)}$ and age together for the same gender. Take $x^{(2)}= 1$ and $x^{(3)}= age+1$ in the numerator and $x^{(2)}= 0$ and $x^{(3)}= age$ in the denominator. Interpret! 
+
+```{r,echo=T}
+exp(sum(diab.cox$coefficients[2:3]))
+```
+
+$$HR=\frac{h(t|x_2)}{h(t|x_1)}=\frac{\exp(\beta_0+\beta_1*sex+\beta_2*1=+\beta_3*(age+1))}{\exp(\beta_0+\beta_1*sex+\beta_2*0+\beta_3*age)}=\exp(\beta_2+\beta_3)$$
+
+The hazard for diabetic patients is 1.75 times of the non-diabetic and 1-year-younger patients with same gender.
+
+(c) Simplify (reduce) the model in part (a) as far as possible. Comment! 
+
+```{r,echo=T,include=F}
+diab.cox.AIC <- MASS::stepAIC(diab.cox,~.^2) 
+diab.cox2 <- coxph(Surv(lzeit,tod) ~ diab+alter, diabetes) 
+diab.cox2.AIC <- MASS::stepAIC(diab.cox2,~.^2) 
+```
+
+
+```{r,echo=T}
+diab.cox.AIC$anova
+diab.cox2.AIC$anova
+diab.cox3 <- coxph(Surv(lzeit,tod) ~ alter, diabetes) 
+1-pchisq(c(2*diab.cox$loglik[2]-2*diab.cox2$loglik[2],2*diab.cox2$loglik[2]-2*diab.cox3$loglik[2]),c(1,1))
+```
+
+There is not evidence against the models including covariates of 'diab' and 'alter' without any interactions (p-value=0.68217).
+
+Further reducing model with only "alter" is not recommmended (p-value=0.09201).
+
+(d) We now add two additional covariates, which model in the possible dependence of diabetic or not with age. That is, we replace x(3) with the following interaction variables: 
+
+$x^{(4)} =\begin{cases} \text{age}, &\text{if diabetic} \\ 0& \text{otherwise}\end{cases}$
+$x^{(5)} =\begin{cases} \text{age}, &\text{if nondiabetic} \\ 0& \text{otherwise}\end{cases}$
+
+Now do the analysis as in part (a).
+
+```{r,echo=T}
+diabetes$x4 <- diabetes$x5 <- diabetes$alter 
+diabetes$x4[diabetes$diab==0] <- 0 
+diabetes$x5[diabetes$diab==1] <- 0
+diab.cox4 <- coxph(Surv(lzeit,tod) ~ sex+diab+x4+x5, data=diabetes) 
+summary(diab.cox4) 
+```
+
+(e) Simplify the model in part (d) as much as possible. Draw conclusions (as much as possible as you are not diabetes specialists, etc.) and compare these results with those from your results in the stratified analysis you performed in Exercise 2.4(c). 
+
+```{r,echo=T}
+diabetes$x6 <- diabetes$x7 <- diabetes$alter 
+diabetes$x6[diabetes$sex==0] <- 0 
+diabetes$x7[diabetes$sex==1] <- 0
+diab.cox5 <- coxph(Surv(lzeit,tod) ~ sex*diab+x4+x5+x6+x7, data=diabetes) 
+```
+
+```{r,echo=F,include=F}
+diab.cox5.AIC <- MASS::stepAIC(diab.cox5) 
+```
+
+```{r,echo=T}
+diab.cox5.AIC$anova
+diab.cox6 <- coxph(Surv(lzeit,tod) ~ diab+x5, diabetes) 
+1-pchisq(2*diab.cox5$loglik[2]-2*diab.cox6$loglik[2],5)
+```
+
+The simplified model includes 'diab' and the interation term between 'diab' and 'age'. The main effect of diabetic affects the survival duration after operation significantly. The non-diabetic older patients accelerate the change in survival time. The result is same with 2.4(c). There is not significant evident that gender affects the survival duration.
+
+(f) Use stepAIC to select the best subset of variables from the four variables in part (d). Consider only main effects models. Do “backward” elimination starting with all four variables in the model. Refer to Remark 2 on page 129. 
+
+```{r,echo=T}
+diab.cox4 <- coxph(Surv(lzeit,tod) ~ sex+diab+x4+x5, data=diabetes) 
+```
+
+```{r,echo=T,include=F}
+diab.cox4.AIC <- MASS::stepAIC(diab.cox4,direction = "backward") 
+```
+
+```{r,echo=F}
+diab.cox4.AIC$anova
+```
+
+The backward AIC gives the same simplified model including 'diab', interaction between 'diab' and 'age'.
+
+(g) Fit your selected model from stepAIC to a Cox regression model stratified on the diab variable. See page 133. 
+
+```{r,echo=T}
+(diab.cox7 <- coxph(Surv(lzeit,tod) ~ strata(diab)+x5, data=diabetes) )
+```
+
+
+(h) For the stratified fit in part (g), produce a plot of the survival curves and produce a plot of the log-log cumulative hazards. See pages 134 and 135.
+
+
+```{r,echo=F,out.width='50%'}
+autoplot(survfit(diab.cox7),conf.int=T, surv.linetype =1, conf.int.alpha = 0.3) + theme_light() + theme(legend.position = c(0.8, 0.2)) +
+        scale_colour_manual(values = c('darkcyan','blue'),labels = c("non-diabetic","diabetic")) + 
+        scale_fill_manual(values = c('cyan3','steelblue3'),labels = c("non-diabetic","diabetic")) + 
+        scale_x_continuous(breaks = seq(from=0,to=5500,by=1000)) 
+```
+
+```{r,echo=F,out.width='50%'}
+plot(survfit(diab.cox7),conf.int=F,fun="cloglog",axes=T,xlab="observed failure times ",ylab="Log-log cumulative hazard",col=c('steelblue3','cyan'),lty=1:2)
+legend(20,2,c("diabetic","non-diabetic"),col=c('cyan','steelblue3'),lty=2:1)
+```
+
+
+
+
+
+
+
+
+
+
+
+\pagebreak
+
+Grube-Cavers, A., & Patterson, Z. (2015). Urban rapid rail transit and gentrification in Canadian urban centres: A survival analysis approach. Urban Studies, 52(1), 178–194. https://doi.org/10.1177/0042098014524287
