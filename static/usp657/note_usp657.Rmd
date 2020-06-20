@@ -1,8 +1,10 @@
 ---
 title: "Discrete Choice Modeling"
 subtitle: "USP 657"
-date: '`r format(Sys.Date(), "%B %d, %Y")`'
-output: html_document
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 
@@ -16,7 +18,7 @@ options(repos="https://cran.rstudio.com")
 
 ## SIC
 
-A Self Instructing Course in Mode Choice Modeling: Multinomial and Nested Logit Models 
+`A Self Instructing Course in Mode Choice Modeling: Multinomial and Nested Logit Models`
 
 ### 1 Introduction
 
@@ -26,18 +28,135 @@ A Self Instructing Course in Mode Choice Modeling: Multinomial and Nested Logit 
 
 ### 4 The Multinomial Logit Model
 
+#### Extreme Value Type I Distribution
+
+The extreme value type I distribution has two forms.  One is based on the smallest extreme and the other is based on the largest extreme.  We call these the minimum and maximum cases, respectively.  Formulas and plots for both cases are given.  The extreme value type I distribution is also referred to as the [Gumbel distribution](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366g.htm).
+
+| |general (minimum)|standard(minimum) |general (maximum)|standard(maximum) |
+|-|---              |---               |---              |---               |
+\(f(x)\) |\( \frac{1} {\beta} e^{\frac{x-\mu}{\beta}}e^{-e^{\frac{x-\mu}{\beta}}}\) |$e^{x}e^{-e^{x}}$|$\frac{1}{\beta} e^{-\frac{x-\mu}{\beta}}e^{-e^{-\frac{x-\mu}{\beta}}}$  | $e^{-x}e^{-e^{-x}}$
+\(F(x)\) | |\( 1 - e^{-e^{x}} \)| |\( e^{-e^{-x}} \)
+
+where $\mu$ is the location parameter and $\beta$ is the scale parameter.  
+
+Mean \( \mu + 0.5772\beta \) (Euler's number)
+
+Median \( \mu - \beta\ln(\ln(2)) \)
+
+Mode \(\mu\)
+
+Range \(-\infty \mbox{  to  } \infty\)
+
+Standard Deviation \( \frac{\beta\pi} {\sqrt{6}} \)
+
+Skewness 1.13955
+
+Kurtosis 5.4
+
+Coefficient of Variation \( \frac {\beta\pi} {\sqrt{6}(\mu + 0.5772\beta)} \)
+
+
 Gumbel_pmf|Gumbel_cdf
 |---|---
 ![Gumbel_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Gumbel-Density.svg/600px-Gumbel-Density.svg.png)|![Gumbel_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Gumbel-Cumulative.svg/600px-Gumbel-Cumulative.svg.png)
 
 
-`p.8-10` Example: 
+### 5 : Data Assembly and Estimation of sample Multinomial Logit Model
 
+#### 5.2 Data requirements Overview
+
+Dependent, endogenous variable: mode choice
+
+Independent, exogenous variables:(automobile ownership,  time of day of travel, origin and destination of trip, and travel party size)
+
+- Traveler related variables 
+
+Income, Number of automobiles in traveler's household, Number of  workers in traveler's household, Sex, Age, Functions of these variables such as number of autos divided by number of workers
+
+- Trip context variables 
+
+Trip purpose, Employment density at the traveler's workplace, Population density at the home location, and Dummy variable indicating whether the traveler;s workplace is the Central Business District (CBD)
+
+- Mode (alternative) related variables: 
+
+Total travel time, IN-vehicle travel time, Out-of-vehicle travel time, Walk time, Wait time, Number of transfers, Transit headway(service frequency for carrier modes), and travel cost.
+
+- Interaction of Mode and Traveler or Trip Related Variables
+
+Travel cost divided by household income, Travel time or cost interacted with sex or age group for traveler, and Out-of-Vehicle time divided by total trip distance.
+
+#### 5.3 Sources and Methods for Traveler and Trip Related Data Collection
+
+- Travel Survey Types
+
+Household Travel Surveys, Workplace Surveys, Destination Surveys, Intercept Surveys,
+
+- Sampling Design Considerations
+
+Population of interest; Sampling units; The probability sampling; stratified random sampling; Sample size.
+
+#### 5.4 Methods for collecting mode related data
+
+Network analysis
+
+#### 5.5 Data structure for estimation
+
+The trip format: IDCase, each record contains all the information for mode choice over laternatives for a signle trip.
+
+The trip-alternative format: IDCase-IDAlt, each record contains all the information for a single mode available to each trip maker so there is one record for each mode for each trip.
+
+
+
+#### 5.6 Application data for work mode choice in the San Francisco Bay Area
+
+
+#### 5.7 Estimation of MNL Model with Basic Specification
+
+\(
+\begin{aligned}
+V_{DA}=& &\beta_1TT_{DA}+\beta_2TC_{DA}&\\
+V_{SR2}=&\beta_{SR2}+&\beta_1TT_{SR2}+\beta_2TC_{SR2}&+\gamma_{SR2}Inc\\
+V_{SR3+}=&\beta_{SR3+}+&\beta_1TT_{SR3+}+\beta_2TC_{SR3+}&+\gamma_{SR3+}Inc\\
+V_{TR}=&\beta_{TR}+&\beta_1TT_{TR}+\beta_2TC_{TR}&+\gamma_{TR}Inc\\
+V_{BK}=&\beta_{BK}+&\beta_1TT_{BK}+\beta_2TC_{BK}&+\gamma_{BK}Inc\\
+V_{WK}=&\beta_{WK}+&\beta_1TT_{WK}+\beta_2TC_{WK}&+\gamma_{WK}Inc
+\end{aligned}
+\)
+
+- Informal Tests
+
+The sign of parameters (do the associated variables have a positive or negative effect on the alternatives with which they are associated?),
+
+The difference (positive or negative) within sets of alternative specific variables (does the inclusion of this variable have a more or less positive effect on one alternative relative to another?) and 
+
+The ratio of pairs of parameters (is the ratio between the parameters of the correct sign and in a reasonable range?). 
+
+- Overall Goodness-of-Fit Measures
+
+\(\rho_0^2=1-\frac{LL(\hat\beta)}{LL(0)};\quad\bar\rho_0^2=1-\frac{LL(\hat\beta)-K}{LL(0)}\)
+
+\(\rho_c^2=1-\frac{LL(\hat\beta)}{LL(c)};\quad\bar\rho_c^2=1-\frac{LL(\hat\beta)-K}{LL(c)-K_{MS}}\)
+
+t test: \(\frac{\hat\beta_k-\beta^*_k}{S_k}\)
+
+`Table 5-4 p.86`
+
+### 6 
+
+extends this example to the estimation of more sophisticated models.  
+
+### 7 
+
+develops a parallel example for shop/other mode choice in the San Francisco Bay Region.  
+
+### 9 
+
+extends the examples from previous chapters and explores nested logit models for work and shop/other trips in the San Francisco Bay Region. Additional examples based on data collected in different urban regions are presented in the appendices
 
 
 ## DCM
 
-Discrete choice methods with simulation 
+`Discrete choice methods with simulation`
 
 ### Common Distributions
 

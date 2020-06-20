@@ -10,7 +10,6 @@
 
 
 
-<meta name="date" content="2020-06-19" />
 
 <title>Discrete Choice Modeling</title>
 
@@ -364,7 +363,7 @@ summary {
 
 <h1 class="title toc-ignore">Discrete Choice Modeling</h1>
 <h3 class="subtitle">USP 657</h3>
-<h4 class="date">June 19, 2020</h4>
+<h4 class="date">19 June, 2020</h4>
 
 </div>
 
@@ -373,7 +372,7 @@ summary {
 <h1></h1>
 <div id="sic" class="section level2">
 <h2>SIC</h2>
-<p>A Self Instructing Course in Mode Choice Modeling: Multinomial and Nested Logit Models</p>
+<p><code>A Self Instructing Course in Mode Choice Modeling: Multinomial and Nested Logit Models</code></p>
 <div id="introduction" class="section level3">
 <h3>1 Introduction</h3>
 </div>
@@ -385,6 +384,52 @@ summary {
 </div>
 <div id="the-multinomial-logit-model" class="section level3">
 <h3>4 The Multinomial Logit Model</h3>
+<div id="extreme-value-type-i-distribution" class="section level4">
+<h4>Extreme Value Type I Distribution</h4>
+<p>The extreme value type I distribution has two forms. One is based on the smallest extreme and the other is based on the largest extreme. We call these the minimum and maximum cases, respectively. Formulas and plots for both cases are given. The extreme value type I distribution is also referred to as the <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda366g.htm">Gumbel distribution</a>.</p>
+<table style="width:100%;">
+<colgroup>
+<col width="7%"></col>
+<col width="23%"></col>
+<col width="23%"></col>
+<col width="23%"></col>
+<col width="23%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>general (minimum)</th>
+<th>standard(minimum)</th>
+<th>general (maximum)</th>
+<th>standard(maximum)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(f(x)\)</span></td>
+<td><span class="math inline">\(\frac{1} {\beta} e^{\frac{x-\mu}{\beta}}e^{-e^{\frac{x-\mu}{\beta}}}\)</span></td>
+<td><span class="math inline">\(e^{x}e^{-e^{x}}\)</span></td>
+<td><span class="math inline">\(\frac{1}{\beta} e^{-\frac{x-\mu}{\beta}}e^{-e^{-\frac{x-\mu}{\beta}}}\)</span></td>
+<td><span class="math inline">\(e^{-x}e^{-e^{-x}}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(F(x)\)</span></td>
+<td></td>
+<td><span class="math inline">\(1 - e^{-e^{x}}\)</span></td>
+<td></td>
+<td><span class="math inline">\(e^{-e^{-x}}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>where <span class="math inline">\(\mu\)</span> is the location parameter and <span class="math inline">\(\beta\)</span> is the scale parameter.</p>
+<p>Mean <span class="math inline">\(\mu + 0.5772\beta\)</span> (Euler’s number)</p>
+<p>Median <span class="math inline">\(\mu - \beta\ln(\ln(2))\)</span></p>
+<p>Mode <span class="math inline">\(\mu\)</span></p>
+<p>Range <span class="math inline">\(-\infty \mbox{ to } \infty\)</span></p>
+<p>Standard Deviation <span class="math inline">\(\frac{\beta\pi} {\sqrt{6}}\)</span></p>
+<p>Skewness 1.13955</p>
+<p>Kurtosis 5.4</p>
+<p>Coefficient of Variation <span class="math inline">\(\frac {\beta\pi} {\sqrt{6}(\mu + 0.5772\beta)}\)</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -399,12 +444,75 @@ summary {
 </tr>
 </tbody>
 </table>
-<p><code>p.8-10</code> Example:</p>
+</div>
+</div>
+<div id="data-assembly-and-estimation-of-sample-multinomial-logit-model" class="section level3">
+<h3>5 : Data Assembly and Estimation of sample Multinomial Logit Model</h3>
+<div id="data-requirements-overview" class="section level4">
+<h4>5.2 Data requirements Overview</h4>
+<p>Dependent, endogenous variable: mode choice</p>
+<p>Independent, exogenous variables:(automobile ownership, time of day of travel, origin and destination of trip, and travel party size)</p>
+<ul>
+<li>Traveler related variables</li>
+</ul>
+<p>Income, Number of automobiles in traveler’s household, Number of workers in traveler’s household, Sex, Age, Functions of these variables such as number of autos divided by number of workers</p>
+<ul>
+<li>Trip context variables</li>
+</ul>
+<p>Trip purpose, Employment density at the traveler’s workplace, Population density at the home location, and Dummy variable indicating whether the traveler;s workplace is the Central Business District (CBD)</p>
+<ul>
+<li>Mode (alternative) related variables:</li>
+</ul>
+<p>Total travel time, IN-vehicle travel time, Out-of-vehicle travel time, Walk time, Wait time, Number of transfers, Transit headway(service frequency for carrier modes), and travel cost.</p>
+<ul>
+<li>Interaction of Mode and Traveler or Trip Related Variables</li>
+</ul>
+<p>Travel cost divided by household income, Travel time or cost interacted with sex or age group for traveler, and Out-of-Vehicle time divided by total trip distance.</p>
+</div>
+<div id="sources-and-methods-for-traveler-and-trip-related-data-collection" class="section level4">
+<h4>5.3 Sources and Methods for Traveler and Trip Related Data Collection</h4>
+<ul>
+<li>Travel Survey Types</li>
+</ul>
+<p>Household Travel Surveys, Workplace Surveys, Destination Surveys, Intercept Surveys,</p>
+<ul>
+<li>Sampling Design Considerations</li>
+</ul>
+<p>Population of interest; Sampling units; The probability sampling; stratified random sampling; Sample size.</p>
+</div>
+<div id="methods-for-collecting-mode-related-data" class="section level4">
+<h4>5.4 Methods for collecting mode related data</h4>
+<p>Network analysis</p>
+</div>
+<div id="data-structure-for-estimation" class="section level4">
+<h4>5.5 Data structure for estimation</h4>
+<p>The trip format: IDCase, each record contains all the information for mode choice over laternatives for a signle trip.</p>
+<p>The trip-alternative format: IDCase-IDAlt, each record contains all the information for a single mode available to each trip maker so there is one record for each mode for each trip.</p>
+</div>
+<div id="application-data-for-work-mode-choice-in-the-san-francisco-bay-area" class="section level4">
+<h4>5.6 Application data for work mode choice in the San Francisco Bay Area</h4>
+</div>
+<div id="estimation-of-mnl-model-with-basic-specification" class="section level4">
+<h4>5.7 Estimation of MNL Model with Basic Specification</h4>
+<p><span class="math inline">\(V_{DA}=&amp;\beta_1TT_{DA}+\beta_2TC_{DA}\\ V_{SR2}=\beta_{SR2}+&amp;\beta_1TT_{SR2}+\beta_2TC_{SR2}+\gamma_{SR2}Inc\\ \)</span></p>
+</div>
+</div>
+<div id="section-1" class="section level3">
+<h3>6</h3>
+<p>extends this example to the estimation of more sophisticated models.</p>
+</div>
+<div id="section-2" class="section level3">
+<h3>7</h3>
+<p>develops a parallel example for shop/other mode choice in the San Francisco Bay Region.</p>
+</div>
+<div id="section-3" class="section level3">
+<h3>9</h3>
+<p>extends the examples from previous chapters and explores nested logit models for work and shop/other trips in the San Francisco Bay Region. Additional examples based on data collected in different urban regions are presented in the appendices</p>
 </div>
 </div>
 <div id="dcm" class="section level2">
 <h2>DCM</h2>
-<p>Discrete choice methods with simulation</p>
+<p><code>Discrete choice methods with simulation</code></p>
 <div id="common-distributions" class="section level3">
 <h3>Common Distributions</h3>
 
