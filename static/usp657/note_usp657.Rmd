@@ -137,26 +137,323 @@ The ratio of pairs of parameters (is the ratio between the parameters of the cor
 
 \(\rho_c^2=1-\frac{LL(\hat\beta)}{LL(c)};\quad\bar\rho_c^2=1-\frac{LL(\hat\beta)-K}{LL(c)-K_{MS}}\)
 
-t test: \(\frac{\hat\beta_k-\beta^*_k}{S_k}\)
+- t test: 
 
 `Table 5-4 p.86`
 
+Test of Individual Parameters \(\frac{\hat\beta_k-\beta^*_k}{S_k}\)
+
+Test of Linear Relationship between Parameters $H_0:\beta_k=\beta_l$,  \(\frac{\hat\beta_k-\hat\beta_l}{\sqrt{S_k^2+S_l^2-2S_{k,l}}}\)
+
+$H_0:\beta_{cost}=(VOT)\beta_{time}$,  \(\frac{\hat\beta_{cost}-(VOT)\hat\beta_{time}}{\sqrt{S_{cost}^2+(VOT)^2S^2_{time}-2S_{time,cost}}}\)
+
+Tests of Entire Models: LRT $-2[LL_{R}-LL_U]$
+
+`5.7.3.4` The non-nested hypothesis test uses the adjusted likelihood ratio index $\bar\rho^2$ to test the hypothesis that the model with the lower $\bar\rho^2$ value is the true model
+
+\(\alpha=\Phi[-(-2(\bar\rho^2_H-\bar\rho^2_L)LL(0)+(K_H-K_l))^{\frac12}]\)
+
+#### 5.8 Value of Time
+
+- Value of Time for linear Utility Function
+
+\(V_i=...+\beta_{TVT}TVT_i+\beta_{cost}Cost_i+...=...+\beta_{TVT}TVT_{it}+\beta_{costInc}\frac{Cost_{it}}{Income_t}+...\)
+
+\(VofT=\beta_{TVT}/\beta_{cost}=\frac{\partial V_i/\partial Time_i}{\partial V_i/\partial Cost_i}=\frac{\beta_{TVT}}{\beta_{CostInc}/Income_t}\)
+
+\(VofT=\frac{0.6\frac{\beta_{TVT}}{\beta_{Cost}}}{\ln[Income(\frac{\$1000}{year})]}\$/hour\)
+
+\(VofT=\frac{\beta_{TVT}}{\beta_{CostInc}}Units_{VofT}=\frac{\beta_{TVT}}{\beta_{CostInc}}\frac{\frac{cents}{minute}}{\frac{\$1000}{year}}=\frac{\beta_{TVT}}{\beta_{CostInc}}1.2\)
+
+- Value of Time for Time or Cost Transformation
+
+\(V_{it}=...+\beta_{\ln(TVT)}\ln(TVT_{it})+\beta_{cost}Cost_{it}+...\)
+
+\(VofT=\frac{\beta_{\ln(TVT)}}{\beta_{Cost}}\frac1{TVT_{it}}=\frac{\beta_{TVT}}{\beta_{\ln(Cost)}}Cost_{it}\)
+
 ### 6 
 
-extends this example to the estimation of more sophisticated models.  
+$H_0:\underline\beta_{1}=\underline\beta_{2}=...=\underline\beta_{s}...=\underline\beta_{S}$, 
 
-### 7 
+\(-2[\mathit{l}_R-\mathit{l}_U]=-2[\mathit{l}(\beta)-\sum_{s=1}^S\mathit{l}(\beta_s)]\ge\chi^2_{n,(p)}\)
 
-develops a parallel example for shop/other mode choice in the San Francisco Bay Region.  
+### 7  San Francisco Bay Area Shop/Other Mode Choice 
 
-### 9 
 
-extends the examples from previous chapters and explores nested logit models for work and shop/other trips in the San Francisco Bay Region. Additional examples based on data collected in different urban regions are presented in the appendices
+### 8  Nested Logit Model 
+
+\(
+\begin{align*}
+U_{DA}=&V_{DA} &&&+&\varepsilon_{DA}\\
+U_{SR}=&V_{GRP}+V_{SR} &+\varepsilon_{GRP}&&+&\varepsilon_{SR}\\
+U_{Bus}=&V_{GRP}+V_{PT}+V_{Bus}&+\varepsilon_{GRP}&+\varepsilon_{PT}&+&\varepsilon_{Bus}\\
+U_{LTR}=&V_{GRP}+V_{PT}+V_{LTR}&+\varepsilon_{GRP}&+\varepsilon_{PT}&+&\varepsilon_{LTR}
+\end{align*}
+\)
+
+\(Pr(Bus|PT)=\frac{\exp{(\frac{V_{Bus}}{\theta_{PT}})}}{\exp{(\frac{V_{Bus}}{\theta_{PT}})}+\exp{(\frac{V_{LTR}}{\theta_{PT}})}}\),\(Pr(LTR|PT)=\frac{\exp{(\frac{V_{LTR}}{\theta_{PT}})}}{\exp{(\frac{V_{Bus}}{\theta_{PT}})}+\exp{(\frac{V_{LTR}}{\theta_{PT}})}}\)
+
+\(Pr(SR|GRP)=\frac{\exp{(\frac{V_{SR}}{\theta_{GRP}})}}{\exp{(\frac{V_{SR}}{\theta_{GRP}})}+\exp{(\frac{V_{PT}+\theta_{PT}\Gamma_{PT}}{\theta_{GRP}})}}\), \(Pr(PT|GRP)=\frac{\exp{(\frac{V_{PT}+\theta_{PT}\Gamma_{PT}}{\theta_{GRP}})}}{\exp{(\frac{V_{SR}}{\theta_{GRP}})}+\exp{(\frac{V_{PT}+\theta_{PT}\Gamma_{PT}}{\theta_{GRP}})}}\), \(\Gamma_{PT}=\log[\exp{(\frac{V_{Bus}}{\theta_{PT}})}+\exp{(\frac{V_{LTR}}{\theta_{PT}})}]\)
+
+\(Pr(DA)=\frac{\exp{(V_{DA})}}{\exp{(V_{DA})}+\exp{(V_{GRP}+\theta_{GRPT}\Gamma_{GRP})}}\), \(Pr(GRP)=\frac{\exp{(V_{GRP}+\theta_{GRPT}\Gamma_{GRP})}}{\exp{(V_{DA})}+\exp{(V_{GRP}+\theta_{GRPT}\Gamma_{GRP})}}\), \(\Gamma_{GRP}=\log[\exp{(\frac{V_{SR}}{\theta_{GRP}})}+\exp{(\frac{V_{PT}+\theta_{PT}\Gamma_{PT}}{\theta_{GRP}})}]\)
+
+\(Pr(SR)=Pr(SR|GRP)Pr(GRP)\)
+
+\(Pr(Bus)=Pr(Bus|PT)Pr(PT|GRP)Pr(GRP)\)
+
+\(Pr(LTR)=Pr(LTR|PT)Pr(PT|GRP)Pr(GRP)\)
+
+\(Var(\varepsilon_{DA})=Var(\varepsilon_{SR})+Var(\varepsilon_{GRP})=Var(\varepsilon_{GRP})+Var(\varepsilon_{PT})+Var(\varepsilon_{Bus})=Var(\varepsilon_{GRP})+Var(\varepsilon_{PT})+Var(\varepsilon_{LTR})=\frac{\pi^2}{6}\),
+
+\(Var(\varepsilon_{Bus})=Var(\varepsilon_{LTR})=\frac{\pi^2}{6\mu_{PT}^2}=\frac{\pi^2\theta^2_{PT}}{6}\),
+
+\(Var(\varepsilon_{GRP})=\frac{\pi^2\theta^2_{Grp}}{6}\),\(Var(\varepsilon_{PT})=\frac{\pi^2\theta^2_{PT}}{6}\),
+\(Var(\varepsilon_{Total}-\varepsilon_{GRP})=\frac{\pi^2}{6}(1-\theta^2_{Grp})\),\(Var(\varepsilon_{Grp}-\varepsilon_{PT})=\frac{\pi^2}{6}(\theta^2_{Grp}-\theta^2_{PT})\)
+
+```{r,echo=F,out.width='50%'}
+# libraries
+library(ggraph)
+library(igraph)
+library(tidyverse)
+theme_set(theme_void())
+# data: edge list
+d1 <- data.frame(from="Total", to=c("Drive Alone","Group"))
+d2 <- data.frame(from=rep(d1$to[2],2), to=c("Shared Ride","Public Transit"))
+d3 <- data.frame(from=rep(d2$to[2],2), to=c("Bus","Light Rail"))
+edges <- rbind(d1,d2,d3)
+# We can add a second data frame with information for each node!
+name <- unique(c(as.character(edges$from), as.character(edges$to)))
+vertices <- data.frame(name=name,
+  variance=c("Total","Group","PT",rep("",4)),
+  cluster=sample(letters[1:4], length(name), replace=T),
+  value=sample(seq(10,30), length(name), replace=T)
+)
+# Create a graph object
+mygraph <- graph_from_data_frame( edges, vertices=vertices)
+ggraph(mygraph, layout = 'dendrogram') + 
+  geom_edge_link() +
+  geom_node_text(aes( label=name,color=variance),angle=0,hjust=0,vjust=1, nudge_y = -0.1) +
+  geom_node_point(aes(size=15,color=variance),alpha=0.9)+ scale_x_reverse() # +ylim(-.5, NA)
+
+```
+
+- Elasticity Comparison of Nested Logit vs. MNL Models
+
+|Direct Elasticity| Change in Non-Nested Alternative | Change in Nested Alternative |
+|-|---         |---       |
+|Multinomial Logit| $(1-P_j)\beta_{Los}Los_j$ | Not Applicaable |
+|Nested Logit     | $(1-P_j)\beta_{Los}Los_j$ | $(1-P_k+\frac{1-\theta_n}{\theta_n}(1-P_{k|N}))\beta_{Los}Los_k$|
+|Cross Elasticity|Effect on Non-Nested Alts | |
+|Multinomial Logit| $-P_j\beta_{Los}Los_j$  | Not Applicaable |
+|Nested Logit     | $-P_j\beta_{Los}Los_j$  |$-P_k\beta_{Los}Los_k$ |
+|Cross Elasticity|Effect on Nested Alts | |
+|Multinomial Logit|     Not Applicaable     | Not Applicaable |
+|Nested Logit     | $-P_j\beta_{Los}Los_j$  | $-(P_k+\frac{1-\theta_n}{\theta_n}P_{k|N})\beta_{Los}Los_k$|
+
+#### 8.4 Statistical Testing of Nested Logit Structures 
+
+Adopting a nested logit model implies rejection of the MNL. We reject the null hypothesis that the MNL model is the correct model if the calculated value is greater than the test or critical value for the distribution as: 
+
+\(-2[\mathit{l}^{MNL}-\mathit{l}^{NL}]\ge\chi^2_n\),
+
+for a top level nest, \(\frac{\hat\theta_k-1}{S_k}\)
+
+for other nest, \(\frac{\hat\theta_{k\subset j}-\hat\theta_j}{\sqrt{S_{k\subset j}^2+S_{j}^2-2S_{k\subset j,j}}}\)
+
+### 9 Selecting a Preferred Nesting Structure
+
+
+```{r,echo=F,out.width='50%'}
+d1 <- data.frame(from="mode", to="M")
+d2 <- data.frame(from=d1$to, to="S")
+d3 <- data.frame(from=c(d1$to,rep(d2$to,2),d1$to,rep(d1$from,2)), to=c("DA","SR2","SR3+","TRN","WLK","BLK"))
+edges <- rbind(d1,d2,d3)
+
+name <- unique(c(as.character(edges$from), as.character(edges$to)))
+vertices <- data.frame(name=name,
+  group=c(NA,"Moroized","Shared ride","Private",rep("Shared ride",2),"Public",rep("Non-Moroized",2)),
+  cluster=sample(letters[1:4], length(name), replace=T),
+  value=sample(seq(10,30), length(name), replace=T)
+)
+
+mygraph <- graph_from_data_frame( edges, vertices=vertices)
+ggraph(mygraph, layout = 'dendrogram') + 
+  geom_edge_link() +
+  geom_node_text(aes( label=name,color=group),angle=0,hjust=1,vjust=1, nudge_y = -0.1) +
+  geom_node_point(aes(size=value,color=group),alpha=0.6) # +ylim(-.5, NA)
+```
+
+### 10 Multiple Maxima in the Estimation of Nested Logit Models
+
+### 11 Aggregate Forecasting, Assessment, and Application
+
+#### 11.2 Aggregate Forecasting
+
+\(\hat N_i=\sum_{n=1}^NP_i(x_{ni},\hat\theta)=\sum_{n=1}^N\hat P_{ni}\)
+
+Where $\theta$ is the expected value of the vector of parameters obtained in the estimation phase and $\hat P_{ni}$ is the estimated probability of choosing mode $i$ for individual $n$. 
+
+\(\hat S_i=\frac1N\sum_{n=1}^NP_i(x_{ni},\hat\theta)=\frac1N\sum_{n=1}^N\hat P_{ni}\)
+
+Two sources of variation: 
+ 
+the probabilistic form of the discrete choice model at the individual level. This sampling variance declines with the size $N$ of the population for which an aggregate prediction is desired. $N$ is likely to be large enough so that the sampling variance can be ignored.
+
+An estimate vector $\hat\theta$ of the true value. An estimate of the asymptotic variance of the aggregate share prediction due to this estimation variance:
+
+\(Var(\hat S_i)=d_i'Var(\hat\theta)d_i\), where \(d_i=\frac1N\sum_{n=1}^N[\hat P_{ni}(x_{ni}-\sum_j\hat P_{nj}x_{nj})]\)
+
+$Var(\hat\theta)$ is the asymptotic variance-covariance matrix of the parameters obtained in 
+estimation and $d_i'$ is the transpose matrix of $d_i$. If the dimension of the vector $x_{ni}$ is $K\times1$, then the dimension of $d_i$ is also $K\times1$ and the dimension of $Var(\hat\theta)$ is $K\times K$.
+
+sample enumeration: uses a random sample of the population of interest and then applies equation to the sample.
+
+synthetic population:construct a synthetic prediction sample for the entire population through micro-simulation.
+
+\(\tilde S_i=\frac1M\sum_{n=1}^MP_i(x_{ni},\hat\theta)=\frac1M\sum_{n=1}^M\hat P_{ni}\)
+
+A two-step iterative proportional fitting (IPF) procedure is used to estimate simultaneously the multi-way distribution for each census tract within a PUMA (Miller, 1996), in such a way as to match the marginal distribution of each census tract and the multi-way correlation of the PUMA(Public Use Microdata Area) in the Public Use Microdata Sample (PUMS).
+
+#### 11.3 Aggregate Assessment of Travel Mode Choice Models
+
+The testing of alternative model structures and specifications should be conducted at the disaggregate level to select a preferred model structure/specification. This testing and selection process should not be pursued at the aggregate level.
+
+1. In some model structures such as the multinomial logit, the predicted aggregate share of each modal alternative in the estimation sample will be the same regardless of the model specification as long as a full set of alternative specific constants are included. Thus, aggregate testing of alternative models using the estimation sample is futile.
+
+2. A model that performs poorly at the disaggregate level may perform as well or even better than a model that performs well at the disaggregate level when both models are applied to a hold-out sample to obtain aggregate predictions. 
+
+3. errors in individual-level predictions tend to average out in the aggregate, and so aggregate-level testing does not discriminate much among alternative models.
+
+4. the same problems mentioned earlier are applicable (though to a lesser extent) even for semi-aggregate comparisons among alternative models. 
+
+Once a model has been selected, it becomes necessary to validate the models at the aggregate level. This validation is used to ensure that the prediction of aggregate behavior, which drives the modeling process, is consistent with the historically observed aggregate data and by extension future aggregate behavior.  Effective validation requires matching prediction to observations at easily observable and measurable locations. 
+
+The predicted shares can be compared to the actual shares and summary measures such as the root mean square error or average absolute error percentage may be computed to assess the degree to which the predictions correspond to the aggregate observed data. 
+
+
+### 12 Recent Advances in Discrete Choice Modeling
+(Bhat, 2005)
+The first assumption in the MNL model is that the random components of the utilities of the different alternatives are independent and identically distributed (IID). 
+
+The assumption of *independence* implies that there are no common unobserved factors affecting the utilities of the various alternatives. The same underlying unobserved factor (opportunity to socialize or lack of privacy) impacts the utilities of multiple modes. The presence of such common underlying factors across modal utilities has implications for competitive structure. 
+
+The assumption of *identically* distributed (across alternatives) random utility terms implies that the variation in unobserved factors affecting modal utility is the same across all modes. If comfort is an unobserved variable whose values vary considerably for the train mode but little for the automobile mode, then the random components for the automobile and train modes will have different variances. Unequal error variances have significant implications for competitive structure, as discussed in detail by Bhat (1995).
+
+A second assumption of the MNL model is that it maintains *homogeneity* in responsiveness to attributes of alternatives across individuals 
+
+The MNL model does not allow sensitivity variations to an attribute (for example, travel cost or travel time in a mode choice model) due to unobserved individual characteristics. However, unobserved individual characteristics can and generally will affect responsiveness. Ignoring the effect of unobserved individual attributes can lead to biased and inconsistent parameter and choice probability estimates (see Chamberlain, 1980).
+
+#### 12.2 The GEV Class of Models 
+
+The GEV-class of models relaxes the independence from irrelevant alternatives (IIA) property of the multinomial logit model by relaxing the independence assumption between the error terms of alternatives. In other words, a generalized extreme value error structure is used to characterize the unobserved components of utility as opposed to the univariate and independent extreme value error structure used in the multinomial logit model. 
+
+three important characteristics of all GEV models:
+
+(1) the overall variances of the alternatives (i.e., the scale of the utilities of alternatives) are assumed to be identical across alternatives, 
+
+(2) the choice probability structure takes a closed-form expression, and 
+
+(3) all GEV models collapse to the MNL model when the parameters generating correlation take values that reduce the correlations between each pair of alternatives to zero. 
+
+
+```{r,echo=F,out.width='100%'}
+# libraries
+library(ggraph)
+library(igraph)
+library(tidyverse)
+library(dendextend)
+theme_set(theme_void())
+ 
+# data: edge list
+d1 <- data.frame(from=rep("MNL",3), to=c("GEV","MMNL","MGEV"))
+d2 <- data.frame(from=rep(d1$to[1],6), to=c("NL\n(Nested Logit)","OGEV\n(Ordered GEV)","PCL\n(Paired Combinatorial Logit)","PDL\n(Product Differentiation Logit)","new GEV","network GEV"))
+d3 <- data.frame(from=c(rep(d2$to[1],3),rep(d2$to[2],2)), to=c("GNL\n(Generalized Nested Logit)","GenL\n(Generation Logit)", "CNL\n(CrossNested Logit)","OGEV-NL\n(ordered GEV-nested logit)","MNL-OGEV\n(Multinomial Logit-Ordered GEV)"))
+edges <- rbind(d1,d2,d3)
+ 
+# We can add a second data frame with information for each node!
+name <- unique(c(as.character(edges$from), as.character(edges$to)))
+vertices <- data.frame(name=name,group=1,cluster=rep(1, length(name)),value=rep(1, length(name)))
+ 
+# Create a graph object
+GEV <- graph_from_data_frame( edges, vertices=vertices)
+
+# E(GEV)$length <- c(rep(1, 3),rep(2, 4),rep(3, 8))
+E(GEV)$describe <- c('(McFadden,1978;\n Ben-Akiva&F1983)','','','','(Small, 1987)','','','(Koppelman,2001)','(Bierlaire, 2002)','(Wen&Koppelman\n 2001)','(Swait\n 2001)','(Vovsha\n 1997)','(Whelan et al. 2002)','')
+
+ggraph(GEV, layout ='auto',circular=F) + #layout = 'treemap', 'circlepack' , 'linear', 'graphopt','kk','dendrogram', length=length
+    geom_edge_link(aes(start_cap = label_rect(node1.name), # geom_edge_diagonal
+                       end_cap = label_rect(node2.name),
+                   label = describe), 
+                   colour = 'grey',
+                   angle_calc = 'along',
+                   label_dodge = unit(0, 'mm'),
+                   label_size = unit(1.5, 'mm'),
+                   arrow = arrow(length = unit(2, 'mm'))) + # end_cap = circle(3, 'mm')
+    geom_node_text(aes(label = name,check_overlap =T,nudge_y =0.1),size=2.5)+ #,vjust=0.5, hjust=0.4
+#   geom_node_point(aes(size=3,color=group),alpha=0.1) + theme(legend.position = 'none') +ylim(-.5, NA)+ 
+    coord_flip(ylim = c(3,-0.5),expand =T) + scale_y_reverse()+ # 
+    ggtitle("Start from random utility maximization hypothesis, the variance of the joint alternatives be identical,\n do not relax assumptions related to taste homogeneity")+theme_void()+ 
+theme(plot.title = element_text(size=8)) # , face = "bold"
+
+```
+
+#### 12.2 The MMNL Class of Models 
+
+\(P_{qi}(\theta)=\int_{-\infty}^{+\infty}L_{qi}(\beta)f(\beta|\theta)d(\beta)\), where \(L_{qi}(\beta)=\frac{e^{\beta'x_{qi}}}{\sum_je^{\beta'x_{qi}}}\)
+
+$P_{qi}$ is the probability that individual $q$ chooses alternative $i$, $x_{qi}$ is a vector of observed variables specific to individual $q$ and alternative $i$, $\beta$ represents parameters which are random realizations from a density function $f(.)$, and $\theta$ is a vector of underlying moment parameters characterizing $f(.)$. 
+
+Train (1986) and Ben-Akiva et al. (1993) applied the mixed logit to customer-level data, but considered only one or two random coefficients in their specifications. Thus, they were able to use *quadrature techniques* for estimation. 
+
+The first applications to realize the full potential of mixed logit by allowing several random coefficients simultaneously include Revelt and Train (1998) and Bhat (1998b), both of which were originally completed in the early 1996 and exploited the advances in simulation methods (Train,2003;Bhat, 2005).
+
+The MMNL model structure can be motivated from two very different (but formally equivalent) perspectives (see Bhat, 2000a). 
+
+From an intrinsic motivation to allow flexible substitution patterns across alternatives (*error-components structure*) 
+
+or from a need to accommodate unobserved heterogeneity across individuals in their sensitivity to observed exogenous variables (*random coefficients structure*) or a combination of the two.
+
+Assumption for $f(.)$ are Normal, log-normal($\beta$ has to take the same sign for every individual), triangular and uniform(bounded on both sides;same sign for one or more coefficients), Rayleigh distribution(same sign of coefficients for all decision makers).
+
+the MMNL model represents a computationally efficient structure when the number of error components (or factors) needed to generate the desired error covariance structure across alternatives is much smaller than the number of alternatives (see Bhat, 2003a,b
+
+The MMNL model structure also serves as a comprehensive framework for relaxing both the IID error structure as well as the response homogeneity assumption.
+
+| | MMNL model |MNP model |
+|-|---         |---       |
+|capture random taste variations,substitution patterns|flexible|flexible|
+|capture| temporal correlation over time| panel data|
+|accommodate distributions|non-normal|only normal|
+|understand the structure|easier||
+|estimate|multidimensional integrals| same|
+|simulator|arising from |logit-smoothed Accept-Reject (AR)|
+|code|simple, straightforward |
+|  |appealing and broad| if number of normal random coefficients more than alternatives|
+|dimensionality|order of the number of random coefficients|order of the number of alternatives|
+
+#### 12.4 The Mixed GEV Class of Models 
+
+There are instances when substantial computational efficiency gains may be achieved using a MGEV structure.
+
+It is possible that the utility of spatial units that are close to each other will be correlated due to common unobserved spatial elements. A common specification in the spatial analysis literature for capturing such spatial correlation is to allow contiguous alternatives to be correlated. 
+
+In the MMNL structure, such a correlation structure may require multidimensional integration of the order of the number of spatial units.
+
+A carefully specified GEV model can accommodate the spatial correlation structure within a closed-form formulation. However, the GEV model structure of Bhat and Guo cannot accommodate unobserved random heterogeneity across individuals. 
+
+The MGEV model involves multidimensional integration only of the order of the number of random coefficients, while the MMNL model would entail a multidimensional integration of the order of spatial units plus the number of random coefficients.
+
+A closed-form analytic structures should be used whenever feasible, because they are always more accurate than the simulation evaluation of analytically intractable structures. Superimposing a mixing structure to accommodate random coefficients over a closed form analytic structure that accommodates a particular desired inter-alternative error correlation structure represents a powerful approach to capture random taste variations and complex substitution patterns.
 
 
 ## DCM
 
 `Discrete choice methods with simulation`
+
+
+
+
+
 
 ### Common Distributions
 
