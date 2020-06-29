@@ -5,6 +5,8 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document: default
   pdf_document: default
+header-includes:
+    - \usepackage{amsmath}
 ---
 
 
@@ -58,8 +60,8 @@ Coefficient of Variation \( \frac {\beta\pi} {\sqrt{6}(\mu + 0.5772\beta)} \)
 
 Gumbel_pmf|Gumbel_cdf
 |---|---
-![Gumbel_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Gumbel-Density.svg/600px-Gumbel-Density.svg.png)|![Gumbel_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Gumbel-Cumulative.svg/600px-Gumbel-Cumulative.svg.png)
-
+<!-- ![Gumbel_pdf](https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Gumbel-Density.svg/600px-Gumbel-Density.svg.png)|![Gumbel_cdf](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Gumbel-Cumulative.svg/600px-Gumbel-Cumulative.svg.png)
+-->
 
 ### 5 : Data Assembly and Estimation of sample Multinomial Logit Model
 
@@ -183,12 +185,12 @@ $H_0:\underline\beta_{1}=\underline\beta_{2}=...=\underline\beta_{s}...=\underli
 ### 8  Nested Logit Model 
 
 \(
-\begin{align*}
+\begin{aligned}
 U_{DA}=&V_{DA} &&&+&\varepsilon_{DA}\\
 U_{SR}=&V_{GRP}+V_{SR} &+\varepsilon_{GRP}&&+&\varepsilon_{SR}\\
 U_{Bus}=&V_{GRP}+V_{PT}+V_{Bus}&+\varepsilon_{GRP}&+\varepsilon_{PT}&+&\varepsilon_{Bus}\\
 U_{LTR}=&V_{GRP}+V_{PT}+V_{LTR}&+\varepsilon_{GRP}&+\varepsilon_{PT}&+&\varepsilon_{LTR}
-\end{align*}
+\end{aligned}
 \)
 
 \(Pr(Bus|PT)=\frac{\exp{(\frac{V_{Bus}}{\theta_{PT}})}}{\exp{(\frac{V_{Bus}}{\theta_{PT}})}+\exp{(\frac{V_{LTR}}{\theta_{PT}})}}\),\(Pr(LTR|PT)=\frac{\exp{(\frac{V_{LTR}}{\theta_{PT}})}}{\exp{(\frac{V_{Bus}}{\theta_{PT}})}+\exp{(\frac{V_{LTR}}{\theta_{PT}})}}\)
@@ -451,7 +453,233 @@ A closed-form analytic structures should be used whenever feasible, because they
 `Discrete choice methods with simulation`
 
 
+### 1 Introduction
 
+### 5 Probit
+
+The logit model is limited in three important ways. 
+It cannot represent random taste variation.It exhibits restrictive substitution patterns due to the IIA property. And it can not be used with panel data when unobserved factors are correlated over time for each decision maker. 
+
+GEV models relax the second of these restrictions, but not the other two.
+
+Probit models deal with all three. The only limitation of probit models is that they require normal distributions for all unobserved components of utility.
+
+\(U_{nj}=V_{nj} +\varepsilon_{nj},\ \forall j;\ \varepsilon_{n}'=\langle\varepsilon_{n1},..,\varepsilon_{nJ}\rangle\)
+
+\(\phi(\varepsilon_{n})=\frac{1}{(2\pi)^{J/2}|\Omega|^{1/2}}e^{-\frac12\varepsilon_{n}'\Omega^{-1}\varepsilon_{n}}\)
+
+\(P_{ni}=Pr(V_{ni} +\varepsilon_{ni}>V_{nj} +\varepsilon_{nj},\forall j\neq i)=\int I(V_{ni} +\varepsilon_{ni}>V_{nj} +\varepsilon_{nj},\forall j\neq i)\phi(\varepsilon_{n})d\varepsilon_{n}=\int_{\varepsilon_{n}\in B_{ni}}\phi(\varepsilon_{n})d\varepsilon_{n}\)
+
+\(\varepsilon_{n}\text{s.t.} V_{nj}+\varepsilon_{nj},\forall j\neq i)\)
+
+Define \(\tilde U_{nji}=U_{nj}-U_{ni},\ \tilde V_{nji}=V_{nj}-V_{ni},\ \tilde\varepsilon_{nji}=\varepsilon_{nj}-\varepsilon_{ni}\)
+
+\(\phi(\tilde\varepsilon_{n})=\frac{1}{(2\pi)^{\frac12(J-1)}|\tilde\Omega_i|^{1/2}}e^{-\frac12\tilde\varepsilon_{ni}'\tilde\Omega^{-1}\tilde\varepsilon_{ni}}\)
+
+\(P_{ni}=\int I(\tilde V_{ni} +\tilde\varepsilon_{ni}>\tilde V_{nj} +\tilde\varepsilon_{nj},\forall j\neq i)\phi(\tilde\varepsilon_{ni})d\tilde\varepsilon_{ni}=\int_{\tilde\varepsilon_{ni}\in\tilde B_{ni}}\phi(\tilde\varepsilon_{ni})d\tilde\varepsilon_{ni}\)
+
+
+#### 5.2 Identification
+
+
+
+
+#### 5.5 Panel Data
+
+
+#### 5.6 Simulation of the Choice Probabilities
+
+- Accept-Reject Simulator
+
+- Smoothed AR Simulators
+
+- GHK Simulator 
+
+\(S^r=\frac{e^{U^r_{ni}/\lambda}}{\sum_je^{U^r_{nj}/\lambda}}\)
+
+
+ let $L_1$ be the Choleski factor of $\tilde\Omega_1$, a lower-triangular matrix $\begin{bmatrix}C_{aa}&0\\C_{ab}&C_{bb}\end{bmatrix}$
+
+\(\tilde\varepsilon_{n21}= C_{aa}\eta_1\\\tilde\varepsilon_{n31}= C_{ab}\eta_1+C_{bb}\eta_2\)
+
+\(\tilde U_{n21}=\tilde V_{n21}+C_{aa}\eta_1\\\tilde U_{n31}=\tilde V_{n31}+C_{ab}\eta_1+C_{bb}\eta_2\)
+
+\(P_{n1}=Pr(\tilde V_{n21}+C_{aa}\eta_1<0,\tilde V_{n31}+C_{ab}\eta_1+C_{bb}\eta_2<0)\\=Pr(\tilde V_{n21}+C_{aa}\eta_1<0)Pr(\tilde V_{n31}+C_{ab}\eta_1+C_{bb}\eta_2<0|\tilde V_{n21}+C_{aa}\eta_1<0)\\=Pr(\eta_1<-\tilde V_{n21}/C_{aa})Pr(\eta_2<-(\tilde V_{n31}+C_{ab}\eta_1)/C_{bb}|\eta_1<-\tilde V_{n21}/C_{aa})\\=\Phi(\frac{-V_{n21}}{C_{aa}})\int_{\eta_{1}=-\infty}^{-V_{n21}/C_{aa}}\Phi\left(\frac{-(V_{n31}+C_{ab}\eta_1)}{C_{bb}}\right)\bar\phi(\eta_{1})d\eta_{1}\)
+
+$\bar\phi(\eta_{1})=\phi(\eta_{1})/\Phi(\frac{-V_{n21}}{C_{aa}})$ for $-\infty<\eta_1<-\frac{V_{n21}}{C_{aa}}$, and 0 otherwise.
+
+This probability is simulated as follows: 
+
+1. Calculate $k = \Phi(\frac{-V_{n21}}{C_{aa}})$. 
+
+2. Draw a value of $\eta_1$,labeled $\eta_1^r$,from a truncated standard normal truncated at $\frac{-V_{n21}}{C_{aa}}$. This is accomplished as follows: 
+   (a) Draw a standard uniform $\mu^r$. 
+   
+   (b) Calculate $\eta_1^r=\Phi^{-1}(\mu^r\Phi(\frac{-V_{n21}}{C_{aa}}))$. 
+
+3. Calculate $g^r=\Phi\left(\frac{-(V_{n31}+C_{ab}\eta_1)}{C_{bb}}\right)$ . 
+
+4. The simulated probability for this draw is $\check P_{n1}^r=k\times g^r$.
+
+5. Repeat steps 1-4 $R$ times,and average the results.This average is the simulated probability: $\check P_{n1}=\frac1R\sum\check P_{n1}^r$
+
+
+- General Model
+
+\(U_{in}=V_{in} +\varepsilon_{in},\ \forall i;\ \varepsilon_{n}'=\langle\varepsilon_{1n},..,\varepsilon_{Jn}\rangle;\ \varepsilon_{n}\sim N(0,\Omega)\)
+
+$\Omega$ has $\frac12J(J+1)$ elements. 5 alternatives with 15 elements.
+
+Difference against first alternative
+
+$\tilde U_{i1n}=\tilde V_{i1n} +\tilde\varepsilon_{i1n},\ \forall i$; $\tilde\varepsilon_{1n}'=\langle\tilde\varepsilon_{21n},..,\tilde\varepsilon_{J1n}\rangle$ with $J-1$ length; $\tilde\varepsilon_{1n}\sim N(0,\Omega_1)$
+
+$\tilde\Omega_1$ has $\frac12(J-1)J$ elements. 5 alternatives with 10 elements.
+
+
+- GHK Simulator with Maximum Likelihood Estimation `p.129`
+
+
+
+1. Identification
+
+2. Assure the covariance matrix is positive definite
+
+3. Assure $\Omega_i$ is related for all $i$.
+
+
+
+
+### 8 Numerical Maximization
+
+$LL(\beta)=\sum_{n=1}^N\ln P_n(\beta)/N$
+
+The gradient at $\beta_t$ is the vector of first derivative of $LL(\beta)$ evaluated at $\beta_t$: $g_t=\left(\frac{\partial LL(\beta)}{\partial\beta}\right)_{\beta_t}$
+
+The Hessian is the matrix of second derivatives: $H_t=\left(\frac{\partial g_t}{\partial\beta'}\right)_{\beta_t}=\left(\frac{\partial LL(\beta)}{\partial\beta}\right)_{\beta_t}$
+
+- Newton Raphson
+
+$LL(\beta_{t+1})=LL(\beta_{t})+(\beta_{t+1}-\beta_{t})'g_t+\frac12(\beta_{t+1}-\beta_{t})'H_t(\beta_{t+1}-\beta_{t})$
+
+$\frac{\partial LL(\beta_{t+1})}{\partial\beta_{t+1}}=g_t+H_t(\beta_{t+1}-\beta_{t})=0$
+
+$\beta_{t+1}=\beta_{t}+(-H_t^{-1})g_t$
+
+Quadratics: If $LL(\beta)$ were exactly quadratic in $\beta$, then the NR procedure would reach the maximum in one step from any starting value.
+
+Concavity:
+
+$LL(\beta_{t+1})=LL(\beta_{t})+(\lambda(-H_t^{-1})g_t)'g_t=LL(\beta_{t})+\lambda g_t'((-H_t^{-1}))g_t$
+
+- BHHH
+
+Berndt, Hall, Hall, and Hausman (1974)
+
+#### 8.6 Variance of the Estimates
+
+$\sqrt{N}(\hat\beta-\beta)\overset{\mathcal{D}}{\to}N(0,(-\mathbf{H})^{-1})$
+
+If the model is not correctly specified,
+$\sqrt{N}(\hat\beta-\beta)\overset{\mathcal{D}}{\to}N(0,\mathbf{H^{-1}VH^{-1}})$
+
+where $\mathbf{V}$ is the variance of the scores in the population.
+
+### 9 Drawing from Densities
+
+#### 9.2 Random Draws
+
+#### 9.3 Variance Reduction
+
+- Antithetics
+
+- Systematic Sampling
+
+- Halton Sequences
+
+### 10 Simulation-Assisted Estimation
+
+1. Maximum Simulated Likelihood: MSL
+
+This procedure is the same as maximum likelihood (ML) except that simulated probabilities are used in lieu of the exact probabilities. The properties of MSL have been derived by, for example, Gourieroux and Monfort,(1993), Lee(1995), and Hajivassiliou and Ruud (1994).
+
+The log-likelihood function is $LL(\theta)=\sum_{n}\ln P_n(\theta)$
+
+the ML estimator $\sum_{n}s_n(\theta)=\sum_{n}\frac{\partial\ln P_n(\theta)}{\partial\theta}=0$
+
+2. Method of Simulated Moments: MSM
+
+This procedure, suggested by McFadden (1989), is a simulated analog to the traditional method of moments (MOM). Under traditional MOM for discrete choice, residuals are defined as the difference between the 0–1 dependent variable that identifies the chosen alternative and the probability of the alternative. Exogenous variables are identified that are uncorrelated with the model residuals in the population. The estimates are the parameter values that make the variables and residuals uncorrelated in the sample. The simulated version of this procedure calculates residuals with the simulated probabilities rather than the exact probabilities.
+
+$\sum_{n}\sum_{j}[d_{nj}-P_{nj}(\theta)]z_{nj}=0$
+
+$d_{nj}$ is the dependent variable that identifies the chosen alternative:
+$d_{nj}= 1$ if $n$ chose $j$, and $= 0$ otherwise, and
+$z_{nj}$ is a vector of exogenous variables called instruments.
+
+The residuals are $d_{nj}-P_{nj}(\theta)$, and the MOM estimator is the parameter
+values at which the residuals are uncorrelated with the instruments in the sample.
+
+A regression model takes the form $y_{n}=x_n'\beta+\varepsilon_n$, $\sum_{n}[y_{n}-x_n'\beta]z_{n}=0$
+
+When the explanatory variables in the model are exogenous, $\sum_{n}[y_{n}-x_n'\beta]x_{n}=0$, $\hat\beta=(\sum_{n}x_nx_n')^{-1}(\sum_{n}x_ny_n)$
+
+MOM estimator becomes the standard instrumental variables estimator: $\hat\beta=(\sum_{n}z_nx_n')^{-1}(\sum_{n}z_ny_n)$
+
+3. Method of Simulated Scores: MSS
+
+As discussed in Chapter 8, the gradient of the log likelihood of an observation is called the
+score of the observation. The method of scores finds the parameter values that set the average score to zero. When exact probabilities are used, the method of scores is the same as maximum
+likelihood, since the log-likelihood function is maximized when the average score is zero. Hajivassiliou and McFadden (1998) suggested using simulated scores instead of the exact ones. They
+showed that, depending on how the scores are simulated, MSS can differ from MSL and, importantly, can attain consistency and efficiency under more relaxed conditions.
+
+$\sum_{n} s_n(\theta)=\sum_{n}\frac{\partial\ln P_{nj}(\theta)}{\partial\theta}=\sum_{n}\frac{1}{P_{nj}}\frac{\partial P_{nj}}{\partial\theta}=0$
+
+#### 10.3
+
+
+#### 10.5 Properties of Simulation-Based Estimators
+
+- Step 1: The Distribution of $\check g(\theta)$
+
+\(\sqrt{N}\check g(\theta)=\sqrt{N}\underbrace{g(\theta)}_{A:NonSimEst}+\sqrt{N}(\underbrace{E_r[\check g(\theta)]-g(\theta)}_{B:Bias})+\sqrt{N}(\underbrace{\check g(\theta)-E_r[\check g(\theta)]}_{C:Noise})\)
+
+
+$A=g(\theta)\overset{\mathcal{D}}{\to}N(0,\mathbf{W})$, $\mathbf{W}=E[g_n(\theta)g_n(\theta)']=V[g_n(\theta)]$ By CLT
+
+$C=\check g(\theta)-E_r[\check g(\theta)]=\frac{1}N\sum_n d_n\overset{\mathcal{D}}{\to}N(0,\frac{\mathbf{S}}{NR})$, $\mathbf{S}$ is the population mean of $S_n$
+
+$B=E_r[\check g(\theta)]-g(\theta)=\frac{1}N\sum_n g_n''\frac{\mathcal{Q}_n}{2R}=\frac{\mathcal{Z}}R$, $\mathcal{Z}$ is the sample average of $g_n''\mathcal{Q}_n/2$
+
+- Step 2: Derive Distribution of $\hat\theta$ from Distribution of $\check g(\theta)$
+
+   1. MSL
+
+If $R$ rises faster than $\sqrt{N}$, then
+$\sqrt{N}B=\frac{\sqrt{N}\mathcal{Z}}R\overset{\mathcal{P}}{\to}0$
+
+$\frac{\mathbf{S}}{R}\overset{\mathcal{P}}{\to}0$, as $N\to\infty$
+
+$\sqrt{N}(\hat\theta-\theta)=-\mathbf{D}^{-1}\sqrt{N}A\overset{\mathcal{D}}{\to}N(0,\mathbf{D^{-1}WD^{-1}})=N(0,\mathbf{H^{-1}VH^{-1}})=N(0,\mathbf{-H^{-1}})$
+
+   2. MSM
+
+For MSM with fixed instruments, $\check g(\theta)$ is unbiased for $g(\theta)$
+
+$\sqrt{N}(\hat\theta-\theta)=-\mathbf{\check D}^{-1}\sqrt{N}(A+C)\overset{\mathcal{D}}{\to}N(0,\mathbf{D^{-1}[W+S}/R]\mathbf{D}^{-1})$
+
+
+### 11 Individual-Level Parameters
+
+#### 11.2 Derivation of Conditional Distribution
+
+#### 11.3 Implications of Estimation of $\tehta$
+
+### 12 Bayesian Procedures
+
+- The Bernstein–von Mises Theorem
+
+#### 12.8 Bayesian Procedures for Probit Models
 
 
 

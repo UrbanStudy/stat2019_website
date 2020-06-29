@@ -1,0 +1,85 @@
+---
+title: "Statistical Literature and Problems"
+subtitle: "STAT 501"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document: default
+header-includes:
+    - \usepackage{amsmath}
+---
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+```
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## (Albert &  Chib, 1993)
+
+James H. Albert & Siddhartha Chib (1993) Bayesian Analysis of Binary and Polychotomous Response Data, Journal of the American Statistical Association, 88:422, 669-679, DOI: 10.1080/01621459.1993.10476321
+
+
+### 5.1 Finney Data
+
+```{r,echo=F,out.width='50%'}
+# library(likelihoodAsy)
+library(tidyverse)
+library(robcbi)
+data(Finney)
+```
+
+```{r,echo=F,out.width='50%'}
+Finney
+
+Vol <- Finney$Vol; Rate <- Finney$Rate; Resp <- Finney$Resp
+lVol <-log(Vol); lRate <- log(Rate)
+```
+
+```{r,echo=F,out.width='50%'}
+z.glm <- glm(Resp~lVol+lRate,family=binomial)
+summary(z.glm)
+covar(z.glm)
+Rank(z.glm)
+rscale(z.glm)
+weights(z.glm)
+
+
+z.cub <- glm(Resp~lVol+lRate,family=binomial,method="cubinf", ufact=3.2)
+summary(z.cub)
+# plot(z.cub, smooth=TRUE, ask=TRUE)
+```
+
+```{r,echo=F,out.width='50%'}
+## Plots for comparing fits
+comp <- fits.compare(z.glm,z.cub)
+comp
+# plot(comp)
+```
+
+```{r,echo=F,out.width='50%'}
+## Adds a QQ-line for the values in x in the current plot.
+x <- residuals(z.cub, type="deviance")
+qqnorm(x, ylab = "Deviance Residuals")
+QQline(x, lty = 2)
+# Predictions provided by a model fit when method is "cubinf".
+rVol <- runif(20,0.4,3.7); rRate <- runif(20,0.3,3.75)
+newdat <- data.frame(lVol=log(rVol),lRate=log(rRate))
+predict(z.cub, newdat, type="response")
+
+```
+
+
+### 5.2 Election Data
+
+
+### 5.3 A Trivariate Probit Example
+
+
+
+## (Polson etal, 2013)
+
+Nicholas G. Polson, James G. Scott & Jesse Windle (2013) Bayesian Inference for Logistic Models Using Pólya–Gamma Latent Variables, Journal of the American Statistical Association, 108:504, 1339-1349, DOI: 10.1080/01621459.2013.829001
