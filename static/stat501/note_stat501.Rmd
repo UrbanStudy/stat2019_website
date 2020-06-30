@@ -6,15 +6,24 @@ output:
   html_document: default
   pdf_document: default
 header-includes:
-    - \usepackage{amsmath}
+ - \usepackage{amssymb}
+ - \usepackage{amsmath}
 ---
+
+
+
 
 
 ```{r setup, include=F}
 knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
+options(scipen=6)
+options(digits=4)
+# fontfamily: mathpazo
+#  
 ```
+
 
 #  {.tabset .tabset-fade .tabset-pills}
 
@@ -22,53 +31,161 @@ options(repos="https://cran.rstudio.com")
 
 James H. Albert & Siddhartha Chib (1993) Bayesian Analysis of Binary and Polychotomous Response Data, Journal of the American Statistical Association, 88:422, 669-679, DOI: 10.1080/01621459.1993.10476321
 
+### 1 Introduction
+
+\(p_i=H(\mathbf{x}_i^T\boldsymbol{\beta})\)
+
+
+### 3 Data augmentation and Gibbs sampling
+
+#### 3.1 Introduction
+
+\[
+\begin{align} 
+\pi(\boldsymbol{\beta|y,Z}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{k}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1); &\quad\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}; &\quad \boldsymbol{\varepsilon}\sim N_N(0,\mathbf{I})&&(1)\\
+\\
+\boldsymbol{\beta}|\mathbf{y,Z}\sim N_k(\boldsymbol{\hat\beta_Z},(\mathbf{X}^T\mathbf{X})^{-1}); &\quad\boldsymbol{\hat\beta_Z}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z}&&& (2)\\
+\\
+Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1) &\quad\text{truncated at the left by 0} & \text{if } y_i=1 &&\\
+ &\quad\text{truncated at the right by 0} & \text{if } y_i=0 &&(3)
+\end{align}
+\]
+
+The starting value $\beta^{(0)}$ may be taken to be the maximum likelihood (ML) estimate, or least squares (LS) estimate $(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$
+
+#### 3.2 The $t$ Link
+
+\(\mathbf{Y}\sim Bern(p_i)\) have an underlying \(N(Z)\); \(\boldsymbol{\beta}|\mathbf{Z}\sim N_k()\); generalize mixtures of Normal distribution.
+
+$H()=t$ investigate the sensitivity of the fitted probabilities to the choice of link function.
+
+The most popular link function for binary data is the logit, which corresponds to a choice of a logistic distribution for $H$
+
+Logistic quantiles are approximately a linear function of $t(8)$ quantiles. The logistic distribution has the same kurtosis as a $t$ distribution with 9 df.
+
+\(Z_i\sim t_{\nu}(\mathbf{x}_i^T\boldsymbol{\beta},1)\) equivalently, \(Z_i|\lambda_i\sim N(\mathbf{x}_i^T\boldsymbol{\beta},\lambda_i^{-1})\); \(\lambda_i\sim Gamma(\frac{\nu}{2},\frac{2}{\nu})\propto\lambda_i^{\frac{\nu}{2}-1}\exp(-\frac{\nu\lambda_i}{2})\); Suppose \(\beta\sim Unif()\)
+
+\[
+\begin{align} 
+\boldsymbol{\beta|y,Z,\lambda,\nu}\sim N_k(\boldsymbol{\hat\beta_{Z,\lambda}},(\mathbf{X'WX})^{-1}); &\quad\boldsymbol{\hat\beta_{Z,\lambda}}=(\mathbf{X'WX})^{-1}\mathbf{X'WZ},\ \mathbf{W}=\mathrm{diag}(\lambda_i) &&& (4)\\
+\\
+\boldsymbol{Z_i|y,\beta,\lambda,\nu}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},\lambda_i^{-1}) &\quad\text{truncated at the left by 0} & \text{if } y_i=1 &&\\
+ &\quad\text{truncated at the right by 0} & \text{if } y_i=0 &&(5)\\
+\\
+\boldsymbol{\lambda_{1:N}|y,Z,\beta,\nu}\sim Gamma(\frac{\nu+1}{2},\frac{2}{\nu+(Z_i-\mathbf{x}_i^T\boldsymbol{\beta})^2})&\quad\text{independent with } \lambda_i&&&(6)\\
+\boldsymbol{\nu|y,Z,\beta,\lambda}\propto\pi(\nu)\prod_{i=1}^N(c(\nu)\lambda_i^{\frac{\nu}{2}-1}e^{-\frac{\nu\lambda_i}{2}})&\quad\text{in a finite set}&&&(7)\\
+\end{align}
+\]
+
+$\beta^{(0)}=$  least squares (LS) estimate under the probit model, set $\lambda_i=1,\forall i$
+
+\[\hat\pi(\boldsymbol{\beta})\approx\frac1m\sum_{i=1}^m\pi(\boldsymbol{\beta|Z^{(i)},\lambda^{(i)}})\]
+
+\(p_k=\Phi(\lambda_k^{\frac12}\mathbf{x}_k^T\boldsymbol{\beta})\) by a transformation of the conditional density of $\beta$
+
+\[\hat\pi(p_k)=\frac1m\sum_{i=1}^m\frac{\phi(\Phi(p_k);\mu,\sigma^2)}{\phi(\Phi(p_k);0,1)}\]
+
+\(\mu=\sqrt{\lambda_k^{(i)}}\mathbf{x}_k^T\boldsymbol{\hat\beta_{Z,\lambda}^{mu3(i)}}\) ????
+
+\(\sigma^2=\lambda_k^{(i)}\mathbf{x}_k^T(\mathbf{X'WX})^{-1}\mathbf{x}_k\)
+
+
+#### 3.3 Hierarchical Analysis
+
+(1) \(\mathbf{Z}\sim N(\boldsymbol{X\beta,I})\), (2) \(\boldsymbol{\beta}\sim N(\boldsymbol{A\beta^{(0)},\sigma^2I})\), (3) prior density \(\pi(\boldsymbol{\beta^{(0)},\sigma^2})\qquad\)  (8)
+
+The hyperparameters \(\boldsymbol{\beta^{(0)}}\sim Unif()\), $\sigma^2$ given a noninformative prior ????
+
+ The posterior density of the regression vector $\beta$ compromises between least squares estimates from the "full" k-dimensional model and the "reduced" p-dimensional model where $\boldsymbol{\beta=A\beta^{(0)}}$
+
+\[
+\begin{align} 
+\boldsymbol{\beta|Z,\sigma^2}&\sim N_k(\boldsymbol{\mu,V}) &&(9)\\ 
+\boldsymbol{\mu}&=\boldsymbol{W_1\hat\theta_1+(I-W_1)A\hat\theta_2} \\
+\boldsymbol{\hat\theta_1}&=(\mathbf{X'X})^{-1}\mathbf{X'Z} \\
+\boldsymbol{\hat\theta_1}&=(\mathbf{X'X})^{-1}\mathbf{X'Z} \\
+\boldsymbol{V}&=\boldsymbol{((I-W_1)A)[A^TX^T(I+XX^T\sigma^2)^{-1}XA]^{-1}((I-W_1)A)^T+[X^TX+I/\sigma^2]^{-1}} \\
+\boldsymbol{\sigma^2|Z}&\propto c(\mathbf{Z)\frac{|(I+XX^T\sigma^2)^{-1}|^{\frac12}}{|A^TX^T(I+XX^T\sigma^2)^{-1}XA|^{\frac12}}}\exp{\left\{\frac12Q(\boldsymbol{Z,XA\hat\theta_2,I+XX^T\sigma^2})\right\}}\pi(\sigma^2) &&(10)\\ 
+\end{align}
+\]
+
+where \(Q(\boldsymbol{Z,\mu,\Sigma})=\boldsymbol{(Z-\mu)^T\Sigma^{-1}(Z-\mu)}\) and \(c(\mathbf{Z)}\) is a proportionality constant.
+
+one starts with initial guesses at $\boldsymbol{\beta}$ and $\sigma^2$, simulates the $Z_i$ from (3), and then simulates $\boldsymbol{\beta}$ and $\sigma^2$ from the distributions (9) and (10)
+
+### 4 Generalizations to a Multinomial response
 
 ### 5.1 Finney Data
+
+\[\Phi^{-1}(p_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i},\ i=1,..,39\]
+
+where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspired, and the binary outcome observed is the occurrence
+ or nonoccurrence on a transient vasorestriction on the skin of the digits. $\beta\sim Unif$
+ prior is placed on the regression parameter
 
 ```{r,echo=F,out.width='50%'}
 # library(likelihoodAsy)
 library(tidyverse)
 library(robcbi)
+library(kableExtra)
 data(Finney)
 ```
 
 ```{r,echo=F,out.width='50%'}
-Finney
 
 Vol <- Finney$Vol; Rate <- Finney$Rate; Resp <- Finney$Resp
 lVol <-log(Vol); lRate <- log(Rate)
+plotFdat <- Finney$plotFdat
+
+plotFdat(Rs=Resp,lV=lVol,lR=lRate,zc,zr,rob=F,cont=F)
 ```
 
 ```{r,echo=F,out.width='50%'}
-z.glm <- glm(Resp~lVol+lRate,family=binomial)
-summary(z.glm)
-covar(z.glm)
-Rank(z.glm)
-rscale(z.glm)
-weights(z.glm)
+z.logit <- glm(Resp~lVol+lRate,family=binomial(link="logit"))
+summary(z.logit)
+correl(z.logit)
+covar(z.logit)
+Rank(z.logit)
+rscale(z.logit)
+# kable(t(data_frame(weights(z.logit))))
+```
 
 
-z.cub <- glm(Resp~lVol+lRate,family=binomial,method="cubinf", ufact=3.2)
-summary(z.cub)
-# plot(z.cub, smooth=TRUE, ask=TRUE)
+
+```{r,echo=F,out.width='50%'}
+z.probit <- glm(Resp~lVol+lRate,family=binomial(link="probit"))
+summary(z.probit)
+correl(z.probit)
+covar(z.probit)
+Rank(z.probit)
+rscale(z.probit)
+# kable((data_frame(weights(z.probit))))
 ```
 
 ```{r,echo=F,out.width='50%'}
 ## Plots for comparing fits
-comp <- fits.compare(z.glm,z.cub)
+comp <- fits.compare(z.logit,z.probit)
 comp
-# plot(comp)
+plot(comp)
 ```
 
 ```{r,echo=F,out.width='50%'}
+#z.cub <- glm(Resp~lVol+lRate,family=binomial,method="cubinf", ufact=3.2)
+# summary(z.cub)
+# plot(z.cub, smooth=TRUE, ask=TRUE)
+```
+
+
+
+```{r,echo=F,out.width='50%'}
 ## Adds a QQ-line for the values in x in the current plot.
-x <- residuals(z.cub, type="deviance")
+x <- residuals(z.probit, type="deviance")
 qqnorm(x, ylab = "Deviance Residuals")
 QQline(x, lty = 2)
 # Predictions provided by a model fit when method is "cubinf".
 rVol <- runif(20,0.4,3.7); rRate <- runif(20,0.3,3.75)
 newdat <- data.frame(lVol=log(rVol),lRate=log(rRate))
-predict(z.cub, newdat, type="response")
+predict(z.probit, newdat, type="response")
 
 ```
 
