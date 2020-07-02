@@ -127,8 +127,12 @@ where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspir
 data(Finney)
 Vol <- Finney$Vol; Rate <- Finney$Rate; Resp <- Finney$Resp
 lVol <-log(Vol); lRate <- log(Rate)
-plotFdat <- Finney$plotFdat
-plotFdat(Rs=Resp,lV=lVol,lR=lRate,zc,zr,rob=F,cont=F)
+# plotFdat <- Finney$plotFdat
+# plotFdat(Rs=Resp,lV=lVol,lR=lRate,zc,zr,rob=F,cont=F)
+plot(Vol,Rate,type="n",xlab="Vol",ylab="Rate")
+points(Vol[Resp==0],Rate[Resp==0],pch=5, cex=1.2)
+points(Vol[Resp==1],Rate[Resp==1],pch=16,cex=1.2)
+
 finney <- data.frame(Finney[1:3])
 finney[,3] <- as.factor(finney[,3])
 table(finney[3])
@@ -142,20 +146,31 @@ The starting value $\beta^{(0)}$ is the least square estimate $(\mathbf{X}^T\mat
 # X <- cbind(Vol, Rate)
 # (beta <- solve( t(X) %*% X ) %*% t(X) %*% Resp) #start from LS estimate
 X <- cbind(1, Vol, Rate)
-(beta <- solve( t(X) %*% X ) %*% t(X) %*% Resp)
+(beta <- as.vector(solve( t(X) %*% X ) %*% t(X) %*% Resp))
+p <- dim(X)[2]
 ```
 
 \(\mu=\mathbf{x}_i^T\boldsymbol{\beta}\)
 
 ```{r, echo=T,collapse=T}
-mu <- t(X %*% beta) # Initial mu of Z
+(mu <- as.vector(X %*% beta)) # Initial mu of Z
 ```
 
 \(Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)\) truncated by 0 at the \(\begin{cases}\text{left if}&y_i=1\\\text{right if}&y_i=0\end{cases}\)
 
+
+
+```{r,eval=T, echo=T,collapse=T}
+# only works for the second probit model
+ez<-as.vector(X%*%beta)
+set.seed(123); u<-runif(n,0,1)
+(z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1))))
+```
+
 ```{r, echo=T,collapse=T}
+# only works for the first probit model
 tr_norm<-function(n,mu,v,truc_side='left'){ # Truncated Normal function
- u<-runif(n,min=0,max=1)
+u<-runif(n,min=0,max=1)
   if(truc_side=='left'){
  tr_norm_value<-u-u*pnorm(0,mean=mu,sd=sqrt(v))+pnorm(0,mean=mu,sd=sqrt(v))}
  if(truc_side=='right'){
@@ -163,12 +178,17 @@ tr_norm<-function(n,mu,v,truc_side='left'){ # Truncated Normal function
   qnorm(tr_norm_value,mu,sqrt(v))
 }
 
-z<- ifelse(Resp==1, # Initial Z
+set.seed(123)
+(z<- ifelse(Resp==1, # Initial Z
 tr_norm(1,mu,1),
 tr_norm(1,mu,1,'right')
-)
+))
+```
 
-# anohter attempt of truncated
+*other attempts of sampling from truncated nromal*
+
+```{r,eval=F, echo=T,collapse=T}
+
 #for(j in 1:n){  
 #ifelse(Resp[j]==1,
 #z[j] <- rtruncnorm(1,a=0,b=Inf,mean=mu[j],sd=1),
@@ -188,30 +208,40 @@ tr_norm(1,mu,1,'right')
 ```{r, echo=T,collapse=T}
 solve(t(X)%*%X)%*%t(X)%*%z # first mu for Beta
 solve(t(X)%*%X)            # first omega for Beta
+
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V) # from Hoff (2009, Ch.12)
+
 ```
 
+#### The first Probit model
 
 ```{r}
-M <- 10000; set.seed(123)
-gibbs.mat <- matrix(NA,ncol=length(beta),nrow=M) #Gibbs Sampelr variables
+M <- 25000; set.seed(123)
+gibbs.mat <- matrix(NA,ncol=p,nrow=1000) #Gibbs Sampelr variables
 for(m in 1:M){  #Gibbs Sampler
   
-beta <- mvrnorm(1, solve(t(X)%*%X)%*%t(X)%*%z, solve(t(X)%*%X)) # draw beta from Normal
+# beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)
+beta <- mvrnorm(1, V%*%(t(X)%*%z), V) # draw beta from Normal
 
 z<- ifelse(Resp==1, # draw Z from truncated Normal
 tr_norm(1 ,t(X %*% beta), 1),
 tr_norm(1 ,t(X %*% beta), 1 ,'right')
 )
-gibbs.mat[m,] <- t(beta)   # store draws
+
+#ez<-(X%*%beta)
+#u<-runif(n,0,1)
+#z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
+
+  if(m%%(M/1000)==0) { gibbs.mat[m/(M/1000),] <- t(beta)}   # store draws
 }
 ```
 
 \(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)},\lambda^{(i)}})\)
 
 ```{r,echo=T,collapse=T}
-burnin <- 1:(M/2)
-pumps.quant <- apply(gibbs.mat[-burnin,],2,quantile,probs=c(0.025,0.5,0.975))
-mean <- colMeans(gibbs.mat[-burnin,])
+#burnin <- 1:(M/2)
+pumps.quant <- apply(gibbs.mat,2,quantile,probs=c(0.025,0.5,0.975)) # [-burnin,]
+mean <- colMeans(gibbs.mat)
 pumps.par<- rbind(mean,pumps.quant)
 colnames(pumps.par) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(pumps.par),4))
@@ -219,14 +249,17 @@ pander::pander(round(t(pumps.par),4))
 
 ```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
-for(j in 1:3){
-plot(gibbs.mat[-burnin,j],  ylab=expression(beta[j]^{(m)}),main="",pch=1,cex=0.3,
+lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
+for(j in 1:p){
+plot(gibbs.mat[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
-plot(cumsum(gibbs.mat[-burnin,j])/(1:(M/2)),  ylab=expression(E(beta[j])),main="",
+plot(cumsum(gibbs.mat[,j])/(1:1000),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
-hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j),
-     main="",col="cornflowerblue")
-abline(v=quantile(gibbs.mat[-burnin,j],c(0.025,0.975)),col="red",lwd=1)
+#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),
+#     main="",col="cornflowerblue")
+plot(density(gibbs.mat[,j],adj=2),lwd=2,main="",col="cornflowerblue",
+    xlab=lab[j],ylab="density")
+abline(v=quantile(gibbs.mat[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
 
@@ -234,7 +267,7 @@ abline(v=quantile(gibbs.mat[-burnin,j],c(0.025,0.975)),col="red",lwd=1)
 \(p_i=\Phi(\mathbf{x}_i^T\boldsymbol{\beta})\)
 
 ```{r,echo=T,collapse=T}
-(p <- pnorm(t(X %*% beta),0,1))
+(prob <- pnorm(t(X %*% beta),0,1))
 ```
 
 ```{r,echo=F,eval=F, message=F, warning=F, fig.width=6, fig.height=3, fig.align='center'}
@@ -260,6 +293,83 @@ segments(pumps.quant["2.5%",1:10],10:1,pumps.quant["97.5%",1:10],10:1,col="cornf
 segments(pumps.quant["50%",1:10],(10:1)-0.25,pumps.quant["50%",1:10],(10:1)+0.25,col="cornflowerblue",lwd=2,pch=20,cex=0.7)
 ```
 
+#### The second Probit model, refer to (Hoff, 2009, Ch.12)
+
+```{r}
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
+```
+
+```{r,echo=T,include=T}
+#### Ordinal probit regression
+## setup
+set.seed(123)
+beta<-rep(0,p) 
+z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
+BETA<-matrix(NA,1000,p) ; Z<-matrix(NA,1000,n) ; ac<-0
+mu<-0 ; sigma<-100  ### Why????
+
+## MCMC
+S<-25000
+for(s in 1:S) 
+{
+  #update beta
+  E<- V%*%( t(X)%*%z )
+  beta<- cholV%*%rnorm(p) + E  # ????????
+
+  #update z
+  ez<-X%*%beta
+  u<-runif(n,0,1)
+  z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
+    
+  #help mixing
+c<-rnorm(1,0,n^(-1/3))  #  sd responding the sample size ????
+zp<-z+c #;g <- 0 ; gp<-g+c
+lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) #+ sum(dnorm(c,mu,sigma,log=T) - dnorm(0,mu,sigma,log=T) )
+if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }              # ; g<-gp
+
+  if(s%%(S/1000)==0) 
+  { 
+    # cat(s/S,ac/s,"\n")
+    BETA[s/(S/1000),]<-  beta
+    Z[s/(S/1000),]<- z
+  }
+} 
+```
+
+```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=3, fig.align='center'}
+par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
+(beta.pm<-apply(BETA,2,mean))
+ZPM<-apply(Z,2,mean)
+laby<-c("density","","")
+for(j in 1:p){
+plot(density(BETA[,j],adj=2),lwd=2,main="",#xlim=c(-10,5),
+    xlab=lab[j],ylab=laby[j],col="cornflowerblue")
+sd<-sqrt(  solve(t(X)%*%X/n)[j,j] )
+x<-seq(min(BETA[,j]),max(BETA[,j]),length=100)
+lines(x,dnorm(x,E[j],sd),lwd=2,col="gray")
+if(j==3) {legend(2.1,1,legend=c("prior","posterior"),lwd=c(2,2),col=c("gray","cornflowerblue"),bty="n")}
+}
+```
+
+```{r,echo=T,collapse=T}
+source("rlreg.R")
+rfit<-treg(Resp,X)
+```
+
+```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=3, fig.align='center'}
+par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
+ymx<-c(0.3,0.75,1.25)
+for(j in 1:3) {
+plot(density(rfit$BETA[,j],adj=2),lwd=2,main="",
+ xlab=lab[j],col="gray",ylim=c(0,ymx[j]),ylab=laby[j])
+lines(density(gibbs.mat[,j],adj=2),col="cornflowerblue",lwd=2)
+lines(density(BETA[,j],adj=2),col="cyan",lwd=2)
+if(j==3) {
+ legend(1.8,1.25,legend=c("likelihood","probit1","probit2"), 
+       lwd=c(2,2,2),col=c("gray","cornflowerblue","cyan"))
+          } 
+               }
+```
 
 
 
@@ -268,15 +378,27 @@ segments(pumps.quant["50%",1:10],(10:1)-0.25,pumps.quant["50%",1:10],(10:1)+0.25
 
 #### Compare with the results by GLM
 
-```{r,eval=T,echo=T,collapse=T}
-# Using glm function
-fit.probit.glm <- glm(Resp~Vol+Rate,family=binomial(link="probit"))
-summary(fit.probit.glm)
+Using glm function, the fitted logit model gives the largest value of coefficients and residual scale.
 
-# fit.probit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="probit"))
-# fit.logit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="logit"))
-#comp <- fits.compare(fit.probit.glm, fit.probit.glm.l, fit.logit.glm.l)
-# comp
+Linear regression treat response as a continuous value <span style="color: red;">????</span> and gives the smallest value of coefficients.
+
+What is the benifit of log transform?
+
+```{r,eval=T,echo=T,collapse=T}
+fit.probit.lm <- lm(Resp~Vol+Rate)
+fit.probit.glm <- glm(Resp~Vol+Rate,family=binomial(link="probit"))
+fit.logit.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
+comp <- fits.compare(fit.probit.lm, fit.probit.glm, fit.logit.glm)
+comp
+plot(comp)
+```
+
+```{r,eval=T,echo=T,collapse=T}
+fit.probit.lm.l <- lm(Resp~lVol+lRate)
+fit.probit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="probit"))
+fit.logit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="logit"))
+comp <- fits.compare(fit.probit.lm.l, fit.probit.glm.l, fit.logit.glm.l)
+comp
 # plot(comp)
 ```
 
