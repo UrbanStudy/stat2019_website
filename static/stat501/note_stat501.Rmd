@@ -33,8 +33,65 @@ James H. Albert & Siddhartha Chib (1993) Bayesian Analysis of Binary and Polycho
 
 ### 1 Introduction
 
-\(p_i=H(\mathbf{x}_i^T\boldsymbol{\beta})\)
+\(Y_1,..,Y_n\sim Bern(p_i)\). \(\beta_{k\times1}\) unknown vector of parameters. \(X_i^T=(X_{i1},..,X_{ik})\) known covariates.
 
+\(p_i=H(\mathbf{x}_i^T\boldsymbol{\beta})\). \(H(\cdot)\) is a known CDF with linear structure \(\mathbf{x}_i^T\boldsymbol{\beta}\)
+
+If \(H(\cdot)\) is standard normal CDF, it obtains the probit model,
+
+if \(H(\cdot)\) is logistic CDF, it obtains the logit model.
+
+\(\pi(\boldsymbol{\beta})\) is the prior density.
+
+\(
+\pi(\boldsymbol{\beta}|data) = \frac{\pi(\boldsymbol{\beta})\prod_{i=1}^{k}H (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-H(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}}{\int\pi(\boldsymbol{\beta})\prod_{i=1}^{k}H (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-H(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}d\boldsymbol{\beta}}
+\)
+is intractable.
+
+
+For small number of parameter, a Bayesian approach summarized the posterior using numerical integration.
+
+For large models (k large), posterior moments by Monte Carlo integration with a `multivariate Student's t importance function`.
+
+This is a simulation-based approach for computing the exact posterior distribution of $\beta$.
+
+The key idea is to introduce $N$ independent latent variables $Z_1,..Z_N\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)$ into the problem. \(Y_i=\begin{cases}1&\text{if } Z_i>0\\0&\text{if }Z_i\le0\end{cases}\)
+
+This approach is very simular to the data augmentation/Gibbs sampling framework used in censored regression models.
+
+### 2. The Gibbs Sampler
+
+\(
+\theta_1^{(1)}\quad\text{from}\quad\pi(\theta_1|\{\theta_j^{(0)},j\neq1\})\\
+\theta_2^{(1)}\quad\text{from}\quad\pi(\theta_2|\{\theta_1^{(1)},j>2\})\\
+\vdots\\
+\theta_p^{(1)}\quad\text{from}\quad\pi(\theta_p|\{\theta_j^{(1)},j<p\})\\
+\)
+
+One cycle is iterated $t$ times. For sufficiently large $t^*$, $\theta^{(t^*)}$ can be regarded as one simulated value from the posterior of $\theta$. Replicating this process $m$ times $\{\theta_{1j}^{(t^*)},\theta_{2j}^{(t^*)},..,\theta_{pj}^{(t^*)},j=1,..,m\}$
+
+Two practical drawbacks to the replication approach:
+
+1. The method is inefficient. the samples $\{\theta_j^{(t)}\}$, for $t<t^*$ are discarded.
+
+2. After the initial run it may be necessary to repeat the simulation with a larger number of replication to get accurate density estimates.
+
+- A "one-run" Gibbs sampling scheme is efficient in that few observations are discarded.
+
+1. One should collect the values staring at the cycle $t$. The value of $t$ is samll (10-40) relative to the total number of values collected. <span style="color: red;">(burn-in???)</span>
+
+2.  If one wishes to obtain an approximate independent sample of the $\theta$, the simulated values of $\theta$ could be collected at cycles $t,t+n_1,t+2n_1,..$, where $n_1$ is the spacing between cycles where $\theta^{(t)}$ and $\theta^{(t)}$ are believed to be approximately independent. *But it is not necessary to obtain an independent sample of $\theta$ to obtain, say, a marginal posterior density estimate of $\theta_k$* <span style="color: red;">???</span>
+
+- One goal of this article is to obtain estimates of the densities of the individual parameters or their functional. 
+
+One can estimate the density of this function using a *kernel density* estimate of the simulated values of \(g(\theta_k)\{\theta_k^{(i)},i=1,..,m\}\). A slightly preferable estimate of this marginal posterior density is given by \(\hat\pi(g(\theta_k))\approx\frac1m\sum_{i=1}^m\pi(g(\theta_k)\{\theta_r^{(i)},r\neq k\})\) <span style="color: red;">???</span>
+
+In practice, we collect values of $\theta$ in batches of 100-200 until all the marginal density estimates for the components of $\theta$ stabilize.
+
+- A second goal is estimation of posterior expectations.
+
+To compute this standard error from this correlated simulation sample, we apply *the well-known batch means method*. We batch or section the sample into subsamples of equal size. When the lag one autocorrelation of the batch means is under .05, the simulation standard error is computed as the standard deviation of the batch means divided by the square root of the number of batches.
+\(se=\frac{sd}{\sqrt{B}}\) <span style="color: red;"> subsamples of equal size???</span>
 
 ### 3 Data augmentation and Gibbs sampling
 
@@ -42,7 +99,7 @@ James H. Albert & Siddhartha Chib (1993) Bayesian Analysis of Binary and Polycho
 
 \[
 \begin{align} 
-\pi(\boldsymbol{\beta|y,Z}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{k}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1); &\quad\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}; &\quad \boldsymbol{\varepsilon}\sim N_N(0,\mathbf{I})&&(1)\\
+\pi(\boldsymbol{\beta|y,Z}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1); &\quad\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}; &\quad \boldsymbol{\varepsilon}\sim N_N(0,\mathbf{I})&&(1)\\
 \\
 \boldsymbol{\beta}|\mathbf{y,Z}\sim N_k(\boldsymbol{\hat\beta_Z},(\mathbf{X}^T\mathbf{X})^{-1}); &\quad\boldsymbol{\hat\beta_Z}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z}&&& (2)\\
 \\
@@ -57,7 +114,7 @@ The starting value $\beta^{(0)}$ may be taken to be the maximum likelihood (ML) 
 
 \(\mathbf{Y}\sim Bern(p_i)\) have an underlying \(N(Z)\); \(\boldsymbol{\beta}|\mathbf{Z}\sim N_k()\); generalize mixtures of Normal distribution.
 
-$H()=t$ investigate the sensitivity of the fitted probabilities to the choice of link function.
+$H()=t$ *investigate the sensitivity* of the fitted probabilities to the choice of link function.
 
 The most popular link function for binary data is the logit, which corresponds to a choice of a logistic distribution for $H$
 
@@ -114,6 +171,32 @@ where \(Q(\boldsymbol{Z,\mu,\Sigma})=\boldsymbol{(Z-\mu)^T\Sigma^{-1}(Z-\mu)}\) 
 one starts with initial guesses at $\boldsymbol{\beta}$ and $\sigma^2$, simulates the $Z_i$ from (3), and then simulates $\boldsymbol{\beta}$ and $\sigma^2$ from the distributions (9) and (10)
 
 ### 4 Generalizations to a Multinomial response
+
+#### 4.1 Ordered Categories
+
+\(Y_1,..,Y_N\) are observed. \(Y_i\) takes one of $J$ ordered categories. \(p_{ij}=P[Y_i=j]\), we define the cumulative probabilities \(\eta_{ij}=\sum_{k=1}^jp_{ij},j=1,..,J-1\) <span style="color: red;">k????</span>
+
+One popular regression model is given by \(\eta_{ij}=\Phi(\gamma_i-\mathbf{x}_i^T\boldsymbol{\beta}),i=1,..,N; j=1,..,J-1\)
+
+A latent continuous variable $Z_i\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)$. \(Y_i=j\text{ if } \gamma_{j-1}<Z_i\le\gamma_{j}, \gamma_{0}=-\infty,\gamma_{J}=\infty\)
+
+ The posterior distribution of $\beta$ conditional on $y$ and $Z$ is given by the multivariate normal form (2)
+
+\[
+\begin{align} 
+\pi(\boldsymbol{\beta,\gamma|y})&= C\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\sum_{j=1}^{J}\mathbf{1}_{(y_i=j)}[\Phi (\gamma_{j}-\mathbf{x}_i^T\boldsymbol{\beta})-\Phi (\gamma_{j-1}-\mathbf{x}_i^T\boldsymbol{\beta})]\\
+\pi(\boldsymbol{\beta,\gamma,Z|y})&= C\prod_{i=1}^{N}\left[\frac{1}{\sqrt{2\pi}}\exp(-\frac12(Z_i-\mathbf{x}_i^T\boldsymbol{\beta})^2)(\sum_{j=1}^{J}\mathbf{1}_{(Y_i=j)}\mathbf{1}_{(\gamma_{j-1}<Z_i\le\gamma_{j})})\right]&&(11)\\
+Z_i|\boldsymbol{\beta,\gamma},y_i&\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1) \quad\text{truncated at the left(right) by } \gamma_{j-1}(\gamma_{j}) &&(12)\\
+\gamma_j|\boldsymbol{Z,y,\beta,},\{\gamma_k,k\neq j\}&\propto  \prod_{i=1}^{N}\left[\mathbf{1}_{(Y_i=j)}\mathbf{1}_{(\gamma_{j-1}<Z_i\le\gamma_{j})})+\mathbf{1}_{(Y_i=j+1)}\mathbf{1}_{(\gamma_{j}<Z_i\le\gamma_{j+1})})\right]&&(13)\\
+\end{align}
+\]
+
+(13) can be seen to be uniform on the interval \([\max \{\max \{Z_i: Y_i = j \}, \gamma_{j-1} \}, \min \{\min \{Z_i: Y_i = j + 1\}, \gamma_{j+1} \}]\). 
+
+To implement the Gibbs sampler here, start with ($\beta,\gamma$) set equal to the MLE and simulate from the distributions (13), (12), and (1), in that order.
+
+#### 4.2 Unordered Categories With a Latent Multinormal Distribution
+
 
 ### 5.1 Finney Data
 
@@ -185,7 +268,7 @@ tr_norm(1,mu,1,'right')
 ))
 ```
 
-*other attempts of sampling from truncated nromal*
+*other attempts of sampling from truncated normal*
 
 ```{r,eval=F, echo=T,collapse=T}
 
@@ -213,11 +296,12 @@ iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V) # from Hoff (2009, Ch.
 
 ```
 
-#### The first Probit model
+#### The first Gibbs sampling
 
 ```{r}
 M <- 25000; set.seed(123)
-gibbs.mat <- matrix(NA,ncol=p,nrow=1000) #Gibbs Sampelr variables
+Gibbs <- matrix(NA,ncol=p,nrow=M); ZZ<-matrix(NA,M,n)      #For full Sample
+gibbs <- matrix(NA,ncol=p,nrow=1000); Z<-matrix(NA,1000,n) #For Sub Sample
 for(m in 1:M){  #Gibbs Sampler
   
 # beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)
@@ -232,36 +316,62 @@ tr_norm(1 ,t(X %*% beta), 1 ,'right')
 #u<-runif(n,0,1)
 #z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
 
-  if(m%%(M/1000)==0) { gibbs.mat[m/(M/1000),] <- t(beta)}   # store draws
+Gibbs[m,] <- t(beta); ZZ[m,]<- z                                        # full samples
+if(m%%(M/1000)==0) { gibbs[m/(M/1000),] <- t(beta); Z[m/(M/1000),]<- z}   # subsamples of equal size
 }
 ```
 
-\(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)},\lambda^{(i)}})\)
+\(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)}})\)
 
 ```{r,echo=T,collapse=T}
-#burnin <- 1:(M/2)
-pumps.quant <- apply(gibbs.mat,2,quantile,probs=c(0.025,0.5,0.975)) # [-burnin,]
-mean <- colMeans(gibbs.mat)
-pumps.par<- rbind(mean,pumps.quant)
-colnames(pumps.par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round(t(pumps.par),4))
+full.mean <- colMeans(Gibbs[,])
+burnin <- 24000:25000
+tail.mean <- colMeans(Gibbs[burnin,])
+sub.mean <- colMeans(gibbs)
+par<- cbind(full.mean,tail.mean,sub.mean)
+rownames(par) <- c("Beta0","Beta1","Beta2")
+pander::pander(round((par),4))
 ```
+
+```{r,eval=F,echo=T}
+full.quant <- apply(Gibbs[burnin,],2,quantile,probs=c(0.025,0.5,0.975)) 
+tail.quant <- apply(Gibbs[burnin,],2,quantile,probs=c(0.025,0.5,0.975)) 
+sub.quant <- apply(gibbs,2,quantile,probs=c(0.025,0.5,0.975)) 
+par<- rbind(full.quant,tail.quant,sub.quant)
+colnames(par) <- c("Beta0","Beta1","Beta2")
+pander::pander(round(t(par),4))
+```
+
+```{r,echo=T,include=T,fig.show='hold', fig.width=9, fig.height=6, fig.align='center'}
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0)); par(mfrow=c(3,3))
+lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
+for(j in 1:3) {
+acf(Gibbs[,j],ci.col="dodgerblue4",xlab=lab[j])}  
+for(j in 1:3) {
+acf(Gibbs[burnin,j],ci.col="dodgerblue4",xlab=lab[j])} 
+for(j in 1:3) {
+acf(gibbs[,j],xlab=lab[j],ci.col="dodgerblue4")}
+mtext("autocorrelation functions with Gibbs1.full(above),Gibbs1.tail(middle) ,Gibbs1.sub(below)",side=1,line=-1,outer=T)
+```
+
+Choose sub-sampling
 
 ```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
-lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
 for(j in 1:p){
-plot(gibbs.mat[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
+plot(gibbs[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
-plot(cumsum(gibbs.mat[,j])/(1:1000),  ylab=lab[j],main="",
+plot(cumsum(gibbs[,j])/(1:1000),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
 #hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),
 #     main="",col="cornflowerblue")
-plot(density(gibbs.mat[,j],adj=2),lwd=2,main="",col="cornflowerblue",
+plot(density(gibbs[,j],adj=2),lwd=2,main="",col="cornflowerblue",
     xlab=lab[j],ylab="density")
-abline(v=quantile(gibbs.mat[,j],c(0.025,0.975)),col="gray",lwd=1)
+abline(v=quantile(gibbs[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
+
+
 
 
 \(p_i=\Phi(\mathbf{x}_i^T\boldsymbol{\beta})\)
@@ -293,14 +403,14 @@ segments(pumps.quant["2.5%",1:10],10:1,pumps.quant["97.5%",1:10],10:1,col="cornf
 segments(pumps.quant["50%",1:10],(10:1)-0.25,pumps.quant["50%",1:10],(10:1)+0.25,col="cornflowerblue",lwd=2,pch=20,cex=0.7)
 ```
 
-#### The second Probit model, refer to (Hoff, 2009, Ch.12)
+#### The second Gibbs sampling, refer to (Hoff, 2009, Ch.12)
 
 ```{r}
 iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
 ```
 
 ```{r,echo=T,include=T}
-#### Ordinal probit regression
+#### probit regression
 ## setup
 set.seed(123)
 beta<-rep(0,p) 
@@ -337,9 +447,8 @@ if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }              # ; g<-gp
 ```
 
 ```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=3, fig.align='center'}
-par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 (beta.pm<-apply(BETA,2,mean))
-ZPM<-apply(Z,2,mean)
+par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 laby<-c("density","","")
 for(j in 1:p){
 plot(density(BETA[,j],adj=2),lwd=2,main="",#xlim=c(-10,5),
@@ -362,11 +471,12 @@ ymx<-c(0.3,0.75,1.25)
 for(j in 1:3) {
 plot(density(rfit$BETA[,j],adj=2),lwd=2,main="",
  xlab=lab[j],col="gray",ylim=c(0,ymx[j]),ylab=laby[j])
-lines(density(gibbs.mat[,j],adj=2),col="cornflowerblue",lwd=2)
+lines(density(Gibbs[burnin,j],adj=2),col="cornflowerblue",lwd=2)
+lines(density(gibbs[,j],adj=2),col="cornflowerblue",lwd=2,lty=2)
 lines(density(BETA[,j],adj=2),col="cyan",lwd=2)
 if(j==3) {
- legend(1.8,1.25,legend=c("likelihood","probit1","probit2"), 
-       lwd=c(2,2,2),col=c("gray","cornflowerblue","cyan"))
+ legend(1.75,1.25,legend=c("likelihood","Gibbs1.tail","Gibbs1.sub","Gibbs2"), lty=c(1,1,2,1),
+       lwd=c(2,2,2,2),col=c("gray","cornflowerblue","cornflowerblue","cyan"))
           } 
                }
 ```
@@ -392,6 +502,8 @@ comp <- fits.compare(fit.probit.lm, fit.probit.glm, fit.logit.glm)
 comp
 plot(comp)
 ```
+
+#### Compare with the results after log transform
 
 ```{r,eval=T,echo=T,collapse=T}
 fit.probit.lm.l <- lm(Resp~lVol+lRate)
