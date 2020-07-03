@@ -197,13 +197,33 @@ To implement the Gibbs sampler here, start with ($\beta,\gamma$) set equal to th
 
 #### 4.2 Unordered Categories With a Latent Multinormal Distribution
 
+We introduce independent latent variables \(Z_i=(Z_{i1},..,Z_{iJ})(J>2)\) and define \(Z_{ij}=\mathbf{x}_{ij}^T\boldsymbol{\beta}+\varepsilon_{ij},\ i=1,..,N;j=1,..,J\), whrre \(\varepsilon_i=(\varepsilon_{i1},..,\varepsilon_{iJ})^T\sim N_J(\mathbf{0,\Sigma_{J\times J}})\)
+
+\(\mathbf{\Sigma}\) is parameterized in terms of a parameter vector $\theta$ of dimension not exceeding \(\frac12J(J-1)\).
+
+On unit $i$ we observe one of $J$ possible outcomes with respective probabilities $p_{i1},..,p_{ij}$. Category $j$ is observed if $Z_{ij}>Z_{ik}$ for all $k\neq j$.
+
+The multinomial logit model can be derived in this setup if and only if the errors \(\varepsilon_{ij}\) are a random sample from a Type I extreme value distribution. The multinomial probabilities are given by \(p_{ij}=P[\mathbf{x}_{ij}^T\boldsymbol{\beta}+\varepsilon_{ij}>\mathbf{x}_{ik}^T\boldsymbol{\beta}+\varepsilon_{ik}, \forall k\neq j]\)
+
+\(\mathbf{Z=X}\boldsymbol{\beta+\varepsilon}\) where \(\varepsilon=(\varepsilon_{1}^T,..,\varepsilon_{N}^T)^T\sim N_{NJ}(\mathbf{0,I_N\otimes\Sigma})\)
+
+\[
+\begin{align} 
+\boldsymbol{\beta|Z_{1:N},Y,\theta}&\sim N_k(\boldsymbol{\hat\beta_{Z}},(\mathbf{X'\Omega^{-1} X})^{-1}); \quad\boldsymbol{\hat\beta_{Z}}=(\mathbf{X'\Omega^{-1} X})^{-1}\mathbf{X'\Omega^{-1} Z}\\
+\boldsymbol{Z_i|y,\beta,\theta,\{Z_i\}}&\sim N(\mathbf{x}_i^T\boldsymbol{\beta},\Sigma) \quad\text{such that
+ the }y_i^{th}\text{ component of }Z_i\text{ is the maximum}  &&\\
+\boldsymbol{\theta|Z_{1:N},Y,\beta}&\propto \boldsymbol{\pi(\theta)|\Omega|^{-\frac12}} \exp\left[-\frac12\boldsymbol{(Z-X\beta)^T\Omega^{-1}(Z-X\beta)}\right]&&(14)\\
+\end{align}
+\]
+
+\(\mathbf{\Omega}^{-1}\) is a block diagonal matrix with \(\mathbf{\Sigma}^{-1}\) as the typical block. <span style="color: red;"> ???</span>
+
 
 ### 5.1 Finney Data
 
 \[\Phi^{-1}(p_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i},\ i=1,..,39\]
 
-where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspired, and the binary outcome observed is the occurrence
- or nonoccurrence on a transient vasorestriction on the skin of the digits. $\beta\sim Unif$
+where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspired, and the binary outcome observed is the occurrence or nonoccurrence on a transient vasorestriction on the skin of the digits. $\beta\sim Unif$
  prior is placed on the regression parameter
 
 ```{r,echo=T,collapse=T}
