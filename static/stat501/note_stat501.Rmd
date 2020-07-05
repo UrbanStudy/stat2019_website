@@ -21,7 +21,7 @@ options(repos="https://cran.rstudio.com")
 options(scipen=6)
 options(digits=4)
 if (!require(pacman)) {install.packages("pacman"); library(pacman)}
-p_load(stargazer, pscl, mvtnorm, MASS, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,lme4) # likelihoodAsy
+p_load(stargazer, pscl, mlmRev,mvtnorm, MASS, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,lme4) # likelihoodAsy, coda,devtools,loo,dagitty,rethinking
 ```
 
 
@@ -376,7 +376,7 @@ mtext("autocorrelation functions with Gibbs1.full(above),Gibbs1.tail(middle) ,Gi
 
 Choose sub-sampling
 
-```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=6, fig.align='center'}
+```{r,echo=T,include=T, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 for(j in 1:p){
 plot(gibbs[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
@@ -485,7 +485,7 @@ source("rlreg.R")
 rfit<-treg(Resp,X)
 ```
 
-```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=3, fig.align='center'}
+```{r,echo=T,include=T, fig.width=9, fig.height=3, fig.align='center'}
 par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 ymx<-c(0.3,0.75,1.25)
 for(j in 1:3) {
@@ -621,6 +621,84 @@ where the $g_k ∼ Ga(b, 1)$ are independent gamma random variables, and where  
 
 A data-augmentation scheme for binomial likelihoods
 
+#### 3.1 Main Result
+
+|   | Polson et al. (2013)  | Albert and Chib (1993)  |
+|---|---|---|
+Gaussian  | scale mixture  | location mixture |
+Latent variables | Polya-Gamma | truncated normals |
+
+The number of successes $y_i\sim Bino(n_i,\frac{1}{\{1+e^{-\psi_i}\}})$, where $n_i$ is the number of trials, $\psi_i=x_i^T\boldsymbol{\beta}$ are the log odds of success. $x_i=(x_{i1},..,x_{ip} )$ the vector of regressors for observation $i\in\{1,..,N\}$. $\boldsymbol{\beta}\sim N(b,B)$
+
+To sample from the posterior distribution using the Pólya–Gamma method, simply iterate two steps:
+
+\[\begin{align}
+(\omega_i|\boldsymbol{\beta})&\sim PG(n_i,x_i^T\boldsymbol{\beta})\\
+(\boldsymbol{\beta}|y,\omega)&\sim N(m_\omega,V_\omega);\quad m_\omega=V_\omega(X^T\kappa+B^{-1}b);V_\omega=(X^T\Omega X+B^{-1})^{-1}
+\end{align}\]
+
+where \(\kappa=(y_1-\frac{n_1}2,..,y_N-\frac{n_N}2)\), and $\Omega$ is the diagonal matrix of $\omega_i$'s.
+
+#### 3.2 Existing Data-Augmentation Schemes
+
+The outcomes $y_i$ are assumed to be thresholded versions of an underlying continuous quantity $z_i$
+
+Assume $n_i=1$, \(y_i=\begin{cases}1&\text{if } z_i>0\\0&\text{if }z_i\le0\end{cases}\)
+
+\(z_i=x_i^T\boldsymbol{\beta}+\epsilon_i\), \(\epsilon_i\sim Logistic(1)\)
+
+The standard approach has been to add another layer of auxiliary variables to handle the logistic error model on the latent-utility scale. One strategy is to represent the logistic distribution as a normal-scale mixture
+
+\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=(2\lambda_i)^2; \lambda_i\sim KS(1)\quad\text{Kolmogorov–Smirnov distribution}\]
+
+Alternatively, one may approximate the logistic error term as a discrete mixture of normals.
+
+\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=\sum_{k=1}^K\omega_k\delta_{\phi^{(k)}}\]
+
+where $\delta_{\phi}$ indicates a <span style="color: red;">*Dirac measure*</span> at $\phi$. The weights $\omega_k$ and the points $\phi^{(k)}$ in the discrete mixture are fixed for a given choice of $k$ so that *<span style="color: red;">the Kullback–Leibler divergence</span>* from the true distribution of the random utilities is minimized. Frühwirth-Schnatter and Frühwirth (2010) found that the choice of $K=10$ leads to a good approximation.
+
+The discrete mixture of normals is an approximation, but it outperforms the scale mixture of normals in terms of effective sampling rate, as it is much faster.
+
+One may also arrive at the hierarchy above by manipulating the random utility derivation of McFadden (1974)
+
+The dRUM. One must use a table of different weights and variances representing different normal mixtures, to approximate a finite collection of type-III logistic distributions, and interpolate within this table to approximate the entire family.
+
+Another approximation: the use of a Student-t link function as a close substitute for the logistic link. This also introduces a second layer of latent variables, in that the Student-t error model for $z_i$ is represented as a scale mixture of normals.
+
+Our data-augmentation scheme differs from each of these approaches in several ways. 
+
+1. it does not appeal directly to the random-utility interpretation of the logit model. Instead, it represents the logistic CDF as a mixture with respect to an infinite convolution of gammas. 
+
+2. the method is exact, in the sense of making draws from the correct joint posterior distribution, rather than an approximation to the posterior that arises out of an approximation to the link function. 
+
+3. like the Albert and Chib (1993) method, it requires only a single layer of latent variables.
+
+
+Directed acyclic graphs depicting two latent-variable constructions for the logistic-regression model: the difference of random-utility model versus direct data-augmentation scheme. ![](uasa_a_829001_o_f0001g.jpeg)
+
+#### 3.3. Mixed Model Example
+
+The real advantage of data augmentation, and the Pólya–Gamma technique in particular, is that it becomes easy to construct and fit more complicated models. For instance, the Pólya–Gamma method trivially accommodates *mixed models, factor models, and models with a spatial or dynamic structure*. For most problems in this class, good MH samplers are difficult to design, and at the very least will require ad hoc tuning to yield good performance.
+
+
+\[\begin{align}
+y_{ij}&\sim Bino(1,p_{ij}),\quad p_{ij}=\frac{e^{\psi_{ij}}}{1+e^{\psi_{ij}}}\\
+\psi_{ij}&=m+\delta_j+x'_{ij}\beta,\quad\delta_j\sim N(0,1/\phi);\quad m\sim N(0,\kappa^2/\phi)
+\end{align}\]
+
+where $i$ and $j$ correspond to the $i^{th}$ observation from the $j^{th}$ district. The fixed effect $\beta$ is given an $N(0, 100I)$ prior, while the precision parameter $\phi$ is given $Ga(1, 1)$ prior. We take $\kappa\to\infty$ to recover an improper prior for the global intercept $m$.
+
+
+Bangladesh Fertility Survey, 1989
+
+```{r,eval=T,echo=T,collapse=T}
+data(Contraception)
+```
+
+
+
+bangladesh
+
 ### 4 Simulating Polya-Gamma random Variables
 
 a method for simulating from the Pólya–Gamma distribution, which we have implemented as a stand-alone sampler in the BayesLogit R package.
@@ -633,5 +711,22 @@ presents the results of an extensive benchmarking study comparing the efficiency
 
 concludes with a discussion of some open issues related to our proposal.
 
+## (McElreath 2020)
 
+[McElreath 2020. Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/)
 
+[R package rethinking](https://github.com/rmcelreath/rethinking)
+
+```{r,eval=F,echo=F,collapse=T}
+library(devtools)
+devtools::install_github("rmcelreath/rethinking")
+install.packages("V8")
+library(rethinking)
+data(bangladesh)
+#woman  ID number for each woman in sample
+#district  Number for each district
+#use.contraception  0/1 indicator of contraceptive use
+#living.children  Number of living children
+#age.centered  Centered age
+#urban  0/1 indicator of urban context
+```
