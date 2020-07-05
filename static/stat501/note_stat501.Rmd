@@ -612,10 +612,21 @@ Nicholas G. Polson, James G. Scott & Jesse Windle (2013) Bayesian Inference for 
 
 *Definition 1*. A random variable X has a Pólya–Gamma distribution with parameters b > 0 and , denoted as $X\sim PG(b, c),$ if
 
+\[X\overset{\mathcal{D}}{=}\frac1{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{((k-\frac12)^2 + \frac{c^2}{4\pi^2})}\quad (1)\]
+
 where the $g_k ∼ Ga(b, 1)$ are independent gamma random variables, and where  indicates equality in distribution.
 
 
 ### 2 The Polya-Gamma distribution
+
+#### 2.1. The Case $PG(b,0)$
+
+
+#### 2.2. The General $PG(b,c)$ Class
+
+\[p(x|b,c)=\frac{\exp(-\frac{c^2}2x) p(x|b,0)}{E[\exp x(-\frac{c^2}2\omega)]}\quad (5)\]
+
+where $p(x|b,0) $is the density of an $\omega\sim PG(b,0)$ random variable.
 
 ### 3 A data-augmentation strategy
 
@@ -695,21 +706,162 @@ Bangladesh Fertility Survey, 1989
 data(Contraception)
 ```
 
-
-
-bangladesh
+As seen in the negative binomial examples below, one may also painlessly incorporate a more complex prior structure using the Pólya–Gamma technique. For instance, if given information about *the geographic location* of each district, one could place a *spatial process prior* upon the random offsets $\{\delta_j\}$.
 
 ### 4 Simulating Polya-Gamma random Variables
 
 a method for simulating from the Pólya–Gamma distribution, which we have implemented as a stand-alone sampler in the BayesLogit R package.
 
+#### 4.1. The $PG(1,z)$ Sampler
+
+ An exponentially tilted Jacobi distribution $J^\star(1,z)$ via the density
+
+\[f(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)f(x)\quad(9)\]
+\[PG(1,z)=\frac14J^\star(1,\frac z2)\quad (10)\]
+
+
+When \(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\) and the coefficients $a_n(x)$ are decreasing for all , for fixed $x$ in the support of $f$, then the partial sums, \(S_n(x)=\sum_{i=0}^n(-1)^ia_i(x)\), satisfy 
+
+\[S_0(x)>S_2(x)>..>f(x)>..>S_3(x)>S_1(x)\quad (11)\]
+
+For the $J^\star(1,z)$ distribution the algorithm will accept with high probability upon checking $U\le S_1(X)$.
+
+The Jacobi density has two alternating-sum representations, \(\sum_{n=0}^\infty(-1)^na_i^L(x)\) and \(\sum_{n=0}^\infty(-1)^na_i^R(x)\), neither of which satisfy Equation (11) for all $x$ in the support of $f$. However, each satisfies Equation (11) on an interval. These two intervals, respectively, denoted as $I_L$ and $I_R$ , satisfy \(I_L\cup I_R = (0,\infty)\) and \(I_L\cap I_R\neq\emptyset\) Thus, one may pick \(t\in I_L\cap I_R\)and define the piecewise coefficients.
+
+\[a_n(x)=\pi(n+\frac{1}2)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{2(n+\frac{1}2)^2}{x}\right) & 0<x\le t&(12)\\ \exp\left(-(\frac{\pi^2(n+\frac{1}2)^{2}}2)x\right) & x>t&(13)\end{cases}\]
+
+so that \(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\) satisfies the partial sum criterion (11) for $x>0$. Devroye shows that the best choice of $t$ is near 0.64.
+
+The $J^\star(1,z)$ density can be written as an infinite, alternating sum \(f(x|z)=\sum_{n=0}^\infty(-1)^na_n(x|z)\), where
+
+\[a_n(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_n(x)\]
+
+This satisfies Equation (11), as \(\frac{a_{n+1}(x|z)}{a_n(x|z)}=\frac{a_{n+1}(x)}{a_n(x)}\). 
+
+
+Since \(a_0(x|z)\ge f(x|z)\), the first term of the series provides a natural proposal:
+
+\[c(z) g(x|z)=\frac{\pi}2\cosh(z)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{z^{2}x}2-\frac{1}{2x}\right) & 0<x\le t\\ \exp\left(-(\frac{z^{2}}2+\frac{\pi^{2}}8)x\right) & x>t\end{cases}(14)\]
+
+$X\sim g(x|z)$ may be sampled from a mixture of an inverse-Gaussian and an exponential:
+
+\[X\sim \begin{cases}IG(|z|^{-1},1)\mathbf{1}_{(0,t]} & \text{with prob } \frac{p}{p+q}\\ Expo(-\frac{z^{2}}2+\frac{\pi^{2}}8)\mathbf{1}_{(t,\infty)} & \text{with prob } \frac{q}{p+q}\end{cases}\]
+
+where \(p(z) =\int^t_0 c(z) g(x|z)dx\) and \(q(z) =\int_t^\infty c(z) g(x|z)dx\). Note that we are implicitly suppressing the dependence of p, q, c, and g upon t.
+
+
+<span style="color: red;">\(Expo(-(\frac{z^{2}}2+\frac{\pi^{2}}8))\)???</span>
+
+sampling $J^\star(1,z)$ proceeds as follows:
+
+1. Generate a proposal $X\sim g(x|z)$.
+
+2. Generate $U\sim Unif(0,c(z)g(X|z))$.
+
+3. Iteratively calculate $S_n (X|z)$, starting at $S_1(X|z)$, until $U\le S_n(X|z)$ for an odd $n$ or until $U>S_n (X|z)$ for an even $n$.
+
+4. Accept $X$ if $n$ is odd; return to step 1 if $n$ is even.
+
+To sample $Y\sim PG(1, z)$, draw $X\sim J^\star(1,z/2)$ and then let $Y=X/4$
+
+
+#### 4.2. Analysis of Acceptance Rate
+
+**Proposition 1** Define
+
+\[p(z,t)=\int^t_0 \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^L(x)dx\]
+\[q(z,t)=\int^\infty_t \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^R(x)dx\]
+
+1. The best truncation point $t^\star$ is independent of $z\ge0$.
+
+2. For a fixed truncation point $t$, $p(z,t)$ and $q(z,t)$ are continuous, $p(z,t)$ decreases to zero as $z$ diverges, and $q(z, t)$ converges to 1 as $z$ diverges. Thus, $c(z,t)= p(z,t) + q(z,t)$ is continuous and converges to 1 as $z$ diverges.
+
+3. For fixed $t$, the average probability of accepting a draw, $1/c(z,t)$, is bounded below for all $z$. For $t^\star$, this bound to five digits is $0.99919$, which is attained at $z\simeq1.378.$
+
+
+#### 4.3. Analysis of Tail Probabilities
+
+**Proposition 2**: When sampling $X\sim J^\star(1, z)$, the probability of deciding to accept or reject upon checking the $n^{th}$ partial sum $S_n$, $n\ge1$, is
+
+\[\frac1{c(z)}\int^\infty_0 [a_{n-1}(x|z)-a_n(x|z)]dx\]
+
+#### 4.4. The General $PG(b, z)$ Case
+
+The effective sample size (ESS) for the ith parameter in the model is
+
+\[ESS_i=\frac{M}{1+2\sum_{j=1}^k\rho_i(j)}\]
+
+where $M$ is the number of post-burn-in samples, and $\rho_i(j)$ is the $j^{th}$ autocorrelation of the chain corresponding to $\beta_i$
+
 ### 5 Experiment
 
 presents the results of an extensive benchmarking study comparing the efficiency of our method to other data-augmentation schemes. 
 
+The eight datasets
+
+
+- In binary logit models.  
+
+First, the Pólya–Gamma is more efficient than all previously proposed data-augmentation schemes. 
+
+Second, the Pólya–Gamma method always had a higher effective sample size than the two default Metropolis samplers we tried. 
+
+Finally, the Pólya–Gamma method truly shines when the model has a complex prior structure.
+
+- In negative-binomial models.  
+
+The Pólya–Gamma method consistently yields the best effective sample sizes in negative-binomial regression. However, its effective sampling rate suffers when working with a large count or a nonintegral overdispersion parameter. 
+
+Using either the Pólya–Gamma or the Frühwirth-Schnatter et al. (2009) techniques, one arrives at a multivariate Gaussian conditional for $\psi$ whose covariance matrix involves latent variables. Producing a random variate from this distribution is expensive, as one must calculate the Cholesky decomposition of a relatively large matrix at each iteration. Therefore, the overall sampler spends relatively less time drawing auxiliary variables. Since the Pólya–Gamma method leads to a higher effective sample size, it wastes fewer of the expensive draws for the main parameter.
+
 ### 6 Discussion
 
 concludes with a discussion of some open issues related to our proposal.
+
+## Technical supplement
+
+### 1 Details of Polya-Gamma sampling algorithm
+
+### 2 Benchmarks: overview
+
+### 3 Benchmarks: binary logistic regression
+
+#### 3.1 Data Sets
+
+Nodal: part of the boot R package (Canty and Ripley, 2012). The response indicates if cancer has spread from the prostate to surrounding lymph nodes. There are 53
+observations and 5 binary predictors.
+
+Pima Indian: There are 768 observations and 8 continuous predictors. It is noted on [the UCI website](http://archive.ics.uci.edu/ml/datasets/Pima+Indians+Diabetes) that there are many predictor values coded as 0, though the physical measurement should be non-zero. We have removed all of those entries to generate a data set with 392 observations. The marginal mean incidence of diabetes is roughly 0.33 before and after removing these data points.
+
+[Heart](http://archive.ics.uci.edu/ml/datasets/Statlog+(Heart)): The response represents either an absence or presence of heart disease. There are 270 observations and 13 attributes, of which 6 are categorical or binary and 1 is ordinal. The ordinal covariate has been stratified by dummy variables.
+
+[Australian Credit](http://archive.ics.uci.edu/ml/datasets/Statlog+(Australian+Credit+Approval)): The response represents either accepting or rejecting a credit card application.3 The meaning of each predictor was removed to protect the propriety of the original data. There are 690 observations and 14 attributes, of which 8 are categorical or binary. There were 37 observations with missing attribute values. These
+missing values were replaced by the mode of the attribute in the case of categorical data and the mean of the attribute for continuous data. This dataset is linearly
+separable and results in some divergent regression coefficients, which are kept in check by the prior.
+
+[German Credit 1 and 2](http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)): The response represents either a good or bad credit risk.4
+There are 1000 observations and 20 attributes, including both continuous and categorical data. We benchmark two scenarios. In the first, the ordinal covariates have
+been given integer values and have not been stratified by dummy variables, yielding
+a total of 24 numeric predictors. In the second, the ordinal data has been stratified
+by dummy variables, yielding a total of 48 predictors.
+
+Synthetic 1: Simulated data with 150 outcomes and 10 predictors. The design points were chosen to be orthogonal. The data are included as a supplemental file.
+
+Synthetic 2: Simulated data with 500 outcomes and 20 predictors. The design points were simulated from a Gaussian factor model, to yield pronounced patterns of collinearity.
+The data are included as a supplemental file.
+
+
+
+
+#### 3.2 Methods
+
+#### 3.3 Results
+
+### 4 Benchmarks: logit mixed models
+
+### 5 Benchmarks: negative-binomial models
+
+### 6 Extensions
 
 ## (McElreath 2020)
 

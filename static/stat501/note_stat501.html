@@ -363,7 +363,7 @@ summary {
 
 <h1 class="title toc-ignore">Statistical Literature and Problems</h1>
 <h3 class="subtitle">STAT 501</h3>
-<h4 class="date">04 July, 2020</h4>
+<h4 class="date">05 July, 2020</h4>
 
 </div>
 
@@ -913,10 +913,19 @@ comp
 <p><a href="https://jgscott.github.io/">Home page of James Scott</a></p>
 <p><a href="https://github.com/jwindle/BayesLogit">R package BayesLogit and Thesis</a></p>
 <p><em>Definition 1</em>. A random variable X has a Pólya–Gamma distribution with parameters b &gt; 0 and , denoted as <span class="math inline">\(X\sim PG(b, c),\)</span> if</p>
+<p><span class="math display">\[X\overset{\mathcal{D}}{=}\frac1{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{((k-\frac12)^2 + \frac{c^2}{4\pi^2})}\quad (1)\]</span></p>
 <p>where the <span class="math inline">\(g_k ∼ Ga(b, 1)\)</span> are independent gamma random variables, and where indicates equality in distribution.</p>
 </div>
 <div id="the-polya-gamma-distribution" class="section level3">
 <h3>2 The Polya-Gamma distribution</h3>
+<div id="the-case-pgb0" class="section level4">
+<h4>2.1. The Case <span class="math inline">\(PG(b,0)\)</span></h4>
+</div>
+<div id="the-general-pgbc-class" class="section level4">
+<h4>2.2. The General <span class="math inline">\(PG(b,c)\)</span> Class</h4>
+<p><span class="math display">\[p(x|b,c)=\frac{\exp(-\frac{c^2}2x) p(x|b,0)}{E[\exp x(-\frac{c^2}2\omega)]}\quad (5)\]</span></p>
+<p>where $p(x|b,0) $is the density of an <span class="math inline">\(\omega\sim PG(b,0)\)</span> random variable.</p>
+</div>
 </div>
 <div id="a-data-augmentation-strategy" class="section level3">
 <h3>3 A data-augmentation strategy</h3>
@@ -984,20 +993,118 @@ y_{ij}&amp;\sim Bino(1,p_{ij}),\quad p_{ij}=\frac{e^{\psi_{ij}}}{1+e^{\psi_{ij}}
 <p>where <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> correspond to the <span class="math inline">\(i^{th}\)</span> observation from the <span class="math inline">\(j^{th}\)</span> district. The fixed effect <span class="math inline">\(\beta\)</span> is given an <span class="math inline">\(N(0, 100I)\)</span> prior, while the precision parameter <span class="math inline">\(\phi\)</span> is given <span class="math inline">\(Ga(1, 1)\)</span> prior. We take <span class="math inline">\(\kappa\to\infty\)</span> to recover an improper prior for the global intercept <span class="math inline">\(m\)</span>.</p>
 <p>Bangladesh Fertility Survey, 1989</p>
 <pre class="r"><code>data(Contraception)</code></pre>
-<p>bangladesh</p>
+<p>As seen in the negative binomial examples below, one may also painlessly incorporate a more complex prior structure using the Pólya–Gamma technique. For instance, if given information about <em>the geographic location</em> of each district, one could place a <em>spatial process prior</em> upon the random offsets <span class="math inline">\(\{\delta_j\}\)</span>.</p>
 </div>
 </div>
 <div id="simulating-polya-gamma-random-variables" class="section level3">
 <h3>4 Simulating Polya-Gamma random Variables</h3>
 <p>a method for simulating from the Pólya–Gamma distribution, which we have implemented as a stand-alone sampler in the BayesLogit R package.</p>
+<div id="the-pg1z-sampler" class="section level4">
+<h4>4.1. The <span class="math inline">\(PG(1,z)\)</span> Sampler</h4>
+<p>An exponentially tilted Jacobi distribution <span class="math inline">\(J^\star(1,z)\)</span> via the density</p>
+<p><span class="math display">\[f(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)f(x)\quad(9)\]</span> <span class="math display">\[PG(1,z)=\frac14J^\star(1,\frac z2)\quad (10)\]</span></p>
+<p>When <span class="math inline">\(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\)</span> and the coefficients <span class="math inline">\(a_n(x)\)</span> are decreasing for all , for fixed <span class="math inline">\(x\)</span> in the support of <span class="math inline">\(f\)</span>, then the partial sums, <span class="math inline">\(S_n(x)=\sum_{i=0}^n(-1)^ia_i(x)\)</span>, satisfy</p>
+<p><span class="math display">\[S_0(x)&gt;S_2(x)&gt;..&gt;f(x)&gt;..&gt;S_3(x)&gt;S_1(x)\quad (11)\]</span></p>
+<p>For the <span class="math inline">\(J^\star(1,z)\)</span> distribution the algorithm will accept with high probability upon checking <span class="math inline">\(U\le S_1(X)\)</span>.</p>
+<p>The Jacobi density has two alternating-sum representations, <span class="math inline">\(\sum_{n=0}^\infty(-1)^na_i^L(x)\)</span> and <span class="math inline">\(\sum_{n=0}^\infty(-1)^na_i^R(x)\)</span>, neither of which satisfy Equation (11) for all <span class="math inline">\(x\)</span> in the support of <span class="math inline">\(f\)</span>. However, each satisfies Equation (11) on an interval. These two intervals, respectively, denoted as <span class="math inline">\(I_L\)</span> and <span class="math inline">\(I_R\)</span> , satisfy <span class="math inline">\(I_L\cup I_R = (0,\infty)\)</span> and <span class="math inline">\(I_L\cap I_R\neq\emptyset\)</span> Thus, one may pick <span class="math inline">\(t\in I_L\cap I_R\)</span>and define the piecewise coefficients.</p>
+<p><span class="math display">\[a_n(x)=\pi(n+\frac{1}2)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{2(n+\frac{1}2)^2}{x}\right) &amp; 0&lt;x\le t&amp;(12)\\ \exp\left(-(\frac{\pi^2(n+\frac{1}2)^{2}}2)x\right) &amp; x&gt;t&amp;(13)\end{cases}\]</span></p>
+<p>so that <span class="math inline">\(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\)</span> satisfies the partial sum criterion (11) for <span class="math inline">\(x&gt;0\)</span>. Devroye shows that the best choice of <span class="math inline">\(t\)</span> is near 0.64.</p>
+<p>The <span class="math inline">\(J^\star(1,z)\)</span> density can be written as an infinite, alternating sum <span class="math inline">\(f(x|z)=\sum_{n=0}^\infty(-1)^na_n(x|z)\)</span>, where</p>
+<p><span class="math display">\[a_n(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_n(x)\]</span></p>
+<p>This satisfies Equation (11), as <span class="math inline">\(\frac{a_{n+1}(x|z)}{a_n(x|z)}=\frac{a_{n+1}(x)}{a_n(x)}\)</span>.</p>
+<p>Since <span class="math inline">\(a_0(x|z)\ge f(x|z)\)</span>, the first term of the series provides a natural proposal:</p>
+<p><span class="math display">\[c(z) g(x|z)=\frac{\pi}2\cosh(z)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{z^{2}x}2-\frac{1}{2x}\right) &amp; 0&lt;x\le t\\ \exp\left(-(\frac{z^{2}}2+\frac{\pi^{2}}8)x\right) &amp; x&gt;t\end{cases}(14)\]</span></p>
+<p><span class="math inline">\(X\sim g(x|z)\)</span> may be sampled from a mixture of an inverse-Gaussian and an exponential:</p>
+<p><span class="math display">\[X\sim \begin{cases}IG(|z|^{-1},1)\mathbf{1}_{(0,t]} &amp; \text{with prob } \frac{p}{p+q}\\ Expo(-\frac{z^{2}}2+\frac{\pi^{2}}8)\mathbf{1}_{(t,\infty)} &amp; \text{with prob } \frac{q}{p+q}\end{cases}\]</span></p>
+<p>where <span class="math inline">\(p(z) =\int^t_0 c(z) g(x|z)dx\)</span> and <span class="math inline">\(q(z) =\int_t^\infty c(z) g(x|z)dx\)</span>. Note that we are implicitly suppressing the dependence of p, q, c, and g upon t.</p>
+<p><span style="color: red;"><span class="math inline">\(Expo(-(\frac{z^{2}}2+\frac{\pi^{2}}8))\)</span>???</span></p>
+<p>sampling <span class="math inline">\(J^\star(1,z)\)</span> proceeds as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>Generate a proposal <span class="math inline">\(X\sim g(x|z)\)</span>.</p></li>
+<li><p>Generate <span class="math inline">\(U\sim Unif(0,c(z)g(X|z))\)</span>.</p></li>
+<li><p>Iteratively calculate <span class="math inline">\(S_n (X|z)\)</span>, starting at <span class="math inline">\(S_1(X|z)\)</span>, until <span class="math inline">\(U\le S_n(X|z)\)</span> for an odd <span class="math inline">\(n\)</span> or until <span class="math inline">\(U&gt;S_n (X|z)\)</span> for an even <span class="math inline">\(n\)</span>.</p></li>
+<li><p>Accept <span class="math inline">\(X\)</span> if <span class="math inline">\(n\)</span> is odd; return to step 1 if <span class="math inline">\(n\)</span> is even.</p></li>
+</ol>
+<p>To sample <span class="math inline">\(Y\sim PG(1, z)\)</span>, draw <span class="math inline">\(X\sim J^\star(1,z/2)\)</span> and then let <span class="math inline">\(Y=X/4\)</span></p>
+</div>
+<div id="analysis-of-acceptance-rate" class="section level4">
+<h4>4.2. Analysis of Acceptance Rate</h4>
+<p><strong>Proposition 1</strong> Define</p>
+<p><span class="math display">\[p(z,t)=\int^t_0 \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^L(x)dx\]</span> <span class="math display">\[q(z,t)=\int^\infty_t \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^R(x)dx\]</span></p>
+<ol style="list-style-type: decimal">
+<li><p>The best truncation point <span class="math inline">\(t^\star\)</span> is independent of <span class="math inline">\(z\ge0\)</span>.</p></li>
+<li><p>For a fixed truncation point <span class="math inline">\(t\)</span>, <span class="math inline">\(p(z,t)\)</span> and <span class="math inline">\(q(z,t)\)</span> are continuous, <span class="math inline">\(p(z,t)\)</span> decreases to zero as <span class="math inline">\(z\)</span> diverges, and <span class="math inline">\(q(z, t)\)</span> converges to 1 as <span class="math inline">\(z\)</span> diverges. Thus, <span class="math inline">\(c(z,t)= p(z,t) + q(z,t)\)</span> is continuous and converges to 1 as <span class="math inline">\(z\)</span> diverges.</p></li>
+<li><p>For fixed <span class="math inline">\(t\)</span>, the average probability of accepting a draw, <span class="math inline">\(1/c(z,t)\)</span>, is bounded below for all <span class="math inline">\(z\)</span>. For <span class="math inline">\(t^\star\)</span>, this bound to five digits is <span class="math inline">\(0.99919\)</span>, which is attained at <span class="math inline">\(z\simeq1.378.\)</span></p></li>
+</ol>
+</div>
+<div id="analysis-of-tail-probabilities" class="section level4">
+<h4>4.3. Analysis of Tail Probabilities</h4>
+<p><strong>Proposition 2</strong>: When sampling <span class="math inline">\(X\sim J^\star(1, z)\)</span>, the probability of deciding to accept or reject upon checking the <span class="math inline">\(n^{th}\)</span> partial sum <span class="math inline">\(S_n\)</span>, <span class="math inline">\(n\ge1\)</span>, is</p>
+<p><span class="math display">\[\frac1{c(z)}\int^\infty_0 [a_{n-1}(x|z)-a_n(x|z)]dx\]</span></p>
+</div>
+<div id="the-general-pgb-z-case" class="section level4">
+<h4>4.4. The General <span class="math inline">\(PG(b, z)\)</span> Case</h4>
+<p>The effective sample size (ESS) for the ith parameter in the model is</p>
+<p><span class="math display">\[ESS_i=\frac{M}{1+2\sum_{j=1}^k\rho_i(j)}\]</span></p>
+<p>where <span class="math inline">\(M\)</span> is the number of post-burn-in samples, and <span class="math inline">\(\rho_i(j)\)</span> is the <span class="math inline">\(j^{th}\)</span> autocorrelation of the chain corresponding to <span class="math inline">\(\beta_i\)</span></p>
+</div>
 </div>
 <div id="experiment" class="section level3">
 <h3>5 Experiment</h3>
 <p>presents the results of an extensive benchmarking study comparing the efficiency of our method to other data-augmentation schemes.</p>
+<p>The eight datasets</p>
+<ul>
+<li>In binary logit models.</li>
+</ul>
+<p>First, the Pólya–Gamma is more efficient than all previously proposed data-augmentation schemes.</p>
+<p>Second, the Pólya–Gamma method always had a higher effective sample size than the two default Metropolis samplers we tried.</p>
+<p>Finally, the Pólya–Gamma method truly shines when the model has a complex prior structure.</p>
+<ul>
+<li>In negative-binomial models.</li>
+</ul>
+<p>The Pólya–Gamma method consistently yields the best effective sample sizes in negative-binomial regression. However, its effective sampling rate suffers when working with a large count or a nonintegral overdispersion parameter.</p>
+<p>Using either the Pólya–Gamma or the Frühwirth-Schnatter et al. (2009) techniques, one arrives at a multivariate Gaussian conditional for <span class="math inline">\(\psi\)</span> whose covariance matrix involves latent variables. Producing a random variate from this distribution is expensive, as one must calculate the Cholesky decomposition of a relatively large matrix at each iteration. Therefore, the overall sampler spends relatively less time drawing auxiliary variables. Since the Pólya–Gamma method leads to a higher effective sample size, it wastes fewer of the expensive draws for the main parameter.</p>
 </div>
 <div id="discussion" class="section level3">
 <h3>6 Discussion</h3>
 <p>concludes with a discussion of some open issues related to our proposal.</p>
+</div>
+</div>
+<div id="technical-supplement" class="section level2">
+<h2>Technical supplement</h2>
+<div id="details-of-polya-gamma-sampling-algorithm" class="section level3">
+<h3>1 Details of Polya-Gamma sampling algorithm</h3>
+</div>
+<div id="benchmarks-overview" class="section level3">
+<h3>2 Benchmarks: overview</h3>
+</div>
+<div id="benchmarks-binary-logistic-regression" class="section level3">
+<h3>3 Benchmarks: binary logistic regression</h3>
+<div id="data-sets" class="section level4">
+<h4>3.1 Data Sets</h4>
+<p>Nodal: part of the boot R package (Canty and Ripley, 2012). The response indicates if cancer has spread from the prostate to surrounding lymph nodes. There are 53 observations and 5 binary predictors.</p>
+<p>Pima Indian: There are 768 observations and 8 continuous predictors. It is noted on <a href="http://archive.ics.uci.edu/ml/datasets/Pima+Indians+Diabetes">the UCI website</a> that there are many predictor values coded as 0, though the physical measurement should be non-zero. We have removed all of those entries to generate a data set with 392 observations. The marginal mean incidence of diabetes is roughly 0.33 before and after removing these data points.</p>
+<p><a href="http://archive.ics.uci.edu/ml/datasets/Statlog+(Heart)">Heart</a>: The response represents either an absence or presence of heart disease. There are 270 observations and 13 attributes, of which 6 are categorical or binary and 1 is ordinal. The ordinal covariate has been stratified by dummy variables.</p>
+<p><a href="http://archive.ics.uci.edu/ml/datasets/Statlog+(Australian+Credit+Approval)">Australian Credit</a>: The response represents either accepting or rejecting a credit card application.3 The meaning of each predictor was removed to protect the propriety of the original data. There are 690 observations and 14 attributes, of which 8 are categorical or binary. There were 37 observations with missing attribute values. These missing values were replaced by the mode of the attribute in the case of categorical data and the mean of the attribute for continuous data. This dataset is linearly separable and results in some divergent regression coefficients, which are kept in check by the prior.</p>
+<p><a href="http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)">German Credit 1 and 2</a>: The response represents either a good or bad credit risk.4 There are 1000 observations and 20 attributes, including both continuous and categorical data. We benchmark two scenarios. In the first, the ordinal covariates have been given integer values and have not been stratified by dummy variables, yielding a total of 24 numeric predictors. In the second, the ordinal data has been stratified by dummy variables, yielding a total of 48 predictors.</p>
+<p>Synthetic 1: Simulated data with 150 outcomes and 10 predictors. The design points were chosen to be orthogonal. The data are included as a supplemental file.</p>
+<p>Synthetic 2: Simulated data with 500 outcomes and 20 predictors. The design points were simulated from a Gaussian factor model, to yield pronounced patterns of collinearity. The data are included as a supplemental file.</p>
+</div>
+<div id="methods" class="section level4">
+<h4>3.2 Methods</h4>
+</div>
+<div id="results" class="section level4">
+<h4>3.3 Results</h4>
+</div>
+</div>
+<div id="benchmarks-logit-mixed-models" class="section level3">
+<h3>4 Benchmarks: logit mixed models</h3>
+</div>
+<div id="benchmarks-negative-binomial-models" class="section level3">
+<h3>5 Benchmarks: negative-binomial models</h3>
+</div>
+<div id="extensions" class="section level3">
+<h3>6 Extensions</h3>
 </div>
 </div>
 <div id="mcelreath-2020" class="section level2">
