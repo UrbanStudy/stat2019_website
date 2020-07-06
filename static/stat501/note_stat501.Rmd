@@ -610,6 +610,28 @@ Nicholas G. Polson, James G. Scott & Jesse Windle (2013) Bayesian Inference for 
 
 [R package BayesLogit and Thesis](https://github.com/jwindle/BayesLogit)
 
+
+```{r}
+h = c(1, 2, 3);
+z = c(4, 5, 6);
+
+## Devroye-like method -- only use if h contains integers, preferably small integers.
+(X = rpg.devroye(100, h, z));
+
+h = c(1.2, 2.3, 3.2);
+z = c(4, 5, 6);
+
+## Sum of gammas method -- this is slow.
+(X = rpg.gamma(100, h, z));
+
+h = c(1, 4, 2.3);
+z = c(4, 5, 6);
+
+## Hybrid method -- automatically chooses best procedure.
+(X = rpg(100, h, z));
+```
+
+
 *Definition 1*. A random variable X has a Pólya–Gamma distribution with parameters b > 0 and , denoted as $X\sim PG(b, c),$ if
 
 \[X\overset{\mathcal{D}}{=}\frac1{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{((k-\frac12)^2 + \frac{c^2}{4\pi^2})}\quad (1)\]
