@@ -27,6 +27,16 @@ p_load(stargazer, pscl, mlmRev,mvtnorm, MASS, ggplot2,tidyverse,mlogit,BayesLogi
 
 #  {.tabset .tabset-fade .tabset-pills}
 
+## (Taylor-Rodríguez et al, 2017)
+
+### 1 Introduction
+
+### 2 Inference for a single model
+
+#### 2.1 The occupancy model with Probit link
+
+#### 2.2 An objective prior for (α, λ)
+
 ## (Albert &  Chib, 1993)
 
 James H. Albert & Siddhartha Chib (1993) Bayesian Analysis of Binary and Polychotomous Response Data, Journal of the American Statistical Association, 88:422, 669-679, DOI: 10.1080/01621459.1993.10476321
@@ -319,9 +329,9 @@ iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V) # from Hoff (2009, Ch.
 #### The first Gibbs sampling
 
 ```{r}
-M <- 25000; set.seed(123)
+M <- 2500; set.seed(123)
 Gibbs <- matrix(NA,ncol=p,nrow=M); ZZ<-matrix(NA,M,n)      #For full Sample
-gibbs <- matrix(NA,ncol=p,nrow=1000); Z<-matrix(NA,1000,n) #For Sub Sample
+gibbs <- matrix(NA,ncol=p,nrow=100); Z<-matrix(NA,100,n) #For Sub Sample
 for(m in 1:M){  #Gibbs Sampler
   
 # beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)
@@ -337,7 +347,7 @@ tr_norm(1 ,t(X %*% beta), 1 ,'right')
 #z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
 
 Gibbs[m,] <- t(beta); ZZ[m,]<- z                                        # full samples
-if(m%%(M/1000)==0) { gibbs[m/(M/1000),] <- t(beta); Z[m/(M/1000),]<- z}   # subsamples of equal size
+if(m%%(M/100)==0) { gibbs[m/(M/100),] <- t(beta); Z[m/(M/100),]<- z}   # subsamples of equal size
 }
 ```
 
@@ -345,7 +355,7 @@ if(m%%(M/1000)==0) { gibbs[m/(M/1000),] <- t(beta); Z[m/(M/1000),]<- z}   # subs
 
 ```{r,echo=T,collapse=T}
 full.mean <- colMeans(Gibbs[,])
-burnin <- 24000:25000
+burnin <- 2400:2500
 tail.mean <- colMeans(Gibbs[burnin,])
 sub.mean <- colMeans(gibbs)
 par<- cbind(full.mean,tail.mean,sub.mean)
@@ -381,7 +391,7 @@ par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 for(j in 1:p){
 plot(gibbs[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
-plot(cumsum(gibbs[,j])/(1:1000),  ylab=lab[j],main="",
+plot(cumsum(gibbs[,j])/(1:100),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
 #hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),
 #     main="",col="cornflowerblue")
@@ -435,11 +445,11 @@ iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
 set.seed(123)
 beta<-rep(0,p) 
 z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
-BETA<-matrix(NA,1000,p) ; Z<-matrix(NA,1000,n) ; ac<-0
+BETA<-matrix(NA,100,p) ; Z<-matrix(NA,100,n) ; ac<-0
 mu<-0 ; sigma<-100  ### Why????
 
 ## MCMC
-S<-25000
+S<-2500
 for(s in 1:S) 
 {
   #update beta
@@ -457,11 +467,11 @@ zp<-z+c #;g <- 0 ; gp<-g+c
 lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) #+ sum(dnorm(c,mu,sigma,log=T) - dnorm(0,mu,sigma,log=T) )
 if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }              # ; g<-gp
 
-  if(s%%(S/1000)==0) 
+  if(s%%(S/100)==0) 
   { 
     # cat(s/S,ac/s,"\n")
-    BETA[s/(S/1000),]<-  beta
-    Z[s/(S/1000),]<- z
+    BETA[s/(S/100),]<-  beta
+    Z[s/(S/100),]<- z
   }
 } 
 ```
@@ -611,22 +621,17 @@ Nicholas G. Polson, James G. Scott & Jesse Windle (2013) Bayesian Inference for 
 [R package BayesLogit and Thesis](https://github.com/jwindle/BayesLogit)
 
 
-```{r}
+```{r,eval=F,include=F}
 h = c(1, 2, 3);
 z = c(4, 5, 6);
-
 ## Devroye-like method -- only use if h contains integers, preferably small integers.
 (X = rpg.devroye(100, h, z));
-
 h = c(1.2, 2.3, 3.2);
 z = c(4, 5, 6);
-
 ## Sum of gammas method -- this is slow.
 (X = rpg.gamma(100, h, z));
-
 h = c(1, 4, 2.3);
 z = c(4, 5, 6);
-
 ## Hybrid method -- automatically chooses best procedure.
 (X = rpg(100, h, z));
 ```
@@ -845,15 +850,15 @@ Using either the Pólya–Gamma or the Frühwirth-Schnatter et al. (2009) techni
 
 concludes with a discussion of some open issues related to our proposal.
 
-## Technical supplement
+### Technical supplement
 
-### 1 Details of Polya-Gamma sampling algorithm
+#### 1 Details of Polya-Gamma sampling algorithm
 
-### 2 Benchmarks: overview
+#### 2 Benchmarks: overview
 
-### 3 Benchmarks: binary logistic regression
+#### 3 Benchmarks: binary logistic regression
 
-#### 3.1 Data Sets
+##### 3.1 Data Sets
 
 Nodal: part of the boot R package (Canty and Ripley, 2012). The response indicates if cancer has spread from the prostate to surrounding lymph nodes. There are 53
 observations and 5 binary predictors.
@@ -880,17 +885,19 @@ The data are included as a supplemental file.
 
 
 
-#### 3.2 Methods
+##### 3.2 Methods
 
-#### 3.3 Results
+##### 3.3 Results
 
-### 4 Benchmarks: logit mixed models
+#### 4 Benchmarks: logit mixed models
 
-### 5 Benchmarks: negative-binomial models
+#### 5 Benchmarks: negative-binomial models
 
-### 6 Extensions
+#### 6 Extensions
 
-## (McElreath 2020)
+## Resources
+
+[Charlie Geyer's Personal Home Page](http://users.stat.umn.edu/~geyer/)
 
 [McElreath 2020. Statistical Rethinking](https://xcelab.net/rm/statistical-rethinking/)
 
