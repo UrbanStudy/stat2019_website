@@ -26,7 +26,9 @@ header-includes:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,cache=FALSE, results="markup", tidy=T)
+knitr::opts_chunk$set( eval =F,echo = TRUE,cache=FALSE, results="markup", tidy=T)
+if (!require(pacman)) {install.packages("pacman"); library(pacman)}
+p_load(MASS, ggplot2,GGally,tidyverse,robcbi,kableExtra,lme4)
 ```
 
 
@@ -203,15 +205,15 @@ ggline(table_2016s2,"machine","y",add = c("mean","jitter"),color = "power",shape
 ```{r,message=F}
 model_2016s2 <- aov(y~machine*power*station, table_2016s2)
 summary(model_2016s2)
-anova(model_2016s2)
+# anova(model_2016s2)
 ```
 
 ```{r,message=F}
 library(lme4)
 model_2016s2_1 <-lmer(y~machine*station+(1|machine:power)+(1|machine:power:station),table_2016s2)
 summary(model_2016s2_1)$varcor
-anova(model_2016s2_1)
-pf(anova(model_2016s2_1)$'F value',df1=anova(model_2016s2_1)$'Df',df2=c(3,6,6), lower.tail = F)
+# anova(model_2016s2_1)
+# pf(anova(model_2016s2_1)$'F value',df1=anova(model_2016s2_1)$'Df',df2=c(3,6,6), lower.tail = F)
 confint(model_2016s2_1)
 
 library(GAD)
@@ -342,8 +344,8 @@ anova(model_2016f2_1)
 library(lme4)
 model_2016f2_2 <- lmer(oxygen~creek+(1|creek:sample),table_2016f2)
 summary(model_2016f2_2)
-anova(model_2016f2_2)
-pf(anova(model_2016f2_2)$'F value',df1=anova(model_2016f2_2)$'Df',df2=12, lower.tail = F)
+# anova(model_2016f2_2)
+# pf(anova(model_2016f2_2)$'F value',df1=anova(model_2016f2_2)$'Df',df2=12, lower.tail = F)
 confint(model_2016f2_2)
 ```
 
@@ -571,8 +573,8 @@ anova(model_2017f2)
 library(lme4)
 model_2017f2_1 <-lmer(y~machine*station+(1|machine:power)+(1|machine:power:station),table_2017f2)
 summary(model_2017f2_1)$varcor
-anova(model_2016s2_1)
-pf(anova(model_2017f2_1)$'F value',df1=anova(model_2017f2_1)$'Df',df2=c(3,6,6), lower.tail = F)
+# anova(model_2016s2_1)
+# pf(anova(model_2017f2_1)$'F value',df1=anova(model_2017f2_1)$'Df',df2=c(3,6,6), lower.tail = F)
 pander::pander(confint(model_2017f2_1)[1:4,1:2])
 
 library(GAD)
@@ -1057,3 +1059,184 @@ In the plots of residuals versus predicted value of shrink, there is no signific
 The residuals in this plot are almost symmetrically distributed about zero and hence zero mean assumption is not violated. Further, the vertical deviation of the residuals from zero is about same for each predicted value and hence the constant variance assumption is not violated.
 
 The points are along the straight line in the normal qq plot shown at bottom left and the histogram of residuals shown at the top right is about normal. These plots show no violation of normal distribution assumption of residuals.
+
+
+## 2019F
+
+### 2019F1
+
+### 2019F2
+
+## 2020S1
+
+
+
+In this exercise you will analyze data from the current COVID-19 pandemic in European countries. Specifically, you are provided with the cumulative number of confirmed cases due to COVID-19 reported on April 23rd 2020 for 50 european
+countries. This data is in the column confirmed of the file COVID-19.csv. For example, in France, 158,303 cases of COVID-19 were reported from the beginning of the pandemic up to April 23rd 2020. You are also provided with a
+measurement of the speed at which the pandemic is spreading in each of these countries: the doubling number (labelled confirmed.double in the data set). It is the approximate number of days it took for the confirmed cases to double.
+For example in France, on April 7th 2020, the number of cumulative confirmed cases was 79,163 (the closest report to 158,303/2 = 79151.5). Thus the doubling number is 16, which is the number of days from April 7th to April 24th. Note
+that a small doubling number is associated with a fast spreading of the pandemic while a large doubling number is associated with a slow spread of the COVID-19 pandemic. Note also that even if the doubling number is an integer, you will analyze it as if it was a continuous variable.
+
+Your task is to analyze the speed of the spread of the pandemic in each European country, measured by the doubling number, as a function of the demographic, social, and economic variables for each country, available in the file COVID-19.csv and described in the data dictionary. Note that the table contains a few missing values indicated by NA. Please explain how you dealt with them and what you rationale was.
+
+The NA records are concentrated in the countries with top 10 population.
+
+```{r,echo=F}
+table_2020s1<- read_csv("qe_lab/COVID-19.csv")
+arrange(table_2020s1, population, pop_density)
+
+table_2020s1 <- table_2020s1[,3:9]
+```
+
+The distribution of each variables: X1, X2, X3, X4, X6 show a exponential distribution. Log transform may help to find some linear relationship.
+
+Linear model with full variables shows X5, X6 have significant effects on the responsor Y, confirmed.double.
+
+```{r,out.width='50%',message=F,warning=F}
+library(GGally)
+ggpairs(table_2020s1,aes(alpha=0.3))+theme_light()
+# plot(table_2020s1$population,table_2020s1$land_area_skm,log = "xy")
+# plot(table_2020s1$pop_density ,table_2020s1$pop_largest_city,log = "xy") # 
+```
+
+The 9 missing values for X4 and 2 for X5.
+
+Using data imputation by 'mice' package.
+
+---          ---           ------
+pmm          any           Predictive mean matching
+midastouch   any           Weighted predictive mean matching
+sample       any           Random sample from observed values
+cart         any           Classification and regression trees
+rf           any           Random forest imputations
+mean         numeric       Unconditional mean imputation
+norm         numeric       Bayesian linear regression
+norm.nob     numeric       Linear regression ignoring model error
+norm.boot    numeric       Linear regression using bootstrap
+norm.predict numeric       Linear regression, predicted values
+quadratic    numeric       Imputation of quadratic terms
+ri           numeric       Random indicator for nonignorable data
+logreg       binary        Logistic regression
+logreg.boot  binary        Logistic regression with bootstrap
+polr         ordered       Proportional odds model
+polyreg      unordered     Polytomous logistic regression
+lda          unordered     Linear discriminant analysis
+2l.norm      numeric       Level-1 normal heteroscedastic
+2l.lmer      numeric       Level-1 normal homoscedastic, lmer
+2l.pan       numeric       Level-1 normal homoscedastic, pan
+2l.bin       binary        Level-1 logistic, glmer
+2lonly.mean  numeric       Level-2 class mean
+2lonly.norm  numeric       Level-2 class normal
+2lonly.pmm   any           Level-2 class predictive mean matching
+------------------------------------------------------------------
+
+
+```{r,out.width='50%',message=F,warning=F}
+# Find the missing values (2 ways)
+# summary(table_2020s1)
+sapply(table_2020s1,function(x)sum(is.na(x)))
+# Imputing Missing Data
+library(mice)
+md.pattern(table_2020s1,rotate.names=T)
+imputed <- mice(table_2020s1,m=6,maxit=30,seed=500,method=c("","","","","cart","mean",""))#
+# inspect quality of imputations
+stripplot(imputed, pop_largest_city, pch = 19, xlab = "Imputation number")
+stripplot(imputed, life_expectancy, pch = 19, xlab = "Imputation number")
+stripplot(imputed, pop_largest_city+life_expectancy~confirmed.double, cex=c(1,2), pch=c(1,20),jitter=FALSE,layout=c(2,1))
+table_2020s1_imputed <- complete(imputed)
+imputed$imp$pop_largest_city
+
+```
+
+```{r,out.width='50%',message=F,warning=F}
+# same result
+mean(table_2020s1$life_expectancy,na.rm=T)
+imputed$imp$life_expectancy
+# need fill the NA in X5 first
+fit_x5<- lm(pop_largest_city~population+land_area_skm+pop_density+confirmed.double+life_expectancy+gdp_capita,table_2020s1)
+predict(fit_x5, table_2020s1[c(2,11,25,29,31,33,36,43,46),], interval="prediction")
+imputed$imp$pop_largest_city
+```
+
+
+See the correlattion after imputing
+
+Make log transform for X1, X2, X3, X4, X6
+
+Also try to standardize the data. All of the data should have positive values. Thus, set 'center=F'.
+
+```{r,out.width='50%',message=F,warning=F}
+cor(table_2020s1_imputed)
+# y <- table_2020s1_imputed$confirmed.double
+# X <- table_2020s1_imputed[,2:7]
+# cor(scale(X,center = F, scale = T))
+# cov(scale(X,center = F, scale=apply(X,2,sd,na.rm=T)))
+table_2020s1_log <- table_2020s1_imputed
+table_2020s1_log[,c(2:5,7)] <- log(table_2020s1_imputed[,c(2:5,7)])
+table_2020s1_std<- data.frame(scale(table_2020s1_imputed, center=F, scale = T))
+
+ggpairs(table_2020s1_log[,c(2:5,7)],aes(alpha=0.3))+theme_light()
+```
+
+Fit different models. 
+Log transform made some large VIF values.
+
+```{r}
+fit_2020s1<- lm(confirmed.double~population+land_area_skm+pop_density+pop_largest_city+life_expectancy+gdp_capita,table_2020s1_imputed)
+fit_2020s1_log<- update(fit_2020s1,data=table_2020s1_log)
+fit_2020s1_std<- update(fit_2020s1,data=table_2020s1_std)
+library(car)
+vif(fit_2020s1)
+vif(fit_2020s1_log)
+vif(fit_2020s1_std)
+fit_2020s1_log<- update(fit_2020s1_log,. ~ population+pop_density+pop_largest_city+life_expectancy+gdp_capita)
+```
+Stepwise selection reduce the model to two variables.
+
+log transform gives a complex model.
+
+
+```{r}
+library(MASS)
+aic_2020s1 <- stepAIC(fit_2020s1,~.^2,direction = "both") 
+aic_2020s1_log <- stepAIC(fit_2020s1_log,~.^2,direction = "both") 
+# aic_2020s1_std <- stepAIC(fit_2020s1_std,~.^2) 
+summary(aic_2020s1)
+summary(aic_2020s1_log)
+# summary(aic_2020s1_std)
+```
+
+Update the model with two variables.
+
+```{r}
+fit_2020s1_2v<- update(fit_2020s1,. ~ pop_largest_city + life_expectancy)
+# fit_2020s1_2v_log<- update(fit_2020s1_log,. ~ pop_largest_city + life_expectancy)
+# fit_2020s1_2v_std<- update(fit_2020s1_std,. ~ pop_largest_city + life_expectancy)
+plot(aic_2020s1)
+# plot(aic_2020s1_log)
+# plot(aic_2020s1_std)
+```
+
+Box-Cox Transformations shows $\lambda=0.5$ a square root transform may helps stablize the variance.
+
+```{r}
+boxcox_2020s1<- boxcox(fit_2020s1)
+boxcox_2020s1$x[which.max(boxcox_2020s1$y)]
+aic_2020s1_sqrt <- update(aic_2020s1,sqrt(confirmed.double) ~.)
+summary(aic_2020s1_sqrt)
+plot(aic_2020s1_sqrt)
+```
+
+
+Using glm function with gaussian family and log link,  
+
+```{r,eval=F,echo=T,collapse=T}
+fit_2020s1_glm <- glm(confirmed.double~population+land_area_skm+pop_density+pop_largest_city+life_expectancy+gdp_capita,table_2020s1_imputed,family=gaussian(link = "log")) # Gamma(link = "identity")
+summary(fit_2020s1_glm)
+plot(fit_2020s1_glm)
+aic_2020s1_glm <- stepAIC(fit_2020s1_glm,~.^2,direction = "both") 
+summary(aic_2020s1_glm)
+#comp <- fits.compare(fit_2020s1, fit_2020s1_log,fit_2020s1_std)
+# comp
+# plot(comp)
+```

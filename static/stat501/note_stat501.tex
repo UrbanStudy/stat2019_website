@@ -133,7 +133,7 @@
 \makeatother
 \subtitle{STAT 501}
 \author{}
-\date{\vspace{-2.5em}02 July, 2020}
+\date{\vspace{-2.5em}15 July, 2020}
 
 \begin{document}
 \maketitle
@@ -146,7 +146,9 @@
 
 James H. Albert \& Siddhartha Chib (1993) Bayesian Analysis of Binary
 and Polychotomous Response Data, Journal of the American Statistical
-Association, 88:422, 669-679, DOI: 10.1080/01621459.1993.10476321
+Association, 88:422, 669-679,
+\href{https://doi.org/10.1080/01621459.1993.10476321}{DOI:
+10.1080/01621459.1993.10476321}
 
 \hypertarget{introduction}{%
 \subsubsection{1 Introduction}\label{introduction}}
@@ -270,7 +272,7 @@ sampling}\label{data-augmentation-and-gibbs-sampling}}
 
 \[
 \begin{align} 
-\pi(\boldsymbol{\beta|y,Z}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{k}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1); &\quad\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}; &\quad \boldsymbol{\varepsilon}\sim N_N(0,\mathbf{I})&&(1)\\
+\pi(\boldsymbol{\beta|y,Z}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1); &\quad\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}; &\quad \boldsymbol{\varepsilon}\sim N_N(0,\mathbf{I})&&(1)\\
 \\
 \boldsymbol{\beta}|\mathbf{y,Z}\sim N_k(\boldsymbol{\hat\beta_Z},(\mathbf{X}^T\mathbf{X})^{-1}); &\quad\boldsymbol{\hat\beta_Z}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z}&&& (2)\\
 \\
@@ -376,6 +378,82 @@ one starts with initial guesses at \(\boldsymbol{\beta}\) and
 \hypertarget{generalizations-to-a-multinomial-response}{%
 \subsubsection{4 Generalizations to a Multinomial
 response}\label{generalizations-to-a-multinomial-response}}
+
+\hypertarget{ordered-categories}{%
+\paragraph{4.1 Ordered Categories}\label{ordered-categories}}
+
+\(Y_1,..,Y_N\) are observed. \(Y_i\) takes one of \(J\) ordered
+categories. \(p_{ij}=P[Y_i=j]\), we define the cumulative probabilities
+\(\eta_{ij}=\sum_{k=1}^jp_{ij},j=1,..,J-1\) {k????}
+
+One popular regression model is given by
+\(\eta_{ij}=\Phi(\gamma_i-\mathbf{x}_i^T\boldsymbol{\beta}),i=1,..,N; j=1,..,J-1\)
+
+A latent continuous variable
+\(Z_i\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)\).
+\(Y_i=j\text{ if } \gamma_{j-1}<Z_i\le\gamma_{j}, \gamma_{0}=-\infty,\gamma_{J}=\infty\)
+
+The posterior distribution of \(\beta\) conditional on \(y\) and \(Z\)
+is given by the multivariate normal form (2)
+
+\[
+\begin{align} 
+\pi(\boldsymbol{\beta,\gamma|y})&= C\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\sum_{j=1}^{J}\mathbf{1}_{(y_i=j)}[\Phi (\gamma_{j}-\mathbf{x}_i^T\boldsymbol{\beta})-\Phi (\gamma_{j-1}-\mathbf{x}_i^T\boldsymbol{\beta})]\\
+\pi(\boldsymbol{\beta,\gamma,Z|y})&= C\prod_{i=1}^{N}\left[\frac{1}{\sqrt{2\pi}}\exp(-\frac12(Z_i-\mathbf{x}_i^T\boldsymbol{\beta})^2)(\sum_{j=1}^{J}\mathbf{1}_{(Y_i=j)}\mathbf{1}_{(\gamma_{j-1}<Z_i\le\gamma_{j})})\right]&&(11)\\
+Z_i|\boldsymbol{\beta,\gamma},y_i&\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1) \quad\text{truncated at the left(right) by } \gamma_{j-1}(\gamma_{j}) &&(12)\\
+\gamma_j|\boldsymbol{Z,y,\beta,},\{\gamma_k,k\neq j\}&\propto  \prod_{i=1}^{N}\left[\mathbf{1}_{(Y_i=j)}\mathbf{1}_{(\gamma_{j-1}<Z_i\le\gamma_{j})})+\mathbf{1}_{(Y_i=j+1)}\mathbf{1}_{(\gamma_{j}<Z_i\le\gamma_{j+1})})\right]&&(13)\\
+\end{align}
+\]
+
+\begin{enumerate}
+\def\labelenumi{(\arabic{enumi})}
+\setcounter{enumi}{12}
+\tightlist
+\item
+  can be seen to be uniform on the interval
+  \([\max \{\max \{Z_i: Y_i = j \}, \gamma_{j-1} \}, \min \{\min \{Z_i: Y_i = j + 1\}, \gamma_{j+1} \}]\).
+\end{enumerate}
+
+To implement the Gibbs sampler here, start with (\(\beta,\gamma\)) set
+equal to the MLE and simulate from the distributions (13), (12), and
+(1), in that order.
+
+\hypertarget{unordered-categories-with-a-latent-multinormal-distribution}{%
+\paragraph{4.2 Unordered Categories With a Latent Multinormal
+Distribution}\label{unordered-categories-with-a-latent-multinormal-distribution}}
+
+We introduce independent latent variables
+\(Z_i=(Z_{i1},..,Z_{iJ})(J>2)\) and define
+\(Z_{ij}=\mathbf{x}_{ij}^T\boldsymbol{\beta}+\varepsilon_{ij},\ i=1,..,N;j=1,..,J\),
+whrre
+\(\varepsilon_i=(\varepsilon_{i1},..,\varepsilon_{iJ})^T\sim N_J(\mathbf{0,\Sigma_{J\times J}})\)
+
+\(\mathbf{\Sigma}\) is parameterized in terms of a parameter vector
+\(\theta\) of dimension not exceeding \(\frac12J(J-1)\).
+
+On unit \(i\) we observe one of \(J\) possible outcomes with respective
+probabilities \(p_{i1},..,p_{ij}\). Category \(j\) is observed if
+\(Z_{ij}>Z_{ik}\) for all \(k\neq j\).
+
+The multinomial logit model can be derived in this setup if and only if
+the errors \(\varepsilon_{ij}\) are a random sample from a Type I
+extreme value distribution. The multinomial probabilities are given by
+\(p_{ij}=P[\mathbf{x}_{ij}^T\boldsymbol{\beta}+\varepsilon_{ij}>\mathbf{x}_{ik}^T\boldsymbol{\beta}+\varepsilon_{ik}, \forall k\neq j]\)
+
+\(\mathbf{Z=X}\boldsymbol{\beta+\varepsilon}\) where
+\(\varepsilon=(\varepsilon_{1}^T,..,\varepsilon_{N}^T)^T\sim N_{NJ}(\mathbf{0,I_N\otimes\Sigma})\)
+
+\[
+\begin{align} 
+\boldsymbol{\beta|Z_{1:N},Y,\theta}&\sim N_k(\boldsymbol{\hat\beta_{Z}},(\mathbf{X'\Omega^{-1} X})^{-1}); \quad\boldsymbol{\hat\beta_{Z}}=(\mathbf{X'\Omega^{-1} X})^{-1}\mathbf{X'\Omega^{-1} Z}\\
+\boldsymbol{Z_i|y,\beta,\theta,\{Z_i\}}&\sim N(\mathbf{x}_i^T\boldsymbol{\beta},\Sigma) \quad\text{such that
+ the }y_i^{th}\text{ component of }Z_i\text{ is the maximum}  &&\\
+\boldsymbol{\theta|Z_{1:N},Y,\beta}&\propto \boldsymbol{\pi(\theta)|\Omega|^{-\frac12}} \exp\left[-\frac12\boldsymbol{(Z-X\beta)^T\Omega^{-1}(Z-X\beta)}\right]&&(14)\\
+\end{align}
+\]
+
+\(\mathbf{\Omega}^{-1}\) is a block diagonal matrix with
+\(\mathbf{\Sigma}^{-1}\) as the typical block. { ???}
 
 \hypertarget{finney-data}{%
 \subsubsection{5.1 Finney Data}\label{finney-data}}
@@ -512,14 +590,14 @@ truncated by 0 at the
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{the-first-probit-model}{%
-\paragraph{The first Probit model}\label{the-first-probit-model}}
+\hypertarget{the-first-gibbs-sampling}{%
+\paragraph{The first Gibbs sampling}\label{the-first-gibbs-sampling}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{M <-}\StringTok{ }\DecValTok{25000}\NormalTok{; }\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
+\NormalTok{M <-}\StringTok{ }\DecValTok{2500}\NormalTok{; }\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
 \NormalTok{Gibbs <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DataTypeTok{ncol=}\NormalTok{p,}\DataTypeTok{nrow=}\NormalTok{M); ZZ<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,M,n)      }\CommentTok{#For full Sample}
-\NormalTok{gibbs <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DataTypeTok{ncol=}\NormalTok{p,}\DataTypeTok{nrow=}\DecValTok{1000}\NormalTok{); Z<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DecValTok{1000}\NormalTok{,n) }\CommentTok{#For Sub Sample}
+\NormalTok{gibbs <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DataTypeTok{ncol=}\NormalTok{p,}\DataTypeTok{nrow=}\DecValTok{100}\NormalTok{); Z<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DecValTok{100}\NormalTok{,n) }\CommentTok{#For Sub Sample}
 \ControlFlowTok{for}\NormalTok{(m }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{M)\{  }\CommentTok{#Gibbs Sampler}
   
 \CommentTok{# beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)}
@@ -535,117 +613,104 @@ truncated by 0 at the
 \CommentTok{#z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))}
 
 \NormalTok{Gibbs[m,] <-}\StringTok{ }\KeywordTok{t}\NormalTok{(beta); ZZ[m,]<-}\StringTok{ }\NormalTok{z                                        }\CommentTok{# full samples}
-\ControlFlowTok{if}\NormalTok{(m}\OperatorTok{%%}\NormalTok{(M}\OperatorTok{/}\DecValTok{1000}\NormalTok{)}\OperatorTok{==}\DecValTok{0}\NormalTok{) \{ gibbs[m}\OperatorTok{/}\NormalTok{(M}\OperatorTok{/}\DecValTok{1000}\NormalTok{),] <-}\StringTok{ }\KeywordTok{t}\NormalTok{(beta); Z[m}\OperatorTok{/}\NormalTok{(M}\OperatorTok{/}\DecValTok{1000}\NormalTok{),]<-}\StringTok{ }\NormalTok{z\}   }\CommentTok{# subsamples of equal size}
+\ControlFlowTok{if}\NormalTok{(m}\OperatorTok{%%}\NormalTok{(M}\OperatorTok{/}\DecValTok{100}\NormalTok{)}\OperatorTok{==}\DecValTok{0}\NormalTok{) \{ gibbs[m}\OperatorTok{/}\NormalTok{(M}\OperatorTok{/}\DecValTok{100}\NormalTok{),] <-}\StringTok{ }\KeywordTok{t}\NormalTok{(beta); Z[m}\OperatorTok{/}\NormalTok{(M}\OperatorTok{/}\DecValTok{100}\NormalTok{),]<-}\StringTok{ }\NormalTok{z\}   }\CommentTok{# subsamples of equal size}
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
 
-\(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)},\lambda^{(i)}})\)
+\(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)}})\)
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{burnin <-}\StringTok{ }\DecValTok{24000}\OperatorTok{:}\DecValTok{25000}
-\NormalTok{tail.quant <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(Gibbs[burnin,],}\DecValTok{2}\NormalTok{,quantile,}\DataTypeTok{probs=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.975}\NormalTok{)) }
+\NormalTok{full.mean <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(Gibbs[,])}
+\NormalTok{burnin <-}\StringTok{ }\DecValTok{2400}\OperatorTok{:}\DecValTok{2500}
 \NormalTok{tail.mean <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(Gibbs[burnin,])}
-\NormalTok{sub.quant <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(gibbs,}\DecValTok{2}\NormalTok{,quantile,}\DataTypeTok{probs=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.975}\NormalTok{)) }
 \NormalTok{sub.mean <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(gibbs)}
-\NormalTok{pumps.par<-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(tail.mean,tail.quant,sub.mean,sub.quant)}
-\KeywordTok{colnames}\NormalTok{(pumps.par) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Beta0"}\NormalTok{,}\StringTok{"Beta1"}\NormalTok{,}\StringTok{"Beta2"}\NormalTok{)}
-\NormalTok{pander}\OperatorTok{::}\KeywordTok{pander}\NormalTok{(}\KeywordTok{round}\NormalTok{(}\KeywordTok{t}\NormalTok{(pumps.par),}\DecValTok{4}\NormalTok{))}
+\NormalTok{par<-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(full.mean,tail.mean,sub.mean)}
+\KeywordTok{rownames}\NormalTok{(par) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Beta0"}\NormalTok{,}\StringTok{"Beta1"}\NormalTok{,}\StringTok{"Beta2"}\NormalTok{)}
+\NormalTok{pander}\OperatorTok{::}\KeywordTok{pander}\NormalTok{(}\KeywordTok{round}\NormalTok{((par),}\DecValTok{4}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{longtable}[]{@{}ccccccccc@{}}
+\begin{longtable}[]{@{}cccc@{}}
 \toprule
-\begin{minipage}[b]{0.10\columnwidth}\centering
+\begin{minipage}[b]{0.15\columnwidth}\centering
 ~\strut
-\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\centering
+\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\centering
+full.mean\strut
+\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\centering
 tail.mean\strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\centering
-2.5\%\strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\centering
-50\%\strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\centering
-97.5\%\strut
-\end{minipage} & \begin{minipage}[b]{0.10\columnwidth}\centering
+\end{minipage} & \begin{minipage}[b]{0.15\columnwidth}\centering
 sub.mean\strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\centering
-2.5\%\strut
-\end{minipage} & \begin{minipage}[b]{0.07\columnwidth}\centering
-50\%\strut
-\end{minipage} & \begin{minipage}[b]{0.08\columnwidth}\centering
-97.5\%\strut
 \end{minipage}\tabularnewline
 \midrule
 \endhead
-\begin{minipage}[t]{0.10\columnwidth}\centering
+\begin{minipage}[t]{0.15\columnwidth}\centering
 \textbf{Beta0}\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
--6.29\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
--13.54\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
--5.926\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
--1.159\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
--5.587\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
--12.12\strut
-\end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\centering
--5.3\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
--1.016\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+-5.417\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+-6.043\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+-5.371\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.10\columnwidth}\centering
+\begin{minipage}[t]{0.15\columnwidth}\centering
 \textbf{Beta1}\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
-2.547\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-0.5703\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-2.406\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-5.332\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
-2.208\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-0.4367\strut
-\end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\centering
-2.08\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-4.854\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+2.133\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+2.45\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+2.112\strut
 \end{minipage}\tabularnewline
-\begin{minipage}[t]{0.10\columnwidth}\centering
+\begin{minipage}[t]{0.15\columnwidth}\centering
 \textbf{Beta2}\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
-1.83\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-0.3318\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-1.726\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-3.915\strut
-\end{minipage} & \begin{minipage}[t]{0.10\columnwidth}\centering
-1.64\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-0.3412\strut
-\end{minipage} & \begin{minipage}[t]{0.07\columnwidth}\centering
-1.537\strut
-\end{minipage} & \begin{minipage}[t]{0.08\columnwidth}\centering
-3.576\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+1.586\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+1.766\strut
+\end{minipage} & \begin{minipage}[t]{0.15\columnwidth}\centering
+1.566\strut
 \end{minipage}\tabularnewline
 \bottomrule
 \end{longtable}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{),}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\FloatTok{3.2}\NormalTok{,.}\DecValTok{5}\NormalTok{,.}\DecValTok{5}\NormalTok{),}\DataTypeTok{mgp=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.70}\NormalTok{,.}\DecValTok{70}\NormalTok{,}\DecValTok{0}\NormalTok{))}
+\NormalTok{full.quant <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(Gibbs[burnin,],}\DecValTok{2}\NormalTok{,quantile,}\DataTypeTok{probs=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.975}\NormalTok{)) }
+\NormalTok{tail.quant <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(Gibbs[burnin,],}\DecValTok{2}\NormalTok{,quantile,}\DataTypeTok{probs=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.975}\NormalTok{)) }
+\NormalTok{sub.quant <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(gibbs,}\DecValTok{2}\NormalTok{,quantile,}\DataTypeTok{probs=}\KeywordTok{c}\NormalTok{(}\FloatTok{0.025}\NormalTok{,}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.975}\NormalTok{)) }
+\NormalTok{par<-}\StringTok{ }\KeywordTok{rbind}\NormalTok{(full.quant,tail.quant,sub.quant)}
+\KeywordTok{colnames}\NormalTok{(par) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Beta0"}\NormalTok{,}\StringTok{"Beta1"}\NormalTok{,}\StringTok{"Beta2"}\NormalTok{)}
+\NormalTok{pander}\OperatorTok{::}\KeywordTok{pander}\NormalTok{(}\KeywordTok{round}\NormalTok{(}\KeywordTok{t}\NormalTok{(par),}\DecValTok{4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\DataTypeTok{mgp=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.75}\NormalTok{,.}\DecValTok{75}\NormalTok{,}\DecValTok{0}\NormalTok{)); }\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{))}
 \NormalTok{lab<-}\KeywordTok{c}\NormalTok{(}\KeywordTok{expression}\NormalTok{(beta[}\DecValTok{0}\NormalTok{]),}\KeywordTok{expression}\NormalTok{(beta[}\DecValTok{1}\NormalTok{]),}\KeywordTok{expression}\NormalTok{(beta[}\DecValTok{2}\NormalTok{]))}
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) \{}
+\KeywordTok{acf}\NormalTok{(Gibbs[,j],}\DataTypeTok{ci.col=}\StringTok{"dodgerblue4"}\NormalTok{,}\DataTypeTok{xlab=}\NormalTok{lab[j])\}  }
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) \{}
+\KeywordTok{acf}\NormalTok{(Gibbs[burnin,j],}\DataTypeTok{ci.col=}\StringTok{"dodgerblue4"}\NormalTok{,}\DataTypeTok{xlab=}\NormalTok{lab[j])\} }
+\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) \{}
+\KeywordTok{acf}\NormalTok{(gibbs[,j],}\DataTypeTok{xlab=}\NormalTok{lab[j],}\DataTypeTok{ci.col=}\StringTok{"dodgerblue4"}\NormalTok{)\}}
+\KeywordTok{mtext}\NormalTok{(}\StringTok{"autocorrelation functions with Gibbs1.full(above),Gibbs1.tail(middle) ,Gibbs1.sub(below)"}\NormalTok{,}\DataTypeTok{side=}\DecValTok{1}\NormalTok{,}\DataTypeTok{line=}\OperatorTok{-}\DecValTok{1}\NormalTok{,}\DataTypeTok{outer=}\NormalTok{T)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-11-1} \end{center}
+
+Choose sub-sampling
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{3}\NormalTok{),}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\FloatTok{3.2}\NormalTok{,.}\DecValTok{5}\NormalTok{,.}\DecValTok{5}\NormalTok{),}\DataTypeTok{mgp=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.70}\NormalTok{,.}\DecValTok{70}\NormalTok{,}\DecValTok{0}\NormalTok{))}
 \ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{p)\{}
 \KeywordTok{plot}\NormalTok{(gibbs[,j],  }\DataTypeTok{ylab=}\NormalTok{lab[j],}\DataTypeTok{main=}\StringTok{""}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{1}\NormalTok{,}\DataTypeTok{cex=}\FloatTok{0.1}\NormalTok{,}
      \DataTypeTok{xlab=}\StringTok{"Gibbs iteration (k)"}\NormalTok{,}\DataTypeTok{col=}\StringTok{"cornflowerblue"}\NormalTok{)  }
-\KeywordTok{plot}\NormalTok{(}\KeywordTok{cumsum}\NormalTok{(gibbs[,j])}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{1000}\NormalTok{),  }\DataTypeTok{ylab=}\NormalTok{lab[j],}\DataTypeTok{main=}\StringTok{""}\NormalTok{,}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{cumsum}\NormalTok{(gibbs[,j])}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{100}\NormalTok{),  }\DataTypeTok{ylab=}\NormalTok{lab[j],}\DataTypeTok{main=}\StringTok{""}\NormalTok{,}
      \DataTypeTok{type=}\StringTok{"l"}\NormalTok{,}\DataTypeTok{col=}\StringTok{"cornflowerblue"}\NormalTok{,}\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{,}\DataTypeTok{pch=}\DecValTok{20}\NormalTok{,}\DataTypeTok{cex=}\FloatTok{0.7}\NormalTok{,}\DataTypeTok{xlab=}\StringTok{"Gibbs iteration (k)"}\NormalTok{)}
 \CommentTok{#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),}
 \CommentTok{#     main="",col="cornflowerblue")}
@@ -656,21 +721,21 @@ sub.mean\strut
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-10-1} \end{center}
+\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-12-1} \end{center}
 
 \(p_i=\Phi(\mathbf{x}_i^T\boldsymbol{\beta})\)
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{(prob <-}\StringTok{ }\KeywordTok{pnorm}\NormalTok{(}\KeywordTok{t}\NormalTok{(X }\OperatorTok{%*%}\StringTok{ }\NormalTok{beta),}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{))}
-\CommentTok{##        [,1]   [,2]   [,3]   [,4]   [,5]   [,6]   [,7]   [,8]   [,9] [,10]  [,11]  [,12]  [,13] [,14]  [,15]  [,16] [,17] [,18]  [,19]  [,20]  [,21]  [,22]  [,23]  [,24]  [,25]  [,26]  [,27] [,28] [,29] [,30] [,31] [,32]  [,33]  [,34]  [,35]  [,36] [,37]  [,38]  [,39]}
-\CommentTok{## [1,] 0.9661 0.9711 0.9146 0.5592 0.9468 0.9633 0.2758 0.7201 0.3568 0.268 0.2762 0.8524 0.9023  0.91 0.9793 0.9259 0.982 0.561 0.6922 0.8849 0.6189 0.5728 0.6842 0.7264 0.8487 0.5139 0.8284 0.738 0.713 0.449 0.842  0.64 0.7557 0.8421 0.8189 0.9577 0.738 0.6861 0.7493}
+\CommentTok{##      [,1] [,2]   [,3]     [,4] [,5]   [,6]         [,7]   [,8]       [,9]        [,10]        [,11]  [,12]  [,13]  [,14]  [,15]  [,16] [,17]    [,18] [,19]  [,20]    [,21]   [,22] [,23]  [,24]  [,25]     [,26]  [,27]  [,28]  [,29]    [,30]  [,31]  [,32] [,33]  [,34]  [,35]  [,36]  [,37]   [,38]  [,39]}
+\CommentTok{## [1,]    1    1 0.9645 0.004525 0.98 0.9936 0.0000001507 0.2008 0.00002489 0.0000006221 0.0000005118 0.4913 0.7927 0.9706 0.9996 0.9995     1 0.006583 0.346 0.9721 0.005637 0.01163 0.191 0.3764 0.8747 0.0008358 0.8687 0.1994 0.5096 0.006326 0.9903 0.4631  0.31 0.6847 0.6211 0.9917 0.1994 0.06003 0.3721}
 \end{Highlighting}
 \end{Shaded}
 
-\hypertarget{the-second-probit-model-refer-to-hoff-2009-ch.12}{%
-\paragraph{The second Probit model, refer to (Hoff, 2009,
-Ch.12)}\label{the-second-probit-model-refer-to-hoff-2009-ch.12}}
+\hypertarget{the-second-gibbs-sampling-refer-to-hoff-2009-ch.12}{%
+\paragraph{The second Gibbs sampling, refer to (Hoff, 2009,
+Ch.12)}\label{the-second-gibbs-sampling-refer-to-hoff-2009-ch.12}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -685,11 +750,11 @@ Ch.12)}\label{the-second-probit-model-refer-to-hoff-2009-ch.12}}
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123}\NormalTok{)}
 \NormalTok{beta<-}\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{,p) }
 \NormalTok{z<-}\KeywordTok{qnorm}\NormalTok{(}\KeywordTok{rank}\NormalTok{(Resp,}\DataTypeTok{ties.method=}\StringTok{"random"}\NormalTok{)}\OperatorTok{/}\NormalTok{(n}\OperatorTok{+}\DecValTok{1}\NormalTok{)) }\CommentTok{# random initial Z}
-\NormalTok{BETA<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DecValTok{1000}\NormalTok{,p) ; Z<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DecValTok{1000}\NormalTok{,n) ; ac<-}\DecValTok{0}
+\NormalTok{BETA<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DecValTok{100}\NormalTok{,p) ; Z<-}\KeywordTok{matrix}\NormalTok{(}\OtherTok{NA}\NormalTok{,}\DecValTok{100}\NormalTok{,n) ; ac<-}\DecValTok{0}
 \NormalTok{mu<-}\DecValTok{0}\NormalTok{ ; sigma<-}\DecValTok{100}  \CommentTok{### Why????}
 
 \CommentTok{## MCMC}
-\NormalTok{S<-}\DecValTok{25000}
+\NormalTok{S<-}\DecValTok{2500}
 \ControlFlowTok{for}\NormalTok{(s }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{S) }
 \NormalTok{\{}
   \CommentTok{#update beta}
@@ -707,11 +772,11 @@ Ch.12)}\label{the-second-probit-model-refer-to-hoff-2009-ch.12}}
 \NormalTok{lhr<-}\StringTok{  }\KeywordTok{sum}\NormalTok{(}\KeywordTok{dnorm}\NormalTok{(zp,ez,}\DecValTok{1}\NormalTok{,}\DataTypeTok{log=}\NormalTok{T) }\OperatorTok{-}\StringTok{ }\KeywordTok{dnorm}\NormalTok{(z,ez,}\DecValTok{1}\NormalTok{,}\DataTypeTok{log=}\NormalTok{T) ) }\CommentTok{#+ sum(dnorm(c,mu,sigma,log=T) - dnorm(0,mu,sigma,log=T) )}
 \ControlFlowTok{if}\NormalTok{(}\KeywordTok{log}\NormalTok{(}\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{))}\OperatorTok{<}\NormalTok{lhr) \{ z<-zp ; ac<-ac}\OperatorTok{+}\DecValTok{1}\NormalTok{ \}              }\CommentTok{# ; g<-gp}
 
-  \ControlFlowTok{if}\NormalTok{(s}\OperatorTok{%%}\NormalTok{(S}\OperatorTok{/}\DecValTok{1000}\NormalTok{)}\OperatorTok{==}\DecValTok{0}\NormalTok{) }
+  \ControlFlowTok{if}\NormalTok{(s}\OperatorTok{%%}\NormalTok{(S}\OperatorTok{/}\DecValTok{100}\NormalTok{)}\OperatorTok{==}\DecValTok{0}\NormalTok{) }
 \NormalTok{  \{ }
     \CommentTok{# cat(s/S,ac/s,"\textbackslash{}n")}
-\NormalTok{    BETA[s}\OperatorTok{/}\NormalTok{(S}\OperatorTok{/}\DecValTok{1000}\NormalTok{),]<-}\StringTok{  }\NormalTok{beta}
-\NormalTok{    Z[s}\OperatorTok{/}\NormalTok{(S}\OperatorTok{/}\DecValTok{1000}\NormalTok{),]<-}\StringTok{ }\NormalTok{z}
+\NormalTok{    BETA[s}\OperatorTok{/}\NormalTok{(S}\OperatorTok{/}\DecValTok{100}\NormalTok{),]<-}\StringTok{  }\NormalTok{beta}
+\NormalTok{    Z[s}\OperatorTok{/}\NormalTok{(S}\OperatorTok{/}\DecValTok{100}\NormalTok{),]<-}\StringTok{ }\NormalTok{z}
 \NormalTok{  \}}
 \NormalTok{\} }
 \end{Highlighting}
@@ -719,18 +784,17 @@ Ch.12)}\label{the-second-probit-model-refer-to-hoff-2009-ch.12}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{),}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\FloatTok{3.2}\NormalTok{,.}\DecValTok{5}\NormalTok{,.}\DecValTok{5}\NormalTok{),}\DataTypeTok{mgp=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.70}\NormalTok{,.}\DecValTok{70}\NormalTok{,}\DecValTok{0}\NormalTok{))}
 \NormalTok{(beta.pm<-}\KeywordTok{apply}\NormalTok{(BETA,}\DecValTok{2}\NormalTok{,mean))}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] -5.168  2.001  1.496
+## [1] -5.124  2.006  1.503
 \end{verbatim}
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{ZPM<-}\KeywordTok{apply}\NormalTok{(Z,}\DecValTok{2}\NormalTok{,mean)}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{),}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\FloatTok{3.2}\NormalTok{,.}\DecValTok{5}\NormalTok{,.}\DecValTok{5}\NormalTok{),}\DataTypeTok{mgp=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.70}\NormalTok{,.}\DecValTok{70}\NormalTok{,}\DecValTok{0}\NormalTok{))}
 \NormalTok{laby<-}\KeywordTok{c}\NormalTok{(}\StringTok{"density"}\NormalTok{,}\StringTok{""}\NormalTok{,}\StringTok{""}\NormalTok{)}
 \ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{p)\{}
 \KeywordTok{plot}\NormalTok{(}\KeywordTok{density}\NormalTok{(BETA[,j],}\DataTypeTok{adj=}\DecValTok{2}\NormalTok{),}\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{,}\DataTypeTok{main=}\StringTok{""}\NormalTok{,}\CommentTok{#xlim=c(-10,5),}
@@ -743,7 +807,7 @@ Ch.12)}\label{the-second-probit-model-refer-to-hoff-2009-ch.12}}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-15-1} \end{center}
+\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-17-1} \end{center}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -763,33 +827,14 @@ Ch.12)}\label{the-second-probit-model-refer-to-hoff-2009-ch.12}}
 \KeywordTok{lines}\NormalTok{(}\KeywordTok{density}\NormalTok{(gibbs[,j],}\DataTypeTok{adj=}\DecValTok{2}\NormalTok{),}\DataTypeTok{col=}\StringTok{"cornflowerblue"}\NormalTok{,}\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{,}\DataTypeTok{lty=}\DecValTok{2}\NormalTok{)}
 \KeywordTok{lines}\NormalTok{(}\KeywordTok{density}\NormalTok{(BETA[,j],}\DataTypeTok{adj=}\DecValTok{2}\NormalTok{),}\DataTypeTok{col=}\StringTok{"cyan"}\NormalTok{,}\DataTypeTok{lwd=}\DecValTok{2}\NormalTok{)}
 \ControlFlowTok{if}\NormalTok{(j}\OperatorTok{==}\DecValTok{3}\NormalTok{) \{}
- \KeywordTok{legend}\NormalTok{(}\FloatTok{1.75}\NormalTok{,}\FloatTok{1.25}\NormalTok{,}\DataTypeTok{legend=}\KeywordTok{c}\NormalTok{(}\StringTok{"likelihood"}\NormalTok{,}\StringTok{"probit1.tail"}\NormalTok{,}\StringTok{"probit1.sub"}\NormalTok{,}\StringTok{"probit2"}\NormalTok{), }\DataTypeTok{lty=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{),}
+ \KeywordTok{legend}\NormalTok{(}\FloatTok{1.75}\NormalTok{,}\FloatTok{1.25}\NormalTok{,}\DataTypeTok{legend=}\KeywordTok{c}\NormalTok{(}\StringTok{"likelihood"}\NormalTok{,}\StringTok{"Gibbs1.tail"}\NormalTok{,}\StringTok{"Gibbs1.sub"}\NormalTok{,}\StringTok{"Gibbs2"}\NormalTok{), }\DataTypeTok{lty=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{),}
        \DataTypeTok{lwd=}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{),}\DataTypeTok{col=}\KeywordTok{c}\NormalTok{(}\StringTok{"gray"}\NormalTok{,}\StringTok{"cornflowerblue"}\NormalTok{,}\StringTok{"cornflowerblue"}\NormalTok{,}\StringTok{"cyan"}\NormalTok{))}
 \NormalTok{          \} }
 \NormalTok{               \}}
 \end{Highlighting}
 \end{Shaded}
 
-\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-17-1} \end{center}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mar=}\KeywordTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{),}\DataTypeTok{mgp=}\KeywordTok{c}\NormalTok{(}\FloatTok{1.75}\NormalTok{,.}\DecValTok{75}\NormalTok{,}\DecValTok{0}\NormalTok{))}
-\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{))}
-\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) \{}
-\KeywordTok{acf}\NormalTok{(Gibbs[,j],}\DataTypeTok{ci.col=}\StringTok{"dodgerblue4"}\NormalTok{,}\DataTypeTok{xlab=}\NormalTok{lab[j])}
-\NormalTok{\}  }
-\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) \{}
-\KeywordTok{acf}\NormalTok{(Gibbs[burnin,j],}\DataTypeTok{ci.col=}\StringTok{"dodgerblue4"}\NormalTok{,}\DataTypeTok{xlab=}\NormalTok{lab[j])}
-\NormalTok{\} }
-\ControlFlowTok{for}\NormalTok{(j }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{) \{}
-\KeywordTok{acf}\NormalTok{(gibbs[,j],}\DataTypeTok{xlab=}\NormalTok{lab[j],}\DataTypeTok{ci.col=}\StringTok{"dodgerblue4"}\NormalTok{)}
-\NormalTok{\}}
-\KeywordTok{mtext}\NormalTok{(}\StringTok{"autocorrelation functions with Probit1.full(above),Probit1.tail(middle) ,Probit2(below)"}\NormalTok{, }\DataTypeTok{side =} \DecValTok{1}\NormalTok{, }\DataTypeTok{line =}\OperatorTok{-}\DecValTok{1}\NormalTok{, }\DataTypeTok{outer =} \OtherTok{TRUE}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-18-1} \includegraphics{note_stat501_files/figure-latex/unnamed-chunk-18-2} \end{center}
+\begin{center}\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-19-1} \end{center}
 
 \hypertarget{compare-with-the-results-by-glm}{%
 \paragraph{Compare with the results by
@@ -871,9 +916,9 @@ What is the benifit of log transform?
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-19-1.pdf}
-\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-19-2.pdf}
-\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-19-3.pdf}
+\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-20-1.pdf}
+\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-20-2.pdf}
+\includegraphics{note_stat501_files/figure-latex/unnamed-chunk-20-3.pdf}
 
 \hypertarget{compare-with-the-results-after-log-transform}{%
 \paragraph{Compare with the results after log
@@ -960,6 +1005,508 @@ Example}\label{a-trivariate-probit-example}}
 Nicholas G. Polson, James G. Scott \& Jesse Windle (2013) Bayesian
 Inference for Logistic Models Using Pólya--Gamma Latent Variables,
 Journal of the American Statistical Association, 108:504, 1339-1349,
-DOI: 10.1080/01621459.2013.829001
+\href{https://www.tandfonline.com/doi/full/10.1080/01621459.2013.829001}{DOI:
+10.1080/01621459.2013.829001}
+
+\hypertarget{introduction-2}{%
+\subsubsection{Introduction}\label{introduction-2}}
+
+\href{https://jgscott.github.io/}{Home page of James Scott}
+
+\href{https://github.com/jwindle/BayesLogit}{R package BayesLogit and
+Thesis}
+
+\emph{Definition 1}. A random variable X has a Pólya--Gamma distribution
+with parameters b \textgreater{} 0 and , denoted as \(X\sim PG(b, c),\)
+if
+
+\[X\overset{\mathcal{D}}{=}\frac1{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{((k-\frac12)^2 + \frac{c^2}{4\pi^2})}\quad (1)\]
+
+where the \(g_k ∼ Ga(b, 1)\) are independent gamma random variables, and
+where indicates equality in distribution.
+
+\hypertarget{the-polya-gamma-distribution}{%
+\subsubsection{2 The Polya-Gamma
+distribution}\label{the-polya-gamma-distribution}}
+
+\hypertarget{the-case-pgb0}{%
+\paragraph{\texorpdfstring{2.1. The Case
+\(PG(b,0)\)}{2.1. The Case PG(b,0)}}\label{the-case-pgb0}}
+
+The \(PG(b,0)\) class of distributions is closely related to a subset of
+distributions that are surveyed by Biane, Pitman, and Yor (2001). This
+family of distributions, which we denote by \(J^\star(b), b>0\), has
+close connections with {the Jacobi Theta and Riemann Zeta functions, and
+with Brownian excursions}. Its Laplace transform is
+
+\[E[\exp(-tJ^\star(b))]=\cosh^{-b}\sqrt{2t}\quad (4)\]
+
+implying that \(PG(b,0)\overset{\mathcal{D}}{=}\frac14J^\star(b)\)
+
+\hypertarget{the-general-pgbc-class}{%
+\paragraph{\texorpdfstring{2.2. The General \(PG(b,c)\)
+Class}{2.2. The General PG(b,c) Class}}\label{the-general-pgbc-class}}
+
+\[p(x|b,c)=\frac{\exp(-\frac{c^2}2x) p(x|b,0)}{E[\exp x(-\frac{c^2}2\omega)]}\quad (5)\]
+
+where \(p(x|b,0)\) is the density of an \(\omega\sim PG(b,0)\) random
+variable.
+
+\hypertarget{a-data-augmentation-strategy}{%
+\subsubsection{3 A data-augmentation
+strategy}\label{a-data-augmentation-strategy}}
+
+A data-augmentation scheme for binomial likelihoods
+
+\hypertarget{main-result}{%
+\paragraph{3.1 Main Result}\label{main-result}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+& Polson et al.~(2013) & Albert and Chib (1993)\tabularnewline
+\midrule
+\endhead
+Gaussian & scale mixture & location mixture\tabularnewline
+Latent variables & Polya-Gamma & truncated normals\tabularnewline
+\bottomrule
+\end{longtable}
+
+The number of successes
+\(y_i\sim Bino(n_i,\frac{1}{\{1+e^{-\psi_i}\}})\), where \(n_i\) is the
+number of trials, \(\psi_i=x_i^T\boldsymbol{\beta}\) are the log odds of
+success. \(x_i=(x_{i1},..,x_{ip} )\) the vector of regressors for
+observation \(i\in\{1,..,N\}\). \(\boldsymbol{\beta}\sim N(b,B)\)
+
+To sample from the posterior distribution using the Pólya--Gamma method,
+simply iterate two steps:
+
+\[\begin{align}
+(\omega_i|\boldsymbol{\beta})&\sim PG(n_i,x_i^T\boldsymbol{\beta})\\
+(\boldsymbol{\beta}|y,\omega)&\sim N(m_\omega,V_\omega);\quad m_\omega=V_\omega(X^T\kappa+B^{-1}b);V_\omega=(X^T\Omega X+B^{-1})^{-1}
+\end{align}\]
+
+where \(\kappa=(y_1-\frac{n_1}2,..,y_N-\frac{n_N}2)\), and \(\Omega\) is
+the diagonal matrix of \(\omega_i\)'s.
+
+\hypertarget{existing-data-augmentation-schemes}{%
+\paragraph{3.2 Existing Data-Augmentation
+Schemes}\label{existing-data-augmentation-schemes}}
+
+The outcomes \(y_i\) are assumed to be thresholded versions of an
+underlying continuous quantity \(z_i\)
+
+Assume \(n_i=1\),
+\(y_i=\begin{cases}1&\text{if } z_i>0\\0&\text{if }z_i\le0\end{cases}\)
+
+\(z_i=x_i^T\boldsymbol{\beta}+\epsilon_i\),
+\(\epsilon_i\sim Logistic(1)\)
+
+The standard approach has been to add another layer of auxiliary
+variables to handle the logistic error model on the latent-utility
+scale. One strategy is to represent the logistic distribution as a
+normal-scale mixture
+
+\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=(2\lambda_i)^2; \lambda_i\sim KS(1)\quad\text{Kolmogorov–Smirnov distribution}\]
+
+Alternatively, one may approximate the logistic error term as a discrete
+mixture of normals.
+
+\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=\sum_{k=1}^K\omega_k\delta_{\phi^{(k)}}\]
+
+where \(\delta_{\phi}\) indicates a {\emph{Dirac measure}} at \(\phi\).
+The weights \(\omega_k\) and the points \(\phi^{(k)}\) in the discrete
+mixture are fixed for a given choice of \(k\) so that \emph{{the
+Kullback--Leibler divergence}} from the true distribution of the random
+utilities is minimized. Frühwirth-Schnatter and Frühwirth (2010) found
+that the choice of \(K=10\) leads to a good approximation.
+
+The discrete mixture of normals is an approximation, but it outperforms
+the scale mixture of normals in terms of effective sampling rate, as it
+is much faster.
+
+One may also arrive at the hierarchy above by manipulating the random
+utility derivation of McFadden (1974)
+
+The dRUM. One must use a table of different weights and variances
+representing different normal mixtures, to approximate a finite
+collection of type-III logistic distributions, and interpolate within
+this table to approximate the entire family.
+
+Another approximation: the use of a Student-t link function as a close
+substitute for the logistic link. This also introduces a second layer of
+latent variables, in that the Student-t error model for \(z_i\) is
+represented as a scale mixture of normals.
+
+Our data-augmentation scheme differs from each of these approaches in
+several ways.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  it does not appeal directly to the random-utility interpretation of
+  the logit model. Instead, it represents the logistic CDF as a mixture
+  with respect to an infinite convolution of gammas.
+\item
+  the method is exact, in the sense of making draws from the correct
+  joint posterior distribution, rather than an approximation to the
+  posterior that arises out of an approximation to the link function.
+\item
+  like the Albert and Chib (1993) method, it requires only a single
+  layer of latent variables.
+\end{enumerate}
+
+Directed acyclic graphs depicting two latent-variable constructions for
+the logistic-regression model: the difference of random-utility model
+versus direct data-augmentation scheme.
+\includegraphics{uasa_a_829001_o_f0001g.jpeg}
+
+\hypertarget{mixed-model-example}{%
+\paragraph{3.3. Mixed Model Example}\label{mixed-model-example}}
+
+The real advantage of data augmentation, and the Pólya--Gamma technique
+in particular, is that it becomes easy to construct and fit more
+complicated models. For instance, the Pólya--Gamma method trivially
+accommodates \emph{mixed models, factor models, and models with a
+spatial or dynamic structure}. For most problems in this class, good MH
+samplers are difficult to design, and at the very least will require ad
+hoc tuning to yield good performance.
+
+\[\begin{align}
+y_{ij}&\sim Bino(1,p_{ij}),\quad p_{ij}=\frac{e^{\psi_{ij}}}{1+e^{\psi_{ij}}}\\
+\psi_{ij}&=m+\delta_j+x'_{ij}\beta,\quad\delta_j\sim N(0,1/\phi);\quad m\sim N(0,\kappa^2/\phi)
+\end{align}\]
+
+where \(i\) and \(j\) correspond to the \(i^{th}\) observation from the
+\(j^{th}\) district. The fixed effect \(\beta\) is given an
+\(N(0, 100I)\) prior, while the precision parameter \(\phi\) is given
+\(Ga(1, 1)\) prior. We take \(\kappa\to\infty\) to recover an improper
+prior for the global intercept \(m\).
+
+Bangladesh Fertility Survey, 1989
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data}\NormalTok{(Contraception)}
+\end{Highlighting}
+\end{Shaded}
+
+As seen in the negative binomial examples below, one may also painlessly
+incorporate a more complex prior structure using the Pólya--Gamma
+technique. For instance, if given information about \emph{the geographic
+location} of each district, one could place a \emph{spatial process
+prior} upon the random offsets \(\{\delta_j\}\).
+
+\hypertarget{simulating-polya-gamma-random-variables}{%
+\subsubsection{4 Simulating Polya-Gamma random
+Variables}\label{simulating-polya-gamma-random-variables}}
+
+a method for simulating from the Pólya--Gamma distribution, which we
+have implemented as a stand-alone sampler in the BayesLogit R package.
+
+\hypertarget{the-pg1z-sampler}{%
+\paragraph{\texorpdfstring{4.1. The \(PG(1,z)\)
+Sampler}{4.1. The PG(1,z) Sampler}}\label{the-pg1z-sampler}}
+
+An exponentially tilted Jacobi distribution \(J^\star(1,z)\) via the
+density
+
+\[f(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)f(x)\quad(9)\]
+\[PG(1,z)=\frac14J^\star(1,\frac z2)\quad (10)\]
+
+When \(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\) and the coefficients
+\(a_n(x)\) are decreasing for all , for fixed \(x\) in the support of
+\(f\), then the partial sums, \(S_n(x)=\sum_{i=0}^n(-1)^ia_i(x)\),
+satisfy
+
+\[S_0(x)>S_2(x)>..>f(x)>..>S_3(x)>S_1(x)\quad (11)\]
+
+For the \(J^\star(1,z)\) distribution the algorithm will accept with
+high probability upon checking \(U\le S_1(X)\).
+
+The Jacobi density has two alternating-sum representations,
+\(\sum_{n=0}^\infty(-1)^na_i^L(x)\) and
+\(\sum_{n=0}^\infty(-1)^na_i^R(x)\), neither of which satisfy Equation
+(11) for all \(x\) in the support of \(f\). However, each satisfies
+Equation (11) on an interval. These two intervals, respectively, denoted
+as \(I_L\) and \(I_R\) , satisfy \(I_L\cup I_R = (0,\infty)\) and
+\(I_L\cap I_R\neq\emptyset\) Thus, one may pick \(t\in I_L\cap I_R\)and
+define the piecewise coefficients.
+
+\[a_n(x)=\pi(n+\frac{1}2)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{2(n+\frac{1}2)^2}{x}\right) & 0<x\le t&(12)\\ \exp\left(-(\frac{\pi^2(n+\frac{1}2)^{2}}2)x\right) & x>t&(13)\end{cases}\]
+
+so that \(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\) satisfies the partial sum
+criterion (11) for \(x>0\). Devroye shows that the best choice of \(t\)
+is near 0.64.
+
+The \(J^\star(1,z)\) density can be written as an infinite, alternating
+sum \(f(x|z)=\sum_{n=0}^\infty(-1)^na_n(x|z)\), where
+
+\[a_n(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_n(x)\]
+
+This satisfies Equation (11), as
+\(\frac{a_{n+1}(x|z)}{a_n(x|z)}=\frac{a_{n+1}(x)}{a_n(x)}\).
+
+Since \(a_0(x|z)\ge f(x|z)\), the first term of the series provides a
+natural proposal:
+
+\[c(z) g(x|z)=\frac{\pi}2\cosh(z)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{z^{2}x}2-\frac{1}{2x}\right) & 0<x\le t\\ \exp\left(-(\frac{z^{2}}2+\frac{\pi^{2}}8)x\right) & x>t\end{cases}(14)\]
+
+\(X\sim g(x|z)\) may be sampled from a mixture of an inverse-Gaussian
+and an exponential:
+
+\[X\sim \begin{cases}IG(|z|^{-1},1)\mathbf{1}_{(0,t]} & \text{with prob } \frac{p}{p+q}\\ Expo(-\frac{z^{2}}2+\frac{\pi^{2}}8)\mathbf{1}_{(t,\infty)} & \text{with prob } \frac{q}{p+q}\end{cases}\]
+
+where \(p(z) =\int^t_0 c(z) g(x|z)dx\) and
+\(q(z) =\int_t^\infty c(z) g(x|z)dx\). Note that we are implicitly
+suppressing the dependence of p, q, c, and g upon t.
+
+{\(Expo(-(\frac{z^{2}}2+\frac{\pi^{2}}8))\)???}
+
+sampling \(J^\star(1,z)\) proceeds as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Generate a proposal \(X\sim g(x|z)\).
+\item
+  Generate \(U\sim Unif(0,c(z)g(X|z))\).
+\item
+  Iteratively calculate \(S_n (X|z)\), starting at \(S_1(X|z)\), until
+  \(U\le S_n(X|z)\) for an odd \(n\) or until \(U>S_n (X|z)\) for an
+  even \(n\).
+\item
+  Accept \(X\) if \(n\) is odd; return to step 1 if \(n\) is even.
+\end{enumerate}
+
+To sample \(Y\sim PG(1, z)\), draw \(X\sim J^\star(1,z/2)\) and then let
+\(Y=X/4\)
+
+\hypertarget{analysis-of-acceptance-rate}{%
+\paragraph{4.2. Analysis of Acceptance
+Rate}\label{analysis-of-acceptance-rate}}
+
+\textbf{Proposition 1} Define
+
+\[p(z,t)=\int^t_0 \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^L(x)dx\]
+\[q(z,t)=\int^\infty_t \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^R(x)dx\]
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The best truncation point \(t^\star\) is independent of \(z\ge0\).
+\item
+  For a fixed truncation point \(t\), \(p(z,t)\) and \(q(z,t)\) are
+  continuous, \(p(z,t)\) decreases to zero as \(z\) diverges, and
+  \(q(z, t)\) converges to 1 as \(z\) diverges. Thus,
+  \(c(z,t)= p(z,t) + q(z,t)\) is continuous and converges to 1 as \(z\)
+  diverges.
+\item
+  For fixed \(t\), the average probability of accepting a draw,
+  \(1/c(z,t)\), is bounded below for all \(z\). For \(t^\star\), this
+  bound to five digits is \(0.99919\), which is attained at
+  \(z\simeq1.378.\)
+\end{enumerate}
+
+\hypertarget{analysis-of-tail-probabilities}{%
+\paragraph{4.3. Analysis of Tail
+Probabilities}\label{analysis-of-tail-probabilities}}
+
+\textbf{Proposition 2}: When sampling \(X\sim J^\star(1, z)\), the
+probability of deciding to accept or reject upon checking the \(n^{th}\)
+partial sum \(S_n\), \(n\ge1\), is
+
+\[\frac1{c(z)}\int^\infty_0 [a_{n-1}(x|z)-a_n(x|z)]dx\]
+
+\hypertarget{the-general-pgb-z-case}{%
+\paragraph{\texorpdfstring{4.4. The General \(PG(b, z)\)
+Case}{4.4. The General PG(b, z) Case}}\label{the-general-pgb-z-case}}
+
+The effective sample size (ESS) for the ith parameter in the model is
+
+\[ESS_i=\frac{M}{1+2\sum_{j=1}^k\rho_i(j)}\]
+
+where \(M\) is the number of post-burn-in samples, and \(\rho_i(j)\) is
+the \(j^{th}\) autocorrelation of the chain corresponding to \(\beta_i\)
+
+\hypertarget{experiment}{%
+\subsubsection{5 Experiment}\label{experiment}}
+
+presents the results of an extensive benchmarking study comparing the
+efficiency of our method to other data-augmentation schemes.
+
+The eight datasets
+
+\begin{itemize}
+\tightlist
+\item
+  In binary logit models.
+\end{itemize}
+
+First, the Pólya--Gamma is more efficient than all previously proposed
+data-augmentation schemes.
+
+Second, the Pólya--Gamma method always had a higher effective sample
+size than the two default Metropolis samplers we tried.
+
+Finally, the Pólya--Gamma method truly shines when the model has a
+complex prior structure.
+
+\begin{itemize}
+\tightlist
+\item
+  In negative-binomial models.
+\end{itemize}
+
+The Pólya--Gamma method consistently yields the best effective sample
+sizes in negative-binomial regression. However, its effective sampling
+rate suffers when working with a large count or a nonintegral
+overdispersion parameter.
+
+Using either the Pólya--Gamma or the Frühwirth-Schnatter et al.~(2009)
+techniques, one arrives at a multivariate Gaussian conditional for
+\(\psi\) whose covariance matrix involves latent variables. Producing a
+random variate from this distribution is expensive, as one must
+calculate the Cholesky decomposition of a relatively large matrix at
+each iteration. Therefore, the overall sampler spends relatively less
+time drawing auxiliary variables. Since the Pólya--Gamma method leads to
+a higher effective sample size, it wastes fewer of the expensive draws
+for the main parameter.
+
+\hypertarget{discussion}{%
+\subsubsection{6 Discussion}\label{discussion}}
+
+concludes with a discussion of some open issues related to our proposal.
+
+\hypertarget{technical-supplement}{%
+\subsubsection{Technical supplement}\label{technical-supplement}}
+
+\hypertarget{details-of-polya-gamma-sampling-algorithm}{%
+\paragraph{1 Details of Polya-Gamma sampling
+algorithm}\label{details-of-polya-gamma-sampling-algorithm}}
+
+\hypertarget{benchmarks-overview}{%
+\paragraph{2 Benchmarks: overview}\label{benchmarks-overview}}
+
+\hypertarget{benchmarks-binary-logistic-regression}{%
+\paragraph{3 Benchmarks: binary logistic
+regression}\label{benchmarks-binary-logistic-regression}}
+
+\hypertarget{data-sets}{%
+\subparagraph{3.1 Data Sets}\label{data-sets}}
+
+Nodal: part of the boot R package (Canty and Ripley, 2012). The response
+indicates if cancer has spread from the prostate to surrounding lymph
+nodes. There are 53 observations and 5 binary predictors.
+
+Pima Indian: There are 768 observations and 8 continuous predictors. It
+is noted on
+\href{http://archive.ics.uci.edu/ml/datasets/Pima+Indians+Diabetes}{the
+UCI website} that there are many predictor values coded as 0, though the
+physical measurement should be non-zero. We have removed all of those
+entries to generate a data set with 392 observations. The marginal mean
+incidence of diabetes is roughly 0.33 before and after removing these
+data points.
+
+\href{http://archive.ics.uci.edu/ml/datasets/Statlog+(Heart)}{Heart}:
+The response represents either an absence or presence of heart disease.
+There are 270 observations and 13 attributes, of which 6 are categorical
+or binary and 1 is ordinal. The ordinal covariate has been stratified by
+dummy variables.
+
+\href{http://archive.ics.uci.edu/ml/datasets/Statlog+(Australian+Credit+Approval)}{Australian
+Credit}: The response represents either accepting or rejecting a credit
+card application.3 The meaning of each predictor was removed to protect
+the propriety of the original data. There are 690 observations and 14
+attributes, of which 8 are categorical or binary. There were 37
+observations with missing attribute values. These missing values were
+replaced by the mode of the attribute in the case of categorical data
+and the mean of the attribute for continuous data. This dataset is
+linearly separable and results in some divergent regression
+coefficients, which are kept in check by the prior.
+
+\href{http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)}{German
+Credit 1 and 2}: The response represents either a good or bad credit
+risk.4 There are 1000 observations and 20 attributes, including both
+continuous and categorical data. We benchmark two scenarios. In the
+first, the ordinal covariates have been given integer values and have
+not been stratified by dummy variables, yielding a total of 24 numeric
+predictors. In the second, the ordinal data has been stratified by dummy
+variables, yielding a total of 48 predictors.
+
+Synthetic 1: Simulated data with 150 outcomes and 10 predictors. The
+design points were chosen to be orthogonal. The data are included as a
+supplemental file.
+
+Synthetic 2: Simulated data with 500 outcomes and 20 predictors. The
+design points were simulated from a Gaussian factor model, to yield
+pronounced patterns of collinearity. The data are included as a
+supplemental file.
+
+\hypertarget{methods}{%
+\subparagraph{3.2 Methods}\label{methods}}
+
+\hypertarget{results}{%
+\subparagraph{3.3 Results}\label{results}}
+
+\hypertarget{benchmarks-logit-mixed-models}{%
+\paragraph{4 Benchmarks: logit mixed
+models}\label{benchmarks-logit-mixed-models}}
+
+\hypertarget{benchmarks-negative-binomial-models}{%
+\paragraph{5 Benchmarks: negative-binomial
+models}\label{benchmarks-negative-binomial-models}}
+
+\hypertarget{extensions}{%
+\paragraph{6 Extensions}\label{extensions}}
+
+\hypertarget{choi-hobert-2013}{%
+\subsection{(Choi \& Hobert, 2013)}\label{choi-hobert-2013}}
+
+Choi, H. M., \& Hobert, J. P. (2013). The Polya-Gamma Gibbs sampler for
+Bayesian logistic regression is uniformly ergodic.
+\href{https://projecteuclid.org/euclid.ejs/1377005819}{Electronic
+Journal of Statistics, 7, 2054-2064.}
+
+\hypertarget{introduction-3}{%
+\paragraph{1 Introduction}\label{introduction-3}}
+
+\hypertarget{polson-scott-and-windles-algorithm}{%
+\paragraph{2 Polson, Scott and Windle's
+algorithm}\label{polson-scott-and-windles-algorithm}}
+
+\hypertarget{taylor-rodruxedguez-et-al-2017}{%
+\subsection{(Taylor-Rodríguez et al,
+2017)}\label{taylor-rodruxedguez-et-al-2017}}
+
+Taylor-Rodríguez, D., Womack, A., Fuentes, C., \& Bliznyuk, N. (2017).
+Intrinsic Bayesian Analysis for Occupancy Models.
+\href{https://projecteuclid.org/euclid.ba/1473431536}{Bayesian Anal.,
+12(3), 855-877.}
+
+\hypertarget{introduction-4}{%
+\subsubsection{1 Introduction}\label{introduction-4}}
+
+\hypertarget{inference-for-a-single-model}{%
+\subsubsection{2 Inference for a single
+model}\label{inference-for-a-single-model}}
+
+\hypertarget{the-occupancy-model-with-probit-link}{%
+\paragraph{2.1 The occupancy model with Probit
+link}\label{the-occupancy-model-with-probit-link}}
+
+\hypertarget{an-objective-prior-for-ux3b1-ux3bb}{%
+\paragraph{2.2 An objective prior for (α,
+λ)}\label{an-objective-prior-for-ux3b1-ux3bb}}
+
+\hypertarget{resources}{%
+\subsection{Resources}\label{resources}}
+
+\href{http://users.stat.umn.edu/~geyer/}{Charlie Geyer's Personal Home
+Page}
+
+\href{https://xcelab.net/rm/statistical-rethinking/}{McElreath 2020.
+Statistical Rethinking}
+
+\href{https://github.com/rmcelreath/rethinking}{R package rethinking}
 
 \end{document}

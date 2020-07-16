@@ -1672,6 +1672,8 @@ $\hat\beta_2=\frac{\sum_{i=1}^nx_i^2y_i\sum_{i=1}^nx_i^2-\sum_{i=1}^nx_iy_i\sum_
 
 $\hat\beta_1=\frac{\sum_{i=1}^nx_iy_i}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i^3[\sum_{i=1}^nx_i^2y_i\sum_{i=1}^nx_i^2-\sum_{i=1}^nx_iy_i\sum_{i=1}^nx_i^3]}{\sum_{i=1}^nx_i^2[\sum_{i=1}^nx_i^4\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i^3)^2]}$
 
+\[\hat\beta_1=\frac{\sum_{i=1}^nx_iy_i\sum_{i=1}^nx_i^4-\sum_{i=1}^nx_i^2y_i\sum_{i=1}^nx_i^3}{\sum_{i=1}^nx_i^4\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i^3)^2}\]
+
 \end{multicols}
 
 ### 2019S2
@@ -1714,37 +1716,66 @@ Replications: Random
 
 Model: $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_k+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{(ijk)l}$, $i=1,2,3,4$, $j=1,2,3$, $k=1,2,3,4$, $l=1,2$
 
-$\tau_i\sim N(0,\sigma^2_{\tau})$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $(\gamma\beta)_{kj(i)}\sim N(0,\sigma^2_{\gamma\beta})$, $(\tau\gamma)_{ik}\sim N(0,\sigma^2_{\tau\gamma})$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$, $\sum_{k=1}^c\gamma_k=0$
+$\tau_i\sim N(0,\sigma^2_{\tau})$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $\sum_{k=1}^c\gamma_k=0$, $(\tau\gamma)_{ik}\sim N(0,\sigma^2_{\tau\gamma})$, $(\beta\gamma)_{kj(i)}\sim N(0,\sigma^2_{\beta\gamma})$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$
 
+\textbf{From Fountain's note, in the j column, treat j as fixed. in the EMS column, treat j(i) and jk(i) as random. }
 
 \end{multicols}
 
  ------ --- --- --- -------
  Source SS  df  MS  F    
 
- A      34  4   8.5 8.5/4.4
+ A      34  4   8.5 8.5/2.3=3.696
  
- B+AB   44  10  4.4 4.4/2.3
+ B+AB   44  10  4.4 4.4/2.3=1.913
  
- C      24  3   8.0 8/2.5
+ C      24  3   8.0 8/2.5=3.2
  
- AC     30  12  2.5 2.5/1.8
+ AC     30  12  2.5 2.5/2.3=1.087
  
- BC+ABC 54  30  1.8 1.8/2.3
+ BC+ABC 54  30  1.8 1.8/2.3=0.7826
  
  Error  138 60  2.3
  --------------------------
 
 
-|term |i(r) |j(r) |k(f) |l(r) | df | EMS | F  |
-| -- |   - |  -  |  -  |   - | --| -----| -- |
-|$\tau_{i}$r|1|b|c|n|a-1|$bcn\sigma^2_{\gamma}+cn\sigma^2_{\beta}+\sigma^2$|$\frac{MS_{A}}{MS_{B(A)}}$|
-|$\beta_{j(i)}$r|1|1|c|n|a(b-1)|$cn\sigma^2_{\beta}+\sigma^2$|$\frac{MS_{B(A)}}{MS_{E}}$|
-|$(\gamma)_{k}$f|a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\gamma}+n\sigma^2_{\gamma\beta}+\sigma^2$|$\frac{MS_{C)}}{MS_{(AC)}}$|
-|$(\tau\gamma)_{ik}$r|1|b|0|n|a(c-1)|$bn\sigma^2_{\gamma}+n\sigma^2_{\gamma\beta}+\sigma^2$|$\frac{MS_{(AC)}}{MS_{BC(A)}}$|
-|$(\gamma\beta)_{kj(i)}$r|1|1|0|n|ab(c-1)|$n\sigma^2_{\gamma\beta}+\sigma^2$|$\frac{MS_{BC(A)}}{MS_{E}}$|
+|term |i(r) |j(f) |k(f) |l(r) | df | EMS | F  |
+| -- |   - |  -  |  -  |   - | --| ---| -- |
+|$\tau_{i}$r             |1|b|c|n|a-1|$bcn\sigma^2_{\tau}+\sigma^2$|$\frac{A}{E}$|
+|$\beta_{j(i)}$r         |1|0|c|n|a(b-1)|$cn\sigma^2_{\beta}+\sigma^2$|$\frac{B(A)}{E}$|
+|$(\gamma)_{k}$f         |a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{C}{AC}$|
+|$(\tau\gamma)_{ik}$r    |1|b|0|n|(a-1)(c-1)|$bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{AC}{E}$|
+|$(\gamma\beta)_{kj(i)}$r|1|0|0|n|a(b-1)(c-1)|$n\sigma^2_{\beta\gamma}+\sigma^2$|$\frac{BC(A)}{E}$|
 |$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
 |Total| | | | |abcn-1|
+
+If B(A) is random $F_C=8/(2.5+1.8-2.3)=4$, $df_2=\frac{(AC+BC(A)-E)^2}{\frac{AC^2}{df_{AC}}+\frac{BC(A)^2}{df_{BC(A)}}+\frac{E^2}{df_{E}}}=\frac{2^2}{\frac{2.5^2}{12}+\frac{1.8^2}{30}+\frac{2.3^2}{60}}=5.579\approx6$ P-value=0.07
+
+<!-- (2^2)/(2.5^2/12+1.8^2/30+2.3^2/60) 
+pf(3.2,3,12,lower.tail = F)
+pf(4,3,6,lower.tail = F)
+-->
+
+|term |i(r) |j(f) |k(f) |l(r) | df | EMS | F  |
+| -- |   - |  -  |  -  |   - | --| ----| -- |
+|$\tau_{i}$r             |1|b|c|n|a-1|$bcn\sigma^2_{\tau}+\sigma^2$|$\frac{A}{E}$|
+|$\beta_{j(i)}$r         |1|0|c|n|a(b-1)|$cn\sigma^2_{\beta}+\sigma^2$|$\frac{B(A)}{E}$|
+|$(\gamma)_{k}$f         |a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\tau\gamma}+n\sigma^2_{\beta\gamma}+\sigma^2$|$\frac{C}{AC+BC(A)-E}$|
+|$(\tau\gamma)_{ik}$r    |1|b|0|n|(a-1)(c-1)|$bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{AC}{E}$|
+|$(\gamma\beta)_{kj(i)}$r|1|0|0|n|a(b-1)(c-1)|$n\sigma^2_{\beta\gamma}+\sigma^2$|$\frac{BC(A)}{E}$|
+|$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
+
+If B(A) is fixed $F_C=8/2.5=3.2$ P-value=0.06
+
+|term |i(r) |j(f) |k(f) |l(r) | df | EMS | F  |
+| -- |   - |  -  |  -  |   - | --| ----| -- |
+|$\tau_{i}$r             |1|b|c|n|a-1|$bcn\sigma^2_{\tau}+\sigma^2$|$\frac{A}{E}$|
+|$\beta_{j(i)}$f         |1|0|c|n|a(b-1)|$\frac{cn}{a(b-1)}\sum{\beta^2}+\sigma^2$|$\frac{B(A)}{E}$|
+|$(\gamma)_{k}$f         |a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{C}{AC}$|
+|$(\tau\gamma)_{ik}$r    |1|b|0|n|(a-1)(c-1)|$bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{AC}{E}$|
+|$(\gamma\beta)_{kj(i)}$f|1|0|0|n|a(b-1)(c-1)|$\frac{n}{a(b-1)(c-1)}\sum{(\beta\gamma)^2}+\sigma^2$|$\frac{BC(A)}{E}$|
+|$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
+
 
 
 ### 2019S3
