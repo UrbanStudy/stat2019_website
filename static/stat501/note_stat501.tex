@@ -133,7 +133,7 @@
 \makeatother
 \subtitle{STAT 501}
 \author{}
-\date{\vspace{-2.5em}15 July, 2020}
+\date{\vspace{-2.5em}17 July, 2020}
 
 \begin{document}
 \maketitle
@@ -1494,9 +1494,171 @@ model}\label{inference-for-a-single-model}}
 \paragraph{2.1 The occupancy model with Probit
 link}\label{the-occupancy-model-with-probit-link}}
 
-\hypertarget{an-objective-prior-for-ux3b1-ux3bb}{%
-\paragraph{2.2 An objective prior for (α,
-λ)}\label{an-objective-prior-for-ux3b1-ux3bb}}
+\hypertarget{an-objective-prior-for-alphalambda}{%
+\paragraph{\texorpdfstring{2.2 An objective prior for
+\(\alpha,\lambda\)}{2.2 An objective prior for \textbackslash alpha,\textbackslash lambda}}\label{an-objective-prior-for-alphalambda}}
+
+\hypertarget{model-choices-in-rspm}{%
+\subsection{Model Choices in RSPM}\label{model-choices-in-rspm}}
+
+\hypertarget{current-greenstep-dvmt-models}{%
+\subsubsection{3.2 Current GreenSTEP DVMT
+Models}\label{current-greenstep-dvmt-models}}
+
+The current household travel model in GreenSTEP has two sequential
+(conditional) models: a binary model of whether a household will have
+non-zero daily VMT (Zero DVMT model) and a regression model of the
+actual daily VMT for households with non-zero VMT (DVMT model).
+
+\(\log(odds)=\mathrm{logit}(P) =\ln\left(\frac{P}{1-P}\right)\)
+
+Zero DVMT model: Binomial Logit Models
+
+\(P(\text{DailyVMT}=0)=\mathrm{logit}(\text{DrvAgePop+LogIncome+Htpopdn+Age65Plus+Hhvehcnt+ZeroVeh+Tranilescap+Urban:Tranmilescap})\)
+
+DVMT model: Box--Cox transformation
+
+\[
+\begin{align}
+(\text{DailyVMT})^{0.18}=\text{DrvAgePop+LogIncome+Htppopdn+Age65Plus+Hhvehcnt+ZeroVeh+Tranilescap} \\
++\text{Census_r+Fwylnmicap+Urban+Htppopdn:Tranmilescap}
+\end{align}
+\]
+
+{The models are not same with regression tables???}
+
+\hypertarget{aadvmt-model-power-transformed-linear-regression-model}{%
+\subsubsection{3.3.1 AADVMT Model (Power-transformed linear regression
+model)}\label{aadvmt-model-power-transformed-linear-regression-model}}
+
+\[\text{AADVMT}_h=\sum_{v_h=0}^{V_h}\text{AVMT}_{v_h}/365=f(\text{SD}_h,\text{BE}_h,\text{TS}_{R_h})\]
+
+AADVMT\(_h\) is the annual average daily VMT for household h,
+
+SD\(_h\) represents the demographic and social-demographic
+characteristics of household h
+
+BE\(_h\) is the built environment variables (of various geographical
+resolution) of household h, and
+
+TS\(_{R_h}\) is the transportation supply of the region where household
+h resides
+
+\(f(\cdot)\) linear and transformed linear regression models, and a
+hurdle model
+
+After comparing all three model structures for predictive accuracy in
+cross-validation, the power transformed (with \(\lambda=0.38\)) linear
+regression model is chosen.
+
+The validation results show that the prediction accuracy of new models
+is better than Combined GreenStep DVMT Models
+
+Smaller RMSE (Root Mean Squared Error) and larger \(R^2\)
+
+\hypertarget{person-miles-traveled-pmt-models}{%
+\subsubsection{3.3.2 Person Miles Traveled (PMT)
+Models}\label{person-miles-traveled-pmt-models}}
+
+\hypertarget{transit-person-miles-traveled-model-hurdle-model}{%
+\paragraph{3.3.2.1 Transit Person Miles Traveled Model (hurdle
+model)}\label{transit-person-miles-traveled-model-hurdle-model}}
+
+3.3.2.2 Walk Miles Traveled Model (hurdle model)
+
+3.3.2.3 Bike Miles Traveled Model (hurdle model)
+
+\href{https://data.library.virginia.edu/getting-started-with-hurdle-models/}{Hurdle
+Models}
+
+\hypertarget{trip-frequency-length-tfl-models}{%
+\subsubsection{3.4 Trip Frequency-Length (TFL)
+models}\label{trip-frequency-length-tfl-models}}
+
+\begin{itemize}
+\tightlist
+\item
+  3.4.1 Trip Frequency Models
+\end{itemize}
+
+The trip frequency models of Transit, Bike, and Walk are hurdle models
+with the dependent variable ( \(Trips=zinb(X\beta)\). {???}
+
+\begin{itemize}
+\tightlist
+\item
+  3.4.2 Average Trip Length Models
+\end{itemize}
+
+\((\text{TripMiles})^{0.10}=X\beta\)
+
+In the estimation of TFLM model with NHTS data, it needs to use the trip
+dataset, which has more than 1 million observations; while in
+simulation, it requires to create a dataset with one observation for
+every trip.
+
+\begin{quote}
+Subsampling methods
+\end{quote}
+
+HaiYing Wang, Rong Zhu \& Ping Ma (2018) Optimal Subsampling for Large
+Sample Logistic Regression, Journal of the American Statistical
+Association, 113:522, 829-844,
+\href{https://doi.org/10.1080/01621459.2017.1292914}{DOI:
+10.1080/01621459.2017.1292914}
+
+\hypertarget{total-person-miles-traveled-by-mode-tpmtm-model}{%
+\subsubsection{3.5.1 Total Person Miles Traveled by Mode (TPMTM)
+Model}\label{total-person-miles-traveled-by-mode-tpmtm-model}}
+
+The TPMTM model is made up of two sequential models: a Total Person
+Miles Traveled (TPMT) and a Mode Allocation Model.
+
+The total person miles traveled is a household level model of total
+person miles traveled by all household members. It is a linear
+regression model with total PMT (log or power transformed) as the
+dependent variable: \(\ln(\text{pmt})=X\beta\) or
+\((\text{pmt})^{\lambda}=X\beta\),
+
+while the mode allocation model captures the percentage of PMT by modes
+for households and allocates total PMT to each mode in prediction.
+
+In estimation, we first choose a base mode, compute the ratio of PMT
+percentage for all other modes relative to that for the base mode, and
+then use log of the ratio (i.e., log-odds ratio) as the dependent
+variable of the mode allocation model. We will estimate \(n-1\) models
+if there are n modes in total. In prediction, we first predict the
+log-odds ratios from each of the \(n-1\) models, exponentiate the
+predicted log-odds ratios to get odds ratios, and apply the additional
+condition that the odds for all modes sum up to 1 to get the predicted
+PMT percentage for each mode. The model structure is consistent with a
+multinomial logit model that is commonly used in mode choice modeling.
+
+\[\ln(\frac{P_{Transit}}{P_{Auto}})=X\beta;\quad \ln(\frac{P_{Bike/Walk}}{P_{Auto}})=X\beta\]
+
+The advantage of the TPMTM model is that the model structure is similar
+to the existing household travel model in GreenSTEP, and consistent with
+mode choice models in travel demand modeling
+
+The disadvantages include:
+
+\begin{itemize}
+\tightlist
+\item
+  TPMTM is modeled at an aggregated household level and some of the
+  traveler/trip information that is useful for mode choice modeling is
+  lost. For example, a household will likely have a different
+  probability of choosing walking for 2 trips of half mile each than for
+  1 trip of 1 mile.
+\item
+  The NHTS data is dominated by driving when mode shares are measured by
+  distance. The small share of transit and bike/walk mode may bring
+  large variance of the odds ratio variable.
+\end{itemize}
+
+Finally, special handling is required when any of the shares are 0 among
+the modes being modeled (Auto, Transit, Bike, Walk), which is common for
+daily travel.
 
 \hypertarget{resources}{%
 \subsection{Resources}\label{resources}}

@@ -1152,11 +1152,20 @@ imputed$imp$pop_largest_city
 # same result
 mean(table_2020s1$life_expectancy,na.rm=T)
 imputed$imp$life_expectancy
+
+add2life_expectancy <- table_2020s1
+add2life_expectancy[c(2,33),6] <- 78.46
 # need fill the NA in X5 first
-fit_x5<- lm(pop_largest_city~population+land_area_skm+pop_density+confirmed.double+life_expectancy+gdp_capita,table_2020s1)
-predict(fit_x5, table_2020s1[c(2,11,25,29,31,33,36,43,46),], interval="prediction")
-imputed$imp$pop_largest_city
+fit_x5<- lm(pop_largest_city~population+land_area_skm+pop_density,add2life_expectancy) # +confirmed.double+life_expectancy+gdp_capita
+summary(fit_x5)
+predict(fit_x5, add2life_expectancy[is.na(add2life_expectancy$pop_largest_city),-c(1,5:7)], interval="prediction")
+predict(fit_x5, add2life_expectancy[c(2,11,25,29,31,33,36,43,46),], interval="confidence") 
+# predict(fit_x5,type = "response")[is.na(add2life_expectancy$pop_largest_city)]
+# Using linear regression, predicted value exceed the range.
+imputed$imp$pop_largest_city[,2]
+
 ```
+
 
 
 See the correlattion after imputing
