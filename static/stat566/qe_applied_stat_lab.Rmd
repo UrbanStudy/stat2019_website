@@ -49,27 +49,42 @@ Consider as predictors all possible linear and quadratic terms ($X1, X1^2, X2, X
 ```{r, out.width='50%'}
 table_2015f1 <- readxl::read_xlsx("qe_lab/Profits_2015f.xlsx")
 str(table_2015f1)
-library(ggplot2)
-ggplot(table_2015f1,aes(X2,Y, color=X1))+labs(x="advertising",y="profit",color="month")+geom_point()+theme_light()
+#library(ggplot2)
+#ggplot(table_2015f1,aes(X2,Y, #color=X1))+labs(x="advertising",y="profit",color="month")+geom_point()+theme_light()
+library(GGally)
+ggpairs(table_2015f1)
 ```
 
 ```{r, out.width='25%',fig.show='hold'}
-model_2015f1_1 <- lm(Y^2~X1+X2,table_2015f1)
+model_2015f1_1 <- lm(Y~X1+X2,table_2015f1)
 summary(model_2015f1_1)
-anova(model_2015f1_1)
 plot(model_2015f1_1)
 ```
 
-
 ```{r, out.width='25%',fig.show='hold'}
-model_2015f1_2 <- lm(Y^2~X1*X2,table_2015f1)
+boxcox_2015f1_1 <- MASS::boxcox(model_2015f1_1)
+boxcox_2015f1_1$x[which.max(boxcox_2015f1_1$y)]
+model_2015f1_2 <- update(model_2015f1_1,Y^2~.)
 summary(model_2015f1_2)
-anova(model_2015f1_2)
 plot(model_2015f1_2)
+
+model_2015f1_3 <- update(model_2015f1_2,~X1+I(X1^2)+X2+I(X2^2)+X1:X2)
+summary(model_2015f1_3)
+anova(model_2015f1_3)
+plot(model_2015f1_3)
+car::vif(model_2015f1_3)
+
+aic_2015f1 <-  MASS::stepAIC(model_2015f1_3,~.)
+summary(aic_2015f1)
+plot(aic_2015f1)
+
+
 ```
 
+
+
 ```{r}
-sqrt(predict(model_2015f1_1, newdata=data.frame(X1 = 20 ,X2 =1500), interval="prediction", level=0.95 ))
+sqrt(predict(aic_2015f1, newdata=data.frame(X1 = 20 ,X2 =1500), interval="prediction", level=0.95 ))
 sqrt(predict(model_2015f1_2, newdata=data.frame(X1 = 20 ,X2 =1500), interval="prediction", level=0.95 ))
 ```
 
@@ -85,15 +100,21 @@ Write out the alias structure for this design. What is the resolution of this de
 table_2015f2 <- readxl::read_xlsx("qe_lab/Springs_2015f.xlsx")
 library(tidyverse)
 table_2015f2 <- gather(table_2015f2,'Height','...7','...8',key = "1",value = "height" )[,-6]
+# gather(table_2015f2,c(6,7,8),key = "any",value = "height" )[,-6]
+# library(reshape2)
+# melt(table_2015f2, id=c("A","B","C","D","E"),variable.name = "any",value.name = "Y")[,-6]
+GGally::ggmatrix(table_2015f2[,1:5])
 str(table_2015f2)
 kableExtra::kable(table_2015f2)
 ```
 
 ```{r,eval=F}
-library(devtools)
-devtools::install_github("tidyverse/tidyr",force=T)
+# library(devtools)
+# devtools::install_github("tidyverse/tidyr",force=T)
 pivot_longer(table_2015f2,-A,-B,-C,-D,values_to = "Height")
 ```
+
+$2^{6-1}_{IV}$
 
 I=ABCD;
 
@@ -115,16 +136,12 @@ ABE=CDE;
 BCE=ADE;
 BDE=ACE;
 
-I=ABCD confounded
-
-Resolution=IV
-
 ```{r,message=F, out.width='50%',fig.show='hold'}
 model_2015f2_1 <- aov(height~A*B*C*D*E, table_2015f2)
 summary(model_2015f2_1)
 
 library(daewr)
-halfnorm(coef(model_2015f2_1)[2:16],alpha=0.05)
+halfnorm(coef(model_2015f2_1)[2:16],alpha=0.2)
 
 
 library(gghalfnorm)
@@ -133,7 +150,7 @@ gghalfnorm(x =coef(model_2015f2_1)[2:16],labs = names(coef(model_2015f2_1)[2:16]
 model_2015f2_2 <- lm(height~A+B*E+D, table_2015f2)
 summary(model_2015f2_2)
 anova(model_2015f2_2)
-
+plot(model_2015f2_2)
 ```
 
 ## 2016S
@@ -148,7 +165,7 @@ Consider as predictors all possible linear and quadratic terms. Consider possibl
 ```{r}
 table_2016s1 <- readxl::read_xlsx("qe_lab/RegressionSpr16.xlsx")[-1,]
 table_2016s1$weight <- round(as.numeric(table_2016s1$weight), 2)
-table_2016s1$age <- as.factor(table_2016s1$age)
+table_2016s1$age <- as.numeric(table_2016s1$age)
 table_2016s1$height <- round(as.numeric(table_2016s1$height), 2)
 table_2016s1$male <- factor(table_2016s1$male, labels=c("female","male"))
 str(table_2016s1)
@@ -158,24 +175,74 @@ str(table_2016s1)
 library(ggpubr)
 ggline(table_2016s1,"height","weight",add = c("mean","jitter"),color = "age" )
 ggline(table_2016s1,"height","weight",add = c("mean","jitter"),color = "male",shape = "male" )
+ggplot(table_2016s1,aes(height,weight,col=age,group=male))+geom_point()+geom_smooth(method=lm)
 ```
 
 ```{r, eval=F, include=T}
 library(GGally)
 ggpairs(table_2016s1)
-model_2016s1 <- lm(weight~height*male*age, table_2016s1)
-olsrr::ols_step_both_aic(model_2016s1)
+t.test(weight~male,alternative="less",table_2016s1)
+t.test(height~male,alternative="less",table_2016s1)
+data_male <- table_2016s1[table_2016s1$male=="male",]
+data_female <- table_2016s1[table_2016s1$male=="female",]
 ```
 
-```{r, message=F, out.width='25%',fig.show='hold'}
-model_2016s1_1 <- lm((weight)~(height):male:age, table_2016s1)
+```{r, eval=F, include=T}
+model_2016s1 <- lm(weight~height+age+male,table_2016s1)
+summary(model_2016s1)
+
+
+aic_2016s1<- MASS::stepAIC(model_2016s1,~.^2,direction = "both")
+summary(aic_2016s1)
+anova(aic_2016s1)
+
+model_2016s1_log <- update(model_2016s1,log(weight)~.)
+summary(model_2016s1_log)
+plot(model_2016s1_log)
+
+aic_2016s1_log<- MASS::stepAIC(model_2016s1_log,~.^2,direction = "both")
+summary(aic_2016s1_log)
+anova(aic_2016s1_log)
+
+boxcox_2016s1 <-  MASS::boxcox(model_2016s1)
+boxcox_2016s1$x[which.max(boxcox_2016s1$y)]
+model_2016s1_sq.inv <- update(model_2016s1,weight^(-0.5)~.)
+summary(model_2016s1_sq.inv)
+anova(model_2016s1_sq.inv)
+plot(model_2016s1_sq.inv)
+
+(predict(model_2016s1_sq.inv,data.frame(height=70,age=26,male="male"),interval = "prediction", level = 0.95))^{-2}
+```
+
+
+
+```{r, eval=F, include=T}
+
+model_2016s1_1 <- lm(weight~height+age,data_male)
 summary(model_2016s1_1)
+plot(model_2016s1_1)
+boxcox_2016s1_1 <- MASS::boxcox(model_2016s1_1)
+boxcox_2016s1_1$x[which.max(boxcox_2016s1_1$y)]
+model_2016s1_3 <- update(model_2016s1_1,weight^1.5~.)
+summary(model_2016s1_3)
+plot(model_2016s1_3)
+anova(model_2016s1_3)
 
-model_2016s1_2 <- lm(log(weight)~male:age+height:male:age, table_2016s1)
+model_2016s1_2 <- lm(weight~height+age,data_female)
 summary(model_2016s1_2)
-anova(model_2016s1_2)
 plot(model_2016s1_2)
+boxcox_2016s1_2 <-  MASS::boxcox(model_2016s1_2)
+boxcox_2016s1_2$x[which.max(boxcox_2016s1_2$y)]
+model_2016s1_4 <- update(model_2016s1_2,weight^0.5~.)
+summary(model_2016s1_4)
+plot(model_2016s1_4)
+anova(model_2016s1_4)
+
+predict(model_2016s1_1,data.frame(height=70,age=26),interval = "prediction", level = 0.95)
+(predict(model_2016s1_3,data.frame(height=70,age=26),interval = "prediction", level = 0.95))^{2/3}
 ```
+
+
 
 
 
@@ -202,31 +269,36 @@ ggline(table_2016s2,"machine","y",add = c("mean","jitter"),color = "station",sha
 ggline(table_2016s2,"machine","y",add = c("mean","jitter"),color = "power",shape = "power")
 ```
 
-```{r,message=F}
-model_2016s2 <- aov(y~machine*power*station, table_2016s2)
+```{r,eval=F,message=F}
+model_2016s2 <- aov(y~machine/power*station, table_2016s2)
 summary(model_2016s2)
+plot(model_2016s2)
 # anova(model_2016s2)
+boxcox_2016s2<- MASS::boxcox(model_2016s2)
+boxcox_2016s2$x[which.max(boxcox_2016s2$y)]
+model_2016s2_1 <- update(model_2016s2,y^2~.)
+summary(model_2016s2_1)
+plot(model_2016s2_1)
+car::vif(model_2016s2_1)
 ```
 
-```{r,message=F}
+```{r,eval=F,message=F}
 library(lme4)
-model_2016s2_1 <-lmer(y~machine*station+(1|machine:power)+(1|machine:power:station),table_2016s2)
-summary(model_2016s2_1)$varcor
+model_2016s2_3 <-lmer(y~machine/(1|power)*station,table_2016s2)
+model_2016s2_4 <-lmer(y~machine*station+(1|machine/power)+(1|machine/power):station,table_2016s2)
+summary(model_2016s2_3)$varcor
 # anova(model_2016s2_1)
 # pf(anova(model_2016s2_1)$'F value',df1=anova(model_2016s2_1)$'Df',df2=c(3,6,6), lower.tail = F)
-confint(model_2016s2_1)
-
+confint(model_2016s2_3)
 library(GAD)
 table_2016s2$machine_f <- as.fixed(table_2016s2$machine)
 table_2016s2$station_f <- as.fixed(table_2016s2$station)
 table_2016s2$power_r <- as.random(table_2016s2$power)
-model_2016s2_2 <- aov(y~machine_f*station_f+power_r%in%machine_f+power_r%in%machine_f*station_f, table_2016s2)
-gad(model_2016s2_2)
+model_2016s2_5 <- aov(y~machine_f*station_f+power_r%in%machine_f+power_r%in%machine_f*station_f, table_2016s2)
+gad(model_2016s2_5)
 ```
 
-```{r, out.width='25%',fig.show='hold'}
-plot(model_2016s2_2)
-```
+
 
 
 
@@ -526,7 +598,7 @@ plot(model_2017f1_2)
 ```
 
 ```{r}
-predict(model_2017f1_2, newdata=data.frame(age= 26, height= 70, male= "male"),interval = "prediction",level = 0.95)
+exp(predict(model_2017f1_2, newdata=data.frame(age= 26, height= 70, male= "male"),interval = "prediction",level = 0.95))
 ```
 
 
@@ -1128,7 +1200,7 @@ lda          unordered     Linear discriminant analysis
 2lonly.mean  numeric       Level-2 class mean
 2lonly.norm  numeric       Level-2 class normal
 2lonly.pmm   any           Level-2 class predictive mean matching
-------------------------------------------------------------------
+
 
 
 ```{r,out.width='50%',message=F,warning=F}

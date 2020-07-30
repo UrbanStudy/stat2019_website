@@ -31,39 +31,12 @@ header-includes:
 small,scriptsize,tiny,p0.5linewidth
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,cache=FALSE, results="markup", tidy=T)
+knitr::opts_chunk$set(echo = TRUE,cache=FALSE, message=FALSE, warning=F, echo=TRUE,results="markup", tidy=T)
+# options(scipen=6)
+# options(digits=4)
+if (!require(pacman)) {install.packages("pacman"); library(pacman)}
+p_load(readxl,ggplot2,GGally,tidyverse, MASS,car,nortest,olsrr,lme4,kableExtra,pander) # ggpubr, mosaic,Metrics(rmse), agricolae, emmeans, huxtable
 ```
-
-```{r eval=T, include=F,message=F}
-library(tidyverse)
-library(readxl)
-library(ggplot2)
-library(ggpubr)
-library(GGally)
-library(car)
-library(olsrr)
-library(huxtable)
-library(pander)
-library(emmeans)
-library(knitr)
-library(kableExtra)
-library(Metrics) # rmse
-library(GAD)
-library(lme4)
-```
-
-```{r eval=F, include=F}
-install.packages("ggplot2")
-install.packages("ggpubr")
-install.packages("mosaic")
-install.packages("agricolae")
-install.packages("DescTools")
-install.packages("emmeans")
-install.packages("kableExtra")
-install.packages("huxtable")
-library(MASS)
-```
-
 
 
 
@@ -135,21 +108,27 @@ ggline(table_2016s1,"height","weight",add=c("mean","jitter"),color="male")
 ```
 
 ```{r,eval=F, fig.width=8}
-ggpairs(table_2016f1[,-1]) # [c(1:10)]
+ggpairs(table_2015f1,aes(alpha=0.3))+theme_light()
 ```
 
-```{r,eval=F, , fig.show='hold', out.width='25%'}
-ggpairs(table_2018s1_u6,mapping=aes(color =male,shape=male,alpha=0.3),
-        columns=c("volume","height","smoker"))+theme_light()
-```
+
 Based on scatterplots and correlation, $Cor(y,X_1)=0.866$. X1 have medium to strong positive linear relationship to the response variable (Correlation coefficient is more than 0.6). X2 has medium negative
+
+A linear function does not fit the data well since the data is clumped in the lower left corner and there appears to be an increasing variance problem.
+
 
 #### Build Model
 
 ```{r,eval=F}
 model_2015f1_1 <- lm(Y~X1*X2,table_2015f1)
+model_2015f1_2 <- lm(Y^2~X1*X2,table_2015f1)
+table_2015f1_logy <- table_wf %>% mutate(logy=log(Y))
+table_2015f1_logy$Y <- NULL
+
 ```
-$y=\beta_0+\beta_1X_1++\beta_2X_2$
+$y=\beta_0+\beta_1X_1+\beta_2X_2$
+
+
 
 #### Regression Analysis
 
@@ -164,6 +143,10 @@ The fitted overall model is statistically significant at 5% significance level (
 But most of the coefficients are not significent.
 
 Coefficient of 511.713 in the full model suggests the average peak rate of flow increases by **511.713** cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
+
+We merely test the null hypothesis $H_0:\beta_1=0$ using either the F-test or the equivalent t-test:
+
+As the output illustrates, the P-value <0.001. There is significant evidence at the 0.01 level to conclude that there is a linear association between the natural logarithm of () and the natural logarithm of ().
 
 #### ANOVA
 
@@ -194,9 +177,7 @@ ols_step_best_subset(model_2015f1_1)
 #### Comparison
 
 ```{r,eval=F, include=T}
-model_2015f1_2 <- lm(Y^2~X1*X2,table_2015f1)
-table_2015f1_logy <- table_wf %>% mutate(logy=log(Y))
-table_2015f1_logy$Y <- NULL
+
 huxreg(model_2015f1_1, model_2015f1_2)
 # Redo analysis
 ```
@@ -210,16 +191,58 @@ The value of PRESS is **6.53**. This model explains **90.8%** of variation in pr
 
 ```{r,eval=F,include=T}
 plot(model_2015f1_1)
+
+plot(table_2015f1$X1, table_2015f1$Y,panel.last = lines(sort(table_2015f1$X1), fitted(model_2015f1_1)[order(table_2015f1$X1)]))
+plot(table_2015f1$X2, table_2015f1$Y,panel.last = lines(sort(table_2015f1$X2), fitted(model_2015f1_1)[order(table_2015f1$X2)]))
+
+plot(x=fitted(model_2015f1_1), y=residuals(model_2015f1_1),panel.last = abline(h=0, lty=2))
+
+qqnorm(residuals(model_2015f1_1), main="", datax=TRUE)
+qqline(residuals(model_2015f1_1), datax=TRUE)
+
+ad.test(residuals(model_2015f1_1))
+
 ```
 Residual Diagnostics show some violations. The model didn't satisfied the OLS assumptions of random errors.
 
-On the residual plot, there is a **funnel pattern**.
+On the residual plot, there is a **funnel pattern**. The residual plot confirms that the "equal variance" assumption is violated.
 
 On the outlier and leverage plot, there are **two outliers**.
 
 On the qq plot, most of points follow approximately straight line but have some **positive skew**. 
 
 Suggestion: using **natural log of response** to make a variance-stabilizing transformations. 
+
+https://online.stat.psu.edu/stat501/book/export/html/956
+
+Transforming the y values corrects problems with the error terms (and may help the non-linearity).
+
+Transforming the x values primarily corrects the non-linearity.
+
+The transformations appear to have rectified the original problem with the model since the fitted line (residual) plot now looks ideal
+
+If the variances are unequal and/or error terms are not normal, try a "power transformation" on y. A power transformation on y involves transforming the response by taking it to some power $\lambda$. That is 
+$y^{\star}=y^\lambda$. Most commonly, for interpretation reasons, $\lambda$ is a "meaningful" number between -1 and 2, such as -1, -0.5, 0, 0.5, (1), 1.5, and 2. When $\lambda=0$, the transformation is taken to be the natural log transformation. That is $y^{\star}=\ln(y)$. One procedure for estimating an appropriate value for $\lambda$ is the so-called Box-Cox Transformation
+
+If the error variances are unequal, try "stabilizing the variance" by transforming y, and stay within the linear regression framework
+
+If the response y is a Poisson count, the variances of the error terms are not constant but rather depend on the value of the predictor. A common recommendation is to transform the response using the "square root transformation "$y^*=\sqrt{y}$
+
+If the response y is a binomial proportion, the variances of the error terms are not constant but rather depend on the value of the predictor. Another common  recommendation is to transform the response using the "arcsine transformation," $\hat{p}^*=sin^{-1}\left(\sqrt{\hat{p}}\right)$ 
+
+If the response y isn't anything special, but the error variances are unequal, a common recommendation is to try the natural log transformation or the "reciprocal transformation" $y^*=\frac{1}{y}$.
+
+It's not really okay to remove some data points just to make the transformation work better, but if you do make sure you report the scope of the model.
+
+It's better to give up some model fit than to lose clear interpretations. Just make sure you report that this is what you did.
+
+In summary, it appears as if the model with the natural log of () as the response and the natural log of () as the predictor works well. The relationship appears to be linear and the error terms appear independent and normally distributed with equal variances.
+
+- polynomial regression
+
+In the residuals versus predictor plots, there is obvious curvature and it does not show uniform randomness. The histogram appears heavily left-skewed and does not show the ideal bell-shape for normality. Furthermore, the NPP seems to deviate from a straight line and curves down at the extreme percentiles. These plots alone suggest that there is something wrong with the model being used and indicate that a higher-order model may be needed.
+
+The figures below give a scatterplot of the raw data and the trend of this data is better suited to a quadratic fit.
 
 #### Estmation
 
@@ -265,10 +288,15 @@ table_2019s1_250_noout <- table_2019s1_250[-c(189,219,249), ]
 model_2019s1_noout <- lm(y ~ sqrt(!is.na(x1))+x2+x3+A+B, table_2019s1_250_noout)
 ```
 
+In general, the median changes by a factor of $k^{\beta_1}$ for each k-fold increase in the predictor x.
+
+The result tells us that the estimated median y value changes by a factor of () for each two-fold increase in x. For example, the median y of 2x is estimated to be () times the median y of x.
+
+We can be 95% confident that the median y will increase by a factor between L and R for each two-fold increase inx.
 
 #### Conclusion
 
-
+the natural logarithm of () is positively linearly related to the natural logarithm of (). That is, as the natural log of () increases, the average natural logarithm of () also increases.
 
 
 

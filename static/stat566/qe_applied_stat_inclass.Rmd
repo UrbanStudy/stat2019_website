@@ -6,6 +6,7 @@ geometry: margin=3mm
 linestretch: 0.1
 classoption:
 - portrait
+- twocolumn
 pagenumbering: FALSE
 whitespace: none
 output:
@@ -38,21 +39,21 @@ header-includes:
 
 # 
 
-## 2015S
+ 2015S
 Fountain*, Crain
 
-### 2015S1
+2015S1
 [2016S1][]
 
-### 2015S2
+2015S2
 [2019S3][]
 
-### 2015S3
+
+2015S3
 [2018S2][] [2019S2][]
 
 ### 2015S4
 [2018S4][] [2019S1][] 
-\begin{multicols}{2}
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$, with the restriction that $\beta_1-\beta_0=0$. Find the least-squares estimators of the regression coefficients.
 
@@ -62,146 +63,78 @@ $\frac{\partial SSE}{\partial\beta_0}=2\sum_{i=1}^n(y_i-\beta_0-\beta_0x_i-\beta
 $\hat\beta_0=\frac{\sum_{i=1}^n(1+x_i)y_i-\hat\beta_2\sum_{i=1}^n(1+x_i)x_i^2}{\sum_{i=1}^n(1+x_i)^2}$
 
 $\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-\beta_0-\beta_0x_i-\beta_2x_i^2)(-x_i^2)\overset{set}{=}0$;
+$\hat\beta_0=\frac{\sum x_i^2y_i-\hat\beta_2\sum x_i^4}{\sum x_i^2(1+x_i)}$
 
-$\sum_{i=1}^nx_i^2y_i=\hat\beta_0\sum_{i=1}^nx_i^2(1+x_i)+\hat\beta_2\sum_{i=1}^nx_i^4=\frac{\sum_{i=1}^n(1+x_i)y_i-\hat\beta_2\sum_{i=1}^n(1+x_i)x_i^2}{\sum_{i=1}^n(1+x_i)^2}\sum_{i=1}^nx_i^2(1+x_i)+\hat\beta_2\sum_{i=1}^nx_i^4$
+$\hat\beta_2=\frac{\sum x_i^2y_i\sum (1+x_i)^2-\sum (1+x_i)y_i\sum x_i^2(1+x_i)}{\sum x_i^4\sum (1+x_i)^2-[\sum x_i^2(1+x_i)]^2}$
 
-$\hat\beta_2\left[\sum_{i=1}^nx_i^4\sum_{i=1}^n(1+x_i)^2-[\sum_{i=1}^nx_i^2(1+x_i)]^2 \right]=\sum_{i=1}^nx_i^2y_i\sum_{i=1}^n(1+x_i)^2-\sum_{i=1}^n(1+x_i)y_i\sum_{i=1}^nx_i^2(1+x_i)$
 
-$\hat\beta_2=\frac{\sum_{i=1}^nx_i^2y_i\sum_{i=1}^n(1+x_i)^2-\sum_{i=1}^n(1+x_i)y_i\sum_{i=1}^nx_i^2(1+x_i)}{\sum_{i=1}^nx_i^4\sum_{i=1}^n(1+x_i)^2-[\sum_{i=1}^nx_i^2(1+x_i)]^2}$
 
-$\sum_{i=1}^n(1+x_i)^2\hat\beta_0=\sum_{i=1}^n(1+x_i)y_i-\frac{\sum_{i=1}^nx_i^2y_i\sum_{i=1}^n(1+x_i)^2-\sum_{i=1}^n(1+x_i)y_i\sum_{i=1}^nx_i^2(1+x_i)}{\sum_{i=1}^nx_i^4\sum_{i=1}^n(1+x_i)^2-[\sum_{i=1}^nx_i^2(1+x_i)]^2}\sum_{i=1}^n(1+x_i)x_i^2$
+$\hat\beta_0=\hat\beta_1=\frac{\sum (1+x_i)y_i\sum x_i^4-\sum x_i^2y_i\sum (1+x_i)x_i^2}{\sum x_i^4\sum (1+x_i)^2-[\sum x_i^2(1+x_i)]^2}$
 
-$=\frac{\sum_{i=1}^n(1+x_i)y_i\sum_{i=1}^nx_i^4\sum_{i=1}^n(1+x_i)^2-\sum_{i=1}^n(1+x_i)y_i[\sum_{i=1}^nx_i^2(1+x_i)]^2-\sum_{i=1}^nx_i^2y_i\sum_{i=1}^n(1+x_i)^2\sum_{i=1}^n(1+x_i)x_i^2+\sum_{i=1}^n(1+x_i)y_i[\sum_{i=1}^nx_i^2(1+x_i)]^2}{\sum_{i=1}^nx_i^4\sum_{i=1}^n(1+x_i)^2-[\sum_{i=1}^nx_i^2(1+x_i)]^2}$
 
-$\hat\beta_0=\hat\beta_1=\frac{\sum_{i=1}^n(1+x_i)y_i\sum_{i=1}^nx_i^4-\sum_{i=1}^nx_i^2y_i\sum_{i=1}^n(1+x_i)x_i^2}{\sum_{i=1}^nx_i^4\sum_{i=1}^n(1+x_i)^2-[\sum_{i=1}^nx_i^2(1+x_i)]^2}$
-
-\end{multicols}
 
 ## 2015F 
 
 ### 2015F1
 [2016S1][] [566-HW2-6] [8.3 The One-Quarter Fraction of the 2k Design p.344] 
-\begin{multicols}{2}
-You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 2 blocks. You may assume that 4-way and higher interactions are not important.
 
-\begin{tabular}{ l|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c }
-&A&B&{\tiny AB}&C&{\tiny AC}&{\tiny BC}&{\tiny \shortstack{AB\\C}}&D&{\tiny AD}&{\tiny BD}&{\tiny \shortstack{AB\\D}}&{\tiny CD}&{\tiny \shortstack{AC\\D}}&{\tiny \shortstack{BC\\D}}&{\tiny \shortstack{AB\\CD}}\\
-(1)&-&-&+&-&+&+&-&-&+&+&-&+&-&-&+\\
-a&+&-&-&-&-&+&+&-&-&+&+&+&+&-&-\\
-b&-&+&-&-&+&-&+&-&+&-&+&+&-&+&-\\
-ab&+&+&+&-&-&-&-&-&-&-&-&+&+&+&+\\
-c&-&-&+&+&-&-&+&-&+&+&-&-&+&+&-\\
-ac&+&-&-&+&+&-&-&-&-&+&+&-&-&+&+\\
-bc&-&+&-&+&-&+&-&-&+&-&+&-&+&-&+\\
-abc&+&+&+&+&+&+&+&-&-&-&-&-&-&-&-\\
-d&-&-&+&-&+&+&-&+&-&-&+&-&+&+&-\\
-ad&+&-&-&-&-&+&+&+&+&-&-&-&-&+&+\\
-bd&-&+&-&-&+&-&+&+&-&+&-&-&+&-&+\\
-abd&+&+&+&-&-&-&-&+&+&+&+&-&-&-&-\\
-cd&-&-&+&+&-&-&+&+&-&-&+&+&-&-&+\\
-acd&+&-&-&+&+&-&-&+&+&-&-&+&+&-&-\\
-bcd&-&+&-&+&-&+&-&+&-&+&-&+&-&+&-\\
-abcd&+&+&+&+&+&+&+&+&+&+&+&+&+&+&+
-\end{tabular}
-
-Show all of the following:
+You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only eight runs can be done on a given day, so you will have to conduct the experiment in 2 blocks. You may assume that 4-way and higher interactions are not important. Show all of the following:
 
  - all of your generators (make sure that your resolution is at least III)
  
-$2^{6-2}_{IV}$ E=ABC, F=BCD;
+$2^{6-2}_{IV}$ ABC=E, BCD=F;
 I=ABCE=BCDF=ADEF
 
  - the 16 runs to conduct
-
-\begin{tabular}{ c|c|c|c|c|c|c|c|l }
-A & B & C & D & E & F &{\scriptsize ABF}&{\scriptsize ABD}& Run\\
-- & - & - & - & - & - & -   & -   & (1) \\
-+ & - & - & - & + & - & +   & +   & ae  \\
-- & + & - & - & + & + & -   & +   & bef \\
-+ & + & - & - & - & + & +   & -   & abf \\
-- & - & + & - & + & + & +   & -   & cef \\
-+ & - & + & - & - & + & -   & +   & acf \\
-- & + & + & - & - & - & +   & +   & bc  \\
-+ & + & + & - & + & - & -   & -   & abce\\
-- & - & - & + & - & + & +   & +   & df  \\
-+ & - & - & + & + & + & -   & -   & adef\\
-- & + & - & + & + & - & +   & -   & bde \\
-+ & + & - & + & - & - & -   & +   & abd \\
-- & - & + & + & + & - & -   & +   & cde \\
-+ & - & + & + & - & - & +   & -   & acd \\
-- & + & + & + & - & + & -   & -   & bcdf\\
-+ & + & + & + & + & + & +   & +   & abcdef
-\end{tabular}
-
-
- 
-E=ABC; F=BCD; Block=ABF
- 
- - the alias structure
- 
-A = BCE = DEF = ABCDF;
-
-B = ACE = CDF = ABDEF;
-
-C = ABE = BDF = ACDEF;
-
-D = BCF = AEF = ABCDE;
-
-E = ABC = ADF = BCDEF;
-
-F = BCD = ADE = ABCEF;
-
-BF = CD = ACEF = ABDE;
-
-AB = CE = ACDF = BDEF;
-
-AC = BE = ABDF = CDEF;
-
-AD = EF = BCDE = ABCF;
-
-AE = BC = DF = ABCDEF;
-
-AF = DE = BCEF = ABCD;
-
-BD = CF = ACDE = ABEF;
-
-ABD = CDE = ACF = BEF;
-
-ACD = BDE = ABF = CEF;
- 
  - the eight runs to be done on each day
  
-Day1: (1), abce, bcdf, adef, abd, cde, acf, bef
+4Blk:ABD-ABF:1--;2+-;3-+;4++. $df_{no AE,ABD,ABF}$=1, $df_{Blk}$=3, $df_{T}$=15
 
-Day2: ae, bc, df, abcdef, abf, cef, acd, bde
+2Blk:ABD:1+3,2+4; ABF:1+2,3+4. $df_{noABD or ABF}$=1, $df_{Blk}$=1, $df_{T}$=15
+
+ABF- Day1: (1), abce, bcdf, adef, abd, cde, acf, bef
+
+ABF+ Day2: ae, bc, df, abcdef, abf, cef, acd, bde
  
  - the effects to be confounded with blocks
  
-ACD=BDE=ABF=CEF 
+ABF=ACD=BDE=CEF 
 
  - the Source and DF columns of the ANOVA table
 
- - - - - - - -  -  -  -  -  -  -   -   -
- A B C D E F AB AC AD AE AF BD BF ABD  Block
+A-F,AB,AC,AD,AE,AF,BD,BF,ABD,Block=1
 
- 1 1 1 1 1 1 1  1  1  1  1  1  1   1   1
- ---------------------------------------
+\begin{tabular}{ l|c|c|c|c|c|c|c|c|c|l }
+Run&A & B & C & D & E & F &{\tiny ABD}&{\tiny ABF}& \\
+ (1) &- & - & - & - & - & - & -   & - & 1 &{\scriptsize I=ABCE=BCDF=ADEF}\\
+ ae  &+ & - & - & - & + & - & +   & + & 4 &{\scriptsize A = BCE = DEF = ABCDF}\\
+ bef &- & + & - & - & + & + & +   & - & 2 &{\scriptsize B = ACE = CDF = ABDEF}\\
+ abf &+ & + & - & - & - & + & -   & + & 3 &{\scriptsize C = ABE = BDF = ACDEF}\\
+ cef &- & - & + & - & + & + & -   & + & 3 &{\scriptsize D = BCF = AEF = ABCDE}\\
+ acf &+ & - & + & - & - & + & +   & - & 2 &{\scriptsize E = ABC = ADF = BCDEF}\\
+ bc  &- & + & + & - & - & - & +   & + & 4 &{\scriptsize F = BCD = ADE = ABCEF}\\
+ abce&+ & + & + & - & + & - & -   & - & 1 &{\scriptsize AB = CE = ACDF = BDEF}\\
+ df  &- & - & - & + & - & + & +   & + & 4 &{\scriptsize AC = BE = ABDF = CDEF}\\
+ adef&+ & - & - & + & + & + & -   & - & 1 &{\scriptsize AD = EF = BCDE = ABCF}\\
+ bde &- & + & - & + & + & - & -   & + & 3 &{\scriptsize AF = DE = BCEF = ABCD}\\
+ abd &+ & + & - & + & - & - & +   & - & 2 &{\scriptsize BD = CF = ACDE = ABEF}\\
+ cde &- & - & + & + & + & - & +   & - & 2 &{\scriptsize BF = CD = ACEF = ABDE}\\
+ acd &+ & - & + & + & - & - & -   & + & 3 &{\scriptsize AE = BC = DF = ABCDEF}\\
+ bcdf&- & + & + & + & - & + & -   & - & 1 &{\scriptsize ABD = BEF = ACF = CDE}\\
+abcdef&+ & + & + & + & + & + & +   & +& 4 &{\scriptsize ABF = BDE = ACD = CEF}
+\end{tabular}
 
-AB=CE, AC=BE, AD=EF, AE=BC=DF, AF=DE, BD=CF, BF=CD, ABD=CDE=ACF=BEF, ACD=BDE=ABF=CEF 
-
-
-\end{multicols}
 
 ### 2015F2
 [2017F1][] [Example 8.2 The Tool Life Data]
-\begin{multicols}{2}
+
 A company is comparing two different methods of processing their raw material. They begin with 8 batches of material, which are randomly assigned to one of the two processes. The quality of the final product is measured on a 50-point scale. There is some concern that the outside temperature on each day might have an effect on the product (and the effect might be different for the two processes), and so it is recorded so that it can be taken into account. The following table shows and ordered pair for each batch, consisting of the quality measurement and the temperature.
 
- --------- ---------------
+
  Process 1 (45,81)(40,68)(41,77)(41,61)
           
  Process 2 (42,59)(37,62)(41,83)(35,70)
- -------------------------
+
 
 a) Write an appropriate model for the situation described above. Hint: there are 8 observations, and you will need to use at least one indicator variable.
 
@@ -225,28 +158,23 @@ $$\begin{bmatrix} 45\\40\\41\\41\\42\\37\\41\\35\end{bmatrix}_{8\times1}=\begin{
 \begin{bmatrix} \beta_0 \\ \beta_1 \\ \gamma_0\end{bmatrix}_{3\times1}
 +\begin{bmatrix} \varepsilon_1\\\varepsilon_2\\\varepsilon_3\\\varepsilon_4\\\varepsilon_5\\\varepsilon_6\\\varepsilon_7\\\varepsilon_8\end{bmatrix}_{8\times1}$$
 
-$\begin{bmatrix} 0&0&0&1\end{bmatrix}\begin{bmatrix} \beta_0\\\beta_1\\\gamma_0\\\gamma_1\end{bmatrix}=0$, $r=1$
-
 $dfE_{Full}=n-(k+1)=8-(3+1)=4$, $dfE_{Reduced}=n-(k+1)+r=5$
 
 $F=\frac{(SSE_{Reduced}-SSE_{Full})/r}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=1$, $df_{deno}=4$
 
-\end{multicols}
 
 ### 2015F3
 [2016S3][] [2017F2][]
-\begin{multicols}{2}
+
 
 a) Explain the difference between fixed and random effects in an experimental design. Give an example to illustrate your explanation.
 
 b) Explain the difference between crossed and nested effects in an experimental design. Give an example to illustrate your explanation. Make sure to discuss which terms would be absent from the model, and the resulting effect on sums of squares and degrees of freedom in the ANOVA table.
 
-\end{multicols}
 
 ### 2015F4
 [2019S1][]
 
-\begin{multicols}{2}
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_1=0$, $\beta_0=2\beta_2$. Find the least-squares estimators of $\beta_0$ and $\beta_1$.
 
@@ -257,14 +185,12 @@ $\frac{\partial SSE}{\partial\beta_0}=2\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)(-
 $\hat\beta_0=\frac{\sum_{i=1}^ny_i(1+2x_i^2)}{\sum_{i=1}^n(1+2x_i^2)^2}$;
 $\hat\beta_2=\frac{2\sum_{i=1}^ny_i(1+2x_i^2)}{\sum_{i=1}^n(1+2x_i^2)^2}$
 
-\end{multicols}
 
 ## 2016S
 Fountain, Tableman*
 
 ### 2016S1
 [2015S1][] [2017SD2][] [7.6 Confouding the 2k Factorial Design in Four Blocks]
-\begin{multicols}{2}
 
 You must design an experiment to test six factors, each having two levels. Your budget will only allow sixteen runs. Furthermore, due to time constraints, only four runs can be done on a given day, so you will have to conduct the experiment in 4 blocks. You may assume that 4-way and higher interactions are not important.
 
@@ -272,100 +198,63 @@ Show all of the following:
 
  - all of your generators (make sure that your resolution is at least III)
  
-$2^{6-2}_{IV}$ E=ABC, F=BCD;
-I=ABCE=BCDF=ADEF
+$2^{6-2}_{IV}$ ABC=D, ABE=F;
+I=ABCD=ABEF=CDEF
  
- - the 16 runs to conduct  E=ABC; F=BCD; Block=ABD  
- 
-\begin{tabular}{ l|l|l|l||l|l|l|l|l|l|l }
-A & B & C & D & E & F & ACD & ABD & Run\\
-- & - & - & - & - & - &  -  &  -  & (1) & 4\\
-- & - & - & + & - & + &  +  &  +  & df  & 1\\
-- & - & + & - & + & + &  +  &  -  & cef & 2\\
-- & - & + & + & + & - &  -  &  +  & cde & 3\\
-- & + & - & - & + & + &  -  &  +  & bef & 3\\
-- & + & - & + & + & - &  +  &  -  & bde & 2\\
-- & + & + & - & - & - &  +  &  +  & bc  & 1\\
-- & + & + & + & - & + &  -  &  -  & bcdf &4\\
-+ & - & - & - & + & - &  +  &  +  & ae  & 1\\
-+ & - & - & + & + & + &  -  &  -  & adef& 4\\
-+ & - & + & - & - & + &  -  &  +  & acf & 3\\
-+ & - & + & + & - & - &  +  &  -  & acd & 2\\
-+ & + & - & - & - & + &  +  &  -  & abf & 2\\
-+ & + & - & + & - & - &  -  &  +  & abd & 3\\
-+ & + & + & - & + & - &  -  &  -  & abce& 4\\
-+ & + & + & + & + & + &  +  &  +  & abcdef&1
-\end{tabular}
- 
- - the alias structure
- 
-A=BCE=DEF; B=CDF=ACE; C=ABE=BDF; D=BCF=AEF; E=ABC=ADF; F=BCD=ADE;
-
-AB=CE; AC=BE; AD=EF; AE=BC=DF; AF=DE; BD=CF; BF=CD;
-
-ABD=CDE=ACF=BEF; ACD=BDE=ABF=CEF 
- 
+ - the 16 runs to conduct
+ - the alias structure 
  - the four runs to be done on each day
- 
-Day1: ae, bc, df, abcdef
-
-Day2: abf, acd, bde, cef
-
-Day3: abd, acf, bef, cde
-
-Day4: (1), abce, adef, bcdf
- 
  - the effects to be confounded with blocks
- 
- ACD=BDE=ABF=CEF;
- ABD=ACF=BEF=CDE;
- AE=BC=DF
- 
  - the Source and DF columns of the ANOVA table
 
- - - - - - - -- -- -- -- -- -- --
- A B C D E F AB AC AD AF BD BF Block
-
- 1 1 1 1 1 1 1  1  1  1  1  1  3
- --------------------------------
-
-AB=CE, AC=BE, AD=EF, AF=DE, BD=CF, BF=CD
  
-
-\end{multicols}
-
-
-
-
+\begin{tabular}{ l|c|c|c|c|c|c|c|c|c|l|l }
+ Run & A& B & C & E & D & F &ACE  &ACF& \\
+ (1) &- & - & - & - & - & - & -   & - & 1 &I=ABCD=ABEF=CDEF&Day1: (1), abcd, abef, cdef\\
+ adf &+ & - & - & - & + & + & +   & - & 2 &A = BCD = BEF&   Day2: adf, ace, bde, bcf\\
+ bdf &- & + & - & - & + & + & -   & + & 3 &B = ACD = AEF&   Day3: bdf, acf, bce, ade\\
+ ab  &+ & + & - & - & - & - & +   & + & 4 &C = ABD = DEF&   Day4: ab, cd, ef, abcdef\\
+ cd  &- & - & + & - & + & - & +   & + & 4 &D = ABC = CEF&\\
+ acf &+ & - & + & - & - & + & -   & + & 3 &E = ABF = CDF&\\
+ bcf &- & + & + & - & - & + & +   & - & 2 &F = ABE = CDE&\\
+ abcd&+ & + & + & - & + & - & -   & - & 1 &AB = CD = EF&  Confounded\\
+ ef  &- & - & - & + & - & + & +   & + & 4 &AC = BD &\\
+ ade &+ & - & - & + & + & - & -   & + & 3 &AD = BC & A-F, AC,AD,AE,AF,CE,CF=1\\
+ bde &- & + & - & + & + & - & +   & - & 2 &AE = BF & Blk=3\\
+ abef&+ & + & - & + & - & + & -   & - & 1 &AF = BE &\\
+ cdef&- & - & + & + & + & + & -   & - & 1 &CE = DF &\\
+ ace &+ & - & + & + & - & - & +   & - & 2 &CF = DE &\\
+ bce &- & + & + & + & - & - & -   & + & 3 &ACE = BDE = BCF = ADF& Confounded\\
+abcdef&+& + & + & + & + & + & +   & + & 4 &ACF = BDF = BCE = ADE& Confounded
+\end{tabular}
 
 
 ### 2016S2
 [2017F3][] [2018S3][]
-
 
 The multiple linear regression model $y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i$
 was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into
 the following:
 
 $SSR(X_1)=108$; 
+
 $SSR(X_2 | X_1)=163$; 
+
 $SSR(X_3 | X_1 X_2)=29$; 
+
 $SSR(X_4 | X_1 X_2 X_3)=41$; 
+
 $SSR(X_5 | X_1 X_2 X_3 X_4)=26$
 
 The model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i3}+\beta_5X_{i5}+\varepsilon_i$ was also fit to the same data and the following ANOVA was calculated:
 
- ----------------------------------------------------------------------------
  Source(df)     $SS_{F}$ $SS_{-3,-4,-5}$ $SS_{1,2}$ $SS_{-2,-4}$ $SS_{1,3,5}$
- ----           ---      ---             ---        ---          ---
+
  Regression     367(5)   -96(3)          271(2)     -153(2)      214(3)
 
  Residual Error 336(69)  +96(3)          432(72)    +153(2)      489(71)
 
  Total          703(74)
- ----------------------------------------------------------------------------
-
-\begin{multicols}{2}
 
 The additional(extral) sum of squares F test (partial F test), $SSE_{reduced}-SSE_{Full}$ is called the extra sum of squares due to $j^{th}$ predictor given that all the other terms are in the model.
 
@@ -415,7 +304,6 @@ $F=\frac{(489-336)/(71-69)}{336/69}=15.70982$,
 $F_{p,2,69}=15.70982$; $F_{0.05,2,50}=3.18$, $F_{0.05,2,100}=3.09$; $\therefore p<0.05$, reject $H_0$ at 0.05 level of significance
 
 
-\end{multicols}
 
 ### 2016S3
 [2017F2][]
@@ -440,16 +328,27 @@ $\hat\beta_0=\hat\beta_2=\frac{\sum_{i=1}^n(1+x_i^2)(y_i-x_i)}{\sum_{i=1}^n(1+x_
 
 In the multiple regression model with $p-1$ independent variables $X_j$, let the $n\times p$ matrix $\mathbf{X}$ denote the design matrix which contains the column of 1’s to fit the intercept term and has full rank. Let $\mathbf{H}$ denote the hat matrix. Let $h_{ii}$ denote the $i_{th}$ diagonal element of $\mathbf{H}$. Prove that $0\le h_{ii}\le1$.
 
+$\mathbf{H}$ is an idempotent matrix and symmetric.
+
+$\mathbf{H^2=X(X'X)^{-1}X'X(X'X)^{-1}X'=X(X'X)^{-1}X'=H}$
+
+\[h_{ii}=h'_{i}h_{i}=\begin{bmatrix}h_{1i}&\cdots&h_{ni}\end{bmatrix}\begin{bmatrix}h_{1i}\\\vdots\\h_{ni}\end{bmatrix}=\sum h_{ii}^2=h_{ii}^2+\sum_{j\neq j} h_{ij}^2\ge 0\]
+
+\[h_{ii}-h_{ii}^2=h_{ii}(1-h_{ii})=\sum_{j\neq j} h_{ij}^2\ge 0\implies h_{ij}\le1\]
+
+Residual: $e=(I-H)Y$
+
+\[Cov(\mathbf{e})=\]
+
+\[Var(e_i)=\sigma^2(1-h_{ii})\ge 0\implies h_{ij}\le1\]
+
 ## 2016F
 Jong Sung Kim*, Brad Crain
 
 ### 2016F1
 
-\begin{multicols}{2}
-
 The data for this question consist of 12 measurements on each of 2 quantitative regressor variables $x_1$ and $x_2$ and on a dependent variable y. The data are displayed below:
 
- --- -- -- --- - --         ------
  Obs x1 x2 y   m $\bar y_i$ $(y_{ij}-\bar y_i)^2$
 
  1   3   1 5   1 5          0
@@ -475,10 +374,7 @@ The data for this question consist of 12 measurements on each of 2 quantitative 
  11  19  2 135 8 135        0
  
  12  19  3 121 9 121        0
- --------------------------------
- 
 
-\end{multicols}
  
 ```{r}
 x1 <- c(3,3,3,7,7,12,12,12,12,12,19,19)
@@ -489,8 +385,6 @@ model <- lm(y~x2,table)
 summary(model)
 anova(model)
 ```
- 
-\begin{multicols}{2}
 
  
 The model to be fit to the data is $Y =\beta_0+\beta_1x_{1}+\beta_2X_{2}+\varepsilon_i$. What follows is partially incomplete SAS output. Although the output is incomplete, there is enough information given that you can answer the questions that follow with a minimal amount of calculation. Note that Type I SS is the same as Seq SS.
@@ -499,7 +393,6 @@ Information I: model: $y = x_1 x_2$;
 
 Analysis of Variance
 
- ---    -- --         ---
  Source df SS         MS
  
  Model  2  21292.2369 10646.1185
@@ -507,19 +400,17 @@ Analysis of Variance
  Error  9  703.87576  78.2084
  
  Total  11 21996
- -------------------------------
- 
- -------------- -------- -------- ------
+
+
  Root MSE       8.84355  R-Square 0.9680
  
  Dependent Mean 52.66667 Adj R-Sq 0.9609
  
  Coeff Var      16.79156
- ---------------------------------------
+
  
 Parameter Estimates
 
- --------- -- ----------------- ---------
  Variable  DF ParameterEstimate Type I SS
  
  Intercept 1  -10.44655         33285
@@ -527,11 +418,9 @@ Parameter Estimates
  x1        1  8.15560           20647
  
  x2        1  -9.56119          663.87250
- ----------------------------------------
  
  Covariance of Estimates
  
- --------- ------------ ------------ ------------
  Variable   Intercept   x1           x2
  
  Intercept  54.81211821 -1.510773883 -16.5305567
@@ -539,13 +428,12 @@ Parameter Estimates
  x1        -1.510773883 0.2483463917 -0.496692783
  
  x2        -16.5305567  -0.496692783 10.7694378
- ------------------------------------------------
+
  
 Information II: model:$y = x_2 x_1$;
 
 Analysis of Variance
 
- ------ ------------
  Source SumofSquares  
  
  Model  
@@ -553,19 +441,16 @@ Analysis of Variance
  Error  703.87576
  
  Total  
- -------------------
- 
- -------------- -------- -------- ------
+
+
  Root MSE       8.84355  R-Square 0.9680
  
  Dependent Mean 52.66667 Adj R-Sq 0.9609
  
  Coeff Var      16.79156
- ---------------------------------------
  
 Parameter Estimates
 
- --------- -- ----------------- ---------
  Variable  DF ParameterEstimate Type I SS
  
  Intercept 1  -10.44655         33285
@@ -573,8 +458,6 @@ Parameter Estimates
  x2        1  -9.56119          364.50000
  
  x1        1  8.15560           20946
- ---------------------------------------- 
-
 
 
 (a) Do a hypothesis test, at the .01 level of significance, of $H_0:\beta_1=\beta_2=0$ vs. $H1$: At least one of $\beta_1$ or $\beta_2\neq0$.
@@ -634,15 +517,11 @@ $F=\frac{SS_{LOF}/df_{LOF}}{MS_{PE}}=\frac{675.87576/6}{28/3}=12.06921$
 $F(0.05,6,3)=8.94$. Reject $H_0$ at the .05 level of significance.
 
 
-\end{multicols}
-
 ### 2016F2
 
-\begin{multicols}{2}
 
 Data were collected on each of two quantitative regressor variables $X_1$ and $X_2$, a dichotomous categorical variable which we shall call “group”, and a dependent variable Y. The data are displayed below:
 
- --- -- ---- -- -----
  Obs y  x1   x2 group
 
  1   14 3.54 17 1
@@ -664,7 +543,6 @@ Data were collected on each of two quantitative regressor variables $X_1$ and $X
  9   40 2.02 13 2
  
  10  34 2.44 13 2
- --------------------
  
 The model to be fit to the data is $Y_i=\beta_0+\beta_1x_{1i}+\beta_2X_{2i}+\beta_3X_{2i}^2+\beta_4Z_{i}+\beta_5X_{1i}Z_{i}+\beta_6X_{2i}Z_{i}+\beta_7X_{2i}^2Z_{i}+\varepsilon_i$, where $Z_i=1$, if case i is in group 1, and $Z_i=0$, otherwise.
 
@@ -685,15 +563,12 @@ Last row: $1, X_{1i}, X_{2i}, X_{2i}^2, 0, 0, 0, 0$, $1,3.54,17,289,0,0,0,0$
   iv. It is desired to know whether the slope coefficients on $x_1$ and $x_2$ for the first group are equal.$\beta_1+\beta_5=\beta_2+\beta_6$
 
 
-\end{multicols}
 
 ### 2016F3
 
-\begin{multicols}{2}
 
 The following is part of the SAS output from a simple linear regression model: $y_i=\beta_0+\beta x_i+\varepsilon_i$, where $i=1,..,13$, and $y_i$ and $x_i$ are the ith punter’s average punting distance and right leg strength, respectively. Each punter punted 10 times and the average distance was measured. In addition, measure of right leg strength (lb lifted) was taken via a weight lifting test.
 
- --- ---- --------
  Obs rleg distance
  
  1   170  162.50
@@ -721,11 +596,9 @@ The following is part of the SAS output from a simple linear regression model: $
  12  140  150.17
  
  13  160  165.17
- -----------------
 
 Dependent Variable: distance X'X Inverse, Parameter Estimates, and SSE
 
- --------- ------------ ------------ ------------
  Variable  Intercept    rleg         distance
  
  Intercept 3.5777777778 -0.023703704 14.906962963
@@ -733,11 +606,9 @@ Dependent Variable: distance X'X Inverse, Parameter Estimates, and SSE
  rleg      -0.023703704 0.0001604938 0.9026716049
  
  distance  14.906962963 0.9026716049 3025.6604973
- ------------------------------------------------
 
 Analysis of Variance
 
- ------ -- ------------ ---------- ------ ------
  Source DF SumofSquares MeanSquare FValue Pr>F
  
  Model  1  5076.93063   5076.93063 18.46  0.0013
@@ -745,29 +616,24 @@ Analysis of Variance
  Error  11 3025.66050   275.06005
  
  Total  12 8102.59112
- ------------------------------------------------
+
  
- -------------- --------- -------- ------
  Root MSE       16.58493  R-Square 0.6266
  
  Dependent Mean 148.22462 Adj R-Sq 0.5926
  
  Coeff Var      11.18906
- ----------------------------------------
  
  Parameter Estimates
  
- --------- -- ----------------- ------
  Variable  DF ParameterEstimate Pr>|t|
 
  Intercept 1  14.90696          0.6439
 
  rleg      1  0.90267           0.0013
- -------------------------------------
  
 Output Statistics
 
- --- -------- --------- ----------- -------- -------- -------- -------- --------
      Dep Var  Predicted Std Error    95% CL           95% CL
      
  Obs distance Value     MeanPredict  Mean             Predict           Residual
@@ -797,10 +663,7 @@ Output Statistics
  12  150.1700 141.2810  4.8755      130.5501 152.0119 103.2332 179.3288 8.8890
  
  13  165.1700 159.3344  5.2769      147.7201 170.9488 121.0281 197.6408 5.8356
- -------------------------------------------------------------------------------
 
-
-\end{multicols}
 
 
 ```{r}
@@ -818,10 +681,7 @@ se_y_mean <- sqrt(275.06005*(1/13+(170-bar_x)^2/S_xx))
 
 se_y_new <- sqrt(275.06005*(1+1/13+(170-bar_x)^2/S_xx))
 
-
 ```
-
-\begin{multicols}{2}
 
 
 
@@ -844,11 +704,7 @@ $se(y_0)=\sqrt{MSE(1+\frac1n+\frac{(x_0-\bar x)^2}{S_{XX}})}=17.83779$
 $168.3609\pm2.200985*17.83779$, $(129.1002,207.6216)$
 
 
-\end{multicols}
-
 ### 2016F4
-
-\begin{multicols}{2}
 
 
 Prior to 1985, Meily Lin had observed that some colors of birthday balloons seem to be harder to inflate than others. She ran this experiment to determine whether balloons of different colors are similar in terms of the time taken for inflation to a diameter of 7 inches. Four colors were selected from a single manufacturer. An assistant blew up the balloons and the experimenter recorded the times (to the nearest 1/10 second) with a stop watch. This experiment was replicated 4 times, and the data including the order are displayed in the SAS code below, where color 1 = pink, 2 = yellow, 3 = orange, and 4 = blue.
@@ -885,7 +741,7 @@ d. Based on the following output from <Program I>, one can apply a Bonferroni mu
 
 The GLM Procedure; Least Squares Means
 
- ----- ------------- ------------
+
  color inftimeLSMEAN LSMEANNumber
  
  1     18.3341795    1
@@ -895,11 +751,11 @@ The GLM Procedure; Least Squares Means
  3     22.0882820    3
  
  4     18.2141603    4
- --------------------------------
+
  
 Least Squares Means for effect color Pr > |t| for H0: LSMean(i)=LSMean(j) Dependent Variable: inftime
 
- --- ------ ------ ------ ------
+
  i/j 1      2      3      4
 
  1          0.0043 0.0076 0.9271
@@ -909,15 +765,11 @@ Least Squares Means for effect color Pr > |t| for H0: LSMean(i)=LSMean(j) Depend
  3   0.0076 0.8195        0.0060
 
  4   0.9271 0.0034 0.0060
- -------------------------------
 
 
-\end{multicols}
 
 ### 2016F5
 [BIBD]
-
-\begin{multicols}{2}
 
 
 Consider an experiment to compare 7 treatments in block of size 5. Taking all possible combinations of five treatments from seven gives a balanced incomplete block design with each treatment level occurring 15 times. Hint: Figure out $p, t, k, r, \lambda$ and their relationships.
@@ -939,22 +791,19 @@ $\lambda=\frac{(k-1)}{a-1}r=\frac{2}{3}r\in\mathbf{N^+}$
 $r$ is a multiple of 3 and 5 (in b.), $r=15$ is the smallest number of observations per treatment for a BIBD with $a=7$, $k=5$.
 
 
-\end{multicols}
-
 ## 2017S
 Brad Crain, Jong Sung Kim*
 
 ### 2017SR1
 [2018S1][]
-\begin{multicols}{2}
+
 
 A company is comparing two different methods of processing their raw material. They begin with 8 batches of material, which are randomly assigned to one of the two processes. The quality of the finalproduct is measured on a 50-point scale. There is some concern that the outside temperature on each day might have an effect on the product (and the effect might be different for the two processes), and so it is recorded so that it can be taken into account. The following table shows and orderedpair for each batch, consisting of the quality measurement and the temperature.
 
- --------- -------------- --------------
  Process 1 (45,81)(40,68) (41,77)(41,61)
           
  Process 2 (42,59)(37,62) (41,83)(35,70)
- ---------------------------------------
+
 
 a) Write an appropriate model for the situation described above. Hint: there are 8 observations, and you will need to use at least one indicator variable.
 
@@ -962,11 +811,9 @@ b) Write the matrix form of the appropriate model. Show the contents and dimensi
 
 c) Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
-\end{multicols}
 
 ### 2017SR2
 [2019S1][]
-\begin{multicols}{2}
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$
 with the additional restrictions that $\beta_1=1$ and $\beta_2=\beta_0/2$. Find the least-squares estimators of $\beta_0$, $\beta_1$, $\beta_2$.
@@ -978,13 +825,8 @@ $$\frac{\partial SSE}{\partial\beta_0}=-2\sum_{i=1}^n(y_i-\hat\beta_0-x_i-\frac{
 $$\hat\beta_0=\frac{\sum_{i=1}^n(y_i-x_i)(1+\frac{x_i^2}{2})}{\sum_{i=1}^n(1+\frac{x_i^2}{2})^2},\hat\beta_1=1,\hat\beta_2=\frac{\sum_{i=1}^n(y_i-x_i)(1+\frac{x_i^2}{2})}{2\sum_{i=1}^n(1+\frac{x_i^2}{2})^2}$$
 
 
-\end{multicols}
-
 ### 2017SD1
 [Latin Square]
-
-\begin{multicols}{2}
-
 
 Given a educational material evaluation experiment where there are three possible blocking factors [R,C,G], each with six levels $[R_{1..6};C_{1..6};G_{1..6}]$:
 
@@ -1015,12 +857,9 @@ $\frac{(df_{E(LS)}+1)(df_{E(CRD)}+3)MS_{CRD}}{(df_{E(LS)}+3)(df_{E(CRD)}+1)MS_{L
 $df_{E(LS)}=(p-1)(p-2)=20$,$(df_{E(GS)}=(p-1)(p-3)=15$, $df_{E(CRD)}=a(n-1)=7.2,32.5$
 
 
-\end{multicols}
-
 ### 2017SD2
 [8.3 The One-Quarter Fraction of the 2k Design p.344] [7.7 table 7.9]
 
-\begin{multicols}{2}
 
 
 Given a Blocked $2^{6-2}$ design with Factors [A,B,C,D,E,F],Generators E=ABC, F=BCD and Defining Contrasts AB, CD
@@ -1061,7 +900,6 @@ AB=CE=ACDF=BDEF
 
 CD=ABDE=BF=ACEF
 
-\end{multicols}
 
 
 ## 2017F
@@ -1070,16 +908,13 @@ Robert Fountain*, Daniel Taylor-Rodriguez
 ### 2017F1
 [2018S1][] [2019S3][]
 
-\begin{multicols}{2}
-
 
 A company has developed two specialized training workshops for their employees. Each of the 12 employees is randomly assigned to one of the two workshops. The company would like to develop a model that could be used to predict each employee’s performance score (a number from 0 to 100) based on their attendance at the workshops. The previous year’s performance score is also available for use as a predictor. The following table shows and ordered pair for each employee, consisting of the current performance score and the previous year’s score.
 
- --------- -------------- -------------- --------------
  WorkshopA (70,58)(70,62) (68,60)(72,65) (72,66)(72,62)
           
  WorkshopB (75,60)(74,62) (72,60)(71,60) (73,61)(73,65)
- ------------------------------------------------------
+
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the two workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
@@ -1088,11 +923,8 @@ b) Write the matrix form of the appropriate model. Show the contents and dimensi
 c) Suppose that you wish to test for equality of the two slopes. Write the matrix form of the reduced model. What will be the numerator and denominator degrees of freedom for the additional sum of squares F test?
 
 
-\end{multicols}
 
 ### 2017F2
-
-\begin{multicols}{2}
 
 
 a) Explain the difference between fixed and random effects in an experimental design. Give an example to illustrate your explanation.
@@ -1121,12 +953,8 @@ A factor is nested within another factor when each category of the first factor 
 If two factors are crossed, you can calculate an interaction. If they are nested, you cannot because you do not have every combination of one factor along with every combination of the other.
 
 
-\end{multicols}
-
 ### 2017F3
 [2018S3][] [2016S2][]
-
-\begin{multicols}{2}
 
 
 The multiple linear regression model $y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i$
@@ -1134,22 +962,26 @@ was fit to a data set of 75 observations. The regression SS’s (SSR) were parti
 the following:
 
 $SSR(X_1)=108$
+
 $SSR(X_2 | X_1)=163$
+
 $SSR(X_3 | X_1 X_2)=29$
+
 $SSR(X_4 | X_1 X_2 X_3)=41$
+
 $SSR(X_5 | X_1 X_2 X_3 X_4)=26$
 
 The model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i3}+\beta_5X_{i5}+\varepsilon_i$ was also fit to the same data and the following ANOVA was calculated:
 
- ------------------
+
  Source          SS
- -------------- ---
+
  Regression     214
 
  Residual Error 489
 
  Total          703
- ------------------
+
 
 Answer the following from the above information:
 
@@ -1162,14 +994,8 @@ Answer the following from the above information:
 (d) Calculate the F-statistic for testing $H_0:\beta_2=\beta_4=0$.
 
 
-\end{multicols}
-
-
 ### 2017F4
 [2019S1][]
-
-\begin{multicols}{2}
-
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_0=1$, $\beta_1-\beta_2=0$. Find the least-squares estimators of the regression coefficients.
 
@@ -1179,7 +1005,6 @@ $\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-1-\beta_1x_i-\beta_1x_i^
 $\hat\beta_1=\hat\beta_2=\frac{\sum_{i=1}^n(x_i+x_i^2)(y_i-1)}{\sum_{i=1}^n(x_i+x_i^2)^2}$
 
 
-\end{multicols}
 
 ## 2018S
 Robert Fountain*, Daniel Taylor-Rodriguez
@@ -1187,17 +1012,15 @@ Robert Fountain*, Daniel Taylor-Rodriguez
 ### 2018S1
 [2019S3][]
 
-\begin{multicols}{2}
 
 A company has developed three specialized training workshops for their employees. Each of the 12 employees is randomly assigned to one of the three workshops. The company would like to develop a model that could be used to predict each employee’s performance score (a number from 0 to 100) based on their attendance at the workshops. The previous year’s performance score is also available for use as a predictor. The following table shows and ordered pair for each employee, consisting of the current performance score and the previous year’s score.
 
- --------- -------------- --------------
  WorkshopA (70,58)(70,62) (68,60)(72,65)
           
  WorkshopB (75,60)(74,62) (72,60)(71,60)
  
  WorkshopC (72,66)(72,62) (73,61)(73,65)
- ---------------------------------------
+
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the three workshops. Hint: there are 12 observations, and you will need to use at least one indicator variable.
 
@@ -1232,15 +1055,12 @@ $dfE_{Full}=n-(k+1)=12-(5+1)=6$, $dfE_{Reduced}=n-(k+1)+r=8$
 $F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=10-8=2$, $df_{deno}=6$
 
 
-\end{multicols}
-
 ### 2018S2
 [2015S3][] [2019S2][]
-\begin{multicols}{2}
 
 A company that produces textiles is trying to determine if the final quality is determined by production site (A), machine operator (B), and thread type (C). The company operates 3 production sites, and all 3 will participate in the experiment. At each of the 3 sites, 5 machine operators will be randomly selected. The company uses two different types of thread. Each of the operators will produce 3 samples of cloth using each type of thread, yielding a total of $3\times5\times2\times3=90$ observations.
 
- ------ --- --- --- ---- ---------
+
  Source SS  df  MS  F    pval<0.05
 
  A      17  2   8.5 3.70 *
@@ -1260,28 +1080,31 @@ A company that produces textiles is trying to determine if the final quality is 
  Error  138 60  2.3
  
  Total  245 89
- ---------------------------------
+
 
 a) State which effects are fixed at which effects are random.
 
 b) State which effects are nested within others and which effects are crossed.
 
-Site (A): $\tau_i$ Fixed;
-Operator (B): $\beta_{j(i)}$ Nested in A, Random;
-Thread Type (C): $\gamma_k$ Crossed with B, Fixed;
-Replications: Random
-
-Model: $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_k+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{(ijk)l}$, $i=1,2,3$, $j=1,2,3,4,5$, $k=1,2$, $l=1,2,3$
-
-$\sum_{i=1}^a\tau_i=0$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $(\gamma\beta)_{kj(i)}\sim N(0,\sigma^2_{\gamma\beta})$, $(\tau\gamma)_{ik}\sim N(0,\sigma^2_{\tau\gamma})$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$, $\sum_{k=1}^c\gamma_k=0$
-
 c) Create an abbreviated ANOVA table that has two columns: one column that lists the effects in the model (including the appropriate main effects, interactions, and nested effects), and a second column that gives the degrees of freedom for each item in the first column.
 
+\textbf{R(F)F}
 
-\end{multicols}
+Site (A): $\tau_i$ a=3, Fixed;
+
+Operator (B): $\beta_{j(i)}$ Nested in A, b=5, Random;
+
+Thread Type (C): $\gamma_k$ Crossed with B, c=2, Fixed;
+
+Replications: n=3, Random
+
+Model: $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_k+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{(ijk)l}$, $i_{1:3}$, $j_{1:5}$, $k_{1:2}$, $l_{1:3}$
+
+$\sum_{i=1}^a\tau_i=0$, $\sum_{k=1}^c\gamma_k=0$, $\sum^a(\tau\gamma)_{ik}=0$, $\sum^c(\tau\gamma)_{ik}=0$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$
+
+$\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $(\beta\gamma)_{kj(i)}\sim N(0,\frac{c-1}{c}\sigma^2_{\beta\gamma})$, $\sum^c(\beta\gamma)_{kj(i)}=0$ 
 
 
- ------ --- --- ---  -----
  Source SS  df  MS   F    
 
  A      17  2   8.5  8.5/4.75
@@ -1295,48 +1118,48 @@ c) Create an abbreviated ANOVA table that has two columns: one column that lists
  CB(A)  24  12  2.0  2.0/2.3
  
  Error  138 60  2.3
- ------------------------
 
 
-|term |i(f) |j(r) |k(f) |l(r) | df | EMS | F  |
-| -- |   - |  -  |  -  |   - | --| ------| -- |
-|$\tau_{i}$f|0|b|c|n|a-1|$\frac{bcn}{a-1}\sum_{i=1}^{a}\tau_i^2+cn\sigma^2_{\beta}+\sigma^2$|$\frac{MS_{A}}{MS_{B(A)}}$|
-|$\beta_{j(i)}$r|1|1|c|n|a(b-1)|$cn\sigma^2_{\beta}+\sigma^2$|$\frac{MS_{B(A)}}{MS_{E}}$|
-|$(\gamma)_{k}$f|a|b|0|n|c-1|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\gamma}+n\sigma^2_{\gamma\beta}+\sigma^2$|$\frac{MS_{C}}{MS_{CB(A)}}$|
-|$(\tau\gamma)_{ik}$f|0|b|0|n|(a-1)(c-1)|$\frac{bn}{(a-1)(c-1)}\sum_{i=1}^{a}\sum_{k=1}^{c}(\tau\gamma)_{ik}^2+n\sigma^2_{\gamma\beta}+\sigma^2$|$\frac{MS_{AC}}{MS_{CB(A)}}$|
-|$(\gamma\beta)_{kj(i)}$r|1|1|0|n|a(b-1)(c-1)|$n\sigma^2_{\gamma\beta}+\sigma^2$|$\frac{MS_{CB(A)}}{MS_{E}}$|
-|$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
-|Total| | | | |abcn-1|
-
+\begin{tabular}{ l|c|c|c|c|c|c|c }
+term &i(f) &j(r) &k(f) &l(r) & df & EMS & F\\
+$\tau_{i}$f             &0&b&c&n&a-1&$\sigma^2+cn\sigma^2_{\beta}+\frac{bcn}{a-1}\sum_{i=1}^{a}\tau_i^2$&$\frac{A}{B(A)}$\\
+$\beta_{j(i)}$r         &1&1&c&n&a(b-1)&$\sigma^2+cn\sigma^2_{\beta}$&$\frac{B(A)}{E}$\\
+$(\gamma)_{k}$f         &a&b&0&n&c-1&$\sigma^2+n\sigma^2_{\gamma\beta}+\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2$&$\frac{C}{CB(A)}$\\
+$(\tau\gamma)_{ik}$f    &0&b&0&n&(a-1)(c-1)&$\sigma^2+n\sigma^2_{\gamma\beta}+\frac{bn}{(a-1)(c-1)}\sum^{a}\sum^{c}(\tau\gamma)_{ik}^2$&$\frac{AC}{CB(A)}$\\
+$(\gamma\beta)_{kj(i)}$r&1&1&0&n&a(b-1)(c-1)&$\sigma^2+n\sigma^2_{\gamma\beta}$&$\frac{CB(A)}{E}$\\
+$\varepsilon_{(ijk)l}$  &1&1&1&1&abc(n-1)&$\sigma^2$&\\
+Total& & & & &abcn-1&
+\end{tabular}
 
 
 ### 2018S3
 [2017F3][] [2016S2][]
-
-\begin{multicols}{2}
-
 
 The multiple linear regression model $y_i=\beta_0+\beta_1x_{i1}+\beta_2X_{i2}+\beta_3X_{i3}+\beta_4X_{i4}+\beta_5X_{i5}+\varepsilon_i$
 was fit to a data set of 75 observations. The regression SS’s (SSR) were partitioned sequentially into
 the following:
 
 $SSR(X_1)=108$
+
 $SSR(X_2 | X_1)=163$
+
 $SSR(X_3 | X_1 X_2)=29$
+
 $SSR(X_4 | X_1 X_2 X_3)=41$
+
 $SSR(X_5 | X_1 X_2 X_3 X_4)=26$
 
 The model $y_i=\beta_0+\beta_1x_{i1}+\beta_3X_{i3}+\beta_5X_{i5}+\varepsilon_i$ was also fit to the same data and the following ANOVA was calculated:
 
- ------------------
+
  Source          SS
- -------------- ---
+
  Regression     214
 
  Residual Error 489
 
  Total          703
- ------------------
+
 
 Answer the following from the above information:
 
@@ -1349,14 +1172,9 @@ Answer the following from the above information:
 (d) Calculate the F-statistic for testing $H_0:\beta_2=\beta_4=0$.
 
 
-\end{multicols}
-
 
 ### 2018S4
 [2019S1][]
-
-\begin{multicols}{2}
-
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_1=0$, $\beta_0=2\beta_2$. Find the least-squares estimators of $\beta_0$, $\beta_1$, and $\beta_2$.
 
@@ -1366,15 +1184,10 @@ $\frac{\partial SSE}{\partial\beta_2}=2\sum_{i=1}^n(y_i-2\beta_2-\beta_2x_i^2)(-
 $\hat\beta_2=\frac{\sum_{i=1}^n(2+x_i^2)y_i}{\sum_{i=1}^n(2+x_i^2)^2}$
 $\hat\beta_0=\frac{2\sum_{i=1}^n(2+x_i^2)y_i}{\sum_{i=1}^n(2+x_i^2)^2}$
 
-\end{multicols}
-
 ## 2018F
 Robert Fountain*, Daniel Taylor-Rodriguez
 
 ### 2018F1
-
-\begin{multicols}{2}
-
 
 The weights ($y_i$, kilograms) and corresponding heights ($x_i$, centimeters) of 10 randomlysampled adolescents (i= 1,..,10) are recorded, and the following summary statistics are computed:
 
@@ -1411,17 +1224,13 @@ e) Compute 95% simultaneous two-sided confidence intervals for the intercept and
 $\hat\beta_1\pm t_{\frac{0.05}{k+1},n-2}se(\hat\beta_1)=0.5805085\pm2.31\sqrt{0.1514673}$, $(-0.3185158,1.479533)$
 
 
-\end{multicols}
 
 ### 2018F2
 [565-HW1]
 
-\begin{multicols}{2}
-
 
 City planners are evaluating the effectiveness of a new “intelligent” traffic control system in reducing the amount of time motorists must spend on city streets. A total of 24 simulations are run: 4 simulations for each of the 6 combinations of control system (old or new) and traffic intensity (light, moderate, or heavy). All simulations use different random seeds, the combinations are run in a completely random order, and the median travel time (minutes) is recorded for each simulation. For each combination, the following table gives the average and sample standard deviation of the median travel times from the 4 simulations assigned that combination:
 
- ------------------ ----- -------- ----- ----- -------- -----   
                       Old System           New System
                   
  Sample             light Moderate Heavy light Moderate Heavy
@@ -1429,7 +1238,7 @@ City planners are evaluating the effectiveness of a new “intelligent” traffi
  Mean               13    14       15    5     8        17
 
  Standard Deviation 1     2.5      3.5   2.5   2        3.5
- -------------------------------------------------------------------
+
 
 a) Write a (univariate) linear model equation of the usual full form for data from this experiment, with median travel time as the response. Explain each term and specify any conditions it satisfies. What crucial assumption are you making about the error variances?
 
@@ -1448,8 +1257,6 @@ Assumptions: $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$ (constant variance, zero 
 
 b) Produce an ANOVA table with all appropriate sources of variation, including the (corrected) total. Include sums of squares, degrees of freedom, and appropriate mean squares.
 
-
-\end{multicols}
 
 \begin{tabular}{l|l|l|l|l|l|l|l}
 term &i(f) &j(f) &k(r) & df & SS & MS & EMS\\\hline
@@ -1476,7 +1283,6 @@ SSE <- (4-1)*(1^2+2.5^2+3.5^2+2.5^2+2^2+3.5^2)
 SS_a/1;SS_b/2;SS_ab/2;SSE/18; SS_a+SS_b+SS_ab+SSE
 ```
 
-\begin{multicols}{2}
 
 c) Test whether your model in part (a) may be reduced to a model in which the effects of system and traffic intensity are purely additive. Remember to state the null and alternative hypotheses. Use $\alpha=0.05$.
 
@@ -1487,11 +1293,9 @@ d) Form a two-sided 95% confidence interval for the difference in median travel 
 $\bar y_{12.}-\bar y_{22.}\pm t_{\frac\alpha2,18}\sqrt{\frac{2MSE}n}=14-8\pm2.1\sqrt{\frac{2*7}4}=6\pm3.9287$;$[2.0713,9.9287]$
 
 
-\end{multicols}
 
 ### 2018F3
 [13.2]
-\begin{multicols}{2}
 
 Consider the linear mixed model
 $y_{ijk}=\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}$, $i=1,..,a$ $j=1,..,b$ $k=1,..,n$, $\sum_{i=1}^a\alpha_i=0$, $\beta_{ij}\sim N(0,\sigma_{\beta}^2)$, $\varepsilon_{ij}\sim N(0,\sigma_{\varepsilon}^2)$
@@ -1558,23 +1362,20 @@ $E[\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2]=\sum_{i=1}^a\sum_{j=1}
 $\sum_{i=1}^a\sum_{j=1}^b[\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)+0]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)$
 
 
-\end{multicols}
 
 e) In terms of the data, write a formula for the usual unbiased (ANOVA) estimate of $\sigma_{\beta}^2$. (Define all new notation, if you use any)
 
-|term |i(f) |j(r) |k(r) | df | EMS | F  |
-| --  |   - |  -  |  -  | -  | --| -- |
-|$\alpha_{i}$f       |0|b|n|a-1|$\frac{bn}{a-1}\sum_{i=1}^a\alpha_{i}+n\sigma^2_{\beta}+\sigma_{\varepsilon}^2$|$\frac{MS_{A}}{MS_{AB}}$|
-|$\beta_{ij}$r       |0|1|n|a(b-1)|$n\sigma^2_{\beta}+\sigma_{\varepsilon}^2$|$\frac{MS_{AB}}{MS_{E}}$|
-|$\varepsilon_{ijk}$r|1|1|1|ab(n-1)|$\sigma_{\varepsilon}^2$|
-|Total| | | |abn-1|
+\begin{tabular}{l|l|l|l|l|l|l}
+term &i(f) &j(r) &k(r) & df & EMS & F  \\
+$\alpha_{i}$f       &0&b&n&a-1&$\frac{bn}{a-1}\sum_{i=1}^a\alpha_{i}+n\sigma^2_{\beta}+\sigma_{\varepsilon}^2$&$\frac{MS_{A}}{MS_{AB}}$\\
+$\beta_{ij}$r       &0&1&n&a(b-1)&$n\sigma^2_{\beta}+\sigma_{\varepsilon}^2$&$\frac{MS_{AB}}{MS_{E}}$\\
+$\varepsilon_{ijk}$r&1&1&1&ab(n-1)&$\sigma_{\varepsilon}^2$\\
+Total& & & &abn-1&
+\end{tabular}
 
 $\hat\sigma^2=\frac{MS_{AB}-MS_{E}}n$; $E[\hat\sigma^2]=\frac1n(n\sigma^2_{\beta}+\sigma_{\varepsilon}^2-\sigma_{\varepsilon}^2)=\sigma^2_{\beta}$
 
 ### 2018F4
-
-\begin{multicols}{2}
-
 
 Consider a **randomized complete block design** with 12 blocks and a single treatment factor having 3 levels. Let $Y_{ij}$ denote the response measured for an experimental unit in block $j$ that receives treatment $i$ for $i=1,2,3$ and $j=1,..,12$. Suppose there is also a
 covariate whose value $X_{ij}$ is measured for each experimental unit.
@@ -1592,17 +1393,11 @@ The corrected total sum of squares is 820.
 
 \begin{tabular}{ l|l|l|l|l||l|l|l|l }
   & df $SS_F$ & $-\alpha$ & $SS_{\beta\gamma}$ & $-\beta$ & $SS_{\alpha\gamma}$ & $-\alpha$ & $SS_{\gamma}$\\\hline
-
 $\alpha$&2 &110 &-110 & 0   &      & 110 & -110 & 0\\\hline
- 
 $\gamma$&11&160 &     & 160 &      & 160 &      & 160\\\hline
-
 $\beta$&   &250 &-10  & 240 & -250 & 0   &      & 0\\\hline
-
 E      &22 &300 &+120 & 420 & +250 & 550 & +110 & 660\\
- 
 T      &35 &820
-
 \end{tabular}
 
 
@@ -1612,9 +1407,9 @@ $SS_{\gamma}=160$, $SS_{\alpha}=120$, and $SS_{\beta}=240$
 
 b) Form an ANOVA table for the randomized complete block design without the covariate $X_{ij}$, that is, based on Model 2. The table should include all appropriate sources of variation (including the corrected total), with degrees of freedom, sums of squares, and mean squares where appropriate. Then test whether or not there is any treatment effect based on this model. Use $\alpha=0.05$.
 
- ----------------------------
+
     SS  DF MS     F      P
- -  --- -  ---    ---    ---
+
  R  110 2  55     2.2    >.05
  
  B  160 11 14.545 0.5818 >.05
@@ -1622,15 +1417,15 @@ b) Form an ANOVA table for the randomized complete block design without the cova
  E  550 22 25
  
  T  820 35
- ----------------------------
+
 
 $F_{0.05,2,22}=3.44$
 
 c) Test whether there is any treatment effect, after accounting for both blocking and the covariate. Use $\alpha=0.05$.
 
- ----------------------------
+
     SS  DF MS     F      P
- -  --- -  ---    ---    ---
+
  R  110 2  55     4.0333 <.05
  
  B  160 11 14.545 1.0667 >.05
@@ -1640,21 +1435,19 @@ c) Test whether there is any treatment effect, after accounting for both blockin
  E  300 22 13.636
  
  T  820 35
- ----------------------------
+
 
 d) Suppose the (possibly incorrect) model $Y_{ij}=\mu+\alpha_i+\varepsilon_{ij}$ is fit to the data.
 Compute the residual sum of squares for this model.
 
 $SSE_{\alpha}=820-(420-300)=710$
 
-\end{multicols}
 
 ## 2019S
 Robert Fountain*, Daniel Taylor-Rodriguez
 
 ### 2019S1
 [2018S4][] 
-\begin{multicols}{2}
 
 Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$, with the restriction that $\beta_0=0$. Find the least-squares estimators of the regression coefficients.
 
@@ -1674,16 +1467,13 @@ $\hat\beta_1=\frac{\sum_{i=1}^nx_iy_i}{\sum_{i=1}^nx_i^2}-\frac{\sum_{i=1}^nx_i^
 
 \[\hat\beta_1=\frac{\sum_{i=1}^nx_iy_i\sum_{i=1}^nx_i^4-\sum_{i=1}^nx_i^2y_i\sum_{i=1}^nx_i^3}{\sum_{i=1}^nx_i^4\sum_{i=1}^nx_i^2-(\sum_{i=1}^nx_i^3)^2}\]
 
-\end{multicols}
-
 ### 2019S2
 [2015S3][] [2018S2][][566-HW2-1] [566-HW5-2]
-\begin{multicols}{2}
 
 A manufacturer wishes to know if operator (A), material (B), and heat (C) affect the outcome of the product being produced. All of the machines being used operate at the same four heat settings. Five operators are randomly chosen. There are fifteen varieties of material that can be used, and three of these are assigned to each of the five operators. For each operator, that means that there are 12 combinations of heat and material that can be used. The operator produces two replications of each of these, for a total of $5\times3\times4\times2=120$ observations.
 Incorrectly treating all main effects as fixed and all combinations of factors as crossed, the statistician produces the ANOVA table shown below.
 
- ------ --- --- --- ---- ---------
+
  Source SS  df  MS  F    pval<0.05
 
  A      34  4   8.5 3.70 *
@@ -1703,26 +1493,30 @@ Incorrectly treating all main effects as fixed and all combinations of factors a
  Error  138 60  2.3
  
  Total  324 119
- ---------------------------------
+
 
 Produce the corrected ANOVA table, including the expected mean squares and the correct F statistics.
 If an exact F test is not available, construct an approximate F statistic (for which you need not compute the degrees of freedom).
 
-Operator (A): Random;
-Material (B): Nested in A, Random;
-Heat (C): Crossed with B, Fixed
+\textbf{F(R)F}
 
-Replications: Random
+Operator (A): a=5 Random;
 
-Model: $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_k+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{(ijk)l}$, $i=1,2,3,4$, $j=1,2,3$, $k=1,2,3,4$, $l=1,2$
+Material (B): Nested in A, b=3, Fixed;
 
-$\tau_i\sim N(0,\sigma^2_{\tau})$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $\sum_{k=1}^c\gamma_k=0$, $(\tau\gamma)_{ik}\sim N(0,\sigma^2_{\tau\gamma})$, $(\beta\gamma)_{kj(i)}\sim N(0,\sigma^2_{\beta\gamma})$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$
+Heat (C): Crossed with B, c=4, Fixed
 
-\textbf{From Fountain's note, in the j column, treat j as fixed. in the EMS column, treat j(i) and jk(i) as random. }
+Replications: n=2, Random
 
-\end{multicols}
+Model: $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_k+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{(ijk)l}$, $i=1,2,3,4,5$, $j=1,2,3$, $k=1,2,3,4$, $l=1,2$
 
- ------ --- --- --- -------
+$\tau_i\sim N(0,\sigma^2_{\tau})$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $\sum_{k=1}^c\gamma_k=0$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$
+
+$(\tau\gamma)_{ik}\sim N(0,\sigma^2_{\tau\gamma})$, $(\beta\gamma)_{kj(i)}\sim N(0,\sigma^2_{\beta\gamma})$, 
+
+$\sum^c(\tau\gamma)_{ik}=0$, $\sum^c(\beta\gamma)_{kj(i)}=0$
+
+
  Source SS  df  MS  F    
 
  A      34  4   8.5 8.5/2.3=3.696
@@ -1736,59 +1530,34 @@ $\tau_i\sim N(0,\sigma^2_{\tau})$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $\s
  BC+ABC 54  30  1.8 1.8/2.3=0.7826
  
  Error  138 60  2.3
- --------------------------
 
 
-|term |i(r) |j(f) |k(f) |l(r) | df | EMS | F  |
-| -- |   - |  -  |  -  |   - | --| ---| -- |
-|$\tau_{i}$r             |1|b|c|n|a-1|$bcn\sigma^2_{\tau}+\sigma^2$|$\frac{A}{E}$|
-|$\beta_{j(i)}$r         |1|0|c|n|a(b-1)|$cn\sigma^2_{\beta}+\sigma^2$|$\frac{B(A)}{E}$|
-|$(\gamma)_{k}$f         |a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{C}{AC}$|
-|$(\tau\gamma)_{ik}$r    |1|b|0|n|(a-1)(c-1)|$bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{AC}{E}$|
-|$(\gamma\beta)_{kj(i)}$r|1|0|0|n|a(b-1)(c-1)|$n\sigma^2_{\beta\gamma}+\sigma^2$|$\frac{BC(A)}{E}$|
-|$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
-|Total| | | | |abcn-1|
+\textbf{From Fountain's note, in the j column, treat j as fixed. in the EMS column, treat j(i) and jk(i) as random. }
 
-If B(A) is random $F_C=8/(2.5+1.8-2.3)=4$, $df_2=\frac{(AC+BC(A)-E)^2}{\frac{AC^2}{df_{AC}}+\frac{BC(A)^2}{df_{BC(A)}}+\frac{E^2}{df_{E}}}=\frac{2^2}{\frac{2.5^2}{12}+\frac{1.8^2}{30}+\frac{2.3^2}{60}}=5.579\approx6$ P-value=0.07
+\begin{tabular}{ l|l|l|l|l||l|l|l }
+term &i(r) &j(f) &k(f) &l(r) & df & EMS & F \\
+$\tau_{i}$r             &1&b&c&n&a-1&$\sigma^2+bcn\sigma^2_{\tau}$&$\frac{A}{E}$\\
+$\beta_{j(i)}$r         &1&0&c&n&a(b-1)&$\sigma^2+cn\sigma^2_{\beta}$&$\frac{B(A)}{E}$\\
+$(\gamma)_{k}$f         &a&b&0&n&(c-1)&$\sigma^2+bn\sigma^2_{\tau\gamma}+\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2$&$\frac{C}{AC}$\\
+$(\tau\gamma)_{ik}$r    &1&b&0&n&(a-1)(c-1)&$\sigma^2+bn\sigma^2_{\tau\gamma}$&$\frac{AC}{E}$\\
+$(\gamma\beta)_{kj(i)}$r&1&0&0&n&a(b-1)(c-1)&$\sigma^2+n\sigma^2_{\beta\gamma}$&$\frac{BC(A)}{E}$\\
+$\varepsilon_{(ijk)l}$&1&1&1&1&abc(n-1)&$\sigma^2$&\\
+Total& & & & &abcn-1&
+\end{tabular}
 
-<!-- (2^2)/(2.5^2/12+1.8^2/30+2.3^2/60) 
-pf(3.2,3,12,lower.tail = F)
-pf(4,3,6,lower.tail = F)
--->
-
-|term |i(r) |j(f) |k(f) |l(r) | df | EMS | F  |
-| -- |   - |  -  |  -  |   - | --| ----| -- |
-|$\tau_{i}$r             |1|b|c|n|a-1|$bcn\sigma^2_{\tau}+\sigma^2$|$\frac{A}{E}$|
-|$\beta_{j(i)}$r         |1|0|c|n|a(b-1)|$cn\sigma^2_{\beta}+\sigma^2$|$\frac{B(A)}{E}$|
-|$(\gamma)_{k}$f         |a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\tau\gamma}+n\sigma^2_{\beta\gamma}+\sigma^2$|$\frac{C}{AC+BC(A)-E}$|
-|$(\tau\gamma)_{ik}$r    |1|b|0|n|(a-1)(c-1)|$bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{AC}{E}$|
-|$(\gamma\beta)_{kj(i)}$r|1|0|0|n|a(b-1)(c-1)|$n\sigma^2_{\beta\gamma}+\sigma^2$|$\frac{BC(A)}{E}$|
-|$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
-
-If B(A) is fixed $F_C=8/2.5=3.2$ P-value=0.06
-
-|term |i(r) |j(f) |k(f) |l(r) | df | EMS | F  |
-| -- |   - |  -  |  -  |   - | --| ----| -- |
-|$\tau_{i}$r             |1|b|c|n|a-1|$bcn\sigma^2_{\tau}+\sigma^2$|$\frac{A}{E}$|
-|$\beta_{j(i)}$f         |1|0|c|n|a(b-1)|$\frac{cn}{a(b-1)}\sum{\beta^2}+\sigma^2$|$\frac{B(A)}{E}$|
-|$(\gamma)_{k}$f         |a|b|0|n|(c-1)|$\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2+bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{C}{AC}$|
-|$(\tau\gamma)_{ik}$r    |1|b|0|n|(a-1)(c-1)|$bn\sigma^2_{\tau\gamma}+\sigma^2$|$\frac{AC}{E}$|
-|$(\gamma\beta)_{kj(i)}$f|1|0|0|n|a(b-1)(c-1)|$\frac{n}{a(b-1)(c-1)}\sum{(\beta\gamma)^2}+\sigma^2$|$\frac{BC(A)}{E}$|
-|$\varepsilon_{(ijk)l}$|1|1|1|1|abc(n-1)|$\sigma^2$||
 
 
 
 ### 2019S3
 [2015S2][]
-\begin{multicols}{2}
 
 A company has developed two possible manufacturing processes. They will produce 5 items with each process, in a completely random order. Then they will measure the quality (Y) of each item on a 100-point scale. They suspect that the relative humidity during production might affect the outcome, so they also record it (X). They would like to develop a model that could be used to predict the outcome quality based on the process, with the relative humidity as a covariate. The following table shows and ordered pair for each item, consisting of the quality score and the humidity measurement.
 
- --------- ------------------
+
  Process A (70,38)(70,55)(68,40)(72,45)(72,36)
           
  Process B (75,30)(74,42)(72,30)(71,30)(73,41)
- ----------------------------
+
 
 a) Write an appropriate model for the situation described above, allowing for different slopes and different intercepts for the two processes. Hint: there are 10 observations, and you will need to use at least one indicator variable.
 
@@ -1816,5 +1585,3 @@ $dfE_{Full}=n-(k+1)=10-(3+1)=6$, $dfE_{Reduced}=n-(k+1)+r=7$
 
 $F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=7-6=1$, $df_{deno}=6$
 
-
-\end{multicols}
