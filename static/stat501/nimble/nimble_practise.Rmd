@@ -4,7 +4,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set( eval =T,echo = T,cache=T,collapse=T, out.width='50%',fig.show='hold',message=F,warning=F)
+knitr::opts_chunk$set( eval =F,echo = T,cache=T,collapse=T, out.width='50%',fig.show='hold',message=F,warning=F)
 # options(scipen=10)
 # options(digits=4)
 if (!require(pacman)) install.packages("pacman")
@@ -117,7 +117,7 @@ compiled_dyesModel$calculate() ## all nodes by default
 
 ## Linear Reg
 
-```{r}
+```{r,eval =T}
 set.seed(1)
 p <- 15    # number of explanatory variables
 n <- 100   # number of observations
@@ -130,7 +130,7 @@ y <- rnorm(n, X %*% true_betas, sigma)
 
 ### Manual specification
 
-```{r}
+```{r,eval =T}
 code <- nimbleCode({
   beta0 ~ dnorm(0, sd = 100)
   beta1 ~ dnorm(0, sd = 100)
@@ -153,15 +153,15 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits) # 
 
 
 
-```{r}
+```{r,eval =T}
 mcmcConf <- configureMCMC(model) # assign default samplers to nodes
 ```
 
-```{r}
+```{r,eval =T}
 mcmcConf$printSamplers() # look at default sampler assignments
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
                        nchains = 2, niter = 1000,
@@ -171,7 +171,7 @@ mcmc.out <- nimbleMCMC(code = code, constants = constants,
 names(mcmc.out)
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out$summary
 mcmc.out$WAIC 
 ```
@@ -180,7 +180,7 @@ mcmc.out$WAIC
 
 ### Using `inprod`
 
-```{r}
+```{r,eval =T}
 code <- nimbleCode({
   beta0 ~ dnorm(0, sd = 100)
   for(k in 1:p)
@@ -200,12 +200,12 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 ```
 
 
-```{r}
+```{r,eval =T}
 mcmcConf <- configureMCMC(model)
 mcmcConf$printSamplers() ## Look at sampler assignments in this case.
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
                        nchains = 2, niter = 1000,
@@ -215,14 +215,14 @@ mcmc.out <- nimbleMCMC(code = code, constants = constants,
 names(mcmc.out)
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out$summary
 mcmc.out$WAIC 
 ```
 
 ### Using matrix algebra
 
-```{r}
+```{r,eval =T}
 code <- nimbleCode({
   beta0 ~ dnorm(0, sd = 100)
   beta[1:p] ~ dmnorm(zeros[1:p], omega[1:p, 1:p])
@@ -239,12 +239,12 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 ```
 
 
-```{r}
+```{r,eval =T}
 mcmcConf <- configureMCMC(model)
 mcmcConf$printSamplers()
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
                        nchains = 2, niter = 1000,
@@ -254,14 +254,14 @@ mcmc.out <- nimbleMCMC(code = code, constants = constants,
 names(mcmc.out)
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out$summary
 mcmc.out$WAIC 
 ```
 
 - Compute all n values of the linear predictor in a single vactorized step
 
-```{r}
+```{r,eval =T}
 code <- nimbleCode({
      beta0 ~ dnorm(0, sd = 100)
      beta[1:p] ~ dmnorm(zeros[1:p], omega[1:p, 1:p])
@@ -278,12 +278,12 @@ inits <- list(beta0 = mean(y), beta = rep(0, p), sigma = 0.5)
 model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 ```
 
-```{r}
+```{r,eval =T}
 mcmcConf <- configureMCMC(model)
 mcmcConf$printSamplers()
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
                        nchains = 2, niter = 1000,
@@ -293,14 +293,14 @@ mcmc.out <- nimbleMCMC(code = code, constants = constants,
 names(mcmc.out)
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out$summary
 mcmc.out$WAIC 
 ```
 
 - An equivalent model simply calculates the probability density of all y[i] elements together
 
-```{r}
+```{r,eval =T}
 dnorm_vec <- nimbleFunction( ## Define the distribution
     run = function(x = double(1), mean = double(1), sd = double(0), log = integer(0, default = 0)) {
         returnType(double(0))
@@ -331,13 +331,13 @@ inits <- list(beta0 = mean(y), beta = rep(0, p), sigma = 0.5)
 model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 ```
 
-```{r}
+```{r,eval =T}
 mcmcConf <- configureMCMC(model)
 mcmcConf$printSamplers() ## Look at sampler assignments
 model$getNodeNames()     ## Look at node names in the re-written model
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
                        nchains = 2, niter = 1000,
@@ -347,7 +347,7 @@ mcmc.out <- nimbleMCMC(code = code, constants = constants,
 names(mcmc.out)
 ```
 
-```{r}
+```{r,eval =T}
 mcmc.out$summary
 mcmc.out$WAIC 
 ```
