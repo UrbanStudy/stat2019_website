@@ -1,0 +1,692 @@
+---
+title: "nimble_practise"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set( eval =T,echo = T,cache=T,collapse=T, out.width='50%',fig.show='hold',message=F,warning=F)
+# options(scipen=10)
+# options(digits=4)
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(nimble) 
+# readxl,ggplot2,GGally,tidyverse, MASS,car,olsrr,lmtest,GAD,FrF2,emmeans
+library(nimble, warn.conflicts = FALSE)
+```
+
+```{r,eval=F,echo=F}
+writeLines('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
+Sys.which("make")
+pkgbuild::find_rtools(debug = TRUE)
+```
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+## Var-Comp
+
+Variance components model
+
+Building a model from BUGS code in R using NIMBLE
+
+See <https://r-nimble.org/examples>.
+
+
+```{r}
+dyesCode <- nimbleCode({
+# Model
+   for (i in 1:BATCHES) {
+      for (j in 1:SAMPLES) {
+         y[i,j] ~ dnorm(mu[i], sd = sigma.within);
+      }
+      mu[i] ~ dnorm(theta, sd = sigma.between);
+   }
+   
+# Priors
+   theta ~ dnorm(0.0, 1.0E-10);
+   sigma.within ~ dunif(0, 100)
+   sigma.between ~ dunif(0, 100)
+})
+```
+
+```{r}
+classicDyesModel <- readBUGSmodel('dyes', dir = getBUGSexampleDir('dyes'))
+```
+
+```{r}
+dyesModel <- nimbleModel(dyesCode, constants = list(BATCHES = 6, SAMPLES = 5))
+```
+
+```{r}
+data <- matrix(c(1545, 1540, 1595, 1445, 1595, 1520, 1440, 1555, 1550, 
+1440, 1630, 1455, 1440, 1490, 1605, 1595, 1515, 1450, 1520, 1560, 
+1510, 1465, 1635, 1480, 1580, 1495, 1560, 1545, 1625, 1445), nrow = 6)
+
+dyesModel$setData(list(y = data))
+dyesModel$y
+```
+
+```{r}
+dyesModel$theta <- 1500
+dyesModel$mu <- rnorm(6, 1500, 50)
+dyesModel$sigma.within <- 20
+dyesModel$sigma.between <- 20
+dyesModel$y[1,]
+dyesModel$theta
+```
+
+- Calculate log probability densities for part or all of the model
+
+```{r}
+## arbitrary example
+dyesModel$calculate(c('theta', 'mu[1:6]', 'y[,2]'))
+```
+
+- Simulate part or all of the model
+
+```{r}
+dyesModel$mu
+dyesModel$simulate(c('mu[1:3]'))
+dyesModel$mu
+```
+
+- Query the model’s relationships
+
+```{r}
+## arbitrary example
+dyesModel$getDependencies(c('theta', 'mu[3]'))
+```
+
+- Plot the model graph
+
+```{r}
+library(igraph)
+plot(dyesModel$getGraph())
+```
+
+
+- Compile the model
+
+```{r}
+compiled_dyesModel <- compileNimble(dyesModel)
+```
+
+```{r}
+compiled_dyesModel$theta <- 1450
+compiled_dyesModel$calculate() ## all nodes by default
+```
+
+
+## Linear Reg
+
+```{r}
+set.seed(1)
+p <- 15    # number of explanatory variables
+n <- 100   # number of observations
+X <- matrix(rnorm(p*n), nrow = n, ncol = p) # explanatory variables
+true_betas <- c(c(0.1, 0.2, 0.3, 0.4, 0.5), rep(0, p-5)) # coefficients
+sigma <- 1
+y <- rnorm(n, X %*% true_betas, sigma)
+```
+
+
+### Manual specification
+
+```{r}
+code <- nimbleCode({
+  beta0 ~ dnorm(0, sd = 100)
+  beta1 ~ dnorm(0, sd = 100)
+  beta2 ~ dnorm(0, sd = 100)
+  sigma ~ dunif(0, 100)        # prior for variance components based on Gelman (2006)
+  for(i in 1:n) {
+    y[i] ~ dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma) # manual entry of linear predictors
+  }
+})
+
+## extract data for two predictors and center for better MCMC performance
+x1 <- X[,1] - mean(X[,1])
+x2 <- X[,2] - mean(X[,2])
+
+constants <- list(n = n, x1 = x1, x2 = x2)
+data <- list(y = y)
+inits <- list(beta0 = mean(y), beta1 = 0, beta2 = 0, sigma = 1)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits) # build model
+```
+
+
+
+```{r}
+mcmcConf <- configureMCMC(model) # assign default samplers to nodes
+```
+
+```{r}
+mcmcConf$printSamplers() # look at default sampler assignments
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta1','beta2','sigma')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+
+
+### Using `inprod`
+
+```{r}
+code <- nimbleCode({
+  beta0 ~ dnorm(0, sd = 100)
+  for(k in 1:p)
+    beta[k] ~ dnorm(0, sd = 100)
+  sigma ~ dunif(0, 100)  # prior for variance components based on Gelman (2006)
+  for(i in 1:n) {
+    y[i] ~ dnorm(beta0 + inprod(beta[1:p], x[i, 1:p]), sd = sigma)
+  }
+})
+
+X <- sweep(X, 2, colMeans(X))  # center for better MCMC performance
+
+constants <- list(n = n, p = p, x = X)
+data <- list(y = y)
+inits <- list(beta0 = mean(y), beta = rep(0, p), sigma = 0.5)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits)
+```
+
+
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers() ## Look at sampler assignments in this case.
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta','sigma')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+### Using matrix algebra
+
+```{r}
+code <- nimbleCode({
+  beta0 ~ dnorm(0, sd = 100)
+  beta[1:p] ~ dmnorm(zeros[1:p], omega[1:p, 1:p])
+  sigma ~ dunif(0, 100)  # prior for variance components based on Gelman (2006)
+  for(i in 1:n) {
+    y[i] ~ dnorm(beta0 + (beta[1:p] %*% x[i, 1:p])[1,1], sd = sigma)
+  }
+})
+
+constants <- list(n = n, p = p, x = X, zeros = rep(0, p), omega = 0.0001 * diag(p))
+data <- list(y = y)
+inits <- list(beta0 = mean(y), beta = rep(0, p), sigma = 0.5)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits)
+```
+
+
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers()
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta','sigma')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+- Compute all n values of the linear predictor in a single vactorized step
+
+```{r}
+code <- nimbleCode({
+     beta0 ~ dnorm(0, sd = 100)
+     beta[1:p] ~ dmnorm(zeros[1:p], omega[1:p, 1:p])
+     sigma ~ dunif(0, 100)  # prior for variance components based on Gelman (2006)
+     linpred[1:n] <- (x[1:n, 1:p] %*% beta[1:p])[1:n,1]
+     for(i in 1:n) {
+           y[i] ~ dnorm(beta0 + linpred[i], sd = sigma)
+       }
+})
+
+constants <- list(n = n, p = p, x = X, zeros = rep(0, p), omega = 0.0001 * diag(p))
+data <- list(y = y)
+inits <- list(beta0 = mean(y), beta = rep(0, p), sigma = 0.5)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits)
+```
+
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers()
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta','sigma')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+- An equivalent model simply calculates the probability density of all y[i] elements together
+
+```{r}
+dnorm_vec <- nimbleFunction( ## Define the distribution
+    run = function(x = double(1), mean = double(1), sd = double(0), log = integer(0, default = 0)) {
+        returnType(double(0))
+        logProb <- sum(dnorm(x, mean, sd, log = TRUE))
+        if(log) return(logProb)
+        else return(exp(logProb)) 
+    })
+
+rnorm_vec <- nimbleFunction( ## Define a simulation function, optionally.
+    run = function(n = integer(0), mean = double(1), sd = double(0)) {
+        returnType(double(1))
+        if(n != 1) print("rnorm_vec only allows n = 1; using n = 1.")
+        smp <- rnorm(n, mean, sd)
+        return(smp)
+    })
+
+code <- nimbleCode({
+     beta0 ~ dnorm(0, sd = 100)
+     beta[1:p] ~ dmnorm(zeros[1:p], omega[1:p, 1:p])
+     sigma ~ dunif(0, 100)  # prior for variance components based on Gelman (2006)
+     linpred[1:n] <- beta0 + x[1:n, 1:p] %*% beta[1:p]
+     y[1:n] ~ dnorm_vec(linpred[1:n], sigma)
+})
+
+constants <- list(n = n, p = p, x = X, zeros = rep(0, p), omega = 0.0001 * diag(p))
+data <- list(y = y)
+inits <- list(beta0 = mean(y), beta = rep(0, p), sigma = 0.5)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits)
+```
+
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers() ## Look at sampler assignments
+model$getNodeNames()     ## Look at node names in the re-written model
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta','sigma')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+
+
+
+## Logistic Reg
+
+MCMC for logistic regression with random effects
+
+```{r}
+## define the model
+code <- nimbleCode({
+    beta0 ~ dnorm(0, sd = 10000)
+    beta1 ~ dnorm(0, sd = 10000)
+    sigma_RE ~ dunif(0, 1000)
+    for (i in 1:N) {
+        beta2[i] ~ dnorm(0, sd = sigma_RE)
+        logit(p[i]) <- beta0 + beta1 * x[i] + beta2[i]
+        r[i] ~ dbin(p[i], n[i])
+    }
+})
+
+## constants, data, and initial values
+constants <- list(N = 10)
+
+data <- list(
+    r = c(10, 23, 23, 26, 17, 5, 53, 55, 32, 46),
+    n = c(39, 62, 81, 51, 39, 6, 74, 72, 51, 79),
+    x = c(0,  0,  0,  0,  0,  1, 1,  1,  1,  1)
+)
+
+inits <- list(beta0 = 0, beta1 = 0, sigma_RE = 1)
+
+## create the model object
+glmmModel <- nimbleModel(code = code, constants = constants, data = data, 
+                         inits = inits, check = FALSE)
+```
+
+
+
+
+- Default MCMC Algorithm
+
+```{r}
+glmmMCMC <- buildMCMC(glmmModel)
+```
+
+
+
+
+- Compile the model and MCMC algorithm
+
+```{r}
+CglmmModel <- compileNimble(glmmModel)
+```
+
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = F,
+                       monitors = c('beta0','beta1','beta2')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+
+```{r,eval=F}
+CglmmMCMC <- compileNimble(glmmMCMC, project = glmmModel)
+```
+
+
+- Execute MCMC algorithm and extract samples
+
+```{r,eval=F}
+samples <- runMCMC(CglmmMCMC, niter = 1000)
+```
+
+- Customize an MCMC Algorithm
+
+```{r}
+glmmModel <- nimbleModel(code = code, constants = constants, 
+                         data = data, inits = inits)
+```
+
+```{r}
+spec <- configureMCMC(glmmModel, nodes = NULL)
+spec$addSampler(type = 'slice', target = 'beta0')
+spec$addSampler(type = 'slice', target = 'beta1')
+spec$addSampler(type = 'RW', target = 'sigma_RE')
+spec$addSampler(type = 'RW_block', target = 'beta2[1:10]')
+customGlmmMCMC <- buildMCMC(spec)
+```
+
+```{r}
+CglmmModel <- compileNimble(glmmModel)
+CglmmMCMC <- compileNimble(customGlmmMCMC, project = glmmModel)
+samples <- runMCMC(CglmmMCMC, niter = 1000)
+```
+
+
+## Chap2-intro
+
+Chapter 2 Lightning introduction
+
+
+
+See <https://r-nimble.org/html_manual/cha-welcome-nimble.html>.
+
+### 2.2 Creating a model
+
+```{r}
+pumpCode <- nimbleCode({ 
+  for (i in 1:N){
+      theta[i] ~ dgamma(alpha,beta)
+      lambda[i] <- theta[i]*t[i]
+      x[i] ~ dpois(lambda[i])
+  }
+  alpha ~ dexp(1.0) # 
+  beta ~ dgamma(0.1,1.0)
+})
+
+pumpConsts <- list(N = 10,
+                   t = c(94.3, 15.7, 62.9, 126, 5.24,31.4, 1.05, 1.05, 2.1, 10.5))
+
+pumpData <- list(x = c(5, 1, 5, 14, 3, 19, 1, 1, 4, 22))
+
+pumpInits <- list(alpha = 1 ,beta = 1, # alpha =1.802
+                  theta =rep(0.1, pumpConsts$N) ) #x/t
+```
+
+```{r}
+pump <- nimbleModel(code = pumpCode, name = "pump", constants = pumpConsts,
+                    data = pumpData, inits = pumpInits)
+
+pump$getNodeNames()
+```
+
+```{r}
+pump$x
+pump$logProb_x
+pump$alpha
+pump$theta
+pump$lambda
+```
+
+```{r}
+pump$plot()
+pump$plotGraph()
+```
+
+```{r}
+# Show all dependencies of alpha and beta terminating in stochastic nodes
+pump$getDependencies(c("alpha", "beta"))
+# Now show only the deterministic dependencies
+pump$getDependencies(c("alpha", "beta"), determOnly = TRUE)
+# Check that the lifted node was initialized. 
+pump[["lifted_d1_over_beta"]] # It was.
+# Now let's simulate new theta values
+set.seed(1) # This makes the simulations here reproducible
+pump$simulate("theta")
+pump$theta   # the new theta values
+# lambda and logProb_x haven't been re-calculated yet
+pump$lambda # these are the same values as above
+pump$logProb_x
+pump$getLogProb("x") # The sum of logProb_x
+pump$calculate(pump$getDependencies(c("theta")))
+pump$lambda  # Now they have.
+pump$logProb_x
+```
+
+### 2.3 Compiling the model
+
+```{r}
+Cpump <- compileNimble(pump)
+Cpump$theta
+```
+
+### 2.4 One-line invocation of MCMC
+
+```{r}
+mcmc.out <- nimbleMCMC(code = pumpCode, constants = pumpConsts,
+                       data = pumpData, inits = pumpInits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = TRUE,
+                       monitors = c('alpha','beta','theta')) # 
+
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary
+mcmc.out$WAIC 
+```
+
+### 2.5 Creating, compiling and running a basic MCMC configuration
+
+```{r}
+pumpConf <- configureMCMC(pump, print = TRUE)
+```
+
+```{r}
+pumpConf$addMonitors(c("alpha", "beta", "theta"))
+```
+```{r}
+pumpMCMC <- buildMCMC(pumpConf)
+CpumpMCMC <- compileNimble(pumpMCMC, project = pump)
+
+niter <- 1000
+set.seed(1)
+samples <- runMCMC(CpumpMCMC, niter = niter)
+
+par(mfrow = c(2, 2), mai = c(.8, .8, .1, .2))
+plot(samples[ , "alpha"], type = "l", xlab = "iteration",
+     ylab = expression(alpha),col="cornflowerblue")
+plot(samples[ , "beta"], type = "l", xlab = "iteration",
+     ylab = expression(beta),col="cornflowerblue")
+plot(samples[ , "alpha"], samples[ , "beta"], xlab = expression(alpha),
+     ylab = expression(beta),col="cornflowerblue")
+plot(samples[ , "theta[1]"], type = "l", xlab = "iteration",
+     ylab = expression(theta[1]),col="cornflowerblue")
+acf(samples[, "alpha"]) # plot autocorrelation of alpha sample
+acf(samples[, "beta"])  # plot autocorrelation of beta  sample
+```
+
+### 2.6 Customizing the MCMC
+
+```{r}
+pumpConf$addSampler(target = c("alpha", "beta"), type = "RW_block",
+                    control = list(adaptInterval = 100))
+                                     
+pumpMCMC2 <- buildMCMC(pumpConf)
+
+# need to reset the nimbleFunctions in order to add the new MCMC
+CpumpNewMCMC <- compileNimble(pumpMCMC2, project  = pump,
+                              resetFunctions = TRUE)
+
+set.seed(1)
+CpumpNewMCMC$run(niter)
+```
+
+
+```{r}
+samplesNew <- as.matrix(CpumpNewMCMC$mvSamples)
+
+par(mfrow = c(2, 2), mai = c(.8, .8, .1, .2))
+plot(samplesNew[ , "alpha"], type = "l", xlab = "iteration",
+     ylab = expression(alpha),col="cornflowerblue")
+plot(samplesNew[ , "beta"], type = "l", xlab = "iteration",
+     ylab = expression(beta),col="cornflowerblue")
+plot(samplesNew[ , "alpha"], samplesNew[ , "beta"], xlab = expression(alpha),
+     ylab = expression(beta),col="cornflowerblue")
+plot(samplesNew[ , "theta[1]"], type = "l", xlab = "iteration",
+     ylab = expression(theta[1]),col="cornflowerblue")
+acf(samplesNew[, "alpha"]) # plot autocorrelation of alpha sample
+acf(samplesNew[, "beta"])  # plot autocorrelation of beta  sample
+```
+
+### 2.7 Running MCEM
+
+```{r}
+pump2 <- pump$newModel()
+
+box = list( list(c("alpha","beta"), c(0, Inf)))
+
+pumpMCEM <- buildMCEM(model = pump2, latentNodes = "theta[1:10]",
+                      boxConstraints = box)
+pumpMLE <- pumpMCEM$run()
+pumpMLE
+```
+
+### 2.8 Creating your own functions
+
+```{r}
+simNodesMany <- nimbleFunction(
+    setup = function(model, nodes) {
+        mv <- modelValues(model)
+        deps <- model$getDependencies(nodes)
+        allNodes <- model$getNodeNames()
+    },
+    run = function(n = integer()) {
+        resize(mv, n)
+        for(i in 1:n) {
+            model$simulate(nodes)
+            model$calculate(deps)
+            copy(from = model, nodes = allNodes,
+                 to = mv, rowTo = i, logProb = TRUE)
+        }
+    })
+
+simNodesTheta1to5 <- simNodesMany(pump, "theta[1:5]")
+simNodesTheta6to10 <- simNodesMany(pump, "theta[6:10]")
+```
+
+
+```{r}
+set.seed(1)  # make the calculation repeatable
+pump$alpha <- pumpMLE[1]
+pump$beta <- pumpMLE[2]
+# make sure to update deterministic dependencies of the altered nodes
+pump$calculate(pump$getDependencies(c("alpha","beta"), determOnly = TRUE))
+
+```
+
+```{r}
+saveTheta <- pump$theta
+simNodesTheta1to5$run(10)
+simNodesTheta1to5$mv[["theta"]][1:2]
+```
+
+```{r}
+simNodesTheta1to5$mv[["logProb_x"]][1:2]
+```
+
+```{r}
+CsimNodesTheta1to5 <- compileNimble(simNodesTheta1to5,
+                                    project  = pump, resetFunctions = TRUE)
+Cpump$alpha <- pumpMLE[1]
+Cpump$beta <- pumpMLE[2]
+Cpump$calculate(Cpump$getDependencies(c("alpha","beta"), determOnly = TRUE))
+```
+
+```{r}
+Cpump$theta <- saveTheta
+
+set.seed(1)
+CsimNodesTheta1to5$run(10)
+```
+
+```{r}
+CsimNodesTheta1to5$mv[["theta"]][1:2]
+CsimNodesTheta1to5$mv[["logProb_x"]][1:2]
+```
+

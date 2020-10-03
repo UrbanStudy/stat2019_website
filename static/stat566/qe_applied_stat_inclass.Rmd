@@ -176,7 +176,7 @@ b) Explain the difference between crossed and nested effects in an experimental 
 [2019S1][]
 
 
-Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_1=0$, $\beta_0=2\beta_2$. Find the least-squares estimators of $\beta_0$ and $\beta_1$.
+Assume the model $y_i=\beta_0+\beta_1x_i+\beta_2x_i^2+\varepsilon_i$, $i=1,..,n$ with the additional restrictions that $\beta_1=0$, $\beta_2=2\beta_0$. Find the least-squares estimators of $\beta_0$ and $\beta_1$.
 
 Let $SSE=\sum_{i=1}^n(y_i-\hat y)^2=\sum_{i=1}^n(y_i-\beta_0-\beta_1x_i-\beta_2x_i^2)^2=\sum_{i=1}^n(y_i-\beta_0-2\beta_0x_i^2)^2$
 
@@ -381,9 +381,12 @@ x1 <- c(3,3,3,7,7,12,12,12,12,12,19,19)
 x2 <- c(1,2,2,1,3,1,1,2,3,3,2,3)
 y <- c(5,5,3,23,19,75,81,67,51,47,135,121)
 table <- data.frame(y,x1,x2)
-model <- lm(y~x2,table)
+model <- lm(y~x1+x2,table)
+model2 <- lm(y~x2+x1,table)
+vcov(model) # Covariance of Estimates
 summary(model)
 anova(model)
+anova(model2)
 ```
 
  
@@ -419,16 +422,6 @@ Parameter Estimates
  
  x2        1  -9.56119          663.87250
  
- Covariance of Estimates
- 
- Variable   Intercept   x1           x2
- 
- Intercept  54.81211821 -1.510773883 -16.5305567
- 
- x1        -1.510773883 0.2483463917 -0.496692783
- 
- x2        -16.5305567  -0.496692783 10.7694378
-
  
 Information II: model:$y = x_2 x_1$;
 
@@ -487,7 +480,12 @@ $F=\frac{663.8725/(10-9)}{78.20842}=8.488504>F(0.05,1,9)=5.12$
 (d) Obtain a 99% confidence interval for $\beta_1$.
 
 $\hat\beta_1\pm t_{\frac{\alpha}{2},n-k-1}se(\hat\beta_1)$, $se(\hat\beta_1)=\sqrt{MSE\cdot C_{22}}$;
-$8.1556\pm t(0.005,9)\sqrt{8.84355*0.2483463917}$, $8.1556\pm3.25\times4.407127$;$(-6.1653,22.4765)$
+$8.1556\pm t(0.005,9)8.84355*\sqrt{0.2483463917}$, $8.1556\pm3.249835541\times4.407127$;$(-6.166838,22.47804)$
+
+```{r}
+c(8.1556-qt(0.995,9)*8.84355*sqrt(0.2483463917),8.1556+qt(0.995,9)*8.84355*sqrt(0.2483463917))
+```
+
 
 (e) Give an unbiased estimate of the variance of $\hat\beta_1-\hat\beta_2$.
 
@@ -569,33 +567,19 @@ Last row: $1, X_{1i}, X_{2i}, X_{2i}^2, 0, 0, 0, 0$, $1,3.54,17,289,0,0,0,0$
 
 The following is part of the SAS output from a simple linear regression model: $y_i=\beta_0+\beta x_i+\varepsilon_i$, where $i=1,..,13$, and $y_i$ and $x_i$ are the ith punter’s average punting distance and right leg strength, respectively. Each punter punted 10 times and the average distance was measured. In addition, measure of right leg strength (lb lifted) was taken via a weight lifting test.
 
- Obs rleg distance
- 
- 1   170  162.50
- 
- 2   140  144.00
- 
- 3   180  147.50
- 
- 4   160  163.50
- 
- 5   170  192.00
- 
- 6   150  171.75
- 
- 7   170  162.00
- 
- 8   110  104.83
- 
- 9   120  105.67
- 
- 10  130  117.58
- 
- 11  120  140.25
- 
- 12  140  150.17
- 
- 13  160  165.17
+```{r}
+
+table_2016f3 <- matrix(c(170,162.50,140,144.00,180,147.50,160,163.50,170,192.00,150,171.75,170,162.00,110,104.83,120,105.67,130,117.58,120,140.25,140,150.17,160,165.17),
+       nrow=13,ncol =2,byrow = T)
+colnames(table_2016f3) <- c("rleg","distance")
+model_2016f3 <- lm(distance~rleg,data.frame(table_2016f3))
+summary(model_2016f3)
+anova(model_2016f3)
+vcov(model_2016f3)
+model_2016f3$fitted.values
+model_2016f3$residuals
+```
+
 
 Dependent Variable: distance X'X Inverse, Parameter Estimates, and SSE
 
@@ -607,15 +591,6 @@ Dependent Variable: distance X'X Inverse, Parameter Estimates, and SSE
  
  distance  14.906962963 0.9026716049 3025.6604973
 
-Analysis of Variance
-
- Source DF SumofSquares MeanSquare FValue Pr>F
- 
- Model  1  5076.93063   5076.93063 18.46  0.0013
- 
- Error  11 3025.66050   275.06005
- 
- Total  12 8102.59112
 
  
  Root MSE       16.58493  R-Square 0.6266
@@ -624,13 +599,7 @@ Analysis of Variance
  
  Coeff Var      11.18906
  
- Parameter Estimates
- 
- Variable  DF ParameterEstimate Pr>|t|
 
- Intercept 1  14.90696          0.6439
-
- rleg      1  0.90267           0.0013
  
 Output Statistics
 
@@ -670,20 +639,22 @@ Output Statistics
 x <- c(170,140,180,160,170,150,170,110,120,130,120,140,160)
 y <- c(162.50,144.00,147.50,163.50,192.00,171.75,162.00,104.83,105.67,117.58,140.25,150.17,165.17)
 bar_x <- mean(x)
-S_xx <- var(x)*(13-1)
 sum((x-mean(x))^2)
+sum(x^2)-sum(x)^2/13
+sum(x^2)-mean(x)^2*13
+sd(x)^2
+S_xx <- var(x)*(13-1)
+
 
 hat_y <- 14.90696+0.90267*170
 
-qt(0.025,11,lower.tail = F,log.p = F)
+qt(0.025,11,lower.tail = F)
 
 se_y_mean <- sqrt(275.06005*(1/13+(170-bar_x)^2/S_xx))
 
 se_y_new <- sqrt(275.06005*(1+1/13+(170-bar_x)^2/S_xx))
 
 ```
-
-
 
 (a) Find the three residual values at x = 170.
 
@@ -710,19 +681,23 @@ $168.3609\pm2.200985*17.83779$, $(129.1002,207.6216)$
 Prior to 1985, Meily Lin had observed that some colors of birthday balloons seem to be harder to inflate than others. She ran this experiment to determine whether balloons of different colors are similar in terms of the time taken for inflation to a diameter of 7 inches. Four colors were selected from a single manufacturer. An assistant blew up the balloons and the experimenter recorded the times (to the nearest 1/10 second) with a stop watch. This experiment was replicated 4 times, and the data including the order are displayed in the SAS code below, where color 1 = pink, 2 = yellow, 3 = orange, and 4 = blue.
 
 ```{r eval=FALSE, include=T}
-data balloon;
-input runorder color inftime @@;
-cards;
-1 1 22.4 2 3 24.6 3 1 20.3 4 4 19.8 5 3 24.3 6 2 22.2 7 2 28.5 8 2 25.7
-9 3 20.2 10 1 19.6 11 2 28.8 12 4 24.0 13 4 17.1 14 4 19.3 15 3 24.2 16
-1 15.8 17 2 18.3 18 1 17.5 19 4 18.7 20 3 22.9 21 1 16.3 22 4 14.0 23 4
-16.6 24 2 18.1 25 2 18.9 26 4 16.0 27 2 20.1 28 3 22.5 29 3 16.0 30 1
-19.3 31 1 15.9 32 3 20.3
+baloon <- matrix(c(1,1,22.4,2,3,24.6,3,1,20.3,4,4,19.8,5,3,24.3,6,2,22.2,7,2,28.5,8,2,25.7,9,3,20.2,10,1,19.6,11,2,28.8,12,4,24.0,13,4,17.1,14,4,19.3,15,3,24.2,16,1,15.8,17,2,18.3,18,1,17.5,19,4,18.7,20,3,22.9,21,1,16.3,22,4,14.0,23,4,16.6,24,2,18.1,25,2,18.9,26,4,16.0,27,2,20.1,28,3,22.5,29,3,16.0,30,1,19.3,31,1,15.9,32,3,20.3),
+                 nrow = 32,ncol = 3,byrow = T)
+colnames(baloon) <- c("runorder", "color", "inftime")
+cbind(baloon[1:8,],baloon[9:16,],baloon[17:24,],baloon[25:32,])
 ```
 
 a. Why or why not do we need to record the run order in the model?
 
+Blocking can systematically eliminate the nuisance's effect on the statistical comparisons among treatments. The four times as blocks can test the robustness of the process variable to conditions which not easily control.
+
 b. What kind of model would be appropriate for the above experiment?
+
+BIBD, Balanced Incomplete Block Design. Every treatment is not present in every block twice. Incomplete means each block doesn't contain two pairs of treatments.
+
+Each block contain a unique combination of treatments. Any pairs of treatments occur together the same number of times as any other pair.
+
+a=4 treatments occurs r=8 times in the design. b=4 block contains k=8 treatment.
 
 c. Read the following <Program I>. If we had assumed that there is an equal slope linear relationship between the inflation time and the run order for each color, how can we test the assumption? How would you adjust the following program?
 Why?
@@ -1219,9 +1194,9 @@ $t_0=\frac{\hat\beta_1-0}{\sqrt{Var(\hat\beta_1)}}=\frac{0.5805085}{\sqrt{0.1514
 
 Fail to reject $H_0$ at 0.05 level of significance.
 
-e) Compute 95% simultaneous two-sided confidence intervals for the intercept andslope parameters, using the Bonferroni method.
+e) Compute 95% simultaneous two-sided confidence intervals for the intercept and slope parameters, using the Bonferroni method.
 
-$\hat\beta_1\pm t_{\frac{0.05}{k+1},n-2}se(\hat\beta_1)=0.5805085\pm2.31\sqrt{0.1514673}$, $(-0.3185158,1.479533)$
+$\hat\beta_1\pm t_{\frac{0.05}{2p},n-2}se(\hat\beta_1)=0.5805085\pm2.75\sqrt{0.1514673}$, $(-0.4905,1.6515)$
 
 
 
@@ -1273,22 +1248,51 @@ Total& & & &abn-1&$\bar y_{...}=12$;$\sum\sum\sum(y_{ijk}-\bar y_{...})^2$;$\sum
 \end{tabular}
 
 
-```{r}
+```{r,collapse=T}
 bar_y... <- (13+14+15+5+8+17)/6; bar_y1.. <- (13+14+15)/3; bar_y2.. <- (5+8+17)/3; bar_y.1. <- (13+5)/2; bar_y.2. <- (14+8)/2; bar_y.3. <- (15+17)/2
-bar_y11. <- 13-14-9+12; bar_y12. <- 14-14-11+12; bar_y13. <- 15-14-16+12; bar_y21. <- 5-10-9+12; bar_y22. <- 8-10-11+12; bar_y23. <- 17-10-16+12
+hat_y11. <- 13-14-9+12; hat_y12. <- 14-14-11+12; hat_y13. <- 15-14-16+12;hat_y21. <- 5-10-9+12; hat_y22. <- 8-10-11+12; hat_y23. <- 17-10-16+12
 SS_a <- 3*4*((bar_y1..-bar_y...)^2+(bar_y2..-bar_y...)^2)
 SS_b <- 2*4*((bar_y.1.-bar_y...)^2+(bar_y.2.-bar_y...)^2+(bar_y.3.-bar_y...)^2)
-SS_ab <- 4*(bar_y11.^2+bar_y12.^2+bar_y13.^2+bar_y21.^2+bar_y22.^2+bar_y23.^2)
+SS_ab <- 4*(hat_y11.^2+hat_y12.^2+hat_y13.^2+hat_y21.^2+hat_y22.^2+hat_y23.^2)
 SSE <- (4-1)*(1^2+2.5^2+3.5^2+2.5^2+2^2+3.5^2)
 SS_a/1;SS_b/2;SS_ab/2;SSE/18; SS_a+SS_b+SS_ab+SSE
 ```
 
+```{r,collapse=T}
+sd <- c(1,2.5,3.5,2.5,2,3.5)
+yij.bar <- c(13,14,15,5,8,17)
+(yi..bar <- c(mean(yij.bar[1:3]),mean(yij.bar[4:6])))
+(y.j.bar <- c(mean(yij.bar[c(1,4)]),mean(yij.bar[c(2,5)]),mean(yij.bar[c(3,6)])))
+(y...bar <- mean(yij.bar))
+(ssa <- 3*4*sum((yi..bar-y...bar)^2))
+(ssb <- 2*4*sum((y.j.bar-y...bar)^2))
+(ssab <- 4*sum((yij.bar-
+                rep(yi..bar,1,each=3)-
+                rep(y.j.bar,2,each=1)+
+                y...bar)^2))
+(sse <- (4-1)*sum(sd^2))
+(sst <- ssa+ssb+ssab+sse)
+ssa/1; ssb/2; ssab/2; sse/18
+```
 
 c) Test whether your model in part (a) may be reduced to a model in which the effects of system and traffic intensity are purely additive. Remember to state the null and alternative hypotheses. Use $\alpha=0.05$.
+
+```{r,collapse=T}
+(F0 <- ssab/2*18/sse)
+pf(8,2,18,lower.tail = F)
+qf(0.05,2,18,lower.tail = F)
+```
+
 
 $H_0:(\tau\beta)_{ij}=0\forall i,j$; $F_{p,2,18}\frac{MS_{AB}}{MSE}=\frac{56}7=8$; $F_{0.05,2,8}=3.55$. There is enough evidence to reject $H_0$. The model may not be reduced, as the interaction effects is significant at 5% significance level.
 
 d) Form a two-sided 95% confidence interval for the difference in median travel time between the new system and the old system under moderate traffic conditions.
+
+```{r,collapse=T}
+yij.bar[2]-yij.bar[5]-qt(0.025,18,lower.tail = F)*sqrt(2*sse/18/4)
+yij.bar[2]-yij.bar[5]+qt(0.025,18,lower.tail = F)*sqrt(2*sse/18/4)
+```
+
 
 $\bar y_{12.}-\bar y_{22.}\pm t_{\frac\alpha2,18}\sqrt{\frac{2MSE}n}=14-8\pm2.1\sqrt{\frac{2*7}4}=6\pm3.9287$;$[2.0713,9.9287]$
 
@@ -1323,24 +1327,17 @@ $\bar y_{ij.}$ is a linear combination of $\mu,\alpha_i,\beta_{ij},\varepsilon_{
 
 **A linear combination of normal distributed random variables and constants are normal distributed.**
 
-$E[\bar y_{ij.}]=E[\frac1n\sum_{k=1}^ny_{ijk}]=\frac{\sum_{k=1}^n}nE[\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}]=\mu+\alpha_i,\forall i=1,..,a;j=1,..,b$
+$E[\bar y_{ij.}]=E[\frac1n\sum_{k}^ny_{ijk}]=E[\mu+\alpha_i+\beta_{ij}+\bar\varepsilon_{ij.}]=\mu+\alpha_i,\forall i_{1:a};j_{1:b}$
 
-$Var[\bar y_{ij.}]=Var[\frac1n\sum_{k=1}^ny_{ijk}]=\frac{\sum_{k=1}^n}{n^2}Var[\mu+\alpha_i+\beta_{ij}+\varepsilon_{ijk}]=\frac1n(\sigma^2_{\beta}+\sigma_{\varepsilon}^2),\forall i=1,..,a;j=1,..,b$
+$Var[\bar y_{ij.}]=Var[\mu+\alpha_i+\beta_{ij}+\bar\varepsilon_{ij.}]=\sigma^2_{\beta}+\frac1n\sigma_{\varepsilon}^2$
 
-$f(\bar y_{i1.},..\bar y_{ib.})=\prod_{j=1}^bf(\bar y_{ij.})=(2\pi\frac{\sigma^2_{\beta}+\sigma_{\varepsilon}^2}n)^{-\frac{b}2}\exp[\frac{-n}{2(\sigma^2_{\beta}+\sigma_{\varepsilon}^2)}\sum_{j=1}^b(\bar y_{ij.}-\mu-\alpha_i)^2]$
+$f(\bar y_{i1.},..\bar y_{ib.})=\prod_{j}^bf(\bar y_{ij.})=(2\pi(\sigma^2_{\beta}+\frac{1}n\sigma_{\varepsilon}^2))^{-\frac{b}2}\exp[\frac{-1}{2(\sigma^2_{\beta}+\frac{1}n\sigma_{\varepsilon}^2)}\sum_{j}^b(\bar y_{ij.}-\mu-\alpha_i)^2]$
 
 c) In terms of the data, write a formula for the usual unbiased estimator of $\alpha_1-\alpha_2$. What is the exact distribution of this estimator?
 
-Let $SSE=\sum_{i=1}^a\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\mu-\alpha_i-\beta_{ij})^2$
+$E[\bar y_{1..}-\bar y_{2..}]=E[\alpha_1-\alpha_2+\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}]=\alpha_1-\alpha_2$
 
-$\frac{\partial SSE}{\partial\alpha_i}=2\sum_{j=1}^b\sum_{k=1}^n(y_{ijk}-\mu-\alpha_i-\beta_{ij})(-1)\overset{set}{=}0$;
-$\hat\alpha_i=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^ny_{ijk}-\mu-\frac1{b}\sum_{j=1}^b\beta_{ij}=\bar y_{i..}-\mu$
-
-$\hat\alpha_1-\hat\alpha_2=\bar y_{1..}-\mu-(\bar y_{2..}-\mu)=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n(y_{1jk}-y_{2jk})=\frac1{bn}\sum_{j=1}^b\sum_{k=1}^n(\alpha_1-\alpha_2+\beta_{1j}-\beta_{2j}+\varepsilon_{1jk}-\varepsilon_{2jk})=\alpha_1-\alpha_2+\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}$
-
-$E[\hat\alpha_1-\hat\alpha_2]=\alpha_1-\alpha_2$
-
-$Var[\hat\alpha_1-\hat\alpha_2]=Var[\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}]=Var[\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}]=\frac1{b^2}\sum_{j=1}^{b}(Var[\beta_{1.}]-Var[\beta_{2.}])+\frac1{b^2n^2}\sum_{j=1}^b\sum_{k=1}^n(Var[\varepsilon_{1..}]+Var[\varepsilon_{2..}])=\frac2{b}\sigma^2_{\beta}+\frac2{bn}\sigma_{\varepsilon}^2$
+$V[]=Var[\bar\beta_{1.}-\bar\beta_{2.}+\bar\varepsilon_{1..}-\bar\varepsilon_{2..}]=V[\bar\beta_{1.}]+V[\bar\beta_{2.}]+V[\bar\varepsilon_{1..}]+V[\bar\varepsilon_{2..}]=\frac2{b}\sigma^2_{\beta}+\frac2{bn}\sigma_{\varepsilon}^2$
 
 $\hat\alpha_1-\hat\alpha_2$ is a combination of normal distributed r.v. $\sim N(\alpha_1-\alpha_2,\frac2{b}\sigma^2_{\beta}+\frac2{bn}\sigma_{\varepsilon}^2)$
 
@@ -1350,16 +1347,16 @@ $\bar y_{ij.}-\bar y_{i..}=\mu+\alpha_i+\beta_{ij}+\bar\varepsilon_{ij.}-(\mu+\a
 
 $E[\bar y_{ij.}-\bar y_{i..}]=E[\beta_{ij}-\bar\beta_{i.}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]=0$
 
-$Cov(\beta_{ij},\bar\beta_{i.})=\frac{1}{b}Cov(\beta_{ij},\sum_{j=1}^b\beta_{ij})=\frac1b[1\cdot\sigma_{\beta}^2+(b-1)\cdot0]$
+$Cov(\beta_{ij},\bar\beta_{i.})=\frac{1}{b}Cov(\beta_{ij},\sum_{j}^b\beta_{ij})=\frac1b[1\cdot\sigma_{\beta}^2+(b-1)\cdot0]$
 
-$Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})=Cov(\frac{1}{n}\sum_{k=1}^n\varepsilon_{ijk},\frac{1}{bn}\sum_{j=1}^b\sum_{k=1}^n\varepsilon_{ijk})=\frac{1}{b}\frac{\sum_{k=1}^n}{n^2}Cov(\varepsilon_{ijk},\sum_{j=1}^b\varepsilon_{ijk})=\frac{1}{bn}\sigma_{\varepsilon}^2$
+$Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})=Cov(\frac{1}{n}\sum_{k}^n\varepsilon_{ijk},\frac{1}{bn}\sum_{j}^b\sum_{k}^n\varepsilon_{ijk})=\frac{1}{bn^2}\sum_{k}^nCov(\varepsilon_{ijk},\sum_{j}^b\varepsilon_{ijk})=\frac{1}{bn}\sigma_{\varepsilon}^2$
 
-$Var[\bar y_{ij.}-\bar y_{i..}]=Var[\beta_{ij}-\bar\beta_{i.}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]=Var[\beta_{ij}-\bar\beta_{i.}]+Var[\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]$
-$=Var[\beta_{ij}]+Var[\bar\beta_{i.}]-2Cov(\beta_{ij},\bar\beta_{i.})+Var[\bar\varepsilon_{ij.}]+Var[\bar\varepsilon_{i..}]-2Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})$
+$Var[\bar y_{ij.}-\bar y_{i..}]=V[\beta_{ij}-\bar\beta_{i.}+\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]=V[\beta_{ij}-\bar\beta_{i.}]+V[\bar\varepsilon_{ij.}-\bar\varepsilon_{i..}]$
+$=V[\beta_{ij}]+V[\bar\beta_{i.}]-2Cov(\beta_{ij},\bar\beta_{i.})+V[\bar\varepsilon_{ij.}]+V[\bar\varepsilon_{i..}]-2Cov(\bar\varepsilon_{ij.},\bar\varepsilon_{i..})$
 $=\sigma_{\beta}^2+\frac{1}{b}\sigma_{\beta}^2-\frac2b\sigma_{\beta}^2+\frac{1}{n}\sigma_{\varepsilon}^2+\frac{1}{bn}\sigma_{\varepsilon}^2-\frac{2}{bn}\sigma_{\varepsilon}^2=\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)$
 
-$E[\sum_{i=1}^a\sum_{j=1}^b(\bar y_{ij.}-\bar y_{i..})^2]=\sum_{i=1}^a\sum_{j=1}^b(Var[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2)$
-$\sum_{i=1}^a\sum_{j=1}^b[\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)+0]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)$
+$E[\sum_{i}^a\sum_{j}^b(\bar y_{ij.}-\bar y_{i..})^2]=\sum_{i}^a\sum_{j}^b(V[\bar y_{ij.}-\bar y_{i..}]+E[\bar y_{ij.}-\bar y_{i..}]^2)$
+$\sum_{i}^a\sum_{j}^b[\frac{b-1}{b}(\sigma_{\varepsilon}^2+\frac{1}{n}\sigma_{\varepsilon}^2)+0]=a(b-1)(\sigma_{\beta}^2+\frac1n\sigma_{\varepsilon}^2)$
 
 
 
@@ -1373,7 +1370,7 @@ $\varepsilon_{ijk}$r&1&1&1&ab(n-1)&$\sigma_{\varepsilon}^2$\\
 Total& & & &abn-1&
 \end{tabular}
 
-$\hat\sigma^2=\frac{MS_{AB}-MS_{E}}n$; $E[\hat\sigma^2]=\frac1n(n\sigma^2_{\beta}+\sigma_{\varepsilon}^2-\sigma_{\varepsilon}^2)=\sigma^2_{\beta}$
+\(\hat\sigma_\beta^2=\frac{1}n(MS_{B(A)}-MS_{E})=\frac{\sum_{i}^a\sum_{j}^b(\bar y_{ij.}-\bar y_{i..})^2}{a(b-1)}-\frac{\sum_{i}^a\sum_{j}^b\sum_{k}^n(y_{ijk}-\bar y_{ij.})^2}{abn(n-1)}\) 
 
 ### 2018F4
 
@@ -1426,13 +1423,13 @@ c) Test whether there is any treatment effect, after accounting for both blockin
 
     SS  DF MS     F      P
 
- R  110 2  55     4.0333 <.05
+ R  110 2  55     3.849 <.05
  
- B  160 11 14.545 1.0667 >.05
+ B  160 11 14.545 1.018 >.05
  
- RB 250 0
+ RB 250 1
  
- E  300 22 13.636
+ E  300 21 14.29
  
  T  820 35
 
@@ -1510,11 +1507,10 @@ Replications: n=2, Random
 
 Model: $y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_k+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{(ijk)l}$, $i=1,2,3,4,5$, $j=1,2,3$, $k=1,2,3,4$, $l=1,2$
 
-$\tau_i\sim N(0,\sigma^2_{\tau})$, $\beta_{j(i)}\sim N(0,\sigma^2_{\beta})$, $\sum_{k=1}^c\gamma_k=0$, $\varepsilon_{(ijk)l}\sim N(0,\sigma^2)$
+$\sum_{j}^b\beta_{j(i)}$=$\sum_{k}^c\gamma_{k}$=$\sum_{k}^c(\tau\gamma)_{ik}$=$\sum_{j}^b(\beta\gamma)_{(i)jk}$=$\sum_{k}^c(\beta\gamma)_{(i)jk}$=0; 
 
-$(\tau\gamma)_{ik}\sim N(0,\sigma^2_{\tau\gamma})$, $(\beta\gamma)_{kj(i)}\sim N(0,\sigma^2_{\beta\gamma})$, 
-
-$\sum^c(\tau\gamma)_{ik}=0$, $\sum^c(\beta\gamma)_{kj(i)}=0$
+E[$\tau_i$=$\beta_{(i)j}$=$(\tau\gamma)_{ik}$=$(\beta\gamma)_{(i)jk}$]=0;
+V[]=$\sigma_{\tau}^2$;$\frac{b-1}{b}\sigma_{\beta}^2$;$\frac{c-1}{c}\sigma_{\tau\gamma}^2$;$\frac{(b-1)(c-1)}{bc}\sigma_{\beta\gamma}^2$
 
 
  Source SS  df  MS  F    
@@ -1534,18 +1530,16 @@ $\sum^c(\tau\gamma)_{ik}=0$, $\sum^c(\beta\gamma)_{kj(i)}=0$
 
 \textbf{From Fountain's note, in the j column, treat j as fixed. in the EMS column, treat j(i) and jk(i) as random. }
 
-\begin{tabular}{ l|l|l|l|l||l|l|l }
-term &i(r) &j(f) &k(f) &l(r) & df & EMS & F \\
-$\tau_{i}$r             &1&b&c&n&a-1&$\sigma^2+bcn\sigma^2_{\tau}$&$\frac{A}{E}$\\
-$\beta_{j(i)}$r         &1&0&c&n&a(b-1)&$\sigma^2+cn\sigma^2_{\beta}$&$\frac{B(A)}{E}$\\
-$(\gamma)_{k}$f         &a&b&0&n&(c-1)&$\sigma^2+bn\sigma^2_{\tau\gamma}+\frac{abn}{c-1}\sum_{k=1}^{c}\gamma_k^2$&$\frac{C}{AC}$\\
-$(\tau\gamma)_{ik}$r    &1&b&0&n&(a-1)(c-1)&$\sigma^2+bn\sigma^2_{\tau\gamma}$&$\frac{AC}{E}$\\
-$(\gamma\beta)_{kj(i)}$r&1&0&0&n&a(b-1)(c-1)&$\sigma^2+n\sigma^2_{\beta\gamma}$&$\frac{BC(A)}{E}$\\
-$\varepsilon_{(ijk)l}$&1&1&1&1&abc(n-1)&$\sigma^2$&\\
-Total& & & & &abcn-1&
+
+\begin{tabular}{ l|l|l|l|l|l|l|l }
+term &i(r) &j(f) &k(f) &l(r) & df & EMS & F \\\hline
+$\tau_{i}$r &1&b&c&n&a-1&$\sigma^2+bcn\sigma^2_{\tau}$&$\frac{A}{E}$\\
+$\beta_{j(i)}$r  &1&0&c&n&a(b-1)&$\sigma^2+cn\sigma^2_{\beta}$&$\frac{B(A)}{E}$\\
+$(\gamma)_{k}$f  &a&b&0&n&c-1&$\sigma^2+bn\sigma^2_{\tau\gamma}+\frac{abn\sum^{c}\gamma_k^2}{c-1}$&$\frac{C}{AC}$\\
+$(\tau\gamma)_{ik}$r &1&b&0&n&(a-1)(c-1)&$\sigma^2+bn\sigma^2_{\tau\gamma}$&$\frac{AC}{E}$\\
+$(\gamma\beta)_{kj(i)}$r &1&0&0&n&a(b-1)(c-1)&$\sigma^2+n\sigma^2_{\beta\gamma}$&$\frac{CB(A)}{E}$\\
+$\varepsilon_{(ijk)l}$&1&1&1&1&abc(n-1)&$\sigma^2$\\\hline
 \end{tabular}
-
-
 
 
 ### 2019S3
@@ -1584,4 +1578,217 @@ $\begin{bmatrix} 0&0&0&1\end{bmatrix}_{10\times4}\begin{bmatrix} \beta_0 \\ \bet
 $dfE_{Full}=n-(k+1)=10-(3+1)=6$, $dfE_{Reduced}=n-(k+1)+r=7$
 
 $F=\frac{(SSE_{Reduced}-SSE_{Full})/(dfE_{Reduced}-dfE_{Full})}{SSE_{Full}/dfE_{Full}}$, $df_{nume}=7-6=1$, $df_{deno}=6$
+
+
+
+## 2019F
+
+### 2019F1
+
+```{r,collapse=T}
+xx <- matrix(c(47, 6500, 397.69, 6500, 1501754, 71104.33, 397.69, 
+               71104.33, 7587.418),nrow = 3,ncol = 3)
+(ixx <- solve(xx))
+xy <- c(178.97, 22080.38, 1291.301)
+yy <- 819.0221    
+yHy <- 699.3965
+n <- 47 ; p <- 3
+(beta <- ixx%*%xy)
+(sse <- yy-t(beta)%*%xy) ; (sse <- yy-yHy)
+(mse <- sse/(n-p))
+
+(var.beta <- mse*ixx)
+(sst <- yy-xy[1]^2/n)
+(ssr <- t(beta)%*%xy-xy[1]^2/n); (ssr <- yHy-xy[1]^2/n)
+(r.sq <- ssr/sst)
+
+(f0 <- (ssr)/2/mse)
+pf(f0,2,(n-p),lower.tail = F)
+
+(t0 <- abs(beta[2]/sqrt(mse*ixx[2,2])))
+pt(t0,(n-p),lower.tail = F)
+(t025 <- qt(0.975,(n-p)))
+
+x0 <- c(1,300,5)
+(y0 <- x0%*%beta)
+(var.y0 <- mse*x0%*%ixx%*%x0)
+c(y0-t025*sqrt(var.y0),y0+t025*sqrt(var.y0))
+```
+
+### 2019F2
+
+```{r,collapse=T}
+sd <- c(3.6,3.1,2.3,4.8,1.9,1.2,5.5)
+(sse <- (3-1)*sum(sd^2))
+rep <- 3
+y...bar <- 10.7
+yi..bar <- c(10.5,10.3,11.5)
+yij.bar <- c(11.3,9.7,7.7,14.7,8.5,3.8,19.2)
+
+(ssa <- 3*(2*(yi..bar[1]-y...bar)^2+3*(yi..bar[2]-y...bar)^2+2*(yi..bar[3]-y...bar)^2))
+(ssb <- 3*(sum((yij.bar[1:2]-yi..bar[1])^2)+sum((yij.bar[3:5]-yi..bar[2])^2)+sum((yij.bar[6:7]-yi..bar[3])^2)))
+(sst <- ssa+ssb+sse)
+(msa <- ssa/2) ; (msb <- ssb/4); (mse <- sse/14)
+
+pf(msa/mse,2,14,lower.tail=F)
+pf(msb/mse,4,14,lower.tail=F)
+
+(t_a.bonferroni <- qt(0.05/2/choose(3,2),14,lower.tail = F))
+(t_b.bonferroni <- qt(0.05/2/choose(7,2),14,lower.tail = F))
+(min.diff_a <- t_a.bonferroni*sqrt(mse/(1/6+1/9)))
+(min.diff_b <- t_b.bonferroni*sqrt(2*mse/3))
+
+(t_a.tukey <- qtukey(0.95,nmeans = 3, df =14))
+(t_b.tukey <- qtukey(0.95,nmeans = 7, df =14))
+(min.diff_a <- t_a.tukey*sqrt(mse/2*(1/6+1/9)))
+(min.diff_b <- t_b.tukey*sqrt(mse/3))
+sort(yij.bar)
+```
+
+### 2019F3
+
+
+
+
+
+
+## 2020S
+
+### 2020S1
+
+$H_0$:$\hat\beta_0=273.15\hat\beta_1$; 
+$\frac{\hat\beta_0-273.15\hat\beta_1}{\sqrt{mse(\frac1n+\frac{\bar x^2}{S_{xx}})}}=66.81681$ Wrong
+
+$S_{xx}=\sum x^2-n\bar x^2=\sum x^2-20*10.5^2=665$; $\sum x^2=2870$
+
+
+$X'X=\begin{bmatrix} n &\sum x\\\sum x&\sum x^2\end{bmatrix}=\begin{bmatrix} 20 &210\\210&2870\end{bmatrix}$
+
+
+$(X'X)^{-1}=\frac1{nS_{xx}}\begin{bmatrix}\sum x^2&-\sum x\\-\sum x&n\end{bmatrix}=\frac1{20*665}\begin{bmatrix}2870&-210\\-210&20\end{bmatrix}$
+
+$se(\hat\beta_0-273.15\hat\beta_1)=\sqrt{\frac{MSE}{nS_{xx}}[1,-273.15](X'X)^{-1}[1,-273.15]^T}$
+
+$\sqrt{\frac{MSE}{nS_{xx}}(\sum x^2+273.15^2n+2\times273.15n\bar x)}=\sqrt{\frac{0.09035889}{20*665}1609811}=3.307098$
+
+
+
+
+$\frac{\hat\beta_0-273.15\hat\beta_1}{se(\hat\beta_0-273.15\hat\beta_1)}=\frac{9.3301}{3.307098}=2.821234>\Delta$
+
+Bonferronii:$\Delta=t_{\frac{\alpha}{2p},n-p}=2.445006$
+
+Scheffe: $\Delta=\sqrt{2F_{\alpha,p,n-p}}=2.666292$
+
+- Elliptical Joint Conf reg: 
+
+$\frac{(\hat\beta-\beta)'(\hat\beta-\beta)}{\sigma^2(X'X)^{-1}}\sim\chi^2_{p}$;
+
+P($\frac{(\hat\beta-\beta)'X'X(\hat\beta-\beta)}{p\cdot MSE}$<$F_{\alpha,p,n-p}$)=1-$\alpha$
+
+$n(\hat\beta_0-\beta_0)^2+2\sum x(\hat\beta_0-\beta_0)(\hat\beta_1-\beta_1)+\sum x^2(\hat\beta_1-\beta_1)^2\le F_{0.05,p,n-p}pMSE$
+
+$20(98.377-273.15\beta_1)^2+420(98.377-273.15\beta_1)(0.326-\beta_1)+2870(0.326-\beta_1)^2\le2*F*0.09$=0.6423717
+
+There is no real numerical solution. Reject null hypothesis.
+
+
+
+```{r,collapse=T}
+rm(list=ls())
+(xbar <- 10.5); (ybar <- 101.8); (n <- 20)
+(sxx <- 665)
+(syy <- 72.3)
+(sxy <-  216.79)
+
+(b1 <- sxy/sxx)
+(b0<- ybar - b1*xbar)
+
+(var.e <- (syy-sxy^2/sxx)/(n-2))
+(var.b1 <- var.e/sxx)
+(var.b0 <- var.e*(1/n+xbar^2/sxx))
+
+pt((b0-273.15*b1)/(sqrt(var.b0)),(n-2),lower.tail=F)
+
+```
+
+
+```{r,collapse=T}
+##
+xx <- matrix(c(20,210,210,2870),2,2)
+ixx <- solve(xx)
+a <- c(1,-273.15)
+se.b0.b1 <- sqrt(var.e*a%*%ixx%*%a)
+##
+sx <- sxx+n*xbar^2
+se.b0.b1 <- sqrt(var.e/n/sxx*(sx+n*273.15^2+2*273.15*n*xbar))
+pt((b0-273.15*b1)/se.b0.b1,(n-2),lower.tail=F)
+##
+
+##
+
+qt(0.025/2,(n-2),lower.tail=F) # Bonferroni
+
+(f <- qf(0.05,2,18,lower.tail = F))
+
+sqrt(2*f)# Scheffe
+
+y <- function(x){
+  20*(98.377-273.15*x)^2+420*(98.377-273.15*x)*(0.326-x)+2870*(0.326-x)^2
+}
+optim(0.326,fn=y,method="BFGS" )$value < 2*f*var.e
+
+
+```
+
+
+### 2020S2
+
+```{r,collapse=T}
+x<- rep(1:4,1,each=3)
+y<- c(17, 20, 23,29, 21, 25,31, 29, 30,45, 43, 47)
+(xbar <- mean(x)); (ybar <- mean(y))
+(sxx <- sum((x-xbar)^2))
+(syy <- sum((y-ybar)^2))
+(sxy <-  sum((x-xbar)*(y-ybar)))
+
+(b1 <- sxy/sxx)
+(b0<- ybar - b1*xbar)
+(yhat <- b0 + b1*x)
+(sst <- sum((y-ybar)^2))
+(sse <- sum((y-yhat)^2))
+(ssr <- sum((yhat-ybar)^2))
+ssr/sst
+(var.e <- sse/(12-2)); (var.e <- (syy-sxy^2/sxx)/(12-2))
+
+yi.bar <- c(mean(y[1:3]),mean(y[4:6]),mean(y[7:9]),mean(y[10:12]))
+(ssa <- 3*sum((yi.bar-ybar)^2))
+(sse <-  sum((y-rep(yi.bar,1,each=3))^2))
+# library(pastecs); stat.desc(x); stat.desc(y)
+fit1 <- lm(y~x)
+fit2 <- aov(y~as.factor(x))
+summary(fit1)
+anova(fit1)
+anova(fit2)
+anova(fit1,fit2)
+olsrr::ols_pure_error_anova(fit1)
+```
+
+
+
+### 2020S3
+
+$E[y_{ijk}]=\mu+\tau_i$; $V[y_{ijk}]=\sigma^2+\sigma^2_\beta$
+
+$Cov[y_{ijk},y_{ijk'}]=\sigma^2_\beta$; $Cov[y_{ijk},y_{ij'k'}]=0$
+
+SSA=4000; SSB(A)=2400; SSE=2250; SST=8650
+
+dfA=2; dfB(A)=12; dfE=45; dfT=59
+
+MSA=2000; MSB(A)=200; MSE=50
+
+Fa=10; Fb(a)=4
+
+
 

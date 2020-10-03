@@ -1,0 +1,171 @@
+---
+title: "Explorations on Comparisons without a Gold Standard"
+author: "DTR"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::material
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.align = "center")
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(purrr)
+library(rstan)
+# library(shinystan)
+library(viridis)
+```
+
+
+# Joint modeling with two tests
+
+Below we provide code for the methods developed in Dendukuri and Joseph 2001.  There, two models are proposed, a fixed model and a model based on subject specific random effects. Bewlo, we introduce each of the methods and include code with a simple example.
+
+## One population two tests (fixed model)
+
+```{r loaddata, echo=F, eval=F}
+Nvec <- c(38,87,2,35)#c(5881,666,496,4990)
+```
+
+```{r fixedmodel, echo=T, eval=T}
+#specify necessary inputs
+datalist <- list(Nvec=Nvec,aT=1,bT=1,
+                 aS2=4.44,bS2=13.31,aC2=71.25,bC2=3.75,
+                 aS1=21.96,bS1=5.49,aC1=4.1,bC1=1.76,
+                 acovs=3,bcovs=3,acovc=3,bcovc=3)
+
+#allow for multicore processing
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+fixedmodel <- stan_model(file = 'FixedModel.stan') #compile model structure in stan
+#generate parameter samples and predicted values from marginal model
+fit.fixedmodel <- sampling(fixedmodel,iter=10000,algorithm='NUTS', chains = 4,
+                           data = datalist,seed = 363360090)
+
+save(datalist,fit.fixedmodel,list=c("datalist","fit.fixedmodel"),file = "Results_Fixed.RData")
+# launch_shinystan(fit.fixedmodel)
+```
+
+```{r}
+print(fit.fixedmodel, pars=c("pT", "S", "C", "cov12base"), probs=c(.05,.5,.95))
+```
+
+
+\[\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrr}
+  \toprule
+Parameter & mean & sd & 2.5\% & 50\% & 97.5\% \\ 
+  \midrule
+pT & 0.8241 & 0.1158 & 0.5394 & 0.8423 & 0.9895 \\ 
+  ulcovs & 0.0455 & 0.0141 & 0.0206 & 0.0449 & 0.0747 \\ 
+  ulcovc & 0.0318 & 0.0180 & 0.0068 & 0.0285 & 0.0756 \\ 
+  S[1] & 0.8386 & 0.0489 & 0.7448 & 0.8384 & 0.9309 \\ 
+  S[2] & 0.2864 & 0.0496 & 0.2063 & 0.2807 & 0.3998 \\ 
+  C[1] & 0.6504 & 0.1808 & 0.2960 & 0.6631 & 0.9482 \\ 
+  C[2] & 0.9499 & 0.0250 & 0.8907 & 0.9538 & 0.9868 \\ 
+  cov12base[1] & 0.5696 & 0.1670 & 0.2178 & 0.5829 & 0.8544 \\ 
+  cov12base[2] & 0.5051 & 0.1893 & 0.1521 & 0.5049 & 0.8584 \\ 
+  multp[1] & 0.2231 & 0.0303 & 0.1668 & 0.2222 & 0.2853 \\ 
+  multp[2] & 0.5374 & 0.0368 & 0.4650 & 0.5375 & 0.6095 \\ 
+  multp[3] & 0.0184 & 0.0074 & 0.0068 & 0.0174 & 0.0356 \\ 
+  multp[4] & 0.2211 & 0.0309 & 0.1639 & 0.2199 & 0.2849 \\ 
+  cov12[1] & 0.0263 & 0.0119 & 0.0067 & 0.0254 & 0.0514 \\ 
+  cov12[2] & 0.0161 & 0.0115 & 0.0022 & 0.0133 & 0.0455 \\ 
+   \bottomrule
+\end{tabular}
+\end{table}\]
+
+
+## One population two tests (random model)
+
+Thinking about how to specify priors for this
+
+```{r}
+a<-b<-seq(-2,2,length.out = 50)
+sensvals <- function(a,b){pnorm(a/sqrt(b^2+1))}
+
+exploreparsSens <- data.frame(a=rep(a,times=50),
+                              b=rep(b,each=50),
+                              sens=c(outer(a,b,sensvals)))
+
+
+library(ggplot2)
+ggplot(data=exploreparsSens,aes(x=a,y=b,z=sens)) +
+   geom_tile(aes(fill=sens)) + 
+   geom_contour(aes(z = sens ,colour = "red"),
+               breaks = c(0.07,0.47))+
+    labs(colour = "0.07~0.47")+
+   scale_fill_viridis()
+```
+
+
+
+```{r randommodel, echo=F, eval=F}
+#specify necessary inputs
+datalist.rnd <- list(N = sum(Nvec),
+                     T1vec = rep(c(1,1,0,0),times=Nvec),
+                     T2vec = rep(c(1,0,1,0),times=Nvec),
+                     aT=1,bT=1,
+                     aS2=-0.5418,bS2=0.14,aS1=1.0626,bS1=0.20437,
+                     aC2=1.7151783,bC2=0.24246,aC1=0.54345,bC1=0.5497,
+                     b1mu=.668,b1sd=1.076,b0mu=.861,b0sd=1.2448)
+
+#allow for multicore processing
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+randommodel <- stan_model(file = 'RandomModel.stan') #compile model structure in stan
+#generate parameter samples and predicted values from marginal model
+fit.randommodel <- sampling(randommodel, data = datalist.rnd,
+                            pars = c("pT","S1","C1","S2","C2","a11","a21","a10","a20","b11","b10"),
+                            iter=10000,algorithm='NUTS', chains = 4,
+                            seed = 363360090)
+
+save(datalist.rnd,fit.randommodel,list=c("datalist.rnd","fit.randommodel"),file = "Results_Random.RData")
+
+# launch_shinystan(fit.randommodel)
+```
+
+```{r}
+print(fit.randommodel, pars=c("pT","S1","S2","C1","C2","a11","a21","a10","a20","b11","b10"), probs=c(.05,.5,.95))
+```
+
+When                aS2=-0.811,bS2=0.38,aS1=1.012,bS1=0.268,
+                     aC2=2.171,bC2=0.261,aC1=.692,bC1=0.56,
+                     b1mu=.668,b1sd=0.5,b0mu=.861,b0sd=0.5)
+get
+     mean se_mean   sd    5%   50%   95% n_eff Rhat
+pT   0.56    0.05 0.08  0.45  0.57  0.68     2 6.04
+S1   0.84    0.01 0.02  0.79  0.85  0.87     5 1.53
+S2   0.34    0.04 0.06  0.27  0.33  0.44     2 3.63
+C1   0.34    0.03 0.05  0.27  0.36  0.41     2 3.38
+C2   0.88    0.02 0.03  0.82  0.89  0.91     3 2.46
+a11  1.11    0.07 0.13  0.96  1.06  1.35     3 2.23
+a21 -0.46    0.14 0.20 -0.76 -0.48 -0.15     2 3.86
+a10 -0.59    0.11 0.17 -0.88 -0.64 -0.35     3 2.57
+a20  1.80    0.14 0.21  1.48  1.88  2.06     2 3.82
+b11 -0.28    0.27 0.40 -0.84 -0.16  0.26     2 5.78
+b10  1.10    0.29 0.42  0.40  1.28  1.65     2 5.27
+
+When                 aS2=-0.5418,bS2=0.14,aS1=1.0626,bS1=0.20437,
+                     aC2=1.7151783,bC2=0.24246,aC1=0.54345,bC1=0.5497,
+                     b1mu=.668,b1sd=1.076,b0mu=.861,b0sd=1.2448)
+get
+     mean se_mean   sd    5%   50%   95% n_eff  Rhat
+pT   0.51    0.02 0.03  0.48  0.50  0.57     3  2.09
+S1   0.86    0.04 0.05  0.75  0.87  0.91     2  4.34
+S2   0.37    0.00 0.02  0.33  0.36  0.41    23  1.19
+C1   0.37    0.05 0.08  0.23  0.36  0.46     2  4.17
+C2   0.88    0.02 0.03  0.84  0.88  0.94     2  3.22
+a11  1.25    0.14 0.22  0.96  1.19  1.61     2  3.40
+a21 -0.39    0.05 0.10 -0.58 -0.39 -0.24     3  1.84
+a10 -0.46    0.19 0.28 -0.81 -0.44 -0.09     2  5.48
+a20  1.54    0.17 0.25  1.24  1.44  1.99     2  4.39
+b11 -0.43    0.29 0.42 -1.01 -0.51  0.04     2  9.68
+b10  0.56    0.50 0.72 -0.51  0.50  1.62     2 10.01
+
+
+
+
+

@@ -1,0 +1,413 @@
+---
+title: "Explorations on Comparisons without a Gold Standard"
+author: "DTR"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::material
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, fig.align = "center", error=F, warnings=F)
+library(ggplot2)
+library(ggthemes)
+library(tidyverse)
+library(purrr)
+library(rstan)
+# library(shinystan)
+library(viridis)
+```
+
+
+# Explorations with different methods
+
+Below we provide code for methods presented in both Johnson et al. (2019), and Dendukuri and Joseph (2001).  In the first paper, several models are proposed for one or more tests, with one or more populations (we only try out the methods with one population and either one or two tests).  In the second paper, two methods are presented, a *fixed* model and another one based on *subject specific random effects* (we try them both). Below we introduce each of the methods and include code with a simple example.
+
+# data simulations
+
+```{r}
+source("multi_test_simulation_DTR.R")
+```
+
+- Cluster Analysis
+
+```{r}
+# Determine number of clusters
+wss <- (nrow(scenario)-1)*sum(apply(scenario[,6:9],2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(scenario[,6:9],centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",ylab="Within groups sum of squares")
+```
+
+
+```{r}
+# K-Means Cluster Analysis
+fit.cluster0 <- kmeans(scenario[,6:9], 4) # 4 cluster solution
+# get cluster means
+aggregate(scenario[,6:9],by=list(fit.cluster0$cluster),FUN=mean)
+# scenario <- data.frame(scenario, fit.cluster0$cluster) # append cluster assignment
+# scenario[order(scenario[,14],scenario[,5],scenario[,4],scenario[,3],scenario[,2],scenario[,1]),][38:48,]
+```
+
+
+```{r , echo=T, eval=T, warning=F, error=F, cache=T}
+# Ward Hierarchical Clustering
+t <- dist(scenario[,6:9], method = "euclidean") # distance matrix
+fit.cluster1 <- hclust(t, method="ward.D")
+plot(fit.cluster1) # display dendogram
+groups <- cutree(fit.cluster1, k=4) # cut tree into 5 clusters
+# draw dendogram with red borders around the 5 clusters
+rect.hclust(fit.cluster1,k=4, border="red")
+
+# Ward Hierarchical Clustering with Bootstrapped p values
+library(pvclust)
+fit.cluster2 <- pvclust(scenario[,6:9], method.hclust="ward",method.dist="euclidean")
+plot(fit.cluster2) # dendogram with p values
+# add rectangles around groups highly supported by the data
+pvrect(fit.cluster2, alpha=.95)
+```
+- Four choose scenarios with balanced setting.
+
+```{r}
+paste("Chose a scenario with");scenario[c(7,10,36,45),]
+# table(Y4list[[46]][,1])
+# table(Tlist[[46]][,1])
+paste("The simulated data is");sim[c(7,10,36,45),]
+```
+
+- Real data
+
+```{r, echo=F, eval=T}
+Aphasia<- readxl::read_xlsx("binary_vectors.xlsx")
+testname <- c("paralg","human")
+subjectname <- c("Lexicality","Phonology","Semantic")
+datalist <- list(
+Lexicality = table(Aphasia$Lexicality_paralg ,Aphasia$Lexicality_human,dnn=testname),
+Phonology = table(Aphasia$Phonology_paralg ,Aphasia$Phonology_human,dnn=testname),
+Semantic = table(Aphasia$Semantic_paralg ,Aphasia$Semantic_human,dnn=testname)
+)
+datalist
+```
+
+## prior information
+
+### For the fixed model
+
+- Start from elicited 95% prior probability interval
+
+```{r,echo=T}
+ll=c(0.07,0.89,0.63,0.31) #s1,s2,c1,c2
+ul=c(0.47,0.99,0.92,0.96)
+
+elicited <- cbind(ll,ul)
+rownames(elicited) <- c("S1","C1","S2","C2")
+elicited
+```
+
+- Method in Dendukuri (2001)
+
+In section 4
+
+\[\mu=\frac{\alpha}{\alpha+\beta};\quad\sigma=\sqrt{\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}}\]
+\[\implies\alpha=\frac{(1-\mu)\mu^2}{\sigma^2}-\mu;\quad\beta=\frac{\alpha}{\mu}-\alpha\]
+
+It gives a narrower range of $\alpha$ and $\beta$
+
+```{r,echo=T}
+ab.direct<- matrix(NA,nrow=4,ncol =2)
+getab <- function(ll,ul){ 
+  a <- b <- NULL
+  sigma <- (ul-ll)/2
+  mu<-seq(ll,ul,length.out =1000)
+for (i in 1:1000) {
+    a[i] <- (1-mu[i])*(mu[i]^2)/(sigma^2)-mu[i]
+    b[i] <- (1-mu[i])^2*(mu[i])/(sigma^2)+mu[i]-1
+  }  
+return(c(max(a),max(b))) 
+}  
+
+
+for (i in 1:4) {
+ab.direct[i,] <- getab(ll[i],ul[i])
+}
+colnames(ab.direct) <- c("alpha","beta")
+rownames(ab.direct) <- c("S1","C1","S2","C2")
+ab.direct
+```
+
+
+
+- Method in Johnson (2019)
+
+It's close to the Table2 of Dendukuri (2001)
+
+```{r,echo=T}
+ll=c(0.01,0.01,0.495,0.98) 
+ul=c(0.02,0.99,0.505,0.99)
+
+getalphabeta <- function(ll,ul){ 
+      mu <- (ul+ll)/2
+ab<- matrix(NA,nrow=50,ncol = 2)
+for (i in 1:50) {
+    geta <- function(a){
+    b <- a*(1-mu)/mu
+    abs(pbeta(ul,shape1=a,shape2=b)-pbeta(ll,shape1=a,shape2=b)-0.95)
+    }
+a<- optim(par=seq(0.01,10,length.out=50)[i],fn=geta,method="BFGS")$par
+ab[i,] <-c(a,a*(1-mu)/mu)
+}
+return(c(min(ab[,1]),min(ab[,2]))) 
+}
+
+alphabeta<- matrix(NA,nrow=4,ncol =2)
+for (i in 1:4) {
+alphabeta[i,] <- getalphabeta(ll[i],ul[i])
+}
+colnames(alphabeta) <- c("alpha","beta")
+rownames(alphabeta) <- c("sharp skewed right","flat center","sharp center","sharp skewed left")
+alphabeta
+# label <- c("Optimized alpha","Optimized beta")
+# for (j in 1:2){
+# plot(ab[,j],type="l",main="",xlab="Initial values",ylab=label[j])
+# }
+
+```
+
+
+### For the random model
+
+- Method of contour plot
+
+```{r eval=T, echo=T}
+a<-b<-seq(-50,50,length.out = 50)
+sensvals <- function(a,b){pnorm(a/sqrt(b^2+1))}
+
+exploreparsSens <- data.frame(a=rep(a,times=50),
+                              b=rep(b,each=50),
+                              sens=c(outer(a,b,sensvals)))
+```
+
+
+```{r eval=T, echo=F}
+library(ggplot2)
+ggplot(data=exploreparsSens,aes(x=a,y=b)) +
+   geom_tile(aes(fill=sens)) + 
+     geom_contour(aes(z = sens ,colour = "red"),breaks = c(0.07,0.47))+
+     labs(colour = "0.07~0.47")+
+   scale_fill_viridis()
+```
+
+- Method in Nandini Dendukuri's website
+
+It's close to the Table2 of Dendukuri (2001)
+
+```{r,echo=T}
+# LC=c(0.2054,0.744,0.8908,0.2909) #s1,s2,c1,c2
+# UC=c(0.4045,0.9287,0.9862,0.9453) # the reuslts of fixed model
+# ll=c(0.07,0.89,0.63,0.31) #s1,s2,c1,c2
+# ul=c(0.47,0.99,0.92,0.96) # the elicited values in paper
+# mu_b <- c(0.668,0.861,0.668,0.861)
+
+
+
+getab <- function(ll,ul){ 
+mu_a=(qnorm(ul)+qnorm(ll))/2
+mu_b <- 0
+sigma_a=(qnorm(ul)-qnorm(ll))/4
+LP=0.001; UP=0.999
+sigma_b<-  max(sqrt(((qnorm(UP)-mu_a)/1.96)^2 - sigma_a^2)/1.96,
+               sqrt(((mu_a-qnorm(LP))/1.96)^2 - sigma_a^2)/1.96)
+return(c(mu_a,sigma_a,mu_b,sigma_b))
+}
+
+ab<- matrix(NA,nrow=4,ncol =4)
+for (i in 1:4) {
+  ab[i,] <- getab(ll[i],ul[i])
+}
+colnames(ab) <- c("mu_a","sigma_a","mu_b","sigma_b")
+rownames(ab) <- c("minimum mu","maximum sd","minimum sd","maximum mu")
+ab
+```
+
+
+### Generating Hyperparameters
+
+```{r,echo=T}
+genhyperpars <- function(trueinfo,
+                         setting=c("pi.info","S1.info","C1.info","S2.info","C2.info"),
+                         scale=c(0.8,1.1)){
+  hyper.parlist <- list(fixed=c(api=2,bpi=2,
+                                aS1=2,bS1=2,
+                                aS2=2,bS2=2,
+                                aC1=2,bC1=2,
+                                aC2=2,bC2=2,
+                                acovs=2,bcovs=2,
+                                acovc=2,bcovc=2),
+                        random=c(api=2,bpi=2,
+                                muS1=2.19,sdS1=1.16317,
+                                muS2=2.19,sdS2=1.16317,
+                                muC1=2.19,sdC1=1.16317,
+                                muC2=2.19,sdC2=1.16317,
+                                b1mu=0,b1sd=1.374,
+                                b0mu=0,b0sd=1.374)
+                                )
+  names(trueinfo) <- c("pi","S1","S2","C1","C2")
+  switch(setting,
+         pi.info={
+           prev <- trueinfo["pi"]
+           hyper.parlist$fixed[c("api","bpi")] <- getalphabeta(ll=scale[1]*prev,ul=scale[2]*prev)
+           hyper.parlist$random[c("api","bpi")] <-getalphabeta(ll=scale[1]*prev,ul=scale[2]*prev)
+           return(hyper.parlist)
+           },
+         S1.info={
+           S1 <- trueinfo["S1"]
+           hyper.parlist$fixed[c("aS1","bS1")] <- getalphabeta(ll=scale[1]*S1,ul=scale[2]*S1)
+           hyper.parlist$random[c("muS1","sdS1","b1mu","b1sd")]<-getab(ll=scale[1]*S1,ul=scale[2]*S1)
+           return(hyper.parlist)
+           },
+         C1.info={
+           C1 <- trueinfo["C1"]
+           hyper.parlist$fixed[c("aC1","bC1")] <- getalphabeta(ll=scale[1]*C1,ul=scale[2]*C1)
+           hyper.parlist$random[c("muC1","sdC1","b0mu","b0sd")]<-getab(ll=scale[1]*C1,ul=scale[2]*C1)           
+           return(hyper.parlist)
+           },
+         S2.info={
+           S2 <- trueinfo["S2"]
+           hyper.parlist$fixed[c("aS2","bS2")] <- getalphabeta(ll=scale[1]*S2,ul=scale[2]*S2)
+           hyper.parlist$random[c("muS2","sdS2","b1mu","b1sd")]<-getab(ll=scale[1]*S2,ul=scale[2]*S2)
+           return(hyper.parlist)
+           },
+         C2.info={
+           C2 <- trueinfo["C2"]
+           hyper.parlist$fixed[c("aC2","bC2")] <- getalphabeta(ll=scale[1]*C2,ul=scale[2]*C2)
+           hyper.parlist$random[c("muC2","sdC2","b0mu","b0sd")]<-getab(ll=scale[1]*C2,ul=scale[2]*C2)           
+           return(hyper.parlist)
+           })
+}
+```
+
+
+```{r,echo=T}
+library(knitr)
+kable(genhyperpars(trueinfo=scenario[10,1:5],setting="pi.info"))
+kable(genhyperpars(trueinfo=scenario[10,1:5],setting="S1.info"))
+kable(genhyperpars(trueinfo=scenario[10,1:5],setting="C1.info"))
+kable(genhyperpars(trueinfo=scenario[10,1:5],setting="S2.info"))
+kable(genhyperpars(trueinfo=scenario[10,1:5],setting="C2.info"))
+```
+
+
+
+# One population, one test (JJ\&G19)
+
+```{r loaddata, echo=F, eval=T}
+Nvec <- c(38,2,87,35)#c(5881,666,496,4990)
+```
+
+
+```{r onetest, echo=T, eval=T, cache=T, warning=F, error=F}
+
+#specify necessary inputs
+datalist1 <- list(n=sum(Nvec[1:2]),N=sum(Nvec),aT=1,bT=1,
+                 aS=4.44,bS=13.31,aC=71.25,bC=3.75)
+
+#allow for multicore processing
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+modelonetest <- stan_model(file = 'OneTestModel.stan') 
+fit.onetest <- sampling(modelonetest,iter=10000,algorithm='NUTS',
+                        chains = 4,data = datalist1,seed = 363360090)
+
+save(datalist1, fit.onetest, file="Results_OneTest.RData")
+pander::pander(summary(fit.onetest))
+# launch_shinystan(fit.fixedmodel)
+```
+
+
+
+
+# One population two tests (JJ\&G19)
+
+```{r twotests, echo=T, eval=T,cache=T, warning=F, error=F}
+#specify necessary inputs
+datalist2 <- list(Nvec=Nvec,N=sum(Nvec),aT=1,bT=1,
+                 aS1=4.44,bS1=13.31,aC1=71.25,bC1=3.75,
+                 aS2p=21.96,bS2p=5.49,aC2p=4.1,bC2p=1.76,
+                 aS2n=21.96,bS2n=5.49,aC2n=4.1,bC2n=1.76)
+
+#allow for multicore processing
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+modeltwotest <- stan_model(file = 'TwoTestModel.stan')
+fit.twotest <- sampling(modeltwotest,iter=10000,algorithm='NUTS',
+                        chains = 4,data = datalist2,
+                        pars = c("pT","S1","C1","S2","C2",
+                                 "rho12s", "rho12c"),
+                        seed = 363360090)
+
+pander::pander(summary(fit.twotest))
+
+save(datalist2, fit.twotest, file="Results_TwoTests.RData")
+# launch_shinystan(fit.fixedmodel)
+```
+
+# One population two tests (fixed model, D\&J01)
+
+```{r fixedmodel, echo=T, eval=T, warning=F, error=F, cache=T}
+#specify necessary inputs
+datalist3 <- list(Nvec=Nvec,aT=1,bT=1,
+                 aS1=4.44,bS1=13.31,aC1=71.25,bC1=3.75,
+                 aS2=21.96,bS2=5.49,aC2=4.1,bC2=1.76,
+                 acovs=3,bcovs=3,acovc=3,bcovc=3)
+
+#allow for multicore processing
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+fixedmodel <- stan_model(file = 'FixedModel.stan') #compile model structure in stan
+#generate parameter samples and predicted values from marginal model
+fit.fixedmodel <- sampling(fixedmodel,iter=10000,algorithm='NUTS',
+                           chains = 4,data = datalist3,
+                           pars=c("pT","S","C","cov12"),
+                           seed = 363360090)
+
+pander::pander(summary(fit.fixedmodel))
+
+save(datalist3, fit.fixedmodel, file="Results_Fixed.RData")
+# launch_shinystan(fit.fixedmodel)
+```
+
+# One population two tests (random model, D\&J01)
+
+
+
+```{r randommodel, echo=T, eval=T, warning=F, error=F, cache=T}
+#specify necessary inputs
+datalist4 <- list(N = sum(Nvec),
+                     T1vec = rep(c(1,1,0,0),times=Nvec),
+                     T2vec = rep(c(1,0,1,0),times=Nvec),
+                     aT=1,bT=1,
+                     aS1=-0.5321015,bS1=0.1451926,aS2=1.0609520,bS2=0.2026126,
+                     aC1=1.7168596,bC1=0.2430329,aC2=0.5250692,bC2=0.5379133,
+                     b1mu=0.668,b1sd=1.0759759,b0mu=0.861,b0sd=1.2447561)
+
+#allow for multicore processing
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+randommodel <- stan_model(file = 'RandomModel.stan') #compile model structure in stan
+#generate parameter samples and predicted values from marginal model
+fit.randommodel <- sampling(randommodel, data = datalist4,
+                            pars = c("pT","S1","C1","S2","C2"),
+                            iter=10000,algorithm='NUTS', chains = 4,
+                            seed = 363360090,
+                            control=list(max_treedepth=10))
+
+pander::pander(summary(fit.randommodel))
+
+save(datalist4,fit.randommodel,file="ResultsRandom.RData")
+
+# launch_shinystan(fit.randommodel)
+```
+
+```{r}
+table(datalist4$T1vec,datalist4$T2vec)
+```
+
+

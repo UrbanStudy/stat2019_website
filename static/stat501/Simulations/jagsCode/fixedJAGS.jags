@@ -1,0 +1,35 @@
+model{
+  prev~ dbeta(api,bpi)
+  s1~dbeta(aS1,bS1)
+  c1~dbeta(aC1,bC1)
+  s2~dbeta(aS2,bS2)
+  c2~dbeta(aC2,bC2)
+  #=======================================
+  # upper limits of covariance parameters
+  #=======================================
+  us<- min(s1,s2)-(s1*s2)
+  uc<- min(c1,c2)-(c1*c2)
+  
+  #==============================================================
+  # prior distribution of transformed covariances on (0,1) range
+  #==============================================================
+  u.covs12~ dbeta(acovs,bcovs)
+  u.covc12~ dbeta(acovc,bcovc)
+  #==============================================
+  # adjustment of range of covariance parameters
+  #==============================================
+  covs12<- u.covs12*us
+  covc12<- u.covc12*uc
+  #================================================================================================
+  # probabilities of observing different cross-classifications of two dichotomous diagnostic tests
+  #================================================================================================
+  
+  p12[1]<- prev*(s1*s2+covs12)+(1-prev)*((1-c1)*(1-c2)+covc12)
+  p12[2]<- prev*(s1*(1-s2)-covs12)+(1-prev)*((1-c1)*c2-covc12)
+  p12[3]<- prev*((1-s1)*s2-covs12)+(1-prev)*(c1*(1-c2)-covc12)
+  p12[4]<- prev*((1-s1)*(1-s2)+covs12)+(1-prev)*(c1*c2+covc12)
+  #==============================
+  # likelihood of observed data
+  #===============================
+  t12[1:4] ~ dmulti(p12[1:4],N)
+}

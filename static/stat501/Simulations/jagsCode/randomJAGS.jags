@@ -1,0 +1,69 @@
+model {
+
+#==================================================
+# Prior distributions of prevalence, sensitivities
+# and specificities
+#==================================================
+
+prev~dbeta(api,bpi)
+a11~dnorm(muS1,sdS1)
+a21~dnorm(muS2,sdS2)
+a10~dnorm(muC1,sdC1)
+a20~dnorm(muC2,sdC2)
+b1~dnorm(b1mu,b1sd)
+b0~dnorm(b0mu,b0sd)
+
+#==========================================================
+# Defining the sensitivity and specificity of each subject
+#==========================================================
+
+for (i in 1:n4) {
+
+	t.i[i]~dnorm(0,1)
+	sens1[i]<-phi(a11+b1*t.i[i])
+	one.minus.spec1[i]<-phi(-a10-b0*t.i[i])
+	spec1[i]<-1-one.minus.spec1[i]
+	sens2[i]<-phi(a21+b1*t.i[i])
+	one.minus.spec2[i]<-phi(-a20-b0*t.i[i])
+	spec2[i]<-1-one.minus.spec2[i]
+
+}
+
+
+#===================================================
+# Conditional probability of a positive observation
+#===================================================
+
+for (i in 1:n4) {
+
+	p1[i,2]<-sens1[i]
+	p1[i,1]<-one.minus.spec1[i]
+	p2[i,2]<-sens2[i]
+	p2[i,1]<-one.minus.spec2[i]
+
+}
+
+#===============================================================================
+# Relation between observed data and conditional probability of a positive observation
+#===============================================================================
+
+for (i in 1:n4) {
+
+	D1[i]~dbern(prev)
+	D[i]<-D1[i]+1
+	res1[i]~dbern(p1[i,D[i]])
+	res2[i]~dbern(p2[i,D[i]])
+
+}
+
+
+#=========================================================
+# Sensitivity and specificity for the entire population
+#=========================================================
+
+s1<-phi((a11)/sqrt(1+b1*b1))
+c1<-phi((a10)/sqrt(1+b0*b0))
+s2<-phi((a21)/sqrt(1+b1*b1))
+c2<-phi((a20)/sqrt(1+b0*b0))
+
+}

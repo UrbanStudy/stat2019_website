@@ -28,7 +28,7 @@ header-includes:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set( eval =F,echo = TRUE,cache=FALSE, results="markup", tidy=T)
 if (!require(pacman)) {install.packages("pacman"); library(pacman)}
-p_load(MASS, ggplot2,GGally,tidyverse,robcbi,kableExtra,lme4)
+p_load(MASS, ggplot2,GGally,tidyverse,kableExtra,lme4,GAD) ##,robcbi
 ```
 
 
@@ -36,6 +36,14 @@ p_load(MASS, ggplot2,GGally,tidyverse,robcbi,kableExtra,lme4)
 
 ## 2015S
 Fountain*, Crain
+
+### 2015S1
+
+
+
+### 2015S2
+
+You are asked to design an experiment to study the effect of three different types of 32-ounce bottles (A) and three different shelf types (B)—smooth permanent shelves, end-aisle displays with grilled shelves, and beverage coolers—on the time it takes to stock ten 12-bottle cases on the shelves. Three workers (factor C) will be employed in the experiment, and a $3^3$ factorial design is desired. Unfortunately, due to time constraints, you find that only a one-third fraction of this design can be run. Construct the design with I = ABC and determine the complete alias structure. Then, assuming that none of the interaction terms are of interest, analyze the data from the 9 runs that you select. The data set appears in the file, “Bottles.xlsx”.
 
 ## 2015F 
 
@@ -106,6 +114,7 @@ table_2015f2 <- gather(table_2015f2,'Height','...7','...8',key = "1",value = "he
 GGally::ggmatrix(table_2015f2[,1:5])
 str(table_2015f2)
 kableExtra::kable(table_2015f2)
+
 ```
 
 ```{r,eval=F}
@@ -114,7 +123,7 @@ kableExtra::kable(table_2015f2)
 pivot_longer(table_2015f2,-A,-B,-C,-D,values_to = "Height")
 ```
 
-$2^{6-1}_{IV}$
+$2^{5-1}_{IV}$
 
 I=ABCD;
 
@@ -181,68 +190,174 @@ ggplot(table_2016s1,aes(height,weight,col=age,group=male))+geom_point()+geom_smo
 ```{r, eval=F, include=T}
 library(GGally)
 ggpairs(table_2016s1)
+
+```
+
+- VIF
+
+```{r}
+car::vif(lm(weight~height+age+male,table_2016s1))
+```
+No VIF problem
+
+No missing value
+
+- Box-Cox diagnostic
+
+```{r, eval=F, include=T}
+boxcox_2016s1 <-  MASS::boxcox(lm(weight~height+age+male,table_2016s1))
+boxcox_2016s1$x[which.max(boxcox_2016s1$y)]
+```
+
+$\lambda$=-0.5
+
+- fit the full model
+
+```{r, eval=F, include=T}
+model_2016s1 <- lm(weight^(-0.5)~((height+age)^2+I(height^2)+I(age^2))*male,table_2016s1)
+# model_2016s1 <- lm(weight^(-0.5)~(height+age)^2+I(height^2)+I(age^2)+male,table_2016s1)
+summary(model_2016s1)
+plot(model_2016s1)
+```
+
+
+
+- Stepwise method
+
+```{r, eval=F, include=T}
+aic_2016s1<- MASS::stepAIC(model_2016s1,~.,direction = "both") # ^2, "both"_sq.inv
+```
+
+
+```{r, eval=F, include=T}
+summary(aic_2016s1)
+```
+
+- Subset method
+
+```{r, eval=F, include=T}
+p<- ols_step_best_subset(model_2016s1)
+```
+
+```{r}
+p
+```
+
+
+```{r, eval=F, include=T}
+model_2016s1_subset <-  lm((weight)^(-0.5)~male+height:male+age:male+I(height^2):male+height:age:male,table_2016s1)#^(-2)
+summary(model_2016s1_subset)
+plot(model_2016s1_subset)
+
+(predict(model_2016s1_subset,data.frame(height=70,age=26,male="male"),interval = "prediction", level = 0.95))^{-2}
+
+boxcox(lm(weight~height+I(height^2)+I(age^2)+male,table_2016s1))
+model_2016s1_subset2 <- lm(weight^(-1.5)~height+I(height^2)+I(age^2)+male,table_2016s1) # height+age+male+height:male
+summary(model_2016s1_subset2)
+plot(model_2016s1_subset2)
+(predict(model_2016s1_subset2,data.frame(height=70,age=26,male="male"),interval = "prediction", level = 0.95))^{-2/3}
+```
+
+
+- Transformatin
+
+
+
+If we don't consider quadratic terms, the proper transform is $y^{-0.5}$
+
+inverse-sqrt transform
+
+```{r, eval=F, include=T}
+model_2016s1_sqrt.inv <- lm(weight^(-0.5)~height+age+male,table_2016s1)
+summary(model_2016s1_sqrt.inv)
+plot(model_2016s1_sqrt.inv)
+```
+
+
+
+```{r, eval=F, include=T}
+boxcox_2016s1 <-  MASS::boxcox(model_2016s1)
+boxcox_2016s1$x[which.max(boxcox_2016s1$y)]
+```
+
+If we do consider quadratic terms, the proper transform is $y^{-2}$
+inverse-sq transform
+
+```{r, eval=F, include=T}
+model_2016s1_sq.inv <- lm(weight^(-2)~height+age+male+height:male,table_2016s1)
+summary(model_2016s1_sq.inv)
+plot(model_2016s1_sq.inv)
+
+model_2016s1_sq.inv2 <- lm(weight^(-2)~age+male+I(height^2)+height:male+age:male,table_2016s1)
+summary(model_2016s1_sq.inv2)
+plot(model_2016s1_sq.inv2)
+```
+
+
+log transform
+
+```{r, eval=F, include=T}
+model_2016s1_log <- lm(log(weight)~height+age+male,table_2016s1)
+summary(model_2016s1_log)
+plot(model_2016s1_log)
+```
+
+
+- Prediction Interval
+
+```{r, eval=F, include=T}
+(predict(model_2016s1_sq.inv,data.frame(height=70,age=26,male="male"),interval = "prediction", level = 0.95))^{-0.5}
+(predict(model_2016s1_sqrt.inv,data.frame(height=70,age=26,male="male"),interval = "prediction", level = 0.95))^{-2}
+```
+
+- Analysis by gender groups
+
+```{r, eval=F, include=T}
 t.test(weight~male,alternative="less",table_2016s1)
 t.test(height~male,alternative="less",table_2016s1)
 data_male <- table_2016s1[table_2016s1$male=="male",]
 data_female <- table_2016s1[table_2016s1$male=="female",]
 ```
 
-```{r, eval=F, include=T}
-model_2016s1 <- lm(weight~height+age+male,table_2016s1)
-summary(model_2016s1)
-
-
-aic_2016s1<- MASS::stepAIC(model_2016s1,~.^2,direction = "both")
-summary(aic_2016s1)
-anova(aic_2016s1)
-
-model_2016s1_log <- update(model_2016s1,log(weight)~.)
-summary(model_2016s1_log)
-plot(model_2016s1_log)
-
-aic_2016s1_log<- MASS::stepAIC(model_2016s1_log,~.^2,direction = "both")
-summary(aic_2016s1_log)
-anova(aic_2016s1_log)
-
-boxcox_2016s1 <-  MASS::boxcox(model_2016s1)
-boxcox_2016s1$x[which.max(boxcox_2016s1$y)]
-model_2016s1_sq.inv <- update(model_2016s1,weight^(-0.5)~.)
-summary(model_2016s1_sq.inv)
-anova(model_2016s1_sq.inv)
-plot(model_2016s1_sq.inv)
-
-(predict(model_2016s1_sq.inv,data.frame(height=70,age=26,male="male"),interval = "prediction", level = 0.95))^{-2}
-```
-
-
 
 ```{r, eval=F, include=T}
-
-model_2016s1_1 <- lm(weight~height+age,data_male)
+model_2016s1_1 <- lm(weight~(height+age)^2+I(height^2)+I(age^2),data_male)
 summary(model_2016s1_1)
 plot(model_2016s1_1)
-boxcox_2016s1_1 <- MASS::boxcox(model_2016s1_1)
+
+boxcox_2016s1_1 <- MASS::boxcox(lm(weight~I(age^2),data_male))
 boxcox_2016s1_1$x[which.max(boxcox_2016s1_1$y)]
-model_2016s1_3 <- update(model_2016s1_1,weight^1.5~.)
+
+aic_2016s1_1<- MASS::stepAIC(model_2016s1_1)
+summary(aic_2016s1_1)
+olsrr::ols_step_best_subset(model_2016s1_1)
+
+
+model_2016s1_3 <- update(model_2016s1_1,weight^1.5~I(age^2))
 summary(model_2016s1_3)
 plot(model_2016s1_3)
-anova(model_2016s1_3)
-
-model_2016s1_2 <- lm(weight~height+age,data_female)
-summary(model_2016s1_2)
-plot(model_2016s1_2)
-boxcox_2016s1_2 <-  MASS::boxcox(model_2016s1_2)
-boxcox_2016s1_2$x[which.max(boxcox_2016s1_2$y)]
-model_2016s1_4 <- update(model_2016s1_2,weight^0.5~.)
-summary(model_2016s1_4)
-plot(model_2016s1_4)
-anova(model_2016s1_4)
 
 predict(model_2016s1_1,data.frame(height=70,age=26),interval = "prediction", level = 0.95)
 (predict(model_2016s1_3,data.frame(height=70,age=26),interval = "prediction", level = 0.95))^{2/3}
 ```
 
 
+
+```{r, eval=F, include=T}
+model_2016s1_2 <- lm(weight~(height+age)^2+I(height^2)+I(age^2),data_female)
+summary(model_2016s1_2)
+plot(model_2016s1_2)
+
+aic_2016s1_2<- MASS::stepAIC(model_2016s1_2)
+summary(aic_2016s1_2)
+olsrr::ols_step_best_subset(model_2016s1_2)
+
+boxcox_2016s1_2 <-  MASS::boxcox(lm(weight~age+height:age,data_female))
+boxcox_2016s1_2$x[which.max(boxcox_2016s1_2$y)]
+model_2016s1_4 <- update(model_2016s1_2,weight^0.5~age+height:age)
+summary(model_2016s1_4)
+plot(model_2016s1_4)
+```
 
 
 
@@ -284,18 +399,25 @@ car::vif(model_2016s2_1)
 
 ```{r,eval=F,message=F}
 library(lme4)
-model_2016s2_3 <-lmer(y~machine/(1|power)*station,table_2016s2)
-model_2016s2_4 <-lmer(y~machine*station+(1|machine/power)+(1|machine/power):station,table_2016s2)
+model_2016s2_3 <-lmer(y^2~machine/(1|power)*station,table_2016s2)
+model_2016s2_4 <-lmer(y^2~machine*station+(machine|power),table_2016s2)  # machine*station+machine/(1|power)*station
 summary(model_2016s2_3)$varcor
-# anova(model_2016s2_1)
-# pf(anova(model_2016s2_1)$'F value',df1=anova(model_2016s2_1)$'Df',df2=c(3,6,6), lower.tail = F)
+summary(model_2016s2_4)$varcor
 confint(model_2016s2_3)
+# pf(anova(model_2016s2_1)$'F value',df1=anova(model_2016s2_1)$'Df',df2=c(3,6,6), lower.tail = F)
+```
+
+
+```{r,eval=F,message=F}
 library(GAD)
 table_2016s2$machine_f <- as.fixed(table_2016s2$machine)
 table_2016s2$station_f <- as.fixed(table_2016s2$station)
 table_2016s2$power_r <- as.random(table_2016s2$power)
-model_2016s2_5 <- aov(y~machine_f*station_f+power_r%in%machine_f+power_r%in%machine_f*station_f, table_2016s2)
+model_2016s2_5 <- aov(y^2~power_r%in%machine_f+machine_f*station_f+power_r%in%machine_f*station_f, table_2016s2)
 gad(model_2016s2_5)
+estimates(model_2016s2_5)
+model_2016s2_6 <- aov(y^2~power_r%in%machine_f+power_r%in%machine_f*station_f, table_2016s2)
+gad(model_2016s2_6)
 ```
 
 
@@ -330,6 +452,7 @@ Perform a complete regression analysis on these data; including checking of mode
 table_2016f1 <- readxl::read_xlsx("qe_lab/cigcons.xlsx")
 table_2016f1$State <- as.factor(table_2016f1$State)
 str(table_2016f1)
+summary(table_2016f1[,-1])
 ```
 
 ```{r, fig.width=8}
@@ -338,22 +461,47 @@ ggpairs(table_2016f1[,-1])
 ```
 
 ```{r eval=FALSE, include=T}
-model_2016f1 <- lm(Scig~price*perfem*perblack*Income*Education*Age, table_2016f1)
-ols_step_both_aic(model_2016f1)
-ols_step_both_p(model_2016f1)
+model_2016f1 <- lm(Scig~(price+perfem+perblack+Income+Education+Age), table_2016f1)
+summary(model_2016f1)
+anova(model_2016f1)
+plot(model_2016f1)
+car::vif(model_2016f1)
+ols_correlations(model_2016f1)
+
+
+aic_2016f1 <- MASS::stepAIC(lm(Scig~(price+perfem+perblack+Income+Education+Age)^2, table_2016f1),direction = "both")
+summary(aic_2016f1)
+
+library(olsrr)
+ols_step_both_aic(lm(Scig~(price+perfem+perblack+Income+Education+Age)^2, table_2016f1))
+
+# ols_step_best_subset(model_2016f1)
 ```
 
+ols_correlations() returns the relative importance of independent variables in determining response variable. How much each variable uniquely contributes to rsquare over and above that which can be accounted for by the other predictors? 
+
+Zero order correlation is the Pearson correlation coefficient between the dependent variable and the independent variables. 
+
+Part correlations indicates how much rsquare will decrease if that variable is removed from the model and 
+
+partial correlations indicates amount of variance in response variable, which is not estimated by the other independent variables in the model, but is estimated by the specific variable.
+
+```{r}
+boxcox_2016f1 <- MASS::boxcox(lm(Scig~price+Income*Age, table_2016f1))
+boxcox_2016f1$x[which.max(boxcox_2016f1$y)]
+```
+
+
 ```{r,message=F, echo=FALSE, out.width='25%',fig.show='hold'}
-model_2016f1_1 <- lm(Scig~perfem:Income:Age+price:perfem:Income:Age, table_2016f1)
-car::vif(model_2016f1_1)
+model_2016f1_1 <- lm(Scig^(-1)~price+Income+Age, table_2016f1) #  # perfem:Income:Age+price:perfem:Income:Age  #  Age+Income+perblack+Age:price # price + perfem+price:perfem
 summary(model_2016f1_1)
 anova(model_2016f1_1)
 plot(model_2016f1_1)
+table_2016f1[c(12,45),]
 ```
 
 ```{r,message=F, echo=FALSE, out.width='25%',fig.show='hold'}
-model_2016f1_2 <- lm(log(Scig)~perfem:Income:Age+log(price), table_2016f1)
-car::vif(model_2016f1_2)
+model_2016f1_2 <- lm(log(Scig)~(Income*Age)+log(price), table_2016f1)
 summary(model_2016f1_2)
 anova(model_2016f1_2)
 plot(model_2016f1_2)
@@ -414,7 +562,7 @@ anova(model_2016f2_1)
 
 ```{r echo=T, out.width='25%',fig.show='hold'}
 library(lme4)
-model_2016f2_2 <- lmer(oxygen~creek+(1|creek:sample),table_2016f2)
+model_2016f2_2 <- lmer(oxygen~creek+(1|creek:sample),table_2016f2) #creek+(1|creek:sample)
 summary(model_2016f2_2)
 # anova(model_2016f2_2)
 # pf(anova(model_2016f2_2)$'F value',df1=anova(model_2016f2_2)$'Df',df2=12, lower.tail = F)
@@ -684,11 +832,12 @@ smoker=1 if child reports that he or she smokes cigarettes regularly, and =0 oth
 
 ```{r}
 table_2018s1 <- readxl::read_xlsx("qe_lab/Problem1_ChildSmoking.xlsx")
-table_2018s1_above6 <- table_2018s1[which(table_2018s1$age>5),]
-table_2018s1_above6$age <- factor(table_2018s1_above6$age)
-table_2018s1_above6$male <- factor(table_2018s1_above6$male, labels = c("female","male"))
-table_2018s1_above6$smoker <- factor(table_2018s1_above6$smoker, labels = c("not regu","regularly"))
+#table_2018s1_above6$age <- factor(table_2018s1_above6$age)
+table_2018s1$male <- factor(table_2018s1$male, labels = c("female","male"))
+table_2018s1$smoker <- factor(table_2018s1$smoker, labels = c("not regu","regularly"))
 str(table_2018s1)
+
+table_2018s1_above6 <- table_2018s1[which(table_2018s1$age>5),]
 str(table_2018s1_above6)
 summary(table_2018s1$height)
 ```
@@ -715,6 +864,12 @@ ggpairs(table_2018s1_above6,mapping = aes(color =male, shape=male,alpha=0.3), co
 
 ```{r,eval=F}
 model_2018s1 <- lm(volume~height*age*male*smoker,table_2018s1_above6)
+model_2018s1<- lm(volume ~ height*age*male*smoker, data = table_2018s1, subset=(age >= 6))
+summary(model_2018s1)
+```
+
+
+```{r,eval=F}
 ols_step_both_aic(model_2018s1)
 ols_step_both_p(model_2018s1)
 ```
@@ -805,33 +960,44 @@ ggplot(table_2018f1, aes(X2, Y, color=X1))+geom_point()+labs(y="Profit",x="Spent
 ggplot(table_2018f1, aes(X1, Y, color=X2))+geom_point()+labs(y="Profit",x="the number of months", color="spend")+theme_light()
 ```
 
-```{r, out.width='25%', fig.show='hold'}
-model_2018f1_1 <- lm(Y^2~X1/X2, table_2018f1)
+```{r}
+model_2018f1_1 <- lm(Y^2~X1+X2+X1:X2+I(X1^2)+I(X2^2), table_2018f1)
+MASS::boxcox(model_2018f1_1)
 summary(model_2018f1_1)
-# library(olsrr)
-# ols_regress(model_2018f1_1)
-# car::Anova(model_2018f1_1)
-# car::vif(model_2018f1_1)
 anova(model_2018f1_1)
 plot(model_2018f1_1)
-```
+ols_plot_diagnostics(model_2018f1_1)
+plot(x=fitted(model_2018f1_1), y=residuals(model_2018f1_1),panel.last = abline(h=0, lty=2))
 
-```{r, out.width='25%', fig.show='hold'}
-model_2018f1_2 <- lm(-log(Y)~X1/X2, table_2018f1)
-summary(model_2018f1_2)
-anova(model_2018f1_2)
-plot(model_2018f1_2)
-```
+olsrr::ols_regress(model_2018f1_1)
+car::Anova(model_2018f1_1)
+car::vif(model_2018f1_1)
 
-```{r, out.width='25%', fig.show='hold'}
-model_2018f1_3 <- lm(Y^(-0.01)~X1/X2, table_2018f1)
-summary(model_2018f1_3)
-anova(model_2018f1_3)
-plot(model_2018f1_3)
 ```
 
 ```{r}
-predict(model_2018f1_1, newdata = data.frame(X1=20,X2=1900), interval = "prediction", level=0.95)
+ols_step_best_subset(model_2018f1_1)
+aic_2018f1_1<- MASS::stepAIC(model_2018f1_1,direction = "both")
+summary(aic_2018f1_1)
+```
+
+
+```{r}
+model_2018f1_2 <- lm(Y^2~X1*X2+I(X1^2), table_2018f1)
+MASS::boxcox(model_2018f1_2)
+summary(model_2018f1_2)
+anova(model_2018f1_2)
+plot(model_2018f1_2)
+ols_plot_diagnostics(model_2018f1_2)
+plot(x=fitted(model_2018f1_2), y=residuals(model_2018f1_2),panel.last = abline(h=0, lty=2))
+
+olsrr::ols_regress(model_2018f1_2)
+car::Anova(model_2018f1_2)
+car::vif(model_2018f1_2)
+```
+
+```{r}
+sqrt(predict(model_2018f1_1, newdata = data.frame(X1=20,X2=1900), interval = "prediction", level=0.95))
 ```
 
 
@@ -852,13 +1018,21 @@ A, B
 ```{r}
 table_2018f2 <- readxl::read_xlsx("qe_lab/Springs_2018f.xlsx")
 table_2018f2 <- table_2018f2[order(table_2018f2$D ,table_2018f2$C ,table_2018f2$B,table_2018f2$A),]
+table_2018f2$Blk <- rep(0:1,each=24)
+table_2018f2$A <- as.factor(table_2018f2$A)
+table_2018f2$B <- as.factor(table_2018f2$B)
+table_2018f2$C <- as.factor(table_2018f2$C)
+table_2018f2$D <- as.factor(table_2018f2$D)
+table_2018f2$Blk <- as.factor(table_2018f2$Blk)
 str(table_2018f2)
-kableExtra::kable(table_2018f2)
+
 ```
 
 ```{r, out.width='50%',fig.show='hold'}
-model_2018f2_1 <- aov(Heights~A*B*C*D, table_2018f2)
-summary(model_2018f2_1)
+model_2018f2_1 <- aov(Heights~Blk+(A+B+C+D)^3, table_2018f2)
+anova(model_2018f2_1)
+
+DanielPlot(model_2018f2_1,half = T, alpha=0.2)
 library(daewr)
 halfnorm(coef(model_2018f2_1)[2:8],alpha=0.4)
 
@@ -866,7 +1040,7 @@ library(gghalfnorm)
 gghalfnorm(x =coef(model_2018f2_1)[2:8],labs = names(coef(model_2018f2_1)[2:8]) , nlab = 4)+ ggplot2::theme_light()
 
 model_2018f2_2 <- lm(Heights~A+B, table_2018f2)
-summary(model_2018f2_2)
+anova(model_2018f2_2)
 
 ```
 
@@ -892,7 +1066,12 @@ Use only the first 250 observations for model training model (i.e., selection, f
 
 ```{r}
 table_2019s1 <- readxl::read_xlsx("qe_lab/ModelBuildingData.xlsx")
+
+table_2019s1$A <- as.factor(table_2019s1$A)
+table_2019s1$B <- as.factor(table_2019s1$B)
+
 str(table_2019s1)
+glimpse(table_2019s1)
 dplyr::glimpse(table_2019s1)
 table_2019s1_250 <- table_2019s1[1:250,]
 table_2019s1_500 <- table_2019s1[251:500,]
@@ -902,19 +1081,57 @@ str(table_2019s1_500)
 
 ```{r echo=FALSE, fig.height=6, fig.width=8}
 library(GGally)
-ggpairs(table_2019s1_250, mapping = aes(color = B,alpha=0.3))+theme_light()
-
-ggpairs(table_2019s1_250, mapping = aes(color = A, shape=B,alpha=0.3), columns = c("y", "x1", "x2", "x3"))+theme_light()
+ggpairs(table_2019s1_250, mapping = aes(color = A,alpha=0.3))+theme_light()
+ggpairs(table_2019s1_500, mapping = aes(color = A,alpha=0.3))+theme_light()
+hist(as.numeric(table_2019s1$x1))
 ```
 
-```{r echo=FALSE, fig.height=6, fig.width=8}
+```{r, out.width='30%'}
+# Prepare Data
+data <- na.omit(table_2019s1_250) # listwise deletion of missing
+# data <- scale(table_2019s1_250[,1:4]) # standardize variables
+
+# Determine number of clusters
+wss <- (nrow(data)-1)*sum(apply(data,2,var))
+for (i in 2:15) wss[i] <- sum(kmeans(data,centers=i)$withinss)
+plot(1:15, wss, type="b", xlab="Number of Clusters",
+  ylab="Within groups sum of squares")
+
+# K-Means Cluster Analysis
+fit_2019s1 <- kmeans(table_2019s1_250[,1:4], 3) 
+# get cluster means
+aggregate(table_2019s1_250[,1:4],by=list(fit_2019s1$cluster),FUN=mean)
+
+# append cluster assignment
+clusted_2019s1 <- data.frame(table_2019s1_250, fit_2019s1$cluster)
+
+
+
+# vary parameters for most readable graph
+library(cluster)
+clusplot(table_2019s1_250[,1:4], fit_2019s1$cluster, color=TRUE, shade=TRUE,
+   labels=2, lines=0)
+
+# Model Based Clustering
+library(mclust)
+fit_2019s1_1 <- Mclust(table_2019s1_250[,1:4])
+# plot(fit_2019s1_1) # plot results
+summary(fit_2019s1_1) # display the best model
+
+
+# comparing 2 cluster solutions
+# library(fpc)
+# cluster.stats(d, fit1$cluster, fit2$cluster)
+```
+
+
+```{r eval=FALSE, fig.height=6, fig.width=8}
 plotList <- list(
   qplot(x1+x2+x3, y, data = subset(table_2019s1_250, A== "a1" & B == "b1")),
   qplot(x1+x2+x3, y, data = subset(table_2019s1_250, A== "a2" & B == "b1")),
   qplot(x1+x2+x3, y, data = subset(table_2019s1_250, A== "a2" & B == "b2")),
   qplot(x1+x2+x3, y, data = subset(table_2019s1_250, A== "a1" & B == "b2"))
 )
-
 ggmatrix(
   plotList, nrow = 2, ncol = 2,
   yAxisLabels = c("a1", "a2"),
@@ -925,14 +1142,74 @@ ggmatrix(
 ```
 
 ```{r, eval=FALSE, out.width='25%',fig.show='hold'}
-model_2019s1 <- lm(log(y)~ x1*x2*x3*A*B,table_2019s1_250)
+model_2019s1 <- lm((y)~ (x1+x2+x3)^2+A*B,table_2019s1_250)
 car::vif(model_2019s1)
 summary(model_2019s1)
 library(olsrr)
 # ols_plot_diagnostics(model_2019s1_1)
 ols_step_both_aic(model_2019s1)
-
+aic_2019s1 <- MASS::stepAIC(model_2019s1,direction = "both")
+summary(aic_2019s1)
 ```
+
+```{r}
+MASS::boxcox(model_2019s1_1)
+model_2019s1_1 <- lm((1/y)~ (x1+x3)+A*B,table_2019s1_250)
+summary(model_2019s1_1)
+car::vif(model_2019s1_1)
+model_2019s1_2 <- lm((1/y)~ x2+A*B,table_2019s1_250)
+summary(model_2019s1_2)
+
+model_2019s1_0 <- lm((1/y)~ (x1+x2+x3+A+B)^2,table_2019s1_250)
+
+
+yhat500<- predict(model_2019s1_1,table_2019s1_500,interval="prediction",level = 0.95)
+
+sq.predict.error_1 <- (yhat500[1]-table_2019s1_500$y)^2
+sqrt(mean(sq.predict.error_1))
+
+sq.predict.error_2 <- (predict(model_2019s1_2,table_2019s1_500)-table_2019s1_500$y)^2
+sqrt(mean(sq.predict.error_2))
+```
+
+make three models by groups
+
+```{r}
+colnames(clusted_2019s1)[7] <- "group"
+clusted_2019s1$group<- as.factor(clusted_2019s1$group)
+model_2019s1_3 <- lm((1/y)~ x1+A*B+group,clusted_2019s1)
+summary(model_2019s1_3)
+
+model_2019s1_4 <- lm((1/y)~ x1+A+B,clusted_2019s1[which(clusted_2019s1$group==1),])
+summary(model_2019s1_4)
+
+model_2019s1_5 <- lm((1/y)~ A+B,clusted_2019s1[which(clusted_2019s1$group==2),])
+summary(model_2019s1_5)
+
+model_2019s1_6 <- lm((1/y)~ x2,clusted_2019s1[which(clusted_2019s1$group==3),])
+summary(model_2019s1_6)
+```
+
+```{r}
+table_2019s1_500 <- table_2019s1_500%>%mutate(group=ifelse(x3>0,1,ifelse(x1>0,2,3)))
+
+test_group1 <- table_2019s1_500[which(table_2019s1_500$group==1),]
+test_group2 <- table_2019s1_500[which(table_2019s1_500$group==2),]
+test_group3 <- table_2019s1_500[which(table_2019s1_500$group==3),]
+
+sq.predict.error1 <- (predict(model_2019s1_4,test_group1)-test_group1$y)^2
+sq.predict.error2 <- (predict(model_2019s1_5,test_group2)-test_group2$y)^2
+sq.predict.error3 <- (predict(model_2019s1_6,test_group3)-test_group3$y)^2
+
+sqrt(mean(sq.predict.error1))
+sqrt(mean(sq.predict.error2))
+sqrt(mean(sq.predict.error3))
+sqrt(mean(c(sq.predict.error1,sq.predict.error2,sq.predict.error3)))
+```
+
+
+
+
 
 ```{r echo=FALSE, fig.height=6, fig.width=8}
 model_2019s1_1 <- step(lm(y ~ ., data = table_2019s1_250), trace = FALSE)
@@ -946,7 +1223,7 @@ ggnostic(model_2019s1_1, mapping = aes(color = A))
 
 
 ```{r, echo=FALSE, out.width='25%',fig.show='hold'}
-model_2019s1_2 <- lm(table_2019s1_250,formula=log(y)~ x2+A+B)
+model_2019s1_2 <- lm(table_2019s1_250,formula=(1/y)~ x2+A*B)
 summary(model_2019s1_2)
 car::Anova(model_2019s1_2)
 car::vif(model_2019s1_2)
@@ -999,10 +1276,7 @@ table_2019s1_250_noouter <- table_2019s1_250[-c(113,189,219,249), ]
 model_2019s1_noouter <- lm(y ~ sqrt(!is.na(x1))+x2+x3+A+B, data = table_2019s1_250_noouter)
 summary(model_2019s1_noouter)
 plot(model_2019s1_noouter)
-
 ```
-
-
 
 
 a. calculate for each observation the square of the prediction errors,
@@ -1061,15 +1335,21 @@ library(GAD)
 table_2019s2$Run_r <- as.random(table_2019s2$Run)
 table_2019s2$Trt_f <- as.fixed(table_2019s2$Trt)
 table_2019s2$Rev_f <- as.fixed(table_2019s2$Rev)
-model_2019s2_1 <- aov(formula = Shrink ~ Run_r+Trt_f + Trt_f%in%Run_r+ Rev_f%in%Run_r + Rev_f + Trt_f:Rev_f, data=table_2019s2)
-pander::pander(gad(model_2019s2_1))
+model_2019s2_1 <- lm(formula = Shrink ~ Run_r+Trt_f+ Trt_f%in%Run_r+Rev_f + Rev_f%in%Run_r+Trt_f:Rev_f, data=table_2019s2)
+gad(model_2019s2_1) # same to anova(model_2019s2_1)
+estimates(model_2019s2_1) # see the structure of EMS
 ```
 
 The results show all the main effects and the interaction effect of Runs and Recolutions are significant at 0.05 significance level (P-value=0.5082). 
 
 ```{r message=F, warning=F, collapse=T}
 library("lme4")
+library("lmerTest")
 model_2019s2_2 <- lmer(formula = Shrink ~ (1|Run) + Trt + (1|Run:Trt) + Rev + (1|Run:Rev) + Trt:Rev, data=table_2019s2 , REML = TRUE)
+summary(model_2019s2_2)
+anova(model_2019s2_2)
+ranova(model_2019s2_2)
+
 summary(model_2019s2_2)$varcor
 pander::pander(confint(model_2019s2_2)[1:4,1:2])
 ```
@@ -1077,10 +1357,13 @@ pander::pander(confint(model_2019s2_2)[1:4,1:2])
 The results of variance components show the variance of interaction term of Runs and revolutions is negligible and hence dropping interaction term of them.
 
 ```{r}
-model_2019s2_3 <- aov(formula = Shrink ~ Run_r+Trt_f + Trt_f%in%Run_r+ Rev_f + Trt_f:Rev_f, data=table_2019s2)
-pander::pander(gad(model_2019s2_3))
+model_2019s2_3 <- aov(formula = Shrink ~ Run_r + Trt_f*Rev_f+ Trt_f%in%Run_r, data=table_2019s2)
+gad(model_2019s2_3)
 
-model_2019s2_4<- lmer(formula = Shrink ~ (1|Run)+Trt+Rev+(1|Run:Trt)+Rev*Trt, data=table_2019s2, REML = TRUE)
+model_2019s2_4<- lmer(Shrink ~ (1|Run)+(1|Run:Trt)+Trt*Rev, data=table_2019s2)
+summary(model_2019s2_4)
+anova(model_2019s2_4)
+
 ```
 
 The ANOVA table of new model shows that the interaction effects are significant.
@@ -1102,10 +1385,26 @@ Trt_Rev <- pairs(lsmeans(model_2019s2_4,~ Trt|Rev))
 Trt_Run <- pairs(lsmeans(model_2019s2_3,~ Trt_f|Run_r))
 Run_Trt <- pairs(lsmeans(model_2019s2_3,~ Run_r|Trt_f))
 
+test(rbind(Trt_Run,Run_Trt),adjust="tukey")
+test(rbind(Rev_Trt,Trt_Rev),adjust="tukey")
+```
+
+
+```{r eval=F, out.width='30%',fig.show='hold',message=F}
 library(kableExtra)
 kable(test(rbind(Trt_Run,Run_Trt),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(10,26:27,30,32,34:36,38,39,42,43,48),bold =T)%>%row_spec(c(10,26:27,30,32,34:36,38,39,42,43,48),background ="#EAFAF1")
 
 kable(test(rbind(Rev_Trt,Trt_Rev),adjust="tukey"),format="latex")%>%kable_styling("condensed",full_width=F,font_size = 8)%>%row_spec(c(21,85,86,88:90,94,96,100,102,106,112,118),bold =T)%>%row_spec(c(21,85,86,88:90,94,96,100,102,106,112,118),background ="#EAFAF1")
+```
+
+```{r}
+# Helen's plot
+library(lattice)
+library(car)
+library(agricolae)
+with(table_2019s2,xyplot(Shrink~Rev_f|Trt_f,groups=Run_r, aspect="xy",type="o"))
+with(table_2019s2,xyplot(Shrink~Trt_f|Rev_f,groups=Run_r, aspect="xy",type="a"))
+with(table_2019s2, interaction.plot(x.factor = Trt_f, trace.factor = Rev_f,response = Shrink))
 ```
 
 
@@ -1207,7 +1506,7 @@ lda          unordered     Linear discriminant analysis
 # Find the missing values (2 ways)
 # summary(table_2020s1)
 sapply(table_2020s1,function(x)sum(is.na(x)))
-# Imputing Missing Data
+table_2020s1[!complete.cases(table_2020s1), ]
 library(mice)
 md.pattern(table_2020s1,rotate.names=T)
 imputed <- mice(table_2020s1,m=6,maxit=30,seed=500,method=c("","","","","cart","mean",""))#

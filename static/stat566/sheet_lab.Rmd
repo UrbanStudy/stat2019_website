@@ -1,332 +1,1002 @@
 ---
-title: ''
-fontfamily: mathpazo
-fontsize: 10pt
-geometry: margin=3mm
-linestretch: 0.1
-classoption:
-- twocolumn
-pagenumbering: FALSE
-whitespace: none
+title: "Applied Satistics MS Exam-Lab"
+subtitle: ""
+author: "Shen Qu"
+date: 'Code: 34161'
+fontfamily: 
+fontsize: 12pt
 output:
   pdf_document:
-    toc: FALSE
-    number_sections: FALSE
+    toc: F
+    number_sections: F
 header-includes:
-    - \usepackage{booktabs}
-    - \usepackage{tabularx}
-    - \usepackage[fleqn]{mathtools}
-    - \setlength\tabcolsep{0.0pt}
-    - \setlength\lineskip{0pt}
-    - \setlength\parskip{0pt}
+   - \usepackage{fancyhdr}
+   - \pagestyle{fancy}
+   - \fancyhf{}
+   - \rhead{Page \thepage}
+   - \lhead{Code 34161}
 
-
-    
 ---
 
-\fontsize{6pt}{0pt}
-
-\footnotesize
-
-small,scriptsize,tiny,p0.5linewidth
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,cache=FALSE, message=FALSE, warning=F, echo=TRUE,results="markup", tidy=T)
-# options(scipen=6)
+knitr::opts_chunk$set( eval =T,echo = T,cache=F,collapse=T, out.width='50%', fig.show='hold',message=F,warning=F)
+# options(scipen=10)
 # options(digits=4)
-if (!require(pacman)) {install.packages("pacman"); library(pacman)}
-p_load(readxl,ggplot2,GGally,tidyverse, MASS,car,nortest,olsrr,lme4,kableExtra,pander) # ggpubr, mosaic,Metrics(rmse), agricolae, emmeans, huxtable
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(readxl,ggplot2,GGally,tidyverse, MASS,car,olsrr,lmtest,GAD,lme4,FrF2,emmeans) 
+
+# zoo::index
+# mice
+# ggpubr,ggfortify,pander,kableExtra,huxtable,plotly(plot_ly)
+
+# mosaic(favstats), agricolae(LSD.test), emmeans::lsmeans,nortest,,
+
+# lmtest(lrtest,dwtest(autocorr),coeftest),nortest(ad.test),Metrics(rmse)
+
+# lme4(lmer),lmerTest,GAD(), mgcv(gam)
+# smooth stats::loess, mgcv::gam, lmridge(lmrdige)
+
+# FrF2(DanielPlot,aliases),daewr (halfnorm), gghalfnorm(gghalfnorm), FrF2.catlg128(catlg)
+# ibd (ibd.aov)
+
+# small,scriptsize,footnotesize,tiny,p0.5linewidth
+getwd()
+setwd("/home/qs26/qushen26/stat2019_website/static/stat566")
+# par(mfrow=c(2,2))
+
+#(DataExplorer)
+#(pedometrics) #stepVIF
+#(splines)
+#(astsa)
+#(reshape2) #melt
+#(leaps) #regsubsets
 ```
 
 
 
-### Question 1 Linear Regression
+```{r eval=F, include=F}
+install.packages("tinytex")
+tinytex::install_tinytex()
+tinytex:::is_tinytex()
+library(tinytex)
+tlmgr_update()  
+tinytex::reinstall_tinytex()
+```
 
+\thispagestyle{empty}
+\pagebreak
+\tableofcontents
+\pagebreak
+\setcounter{page}{1}
 
-#### Import Data
+\fontsize{9pt}{0pt}
 
-```{r,eval=F, }
+# Preload data
+
+```{r,echo=F}
 table_2015f1 <- read_xlsx("qe_lab/Profits_2015f.xlsx")
 ```
 
-```{r,eval=F,}
-table_2016s1 <- read_xlsx("qe_lab/RegressionSpr16.xlsx")[-1,]
-table_2016s1$weight <- round(as.numeric(table_2016s1$weight), 2)
-table_2016s1$age <- as.factor(table_2016s1$age)
-table_2016s1$height <- round(as.numeric(table_2016s1$height), 2)
-table_2016s1$male <- factor(table_2016s1$male, labels=c("female","male"))
-```
 
-```{r,eval=F,}
+```{r,echo=F}
 table_2016f1 <- read_xlsx("qe_lab/cigcons.xlsx")
 table_2016f1$State <- as.factor(table_2016f1$State)
 ```
 
-```{r,eval=F,}
-# select a part
+```{r,echo=F}
 table_2018s1 <- read_xlsx("qe_lab/Problem1_ChildSmoking.xlsx")
+# table_2018s1$age <- factor(table_2018s1$age)
+table_2018s1$male <- factor(table_2018s1$male, labels = c("female","male"))
+table_2018s1$smoker <- factor(table_2018s1$smoker, labels = c("not regu","regu"))
 table_2018s1_u6 <- table_2018s1[which(table_2018s1$age>5),]
-table_2018s1_u6$age <- factor(table_2018s1_u6$age)
-table_2018s1_u6$male <- factor(table_2018s1_u6$male, labels = c("female","male"))
-table_2018s1_u6$smoker <- factor(table_2018s1_u6$smoker, labels = c("not regu","regu"))
-str(table_2018s1_u6)
-summary(table_2018s1$height)
+# str(table_2018s1_u6)
+# summary(table_2018s1$height)
 ```
 
-```{r,eval=F, out.width='50%', fig.show='hold'}
-table_2018f1 <- read_xlsx("qe_lab/profits_2018f.xlsx")
-```
 
-```{r,eval=F,}
+```{r,echo=F}
 # split to 2 parts
 table_2019s1 <- read_xlsx("qe_lab/ModelBuildingData.xlsx")
-dplyr::glimpse(table_2019s1)
 table_2019s1_250 <- table_2019s1[1:250,]
 table_2019s1_500 <- table_2019s1[251:500,]
-str(table_2019s1_250)
-str(table_2019s1_500)
+#str(table_2019s1_250)
+# str(table_2019s1_500)
+```
+
+```{r,echo=F}
+# reorder
+table_2020s1<- read_csv("qe_lab/COVID-19.csv")
+arrange(table_2020s1, population, pop_density)
+table_2020s1 <- table_2020s1[,3:9]
+```
+
+```{r,echo=F}
+table_2020s1 <- read_csv("qe_lab/COVID-19.csv")
+table_2020s1$country <- factor(table_2020s1$country) #, labels = c("a","b")
+# str(table_2020s1)
+table_2020s1 <- rename(table_2020s1, Y=confirmed.double,pop=population,area=land_area_skm,dens=pop_density,
+                       popL=pop_largest_city,life=life_expectancy,gdp=gdp_capita)
+table_2020s1 <- table_2020s1[,-2]
+imputed <- mice::mice(table_2020s1[,-1],m=6,maxit=30,seed=500,method="cart",print=F)
+imputed_2020s1 <- complete(imputed)
+```
+
+# Question 1 Linear Regression
+
+
+## Initial Analysis
+
+### Data Description
+
+```{r}
+data1 <- read_xlsx("qe_lab/RegressionSpr16.xlsx")[-1,]
+data1$weight <- round(as.numeric(data1$weight), 2)
+data1$age <- as.integer(data1$age)
+data1$height <- round(as.numeric(data1$height), 2)
+data1$male <- factor(data1$male, labels=c("female","male"))
+str(data1)
+```
+
+The data includes 30 rows and 4 columns. Each row represents an observation. The column 'weight' is response variable. Column 'height', 'age' and 'male' are regressors. 
+
+'Age' is integer variable. 'Male' is binary variable. 'Weight' and 'Height' are numerical variables.
+
+- Check Missing Values
+
+```{r}
+sapply(data1,function(x)sum(is.na(x)))
+# data1[!complete.cases(data1), ]
+```
+
+There is no missing values in the data.
+
+- Sample distribution 
+
+
+```{r}
+summary(data1)
+```
+For the 30 observations. the values of weight are from 95.76 to 333.27 and mean value is 180.52.
+ 
+The age are from 20 to 25. It is a ordinal variable.
+
+The height are from 63.80 to 72.00 and mean value is 67.68.
+
+The number of female is 17, which is greater than that of male. The two groups are not balanced.
+
+```{r,echo=F,out.width='100%'}
+ggpairs(data1,aes(col=male,alpha=0.3))+theme_light()
 ```
 
 
+The scatter plots show a strong(medium) positive(negative) curved relationship between height and weight (Correlation is 0.777), a weak correlation among the age and weight (0.133), and a weak correlation between age and height (0.131).
 
-#### Plot Data
+The plot shows that, the relationships of variables are very different between male and female.
 
-```{r,eval=F,  out.width='50%',fig.show='hold'}
-ggplot(table_2015f1,aes(X2,Y, color=X1))+
-  labs(x="adv",y="prof",color="month")+
-  geom_point()+theme_light()
-```
+For male group, the correlation of weight and age is 0.214. The correlation of weight and height is 0.472. The correlation between age and height is 0.56. 
 
-```{r,eval=F, , fig.show='hold', out.width='25%'}
-ggplot(table_2018s1_u6, aes(smoker,fill=male))+
-  geom_bar()+facet_wrap(.~age,ncol = 7)+theme_light()
-```
+For female group, the correlation of weight and age is 0.581. The correlation of weight and height is 0.0931. The correlation between age and height is 0.0711.
 
-```{r,eval=F, message=F, out.width='50%',fig.show='hold'}
-ggline(table_2016s1,"height","weight",add=c("mean","jitter"),color="age")
-ggline(table_2016s1,"height","weight",add=c("mean","jitter"),color="male")
-```
+In the plot of  weight vs. height, the range of the sample points in male and female groups are not overlap. The points of male are dispersed with greater values of weight and height. The points of female are tight with lessr values of weight and height.
 
-```{r,eval=F, fig.width=8}
-ggpairs(table_2015f1,aes(alpha=0.3))+theme_light()
+```{r,eval=F,echo=F}
+group_by(data1, male) %>%
+  summarise(count = n(),
+            median = median(weight, na.rm = TRUE),
+            IQR = IQR(weight, na.rm = TRUE) )
 ```
 
 
-Based on scatterplots and correlation, $Cor(y,X_1)=0.866$. X1 have medium to strong positive linear relationship to the response variable (Correlation coefficient is more than 0.6). X2 has medium negative
+- t test
 
-A linear function does not fit the data well since the data is clumped in the lower left corner and there appears to be an increasing variance problem.
-
-
-#### Build Model
-
-```{r,eval=F}
-model_2015f1_1 <- lm(Y~X1*X2,table_2015f1)
-model_2015f1_2 <- lm(Y^2~X1*X2,table_2015f1)
-table_2015f1_logy <- table_wf %>% mutate(logy=log(Y))
-table_2015f1_logy$Y <- NULL
-
-```
-$y=\beta_0+\beta_1X_1+\beta_2X_2$
-
-
-
-#### Regression Analysis
-
-```{r,eval=F}
-summary(model_2015f1_1)
-ols_regress(model_2015f1_1)
-```
-$\hat y=292.561-203.144X_1+ 1055.782X_2$
-
-The fitted overall model is statistically significant at 5% significance level (p-value=$9.744\times^{-06}$). 
-
-But most of the coefficients are not significent.
-
-Coefficient of 511.713 in the full model suggests the average peak rate of flow increases by **511.713** cubic feet per second when the rainfall increases by 1 inch and other variables are constants. 
-
-We merely test the null hypothesis $H_0:\beta_1=0$ using either the F-test or the equivalent t-test:
-
-As the output illustrates, the P-value <0.001. There is significant evidence at the 0.01 level to conclude that there is a linear association between the natural logarithm of () and the natural logarithm of ().
-
-#### ANOVA
-
-```{r,eval=F}
-anova(model_2015f1_1)
-Anova(model_2015f1_1)
+```{r}
+t.test(weight~male,alternative="less",data1) # "two.sided", "less", "greater"
+t.test(height~male,alternative="less",data1)
 ```
 
-Accroding to the  F test, the partial sum of squares explained by rainfall is **2209**, given that all the other regression coefficients are in the model.
+The t-test shows that the mean weight of male is greater than female at 0.05 significant level. The same goes with height.
 
 
+- Kruskal-Wallis test
 
-#### elimination regression
+It is a unbalanced data with more female.
+The male group and female group may be independent if they come from unrelated populations and the samples do not affect each other. 
 
-```{r,eval=F, include=T}
-vif(model_2016f1_1)
-ols_vif_tol(model_2015f1_1)
-```
-According to the result of VIF test (variance inflation factor), the model does have **problems of multicollinearity**. The VIF of variables **X4 (105)** are larger than 10. 
+Using the Kruskal-Wallis Test, we can decide whether the population distributions are identical without assuming them to follow the normal distribution.
 
-```{r,eval=F, include=T}
-ols_step_both_aic(model_2015f1_1)
-ols_step_both_p(model_2015f1_1)
-ols_step_best_subset(model_2015f1_1)
+```{r}
+kruskal.test(weight ~ male, data = data1)
+kruskal.test(weight ~ age, data = data1)
 ```
 
+At .05 significance level, we conclude that the male's weight and female's weight are nonidentical populations.
+While the weight from different age groups are identical population.
 
-#### Comparison
+- Multiple pairwise-comparison between groups
 
-```{r,eval=F, include=T}
-
-huxreg(model_2015f1_1, model_2015f1_2)
-# Redo analysis
+```{r}
+pairwise.wilcox.test(data1$weight, data1$age,p.adjust.method = "BH") 
+# c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
 ```
 
-comparing to the old model, the new model has a higher (about by 6%) adjusted R square and higher (about by 5%) prediction R-square, which means it shows stronger predictive capability. All the coeficients in new model are statistically significant higher than 98% significance level (the maximum p-values are 0.019, respectively). 
-PRESS statistic of the best model.
+At .05 significance level, we conclude that different age groups are identical populations.
 
-The value of PRESS is **6.53**. This model explains **90.8%** of variation in predicting the .
 
-#### Check Adequacy
+### Fit a basic linear model
 
-```{r,eval=F,include=T}
-plot(model_2015f1_1)
+- Multiple linear regression
 
-plot(table_2015f1$X1, table_2015f1$Y,panel.last = lines(sort(table_2015f1$X1), fitted(model_2015f1_1)[order(table_2015f1$X1)]))
-plot(table_2015f1$X2, table_2015f1$Y,panel.last = lines(sort(table_2015f1$X2), fitted(model_2015f1_1)[order(table_2015f1$X2)]))
+Fit a basic linear model with the first-order terms:
 
-plot(x=fitted(model_2015f1_1), y=residuals(model_2015f1_1),panel.last = abline(h=0, lty=2))
+$$Weight=\beta_0+\beta_1Height+\beta_2Age+(\beta_3+\beta_4Height+\beta_5Age)male+\varepsilon$$
 
-qqnorm(residuals(model_2015f1_1), main="", datax=TRUE)
-qqline(residuals(model_2015f1_1), datax=TRUE)
+for $i=1,2,..,30$. $\varepsilon_{i}$ is random error. $\varepsilon_{i}\sim iid N(0,\sigma^2)$
 
-ad.test(residuals(model_2015f1_1))
-
+```{r}
+model_basic <- lm(weight ~male+height+age+(height+age):male,data1)
+summary(model_basic)
 ```
-Residual Diagnostics show some violations. The model didn't satisfied the OLS assumptions of random errors.
 
-On the residual plot, there is a **funnel pattern**. The residual plot confirms that the "equal variance" assumption is violated.
+The fitted model is statistically significant at 5% significance level (p-value=0.000). None the regression coefficients are significant at 5% significance level. The adjusted $R^2$ is high (0.9082). 90.82% of the variance in the dependent variable is predictable from the independent variable.
 
-On the outlier and leverage plot, there are **two outliers**.
+### Multicollinearity Diagnostics
 
-On the qq plot, most of points follow approximately straight line but have some **positive skew**. 
+Multicollinearity implies two or more variables are near perfect linear combinations of one another. Variance inflation factors measure the inflation in the variances of the parameter estimates due to collinearities that exist among the predictors. In the presence of multicollinearity, regression estimates are unstable and have high standard errors. 
 
-Suggestion: using **natural log of response** to make a variance-stabilizing transformations. 
+A VIF of 1 means that there is no correlation among the $k^{th}$ predictor and the remaining predictor variables, and hence the variance of $\beta_k$ is not inflated at all. VIFs exceeding 4 warrant further investigation, while VIFs exceeding 10 are signs of serious multicollinearity requiring correction.
 
-https://online.stat.psu.edu/stat501/book/export/html/956
+```{r}
+car::vif(model_basic)
+```
 
-Transforming the y values corrects problems with the error terms (and may help the non-linearity).
+All the VIF are less than 10. The test shows there isn't significant problem of collinearity.
 
-Transforming the x values primarily corrects the non-linearity.
+### Check Homogenity of Variances among groups
 
-The transformations appear to have rectified the original problem with the model since the fitted line (residual) plot now looks ideal
+Bartlett’s test is used to test if variances across samples is equal. It is sensitive to departures from normality. 
 
-If the variances are unequal and/or error terms are not normal, try a "power transformation" on y. A power transformation on y involves transforming the response by taking it to some power $\lambda$. That is 
-$y^{\star}=y^\lambda$. Most commonly, for interpretation reasons, $\lambda$ is a "meaningful" number between -1 and 2, such as -1, -0.5, 0, 0.5, (1), 1.5, and 2. When $\lambda=0$, the transformation is taken to be the natural log transformation. That is $y^{\star}=\ln(y)$. One procedure for estimating an appropriate value for $\lambda$ is the so-called Box-Cox Transformation
+```{r}
+bartlett.test(weight~male,data1)
+bartlett.test(data1$weight,data1$male)
+# olsrr::ols_test_bartlett(data1,'weight', group_var = 'male')
+```
+
+Bartlett tests show that variances are not equal across male and female groups
+
+- Levene’s test
+
+The Levene test is an alternative test that is less sensitive to departures from normality.
+
+```{r}
+leveneTest(weight~male, data1) # male*age
+```
+
+
+- Fligner-Killeen test
+
+The Fligner-Killeen test is one of the many tests for homogeneity of variances which is most robust against departures from normality.
+
+```{r}
+fligner.test(weight~male, data1)
+```
+
+From the output above we can see that the p-value is less than the significance level of 0.05. The evidences suggest that the variance across groups is statistically significantly different. Therefore, we cannot assume the homogeneity of variances in the different groups.
+
+
+### Added Variable Plot
+
+Remove 1 predictor from the model. Run the reduced model and obtain the residuals. Run a regression of the removed predictor on the remaining predictors and obtain the residuals. 
+
+```{r,out.width='100%'}
+# ols_plot_added_variable(model_basic)
+avPlots(model_basic)
+```
+
+Added variable plot provides information about the marginal importance of a predictor variable $X_k$, given the other predictor variables already in the model. It shows the marginal importance of the variable in reducing the residual variability.
+
+A strong linear relationship in the added 'male' variable plot indicates the increased importance of the contribution of 'male' to the model already containing the other predictors. The slope of the line fitted to the points in the added variable plot is equal to the regression coefficient when 'weight' is regressed on all variables including 'male'.
+
+
+### Residual vs. fitted values
 
 If the error variances are unequal, try "stabilizing the variance" by transforming y, and stay within the linear regression framework
+Transforming the y values corrects problems with the error terms (and may help the non-linearity).
+Transforming the x values primarily corrects the non-linearity. A higher-order model may be needed.
 
-If the response y is a Poisson count, the variances of the error terms are not constant but rather depend on the value of the predictor. A common recommendation is to transform the response using the "square root transformation "$y^*=\sqrt{y}$
+If the response y is a **Poisson count**, the variances of the error terms are not constant but rather depend on the value of the predictor. A common recommendation is to transform the response using the "square root transformation "$y^*=\sqrt{y}$
 
-If the response y is a binomial proportion, the variances of the error terms are not constant but rather depend on the value of the predictor. Another common  recommendation is to transform the response using the "arcsine transformation," $\hat{p}^*=sin^{-1}\left(\sqrt{\hat{p}}\right)$ 
+If the response y is a **binomial proportion**, the variances of the error terms are not constant but rather depend on the value of the predictor. Another common  recommendation is to transform the response using the "arcsine transformation," $\hat{p}^*=sin^{-1}\left(\sqrt{\hat{p}}\right)$ 
 
 If the response y isn't anything special, but the error variances are unequal, a common recommendation is to try the natural log transformation or the "reciprocal transformation" $y^*=\frac{1}{y}$.
 
-It's not really okay to remove some data points just to make the transformation work better, but if you do make sure you report the scope of the model.
 
-It's better to give up some model fit than to lose clear interpretations. Just make sure you report that this is what you did.
-
-In summary, it appears as if the model with the natural log of () as the response and the natural log of () as the predictor works well. The relationship appears to be linear and the error terms appear independent and normally distributed with equal variances.
-
-- polynomial regression
-
-In the residuals versus predictor plots, there is obvious curvature and it does not show uniform randomness. The histogram appears heavily left-skewed and does not show the ideal bell-shape for normality. Furthermore, the NPP seems to deviate from a straight line and curves down at the extreme percentiles. These plots alone suggest that there is something wrong with the model being used and indicate that a higher-order model may be needed.
-
-The figures below give a scatterplot of the raw data and the trend of this data is better suited to a quadratic fit.
-
-#### Estmation
-
-```{r,eval=F,include=T}
-sqrt(predict(model_2015f1_2, newdata=data.frame(X1=20,X2=1500),
-             interval="prediction", level=0.95 )) # "confidence"
-
-confint(model_2015f1_2, level=0.05/2) # 1-(0.05/2)
-```
-partial sum of squares, estimated coefficients, standard errors, p-values, 95% Bonferroni joint confidence intervals for the coefficients of the best model.
-
-```{r,eval=F,}
-model_2019s1_2 <- lm(table_2019s1_250,formula=log(y)~ x2+A+B)
-model_2019s1_3 <- lm(table_2019s1_500,formula=log(y)~ x2+A+B)
-
-rmse(table_2019s1_500$y,exp(predict(model_2019s1_2,table_2019s1_500)))
-
-ols_press(model_2019s1_3)
-# MPV::PRESS(model_2019s1_3)
-sum((residuals(model_2019s1_3)/(1 - lm.influence(model_2019s1_3)$hat))^2)
-
-ols_pred_rsq(model_2019s1_3)
-
-# str(model_2019s1_3)
-# From 564-lab caculate prediction power
-deviation <- table_2019s1_500$y-mean(table_2019s1_500$y)
-SST <- deviation%*%deviation
-1-(MPV::PRESS(model_2019s1_3)/SST)
-
-# by definition PRESS
-sum((table_2019s1_500$y-exp(model_2019s1_2$fit))^2)
-sum((table_2019s1_500$y-exp(predict(model_2019s1_2,table_2019s1_500)))^2)
-
-# one method of RMSE
-sqrt(mean(model_2019s1_3$residuals^2))
+```{r,echo=F}
+plot(model_basic,c(1,3))
 ```
 
+A residuals vs. fitted plot is better for determining linearity, and A scale-location plot is good for determining heteroskedasticity.
 
-```{r,eval=F, }
-# remove outlier
-table_2019s1_250[c(189,219,249),]
-table_2019s1_250_noout <- table_2019s1_250[-c(189,219,249), ]
-model_2019s1_noout <- lm(y ~ sqrt(!is.na(x1))+x2+x3+A+B, table_2019s1_250_noout)
+The plot of residuals v.s. predicted values detects non-linearity. there is discernible (a funnel) pattern or change in envelope. there is curvature and it doesn't show uniform randomness. 
+
+In this case, the residual are not constant spread. There is a little curved pattern on this plot. The curved red line and spread of points indicates that variance is not constant. Evidence against linearity assumption. We can transform response or add quadratic and interaction terms in the model. 
+
+### Residual vs. explanatory values
+
+Remove 1 predictor from the model. Run the reduced model and obtain the residuals. Plot the residuals vs. the removed predictor. If I see a pattern, then $X_i$ should not be removed from the model. If I see no pattern, this is evidence that $X_i$ could be removed.
+
+Graph to determine whether we should add a new predictor to the model already containing other predictors. The residuals from the model is regressed on the new predictor and if the plot shows non random pattern, you should consider adding the new predictor to the model.
+
+```{r,echo=F, out.width='50%'}
+ols_plot_resid_regressor(model_basic, 'height')
+ols_plot_resid_regressor(model_basic, 'age')
+ols_plot_resid_regressor(model_basic, 'male')
+plot(log(data1$height),resid(model_basic),type="p"); abline(0,0)
 ```
 
-In general, the median changes by a factor of $k^{\beta_1}$ for each k-fold increase in the predictor x.
-
-The result tells us that the estimated median y value changes by a factor of () for each two-fold increase in x. For example, the median y of 2x is estimated to be () times the median y of x.
-
-We can be 95% confident that the median y will increase by a factor between L and R for each two-fold increase inx.
-
-#### Conclusion
-
-the natural logarithm of () is positively linearly related to the natural logarithm of (). That is, as the natural log of () increases, the average natural logarithm of () also increases.
+If there is a curve pattern on the plot, the problem with nonlinearity is probably due to this $X_i$. This variable doesn't enter the model in the right way. We should consider higher order term or other transformation on $X_i$.
 
 
+### Partial Residual Plot
 
-### Question 2 Factorial Design
+```{r,out.width='100%'}
+crPlots(lm(weight ~male+height+age,data1))
+# ols_plot_comp_plus_resid(model_basic)
+```
 
-#### Import Data
+A partial residual plot essentially attempts to model the residuals of one predictor against the dependent variable. A component residual plot adds a line indicating where the line of best fit lies. The Y residuals represent the part of Y not explained by all the variables other than X. The X residuals represent the part of X not explained by other variables. 
+The residual plus component plot indicates whether any non-linearity is present in the relationship between Y and X and can suggest possible transformations for linearizing the data.
 
-```{r,eval=F,}
+
+
+### Check residual Normality
+
+```{r,echo=F}
+plot(model_basic,2)
+olsrr::ols_plot_resid_hist(model_basic)
+```
+
+Normality is more important for small sample size.
+
+The Q-Q plot does not show that the residuals are normal distributed. Some points deviated from the straight line on the two tail sides. The assumption of normal distribution about errors is violated.
+
+The histogram of the residuals shows a roughly normal distribution.
+
+```{r}
+olsrr::ols_test_normality(model_basic)
+```
+
+None of four methods reject that the residuals are normal distributed.
+
+### Check residual independence
+
+```{r,echo = F}
+plot(data1$age,residuals(model_basic)) # zoo::index(data1)
+acf(data1[,1])  # order(data1$age)
+```
+
+
+```{r}
+lmtest::dwtest(model_basic)
+```
+
+If the randomness assumption is not valid, then a different model needs to be used. This will typically be either a time series model or a non-linear model (with age as the independent variable).
+
+The serial autocorrelations should all be 0. Durbin-Watson test fails to reject that the model have zero autocorrelation.
+
+### Brief Summary
+
+  + The above analysis indicate that there are some violations of the model assumption. The basic linear model is not good for the data. 
+
+  + A Box-Cox transformations can stabilize response variance, make the distribution of the response variable closer to the normal distribution, and improve the fit of the model to the data. 
+
+  + Since the randomness assumption is not valid, I will consider a polynomial model.
+
+  + The male's weight and female's weight are not identical populations. We can consider analysis the models for the subgroups.
+
+\pagebreak
+
+
+## The Polynomial Model
+
+### The full Model
+
+Fit a full model with quadratic and pairwise interaction terms:
+
+$$Weight=\beta_0+\beta_1Height+\beta_2Age+\beta_3Height*Age+\beta_4Height^2+\beta_5Age^2+$$ $$(\beta_6+\beta_7Height+\beta_8Age+\beta_9Height*Age+\beta_{10}Height^2+\beta_{11}Age^2)Male+ \varepsilon_i$$
+for $i=1,2,..,30$.
+$\varepsilon_{i}$ is random error. $\varepsilon_{ijk}\sim iid N(0,\sigma^2)$
+
+```{r}
+model1 <- lm(weight ~  male+height+age+age:height+I(height^2)+I(age^2)+
+                        (height+age+age:height+I(height^2)+I(age^2)):male
+                        , data1)
+summary(model1)
+```
+
+The summary table shows that the full model is statistically significant at 5% significance level (p-value=0.000). The adjusted $R^2$ is higher (0.9107). 91.07% of the variance in the dependent variable is predictable from the independent variable.
+
+None the predictors have significant effects on the average value of response at 0.05 significance level (all the coefficients have p-value > 0.2). We need to remove some terms.
+
+### Box-cox analysis
+
+```{r,fig.align='center' }
+bc<- MASS::boxcox(model1)
+bc$x[which.max(bc$y)]
+# bc$x[bc$y > max(bc$y) - 1/2 * qchisq(.95,1)] 
+```
+
+If the variances are unequal and/or error terms are not normal, we can use Box-Cox Transformation, a procedure for estimating an appropriate value for $\lambda$.
+
+$\lambda$ is given a "meaningful" number between -1 and 2, such as -1, -0.5, 0, 0.5, (1), 1.5, and 2. 
+Then, we transform the response by taking it to a power $\lambda$. That is $y^{\star}=y^\lambda$. 
+When $\lambda=0$, the transformation is taken to be the natural log transformation. That is $y^{\star}=\ln(y)$. 
+The result shows we can let $\lambda=-2$. We need to transform response variable.
+We refit the model with $Y^{-2}$
+
+
+```{r}
+data1$Y.tran <- data1$weight^(-2)
+model2 <- update(model1,Y.tran ~ .) 
+summary(model2)
+```
+
+The adjusted $R^2$ is higher than before (.9869). A part of the coefficients are significant.
+
+```{r,echo=F,out.width='30%'}
+plot(model1,1:3)
+plot(model2,1:3)
+```
+
+The transformations appear to have rectified the original problem (above) with the model since the fitted line of residual plot (below) now looks better.
+
+
+### Variable selection
+
+- Stepwise Method
+
+Build regression model from a set of candidate predictor variables by removing predictors based on Akaike Information Criteria, in a stepwise manner until there is no variable left to remove any more.
+
+```{r,results=F}
+aic1 <- MASS::stepAIC(model2,direction = "both")
+aic2 <- MASS::stepAIC(model2,direction = "backward")
+aic3 <- MASS::stepAIC(model2,direction = "forward")
+```
+
+
+```{r}
+summary(aic1)
+```
+
+Using "both sides", "backward", and "forward" AIC selection, there are still 9 coefficients. We can try other package.
+
+```{r}
+ols_step_both_aic(model2)
+```
+
+Another AIC selection suggests the model contains six term: male, height, interaction of height and age, interaction of male and height, age, and height$^2$.
+
+
+```{r,eval=F}
+ols_step_both_p(model2)
+```
+
+
+
+- All possible subsets
+
+```{r eval=T, include=F}
+p<- ols_step_best_subset(aic1)
+```
+
+\fontsize{6pt}{0pt}
+
+```{r}
+p
+```
+
+\fontsize{9pt}{0pt}
+
+We should choose model 4, the subset of predictors that do the best at meeting some well-defined objective criterion, such as having the largest $R^2_{adj}$ value or the smallest Mallow’s $C_p$ and AIC.
+The reduced model is indicator male, interaction terms between male and height, age, and age, and height$^2$.
+
+```{r}
+model3 <- update(model2,.~male+height+age+I(height^2)+(height+age+I(height^2)):male) 
+```
+
+- Partial Regression
+
+```{r eval=F, include=T}
+car::Anova(model1)
+```
+
+The ANOVA table with Type II  tests shows the partial sum of squares explained by X1 is , given that all the other regression coefficients are in the model.
+It shows that the effects of male are more Important.
+
+### Brief Summary
+
+
+```{r}
+# ols_mallows_cp(model_2020s1_p3,model_2020s1_p1)
+summary(model3)
+# ols_regress(model3)
+# olsrr::ols_press(model3)
+# ols_pred_rsq(model3)
+```
+
+
+Considering several criteria for variable selection such as MSE, Mallow’s $C_p$ or AIC, the recommended model using stepwise and all possible subset selection is:
+
+$$Weight^{-2}=\beta_0+\beta_1Height+\beta_2Age+\beta_3Height^2+$$
+$$(\beta_4+\beta_5Height+\beta_6Age+\beta_7Height^2)Male+ \varepsilon_i$$
+
+
+
+  + The comparison of residual plot shows transform of response is necessary.
+
+  + The fitted overall model is statistically significant at 5% significance level (p-value=$2.2\times10^{-16}$). 
+
+  + The F-test or the equivalent t-test test the null hypothesis $H_0:\beta_k=0$. When the P-value <0.05. There is significant evidence at the 0.05 level to conclude that there is a linear association between the $X_k$ and the natural Y.
+
+  + Most of the coefficients are significant. The coefficients in the latest model suggests how many units the average $Y^{-2}$ increases by when the $X_i$ increases by 1 inch and other variables are constants. 
+
+  + Although some model can give higher $R^2$, we would like to choose the model with less explanatory variables.
+
+\pagebreak
+
+## Check Adequacy
+
+### Independence Test
+
+- Durbin-Watson test
+
+```{r}
+lmtest::dwtest(model3)
+```
+
+Durbin-Watson test fails to reject $H_0$. The model may have zero autocorrelation.  The independent assumption is not violated.
+
+### Normality Test
+
+- QQ plot
+
+In the QQ plot (the residuals vs a set of hypothetical normal residuals), most of points follow approximately straight line. The plot seems to deviate from a straight line and curves up at the extreme percentiles. The right tail is longer than normal and the left tail is shorter. It shows a little violation of normal distribution assumption of residuals.
+
+
+```{r,echo=F}
+plot(model3,which=2)
+# ols_plot_resid_qq(model3)
+# qqnorm(residuals(model3), main="", datax=TRUE)
+# qqline(residuals(model3), datax=TRUE)
+ols_plot_resid_hist(model3)
+```
+
+
+- Histogram
+
+The histogram of the residuals shows a normal distribution or detects violation of normality assumption.
+
+The histogram appears a litter right-skewed and does not show the ideal bell-shape for normality. 
+
+- Other normality tests
+
+```{r}
+ols_test_normality(model3)
+# nortest::ad.test(residuals(model3))
+```
+
+Two out of four methods cannot reject the residuals are normal distributed.
+
+Therefore, the transformation improved the assumption of normality. Due to small sample size, it is acceptable.
+
+### Heteroskedasticity Test
+
+```{r,echo=F}
+plot(model3,c(1,3))
+# ols_plot_resid_fit(model3)
+# plot(x=fitted(model3), y=residuals(model3),panel.last = abline(h=0, lty=2))
+```
+
+In the plots of residuals versus predicted value, there is a roughly even width band centered around zero. A horizontal red line with equally spread out points  indicates constant variance.  There isn't serious violation of the "equal variance" and "zero mean" assumption. 
+
+
+- Breusch Pagan Test: 
+
+It is used to test for herteroskedasticity (non-constant error variance). It tests whether the variance of the errors from a regression is dependent on the values of the independent variables. It is a $\chi^2$ test.
+
+```{r}
+ols_test_breusch_pagan(model3, rhs = F,multiple = T, p.adj ='sidak') # 'none','bonferroni', 'holm'
+bptest(model3)
+```
+
+
+- Score Test
+
+Test for heteroskedasticity under the assumption that the errors are independent and identically distributed (i.i.d.).
+
+```{r}
+ols_test_score(model3, rhs = TRUE)
+ncvTest(model3)
+```
+
+- F Test
+
+F Test for heteroskedasticity under the assumption that the errors are independent and identically distributed (i.i.d.).
+
+```{r}
+ols_test_f(model3, rhs = TRUE)
+```
+
+The above tests cannot reject that the variance is constant if controlling the variable of male.
+
+- Weighted Least Squares
+
+
+```{r,eval=F,out.width='25%'}
+regRes <- lm(abs(model3$residuals)~model3$fitted.values)
+weights = 1/regRes$fitted.values^2
+wls <-  update(model3, weights=weights)
+plot(model3)
+plot(wls)
+```
+
+Regress the abs values of OLS residuals versus OLS fitted values. 
+Store the fitted values from this regression. 
+These fitted values are estimates of the error standard deviations.
+
+
+### Outlier and leverage points
+
+```{r,echo = F,out.width='50%'}
+plot(model3,4:5)
+ols_plot_resid_stand(model3)
+ols_plot_resid_stud(model3)
+ols_plot_resid_stud_fit(model3)
+ols_plot_resid_lev(model3)
+```
+
+- Cook's D Chart
+
+Chart of Cook’s distance to detect three observations (#10,#27,#30) that strongly influence fitted values of the model.
+It depends on both the residual and leverage i.e it takes it account both the x value and y value of the observation.
+
+- Studentized Residuals vs Leverage Plot
+
+Studentized deleted residuals is the deleted residual divided by its estimated standard deviation. Studentized residuals are going to be more effective for detecting outlying Y observations than standardized residuals. If an observation has an externally studentized residual that is larger than 2 (in absolute value) we can call it an outlier.
+
+
+There are one outlier (#10) and two leverage points (#27,#13). 
+These points can severely affect normality and homogeneity of variance. It can be useful to remove outliers to meet the test assumptions.
+
+It's not really okay to remove some data points just to make the model work better. Keeping or removing them should be context-dependent.
+
+### Check Multicollinearity again
+
+```{r}
+car::vif(model3)
+```
+
+The quadratic and interaction terms will produce high VIF. We can fix it by fitting an orthogonal polynomial model using the argument of 'raw=T'
+
+```{r}
+model4 <- lm(weight^(-2) ~ male+poly(height,2,raw=T)+age+age:male+poly(height,2,raw=T):male, data1)
+```
+
+
+```{r}
+summary(model3)$coefficient
+summary(model4)$coefficient
+```
+
+The model summaries show that the new model can give the same values of the raw coefficients.
+
+```{r}
+car::vif(model4)
+```
+
+The new vif of the orthogonal polynomial model are not as serious as before.
+
+### Brief Summary
+
+ + It appears that the updated model with weight$^{-2}$ as the response performs better. 
+ 
+ + The relationship appears to be linear and the error terms appear independent and normally distributed with equal variances.
+ 
+ + Further information is needed for discussing the outlier and leverage points.
+ 
+ + The male and female groups are not identical, this model is the best one for the whole data.
+
+
+## Estmation and Prediction
+
+```{r,eval=T,include=T}
+pred <- (predict(model4, data.frame(age=26,height=70,male="male"),
+             interval="predict", level=0.95 ))^(-0.5) # "confidence"
+confint(model4, level=1-(0.05/6)) # 
+confint(model4,adjust.method = "bonferroni")
+```
+
+Using the latest model, when age=26,height=70,male="male", the prediction interval is ( `r pred[c(3,2)]` ) with fitted value of  `r pred[1]` .
+
+Note:
+
+We should be careful with the extrapolation problems. If using fitted model to predict response 'weight' at a predictor 'age' value out of observed range of age, the results are less reliable.
+
+Each variable should have a reasonable range. In this case the upper limits is not reasonable.
+
+## Male group
+
+```{r}
+data_male <- data1[data1$male=="male",]
+data_female <- data1[data1$male=="female",]
+```
+
+
+```{r}
+model_m <- lm(weight ~ height+I(height^2)+age+I(age^2)+age:height,  data_male)
+```
+
+
+```{r}
+summary(model_m)
+```
+
+Very low $R^2$ values
+
+
+- Box-cox analysis
+
+```{r}
+bc_m <- boxcox(model_m)
+bc_m$x[which.max(bc_m$y)]
+```
+
+The result shows $\lambda=1.5$. We can transform response variable as Weight$^{1.5}$.
+
+
+```{r}
+model_m1 <- update(model_m,weight^(3/2) ~.)
+summary(model_m1)
+```
+
+
+
+- Stepwis Selcetion
+
+
+```{r,echo = F,include=F}
+aic_m <- MASS::stepAIC(model_m1,direction = "both")
+```
+
+```{r}
+summary(aic_m)
+```
+
+Using stepwise selection, the recommended model includes height, height$^2$, age, and interaction of age and height.
+
+- All possible subsets
+
+```{r,echo = F}
+p<- ols_step_best_subset(model_m1)
+```
+
+\fontsize{6pt}{0pt}
+
+```{r}
+p
+```
+
+\fontsize{9pt}{0pt}
+
+We should choose model 1, a subset with maximum $R^2_{adj}$ and minimum Mallows's $C_p$ and AIC.
+
+The reduced model is $Weight^2=\beta_0age+\beta_1age^2+\varepsilon$.
+
+- Partial Regression
+
+```{r eval=T, include=T}
+car::Anova(model_m1)
+```
+
+The ANOVA table with Type II tests shows that none the effects are significant.
+
+```{r,echo = F}
+avPlots(model_m1)
+```
+
+The partial-regression plots shows age$^2$ are relatively less important.
+
+```{r,echo = F}
+crPlots(lm(weight^(1.5) ~ height+I(height^2)+age+I(age^2),  data_male))
+ols_plot_comp_plus_resid(model_m1)
+```
+
+Component+Residual (Partial Residual) Plots
+
+A partial residual plot essentially attempts to model the residuals of one predictor against the dependent variable. A component residual plot adds a line indicating where the line of best fit lies. The Y residuals represent the part of Y not explained by all the variables other than X. The X residuals represent the part of X not explained by other variables.
+
+```{r}
+model_m2 <- update(model_m1,.~age+I(age^2))
+summary(model_m2)
+```
+
+- Residual Diagnosis
+
+```{r,echo = F,out.width='25%'}
+plot(model_m2)
+```
+
+The residual plot doesn't show serious violation of assumption.
+
+- Prediction
+
+```{r}
+pred.m <- predict(model_m2,data.frame(age=26,height=70,male="male"),interval = "prediction",level=0.95)^(2/3)
+```
+
+
+```{r}
+compare <- rbind(pred[c(1,3,2)],pred.m) 
+rownames(compare) <- c("whole data","male group")
+compare
+```
+
+Using the male model, when age=26,height=70, the prediction interval is ( `r pred.m[2:3]` ) with fitted value of  `r pred.m[1]` .
+
+Although the model for male group has a low $R^2$ value, the prediction interval is more reasonable than the whole data model.
+
+
+
+
+
+
+## Female group
+
+
+```{r}
+model_f <- lm(weight ~ height+I(height^2)+age+I(age^2)+age:height,  data_female)
+```
+
+
+- Box-cox analysis
+
+```{r}
+bc_f <- boxcox(model_f)
+bc_f$x[which.max(bc_f$y)]
+```
+
+The result shows $\lambda=2$. We can transform response variable as Weight$^{2}$.
+
+
+```{r}
+model_f1 <- update(model_f,weight^(2) ~.)
+```
+
+
+
+- Stepwis Selcetion
+
+
+```{r,echo = F,include=F}
+aic_f <- MASS::stepAIC(model_f1,direction = "both")
+```
+
+```{r}
+summary(aic_f)
+```
+
+Using stepwise selection, the recommended model includes all the terms.
+
+- All possible subsets
+
+```{r,echo = F}
+p<- ols_step_best_subset(model_f1)
+```
+
+\fontsize{6pt}{0pt}
+
+```{r}
+p
+```
+
+\fontsize{9pt}{0pt}
+
+We should choose model 2, a subset with maximum $R^2_{adj}$ and minimum Mallows's $C_p$ and AIC.
+
+The reduced model includes age and interaction of height and age.
+
+- Partial Regression
+
+```{r eval=T, include=T}
+car::Anova(model_f1)
+```
+
+The ANOVA table with Type II tests shows that the interaction effects are significant.
+
+```{r,echo = F,out.width='100%'}
+avPlots(model_f1)
+```
+
+The partial-regression plots shows these terms are equally important.
+
+```{r,echo = F,out.width='100%'}
+# crPlots(lm(weight^(2) ~ height+I(height^2)+age+I(age^2),  data_female))
+ols_plot_comp_plus_resid(model_f1)
+```
+
+Component+Residual (Partial Residual) Plots
+
+A partial residual plot essentially attempts to model the residuals of one predictor against the dependent variable. A component residual plot adds a line indicating where the line of best fit lies. The Y residuals represent the part of Y not explained by all the variables other than X. The X residuals represent the part of X not explained by other variables.
+
+```{r}
+model_f2 <- update(model_f1,.~height+age+height:age)
+summary(model_f2)
+```
+
+The female model has a very high $R^2$ value (0.9804).
+The female model is statistically significant at 5% significance level. 
+The the coefficients of age and interaction of age vs. height are significant.  
+
+
+- Residual Diagnosis
+
+```{r,echo = F,out.width='25%'}
+plot(model_f2)
+```
+
+The residual plots  show some violation of assumption. Due to the small sample size, it is acceptable.
+
+
+
+## Conclusion
+
+
+ + There are many possible models with different predictor combinations. It's better to give up some model fit than to lose clear interpretations.
+ 
+ + Comparing to the old model, the redueced polynomial model has a higher adjusted R square and higher prediction R-square, which means it shows stronger predictive capability. All the coefficients in new model are statistically significant higher than 95% significance level. The transformation on response is necessary. Overall, the polynomial model is acceptable.
+ 
+ + The male group and female group are not identical. Fitting two models for the subgroup respectively is necessary.
+ 
+ + Although the male model has a bad performance on goodness-of-fit, its prediction interval is more reasonable than the polynomial model.
+ 
+ + Notice that the given new value of age (26) is outside the original range of age in the data. The prediction is less reliable.
+ 
+ + The female model shows strong predictive capability.
+
+
+
+
+
+\pagebreak
+
+# Question 2 Factorial Design
+
+## Preload Data
+
+
+```{r,eval=F,echo=F }
 # gather colums
-table_2015f2 <- read_xlsx("qe_lab/Springs_2015f.xlsx")
-table_2015f2 <- gather(table_2015f2,'Height','...7','...8',
-                       key = "1",value = "height" )[,-6]
-str(table_2015f2)
+table_2015f2 <- readxl::read_xlsx("qe_lab/Springs_2015f.xlsx")
+table_2015f2 <- data.frame(table_2015f2)
+heatmap(as.matrix(table_2015f2[,1:5]),Colv = NA,Rowv = NA,scale = "column")
+
+for (i in 1:5){table_2015f2[,i] <- as.factor(table_2015f2[,i])}
+table_2015f2 <- gather(table_2015f2,'Height','...7','...8',key = "temp",value = "height" )[,-6]
 ```
 
-```{r,eval=F,}
+```{r,eval=T,echo=F }
 # gather
-DesignSpr16 <- read_excel("qe_lab/DesignSpr16.xlsx")
+DesignSpr16 <- readxl::read_excel("qe_lab/DesignSpr16.xlsx")
 table_2016s2 <- gather(DesignSpr16[c(2:4,6:8),c(2:4,6:8,10:12)])
 names(table_2016s2) <- c("machine","y")
 table_2016s2 <- table_2016s2[c("y","machine")]
-table_2016s2$machine <- as.factor(c(rep("machine1",18),
-                        rep("machine2",18),rep("machine3",18)))
-table_2016s2$station <- as.factor(rep(c(rep("station1",6),
-                        rep("station2",6),rep("station3",6)),3))
-table_2016s2$power<-as.factor(rep(c(rep("power1",3),rep("power2",3)),9))
-str(table_2016s2)
+table_2016s2$machine <- as.factor(c(rep("machine1",18),rep("machine2",18),rep("machine3",18)) )
+table_2016s2$station <- as.factor(rep(c(rep("station1",6),rep("station2",6),rep("station3",6)),3) )
+table_2016s2$power <- as.factor(rep(c(rep("power1",3),rep("power2",3)),9) )
+# table_2016s2$rep <- as.factor(rep(c("rep1","rep2","rep3"),18))
+# str(table_2016s2)
 ```
 
-```{r,eval=T,, message=F}
+```{r,eval=T,echo=F }
 # One-stage nested design
 creek1 <- c(5.2, 5.4, 5.6, 5.7, 5.4, 5.4, 5.6, 5.5, 5.8, 5.5)
 creek2 <- c(5.1, 5.3, 5.1, 5.0, 5.3, 5.2, 5.0, 5.0, 4.9, 5.1)
@@ -336,14 +1006,11 @@ table_2016f2$creek <- as.factor(table_2016f2$creek)
 table_2016f2$sample <- as.factor(c(rep("sample1",2),rep("sample2",2)
                  ,rep("sample3",2),rep("sample4",2),rep("sample5",2)))
 table_2016f2$rep <- as.factor(rep(c("rep1","rep2"),15))
-str(table_2016f2)
+# str(table_2016f2)
 ```
 
-```{r,eval=F,}
-table_2017sr1 <- read_xlsx("qe_lab/Profits_2017s.xlsx")
-```
 
-```{r,eval=F, }
+```{r,eval=F,echo=F }
 # BIBD
 table_2017sd1 <- read_xlsx("qe_lab/NBalance.xlsx")
 table_2017sd1$Block <- factor(table_2017sd1$Block,
@@ -352,120 +1019,254 @@ table_2017sd1$Animal <- factor(table_2017sd1$Animal,
                                labels = c("Ani1","Ani2","Ani3"))
 table_2017sd1$Ration <- factor(table_2017sd1$Ration,
 labels=c("Rat1","Rat2","Rat3","Rat4","Rat5","Rat6","Rat7","Rat8","Rat9"))
-str(table_2017sd1)
+# str(table_2017sd1)
 ```
-```{r,eval=F, }
-table_2018s2 <- read_xlsx("qe_lab/Problem2_Avocado.xlsx")
-table_2018s2$Blk <- factor(table_2018s2$Block,
-                           labels=c("Blk1","Blk2","Blk3"))
-table_2018s2$Ship <- factor(table_2018s2$Shipping,
-                           labels=c("Ship1","Ship2","Ship3"))
-table_2018s2$Stor <- factor(table_2018s2$Storage,
-                           labels=c("Stor1","Stor2"))
-str(table_2018s2)
+
+```{r,eval=T,echo=F }
+table_2018s1 <- read_xlsx("qe_lab/Problem1_ChildSmoking.xlsx")
+table_2018s1_u6 <- table_2018s1[which(table_2018s1$age>5),]
+table_2018s1_u6$age <- factor(table_2018s1_u6$age)
+table_2018s1_u6$male <- factor(table_2018s1_u6$male, labels = c("female","male"))
+table_2018s1_u6$smoker <- factor(table_2018s1_u6$smoker, labels = c("not regu","regu"))
+# str(table_2018s1_u6)
+# summary(table_2018s1$height)
 ```
-```{r,eval=F,}
+
+
+
+```{r,eval=T,echo=F  }
+table2018s2 <- read_xlsx("qe_lab/Problem2_Avocado.xlsx")
+table2018s2$Run <- factor(table2018s2$Block,labels=c("run1","run2","run3"))
+table2018s2$Method <- factor(table2018s2$Shipping,labels=c("meth1","meth2","meth3"))
+table2018s2$Storage <- factor(table2018s2$Storage,labels=c("Stor1","Stor2"))
+table2018s2$Shipping <- factor(table2018s2$Shipping,labels=c("Shi1","Shi2","Shi3"))
+# str(table2018s2)
+```
+
+```{r,eval=T,echo=F }
 # Order
 table_2018f2 <- read_xlsx("qe_lab/Springs_2018f.xlsx")
 table_2018f2 <- table_2018f2[order(table_2018f2$D,
                   table_2018f2$C ,table_2018f2$B,table_2018f2$A),]
-str(table_2018f2)
+# str(table_2018f2)
 ```
 
-```{r,eval=F,}
+```{r,eval=T,echo=F }
 # [split-plot] [2019S2]
-table_2019s2 <- read_xlsx("qe_lab/WoolShrink.xlsx")
-str(table_2019s2)
-glimpse(table_2019s2)
-table_2019s2$Run <- factor(table_2019s2$Run,
-                    labels=c("Day1","Day2","Day3","Day4"))
-table_2019s2$Trt <- factor(table_2019s2$Trt,
-                    labels=c("Untrt","15Sec","4Min","15Min"))
-table_2019s2$Rev <- as.factor(table_2019s2$Rev)
-str(table_2019s2)
-glimpse(table_2019s2)
+table2019s2 <- read_xlsx("qe_lab/WoolShrink.xlsx")
+table2019s2$Run <- factor(table2019s2$Run,labels=c("Day1","Day2","Day3","Day4"))
+table2019s2$Trt <- factor(table2019s2$Trt,labels=c("Untrt","15Sec","4Min","15Min"))
+table2019s2$Rev <- as.factor(table2019s2$Rev)
+# str(table_2019s2)
 ```
 
-#### Plot Data
-
-```{r,eval=F, out.width='33%', fig.show='hold'}
-ggline(table_2018s2,"Stor","Y",add=c("mean","jitter"),color="Ship",
-  shape="Ship",linetype="Ship",ylab="acceptability",facet.by="Blk")
-```
-
-The above plots show that:
-
-Not all the lines are parallel in the interaction plot. Therefore, in the model, there is the interaction effect of source level and technicians nested in the lab. 
-
-There is not much difference in the average shrink from different days. The average shrink are lower when the treatment is longer. The average shrink are higher when the revolutions are faster.
-
-```{r eval=F, include=T}
-kable(favstats(Y ~ Ship, data=table_2018s2),format="latex",booktabs=T)
-      %>%kable_styling("striped", full_width = F,font_size = 8)
-      %>%column_spec(7,background ="#EAFAF1")
-kable(favstats(Y ~ Stor, data=table_2018s2),format="latex",booktabs=T)
-      %>%kable_styling("striped", full_width = F,font_size = 8)
-      %>%column_spec(7,background ="#EAFAF1")
-kable(favstats(Y ~ Blk, data=table_2018s2),format="latex",booktabs=T)
-     %>%kable_styling("striped", full_width = F,font_size = 8)
-     %>%column_spec(7,background ="#EAFAF1")
-```
-
-The Tables show the same thing with the numerical summaries for each factor level and their combinations.
+## Data Description
 
 
-#### Build Model
+- Experiment Type
 
-```{r,eval=F}
-# 5k1p Fractional Factorial Design
-model_2015f2 <- aov(height~A*B*C*D, table_2015f2)
-model_2015f2$coefficients
-```
-
-This is a neseted and crossed design. Three fixed sources apply on all random selected technicians nested in fixed labs.
-  
-$y=\mu+\tau_i+\beta_{j(i)}+\varepsilon_{k(ij)}$, $i=1,2,3$;$j=1,2,3,4,5$;$k=1,2$ 
-
-```{r,eval=F,}
-# Br in Af * Cf [2016S2] [2017F2]
-model_2016s2_1 <- lm(y~machine*station*power, table_2016s2)
+```{r}
+Design <- readxl::read_excel("qe_lab/DesignFall17.xlsx")
+data2 <- gather(Design[c(2:4,6:8),c(2:4,6:8,10:12)])
+names(data2) <- c("machine","y")
+data2 <- data2[c("y","machine")]
+data2$machine <- as.factor(c(rep("machine1",18),rep("machine2",18),rep("machine3",18)) )
+data2$station <- as.factor(rep(c(rep("station1",6),rep("station2",6),rep("station3",6)),3) )
+data2$power <- as.factor(rep(c(rep("power1",3),rep("power2",3)),9) )
+# data2$rep <- as.factor(rep(c("rep1","rep2","rep3"),18))
+str(data2)
 ```
 
 
-$y=\mu+\beta_1\ln(H)*Age*Male+\beta_2Smoker+\varepsilon$
 
-```{r,eval=F, out.width='25%', fig.show='hold'}
-model_2018s1_2<-lm(log(volume)~log(height):age:male+smoker,table_2018s1_u6)
+```{r}
+# xtabs(~machine + station + power, data = data2)
+ftable(machine + station ~ power, data = data2)
 ```
-\colorbox{yellow}{$y_{ijkl}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{j(i)k}+\varepsilon_{(ijk)l}$}
 
-for $i=1,2$; $j=1,2,3$; $k=1,2,3$; $l=1,2,3$; 
+This experiment includes three factors: machine, power setting, and station.
+Three same stations apply on all fixed power settings in three specific machines.
+The levels of power settings are similar but not identical for different machines. The power factor is nested in machines. Machine and station, power and station are crossed factors.
+This is a nested and crossed design. 
+
+The number of observations taken within each factor are the same. The design is balanced.
+All the factor combinations have one replication. The design is complete.
+
+
+$$y_{ijk}=\mu+\tau_i+\beta_{j(i)}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{kj(i)}+\varepsilon_{ijk}$$
+
+for $i=1,2,3$; $j=1,2$; $k=1,2,3$
 
 $\mu$ is the overall true mean response;
 
-$\tau_i$ is the fixed main effect of $i^{th}$ level of labs;
+$\tau_i$ is the fixed main effect of $i^{th}$ machine;
 
-$\beta_{j(i)}$ is the random effect of $j^{th}$ level of technicians nested in $i^{th}$ level of labs;
+$\beta_{j(i)}$ is the fixed effect of $j^{th}$ level of power nested in $i^{th}$ machine;
 
-$\gamma_{k}$ is the main fixed effect of $k^{th}$ level of sources;
+$\gamma_{k}$ is the main fixed effect of $k^{th}$ station;
 
-$(\tau\gamma)_{ik}$ is the interaction effect of $i^{th}$ level of labs and $k^{th}$ level of sources;
+$(\tau\gamma)_{ik}$ is the interaction effect of $i^{th}$  machine and $k^{th}$ station;
 
-$(\beta\gamma)_{j(i)k}$ is the interaction random effect of $k^{th}$ level of sources and $j^{th}$ level of technicians nested in $i^{th}$ level of labs.
+$(\beta\gamma)_{j(i)k}$ is the interaction fixed effect of $k^{th}$ station and $j^{th}$ level of power nested in $i^{th}$ machine.
 
-$y_{ijkl}$ is response value for the $l^{th}$ replication for $j^{th}$ level of technicians nested in $i^{th}$ level of labs when $k^{th}$ level of sources is applied;
+$y_{ijk}$ is response value (for the $l^{th}$ replication) for $j^{th}$ level of power nested in $i^{th}$ machine when $k^{th}$ station is applied;
 
-$\varepsilon_{(ijk)l}$ is random error for the $l^{th}$ replication for $j^{th}$ level of technicians nested in $i^{th}$ level of labs when $k^{th}$ level of sources is applied.
+$\varepsilon_{(ijk)l}$ is random error (for the $l^{th}$ replication) for $j^{th}$ level of power nested in $i^{th}$ machine when $k^{th}$ station is applied.
 
-Assumptions: Usually, the technicians in a lab are skillful. From the above plots, the technicians' performances are stable. The covariance between two observations from the same level of the random factor can be either positive or negative. Thus we assume this is an **restricted model**. $\varepsilon_{(ijk)l}$, $\beta_{j(i)}$, and $(\beta\gamma)_{j(i)k}$ are independent.
+Assumptions: $\varepsilon_{(ijk)l}$, $\beta_{j(i)}$, and $(\beta\gamma)_{j(i)k}$ are independent.
 
-\begin{tabular}{ l|l|l|l }
-$\varepsilon_{(ijk)l}\sim iid N(0,\sigma^2)$&$\sum_{i=1}^2\tau_{i}=0$&$\sum_{k=1}^3\gamma_{k}=0$&$\beta_{j(i)}\sim iid N(0,\sigma_{\beta}^2)$\\
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_{i=1}^2\tau_{i}=0$; $\sum_{k=1}^3\gamma_{k}=0$; $\beta_{j(i)}\sim iid N(0,\sigma_{\beta}^2)$
 
-$\sum_{i=1}^2(\tau\gamma)_{ik}=0$&$\sum_{k=1}^3(\tau\gamma)_{ik}=0$&$\sum_{i=1}^2(\beta\gamma)_{j(i)k}=0$&$(\beta\gamma)_{j(i)k}\sim iid N(0,\frac{2-1}{2}\sigma_{\beta\gamma}^2)$
-\end{tabular}
+$\sum_{i=1}^2(\tau\gamma)_{ik}=0$; $\sum_{k=1}^3(\tau\gamma)_{ik}=0$; $\sum_{i=1}^2(\beta\gamma)_{j(i)k}=0$; $(\beta\gamma)_{j(i)k}\sim iid N(0,\frac{2-1}{2}\sigma_{\beta\gamma}^2)$
 
-This is a simple Split-Plot design model (fat is whole-plot factor and temperature is split-plot factor)
+
+```{r, eval=F,echo=F}
+group_by(data2, machine,power,station) %>%
+  summarise(count = n(),
+            mean = mean(y, na.rm = TRUE),
+            median = median(y, na.rm = TRUE),
+            IQR = IQR(y, na.rm = TRUE) )
+```
+
+
+```{r echo=F}
+mosaic::favstats(y ~ machine, data=data2)
+mosaic::favstats(y ~ power, data=data2)
+mosaic::favstats(y ~ station, data=data2)
+```
+
+
+```{r,echo=F, out.width='100%', fig.show='hold'}
+ggpubr::ggline(data2,"station","y",add=c("mean","jitter"),color="power",
+  shape="power",linetype="power",ylab="y",facet.by="machine")
+```
+
+The above tables and plots show that:
+There is not much difference in the average yield from different machines. The average yield are very different between the two levels of power. There isn't clear pattern among the three stations.
+
+
+## Model Analysis
+
+If someone think power is not nested in station. the ANOVA table is:
+
+```{r}
+model.1 <- aov(y~machine+station+power+power:machine+
+                        machine:station+power:station+
+                        power:machine:station, data2)
+anova(model.1) # only when all fixed factors.
+```
+
+
+
+
+The corrected ANOVA table should combined the terms of 'power' and 'power:machine', combine the terms of 'station:power' and 'machine:power:station'.
+
+
+
+```{r,eval=F,echo=F}
+model.11 <- aov(y~machine+(power%in%machine)+station+
+                        machine:station+
+                        (power%in%machine):station, data2)
+anova(model.11)
+```
+
+
+```{r}
+data2$machine_f <- as.fixed(data2$machine)
+data2$station_f <- as.fixed(data2$station)
+data2$power_f <- as.fixed(data2$power)
+# data2$rep_r <- as.random(data2$rep)
+model.2 <- aov(y~power_f%in%machine_f+machine_f*station_f+power_f%in%machine_f:station_f, data2)
+# gad(model.2)
+anova(model.2)
+```
+
+
+The ANOVA table show that all the main effects and the interaction effect are significant at 0.05 significance level except the interaction effect between machine and station (P-value=0.06625).
+
+
+## Transformation and Elimination
+
+```{r,eval=T,fig.align='center'}
+bc.2 <- boxcox(model.2)
+model.3 <- update(model.2,y^2~.)
+anova(model.3)
+```
+
+Using Box-cox transformation, we refit the model with $Y^2$.
+After a variance-stability transformation of the response, all the terms have significant effects at 5% significant level.
+
+## Check Adequacy
+
+```{r,echo=F, out.width='25%'}
+plot(model.2,1:3)
+residual.2 <- rstudent(model.2)
+#qqnorm(residual.2)
+#qqline(residual.2)
+# olsrr::ols_plot_resid_hist(model.2)
+hist(residual.2)
+```
+
+```{r, out.width='25%'}
+plot(model.3,1:3)
+residual.3 <- rstudent(model.3)
+hist(residual.3)
+```
+
+
+In the plots of residuals versus predicted value, there is no significant pattern on this plot. Therefore, the model is good enough to describe the effects of machine, power setting, station, and their interactions.
+
+The residuals in this plot are almost symmetrically distributed about zero and hence zero mean assumption is not violated. Further, the vertical deviation of the residuals from zero is about same for each predicted value and hence the constant variance assumption is not violated.
+
+The points are along the straight line in the normal QQ plot and the histogram of residuals is about normal. There is not serious violation of normal distribution assumption of residuals.
+
+On account of the small sample size, the problems in the plots are not severe enough to have a dramatic impact on the analysis and conclusions.
+
+## Comparison
+
+The Tables below show the summary of all those simple effect comparison tests.
+
+
+
+- Tukey multiple pairwise-comparisons
+
+The multiple pairwise-comparison between the means of groups.
+
+```{r,eval=T,  message=F}
+# test(lsmeans(model.2,~machine_f,adjust=c("tukey")))
+pairs(emmeans::lsmeans(model.3,~power_f,adjust=c("tukey")))
+TukeyHSD(model.3,"machine_f:power_f",conf.level = 0.95)
+# agricolae::LSD.test(model.3,"machine_f", console=T) 
+```
+
+
+```{r,eval=F, out.width='30%',fig.show='hold',message=F}
+library(emmeans)
+(ma_po <- pairs(lsmeans(model.3,~ machine_f|power_f))) # machine_f|power_f
+ma_po_st <- pairs(lsmeans(model.3,~ station_f|power_f|machine_f)) #machine_f|power_f:station_f
+# test(rbind(ma_po,ma_po_st),adjust="tukey")
+```
+
+Tukey Multiple comparisons of means for 95% family-wise confidence level shows that most of the power setting nested in specific machine have a different effects on field at 5% significant level with a p-value of 0.000. That is, the combinations of machine and power affect the experiment significantly.
+
+The exceptions include power 1 in machine 1 vs. power 1 in machine 2 (p-value=0.9964); power 2 in machine 1 vs. power 2 in machine 2 (p-value=0.3835); power 2 in machine 1 vs. power 2 in machine 3 (p-value=0.1123); power 2 in machine 2 vs. power 2 in machine 3 (p-value=0.1123).
+
+The 3-way interaction presents a similar results.
+
+Therefore, under power setting 2, the differences among the machines tend to disappear.
+
+## Summary
+
+# Appendix
+
+<!--```{r ref.label=knitr::all_labels(), echo=T, eval=F} 
+```-->
+
+
+
+# Split-Plot design
+
+This is a Split-Plot design model (fat is whole-plot factor and temperature is split-plot factor)
 
 $$y_{ijk}=\mu+\tau_i+\beta_{j}+(\tau\beta)_{ij}+\gamma_{k}+(\tau\gamma)_{ik}+(\beta\gamma)_{jk}+(\tau\beta\gamma)_{ijk}+\varepsilon_{ijk}$$
 
@@ -493,178 +1294,867 @@ $\varepsilon_{ijk}$ is random error for the $i^{th}$ replication when $j^{th}$ l
 
 Assumptions: For an experienced baker, he/she will try to let the recipe and temperature are accurate in each day. the covariance between two observations from the same level of the random factor can be either positive or negative. Thus, we assume this is a **restricted model**.
 
-\begin{tabular}{ l|l|l }
-$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$&$\tau_i\sim iid N(0,\sigma_{\tau}^2)$\\
 
-$\sum_{j=1}^3\beta_{j}=0$&$\sum_{j=1}^3(\tau\beta)_{ij}=0$&$(\tau\beta)_{ij}\sim iid N(0,\frac{3-1}{3}\sigma_{\tau\beta}^2)$\\
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\tau_i\sim iid N(0,\sigma_{\tau}^2)$
 
-$\sum_{k=1}^4\gamma_{k}=0$&$\sum_{k=1}^4(\tau\gamma)_{ik}=0$&$(\tau\gamma)_{ik}\sim iid N(0,\frac{4-1}{4}\sigma_{\tau\gamma}^2)$\\
+$\sum_{j=1}^3\beta_{j}=0$; $\sum_{j=1}^3(\tau\beta)_{ij}=0$; $(\tau\beta)_{ij}\sim iid N(0,\frac{3-1}{3}\sigma_{\tau\beta}^2)$
 
-$\sum_{j=1}^3(\beta\gamma)_{jk}=0$&$\sum_{k=1}^4(\beta\gamma)_{jk}=0$\\
+$\sum_{k=1}^4\gamma_{k}=0$; $\sum_{k=1}^4(\tau\gamma)_{ik}=0$; $(\tau\gamma)_{ik}\sim iid N(0,\frac{4-1}{4}\sigma_{\tau\gamma}^2)$
 
-$\sum_{j=1}^3(\tau\beta\gamma)_{ijk}=0$&$\sum_{k=1}^4(\tau\beta\gamma)_{ijk}=0$&$(\tau\beta\gamma)_{ijk}\sim iid N(0,\frac{(3-1)(4-1)}{3\times4}\sigma_{\tau\beta\gamma}^2)$
-\end{tabular}
+$\sum_{j=1}^3(\beta\gamma)_{jk}=0$; $\sum_{k=1}^4(\beta\gamma)_{jk}=0$
 
+$\sum_{j=1}^3(\tau\beta\gamma)_{ijk}=0$; $\sum_{k=1}^4(\tau\beta\gamma)_{ijk}=0$; $(\tau\beta\gamma)_{ijk}\sim iid N(0,\frac{(3-1)(4-1)}{3\times4}\sigma_{\tau\beta\gamma}^2)$
 
 $\varepsilon_{ijk}$, $\tau_{i}$, $(\tau\beta)_{ij}$, $(\tau\gamma)_{ik}$, $(\beta\gamma)_{jk}$, and $(\tau\beta\gamma)_{ijk}$ are independent.
 
-Since this is a simple replicated factorial design, I use $(\tau\beta\gamma)_{ijk}$ to compute SSE and df.
 
 
-#### Regression Analysis
+```{r,eval=T, message=F}
+table2019s2$Run_r <- as.random(table2019s2$Run)
+table2019s2$Trt_f <- as.fixed(table2019s2$Trt)
+table2019s2$Rev_f <- as.fixed(table2019s2$Rev)
+model_2019s2_1<-aov(Shrink ~ Run_r+Trt_f + Trt_f%in%Run_r+Rev_f +Rev_f%in%Run_r + Trt_f:Rev_f,table2019s2)
+gad(model_2019s2_1)
+model2019s22 <- lmer(Shrink ~ (1|Run) + Trt + (1|Run:Trt) + Rev + (1|Run:Rev) + Trt:Rev,table2019s2 , REML=T)
+```
+
+
+```{r,eval=T}
+table2018s2$Run.r <- as.random(table2018s2$Run)
+table2018s2$Method.f <- as.fixed(table2018s2$Method)
+table2018s2$Storage.f <- as.fixed(table2018s2$Storage)
+model2018s23 <- aov(Y~Run.r+Method.f+Method.f%in%Run.r+Storage.f+Storage.f%in%Run.r+Method.f:Storage.f+(Method.f:Storage.f)%in%Run.r, table2018s2)
+gad(model2018s23)
+estimates(model2018s23)
+```
+
+
+
+- Take average of 4 crates
+
+```{r}
+table2018s2.bar<- table2018s2 %>%
+group_by(Run, Method,Storage) %>%
+summarise(Y.bar = mean(Y))
+```
+
+
+The ANOVA table shows that only A have significant effects on the average Y at 0.05 significance level (p-value=).
+
+The results show all the main effects and the interaction effect of A and B are significant at 0.05 significance level (P-value=0.5082). 
+
+
+
+
+
+
+
+
+# Half-Normal Plot
+
+```{r,eval=F,message=F, out.width='50%',fig.show='hold'}
+daewr::halfnorm(coef(model_2015f2_1)[2:16],alpha=0.10)
+gghalfnorm::gghalfnorm(coef(model_2015f2_1)[2:16],labs = names(coef(model_2015f2_1)[2:16]),nlab = 4)
+FrF2::DanielPlot(model_2015f2_1, half =T,alpha = 0.05)
+```
+
+The results of variance components show the variance of interaction term of A and B is negligible and hence dropping interaction term of them.
+
+
+# 2^k
 
 ```{r,eval=F}
-summary(model_2016s2_1)
+plan <- FrF2(16,6,generators = c("ABC","BCD"))
+design.info(plan)
 ```
 
-```{r,eval=F, eval=F, message=F}
-# When some factors are random 
-
-table_2019s2$Run_r <- as.random(table_2019s2$Run)
-table_2019s2$Trt_f <- as.fixed(table_2019s2$Trt)
-table_2019s2$Rev_f <- as.fixed(table_2019s2$Rev)
-model_2019s2_1<-aov(Shrink ~ Run_r+Trt_f + 
-  Trt_f%in%Run_r+ Rev_f%in%Run_r + Rev_f + Trt_f:Rev_f,table_2019s2)
-pander(gad(model_2019s2_1))
-```
-
-The results show all the main effects and the interaction effect of Runs and Recolutions are significant at 0.05 significance level (P-value=0.5082). 
-
-#### ANOVA
 
 ```{r,eval=F}
-pander(anova(model_2016s2_1))
+print(catlg, nfactors=6, nruns=16)
+splitpick(6, catlg$`6-2.1`$gen, k.WP=2, nfac.WP=2)
 ```
-The ANOVA table shows that only sources have significant effects on the average purity of a chemical compound synthesized at 0.05 significance level (p-value=).
+
+```{r, echo=F}
+table_2015f2 <- readxl::read_xlsx("qe_lab/Springs_2015f.xlsx")
+table_2015f2 <- data.frame(table_2015f2)
+heatmap(as.matrix(table_2015f2[,1:5]),Colv = NA,Rowv = NA,scale = "column",col = blues9)
+table_2015f2 <- gather(table_2015f2,'Height','...7','...8',key = "temp",value = "height" )[,-6]
+# reshape::melt(table_2015f2, id=c("A","B","C","D","E"))[,-6] # ,variable.name = "any",value.name = "Y"
+# data.table::melt(table_2015f2, id=c("A","B","C","D","E"))[,-6]
+```
+
+
+
+```{r, echo=F, out.width='50%', fig.show='hold'}
+model_2015f2_1 <- aov(height~(.)^3, table_2015f2)
+aliases(model_2015f2_1)# , code=TRUE, condense=TRUE
+# anova(model_2015f2_1)
+# model_2015f2_1$coefficients
+```
+
+```{r}
+MEPlot(model_2015f2_1)
+# IAPlot(ff_2015f2)
+```
+
+```{r,echo=F}
+for (i in 1:5){table_2015f2[,i] <- as.factor(table_2015f2[,i])}
+# apply(table_2018f2[,1:5],2,function(x)as.factor(x))%>%as.data.frame()
+```
+
+The selected model is:
+
+$y_{ijklm}=\mu+\tau_{i}+\beta_{j}+\gamma_{k}+\beta\gamma_{jk}+\delta_{l}+\varepsilon_{ijklm}$ i,j,k,l=1,2;m=1,2,3; N=48
+
+```{r}
+model_2015f2_2 <- aov(height~A+B*E+D, table_2015f2)
+# anova(model_2015f2_2)
+```
+
+## Simulate a $2^{4-1}$ design
+
+```{r,echo=T}
+plan <- FrF2(16,nfactors = 4,alias.block.2fis=TRUE,randomize=F,default.levels = c(0, 1),replications = 3)
+plan <- apply(plan, 2,function(x) as.numeric(x))
+plan<-plan%>%transform(ABC=(A+B+C)%%2)
+plan16<- plan[which(plan$ABC==plan$D),]
+plan16<- plan16[order(plan16$Blocks,plan16$C,plan16$B,plan16$A),]
+plan16 <- apply(plan16, 2,function(x) as.factor(x))%>%as.data.frame()
+plan16<- cbind(plan16,y=table_2018f2[,5])
+model16 <- aov(Heights~(A+B+C+D)^3, plan16)
+aliases(model16)
+```
+
+## Simulate a $2^{5-1}$ design
+
+
+```{r,echo=T}
+plan <- FrF2(32,nfactors = 5,alias.block.2fis=TRUE,randomize=F,default.levels = c(0, 1),replications = 3)
+plan <- apply(plan, 2,function(x) as.numeric(x))
+plan<-plan%>%transform(ABC=(A+B+C)%%2)
+plan16<- plan[which(plan$ABC==plan$D),]
+plan16<- plan16[order(plan16$Blocks,plan16$E,plan16$C,plan16$B,plan16$A),]
+plan16 <- apply(plan16, 2,function(x) as.factor(x))%>%as.data.frame()
+plan16<- cbind(plan16,y=table_2015f2[,6])
+```
+
+
+## Simulate $2^{6-2}$ design
+
+ABC=E,BCD=F;I=ABCE=BCDF=ADEF
+
+```{r}
+#plan <- FrF2(16,generators=c("ABC","BCD"),randomize=F)#,alias.block.2fis=TRUE,blocks=4
+#plan <- FrF2(16,gen=c(7,11),alias.block.2fis=TRUE,randomize=F)# ,blocks=4
+plan <- FrF2(16,gen=c(7,13),alias.block.2fis=TRUE,randomize=F)#,blocks=4
+design.info(plan)
+plan<- add.response(plan,rnorm(16))
+model_ff <- lm(rnorm.16.~(A+B+C+D+E+F)^3, data = plan)
+aliases(model_ff)
+```
+
+ABC=D,ABE=F;I=ABCD=ABEF=CDEF
+
+```{r}
+plan <- fac.design(nlevels = 2,nfactors = 6,randomize = F,blocks = 4,block.gen = NULL)
+plan<- add.response(plan,rnorm(64))
+plan1 <- plan[plan$Blocks==1,]
+model_ff <- lm(rnorm.64.~(A+B+C+D+E+F)^3, data = plan1)
+aliases(model_ff)
+```
+
+## Manual selections
+
+Generate a full $2^6$ design and create ABC, BCD, and ABE columns.
+
+```{r}
+plan <- FrF2(64,nfactors = 6,alias.block.2fis=TRUE,randomize=F,default.levels = c(0, 1))
+plan <- apply(plan, 2,function(x) as.integer(x))
+plan<-plan%>%transform(ABC=(A+B+C)%%2,BCD=(B+C+D)%%2,ABE=(A+B+E)%%2)
+```
+
+Choose the rows with ABC=E and BCD=F
+
+```{r}
+plan.abce<- plan[which(plan$ABC==plan$E & plan$BCD==plan$F),]
+plan.abce <- apply(plan.abce, 2,function(x) as.factor(x))%>%as.data.frame()
+plan.abce$y <- rnorm(16)
+model.abce <- lm(y~(A+B+C+D+E+F)^3, data = plan.abce)
+aliases(model.abce)
+```
+
+Choose the rows with ABC=D and ABE=F
+
+```{r}
+plan.abcd<- plan[which(plan$ABC==plan$D & plan$ABE==plan$F),]
+plan.abcd <- apply(plan.abcd, 2,function(x) as.factor(x))%>%as.data.frame()
+plan.abcd$y <- rnorm(16)
+model.abcd <- lm(y~(A+B+C+D+E+F)^3, data = plan.abcd)
+aliases(model.abcd)
+```
+
+
+
+## Simulate $2^{7-2}$
+
+```{r,eval=F}
+plan <- FrF2(32,7,generators = c("ABCD","ABDE"),alias.info=3,randomize=F,default.levels=c(0,1))
+design.info(plan)$aliased$main
+design.info(plan)$aliased$fi2
+design.info(plan)$aliased$fi3
+```
+
+```{r,eval=F}
+plan <- apply(plan, 2,function(x) as.numeric(x))
+plan<-plan%>%transform(ACE=(A+C+E)%%2,ACG=(A+C+G)%%2)
+plan1<- plan[which(plan$ACE==0&plan$ACG==0),]
+plan2<- plan[which(plan$ACE==1&plan$ACG==0),]
+plan3<- plan[which(plan$ACE==0&plan$ACG==1),]
+plan4<- plan[which(plan$ACE==1&plan$ACG==1),]
+```
+
+
+
+# 3^(3-1) Factorial Design
+
+The number of factor = 3
+
+The alia structure is:
+
+$I=ABC=A^2B^2C^2$; resolution=3
+
+$A=A^2BC=B^2C^2=A^2=BC=AB^2C^2$
+
+$B=AB^2C=A^2C^2=B^2=AC=A^2BC^2$
+
+$C=ABC^2=A^2B^2=C^2=AB=A^2B^2C$
+
+$A^2B=B^2C=AC^2=AB^2=A^2C=BC^2$
+
+```{r,eval=F}
+table_2015s2 <- readxl::read_xlsx("qe_lab/Bottles.xlsx")
+table_2015s2[9,3] <- 1
+```
+
+```{r,eval=F}
+plan <- fac.design(nlevels = 3,nfactors = 3,randomize = F,block.gen = NULL)
+plan <- apply(plan, 2,function(x) as.integer(x)-1)
+plan<-plan%>%transform(AB=(A+B)%%3)
+plan$y <- table_2015s2$Time
+plan.abc<- plan[which(plan$AB==plan$C),]
+heatmap(as.matrix(plan.abc[,1:4]),Colv = NA,Rowv = NA,scale = "column",col = blues9)
+for(i in 1:3){plan.abc[,i]<-as.factor(plan.abc[,i])}
+```
+
+Choose the rows of AB=C, the selected runs are
+
+
+
+```{r,eval=F}
+plan.abc
+```
+
+The model only includes the main effects.
+
+$y_{ijk}=\mu+\tau_{i}+\beta_{j}+\gamma_{k}+\varepsilon_{ijk}$ i,j,k=1,2,3
+
+```{r,eval=F}
+model.abc <- aov(y~(A+B+C), data = plan.abc)
+anova(model.abc)
+```
+
+Choose the rows of ABC=B, the selected runs are
+
+```{r,eval=F}
+plan <- fac.design(nlevels = 3,nfactors = 3,randomize = F,block.gen = NULL)
+plan <- apply(plan, 2,function(x) as.integer(x)-1)
+plan<-plan%>%transform(ABB=(A+B+B)%%3)
+plan$y <- rnorm(27)
+plan.abc<- plan[which(plan$ABB==plan$C),]
+plan.abc <- apply(plan.abc, 2,function(x) as.factor(x))%>%as.data.frame()
+model.abc <- aov(y~(A+B+C)^3, data = plan.abc)
+anova(model.abc)
+```
+
+
+
+
+- $3^{6-3}$
+
+```{r,eval=F}
+plan <- fac.design(nlevels = 3,nfactors = 6,randomize = F,block.gen = NULL)
+plan <- apply(plan, 2,function(x) as.integer(x)-1)
+plan<-plan%>%transform(AB=(A+B)%%3,BC=(B+C)%%3,ABC=(A+B+C)%%3)
+plan1<- plan[which(plan$AB==plan$D&plan$BC==plan$E&plan$ABC==plan$F),]
+heatmap(as.matrix(plan1[,1:6]),Colv = NA,Rowv = NA,scale = "column",col = blues9)
+plan1 <- apply(plan1, 2,function(x) as.factor(x))%>%as.data.frame()
+```
+
+```{r,eval=F}
+plan1$y<- rnorm(27)
+model_36 <- lm(y~(A+B+C+D+E+F)^3, data = plan1)
+anova(model_36)
+```
+
+
+# Latin squre
+
+This is a Latin Square Design include 5 level treatments and 5 $\times$ 5 column and row.
+
+The model is:
+
+$$y_{ijk}=\mu+\tau_i+\beta_j+\gamma_{k}+\varepsilon_{jik}$$
+for $i,j,k=1,2,..,5$.
+
+$y_{ijk}$ is the value of potato weight  when $i^{th}$ level of treatment and $j^{th}$ level column and $k^{th}$ row are applied.
+
+$\tau_i$ is fixed main effect of $i^{th}$ level of Treatment ;
+
+$\beta_j$ is block effect of $j^{th}$ level of columns;
+
+$\gamma_j$ is block effect of $j^{th}$ level of rows;
+
+$\varepsilon_{jik}$ is random error when $i^{th}$ level of treatment and $j^{th}$ level column and $k^{th}$ row are applied
+
+$\mu$ is the overall true mean .
+
+The model includes below assumptions:
+
+$\varepsilon_{ijk}\sim iid N(0,\sigma^2)$; $\sum_{k=1}^5\tau_i=0$; $\sum_{k=1}^5\beta_j=0$; $\sum_{k=1}^5\gamma_{k}=0$; and independent
+
+
+```{r,eval=T, include=F}
+table_2019f1 <- readxl::read_xlsx("qe_lab/datasets_2019f.xlsx", sheet = "Potato")
+table_2019f1$Trt <- factor(table_2019f1$Trt, labels=c("P1","P2","P3","P4","P5"))
+table_2019f1$Col <- factor(table_2019f1$Col, labels=c("col1","col2","col3","col4","col5")) 
+table_2019f1$Row <- factor(table_2019f1$Row, labels=c("row1","row2","row3","row4","row5")) 
+# str(table_2019f1)
+```
+
+
+```{r,eval=F, echo=F}
+ggplot(table_2019f1, aes(Row,Col,color=Trt, shape=Trt,size=Val))+
+  labs(x="Row",y="Col",shape="Trt",color="Trt",size="Val")+
+  geom_point()+theme_light()
+plot(table_2019f1[,c(1,2)])
+plot(table_2019f1[,c(3,2)])
+plot(table_2019f1[,c(4,2)])
+```
+
+The first plot shows that it is a 5 $\times$ 5 Latin Square Design.
+
+The plot of value v.s. treatment shows some difference in the average value among 5 treatment levels.
+
+Both of the plots of value v.s. column and row show an increasing trend from 1 to 5.
+
+```{r}
+group_by(table_2019f1, Trt) %>%
+  summarise(
+    count = n(),
+    mean = mean(Val, na.rm = TRUE),
+    sd = sd(Val, na.rm = TRUE)
+  )
+```
+
+
+
+
+```{r eval=T, include=T}
+model_2019f1_1 <- aov(Val ~ Trt+Col+Row, table_2019f1)
+# anova(model_2019f1_1)
+```
+
+The ANOVA table shows that all the treatment, columns and rows have significant effects on the average value of response at 0.05 significance level (p-value=0.01602, 0.001803, 0.03976 respectively).
+
+### Paired test
+
+```{r}
+TukeyHSD(model_2019f1_1,"Trt",conf.level = 0.95)
+```
+
+It can be seen from the output, that only the difference between trt3 and trt1 is significant with an adjusted p-value of 0.025.
+
+The Tukey multiple comparisons show that there is significant different between treatment level 3 and 1 (p-value=0.02561634), and between level 4 and 1 (p-value=0.01828808) at a 5% significance level. The difference between other paired level of treatment are not significant at a 5% significance level. The analysis suggest fertilizer 1 is not as good as fertilizer 3 or 4.
+
+
+
+The Latin square design is used to eliminate two nuisance sources of variability. It systematically allows blocking in two directions. Thus, the rows and columns actually represents two restrictions on randomization.
+
+
+```{r eval=F, include=T}
+model_2019f1_2 <- lm(Val ~ Trt+Col, table_2019f1)
+anova(model_2019f1_2)
+```
+
+Using Randomized Complete Block Design, the model cannot eliminate the nuisance sources in rows. The ANOVA table shows the treatment effects become not significant.
+
+```{r eval=F, include=T}
+model_2019f1_3 <- lm(Val ~ Trt, table_2019f1)
+anova(model_2019f1_3)
+```
+
+Using Completely Randomized  Design, the model cannot eliminate the nuisance sources in both column and rows. The ANOVA table shows the p-value of treatment effects is larger. 
+
+- Graeco Latin Sq
+
+```{r,eval=F}
+T1<-c("a","b","c","d","e")
+T2<-1:5
+pander::pander(design.graeco(T1,T2,serie=1,randomization=F)$sketch)
+```
+
+
+# BIBD
+
+```{r}
+table_2017sd1 <- read_xlsx("qe_lab/NBalance.xlsx")
+heatmap(as.matrix(table_2017sd1[,1:3]),Colv = NA,Rowv = NA,scale = "column",col = blues9)
+xtabs(Animal~Ration+Block, data = table_2017sd1)
+xtabs(Ration~Animal+Block, data = table_2017sd1)
+#ftable(Block~ Animal+Ration, data = table_2017sd1)
+table_2017sd1$Block <- factor(table_2017sd1$Block,
+labels=c("Blk1","Blk2","Blk3","Blk4","Blk5","Blk6","Blk7","Blk8","Blk9"))
+table_2017sd1$Animal <- factor(table_2017sd1$Animal, 
+                               labels = c("Ani1","Ani2","Ani3"))
+table_2017sd1$Ration <- factor(table_2017sd1$Ration,
+labels=c("Rat1","Rat2","Rat3","Rat4","Rat5","Rat6","Rat7","Rat8","Rat9"))
+# str(table_2017sd1)
+```
+
+```{r}
+# t(apply(tab, 1, function(x) (1:4)[x != 0]))
+```
+
+
+A balanced incomplete block design (BIBD) is an incomplete block design where all pairs of treatments occur together in the same block equally often ( = $\lambda$ ).
+
+We use the following notation:
+
+a=9: number of treatments (Rations)
+b=9: number of blocks 
+k=3: number of units per block (k<a) (number of animals each block gets to see)
+r=3: number of replicates per treatment (“how often do we see a ration across all blocks?”)
+N=ar=bk=27: total number of units
+
+For every setting  k<a we can find a BIBD by taking all possible subsets
+
+An unreduced balanced incomplete block design have ${a}\choose{k}$=${9}\choose{3}$=84 binomial coefficient.
+  
+```{r,eval=F}
+combn(x = 9, m = 3)
+```
+
+However, $\frac{k-1}{a-1}r=\frac{3}{4}$ is not an integer. $\lambda=1$ is the least number of times each pair of treatment appear in the same block.
+
+Therefore, r=4, b=12 is needed. 
+
+```{r,eval=F}
+ibd::bibd(v = 9, b = 12, r = 4, k = 3, lambda = 1)$design
+```
+
+- As 2-factor Factorial Design
+
+Drop off the Block, the model is:
+
+$y_{ij}=\mu+\tau_{i}+\beta_{j}+\varepsilon_{ij}$ i=1,2,..,9;j=1,2,3; N=27
+
+
+```{r}
+model_2017sd1_2f <- aov(Nitrogen~Animal+Ration, table_2017sd1)
+# anova(model_2017sd1_2f)
+```
+
+The ANOVA table indicates that no Factors are significant at a 5% significance level, with p-values of
+ and  respectively. 
+
+- As RCBD
+
+```{r}
+model_2017sd1_rcbd <- aov(Nitrogen~Animal+Block, table_2017sd1)
+# anova(model_2017sd1_rcbd)
+```
+
+
+# Imputing Missing Data
+
+There are three types of missigness mechanisms:
+
+Missing completely at random (MCAR): when cases with missing values can be thought of as a random sample of all the cases; MCAR occurs rarely in practice.
+
+Missing at random (MAR): when conditioned on all the data we have, any remaining missingness is completely random; that is, it does not depend on some missing variables. So missingness can be modelled using the observed data. Then, we can use specialised missing data analysis methods on the available data to correct for the effects of missingness.
+
+Missing not at random (MNAR): when data is neither MCAR nor MAR. This is difficult to handle because it will require strong assumptions about the patterns of missingness.
+
+One common way people try to deal with missing data is to delete all cases for which a value is missing. This method is called complete case analysis (CC). However, CC is valid only if data is MCAR. Another method is multiple imputation (MI), which is a monte carlo method that simulates multiple values to impute (fill-in) each missing value, then analyses each imputed dataset separately and finally pools the results together. We use MI as we work with the example dataset.
+
+```{r}
+library(mice)
+md.pattern(table_2020s1,rotate.names=T)
+```
+
+This plot gives the frequencies for different combination of variables missing. Blue refers to observed data and red to the missing data.
+
+In this case, Missing proportion is 18%. 3 patterns observed from all possible patterns. We see that there are 7 cases where popL is missing whereas all the other variables are observed. There are 2 case where both of life and popL is missing.
+
+
+```{r}
+# ?mice
+imputed <- mice(table_2020s1[,-1],m=6,maxit=30,seed=500,method="cart",print=F) #"pmm",,"mean"
+```
+
+pmm stands for predictive mean matching, default method of mice() for imputation of continous incomplete variables; for each missing value, pmm finds a set of observed values with the closest predicted mean as the missing one and imputes the missing values by a random draw from that set. Therefore, pmm is restricted to the observed values, and might do fine even for categorical data (though not recommended).
+
+- Inspect quality of imputations
+
+```{r}
+imputed$imp$popL
+imputed$imp[[5]]
+stripplot(imputed, popL, pch = 19, xlab = "Imputation number")
+stripplot(imputed, life, pch = 19, xlab = "Imputation number")
+stripplot(imputed, popL+life~Y, cex=c(1,2), pch=c(1,20),jitter=FALSE,layout=c(2,1))
+```
+
+We can inspect the distributions of the original and the imputed data:
+
+Blue represents the observed data and red shows the imputed data. 
+Here, we expect the red points (imputed data) have almost the same shape as blue points (observed data). Blue points are constant across imputed datasets, but red points differ from each other, which represents our uncertainty about the true values of missing data.
+
+```{r}
+imputed_2020s1 <- complete(imputed)
+```
+mice() imputes each missing value with a plausible value (simulates a value to fill-in the missing one) until all missing values are imputed and dataset is completed. Repeats the process for multiple times, say m times and stores all the m complete(d)/imputed datasets.
+
+
+# Time series Model
+
+The first-order autoregression model of GDP growth can be estimated by computing OLS estimates in the regression of $Y_t$ on $Y_{t-1}$
+
+$$y_t = \beta_0 + \beta_1  y_{t-1}+\mu_t$$
+
+- Check Autocorrelation
+
+
+```{r,echo=F}
+ts_2015f1 <- ts(table_2015f1[,3])
+dif_2015f1 <- diff(ts_2015f1)
+ts.plot(ts_2015f1)
+# ts.plot(dif_2015f1)
+acf(ts_2015f1)
+# acf(dif_2015f1)
+```
+
+The time series plot of Y shows a strong autocorrelations.
+
+The difference of $Y_t$ and $Y_{t-1}$ still shows some autocorrelations with lag=1.
+
+Simple Moving Average is a method of time series smoothing and is forecasting technique.
+
+```{r,echo = F}
+sma_2015f1 <- smooth::sma(ts_2015f1, silent=T,interval=TRUE)# , h=1, require(Mcomp)
+summary(sma_2015f1)
+(mu <- sma_2015f1$fitted)
+sd <- sma_2015f1$residuals
+```
+
+
+```{r,echo = F}
+ts.pred<- c(mu[20],mu[20]-qt(.025,23,lower.tail = F)*sd[20],
+  mu[20]+qt(.025,23,lower.tail = F)*sd[20])
+```
+
+Using the Time Series model, when x1=20 and x2=1900, the prediction interval is ( `r ts.pred[2:3]` ), with fitted value of  `r ts.pred[1]`.
+
+```{r,echo = F,out.width='25%'}
+plot(sma_2015f1)
+```
+
+
+```{r}
+table_2015f1$Y.dif <-c(0, diff(table_2015f1$Y))
+table_2015f1$X2.dif <-c(0, diff(table_2015f1$X2))
+diff_2015f1 <- lm(Y.dif~X2.dif,table_2015f1)
+summary(diff_2015f1)
+plot(diff_2015f1)
+```
+
+```{r}
+diff_2015f1$fitted.values[20]+table_2015f1$Y[19]
+predict(diff_2015f1,data.frame(X2.dif=table_2015f1$X2.dif[20]),interval = "predict")+table_2015f1$Y[19]
+```
+
+When X1=20, the difference of X2 equals -728
+
+```{r,eval=F}
+regRes <- lm(abs(diff_2015f1$residuals)~diff_2015f1$fitted.values)
+weights = 1/regRes$fitted.values^2
+wls <-  lm(Y.dif~X2.dif,table_2015f1, weights=weights)
+plot(wls)
+```
+
+
+
+# Other non-linear model
+
+- Loess model
+
+```{r}
+loess_2015f1<- stats::loess(Y ~ X1+X2,table_2015f1)
+# summary(loess_2015f1)
+```
+
+```{r,eval = F}
+ggplot(table_2015f1,aes(X2,Y))+geom_point()+geom_smooth(method = "loess")
+# ggplot(table_2015f1,aes(X2,Y))+geom_point()+geom_smooth(span =0.75)
+```
+
+- Spline model
+
+```{r}
+sp_2015f1 <- lm(Y ~ splines::ns(X1, 2)+splines::ns(X2, 2),table_2015f1)
+# summary(sp_2015f1)
+```
+
+
+
+- Gam model
+
+```{r}
+gam_2015f1 <- mgcv::gam(Y ~ s(X1)+s(X2),data=table_2015f1)
+# summary(gam_2015f1)
+```
+
+
+```{r,eval= F}
+plot(gam_2015f1,all.terms=TRUE,pages=1)
+```
+
+```{r,eval=F}
+fit = lm(Y ~ X1+X2,table_2015f1)
+b=matrix(fit$coefficients) #betas
+bT = t(b) #transpose betas for R
+bhat = bT%*%b #this is our denominator
+fit.anova = anova(fit) #need MSE
+sigma.squared = tail(fit.anova$`Mean Sq`, n=1)
+p = length(b)
+my_k = (p*sigma.squared)/bhat
+fit.ridge <-  lmridge::lmridge(Y ~ X1+X2, table_2015f1, K=my_k) #K is cap!!!
+#compare ridge SSE & full SSE
+ridgeSSE = sum((residuals.lmridge(fit.ridge)^2))
+fullSSE=sum(fit$residuals^2)
+
+```
+
+```{r,eval=F}
+prc$x <-  prcomp(table_2015f1[,1:2]) #13 rows in table
+prc_2015f1lm(table_2015f1$Y ~ prc$x[,1]+prc$x[,2]) 
+summary(prc_2015f1)
+```
+
+
+
+```{r eval=F, include=F}
+# plot(sp_2015f1)
+sp.pred<- predict(sp_2015f1,data.frame(X1=20,X2=1500),interval = "prediction",level=0.95)
+predict(gam_2015f1,data.frame(X1=20,X2=1500),interval = "prediction",level=0.95)
+predict(loess_2015f1,data.frame(X1=20,X2=1500),interval = "prediction",level=0.95)
+```
+
+```{r}
+# plot(sp_2018f1)
+sp.pred<- predict(sp_2015f1,data.frame(X1=20,X2=1900),interval = "prediction",level=0.95)^0.5
+#predict(gam_2018f1,data.frame(X1=20,X2=1900),interval = "prediction",level=0.95)^0.5
+# predict(loess_2018f1,data.frame(X1=20,X2=1900),interval = "prediction",level=0.95)^0.5
+```
+
+When x1=20 and x2=1900, the Spline model gives a fitted value of `r sp.pred[1]` .  the prediction interval is ( `r sp.pred[2:3]` ).
+
+
+```{r}
+compare <- rbind(ts.pred,sp.pred) # po.pred,
+rownames(compare) <- c("Time.serious","Spline")# "polynomial",
+compare
+```
+
+
+
+# Plot example
+
+```{r,eval=F,  out.width='25%',fig.show='hold'}
+ggplot(table_2015f1,aes(X2,Y, color=X1))+
+  labs(x="adv",y="prof",color="month")+
+  geom_point()+theme_light()
+
+ggplot(table_2018s1_u6, aes(smoker,fill=male))+
+  geom_bar()+facet_wrap(.~age,ncol = 7)+theme_light()
+
+ggline(data1,"height","weight",add=c("mean","jitter"),color="age")
+ggline(data1,"height","weight",add=c("mean","jitter"),color="male")
+```
+
+
+```{r,eval=F, out.width='33%', fig.show='hold'}
+ggpubr::ggline(table2018s2,"Storage","Y",add=c("mean","jitter"),color="Shipping",
+  shape="Shipping",linetype="Shipping",ylab="acceptability",facet.by="Run")
+```
+
+```{r,echo=F}
+interaction.plot(x.factor=table_2018s1_u6$height, 
+    trace.factor=table_2018s1_u6$smoker,   
+    response=table_2018s1_u6$volume, type="b", 
+    col=c("black","red","green"), 
+    pch=c(19, 17, 15), ### Symbols 
+    fixed=TRUE, ### Order by factor
+    leg.bty = "o")
+
+```
+
+```{r,eval=F}
+plotly::plot_ly(table_2015f1, x=~X1,y=~Y^2,type="scatter")%>% add_lines(x=~X1,y=fitted(model_2015f1_3))
+```
+
+
+The above plots show that:
+
+Not all the lines are parallel in the interaction plot. Therefore, in the model, there is the interaction effect of source level and technicians nested in the lab. 
+
+There is not much difference in the average shrink from different days. The average shrink are lower when the treatment is longer. The average shrink are higher when the revolutions are faster.
+
+
+
+
+
+
+# often used test
+
+## ANOVA test with no assumption of equal variances
+
+```{r}
+oneway.test(oxygen ~ creek, data = table_2016f2)
+```
+
+## Pairwise t-tests with no assumption of equal variances
+
+```{r}
+pairwise.t.test(table_2016f2$oxygen, table_2016f2$creek,
+                 p.adjust.method = "BH", pool.sd = FALSE)
+```
+
+## F test
+
+```{r,eval=F, include=T}
+var.test(y~machine, subset(data2,machine=="machine1"|machine=="machine2"), alternative = "two.sided")
+var.test(y~machine, subset(data2,machine=="machine1"|machine=="machine3"), alternative = "two.sided")
+var.test(y~machine, subset(data2,machine=="machine2"|machine=="machine3"), alternative = "two.sided")
+```
+
+The F test indicates that there is not enough evidence to reject the null hypothesis that the two variances of creek1 and creek2 are equal at the 0.05 significance level (p-value=0.4509). The same goes for creek1 and creek3 (p-value=0.05499).
+
+There is significant difference between the two variances of creek1 and creek3. The p-value of F-test is p = 0.009893 which is greater than the significance level 0.05. 
+
+The Tables below show the summary of all those simple effect comparison tests.
+
+
+## Lack of Fit F Test
+
+Assess how much of the error in prediction is due to lack of model fit. The residual sum of squares resulting from a regression can be decomposed into 2 components:
+
+If most of the error is due to lack of fit and not just random error, the model should be discarded and a new model must be built. The lack of fit F test works only with simple linear regression. Moreover, it is important that the data contains repeat observations i.e. replicates for at least one of the values of the predictor x. This test generally only applies to datasets with plenty of replicates.
+
+```{r,eval=F, include=T}
+ols_pure_error_anova(lm(Y~X1,table_2015f1))
+```
+
+## LRT test
+
+```{r}
+# lrtest (model_2015f1_1,model_2015f1_2)
+logLikA <- -371.679
+logLikB <- -382.403
+1-pchisq(-2*(logLikA-logLikB), df = 2, lower.tail = FALSE)
+```
+
+## Compute table margins and relative frequency
+
+```{r,eval=F}
+spread(table_2018s1_u6,as.character(age),volume)
+addmargins(table_2018s1_u6[,3:5])
+marginSums(as.array(table_2018s1_u6),1, margin = NULL)
+proportions(table_2018s1_u6[,2:3]) # , margin = NULL
+```
+
+Table margins correspond to the sums of counts along rows or columns of the table. 
+
+Relative frequencies express table entries as proportions of table margins (i.e., row or column totals).
+
+
+## Residual Fit Spread Plot
+
+Plot to detect non-linearity, influential observations and outliers. Consists of side-by-side quantile plots of the centered fit and the residuals. It shows how much variation in the data is explained by the fit and how much remains in the residuals. For inappropriate models, the spread of the residuals in such a plot is often greater than the spread of the centered fit.
+
+```{r,eval=F, include=T}
+ols_plot_resid_fit_spread(model_2015f1_3)
+```
+
+## Deleted Studentized Residual vs Fitted Values Plot
+Graph for detecting outliers.
+
+```{r,eval=F, include=T}
+ols_plot_resid_stud_fit(model_2015f1_2)
+```
+
+
+# PRESS and RMSE
+
+```{r,eval=F,}
+model_2019s1_2 <- lm(table_2019s1_250,formula=log(y)~ x2+A+B)
+model_2019s1_3 <- lm(table_2019s1_500,formula=log(y)~ x2+A+B)
+
+Metrics::rmse(table_2019s1_500$y,exp(predict(model_2019s1_2,table_2019s1_500)))
+
+ols_press(model_2019s1_3)
+MPV::PRESS(model_2019s1_3)
+sum((residuals(model_2019s1_3)/(1 - lm.influence(model_2019s1_3)$hat))^2)
+
+
+ols_pred_rsq(model_2019s1_3)
+
+# str(model_2019s1_3)
+# From 564-lab caculate prediction power
+deviation <- table_2019s1_500$y-mean(table_2019s1_500$y)
+SST <- deviation%*%deviation
+1-(MPV::PRESS(model_2019s1_3)/SST)
+
+# by definition PRESS
+sum((table_2019s1_500$y-exp(model_2019s1_2$fit))^2)
+sum((table_2019s1_500$y-exp(predict(model_2019s1_2,table_2019s1_500)))^2)
+
+# one method of RMSE
+sqrt(mean(model_2019s1_3$residuals^2))
+```
+
+# Lmer function
 
 ```{r,eval=F, message=F, warning=F, collapse=T}
 # When some factors are random 
 model_2017f2_3<-lmer(y~(1|machine)+station+power+
   (1|machine:station)+ (1|machine:station:power),table_2017f2,REML=TRUE)
 summary(model_2017f2_3)$varcor
-pander(confint(model_2019s2_2)[1:4,1:2])
+confint(model_2019s2_2)[1:4,1:2]
+ranova(model_2017f2_3)
 ```
-
-$\hat\sigma^2_{\tau\beta}=$;
-
-$\hat\sigma^2_{\tau}=$;
- 
-$\hat\sigma^2=$;
-
-$CI_{\sigma^2_{\tau\beta}}:(,)$;
-
-$CI_{\sigma^2_{\tau}}:(,)$;
-
-$CI_{\sigma^2}:(,)$;
-
-The results of variance components show the variance of interaction term of Runs and revolutions is negligible and hence dropping interaction term of them.
-
-Similarly, there is a significant interaction effect from the fat and temperature, on average amount of force (g) (p-value=).
-
-This means that the effects of day v.s.temperature and fat v.s.temperature on the force are not independent. Hence, the simple effects must be tested.
-
-#### elimination regression
-
-```{r,eval=F,message=F, out.width='50%',fig.show='hold'}
-# 5k1p Fractional Factorial Design [2015F2] [2018F2]
-library(daewr)
-halfnorm(model_2015f2$coefficients[2:8],alpha=1)
-summary(model_2015f2)
-
-library(gghalfnorm)
-gghalfnorm(x =model_2015f2$coefficients[2:8],
-  labs = names(model_2015f2$coef) , nlab = 8)+theme_light()
-```
-
-I=ABCD, AB=CD, AC=BD, AD=BC;
-A=BCD, B=ACD, C=ABD, D=ABC;
-III [2015f2]
-
-I=ABCD, AB=CD, AC=BD, BC=AD; A=BCD, B=ACD, C=ABD, D=ABC; III [2018F2]
-
-```{r,eval=F, out.width='25%',fig.show='hold'}
-model_2016s2_2 <- lm(y~power:machine:station, table_2016s2)
-model_2016f1_2<-lm(log(Scig)~perfem:Income:Age+log(price),table_2016f1)
-# Redo analysis
-```
-
-The ANOVA table of new model shows that the interaction effects are significant.
-This means that the effects of day v.s.revolutions and treatment v.s.revolutions on the shrink are not independent. Hence, the simple effects must be tested.
 
 The results of variance components and condidence intervals show that none of the effects related with technician has significant variance on average value of purity at 0.05 significance level. 
 The variance of interaction effect between sources and technicians nested in labs is zero with confidence intervals ($0,1.539^2$) at 0.05 significance level. 
 The variance of technicians nested in labs is zero with confidence intervals ($0,1.603^2$) at 0.05 significance level. 
 
-#### Comparison
+# anscombe's quartet
 
-The Tables below show the summary of all those simple effect comparison tests.
+The first scatter plot appears to be a simple linear relationship, corresponding to two variables correlated where y could be modelled as gaussian with mean linearly dependent on x.
 
-```{r,eval=F,  message=F}
-kable(pairs(lsmeans(model_2016f2_1,~creek,adjust=c("tukey"))))
-kable(test(lsmeans(model_2016f2_1,~creek,adjust=c("tukey"))))
-kable(TukeyHSD(model_2016f2_3,conf.level=0.95)$creek_f)
-```
+The second graph is not distributed normally; while a relationship between the two variables is obvious, it is not linear, and the Pearson correlation coefficient is not relevant. A more general regression and the corresponding coefficient of determination would be more appropriate.
 
-```{r,eval=F,}
-model_2017sd1 <- aov(Nitrogen~Animal+Ration, table_2017sd1)
-TukeyHSD(model_2017sd1,conf.level = 0.95)
-```
-$H_0: \beta_2=0$, $H_1: \beta_2\neq0$
+In the third graph , the distribution is linear, but should have a different regression line (a robust regression would have been called for). The calculated regression is offset by the one outlier which exerts enough influence to lower the correlation coefficient from 1 to 0.816.
 
+Finally, the fourth graph shows an example when one high-leverage point is enough to produce a high correlation coefficient, even though the other data points do not indicate any relationship between the variables.
 
-```{r,eval=F, out.width='30%',fig.show='hold',message=F}
-Rev_Trt <- pairs(lsmeans(model_2019s2_1,~ Rev|Trt))
-Trt_Rev <- pairs(lsmeans(model_2019s2_1,~ Trt|Rev))
-
-Trt_Run <- pairs(lsmeans(model_2019s2_3,~ Trt_f|Run_r))
-Run_Trt <- pairs(lsmeans(model_2019s2_3,~ Run_r|Trt_f))
-
-kable(test(rbind(Trt_Run,Run_Trt),adjust="tukey"),format="latex")%>%
-  kable_styling("condensed",full_width=F,font_size = 8)%>%
-  row_spec(c(10,26:27),bold =T)%>%
-  row_spec(c(10,26:27),background ="#EAFAF1")
-
-kable(test(rbind(Rev_Trt,Trt_Rev),adjust="tukey"),format="latex")%>%
-  kable_styling("condensed",full_width=F,font_size = 8)%>%
-  row_spec(c(21,85),bold =T)%>%
-  row_spec(c(21,85),background ="#EAFAF1")
-```
-When the day2, the mean shrinks between the 15-Sec and 4-Min treatment don't have significant difference. For all the rest of days, the mean shrinks are significantly different between any different treatment.
-
-The changes of days for a given treatment don't give consistent results. 
-
-For untreated cases, the mean shrinks are not significantly different between 1200 and 1400 revolutions. For all the rest of treatments, the mean shrinks are significantly different between any different revolutions.
-
-For a given revolution, 15-Sec and 4-Min treatment don't have significant differece on the mean shrinks.
-
-**Conclusion:**  As the main effects of sources shown in the above tables, the average purity is different with sources. The average purity from source 1 is lowest (12.72222). The the average purity from source 2 and 3 are 21.38889 and 20.27778 respectively. The selections of labs and technicians don't change this result.
-
-#### Check Adequacy
-
-```{r,eval=F,include=T}
-plot(model_2016s2_2)
-```
-
-```{r,eval=F, out.width='25%', fig.show='hold'}
-model_2017sr1 <- lm(Y^2~X1+X2, table_2017sr1)
-plot(model_2017sr1,c(1,3,5))
-residual_2017sr1 <- rstudent(model_2017sr1)
-qqnorm(residual_2017sr1)
-qqline(residual_2017sr1)
-olsrr::ols_plot_resid_hist(model_2017sr1)
-hist(residual_2017sr1)
-```
-
-In the plots of residuals versus predicted value of shrink, there is no significant pattern on this plot. Therefore, the fitted model is good enough to describe the relationship between the mean value of shrink and the days, revolutions, and treatment.
-
-The residuals in this plot are almost symmetrically distributed about zero and hence zero mean assumption is not violated. Further, the vertical deviation of the residuals from zero is about same for each predicted value and hence the constant variance assumption is not violated.
-
-The points are along the straight line in the normal qq plot shown at bottom left and the histogram of residuals shown at the top right is about normal. These plots show no violation of normal distribution assumption of residuals.
-
-#### Conclusion
-
-Choosing a higher revolution for a given treatment can get a larger shrink. 
-
-In most of the cases, longter alcoholic potash have less shrink. This effect will be more significant when higher revolution.
-
-For a given temperature, almost all of the amount of fat cannot change the texture but different days don't give consistent results. If the baker wants to examine the texture for a specific temperature, he/she should check what other factors in different days may affect the results and redo the experiment.
+The quartet is still often used to illustrate the importance of looking at a set of data graphically before starting to analyze according to a particular type of relationship, and the inadequacy of basic statistic properties for describing realistic datasets.

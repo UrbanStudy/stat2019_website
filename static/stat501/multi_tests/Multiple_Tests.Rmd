@@ -1,0 +1,438 @@
+---
+title: "Tests for Aphasia"
+subtitle: 'Bayesian Approaches to Modeling the Conditional Dependence Between Multiple Diagnostic Tests'
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  pdf_document: default
+  html_document: default
+header-includes:
+- \usepackage{amssymb}
+- \usepackage{amsmath}
+
+---
+
+
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+options(scipen=6)
+options(digits=4)
+if (!require(pacman)) {install.packages("pacman"); library(pacman)}
+p_load(MASS, ggplot2,tidyverse,kableExtra,rstan) # stargazer, pscl, mlmRev,mvtnorm, likelihoodAsy, coda,devtools,loo,dagitty,rethinking,truncnorm,lme4,mlogit,BayesLogit,robcbi, rstanarm
+```
+
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+
+## (Dendukuri & Joseph, 2001)
+
+Dendukuri, N., & Joseph, L. (2001). [Bayesian approaches to modeling the conditional dependence between multiple diagnostic tests. Biometrics, 57(1), 158-167.](https://doi-org.proxy.lib.pdx.edu/10.1111/j.0006-341X.2001.00158.x)
+
+N is the number of tests with subscript 11,10,01,00 representing $(T_1=1,T_2=1)$, $(T_1=1,T_2=0)$, $(T_1=0,T_2=1)$, $(T_1=0,T_2=0)$
+
+Y is the true (latent) number of diseased
+
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c}{}& \multicolumn{2}{|c|}{T1} & \\
+\cline{3-4}
+\multicolumn{2}{|c|}{}& + & - & Total  \\\hline
+\multirow{2}{*}{T2}& + & $N_{11}(Y_{11})$ & $N_{01}(Y_{01})$ & $N_{.1}(Y_{.1})$ \\
+                   & - & $N_{10}(Y_{10})$ & $N_{00}(Y_{00})$ & $N_{.0}(Y_{.0})$ \\ \hline       
+          Total    &   & $N_{1.}(Y_{1.})$ & $N_{0.}(Y_{0.})$ & $N_{..}(Y_{..})$ \\ \hline   
+\end{tabular}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{2}{|c}{}& \multicolumn{2}{|c|}{T1} & \\
+\cline{3-4}
+\multicolumn{2}{|c|}{}& + & - & Total  \\\hline
+\multirow{2}{*}{T2}& + & 2174(2125) & 5076(4675) & 7250(6800) \\
+                   & - & 26(0)      & 2724(1700) & 2750(1700) \\ \hline       
+          Total    &   & 2200(2125) & 7800(6375) & 10000(8500) \\ \hline   
+\end{tabular}
+
+prevalence:\(\hat\pi=\frac{Y_{..}}{N_{..}}=0.85\); 
+
+sensitivity: \(\hat S_1=\frac{Y_{11}+Y_{10}}{Y_{..}}=0.25\), \(\hat S_2=\frac{Y_{11}+Y_{01}}{Y_{..}}=0.8\); 
+
+specificity: \(\hat C_1=\frac{N_{0.}-Y_{0.}}{N_{..}-Y_{..}}=0.95\), \(\hat C_2=\frac{N_{1.}-Y_{1.}}{N_{..}-Y_{..}}=0.7\)
+
+\(u_s=\min(S_1,S_2)-S_1S_2=S_1(1-S_2)=0.25*(1-0.8)=0.05\)
+
+\(u_c=\min(C_1,C_2)-C_1C_2=(1-C_1)C_2=(1-0.95)*0.7=0.035\)
+
+\(CovS\in[0,u_s]=[0,0.05]\)
+
+\(CovC\in[0,u_c]=[0,0.035]\)
+
+\(v_s=\max(S_1,S_2)-S_1S_2=(1-S_1)S_2=(1-0.25)*0.8=0.6\)
+
+\(v_c=\max(C_1,C_2)-C_1C_2=C_1(1-C_2)=0.95*(1-0.7)=0.285\)
+
+\(S_1S_2=0.25*0.8=0.2\) ; \((1-S_1)(1-S_2)=0.75*0.2=0.15\)
+
+\(C_1C_2=0.95*0.7=0.665\) ; \((1-C_1)(1-C_2)=0.05*0.3=0.015\)
+
+
+### Fixed Effects Model
+
+\[\begin{aligned}
+P(T_1=1,T_2=1|D=1)&=S_1S_2+CovS_{12}&\in[0.2,0.2+0.05]&=[0.2,0.25]\\
+P(T_1=1,T_2=0|D=1)&=S_1(1-S_2)-CovS_{12}&\in[0.05-0.05,0.05]&=[0,0.05]\\
+P(T_1=0,T_2=1|D=1)&=(1-S_1)S_2-CovS_{12}&\in[0.6-0.05,0.6]&=[0.55,0.6]\\
+P(T_1=0,T_2=0|D=1)&=(1-S_1)(1-S_2)+CovS_{12}&\in[0.15,0.15+0.05]&=[0.15,0.2]\\
+P(T_1=1,T_2=1|D=0)&=(1-C_1)(1-C_2)+CovC_{12}&\in[0.015,0.015+0.035]&=[0.015,0.05]\\
+P(T_1=1,T_2=0|D=0)&=(1-C_1)C_2-CovC_{12}&\in[0.035-0.035,0.035]&=[0,0.035]\\
+P(T_1=0,T_2=1|D=0)&=C_1(1-C_2)-CovC_{12}&\in[0.285-0.035,0.285]&=[0.25,0.285]\\
+P(T_1=0,T_2=0|D=0)&=C_1C_2+CovC_{12}&\in[0.665,0.665+0.035]&=[0.665,0.7]\\
+\end{aligned}\]
+
+the likelihood function of the observed data given the latent data
+
+\[\begin{aligned}
+L=&P(N_{11,10,01,00}|\pi,S_{1,2},C_{1,2},CovS_{12},CovC_{12},Y_{11,10,01,00})\\
+\propto&\left\{\pi[S_1S_2+CovS_{12}]\right\}^{Y_{11}}\\
+\times&\left\{\pi[S_1(1-S_2)-CovS_{12}]\right\}^{Y_{10}}\\
+\times&\left\{\pi[(1-S_1)S_2-CovS_{12}]\right\}^{Y_{01}}\\
+\times&\left\{\pi[(1-S_1)(1-S_2)+CovS_{12}]\right\}^{Y_{00}}\\
+\times&\left\{[1-\pi][(1-C_1)(1-C_2)+CovC_{12}]\right\}^{N_{11}-Y_{11}}\\
+\times&\left\{[1-\pi][(1-C_1)C_2-CovC_{12}]\right\}^{N_{10}-Y_{10}}\\
+\times&\left\{[1-\pi][C_1(1-C_2)-CovC_{12}]\right\}^{N_{01}-Y_{01}}\\
+\times&\left\{[1-\pi][C_1C_2+CovC_{12}]\right\}^{N_{00}-Y_{00}}\\
+\end{aligned}\]
+
+\(\pi\sim Beta(\alpha_\pi,\beta_\pi)\)
+
+\(S_j\sim Beta(\alpha_{S_j},\beta_{S_j})\), j=1,2
+
+\(C_j\sim Beta(\alpha_{C_j},\beta_{C_j})\), j=1,2
+
+\(0\le CovS_{12}\le\min(S_1,S_2)-S_1S_2=u_s\); \(CovS_{12}\sim GBeta(\alpha_{covs12},\beta_{covs12})\)
+
+\(0\le CovC_{12}\le\min(C_1,C_2)-C_1C_2=u_c\); \(CovC_{12}\sim GBeta(\alpha_{covc12},\beta_{covc12})\)
+
+the joint posterior distribution of the parameters
+
+\[\begin{aligned}
+&P(\pi,S_{1,2},C_{1,2},CovS_{12},CovC_{12},Y_{11,10,01,00}|N_{11,10,01,00})\\
+\propto L\times&\pi^{\alpha_\pi-1}(1-\pi)^{\beta_\pi-1} \\
+\times&S_1^{\alpha_{S_1}-1}(1-S_1)^{\beta_{S_1}-1}S_2^{\alpha_{S_2}-1}(1-S_2)^{\beta_{S_2}-1}\\
+\times&C_1^{\alpha_{C_1}-1}(1-C_1)^{\beta_{C_1}-1}C_2^{\alpha_{C_2}-1}(1-C_2)^{\beta_{C_2}-1}\\
+\times&CovS_{12}^{\alpha_{covs12}-1}(u_s-CovS_{12})^{\beta_{covs12}-1}CovC_{12}^{\alpha_{covc12}-1}(u_c-CovC_{12})^{\beta_{covc12}-1}\\
+\end{aligned}\]
+
+
+
+- Full Conditional Distributions of Parameters in the Fixed Effects Model
+
+
+\[\pi|N,Y_{11,10,01,00}\sim Beta\left(\alpha_\pi+\sum Y_{11,10,01,00},\beta_\pi+N-\sum Y_{11,10,01,00}\right)\]
+
+\[\begin{aligned}
+p&(S_j|S_{3-j},CovS_{12},Y_{11,10,01,00},\alpha_{S_j},\beta_{S_j},u_s,\beta_{covs12})\\
+\propto&[S_1S_2+CovS_{12}]^{Y_{11}}[S_1(1-S_2)-CovS_{12}]^{Y_{10}}[(1-S_1)S_2-CovS_{12}]^{Y_{01}}[(1-S_1)(1-S_2)+CovS_{12}]^{Y_{00}}\\
+&\times S_j^{\alpha_{S_j}-1}(1-S_j)^{\beta_{S_j}-1}(u_s-CovS_{12})^{\beta_{covs12}-1}, j=1,2\\
+p&(C_j|C_{3-j},CovC_{12},N_{11,10,01,00},Y_{11,10,01,00},\alpha_{C_j},\beta_{C_j},u_c,\beta_{covc12})\\
+\propto&[(1-C_1)(1-C_2)+CovC_{12}]^{N_{11}-Y_{11}}[(1-C_1)C_2-CovC_{12}]^{N_{10}-Y_{10}}[C_1(1-C_2)-CovC_{12}]^{N_{01}-Y_{01}}[C_1C_2+CovC_{12}]^{N_{00}-Y_{00}}\\
+&\times C_j^{\alpha_{C_j}-1}(1-C_j)^{\beta_{C_j}-1}(u_c-CovC_{12})^{\beta_{covc12}-1}, j=1,2\\
+\end{aligned}\]
+
+\[\begin{aligned}
+p&(CovS_{12}|S_{1,2},Y_{11,10,01,00},u_s,\alpha_{covs12},\beta_{covs12})\\
+\propto&[S_1S_2+CovS_{12}]^{Y_{11}}[S_1(1-S_2)-CovS_{12}]^{Y_{10}}[(1-S_1)S_2-CovS_{12}]^{Y_{01}}[(1-S_1)(1-S_2)+CovS_{12}]^{Y_{00}}\\
+&\times CovS_{12}^{\alpha_{covs12}-1}(u_s-CovS_{12})^{\beta_{covs12}-1}\\
+p&(CovC_{12}|C_{1,2},,N_{11,10,01,00},Y_{11,10,01,00},u_c,\alpha_{covc12},\beta_{covc12})\\
+\propto&[(1-C_1)(1-C_2)+CovC_{12}]^{N_{11}-Y_{11}}[(1-C_1)C_2-CovC_{12}]^{N_{10}-Y_{10}}[C_1(1-C_2)-CovC_{12}]^{N_{01}-Y_{01}}[C_1C_2+CovC_{12}]^{N_{00}-Y_{00}}\\
+&\times CovC_{12}^{\alpha_{covc12}-1}(u_c-CovC_{12})^{\beta_{covc12}-1}\\
+\end{aligned}\]
+
+
+
+\[\begin{aligned}
+Y_{11}&|\pi,S_{1,2},C_{1,2},CovS_{12},CovC_{12},N_{11}\sim Bino(N_{11},p_{11})\\
+\text{ where }&p_{11}= \frac{\pi(S_1S_2+CovS_{12})}{\pi(S_1S_2+CovS_{12})+(1-\pi)[(1-C_1)(1-C_2)+CovC_{12}]}\\
+Y_{10}&|\pi,S_{1,2},C_{1,2},CovS_{12},CovC_{12},N_{10}\sim Bino(N_{10},p_{10})\\
+\text{ where }&p_{10}= \frac{\pi[S_1(1-S_2)-CovS_{12}]}{\pi[S_1(1-S_2)-CovS_{12}]+(1-\pi)[(1-C_1)C_2-CovC_{12}]}\\
+Y_{01}&|\pi,S_{1,2},C_{1,2},CovS_{12},CovC_{12},N_{01}\sim Bino(N_{01},p_{01})\\
+\text{ where }&p_{01}= \frac{\pi[(1-S_1)S_2-CovS_{12}]}{\pi[(1-S_1)S_2-CovS_{12}]+(1-\pi)[C_1(1-C_2)-CovC_{12}]}\\
+Y_{00}&|\pi,S_{1,2},C_{1,2},CovS_{12},CovC_{12},N_{00}\sim Bino(N_{00},p_{00})\\
+\text{ where }&p_{00}= \frac{\pi[(1-S_1)(1-S_2)+CovS_{12}]}{\pi[(1-S_1)(1-S_2)+CovS_{12}]+(1-\pi)[C_1C_2+CovC_{12}]}\\
+\end{aligned}\]
+
+
+
+
+### Random Effects Model
+
+
+\[S_j=P(T_J=1|D=1)=\int_{-\infty}^{\infty}P(T_{jk}=1|D_k=1,I_k=i_k)d\Phi(i_k)=\Phi\left(\frac{a_{j1}}{\sqrt{1+b_{j1}^2}}\right), j=1,2\]
+
+\[C_j=P(T_J=0|D=0)=\Phi\left(\frac{a_{j0}}{\sqrt{1+b_{j0}^2}}\right), j=1,2\]
+
+Let \(Q_{k1}=\prod_{j=1}^2\Phi(a_{j1}+b_{j1}i_k)^{t_{jk}}[1-\Phi(a_{j1}+b_{j1}i_k)]^{1-t_{jk}}\); 
+
+\(Q_{k0}=\prod_{j=1}^2\Phi(a_{j0}+b_{j0}i_k)^{1-t_{jk}}[1-\Phi(a_{j0}+b_{j0}i_k)]^{t_{jk}}\)
+
+\[\begin{aligned}
+L\propto&\prod_{k=1}^NP(T_{1k}=t_{1k},T_{2k}=t_{2k}|\psi,I_k=i_k,D_k=d_k)\\
+=&\prod_{k=1}^N\left\{\pi\prod_{j=1}^2\Phi(a_{j1}+b_{j1}i_k)^{t_{jk}}[1-\Phi(a_{j1}+b_{j1}i_k)]^{1-t_{jk}}\right\}^{d_{k}}\\
+\times&\prod_{k=1}^N\left\{(1-\pi)\prod_{j=1}^2\Phi(a_{j0}+b_{j0}i_k)^{1-t_{jk}}[1-\Phi(a_{j0}+b_{j0}i_k)]^{t_{jk}}\right\}^{1-d_{k}}\\
+=&\prod_{k=1}^N\left\{\pi Q_{k1}\right\}^{d_{k}}\left\{(1-\pi) Q_{k0}\right\}^{1-d_{k}}\\
+\end{aligned}\]
+\(\psi=(\pi,(a_{1d_k},b_{1d_k},a_{2d_k},b_{21d_k})d_k=0,1)\) k=1,..,N
+
+
+
+- Full Conditional Distributions of Parameters in the Random Effects Model 
+
+\[\begin{aligned}
+P(\pi|d_{1:N},\alpha_\pi,\beta_\pi)&\propto \pi^{\sum_{k=1}^Nd_k+\alpha_\pi-1}(1-\pi)^{N-\sum_{k=1}^Nd_k+\beta_\pi-1} \\
+\implies P(\pi|d_{1:N})&\sim Beta\left(\sum_{k=1}^Nd_k+\alpha_\pi,N-\sum_{k=1}^Nd_k+\beta_\pi\right) \\
+\end{aligned}\]
+
+\[\begin{aligned}
+P(d_k|t_{1k},t_{2k},\psi,i_k)\propto\left\{\pi  Q_{k1}\right\}^{d_{k}}\left\{(1-\pi) Q_{k0}\right\}^{1-d_{k}}\\
+\implies  d_k|\psi,i_k\sim Bernoulli(p_k=\frac{\pi  Q_{k1}}{\pi  Q_{k1}+(1-\pi)Q_{k0}})
+\end{aligned}\]
+
+\[\begin{aligned}
+P(a_{j1},b_{j1}|t_{jk},d_k,i_k)\propto \prod_{k=1}^NQ_{k1}^{d_{k}}d\Phi(a_{j1},b_{j1})\\
+P(a_{j0},b_{j0}|t_{jk},d_k,i_k)\propto \prod_{k=1}^NQ_{k0}^{1-d_{k}}d\Phi(a_{j0},b_{j0})\\
+P(i_k|t_{1k},t_{2k},d_k,a_{10,11,20,21},b_{10,11,20,21})\propto Q_{k1}^{d_{k}}Q_{k0}^{1-d_{k}}\\
+\end{aligned}\]
+
+- A demo values for the data in Dendukuri & Joseph (2001)
+
+```{r,collapse=T}
+n <- 1000
+pi<- 0.85
+s1 <- 0.27; s2 <- 0.83
+c1 <- 0.93; c2 <- 0.67
+covs <- 0.03; covc <- 0.02
+
+y1. <- n*pi*s1 ;  y.1 <- n*pi*s2
+y0. <- n*pi*(1-s1) ; y.0 <- n*pi*(1-s2) 
+
+n1. <- n*pi*s1+n*(1-pi)*(1-c1) ; n.1 <- n*pi*s2+n*(1-pi)*(1-c2)
+n0. <- n*pi*(1-s1)+n*(1-pi)*c1 ; n.0 <- n*pi*(1-s2)+n*(1-pi)*c2
+
+(p111 <- s1*s2+covs)
+(p101 <- round(s1*(1-s2)-covs,4))
+(p011 <- (1-s1)*s2-covs)
+(p001 <- (1-s1)*(1-s2)+covs)
+(Y <- c(p111,p101,p011,p001)*n*pi)
+sum(Y)
+
+(p110 <- (1-c1)*(1-c2)+covc)
+(p100 <- (1-c1)*c2-covc)
+(p010 <- c1*(1-c2)-covc)
+(p000 <- c1*c2+covc)
+
+(N <- Y+c(p110,p100,p010,p000)*n*(1-pi))
+sum(N)
+
+(p11 <- pi*p111+(1-pi)*p110)
+(p10 <- pi*p101+(1-pi)*p100)
+(p01 <- pi*p011+(1-pi)*p010)
+(p00 <- pi*p001+(1-pi)*p000)
+
+
+
+y <- rbinom(n,1,pi)
+table(y)
+lable <- rmultinom(100, size = 3, prob = c(p11,p10,p01,p00))
+seq.pn <- c("11","10","01","00")
+seq.pn <- seq.pn[order(c(p11,p10,p01,p00))]
+for (i in 1:4){
+lable[which(lable==4-i)] <- seq.pn[i]
+}
+table(lable)
+
+lable <- rmultinom(100, size = 1, prob = c(0.1,0.2,0.3,0.4))
+result <- rep(NA,N)
+for (i in 1:4){
+result[which(lable[i,]==1)]<- c("11","10","01","00")[i]
+}
+table(result)
+
+
+result <-lable[1,which(lable[1,]==1)]<- c("11")
+rowsum(lable)
+table(lable)
+
+
+#lable[which(lable==3:0)] <- seq.pn[order(c(p11,p10,p01,p00))]
+
+#t1<- ifelse(y==1,rbinom(1,1,p111+p101),rbinom(1,1,p110+p100))
+#t2<- ifelse(y==1,rbinom(1,1,p111+p011),rbinom(1,1,p110+p010))
+
+#t1<- ifelse(y==1,rbinom(1,1,s1),rbinom(1,1,(1-c1)))
+#t2<- ifelse(y==1,rbinom(1,1,s2),rbinom(1,1,(1-c2)))
+
+t1 <- rbinom(n,1,s1)
+t2 <- rbinom(n,1,s2)
+
+data <- data.frame(cbind(y,t1,t2))
+table(data$t1,data$t2,data$y)
+```
+
+```{r}
+N <- 1000
+nsim <- 1
+Ylist  <- Tlist <-Y4list <- lapply(1:48,function(a)matrix(NA,ncol=nsim,nrow=N))
+
+pivec <- c(0.2,0.5,0.8)
+S1vec <- c(0.2,0.8)
+C1vec <- c(0.2,0.8)
+S2vec <- c(0.2,0.8)
+C2vec <- c(0.2,0.8)
+kappa.s <- kappa.c <- NA
+scenario <- matrix(NA,ncol=13,nrow=48)
+
+calculateprobs <- function(pi,S1,S2,C1,C2){
+  kappa.s <- (min(S1,S2)-S1*S2)/2
+  kappa.c <- (min(C1,C2)-C1*C2)/2  
+  
+  py11 <- (S1*S2+kappa.s)
+  py10 <- (S1*(1-S2)-kappa.s)
+  py01 <- ((1-S1)*S2-kappa.s)
+  py00 <- ((1-S1)*(1-S2)+kappa.s)
+  
+  pt11 <- pi*(S1*S2+kappa.s)+(1-pi)*((1-C1)*(1-C2)+kappa.c)
+  pt10 <- pi*(S1*(1-S2)-kappa.s)+(1-pi)*((1-C1)*C2-kappa.c)
+  pt01 <- pi*((1-S1)*S2-kappa.s)+(1-pi)*(C1*(1-C2)-kappa.c)
+  pt00 <- pi*((1-S1)*(1-S2)+kappa.s)+(1-pi)*(C1*C2+kappa.c)
+  return(c(pt11,pt10,pt01,pt00,py11,py10,py01,py00))
+}
+
+i <-1
+for(j in seq_along(pivec)){
+  for(k in seq_along(S1vec)){
+    for(l in seq_along(C1vec)){
+      for(m in seq_along(S2vec)){
+        for(n in seq_along(C2vec)){
+          scenario[i,1:5] <- c(pivec[j],S1vec[k],C1vec[l],S2vec[m],C2vec[n])
+          scenario[i,6:13] <-  calculateprobs(pivec[j],S1vec[k],C1vec[l],S2vec[m],C2vec[n])    
+          for(h in 1:nsim){
+            Ylist[[i]][,h] <- rbinom(N,1,pivec[j])
+            Tlabel <- rmultinom(N, size = 1,prob = scenario[i,6:9])
+            Ylabel <- rmultinom(N*pivec[j], size = 1,prob = scenario[i,10:13])
+            for (t in 1:4){            
+            Tlist[[i]][,h][which(Tlabel[t,]==1)]<-t # c("11","10","01","00")[t]
+            Y4list[[i]][,h][which(Ylabel[t,]==1)]<-t
+            }
+          }
+          i=i+1          
+        }  
+      }  
+    } 
+  }  
+}
+colnames(scenario) <- c("pi","S1","S2","C1","C2","pt11","pt10","pt01","pt00","py11","py10","py01","py00")
+
+```
+
+
+```{r}
+sim <- matrix(NA,ncol=10,nrow=(48*nsim))
+s <- 1
+for(i in 1:48){
+   for(h in 1:nsim){ 
+sim[s,1:2] <- table(Ylist[[i]][,h])
+sim[s,3:6] <- table(Y4list[[i]][,h])[1:4]
+sim[s,7:10] <- table(Tlist[[i]][,h])[1:4]
+s <- s+1
+   }
+}
+colnames(sim) <- c("Y0","Y1","Y11","Y10","Y01","Y00","T11","T10","T01","T00")
+sim
+```
+
+```{r}
+scenario[44,]
+
+str(Y4list[[44]]) 
+table(Y4list[[44]][,1])
+
+str(Tlist[[44]])
+table(Tlist[[44]][,1])
+
+sim[44,]
+
+
+
+```
+
+```{r}
+#str(Ylist) 
+#str(Tlist)
+
+# scenario<- scenario[order(scenario[,6],scenario[,7],scenario[,8],scenario[,9]),]
+plot(1:4,c(0,0,1,1),type="n")
+for (i in 1:48){
+lines(scenario[i,6:9],col=alpha(rep(1:6,each=8)[i], rep(seq(0.1,0.9,by=0.15),8)[i]))
+}
+```
+
+
+
+
+
+
+
+
+[Stan](https://mc-stan.org/)
+
+[Gelman's homepage](http://www.stat.columbia.edu/~gelman/)
+
+Gelman, A., Jakulin, A., Pittau, M. G., & Su, Y. S. (2008). A weakly informative default prior distribution for logistic and other regression models. The annals of applied statistics, 2(4), 1360-1383.
+
+- A demo code for beta-binomial model
+
+```{r,eval=F,message=F}
+library(rstan)
+# library(rstanarm)
+stancode <- 'data {
+  int<lower = 1> N;
+  real<lower = 0> a;
+  real<lower = 0> b;
+}
+transformed data { // these adhere to the conventions above
+  real pi_ = beta_rng(a, b);
+  int y = binomial_rng(N, pi_);
+}
+parameters {
+  real<lower = 0, upper = 1> pi;
+}
+model {
+  target += beta_lpdf(pi | a, b);
+  target += binomial_lpmf(y | N, pi);
+}
+generated quantities { // these adhere to the conventions above
+  int y_ = y;
+  vector[1] pars_;
+  int ranks_[1] = {pi > pi_};
+  vector[N] log_lik;
+  pars_[1] = pi_;
+  for (n in 1:y) log_lik[n] = bernoulli_lpmf(1 | pi);
+  for (n in (y + 1):N) log_lik[n] = bernoulli_lpmf(0 | pi);
+}'
+
+beta_binomial <- stan_model(model_code = stancode, verbose = TRUE)
+
+# save(beta_binomial,file="/home/qs26/qushen26/stat2019_website/static/stat501/beta_binomial.stan")
+```
+
+
+```{r,eval=F,out.width="50%",fig.show='hold'}
+load("beta_binomial.stan")
+output <- sbc(beta_binomial, data = list(N = 100, a = 1, b = 1), M = 300, refresh = 0)
+print(output)
+plot(output, bins = 10)
+```
+
