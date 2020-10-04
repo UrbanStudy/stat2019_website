@@ -14,7 +14,7 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=FALSE, warning=F, echo=TRUE,cache = T)
+knitr::opts_chunk$set(message=F, warning=F, echo=TRUE,cache = T)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
 options(scipen=6)
@@ -23,6 +23,7 @@ if (!require(pacman)) {install.packages("pacman"); library(pacman)}
 p_load(stargazer, pscl, mlmRev,mvtnorm, MASS,brms, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,lme4) 
 
 # likelihoodAsy, coda,devtools,loo,dagitty,rethinking
+library(nimble, warn.conflicts = FALSE)
 ```
 
 
@@ -221,12 +222,9 @@ The multinomial logit model can be derived in this setup if and only if the erro
 \(\mathbf{\Omega}^{-1}\) is a block diagonal matrix with \(\mathbf{\Sigma}^{-1}\) as the typical block. <span style="color: red;"> ???</span>
 
 
-## 5.1 Finney Data
+### 5.1 Finney Data
 
-\[\Phi^{-1}(p_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i},\ i=1,..,39\]
 
-where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspired, and the binary outcome observed is the occurrence or nonoccurrence on a transient vasorestriction on the skin of the digits. $\beta\sim Unif$
- prior is placed on the regression parameter
 
 ```{r,echo=T,collapse=T}
 data(Finney)
@@ -245,12 +243,181 @@ n <- nrow(finney)
 ```
 
 
-### Rank likelihood regression 
+## Probit practice
+
+### Paper's method
+
+\[\Phi^{-1}(p_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i},\ i=1,..,39\]
+
+where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspired, and the binary outcome observed is the occurrence or nonoccurrence on a transient vasorestriction on the skin of the digits. $\beta\sim Unif$ prior is placed on the regression parameter
+
+\(\Omega=(\mathbf{X}^T\mathbf{X})^{-1})\)
 
 ```{r}
-X <- cbind(1, Vol, Rate)
-p <- dim(X)[2]
+X <- cbind(1, Vol, Rate) # Design Matrix
+p <- dim(X)[2]           # Dimension
+
+(iXX<-solve(t(X)%*%X))   # Inverse Matrix
+V<-iXX*(n/(n+1))         #
+(cholV<-chol(V))         # from Hoff (2009, Ch.12)
+
 ```
+
+
+
+The starting value $\beta^{(0)}$ is the least square estimate or MLE
+
+$\beta^{(0)}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$. Assume y are numeric values
+
+```{r, eval=T,collapse=T}
+(beta <- as.vector(solve( t(X) %*% X ) %*% t(X) %*% Resp)) # not right
+```
+
+\(p_i=\Phi(\mathbf{x}_i^T\boldsymbol{\beta})\)
+
+```{r,echo=T,collapse=T}
+(prob <- as.vector(pnorm(t(X %*% beta),0,1)))
+```
+
+Expected value of Z \(\hat Z=\mathbf{x}_i^T\boldsymbol{\beta}\)
+
+```{r, echo=T,collapse=T}
+(ez <- as.vector(X %*% beta))
+```
+
+Generating Z
+
+\(Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)\) truncated by 0 at the \(\begin{cases}\text{left if}&y_i=1\\\text{right if}&y_i=0\end{cases}\)
+
+- Method 1
+
+```{r,eval=T, echo=T,collapse=T}
+set.seed(123); u<-runif(n,0,1)
+(z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1))))
+```
+
+- Method 2
+
+```{r,eval=T, echo=T,collapse=T}
+tr_norm<-function(n,mu,v,truc_side='left'){ # Truncated Normal function
+ u<-runif(n,0,1)
+ if(truc_side=='left'){
+ tr_norm_value <- u+(1-u)*pnorm(0,mu,sqrt(v))}
+ if(truc_side=='right'){
+ tr_norm_value<-  u*pnorm(0,mu,sqrt(v))}
+  qnorm(tr_norm_value,mu,sqrt(v))
+}
+set.seed(123)
+(z<- ifelse(Resp==1, tr_norm(1,ez,1,'left'),tr_norm(1,ez,1,'right')))
+```
+
+- Method 3
+
+```{r,eval=T, echo=T,collapse=T}
+for(j in 1:n){
+  set.seed(123)
+ifelse(Resp[j]==1,
+z[j] <- rtruncnorm(1,a=0,b=Inf,mean=ez[j],sd=1),
+z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
+)
+}
+z
+```
+
+
+- Update $\boldsymbol{\hat\beta_Z}$
+
+\(\boldsymbol{\hat\beta_Z}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z}\)
+
+
+```{r, echo=T,collapse=T}
+solve(t(X)%*%X)%*%t(X)%*%z # New Beta
+```
+
+
+
+#### Gibbs sampling 1
+
+```{r}
+M <- 2500; burnin <- 500; set.seed(123)
+gibbs <- matrix(NA,ncol=p,nrow=100); Z<-matrix(NA,100,n) 
+for(m in 1:M){  #Gibbs Sampler
+  
+# Update beta 1
+# beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)
+# Update beta 2
+beta <- mvrnorm(1, V%*%(t(X)%*%z), V) # draw beta from Normal
+# Update beta 3
+# beta<- V%*%(t(X)%*%z)+cholV%*%rnorm(p)
+  
+ez<-(X%*%beta)  
+
+# Truncated 1
+# z<- ifelse(Resp==1, tr_norm(1 ,ez, 1,'left'),tr_norm(1 ,ez, 1 ,'right'))# draw Z from truncated Normal
+
+# Truncated 2
+# u<-runif(n,0,1)
+# z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
+
+# Truncated 3
+for(j in 1:n){
+ifelse(Resp[j]==1,
+z[j] <- rtruncnorm(1,a=0,b=Inf,mean=ez[j],sd=1),
+z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
+)}
+
+if(m%%(M/125)==0 & m>burnin) { gibbs[(m-burnin)/(M/125),] <- t(beta); Z[(m-burnin)/(M/125),]<- z} 
+}
+```
+
+
+#### Gibbs sampling 2 , refer to (Hoff, 2009, Ch.12)
+
+
+```{r,echo=T,include=T}
+#### probit regression
+## setup
+# set.seed(123)
+# beta<-rep(0,p) 
+# z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
+BETA<-matrix(NA,100,p) ; Z<-matrix(NA,100,n) ; ac<-0
+# mu<-0 ; sigma<-100  ### Why????
+
+## MCMC
+S<-2500
+for(s in 1:S) {
+  #update beta
+  beta<- V%*%( t(X)%*%z ) + cholV%*%rnorm(p)  # ???
+
+  #update z
+  ez<-X%*%beta
+  u<-runif(n,0,1)
+  z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
+    
+  #help mixing
+c<-rnorm(1,0,n^(-1/3))  #  sd responding the sample size ????
+zp<- z+c 
+lhr <-  sum(dnorm(zp,ez,100,log=T) - dnorm(z,ez,100,log=T) ) 
+if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }              
+  if(s%%(S/125)==0 & s>burnin) 
+  { 
+    BETA[(s-burnin)/(S/125),]<-  beta
+    Z[(s-burnin)/(S/125),]<- z
+  }
+} 
+```
+
+
+\(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)}})\)
+
+```{r,echo=T,collapse=T}
+(g1.beta <- colMeans(gibbs,na.rm = T))
+(g2.beta<-apply(BETA,2,mean))
+```
+
+
+### Rank likelihood regression 
+
 
 ```{r,echo=T,collapse=T}
 source("rlreg.R")
@@ -268,9 +435,9 @@ rfit<-treg(Resp,X)
 ```{r,eval=T,echo=T,collapse=T}
 fit.probit.glm <- glm(Resp~Vol+Rate,family=binomial(link="probit"))
 
-glm.beta<- coef(fit.probit.glm)
+(glm.beta<- coef(fit.probit.glm))
 
-glm.beta.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
+(glm.beta.sd <- summary(fit.probit.glm)$coef[,2]) # sqrt(diag(vcov(fit.probit.glm)))
 
 # fit.probit.lm <- lm(Resp~Vol+Rate)
 # fit.logit.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
@@ -282,41 +449,40 @@ glm.beta.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)
 
 ### Bayesian method by brms
 
-```{r}
-fit.brms1 <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli(),refresh = 0)
+```{r,results=F}
+fit.brms1 <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli(),silent = T, refresh=0)
 
 ```
 
 
-```{r}
+```{r,results=F }
 fit.brms2 <- brm(bf(Resp ~ inv_logit(eta), # 0.5 + 0.5*
-                     eta ~ Vol + Rate, nl = TRUE),
+                     eta ~ Vol + Rate, nl = T),
   data = finney, family = bernoulli("identity"), 
-  prior = prior(normal(0, 5), nlpar = "eta"),refresh = 0
+  prior = prior(normal(0, 5), nlpar = "eta"),silent = T, refresh=0
 )
-
 ```
 
 
-```{r}
+```{r,results=F}
 fit.brms3 <- brm(
   bf(Resp ~ guess + (1 - guess) * inv_logit(eta), 
-    eta ~ 0 + Vol + Rate, guess ~ 1, nl = TRUE),
+    eta ~ 0 + Vol + Rate, guess ~ 1, nl = T),
   data = finney, family = bernoulli("identity"), 
   prior = c(
     prior(normal(0, 5), nlpar = "eta"),
     prior(beta(1, 1), nlpar = "guess", lb = 0, ub = 1)
-  ),refresh = 0
+  ),silent = T, refresh=0
 )
 ```
 
 ```{r, eval=F}
 fit.brms4 <- brm(bf(Resp ~ mu1+ mu2, 
-                     mu1 ~ Vol, mu2 ~ Rate, nl = TRUE),
+                     mu1 ~ Vol, mu2 ~ Rate, nl = T),
   data = finney, family = bernoulli("identity"), 
   prior = c(prior(normal(0, 5), nlpar = "mu1"),
             prior(normal(0, 5), nlpar = "mu2")
-            ),refresh = 0
+            ),silent = T, refresh=0
 )
 ```
 
@@ -326,173 +492,21 @@ summary(fit.brms1)
 summary(fit.brms2)
 summary(fit.brms3)
 
-brm.beta <- fixef(fit.brms1)[,1]
-brm.beta.sd <- fixef(fit.brms1)[,2]
+(brm.beta <- fixef(fit.brms1)[,1])
+(brm.beta.sd <- fixef(fit.brms1)[,2])
 ```
 
 
 
-### Paper's method
+### Comparing the results
 
-The starting value $\beta^{(0)}$ is the least square estimate
-
-
-
-$(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$
-
-```{r, eval=T,collapse=T}
-# X <- cbind(Vol, Rate)
-# (beta <- solve( t(X) %*% X ) %*% t(X) %*% Resp) #start from LS estimate
-(beta <- as.vector(solve( t(X) %*% X ) %*% t(X) %*% Resp)) # not right
-```
-
-\(\mu=\mathbf{x}_i^T\boldsymbol{\beta}\)
-
-```{r, echo=T,collapse=T}
-(mu <- as.vector(X %*% beta)) # Initial mu of Z
-```
-
-\(Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)\) truncated by 0 at the \(\begin{cases}\text{left if}&y_i=1\\\text{right if}&y_i=0\end{cases}\)
-
-
-
-```{r,eval=T, echo=T,collapse=T}
-# only works for the second probit model
-ez<-as.vector(X%*%beta)
-set.seed(123); u<-runif(n,0,1)
-(z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1))))
-```
-
-```{r, echo=T,collapse=T}
-# only works for the first probit model
-tr_norm<-function(n,mu,v,truc_side='left'){ # Truncated Normal function
-u<-runif(n,min=0,max=1)
-  if(truc_side=='left'){
- tr_norm_value<-u-u*pnorm(0,mean=mu,sd=sqrt(v))+pnorm(0,mean=mu,sd=sqrt(v))}
- if(truc_side=='right'){
-   tr_norm_value<-u*pnorm(0,mean=mu,sd=sqrt(v))}
-  qnorm(tr_norm_value,mu,sqrt(v))
-}
-
-set.seed(123)
-(z<- ifelse(Resp==1, # Initial Z
-tr_norm(1,mu,1),
-tr_norm(1,mu,1,'right')
-))
-```
-
-*other attempts of sampling from truncated normal*
-
-```{r,eval=F, echo=T,collapse=T}
-#for(j in 1:n){  
-#ifelse(Resp[j]==1,
-#z[j] <- rtruncnorm(1,a=0,b=Inf,mean=mu[j],sd=1),
-#z[j] <- rtruncnorm(1,a=Inf,b=0,mean=mu[j],sd=1)
-#)
-#}
-
-# anohter attempt of truncated
-#z<- abs(rnorm(n,mean=mu,sd=1)),
-#z<- -abs(rnorm(n,mean=mu,sd=1))
-```
-
-\(\boldsymbol{\hat\beta_Z}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z}\)
-
-\(\Omega=(\mathbf{X}^T\mathbf{X})^{-1})\)
-
-```{r, echo=T,collapse=T}
-solve(t(X)%*%X)%*%t(X)%*%z # first mu for Beta
-solve(t(X)%*%X)            # first omega for Beta
-
-iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V) # from Hoff (2009, Ch.12)
-
-```
-
-#### Gibbs sampling 1
-
-```{r}
-M <- 2500; burnin <- 500; set.seed(123)
-# Gibbs <- matrix(NA,ncol=p,nrow=M); ZZ<-matrix(NA,M,n)      #For full Sample
-gibbs <- matrix(NA,ncol=p,nrow=100); Z<-matrix(NA,100,n) #For Sub Sample
-for(m in 1:M){  #Gibbs Sampler
-  
-# beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)
-beta <- mvrnorm(1, V%*%(t(X)%*%z), V) # draw beta from Normal
-
-z<- ifelse(Resp==1, # draw Z from truncated Normal
-tr_norm(1 ,t(X %*% beta), 1),
-tr_norm(1 ,t(X %*% beta), 1 ,'right')
-)
-
-#ez<-(X%*%beta)
-#u<-runif(n,0,1)
-#z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
-
-# Gibbs[m,] <- t(beta); ZZ[m,]<- z                                        # full samples
-if(m%%(M/100)==0 & m>burnin) { gibbs[m/(M/100),] <- t(beta); Z[m/(M/100),]<- z}   # subsamples of equal size
-}
-```
-
-
-#### Gibbs sampling 2 , refer to (Hoff, 2009, Ch.12)
-
-```{r}
-iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
-```
-
-```{r,echo=T,include=T}
-#### probit regression
-## setup
-set.seed(123)
-beta<-rep(0,p) 
-z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
-BETA<-matrix(NA,100,p) ; Z<-matrix(NA,100,n) ; ac<-0
-mu<-0 ; sigma<-100  ### Why????
-
-## MCMC
-S<-2500
-for(s in 1:S) 
-{
-  #update beta
-  E<- V%*%( t(X)%*%z )
-  beta<- cholV%*%rnorm(p) + E  # ????????
-
-  #update z
-  ez<-X%*%beta
-  u<-runif(n,0,1)
-  z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
-    
-  #help mixing
-c<-rnorm(1,0,n^(-1/3))  #  sd responding the sample size ????
-zp<-z+c #;g <- 0 ; gp<-g+c
-lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) #+ sum(dnorm(c,mu,sigma,log=T) - dnorm(0,mu,sigma,log=T) )
-if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }              # ; g<-gp
-
-  if(s%%(S/100)==0) 
-  { 
-    # cat(s/S,ac/s,"\n")
-    BETA[s/(S/100),]<-  beta
-    Z[s/(S/100),]<- z
-  }
-} 
-```
-
-
-\(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)}})\)
-
-```{r,echo=T,collapse=T}
-# full.mean <- colMeans(Gibbs[,])
-# tail.mean <- colMeans(Gibbs[burnin,])
-g1.beta <- colMeans(gibbs,na.rm = T)
-g2.beta<-apply(BETA,2,mean)
+```{r,echo=F,collapse=T}
 par<- cbind(g1.beta,g2.beta,rl.beta,glm.beta,brm.beta)
 rownames(par) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par),4))
 ```
 
-```{r,eval=T,echo=T}
-#full.quant <- apply(Gibbs[burnin,],2,quantile,probs=c(0.025,0.5,0.975)) 
-#tail.quant <- apply(Gibbs[burnin,],2,quantile,probs=c(0.025,0.5,0.975)) 
+```{r,eval=T,echo=F}
 g1.beta.sd<- apply(gibbs,2,sd,na.rm = T)
 g2.beta.sd<-apply(BETA,2,sd)
 par<- rbind(g1.beta.sd,g2.beta.sd,rl.beta.sd,glm.beta.sd,brm.beta.sd)
@@ -500,13 +514,13 @@ colnames(par) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(par),4))
 ```
 
-```{r,echo=T,include=T,fig.show='hold', fig.width=9, fig.height=6, fig.align='center'}
+```{r,echo=F,include=T,fig.show='hold', fig.width=9, fig.height=6, fig.align='center'}
 par(mar=c(5,3,1,1),mgp=c(1.75,.75,0)); par(mfrow=c(3,3))
 lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
 for(j in 1:3) {
 acf(rfit$BETA[,j],ci.col="dodgerblue4",xlab=lab[j])}  
 for(j in 1:3) {
-acf(gibbs[-(1:20),j],ci.col="dodgerblue4",xlab=lab[j])} 
+acf(gibbs[,j],ci.col="dodgerblue4",xlab=lab[j])} 
 for(j in 1:3) {
 acf(BETA[,j],xlab=lab[j],ci.col="dodgerblue4")}
 mtext("autocorrelation functions with Rank Reg(above),Gibbs1(middle) ,Gibbs2(below)",side=1,line=-1,outer=T)
@@ -514,54 +528,48 @@ mtext("autocorrelation functions with Rank Reg(above),Gibbs1(middle) ,Gibbs2(bel
 
 Plot Gibbs 1
 
-```{r,echo=T,include=T, fig.width=9, fig.height=6, fig.align='center'}
+```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 for(j in 1:p){
-plot(gibbs[-(1:20),j],  ylab=lab[j],main="",pch=1,cex=0.1,
+plot(gibbs[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
-plot(cumsum(gibbs[-(1:20),j])/(1:80),  ylab=lab[j],main="",
+plot(cumsum(gibbs[,j])/(1:100),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
-#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),
-#     main="",col="cornflowerblue")
-plot(density(gibbs[-(1:20),j],adj=2),lwd=2,main="",col="cornflowerblue",
+#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),main="",col="cornflowerblue")
+plot(density(gibbs[,j],adj=2),lwd=2,main="",col="cornflowerblue",
     xlab=lab[j],ylab="density")
-abline(v=quantile(gibbs[-(1:20),j],c(0.025,0.975)),col="gray",lwd=1)
+abline(v=quantile(gibbs[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
 
 
 Plot Gibbs 2
 
-```{r,echo=T,include=T, fig.width=9, fig.height=6, fig.align='center'}
+```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 for(j in 1:p){
 plot(BETA[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
 plot(cumsum(BETA[,j])/(1:100),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
-#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),
-#     main="",col="cornflowerblue")
+#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1), main="",col="cornflowerblue")
 plot(density(BETA[,j],adj=2),lwd=2,main="",col="cornflowerblue",
     xlab=lab[j],ylab="density")
 abline(v=quantile(BETA[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
 
-\(p_i=\Phi(\mathbf{x}_i^T\boldsymbol{\beta})\)
 
-```{r,echo=T,collapse=T}
-(prob <- pnorm(t(X %*% beta),0,1))
-```
 
 ```{r,echo=F,eval=F, message=F, warning=F, fig.width=6, fig.height=3, fig.align='center'}
 par(mfrow=c(2,3),mar=c(3,3,.5,.5),mgp=c(1.70,.70,0))
-plot(gibbs.mat[-burnin,(n+1)],  ylab=expression(beta^{(k)}),main="",pch=20,cex=0.3,
+plot(gibbs.mat[,(n+1)],  ylab=expression(beta^{(k)}),main="",pch=20,cex=0.3,
      xlab="Gibbs iteration (k)",col="cornflowerblue")
-plot(cumsum(gibbs.mat[-burnin,(n+1)])/(1:(S/2)),  ylab=expression(E(beta)),main="",
+plot(cumsum(gibbs.mat,(n+1)])/(1:(S/2)),  ylab=expression(E(beta)),main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
-hist(gibbs.mat[-burnin,(n+1)],  xlab=expression(paste("distribution of est. for ",beta)),
+hist(gibbs.mat[,(n+1)],  xlab=expression(paste("distribution of est. for ",beta)),
      main="",col="cornflowerblue")
-abline(v=quantile(gibbs.mat[-burnin,(n+1)],c(0.025,0.975)),col="red",lwd=1)
+abline(v=quantile(gibbs.mat[,(n+1)],c(0.025,0.975)),col="red",lwd=1)
 
 u <- seq(0.01,4,length=1000)
 d <- dgamma(u,shape=alpha,rate=pumps.par["50%","Beta"])
@@ -578,8 +586,7 @@ segments(pumps.quant["50%",1:10],(10:1)-0.25,pumps.quant["50%",1:10],(10:1)+0.25
 
 
 
-```{r,echo=T,include=T, message=F, warning=F, fig.width=9, fig.height=3, fig.align='center'}
-
+```{r,eval=F,include=T, message=F, warning=F, fig.width=9, fig.height=3, fig.align='center'}
 par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 lab<-c(expression(beta[1]),expression(beta[2]),expression(beta[3]))
 laby<-c("density","","")
@@ -587,6 +594,7 @@ for(j in 1:p){
 plot(density(BETA[,j],adj=2),lwd=2,main="",#xlim=c(-10,5),
     xlab=lab[j],ylab=laby[j],col="cornflowerblue")
 sd<-sqrt(  solve(t(X)%*%X/n)[j,j] )
+E <- V%*%(t(X)%*%z)
 x<-seq(min(BETA[,j]),max(BETA[,j]),length=100)
 lines(x,dnorm(x,E[j],sd),lwd=2,col="gray")
 if(j==3) {legend(2.1,1,legend=c("prior","posterior"),lwd=c(2,2),col=c("gray","cornflowerblue"),bty="n")}
@@ -596,14 +604,15 @@ if(j==3) {legend(2.1,1,legend=c("prior","posterior"),lwd=c(2,2),col=c("gray","co
 
 
 
-```{r,echo=T,include=T, fig.width=9, fig.height=3, fig.align='center'}
+```{r,echo=F,include=T, fig.width=9, fig.height=3, fig.align='center'}
 par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 ymx<-c(0.3,0.75,1.25)
+lab<-c(expression(beta[1]),expression(beta[2]),expression(beta[3]))
+laby<-c("density","","")
 for(j in 1:3) {
 plot(density(rfit$BETA[,j],adj=2),lwd=2,main="",
  xlab=lab[j],col="gray",ylim=c(0,ymx[j]),ylab=laby[j])
-#lines(density(Gibbs[burnin,j],adj=2),col="cornflowerblue",lwd=2)
-lines(density(gibbs[-(1:20),j],adj=2),col="cornflowerblue",lwd=2,lty=1)
+lines(density(gibbs[,j],adj=2),col="cornflowerblue",lwd=2,lty=1)
 lines(density(BETA[,j],adj=2),col="cyan",lwd=2)
 if(j==3) {
  legend(1.75,1.25,legend=c("Rank","Gibbs1","Gibbs2"), lty=c(1,1,1),
@@ -614,12 +623,131 @@ if(j==3) {
 
 
 
+### Nimble
+
+- Code 1
+
+```{r}
+code <- nimbleCode({
+  beta0 ~ dnorm(0, sd = 100)
+  beta1 ~ dnorm(0, sd = 100)
+  beta2 ~ dnorm(0, sd = 100)
+  sigma ~ dunif(0, 100)        
+  for(i in 1:n) {
+#    phi(z[i]) ~ T(dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma),0,Inf)
+#    phi(z[i]) ~ T(dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma),-Inf,0)
+#    probit(p[i]) ~ dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = 1)
+#    dmnorm(mean, cov)
+    probit(p[i]) ~ dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma) # sd = sigma
+    y[i] ~ dbern(p[i])
+  }
+})
+## extract data for two predictors and center for better MCMC performance
+x1 <- Vol - mean(Vol)
+x2 <- Rate - mean(Rate)
+
+constants <- list(n = n, x1 = x1, x2 = x2)
+data <- list(y = Resp)
+inits <- list(beta0 = -0.5, beta1 = 0.1, beta2 = 0.1) # beta0 =mean(Resp), sigma = 1
+model <- nimbleModel(code, constants = constants, data = data, inits = inits) # build model
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta1','beta2','sigma')) 
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary$all.chains
+mcmc.out$WAIC 
+```
+
+- Code 2 Use `inprod`
+
+```{r}
+code <- nimbleCode({
+  beta0 ~ dnorm(0, sd = 100)
+  for(j in 1:k)
+    beta[j] ~ dnorm(0, sd = 100)
+  sigma ~ dunif(0, 100)  
+  for(i in 1:n) {
+  probit(p[i]) ~ dnorm(beta0 + inprod(beta[1:k], x[i, 1:k]), sd = sigma)
+    y[i] ~ dbern(p[i])
+  }
+})
+
+k <- 2
+cX <- sweep(finney[,1:2], 2, colMeans(finney[,1:2]))  # center for better MCMC performance
+
+constants <- list(n = n, k = 2, x = cX) 
+data <- list(y = Resp)
+inits <- list(beta0 = -0.5, beta = rep(0, k), sigma = 0.5)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits)
+```
+
+- Code 3 Use Matrix Algebra
+
+```{r,eval=F}
+code <- nimbleCode({
+     beta0 ~ dnorm(0, sd = 100)
+     beta[1:k] ~ dmnorm(zeros[1:k], omega[1:k, 1:k])
+     sigma ~ dunif(0, 100)
+     linpred[1:n] <- (x[1:n, 1:k] %*% beta[1:k])[1:n,1]
+     for(i in 1:n) {
+     probit(p[i]) ~ dnorm(beta0 + linpred[i], sd = sigma)
+     y[i] ~ dbern(p[i])
+       }
+})
+
+constants <- list(n = n, k = k, x = finney[,1:2], zeros = rep(0, k), omega = 0.0001 * diag(k))
+data <- list(y = Resp)
+inits <- list(beta0 = -0.5, beta = rep(0, k), sigma = 0.5)
+model <- nimbleModel(code, constants = constants, data = data, inits = inits)
+```
+
+> Error in replaceConstantsRecurse(x, constEnv, constNames) : 'list' object cannot be coerced to type 'double'
+
+
+
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers()
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta','sigma')) # ,'beta2'
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary$all.chains
+mcmc.out$WAIC 
+```
 
 
 
 
+### Use `mlogit`
 
+```{r,eval=T,echo=T}
+# From Kenneth Train’s exercises using the mlogit package for R
+# data("Mode", package="mlogit")
+# Mo <- dfidx(Mode, choice = "choice", varying = 2:9)
+# Mo <- mlogit.data(Mode, choice='choice', shape='wide', varying=c(2:9))
+# p1 <- mlogit(choice~cost+time, Mo, seed = 20, R = 100, probit = TRUE)
 
+finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide') #, varying=1:2
+fit.probit.mlogit <- mlogit(Resp~0|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
+summary(fit.probit.mlogit)
+```
 
 
 
@@ -652,24 +780,12 @@ fit.mle.glmer <- glmer(Resp~(1|Vol)+(1|Rate), family=binomial) #, nAGQ = 12, REM
 summary(fit.mle.glmer)
 ```
 
-```{r,eval=F,echo=F}
-# From Kenneth Train’s exercises using the mlogit package for R
 
-# data("Mode", package="mlogit")
-# Mo <- mlogit.data(Mode, choice='choice', shape='wide', varying=c(2:9))
-# p1 <- mlogit(choice~cost+time, Mo, seed = 20, R = 100, probit = TRUE)
-
-finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide') #, varying=c(1:2)
-fit.probit.mlogit <- mlogit(Resp~1|Vol+Rate, probit=F,finney.mlogit) #|0 ,reflevel=5,seed=20,R=100
-```
 
 ```{r,eval=F,echo=F}
 # From lecture5_sample;# response must have 3 or more levels
 # fit.probit.plr <- polr(Resp~Vol+Rate, method = "probit",finney) 
 ```
-
-
-
 
 
 
