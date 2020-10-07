@@ -14,7 +14,7 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=F, warning=F, echo=TRUE,cache = T)
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
 options(scipen=6)
@@ -319,8 +319,7 @@ for(j in 1:n){
 ifelse(Resp[j]==1,
 z[j] <- rtruncnorm(1,a=0,b=Inf,mean=ez[j],sd=1),
 z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
-)
-}
+)}
 z
 ```
 
@@ -339,8 +338,9 @@ solve(t(X)%*%X)%*%t(X)%*%z # New Beta
 #### Gibbs sampling 1
 
 ```{r}
-M <- 2500; burnin <- 500; set.seed(123)
-gibbs <- matrix(NA,ncol=p,nrow=100); Z<-matrix(NA,100,n) 
+M <- 25500; burnin <- 500; step <- 20; set.seed(123)
+size <- (M-burnin)/step
+gibbs1 <- matrix(NA,ncol=p,nrow=size); Z<-matrix(NA,size,n) 
 for(m in 1:M){  #Gibbs Sampler
   
 # Update beta 1
@@ -366,7 +366,7 @@ z[j] <- rtruncnorm(1,a=0,b=Inf,mean=ez[j],sd=1),
 z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
 )}
 
-if(m%%(M/125)==0 & m>burnin) { gibbs[(m-burnin)/(M/125),] <- t(beta); Z[(m-burnin)/(M/125),]<- z} 
+if(m%%step==0 & m>burnin) { gibbs1[(m-burnin)/step,] <- t(beta); Z[(m-burnin)/step,]<- z} 
 }
 ```
 
@@ -380,12 +380,13 @@ if(m%%(M/125)==0 & m>burnin) { gibbs[(m-burnin)/(M/125),] <- t(beta); Z[(m-burni
 # set.seed(123)
 # beta<-rep(0,p) 
 # z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
-BETA<-matrix(NA,100,p) ; Z<-matrix(NA,100,n) ; ac<-0
+
 # mu<-0 ; sigma<-100  ### Why????
 
 ## MCMC
-S<-2500
-for(s in 1:S) {
+
+gibbs2<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
+for(m in 1:M) {
   #update beta
   beta<- V%*%( t(X)%*%z ) + cholV%*%rnorm(p)  # ???
 
@@ -399,10 +400,10 @@ c<-rnorm(1,0,n^(-1/3))  #  sd responding the sample size ????
 zp<- z+c 
 lhr <-  sum(dnorm(zp,ez,100,log=T) - dnorm(z,ez,100,log=T) ) 
 if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }              
-  if(s%%(S/125)==0 & s>burnin) 
+  if(m%%step==0 & m>burnin) 
   { 
-    BETA[(s-burnin)/(S/125),]<-  beta
-    Z[(s-burnin)/(S/125),]<- z
+    gibbs2[(m-burnin)/step,]<-  beta
+    Z[(m-burnin)/step,]<- z
   }
 } 
 ```
@@ -411,8 +412,8 @@ if(log(runif(1))<lhr) { z<-zp ; ac<-ac+1 }
 \(\boldsymbol{\hat\beta}\approx\frac1m\sum_{i=1}^m(\boldsymbol{\beta|Z^{(i)}})\)
 
 ```{r,echo=T,collapse=T}
-(g1.beta <- colMeans(gibbs,na.rm = T))
-(g2.beta<-apply(BETA,2,mean))
+(g1.beta <- colMeans(gibbs1,na.rm = T))
+(g2.beta<-apply(gibbs2,2,mean))
 ```
 
 
@@ -456,33 +457,34 @@ fit.brms1 <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli(),silent = 
 
 
 ```{r,results=F }
+inv_logit <- function(x) 1 / (1 + exp(-x))
 fit.brms2 <- brm(bf(Resp ~ inv_logit(eta), # 0.5 + 0.5*
                      eta ~ Vol + Rate, nl = T),
   data = finney, family = bernoulli("identity"), 
-  prior = prior(normal(0, 5), nlpar = "eta"),silent = T, refresh=0
+  prior = prior(normal(0, 100), nlpar = "eta"),silent = T, refresh=0
 )
 ```
 
 
 ```{r,results=F}
+
 fit.brms3 <- brm(
   bf(Resp ~ guess + (1 - guess) * inv_logit(eta), 
-    eta ~ 0 + Vol + Rate, guess ~ 1, nl = T),
+    eta ~  Vol + Rate, guess ~ 1, nl = T),
   data = finney, family = bernoulli("identity"), 
   prior = c(
-    prior(normal(0, 5), nlpar = "eta"),
+    prior(normal(0, 100), nlpar = "eta"),
     prior(beta(1, 1), nlpar = "guess", lb = 0, ub = 1)
   ),silent = T, refresh=0
 )
 ```
 
 ```{r, eval=F}
-fit.brms4 <- brm(bf(Resp ~ mu1+ mu2, 
-                     mu1 ~ Vol, mu2 ~ Rate, nl = T),
+fit.brms4 <- brm(bf(Resp ~ pnorm(pi), 
+                     pi ~ Vol+Rate, nl = T),
   data = finney, family = bernoulli("identity"), 
-  prior = c(prior(normal(0, 5), nlpar = "mu1"),
-            prior(normal(0, 5), nlpar = "mu2")
-            ),silent = T, refresh=0
+  prior = prior(normal(0, 100), nlpar = "pi"),
+            silent = T, refresh=0
 )
 ```
 
@@ -507,8 +509,8 @@ pander::pander(round((par),4))
 ```
 
 ```{r,eval=T,echo=F}
-g1.beta.sd<- apply(gibbs,2,sd,na.rm = T)
-g2.beta.sd<-apply(BETA,2,sd)
+g1.beta.sd<- apply(gibbs1,2,sd,na.rm = T)
+g2.beta.sd<-apply(gibbs2,2,sd)
 par<- rbind(g1.beta.sd,g2.beta.sd,rl.beta.sd,glm.beta.sd,brm.beta.sd)
 colnames(par) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(par),4))
@@ -520,9 +522,9 @@ lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
 for(j in 1:3) {
 acf(rfit$BETA[,j],ci.col="dodgerblue4",xlab=lab[j])}  
 for(j in 1:3) {
-acf(gibbs[,j],ci.col="dodgerblue4",xlab=lab[j])} 
+acf(gibbs1[,j],ci.col="dodgerblue4",xlab=lab[j])} 
 for(j in 1:3) {
-acf(BETA[,j],xlab=lab[j],ci.col="dodgerblue4")}
+acf(gibbs2[,j],xlab=lab[j],ci.col="dodgerblue4")}
 mtext("autocorrelation functions with Rank Reg(above),Gibbs1(middle) ,Gibbs2(below)",side=1,line=-1,outer=T)
 ```
 
@@ -531,14 +533,14 @@ Plot Gibbs 1
 ```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 for(j in 1:p){
-plot(gibbs[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
+plot(gibbs1[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
-plot(cumsum(gibbs[,j])/(1:100),  ylab=lab[j],main="",
+plot(cumsum(gibbs1[,j])/(1:size),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
 #hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),main="",col="cornflowerblue")
-plot(density(gibbs[,j],adj=2),lwd=2,main="",col="cornflowerblue",
+plot(density(gibbs1[,j],adj=2),lwd=2,main="",col="cornflowerblue",
     xlab=lab[j],ylab="density")
-abline(v=quantile(gibbs[,j],c(0.025,0.975)),col="gray",lwd=1)
+abline(v=quantile(gibbs1[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
 
@@ -548,14 +550,14 @@ Plot Gibbs 2
 ```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 for(j in 1:p){
-plot(BETA[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
+plot(gibbs2[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
      xlab="Gibbs iteration (k)",col="cornflowerblue")  
-plot(cumsum(BETA[,j])/(1:100),  ylab=lab[j],main="",
+plot(cumsum(gibbs2[,j])/(1:size),  ylab=lab[j],main="",
      type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
 #hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1), main="",col="cornflowerblue")
-plot(density(BETA[,j],adj=2),lwd=2,main="",col="cornflowerblue",
+plot(density(gibbs2[,j],adj=2),lwd=2,main="",col="cornflowerblue",
     xlab=lab[j],ylab="density")
-abline(v=quantile(BETA[,j],c(0.025,0.975)),col="gray",lwd=1)
+abline(v=quantile(gibbs2[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
 
@@ -591,11 +593,11 @@ par(mfrow=c(1,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
 lab<-c(expression(beta[1]),expression(beta[2]),expression(beta[3]))
 laby<-c("density","","")
 for(j in 1:p){
-plot(density(BETA[,j],adj=2),lwd=2,main="",#xlim=c(-10,5),
+plot(density(gibbs2[,j],adj=2),lwd=2,main="",#xlim=c(-10,5),
     xlab=lab[j],ylab=laby[j],col="cornflowerblue")
 sd<-sqrt(  solve(t(X)%*%X/n)[j,j] )
 E <- V%*%(t(X)%*%z)
-x<-seq(min(BETA[,j]),max(BETA[,j]),length=100)
+x<-seq(min(gibbs2[,j]),max(gibbs2[,j]),length=100)
 lines(x,dnorm(x,E[j],sd),lwd=2,col="gray")
 if(j==3) {legend(2.1,1,legend=c("prior","posterior"),lwd=c(2,2),col=c("gray","cornflowerblue"),bty="n")}
 }
@@ -612,8 +614,8 @@ laby<-c("density","","")
 for(j in 1:3) {
 plot(density(rfit$BETA[,j],adj=2),lwd=2,main="",
  xlab=lab[j],col="gray",ylim=c(0,ymx[j]),ylab=laby[j])
-lines(density(gibbs[,j],adj=2),col="cornflowerblue",lwd=2,lty=1)
-lines(density(BETA[,j],adj=2),col="cyan",lwd=2)
+lines(density(gibbs1[,j],adj=2),col="cornflowerblue",lwd=2,lty=1)
+lines(density(gibbs2[,j],adj=2),col="cyan",lwd=2)
 if(j==3) {
  legend(1.75,1.25,legend=c("Rank","Gibbs1","Gibbs2"), lty=c(1,1,1),
        lwd=c(2,2,2),col=c("gray","cornflowerblue","cyan"))
@@ -632,13 +634,9 @@ code <- nimbleCode({
   beta0 ~ dnorm(0, sd = 100)
   beta1 ~ dnorm(0, sd = 100)
   beta2 ~ dnorm(0, sd = 100)
-  sigma ~ dunif(0, 100)        
+#  sigma ~ dunif(0, 100)        
   for(i in 1:n) {
-#    phi(z[i]) ~ T(dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma),0,Inf)
-#    phi(z[i]) ~ T(dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma),-Inf,0)
-#    probit(p[i]) ~ dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = 1)
-#    dmnorm(mean, cov)
-    probit(p[i]) ~ dnorm(beta0 + beta1*x1[i] + beta2*x2[i], sd = sigma) # sd = sigma
+    probit(p[i])  <- beta0 + beta1*x1[i] + beta2*x2[i] # sd = sigma
     y[i] ~ dbern(p[i])
   }
 })
@@ -657,7 +655,7 @@ mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
                        nchains = 2, niter = 1000,
                        summary = TRUE, WAIC = T,
-                       monitors = c('beta0','beta1','beta2','sigma')) 
+                       monitors = c('beta0','beta1','beta2')) #,'sigma'
 names(mcmc.out)
 ```
 
@@ -673,9 +671,9 @@ code <- nimbleCode({
   beta0 ~ dnorm(0, sd = 100)
   for(j in 1:k)
     beta[j] ~ dnorm(0, sd = 100)
-  sigma ~ dunif(0, 100)  
+#  sigma ~ dunif(0, 100)  
   for(i in 1:n) {
-  probit(p[i]) ~ dnorm(beta0 + inprod(beta[1:k], x[i, 1:k]), sd = sigma)
+  probit(p[i]) <- beta0 + inprod(beta[1:k], x[i, 1:k]) #, sd = sigma)
     y[i] ~ dbern(p[i])
   }
 })
@@ -689,16 +687,37 @@ inits <- list(beta0 = -0.5, beta = rep(0, k), sigma = 0.5)
 model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 ```
 
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers()
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta')) # ,'beta2','sigma'
+names(mcmc.out)
+```
+
+```{r}
+mcmc.out$summary$all.chains
+mcmc.out$WAIC 
+```
+
+
+
 - Code 3 Use Matrix Algebra
 
 ```{r,eval=F}
 code <- nimbleCode({
      beta0 ~ dnorm(0, sd = 100)
      beta[1:k] ~ dmnorm(zeros[1:k], omega[1:k, 1:k])
-     sigma ~ dunif(0, 100)
+#     sigma ~ dunif(0, 100)
      linpred[1:n] <- (x[1:n, 1:k] %*% beta[1:k])[1:n,1]
      for(i in 1:n) {
-     probit(p[i]) ~ dnorm(beta0 + linpred[i], sd = sigma)
+     probit(p[i]) <-  beta0 + linpred[i,1]   #~ dnorm(, sd = sigma)
      y[i] ~ dbern(p[i])
        }
 })
@@ -713,24 +732,7 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 
 
 
-```{r}
-mcmcConf <- configureMCMC(model)
-mcmcConf$printSamplers()
-```
 
-```{r}
-mcmc.out <- nimbleMCMC(code = code, constants = constants,
-                       data = data, inits = inits,
-                       nchains = 2, niter = 1000,
-                       summary = TRUE, WAIC = T,
-                       monitors = c('beta0','beta','sigma')) # ,'beta2'
-names(mcmc.out)
-```
-
-```{r}
-mcmc.out$summary$all.chains
-mcmc.out$WAIC 
-```
 
 
 
