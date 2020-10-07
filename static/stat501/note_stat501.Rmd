@@ -14,15 +14,15 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T)
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T,collapse = T)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
 options(scipen=6)
 options(digits=4)
 if (!require(pacman)) {install.packages("pacman"); library(pacman)}
-p_load(stargazer, pscl, mlmRev,mvtnorm, MASS,brms, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,lme4) 
+p_load(stargazer, pscl, mlmRev,mvtnorm, MASS,brms, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,msm ,lme4) 
 
-# likelihoodAsy, coda,devtools,loo,dagitty,rethinking
+# likelihoodAsy, coda,devtools,loo,dagitty,rethinking, msm::rtnorm 
 library(nimble, warn.conflicts = FALSE)
 ```
 
@@ -243,6 +243,75 @@ n <- nrow(finney)
 ```
 
 
+
+### Compare with the results after log transform
+
+What is the benifit of log transform?
+
+```{r,eval=F,echo=T,collapse=T}
+fit.probit.lm.l <- lm(Resp~lVol+lRate)
+fit.probit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="probit"))
+fit.logit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="logit"))
+comp <- fits.compare(fit.probit.lm.l, fit.probit.glm.l, fit.logit.glm.l)
+comp
+# plot(comp)
+```
+
+```{r,eval=F,echo=F}
+summary(z.logit)
+correl(z.logit)
+covar(z.logit)
+Rank(z.logit)
+rscale(z.logit)
+# kable(t(data_frame(weights(z.logit))))
+```
+
+```{r,eval=F,echo=F}
+
+# From https://data.princeton.edu/
+fit.mle.glmer <- glmer(Resp~(1|Vol)+(1|Rate), family=binomial) #, nAGQ = 12, REML=FALSE
+summary(fit.mle.glmer)
+```
+
+
+
+```{r,eval=F,echo=F}
+# From lecture5_sample;# response must have 3 or more levels
+# fit.probit.plr <- polr(Resp~Vol+Rate, method = "probit",finney) 
+```
+
+
+
+
+```{r,echo=F,out.width='50%'}
+#z.cub <- glm(Resp~lVol+lRate,family=binomial,method="cubinf", ufact=3.2)
+# summary(z.cub)
+# plot(z.cub, smooth=TRUE, ask=TRUE)
+```
+
+
+
+```{r,eval=F,echo=F,out.width='50%'}
+## Adds a QQ-line for the values in x in the current plot.
+x <- residuals(z.probit, type="deviance")
+qqnorm(x, ylab = "Deviance Residuals")
+QQline(x, lty = 2)
+# Predictions provided by a model fit when method is "cubinf".
+rVol <- runif(20,0.4,3.7); rRate <- runif(20,0.3,3.75)
+newdat <- data.frame(lVol=log(rVol),lRate=log(rRate))
+predict(z.probit, newdat, type="response")
+
+```
+
+
+### 5.2 Election Data
+
+
+### 5.3 A Trivariate Probit Example
+
+
+
+
 ## Probit practice
 
 ### Paper's method
@@ -254,13 +323,13 @@ where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspir
 \(\Omega=(\mathbf{X}^T\mathbf{X})^{-1})\)
 
 ```{r}
+# from Hoff (2009, Ch.12)
 X <- cbind(1, Vol, Rate) # Design Matrix
-p <- dim(X)[2]           # Dimension
-
-(iXX<-solve(t(X)%*%X))   # Inverse Matrix
-V<-iXX*(n/(n+1))         #
-(cholV<-chol(V))         # from Hoff (2009, Ch.12)
-
+p <- dim(X)[2]           # Parameter Dimension
+iXX<-solve(t(X)%*%X)  # Inverse Matrix
+V<-iXX*(n/(n+1))         # Hoff, p.156, 9.2.2: . A unit information prior is one that contains the same amount of information as that would be contained in only a single observation. ; 
+# Note of Regresion Analysis p.23
+cholV<-chol(V)     
 ```
 
 
@@ -270,7 +339,8 @@ The starting value $\beta^{(0)}$ is the least square estimate or MLE
 $\beta^{(0)}=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$. Assume y are numeric values
 
 ```{r, eval=T,collapse=T}
-(beta <- as.vector(solve( t(X) %*% X ) %*% t(X) %*% Resp)) # not right
+z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
+(beta <- as.vector(solve( t(X) %*% X ) %*% t(X) %*% z))
 ```
 
 \(p_i=\Phi(\mathbf{x}_i^T\boldsymbol{\beta})\)
@@ -288,6 +358,8 @@ Expected value of Z \(\hat Z=\mathbf{x}_i^T\boldsymbol{\beta}\)
 Generating Z
 
 \(Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)\) truncated by 0 at the \(\begin{cases}\text{left if}&y_i=1\\\text{right if}&y_i=0\end{cases}\)
+
+<https://adzemski.github.io/r/statistics/R-package-truncated-normal/>
 
 - Method 1
 
@@ -322,6 +394,17 @@ z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
 )}
 z
 ```
+- Method 4
+
+```{r}
+for(j in 1:n){
+  set.seed(123)
+ifelse(Resp[j]==1,
+z[j] <- rtnorm(n, mean=ez[j], sd=1, lower=0, upper=Inf),
+z[j] <- rtnorm(n, mean=ez[j], sd=1, lower=-Inf, upper=0)
+)}
+z
+```
 
 
 - Update $\boldsymbol{\hat\beta_Z}$
@@ -338,33 +421,41 @@ solve(t(X)%*%X)%*%t(X)%*%z # New Beta
 #### Gibbs sampling 1
 
 ```{r}
-M <- 25500; burnin <- 500; step <- 20; set.seed(123)
-size <- (M-burnin)/step
+M <- 25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
+set.seed(123)
+
 gibbs1 <- matrix(NA,ncol=p,nrow=size); Z<-matrix(NA,size,n) 
 for(m in 1:M){  #Gibbs Sampler
   
 # Update beta 1
 # beta <- mvrnorm(1, solve(t(X)%*%X)%*%(t(X)%*%z), solve(t(X)%*%X)) # without n/(n+1)
 # Update beta 2
-beta <- mvrnorm(1, V%*%(t(X)%*%z), V) # draw beta from Normal
+# beta <- mvrnorm(1, V%*%(t(X)%*%z), V) # draw beta from Normal
 # Update beta 3
-# beta<- V%*%(t(X)%*%z)+cholV%*%rnorm(p)
-  
-ez<-(X%*%beta)  
+beta<- V%*%(t(X)%*%z)+cholV%*%rnorm(p)
 
+  #update z
+ez<-(X%*%beta)  
 # Truncated 1
-# z<- ifelse(Resp==1, tr_norm(1 ,ez, 1,'left'),tr_norm(1 ,ez, 1 ,'right'))# draw Z from truncated Normal
+u<-runif(n,0,1)
+z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
 
 # Truncated 2
-# u<-runif(n,0,1)
-# z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,1),u*pnorm(0,ez,1)))
+# z<- ifelse(Resp==1, tr_norm(1 ,ez, 1,'left'),tr_norm(1 ,ez, 1 ,'right'))# draw Z from truncated Normal
 
 # Truncated 3
-for(j in 1:n){
-ifelse(Resp[j]==1,
-z[j] <- rtruncnorm(1,a=0,b=Inf,mean=ez[j],sd=1),
-z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
-)}
+# for(j in 1:n){
+# ifelse(Resp[j]==1,
+# z[j] <- rtruncnorm(1,a=0,b=Inf,mean=ez[j],sd=1),
+# z[j] <- rtruncnorm(1,a=-Inf,b=0,mean=ez[j],sd=1)
+# )}
+
+# Truncated 4    # slow
+# for(j in 1:n){
+# ifelse(Resp[j]==1,
+# z[j] <- rtnorm(1, mean=ez[j], sd=1, lower=0, upper=Inf),
+# z[j] <- rtnorm(1, mean=ez[j], sd=1, lower=-Inf, upper=0)
+# )}
 
 if(m%%step==0 & m>burnin) { gibbs1[(m-burnin)/step,] <- t(beta); Z[(m-burnin)/step,]<- z} 
 }
@@ -377,14 +468,11 @@ if(m%%step==0 & m>burnin) { gibbs1[(m-burnin)/step,] <- t(beta); Z[(m-burnin)/st
 ```{r,echo=T,include=T}
 #### probit regression
 ## setup
-# set.seed(123)
-# beta<-rep(0,p) 
-# z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
-
-# mu<-0 ; sigma<-100  ### Why????
-
+ set.seed(123)
+ beta<-rep(0,p) 
+ z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
+# mu<-0 ; sigma<-100  
 ## MCMC
-
 gibbs2<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
 for(m in 1:M) {
   #update beta
@@ -435,11 +523,8 @@ rfit<-treg(Resp,X)
 
 ```{r,eval=T,echo=T,collapse=T}
 fit.probit.glm <- glm(Resp~Vol+Rate,family=binomial(link="probit"))
-
-(glm.beta<- coef(fit.probit.glm))
-
-(glm.beta.sd <- summary(fit.probit.glm)$coef[,2]) # sqrt(diag(vcov(fit.probit.glm)))
-
+glm.beta<- coef(fit.probit.glm)
+glm.beta.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 # fit.probit.lm <- lm(Resp~Vol+Rate)
 # fit.logit.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
 #comp <- fits.compare(fit.probit.lm, fit.probit.glm, fit.logit.glm)
@@ -448,54 +533,45 @@ fit.probit.glm <- glm(Resp~Vol+Rate,family=binomial(link="probit"))
 ```
 
 
-### Bayesian method by brms
-
-```{r,results=F}
-fit.brms1 <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli(),silent = T, refresh=0)
-
-```
 
 
-```{r,results=F }
-inv_logit <- function(x) 1 / (1 + exp(-x))
-fit.brms2 <- brm(bf(Resp ~ inv_logit(eta), # 0.5 + 0.5*
-                     eta ~ Vol + Rate, nl = T),
-  data = finney, family = bernoulli("identity"), 
-  prior = prior(normal(0, 100), nlpar = "eta"),silent = T, refresh=0
-)
-```
+### Nimble
 
-
-```{r,results=F}
-
-fit.brms3 <- brm(
-  bf(Resp ~ guess + (1 - guess) * inv_logit(eta), 
-    eta ~  Vol + Rate, guess ~ 1, nl = T),
-  data = finney, family = bernoulli("identity"), 
-  prior = c(
-    prior(normal(0, 100), nlpar = "eta"),
-    prior(beta(1, 1), nlpar = "guess", lb = 0, ub = 1)
-  ),silent = T, refresh=0
-)
-```
-
-```{r, eval=F}
-fit.brms4 <- brm(bf(Resp ~ pnorm(pi), 
-                     pi ~ Vol+Rate, nl = T),
-  data = finney, family = bernoulli("identity"), 
-  prior = prior(normal(0, 100), nlpar = "pi"),
-            silent = T, refresh=0
-)
-```
-
+- Code 1
 
 ```{r}
-summary(fit.brms1)
-summary(fit.brms2)
-summary(fit.brms3)
+code <- nimbleCode({
+  beta0 ~ dnorm(0, sd = 100)
+  beta1 ~ dnorm(0, sd = 100)
+  beta2 ~ dnorm(0, sd = 100)
+#  sigma ~ dunif(0, 100)        
+  for(i in 1:n) {
+    probit(p[i])  <- beta0 + beta1*x1[i] + beta2*x2[i] # sd = sigma
+    y[i] ~ dbern(p[i])
+  }
+})
+## extract data for two predictors and center for better MCMC performance
+x1 <- Vol - mean(Vol)
+x2 <- Rate - mean(Rate)
 
-(brm.beta <- fixef(fit.brms1)[,1])
-(brm.beta.sd <- fixef(fit.brms1)[,2])
+constants <- list(n = n, x1 = x1, x2 = x2)
+data <- list(y = Resp)
+inits <- list(beta0 = -0.5, beta1 = 0.1, beta2 = 0.1) # beta0 =mean(Resp), sigma = 1
+model <- nimbleModel(code, constants = constants, data = data, inits = inits) # build model
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta1','beta2')) #,'sigma'
+names(mcmc.out)
+```
+
+```{r}
+nimble.probit.beta <- mcmc.out$summary$all.chains[,1]
+nimble.probit.beta.sd <- mcmc.out$summary$all.chains[,3]
 ```
 
 
@@ -503,7 +579,7 @@ summary(fit.brms3)
 ### Comparing the results
 
 ```{r,echo=F,collapse=T}
-par<- cbind(g1.beta,g2.beta,rl.beta,glm.beta,brm.beta)
+par<- cbind(g1.beta,g2.beta,rl.beta,glm.beta,nimble.probit.beta)
 rownames(par) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par),4))
 ```
@@ -511,7 +587,7 @@ pander::pander(round((par),4))
 ```{r,eval=T,echo=F}
 g1.beta.sd<- apply(gibbs1,2,sd,na.rm = T)
 g2.beta.sd<-apply(gibbs2,2,sd)
-par<- rbind(g1.beta.sd,g2.beta.sd,rl.beta.sd,glm.beta.sd,brm.beta.sd)
+par<- rbind(g1.beta.sd,g2.beta.sd,rl.beta.sd,glm.beta.sd, nimble.probit.beta.sd)
 colnames(par) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(par),4))
 ```
@@ -627,43 +703,6 @@ if(j==3) {
 
 ### Nimble
 
-- Code 1
-
-```{r}
-code <- nimbleCode({
-  beta0 ~ dnorm(0, sd = 100)
-  beta1 ~ dnorm(0, sd = 100)
-  beta2 ~ dnorm(0, sd = 100)
-#  sigma ~ dunif(0, 100)        
-  for(i in 1:n) {
-    probit(p[i])  <- beta0 + beta1*x1[i] + beta2*x2[i] # sd = sigma
-    y[i] ~ dbern(p[i])
-  }
-})
-## extract data for two predictors and center for better MCMC performance
-x1 <- Vol - mean(Vol)
-x2 <- Rate - mean(Rate)
-
-constants <- list(n = n, x1 = x1, x2 = x2)
-data <- list(y = Resp)
-inits <- list(beta0 = -0.5, beta1 = 0.1, beta2 = 0.1) # beta0 =mean(Resp), sigma = 1
-model <- nimbleModel(code, constants = constants, data = data, inits = inits) # build model
-```
-
-```{r}
-mcmc.out <- nimbleMCMC(code = code, constants = constants,
-                       data = data, inits = inits,
-                       nchains = 2, niter = 1000,
-                       summary = TRUE, WAIC = T,
-                       monitors = c('beta0','beta1','beta2')) #,'sigma'
-names(mcmc.out)
-```
-
-```{r}
-mcmc.out$summary$all.chains
-mcmc.out$WAIC 
-```
-
 - Code 2 Use `inprod`
 
 ```{r}
@@ -687,10 +726,7 @@ inits <- list(beta0 = -0.5, beta = rep(0, k), sigma = 0.5)
 model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 ```
 
-```{r}
-mcmcConf <- configureMCMC(model)
-mcmcConf$printSamplers()
-```
+
 
 ```{r}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
@@ -730,10 +766,112 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 
 > Error in replaceConstantsRecurse(x, constEnv, constNames) : 'list' object cannot be coerced to type 'double'
 
+```{r}
+mcmcConf <- configureMCMC(model)
+mcmcConf$printSamplers()
+```
 
 
 
 
+## Logit Practice
+
+### brms
+
+```{r,results=F}
+fit.brms1 <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli(),silent = T, refresh=0)
+
+inv_logit <- function(x) 1 / (1 + exp(-x))
+fit.brms2 <- brm(bf(Resp ~ inv_logit(eta), 
+                     eta ~ Vol + Rate, nl = T),
+  data = finney, family = bernoulli("identity"), 
+  prior = prior(normal(0, 100), nlpar = "eta"),silent = T, refresh=0
+)
+
+fit.brms3 <- brm(
+  bf(Resp ~ guess + (1 - guess) * inv_logit(eta), 
+    eta ~  Vol + Rate, guess ~ 1, nl = T),
+  data = finney, family = bernoulli("identity"), 
+  prior = c(
+    prior(normal(0, 100), nlpar = "eta"),
+    prior(beta(1, 1), nlpar = "guess", lb = 0, ub = 1)
+  ),silent = T, refresh=0
+)
+```
+
+
+
+```{r}
+summary(fit.brms1)
+summary(fit.brms2)
+summary(fit.brms3)
+brm.beta <- fixef(fit.brms1)[,1]
+brm.beta.sd <- fixef(fit.brms1)[,2]
+```
+
+### Nimble
+
+```{r}
+## define the model
+code <- nimbleCode({
+    beta0 ~ dnorm(0, sd = 100)
+    beta1 ~ dnorm(0, sd = 100)
+    beta2 ~ dnorm(0, sd = 100)    
+#    sigma_RE ~ dunif(0, 1000)
+    for(i in 1:n) {
+#        beta2[i] ~ dnorm(0, sd = sigma_RE)
+        logit(p[i]) <- beta0 + beta1 * x1[i] + beta2 *x2[i]
+        y[i] ~ dbern(p[i])
+    }
+})
+## constants, data, and initial values
+x1 <- Vol - mean(Vol)
+x2 <- Rate - mean(Rate)
+constants <- list(n = n, x1 = x1, x2 = x2)
+data <- list(y = Resp)
+inits <- list(beta0 = -0.5, beta1 = 0.1, beta2 = .1)
+
+## create the model object
+Rmodel <- nimbleModel(code=code, constants=constants, data=data, inits=inits, check = FALSE)
+```
+
+```{r,eval=F}
+Rmcmc <- buildMCMC(Rmodel)
+#Compile the model and MCMC algorithm
+Cmodel <- compileNimble(Rmodel)
+Cmcmc <- compileNimble(Rmcmc, project = Rmodel)
+#Execute MCMC algorithm and extract samples
+Cmcmc$run(1000)
+samples <- as.matrix(Cmcmc$mvSamples)
+```
+
+```{r,eval=F}
+mcmcConf <- configureMCMC(Rmodel)
+mcmcConf$printSamplers()
+```
+
+```{r}
+mcmc.out <- nimbleMCMC(code = code, constants = constants,
+                       data = data, inits = inits,
+                       nchains = 2, niter = 1000,
+                       summary = TRUE, WAIC = T,
+                       monitors = c('beta0','beta1','beta2')) #,'sigma''sigma_RE',
+```
+
+```{r}
+nimble.beta <- mcmc.out$summary$all.chains[,1]
+nimble.beta.sd <- mcmc.out$summary$all.chains[,3]
+```
+
+
+### GLM
+
+
+```{r,eval=T,echo=T,collapse=T}
+fit.logit.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
+glm.logit.beta<- coef(fit.logit.glm)
+glm.logit.beta.sd <- summary(fit.logit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
+```
 
 
 
@@ -747,76 +885,27 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits)
 # p1 <- mlogit(choice~cost+time, Mo, seed = 20, R = 100, probit = TRUE)
 
 finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide') #, varying=1:2
-fit.probit.mlogit <- mlogit(Resp~0|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
-summary(fit.probit.mlogit)
+fit.mlogit <- mlogit(Resp~1|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
+mlogit.beta<- coef(fit.mlogit)
+mlogit.beta.sd <- sqrt(diag(vcov(fit.mlogit)))
+```
+
+### Comparing the results
+
+```{r,echo=F,collapse=T}
+par<- cbind(brm.beta,nimble.beta,glm.logit.beta,mlogit.beta)
+rownames(par) <- c("Beta0","Beta1","Beta2")
+pander::pander(round((par),4))
+```
+
+```{r,eval=T,echo=F}
+par<- rbind(brm.beta.sd,nimble.beta.sd,glm.logit.beta.sd,mlogit.beta.sd)
+colnames(par) <- c("Beta0","Beta1","Beta2")
+pander::pander(round(t(par),4))
 ```
 
 
 
-### Compare with the results after log transform
-
-What is the benifit of log transform?
-
-```{r,eval=F,echo=T,collapse=T}
-fit.probit.lm.l <- lm(Resp~lVol+lRate)
-fit.probit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="probit"))
-fit.logit.glm.l <- glm(Resp~lVol+lRate,family=binomial(link="logit"))
-comp <- fits.compare(fit.probit.lm.l, fit.probit.glm.l, fit.logit.glm.l)
-comp
-# plot(comp)
-```
-
-```{r,eval=F,echo=F}
-summary(z.logit)
-correl(z.logit)
-covar(z.logit)
-Rank(z.logit)
-rscale(z.logit)
-# kable(t(data_frame(weights(z.logit))))
-```
-
-```{r,eval=F,echo=F}
-
-# From https://data.princeton.edu/
-fit.mle.glmer <- glmer(Resp~(1|Vol)+(1|Rate), family=binomial) #, nAGQ = 12, REML=FALSE
-summary(fit.mle.glmer)
-```
-
-
-
-```{r,eval=F,echo=F}
-# From lecture5_sample;# response must have 3 or more levels
-# fit.probit.plr <- polr(Resp~Vol+Rate, method = "probit",finney) 
-```
-
-
-
-
-```{r,echo=F,out.width='50%'}
-#z.cub <- glm(Resp~lVol+lRate,family=binomial,method="cubinf", ufact=3.2)
-# summary(z.cub)
-# plot(z.cub, smooth=TRUE, ask=TRUE)
-```
-
-
-
-```{r,eval=F,echo=F,out.width='50%'}
-## Adds a QQ-line for the values in x in the current plot.
-x <- residuals(z.probit, type="deviance")
-qqnorm(x, ylab = "Deviance Residuals")
-QQline(x, lty = 2)
-# Predictions provided by a model fit when method is "cubinf".
-rVol <- runif(20,0.4,3.7); rRate <- runif(20,0.3,3.75)
-newdat <- data.frame(lVol=log(rVol),lRate=log(rRate))
-predict(z.probit, newdat, type="response")
-
-```
-
-
-### 5.2 Election Data
-
-
-### 5.3 A Trivariate Probit Example
 
 
 
