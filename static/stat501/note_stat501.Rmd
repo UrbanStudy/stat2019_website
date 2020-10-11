@@ -1,6 +1,6 @@
 ---
-title: "Statistical Literature and Problems"
-subtitle: STAT 501
+title: "STAT 501"
+subtitle: Statistical Literature and Problems 
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document: default
@@ -114,6 +114,16 @@ Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1) &\quad\text{t
 The starting value $\beta^{(0)}$ may be taken to be the maximum likelihood (ML) estimate, or least squares (LS) estimate $(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$
 
 #### 3.2 The $t$ Link
+
+```{r}
+x <- seq(0.001,.999,0.001)
+plot(qlogis(x,location=0,scale=1),qt(x,df=4),col=4,type = "l")
+lines(qlogis(x,location=0,scale=1),qt(x,df=8), col = 2, lty = 2, lwd = 2, add = TRUE)
+lines(qlogis(x,location=0,scale=1),qt(x,df=16), col = 3, lty = 4, lwd = 2, add = TRUE)
+abline(a=0,b=1, lty = 3, add = TRUE)
+legend(4,-2,c("t(4)","t(8)","t(16)"),col = c(4,2,3),lty = c(1,2,4))
+```
+
 
 \(\mathbf{Y}\sim Bern(p_i)\) have an underlying \(N(Z)\); \(\boldsymbol{\beta}|\mathbf{Z}\sim N_k()\); generalize mixtures of Normal distribution.
 
@@ -312,7 +322,7 @@ predict(z.probit, newdat, type="response")
 
 
 
-## Probit practice
+## Probit Binary
 
 ### Paper's method
 
@@ -535,7 +545,7 @@ glm.beta.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)
 
 
 
-### Nimble
+### nimble
 
 - Code 1
 
@@ -546,16 +556,17 @@ code <- nimbleCode({
   beta2 ~ dnorm(0, sd = 100)
 #  sigma ~ dunif(0, 100)        
   for(i in 1:n) {
+    y[i] ~ dbern(p[i])    
     probit(p[i])  <- beta0 + beta1*x1[i] + beta2*x2[i] # sd = sigma
-    y[i] ~ dbern(p[i])
+
   }
 })
 ## extract data for two predictors and center for better MCMC performance
-x1 <- Vol - mean(Vol)
-x2 <- Rate - mean(Rate)
+x1 <- Vol #- mean(Vol)
+x2 <- Rate # - mean(Rate)
 
-constants <- list(n = n, x1 = x1, x2 = x2)
-data <- list(y = Resp)
+constants <- list(n = n)
+data <- list(y = Resp, x1 = x1, x2 = x2)
 inits <- list(beta0 = -0.5, beta1 = 0.1, beta2 = 0.1) # beta0 =mean(Resp), sigma = 1
 model <- nimbleModel(code, constants = constants, data = data, inits = inits) # build model
 ```
@@ -718,9 +729,9 @@ code <- nimbleCode({
 })
 
 k <- 2
-cX <- sweep(finney[,1:2], 2, colMeans(finney[,1:2]))  # center for better MCMC performance
+# cX <- sweep(finney[,1:2], 2, colMeans(finney[,1:2]))  # center for better MCMC performance
 
-constants <- list(n = n, k = 2, x = cX) 
+constants <- list(n = n, k = 2, x =finney[,1:2]) # cX
 data <- list(y = Resp)
 inits <- list(beta0 = -0.5, beta = rep(0, k), sigma = 0.5)
 model <- nimbleModel(code, constants = constants, data = data, inits = inits)
@@ -774,7 +785,7 @@ mcmcConf$printSamplers()
 
 
 
-## Logit Practice
+## Logit Binary
 
 ### brms
 
@@ -809,7 +820,7 @@ brm.beta <- fixef(fit.brms1)[,1]
 brm.beta.sd <- fixef(fit.brms1)[,2]
 ```
 
-### Nimble
+### nimble
 
 ```{r}
 ## define the model
@@ -825,8 +836,8 @@ code <- nimbleCode({
     }
 })
 ## constants, data, and initial values
-x1 <- Vol - mean(Vol)
-x2 <- Rate - mean(Rate)
+x1 <- Vol # - mean(Vol)
+x2 <- Rate # - mean(Rate)
 constants <- list(n = n, x1 = x1, x2 = x2)
 data <- list(y = Resp)
 inits <- list(beta0 = -0.5, beta1 = 0.1, beta2 = .1)
@@ -875,7 +886,7 @@ glm.logit.beta.sd <- summary(fit.logit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit
 
 
 
-### Use `mlogit`
+### mlogit
 
 ```{r,eval=T,echo=T}
 # From Kenneth Train’s exercises using the mlogit package for R
@@ -888,6 +899,7 @@ finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide') #, varying=1:2
 fit.mlogit <- mlogit(Resp~1|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
 mlogit.beta<- coef(fit.mlogit)
 mlogit.beta.sd <- sqrt(diag(vcov(fit.mlogit)))
+
 ```
 
 ### Comparing the results
@@ -895,433 +907,212 @@ mlogit.beta.sd <- sqrt(diag(vcov(fit.mlogit)))
 ```{r,echo=F,collapse=T}
 par<- cbind(brm.beta,nimble.beta,glm.logit.beta,mlogit.beta)
 rownames(par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round((par),4))
+pander::pander(round((par/2),4))
 ```
 
 ```{r,eval=T,echo=F}
 par<- rbind(brm.beta.sd,nimble.beta.sd,glm.logit.beta.sd,mlogit.beta.sd)
 colnames(par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round(t(par),4))
+pander::pander(round(t(par/2),4))
+```
+
+## t link
+
+### Paper's method
+
+\(\boldsymbol{\beta|y,Z,\lambda,\nu}\sim N_k(\boldsymbol{\hat\beta_{Z,\lambda}},(\mathbf{X'WX})^{-1}); \quad\boldsymbol{\hat\beta_{Z,\lambda}}=(\mathbf{X'WX})^{-1}\mathbf{X'WZ},\ \mathbf{W}=\mathrm{diag}(\lambda_i)\)
+
+```{r}
+lambda <- rep(1,n)
+w <- diag(lambda)
+z<-qnorm(rank(Resp,ties.method="random")/(n+1)) # random initial Z
+(beta <- as.vector(solve(t(X)%*%w%*%X)%*%t(X)%*%w%*%z)) 
+(ez <- as.vector(X %*% beta))
+```
+
+Generating Z
+
+\(Z_i|\boldsymbol{y,\beta,\lambda}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},\lambda_i^{-1})\) truncated by 0 at the \(\begin{cases}\text{left if}&y_i=1\\\text{right if}&y_i=0\end{cases}\)
+
+```{r,eval=T, echo=T,collapse=T}
+set.seed(123); u<-runif(n,0,1)
+(z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,lambda^(-1)),u*pnorm(0,ez,lambda^(-1)))))
+```
+
+\(\boldsymbol{\lambda_{1:N}|y,Z,\beta,\nu}\sim Gamma(\frac{\nu+1}{2},\frac{2}{\nu+(Z_i-\mathbf{x}_i^T\boldsymbol{\beta})^2})\)
+
+```{r}
+nu <- 8; set.seed(123)
+for(i in 1:n){
+lambda[i] <- rgamma(1,shape = (nu+1)/2,rate = ((nu+(z-X %*% beta)^2)/2)[i] )
+}
+w <- diag(lambda)
 ```
 
 
+\(\boldsymbol{\hat\beta_Z}=(\mathbf{X}^TW\mathbf{X})^{-1}\mathbf{X}^TW\mathbf{Z}\)
 
 
-
-
-## (Polson etal, 2013)
-
-Nicholas G. Polson, James G. Scott & Jesse Windle (2013) Bayesian Inference for Logistic Models Using Pólya–Gamma Latent Variables, Journal of the American Statistical Association, 108:504, 1339-1349, [DOI: 10.1080/01621459.2013.829001](https://www.tandfonline.com/doi/full/10.1080/01621459.2013.829001)
-
-### Introduction
-
-[Home page of James Scott](https://jgscott.github.io/)
-
-[R package BayesLogit and Thesis](https://github.com/jwindle/BayesLogit)
-
-
-```{r,eval=F,include=F}
-h = c(1, 2, 3);
-z = c(4, 5, 6);
-## Devroye-like method -- only use if h contains integers, preferably small integers.
-(X = rpg.devroye(100, h, z));
-h = c(1.2, 2.3, 3.2);
-z = c(4, 5, 6);
-## Sum of gammas method -- this is slow.
-(X = rpg.gamma(100, h, z));
-h = c(1, 4, 2.3);
-z = c(4, 5, 6);
-## Hybrid method -- automatically chooses best procedure.
-(X = rpg(100, h, z));
+```{r, echo=T,collapse=T}
+t(solve(t(X)%*%w%*%X)%*%t(X)%*%w%*%z) # New E[Beta]
+solve(t(X)%*%w%*%X)                   #     V[Beta]
 ```
 
 
-*Definition 1*. A random variable X has a Pólya–Gamma distribution with parameters b > 0 and , denoted as $X\sim PG(b, c),$ if
+```{r,eval=F}
+M <- 25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
+set.seed(123)
 
-\[X\overset{\mathcal{D}}{=}\frac1{2\pi^2}\sum_{k=1}^\infty\frac{g_k}{((k-\frac12)^2 + \frac{c^2}{4\pi^2})}\quad (1)\]
+gibbs3 <- matrix(NA,ncol=p,nrow=size); Z<-matrix(NA,size,n) 
+for(m in 1:M){  #Gibbs Sampler
 
-where the $g_k ~ Ga(b, 1)$ are independent gamma random variables, and where  indicates equality in distribution.
+  #update z
+ez<-(X%*%beta)  
+# Truncated 1
+u<-runif(n,0,1)
+z<- ez + qnorm(ifelse(Resp==1,u+(1-u)*pnorm(0,ez,lambda^(-1)),u*pnorm(0,ez,lambda^(-1))))  
+  
+# Update beta 1
+beta <- mvrnorm(1, t(solve(t(X)%*%w%*%X)%*%t(X)%*%w%*%z), solve(t(X)%*%w%*%X)) # without n/(n+1)
+# Update beta 2
+# beta <- mvrnorm(1, V%*%(t(X)%*%z), V) # draw beta from Normal
+# Update beta 3
+# beta<- V%*%(t(X)%*%z)+cholV%*%rnorm(p)
 
+  #update lambda
+for(i in 1:n){
+lambda[i] <- rgamma(1,shape = (nu+1)/2 , rate = ((nu+(z-X %*% beta)^2)/2)[i] )
+}
+# lambda <- rgamma(n,shape = (nu+1)/2 , rate = ((nu+(z-X %*% beta)^2)/2) )
 
-### 2 The Polya-Gamma distribution
+w <- diag(lambda)
 
-#### 2.1. The Case $PG(b,0)$
+ # Update nu # ???
 
-The $PG(b,0)$ class of distributions is closely related to a subset of distributions that are surveyed by Biane, Pitman, and Yor (2001). This family of distributions, which we denote by $J^\star(b), b>0$, has close connections with <span style="color: red;">the Jacobi Theta and Riemann Zeta functions, and with Brownian excursions</span>. Its Laplace transform is
-
-\[E[\exp(-tJ^\star(b))]=\cosh^{-b}\sqrt{2t}\quad (4)\]
-
-implying that \(PG(b,0)\overset{\mathcal{D}}{=}\frac14J^\star(b)\)
-
-#### 2.2. The General $PG(b,c)$ Class
-
-\[p(x|b,c)=\frac{\exp(-\frac{c^2}2x) p(x|b,0)}{E[\exp x(-\frac{c^2}2\omega)]}\quad (5)\]
-
-where $p(x|b,0)$ is the density of an $\omega\sim PG(b,0)$ random variable.
-
-### 3 A data-augmentation strategy
-
-A data-augmentation scheme for binomial likelihoods
-
-#### 3.1 Main Result
-
-|   | Polson et al. (2013)  | Albert and Chib (1993)  |
-|---|---|---|
-Gaussian  | scale mixture  | location mixture |
-Latent variables | Polya-Gamma | truncated normals |
-
-The number of successes $y_i\sim Bino(n_i,\frac{1}{\{1+e^{-\psi_i}\}})$, where $n_i$ is the number of trials, $\psi_i=x_i^T\boldsymbol{\beta}$ are the log odds of success. $x_i=(x_{i1},..,x_{ip} )$ the vector of regressors for observation $i\in\{1,..,N\}$. $\boldsymbol{\beta}\sim N(b,B)$
-
-To sample from the posterior distribution using the Pólya–Gamma method, simply iterate two steps:
-
-\[\begin{align}
-(\omega_i|\boldsymbol{\beta})&\sim PG(n_i,x_i^T\boldsymbol{\beta})\\
-(\boldsymbol{\beta}|y,\omega)&\sim N(m_\omega,V_\omega);\quad m_\omega=V_\omega(X^T\kappa+B^{-1}b);V_\omega=(X^T\Omega X+B^{-1})^{-1}
-\end{align}\]
-
-where \(\kappa=(y_1-\frac{n_1}2,..,y_N-\frac{n_N}2)\), and $\Omega$ is the diagonal matrix of $\omega_i$'s.
-
-#### 3.2 Existing Data-Augmentation Schemes
-
-The outcomes $y_i$ are assumed to be thresholded versions of an underlying continuous quantity $z_i$
-
-Assume $n_i=1$, \(y_i=\begin{cases}1&\text{if } z_i>0\\0&\text{if }z_i\le0\end{cases}\)
-
-\(z_i=x_i^T\boldsymbol{\beta}+\epsilon_i\), \(\epsilon_i\sim Logistic(1)\)
-
-The standard approach has been to add another layer of auxiliary variables to handle the logistic error model on the latent-utility scale. One strategy is to represent the logistic distribution as a normal-scale mixture
-
-\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=(2\lambda_i)^2; \lambda_i\sim KS(1)\quad\text{Kolmogorov–Smirnov distribution}\]
-
-Alternatively, one may approximate the logistic error term as a discrete mixture of normals.
-
-\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=\sum_{k=1}^K\omega_k\delta_{\phi^{(k)}}\]
-
-where $\delta_{\phi}$ indicates a <span style="color: red;">*Dirac measure*</span> at $\phi$. The weights $\omega_k$ and the points $\phi^{(k)}$ in the discrete mixture are fixed for a given choice of $k$ so that *<span style="color: red;">the Kullback–Leibler divergence</span>* from the true distribution of the random utilities is minimized. Frühwirth-Schnatter and Frühwirth (2010) found that the choice of $K=10$ leads to a good approximation.
-
-The discrete mixture of normals is an approximation, but it outperforms the scale mixture of normals in terms of effective sampling rate, as it is much faster.
-
-One may also arrive at the hierarchy above by manipulating the random utility derivation of McFadden (1974)
-
-The dRUM. One must use a table of different weights and variances representing different normal mixtures, to approximate a finite collection of type-III logistic distributions, and interpolate within this table to approximate the entire family.
-
-Another approximation: the use of a Student-t link function as a close substitute for the logistic link. This also introduces a second layer of latent variables, in that the Student-t error model for $z_i$ is represented as a scale mixture of normals.
-
-Our data-augmentation scheme differs from each of these approaches in several ways. 
-
-1. it does not appeal directly to the random-utility interpretation of the logit model. Instead, it represents the logistic CDF as a mixture with respect to an infinite convolution of gammas. 
-
-2. the method is exact, in the sense of making draws from the correct joint posterior distribution, rather than an approximation to the posterior that arises out of an approximation to the link function. 
-
-3. like the Albert and Chib (1993) method, it requires only a single layer of latent variables.
-
-
-Directed acyclic graphs depicting two latent-variable constructions for the logistic-regression model: the difference of random-utility model versus direct data-augmentation scheme. ![](uasa_a_829001_o_f0001g.jpeg)
-
-#### 3.3. Mixed Model Example
-
-The real advantage of data augmentation, and the Pólya–Gamma technique in particular, is that it becomes easy to construct and fit more complicated models. For instance, the Pólya–Gamma method trivially accommodates *mixed models, factor models, and models with a spatial or dynamic structure*. For most problems in this class, good MH samplers are difficult to design, and at the very least will require ad hoc tuning to yield good performance.
-
-
-\[\begin{align}
-y_{ij}&\sim Bino(1,p_{ij}),\quad p_{ij}=\frac{e^{\psi_{ij}}}{1+e^{\psi_{ij}}}\\
-\psi_{ij}&=m+\delta_j+x'_{ij}\beta,\quad\delta_j\sim N(0,1/\phi);\quad m\sim N(0,\kappa^2/\phi)
-\end{align}\]
-
-where $i$ and $j$ correspond to the $i^{th}$ observation from the $j^{th}$ district. The fixed effect $\beta$ is given an $N(0, 100I)$ prior, while the precision parameter $\phi$ is given $Ga(1, 1)$ prior. We take $\kappa\to\infty$ to recover an improper prior for the global intercept $m$.
-
-
-Bangladesh Fertility Survey, 1989
-
-```{r,eval=T,echo=T,collapse=T}
-data(Contraception)
+if(m%%step==0 & m>burnin) { gibbs3[(m-burnin)/step,] <- t(beta); Z[(m-burnin)/step,]<- z} 
+}
 ```
 
-As seen in the negative binomial examples below, one may also painlessly incorporate a more complex prior structure using the Pólya–Gamma technique. For instance, if given information about *the geographic location* of each district, one could place a *spatial process prior* upon the random offsets $\{\delta_j\}$.
-
-### 4 Simulating Polya-Gamma random Variables
-
-a method for simulating from the Pólya–Gamma distribution, which we have implemented as a stand-alone sampler in the BayesLogit R package.
-
-#### 4.1. The $PG(1,z)$ Sampler
-
- An exponentially tilted Jacobi distribution $J^\star(1,z)$ via the density
-
-\[f(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)f(x)\quad(9)\]
-\[PG(1,z)=\frac14J^\star(1,\frac z2)\quad (10)\]
-
-
-When \(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\) and the coefficients $a_n(x)$ are decreasing for all , for fixed $x$ in the support of $f$, then the partial sums, \(S_n(x)=\sum_{i=0}^n(-1)^ia_i(x)\), satisfy 
-
-\[S_0(x)>S_2(x)>..>f(x)>..>S_3(x)>S_1(x)\quad (11)\]
-
-For the $J^\star(1,z)$ distribution the algorithm will accept with high probability upon checking $U\le S_1(X)$.
-
-The Jacobi density has two alternating-sum representations, \(\sum_{n=0}^\infty(-1)^na_i^L(x)\) and \(\sum_{n=0}^\infty(-1)^na_i^R(x)\), neither of which satisfy Equation (11) for all $x$ in the support of $f$. However, each satisfies Equation (11) on an interval. These two intervals, respectively, denoted as $I_L$ and $I_R$ , satisfy \(I_L\cup I_R = (0,\infty)\) and \(I_L\cap I_R\neq\emptyset\) Thus, one may pick \(t\in I_L\cap I_R\)and define the piecewise coefficients.
-
-\[a_n(x)=\pi(n+\frac{1}2)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{2(n+\frac{1}2)^2}{x}\right) & 0<x\le t&(12)\\ \exp\left(-(\frac{\pi^2(n+\frac{1}2)^{2}}2)x\right) & x>t&(13)\end{cases}\]
-
-so that \(f(x)=\sum_{n=0}^\infty(-1)^na_n(x)\) satisfies the partial sum criterion (11) for $x>0$. Devroye shows that the best choice of $t$ is near 0.64.
-
-The $J^\star(1,z)$ density can be written as an infinite, alternating sum \(f(x|z)=\sum_{n=0}^\infty(-1)^na_n(x|z)\), where
-
-\[a_n(x|z)=\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_n(x)\]
-
-This satisfies Equation (11), as \(\frac{a_{n+1}(x|z)}{a_n(x|z)}=\frac{a_{n+1}(x)}{a_n(x)}\). 
-
-
-Since \(a_0(x|z)\ge f(x|z)\), the first term of the series provides a natural proposal:
-
-\[c(z) g(x|z)=\frac{\pi}2\cosh(z)\begin{cases}(\frac{2}{\pi x})^{\frac32}\exp\left(-\frac{z^{2}x}2-\frac{1}{2x}\right) & 0<x\le t\\ \exp\left(-(\frac{z^{2}}2+\frac{\pi^{2}}8)x\right) & x>t\end{cases}(14)\]
-
-$X\sim g(x|z)$ may be sampled from a mixture of an inverse-Gaussian and an exponential:
-
-\[X\sim \begin{cases}IG(|z|^{-1},1)\mathbf{1}_{(0,t]} & \text{with prob } \frac{p}{p+q}\\ Expo(-\frac{z^{2}}2+\frac{\pi^{2}}8)\mathbf{1}_{(t,\infty)} & \text{with prob } \frac{q}{p+q}\end{cases}\]
-
-where \(p(z) =\int^t_0 c(z) g(x|z)dx\) and \(q(z) =\int_t^\infty c(z) g(x|z)dx\). Note that we are implicitly suppressing the dependence of p, q, c, and g upon t.
-
-
-<span style="color: red;">\(Expo(-(\frac{z^{2}}2+\frac{\pi^{2}}8))\)???</span>
-
-sampling $J^\star(1,z)$ proceeds as follows:
-
-1. Generate a proposal $X\sim g(x|z)$.
-
-2. Generate $U\sim Unif(0,c(z)g(X|z))$.
-
-3. Iteratively calculate $S_n (X|z)$, starting at $S_1(X|z)$, until $U\le S_n(X|z)$ for an odd $n$ or until $U>S_n (X|z)$ for an even $n$.
-
-4. Accept $X$ if $n$ is odd; return to step 1 if $n$ is even.
-
-To sample $Y\sim PG(1, z)$, draw $X\sim J^\star(1,z/2)$ and then let $Y=X/4$
-
-
-#### 4.2. Analysis of Acceptance Rate
-
-**Proposition 1** Define
-
-\[p(z,t)=\int^t_0 \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^L(x)dx\]
-\[q(z,t)=\int^\infty_t \frac\pi2\cosh(z)\exp\left(-\frac{z^{2}x}2\right)a_0^R(x)dx\]
-
-1. The best truncation point $t^\star$ is independent of $z\ge0$.
-
-2. For a fixed truncation point $t$, $p(z,t)$ and $q(z,t)$ are continuous, $p(z,t)$ decreases to zero as $z$ diverges, and $q(z, t)$ converges to 1 as $z$ diverges. Thus, $c(z,t)= p(z,t) + q(z,t)$ is continuous and converges to 1 as $z$ diverges.
-
-3. For fixed $t$, the average probability of accepting a draw, $1/c(z,t)$, is bounded below for all $z$. For $t^\star$, this bound to five digits is $0.99919$, which is attained at $z\simeq1.378.$
-
-
-#### 4.3. Analysis of Tail Probabilities
-
-**Proposition 2**: When sampling $X\sim J^\star(1, z)$, the probability of deciding to accept or reject upon checking the $n^{th}$ partial sum $S_n$, $n\ge1$, is
-
-\[\frac1{c(z)}\int^\infty_0 [a_{n-1}(x|z)-a_n(x|z)]dx\]
-
-#### 4.4. The General $PG(b, z)$ Case
-
-The effective sample size (ESS) for the ith parameter in the model is
-
-\[ESS_i=\frac{M}{1+2\sum_{j=1}^k\rho_i(j)}\]
-
-where $M$ is the number of post-burn-in samples, and $\rho_i(j)$ is the $j^{th}$ autocorrelation of the chain corresponding to $\beta_i$
-
-### 5 Experiment
-
-presents the results of an extensive benchmarking study comparing the efficiency of our method to other data-augmentation schemes. 
-
-The eight datasets
-
-
-- In binary logit models.  
-
-First, the Pólya–Gamma is more efficient than all previously proposed data-augmentation schemes. 
-
-Second, the Pólya–Gamma method always had a higher effective sample size than the two default Metropolis samplers we tried. 
-
-Finally, the Pólya–Gamma method truly shines when the model has a complex prior structure.
-
-- In negative-binomial models.  
-
-The Pólya–Gamma method consistently yields the best effective sample sizes in negative-binomial regression. However, its effective sampling rate suffers when working with a large count or a nonintegral overdispersion parameter. 
-
-Using either the Pólya–Gamma or the Frühwirth-Schnatter et al. (2009) techniques, one arrives at a multivariate Gaussian conditional for $\psi$ whose covariance matrix involves latent variables. Producing a random variate from this distribution is expensive, as one must calculate the Cholesky decomposition of a relatively large matrix at each iteration. Therefore, the overall sampler spends relatively less time drawing auxiliary variables. Since the Pólya–Gamma method leads to a higher effective sample size, it wastes fewer of the expensive draws for the main parameter.
-
-### 6 Discussion
-
-concludes with a discussion of some open issues related to our proposal.
-
-### Technical supplement
-
-#### 1 Details of Polya-Gamma sampling algorithm
-
-#### 2 Benchmarks: overview
-
-#### 3 Benchmarks: binary logistic regression
-
-##### 3.1 Data Sets
-
-Nodal: part of the boot R package (Canty and Ripley, 2012). The response indicates if cancer has spread from the prostate to surrounding lymph nodes. There are 53
-observations and 5 binary predictors.
-
-Pima Indian: There are 768 observations and 8 continuous predictors. It is noted on [the UCI website](http://archive.ics.uci.edu/ml/datasets/Pima+Indians+Diabetes) that there are many predictor values coded as 0, though the physical measurement should be non-zero. We have removed all of those entries to generate a data set with 392 observations. The marginal mean incidence of diabetes is roughly 0.33 before and after removing these data points.
-
-[Heart](http://archive.ics.uci.edu/ml/datasets/Statlog+(Heart)): The response represents either an absence or presence of heart disease. There are 270 observations and 13 attributes, of which 6 are categorical or binary and 1 is ordinal. The ordinal covariate has been stratified by dummy variables.
-
-[Australian Credit](http://archive.ics.uci.edu/ml/datasets/Statlog+(Australian+Credit+Approval)): The response represents either accepting or rejecting a credit card application.3 The meaning of each predictor was removed to protect the propriety of the original data. There are 690 observations and 14 attributes, of which 8 are categorical or binary. There were 37 observations with missing attribute values. These
-missing values were replaced by the mode of the attribute in the case of categorical data and the mean of the attribute for continuous data. This dataset is linearly
-separable and results in some divergent regression coefficients, which are kept in check by the prior.
-
-[German Credit 1 and 2](http://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data)): The response represents either a good or bad credit risk.4
-There are 1000 observations and 20 attributes, including both continuous and categorical data. We benchmark two scenarios. In the first, the ordinal covariates have
-been given integer values and have not been stratified by dummy variables, yielding
-a total of 24 numeric predictors. In the second, the ordinal data has been stratified
-by dummy variables, yielding a total of 48 predictors.
-
-Synthetic 1: Simulated data with 150 outcomes and 10 predictors. The design points were chosen to be orthogonal. The data are included as a supplemental file.
-
-Synthetic 2: Simulated data with 500 outcomes and 20 predictors. The design points were simulated from a Gaussian factor model, to yield pronounced patterns of collinearity.
-The data are included as a supplemental file.
-
-
-
-
-##### 3.2 Methods
-
-##### 3.3 Results
-
-#### 4 Benchmarks: logit mixed models
-
-#### 5 Benchmarks: negative-binomial models
-
-#### 6 Extensions
-
-
-## (Choi & Hobert, 2013)
-
-Choi, H. M., & Hobert, J. P. (2013). The Polya-Gamma Gibbs sampler for Bayesian logistic regression is uniformly ergodic. [Electronic Journal of Statistics, 7, 2054-2064.](https://projecteuclid.org/euclid.ejs/1377005819)
-
-#### 1 Introduction
-
-#### 2 Polson, Scott and Windle’s algorithm
-
-## (Taylor-Rodríguez et al, 2017)
-
-Taylor-Rodríguez, D., Womack, A., Fuentes, C., & Bliznyuk, N. (2017). Intrinsic Bayesian Analysis for Occupancy Models. [Bayesian Anal., 12(3), 855-877.](https://projecteuclid.org/euclid.ba/1473431536)
-
-### 1 Introduction
-
-### 2 Inference for a single model
-
-#### 2.1 The occupancy model with Probit link
-
-#### 2.2 An objective prior for $\alpha,\lambda$
-
-## (Johnson etal, 2019)
-
-
-
-
-## Model Choices in RSPM
-
-### 3.2 Current GreenSTEP DVMT Models
-
-The current household travel model in GreenSTEP has two sequential (conditional) models: a binary model of whether a household
-will have non-zero daily VMT (Zero DVMT model) and a regression model of the actual daily VMT for households with non-zero VMT (DVMT model). 
-
-\(\log(odds)=\mathrm{logit}(P) =\ln\left(\frac{P}{1-P}\right)\)
-
-Zero DVMT model: Binomial Logit Models
-
-\(\begin{aligned}
-P(\text{DailyVMT}=0)=&\mathrm{logit}(\text{DrvAgePop+LogIncome+Htpopdn+Age65Plus+Hhvehcnt+ZeroVeh+Tranilescap}\\
-&+\text{Urban:Tranmilescap})
-\end{aligned}\)
-
-DVMT model: Box–Cox transformation
-
-\[\begin{aligned}
-(\text{DailyVMT})^{0.18}=&\text{DrvAgePop+LogIncome+Htppopdn+Age65Plus+Hhvehcnt+ZeroVeh+Tranilescap} \\
-&+\text{Census_r+Fwylnmicap+Urban+Htppopdn:Tranmilescap}
-\end{aligned}\]
-
-<span style="color: red;">The models are not same with regression tables???</span>
-
-
-
-
-### 3.3.1 AADVMT Model (Power-transformed linear regression model)
-
-\[\text{AADVMT}_h=\sum_{v_h=0}^{V_h}\text{AVMT}_{v_h}/365=f(\text{SD}_h,\text{BE}_h,\text{TS}_{R_h})\]
-
-AADVMT$_h$ is the annual average daily VMT for household h,
-
-SD$_h$ represents the demographic and social-demographic characteristics of household h
-
-BE$_h$ is the built environment variables (of various geographical resolution) of household h, and
-
-TS$_{R_h}$ is the transportation supply of the region where household h resides
-
-$f(\cdot)$ linear and transformed linear regression models, and a hurdle model
-
-After comparing all three model structures for predictive accuracy in cross-validation, the power transformed (with $\lambda=0.38$) linear regression model is chosen.
-
-The validation results show that the prediction accuracy of new models is better than Combined GreenStep DVMT Models 
-
-Smaller RMSE (Root Mean Squared Error) and larger $R^2$
-
-### 3.3.2 Person Miles Traveled (PMT) Models
-
-#### 3.3.2.1 Transit Person Miles Traveled Model (hurdle model)
-
-3.3.2.2 Walk Miles Traveled Model (hurdle model)
-
-3.3.2.3 Bike Miles Traveled Model (hurdle model)
-
-[Hurdle Models](https://data.library.virginia.edu/getting-started-with-hurdle-models/)
-
-### 3.4 Trip Frequency-Length (TFL) models
-
-- 3.4.1 Trip Frequency Models
-
-The trip frequency models of Transit, Bike, and Walk are hurdle models with the dependent variable ( $Trips=zinb(X\beta)$. <span style="color: red;">???</span>
-
-- 3.4.2 Average Trip Length Models
-
-$(\text{TripMiles})^{0.10}=X\beta$
-
-In the estimation of TFLM model with NHTS data, it needs to use the trip dataset, which has more than 1 million observations; while in simulation, it requires to create a dataset with one observation for every trip.
-
-> Subsampling methods
-
-HaiYing Wang, Rong Zhu & Ping Ma (2018) Optimal Subsampling for Large Sample Logistic Regression, Journal of the American Statistical Association, 113:522, 829-844, [DOI: 10.1080/01621459.2017.1292914](https://doi.org/10.1080/01621459.2017.1292914)
-
-### 3.5.1 Total Person Miles Traveled by Mode (TPMTM) Model
-
-The TPMTM model is made up of two sequential models: a Total Person Miles Traveled (TPMT) and a Mode Allocation Model.
-
-The total person miles traveled is a household level model of total person miles traveled by all household members. It is a linear regression model with total PMT (log or power transformed) as the dependent variable: $\ln(\text{pmt})=X\beta$ or $(\text{pmt})^{\lambda}=X\beta$, 
-
-while the mode allocation model captures the percentage of PMT by modes for households and allocates total PMT to each mode
-in prediction. 
-
-In estimation, we first choose a base mode, compute the ratio of PMT percentage for all other modes relative to that for the base mode, and then use log of the ratio (i.e., log-odds ratio) as the dependent variable of the mode allocation model. We will estimate $n-1$ models if there are n modes in total. In prediction, we first predict the log-odds ratios from each of the $n-1$ models, exponentiate the predicted log-odds ratios to get odds ratios, and apply the additional condition that the odds for all modes sum up to 1 to get the predicted PMT percentage for each mode. The model structure is consistent with a multinomial logit model that is commonly used in mode choice modeling.
-
-\[\ln(\frac{P_{Transit}}{P_{Auto}})=X\beta;\quad \ln(\frac{P_{Bike/Walk}}{P_{Auto}})=X\beta\]
-
-The advantage of the TPMTM model is that the model structure is similar to the existing household travel model in GreenSTEP, and consistent with mode choice models in travel demand modeling
-
-The disadvantages include:
-
-- TPMTM is modeled at an aggregated household level and some of the traveler/trip information that is useful for mode choice modeling is lost. For example, a household will likely have a different probability of choosing walking for 2 trips of half mile each than for 1 trip of 1 mile.
-- The NHTS data is dominated by driving when mode shares are measured by distance. The small share of transit and bike/walk mode may bring large variance of the odds ratio variable.
-
-Finally, special handling is required when any of the shares are 0 among the modes being modeled (Auto, Transit, Bike, Walk), which is common for daily travel.
-
-
-
-
-
-
-
+> Error in eigen(Sigma, symmetric = TRUE) : infinite or missing values in 'x'
+
+
+## Ordinal probit
+
+### Social mobility data
+
+```{r}
+load("socmob.RData") 
+yincc<-match(socmob$INC,sort(unique(socmob$INC)))
+ydegr<-socmob$DEGREE+1
+yage<-socmob$AGE
+ychild<-socmob$CHILD
+ypdeg<-1*(socmob$PDEG>2)
+tmp<-lm(ydegr~ychild+ypdeg+ychild:ypdeg)
+```
+
+
+```{r}
+#par(mar=c(3,3,1,1),mgp=c(1.75,.75,0))
+#par(mfrow=c(1,2))
+plot(table(socmob$DEG+1)/sum(table(socmob$DEG+1)),
+  lwd=2,type="h",xlab="DEG",ylab="probability")
+plot(table(socmob$CHILD)/sum(table(socmob$CHILD)),lwd=2,type="h",xlab="CHILD",ylab="probability" )
+```
+
+
+```{r}
+X<-cbind(ychild,ypdeg,ychild*ypdeg)
+y<-ydegr
+keep<- (1:length(y))[ !is.na( apply( cbind(X,y),1,mean) ) ]
+X<-X[keep,] ; y<-y[keep]
+ranks<-match(y,sort(unique(y))) ; uranks<-sort(unique(ranks))
+n<-dim(X)[1] ; p<-dim(X)[2]
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
+```
+
+
+```{r}
+## setup
+set.seed(1)
+beta<-rep(0,p) 
+z<-qnorm(rank(y,ties.method="random")/(n+1))
+g<-rep(NA,length(uranks)-1)
+K<-length(uranks)
+BETA<-matrix(NA,1000,p) ; Z<-matrix(NA,1000,n) ; ac<-0
+mu<-rep(0,K-1) ; sigma<-rep(100,K-1) 
+
+## MCMC
+S<-25000
+for(s in 1:S) 
+{
+
+  #update g 
+  for(k in 1:(K-1)) 
+  {
+  a<-max(z[y==k])
+  b<-min(z[y==k+1])
+  u<-runif(1, pnorm( (a-mu[k])/sigma[k] ),
+              pnorm( (b-mu[k])/sigma[k] ) )
+  g[k]<- mu[k] + sigma[k]*qnorm(u)
+  }
+
+  #update beta
+  E<- V%*%( t(X)%*%z )
+  beta<- cholV%*%rnorm(p) + E
+
+  #update z
+  ez<-X%*%beta
+  a<-c(-Inf,g)[ match( y-1, 0:K) ]
+  b<-c(g,Inf)[y]  
+  u<-runif(n, pnorm(a-ez),pnorm(b-ez) )
+  z<- ez + qnorm(u)
+
+
+  #help mixing
+  c<-rnorm(1,0,n^(-1/3))  
+  zp<-z+c ; gp<-g+c
+  lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) + 
+         sum(dnorm(gp,mu,sigma,log=T) - dnorm(g,mu,sigma,log=T) )
+  if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
+
+  if(s%%(S/1000)==0) 
+  { 
+#    cat(s/S,ac/s,"\n")
+    BETA[s/(S/1000),]<-  beta
+    Z[s/(S/1000),]<- z
+  }
+} 
+
+```
+
+```{r}
+
+plot(X[,1]+.25*(X[,2]),Z[1000,],
+ pch=15+X[,2],col=c("gray","black")[X[,2]+1],
+ xlab="number of children",ylab="z", ylim=range(c(-2.5,4,Z[1000,])),
+    xlim=c(0,9))
+
+beta.pm<-apply(BETA,2,mean)
+ZPM<-apply(Z,2,mean)
+abline(0,beta.pm[1],lwd=2 ,col="gray")
+abline(beta.pm[2],beta.pm[1]+beta.pm[3],col="black",lwd=2 )
+legend(5,4,legend=c("PDEG=0","PDEG=1"),pch=c(15,16),col=c("gray","black"))
+
+
+plot(density(BETA[,3],adj=2),lwd=2,xlim=c(-.5,.5),main="",
+    xlab=expression(beta[3]),ylab="density")
+sd<-sqrt(  solve(t(X)%*%X/n)[3,3] )
+x<-seq(-.7,.7,length=100)
+lines(x,dnorm(x,0,sd),lwd=2,col="gray")
+legend(-.5,6.5,legend=c("prior","posterior"),lwd=c(2,2),col=c("gray","black"),bty="n")
+```
+
+```{r}
+beta.pm<-apply(BETA,2,mean)
+beta.pm[1]+beta.pm[3]
+quantile(BETA[,3],prob=c(.025,.0975))
+quantile(BETA[,3],prob=c(0.025,0.975))
+```
 
 
 
