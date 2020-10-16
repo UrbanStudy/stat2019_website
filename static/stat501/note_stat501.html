@@ -385,7 +385,7 @@ summary {
 
 <h1 class="title toc-ignore">STAT 501</h1>
 <h3 class="subtitle">Statistical Literature and Problems</h3>
-<h4 class="date">12 October, 2020</h4>
+<h4 class="date">15 October, 2020</h4>
 
 </div>
 
@@ -819,6 +819,14 @@ if(m%%step==0 &amp; m&gt;burnin) { gibbs3[(m-burnin)/step,] &lt;- t(beta); Z[(m-
 g1.sd&lt;- apply(gibbs1,2,sd,na.rm = T)
 g2.sd&lt;-apply(gibbs2,2,sd)
 g3.sd&lt;-apply(gibbs3,2,sd)</code></pre>
+<p><span class="math inline">\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)</span></p>
+<p><span class="math inline">\(\beta_{marg}=\phi(\bar p)\boldsymbol{\beta}\)</span></p>
+<pre class="r"><code>(g1.marg &lt;- mean(dnorm(X %*% t(gibbs1)))*g1)
+## [1] -1.0407  0.4078  0.3036
+(g2.marg &lt;- mean(dnorm(X %*% t(gibbs2)))*g2)
+## [1] -1.0266  0.3990  0.3033
+(g3.marg &lt;- mean(dnorm(X %*% t(gibbs3)))*g3)
+## [1] -1.1289  0.4401  0.3263</code></pre>
 <div id="rank-likelihood-regression" class="section level3">
 <h3>Rank likelihood regression</h3>
 <pre class="r"><code>source(&quot;rlreg.R&quot;)
@@ -826,18 +834,24 @@ rfit&lt;-treg(Resp,X)</code></pre>
 <pre class="r"><code>(rl &lt;- apply(rfit$BETA,2,mean)) # function(x) c(mean(x),sd(x)))
 ## [1] -5.003  1.902  1.403
 (rl.sd &lt;- apply(rfit$BETA,2,sd))
-## [1] 2.4019 0.4966 0.3067</code></pre>
+## [1] 2.4019 0.4966 0.3067
+
+(rl.marg &lt;- mean(dnorm(X %*% t(rfit$BETA)))*rl)
+## [1] -0.6999  0.2661  0.1962</code></pre>
 </div>
 <div id="glm" class="section level3">
 <h3>GLM</h3>
 <pre class="r"><code>fit.probit.glm &lt;- glm(Resp~Vol+Rate,family=binomial(link=&quot;probit&quot;))
-glm&lt;- coef(fit.probit.glm)
-glm.sd &lt;- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
+glm.p&lt;- coef(fit.probit.glm)
+glm.p.sd &lt;- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 # fit.probit.lm &lt;- lm(Resp~Vol+Rate)
 # fit.logit.glm &lt;- glm(Resp~Vol+Rate,family=binomial(link=&quot;logit&quot;))
 #comp &lt;- fits.compare(fit.probit.lm, fit.probit.glm, fit.logit.glm)
 #comp
-#plot(comp)</code></pre>
+#plot(comp)
+(glm.p.marg &lt;- mean(dnorm(X %*% glm.p))*glm.p)
+## (Intercept)         Vol        Rate 
+##     -1.1244      0.4494      0.3235</code></pre>
 </div>
 <div id="nimble" class="section level3">
 <h3>nimble</h3>
@@ -865,17 +879,26 @@ inits &lt;- list(beta0 = -0.5, beta1 = 0.1, beta2 = 0.1) # beta0 =mean(Resp), si
 model &lt;- nimbleModel(code, constants = constants, data = data, inits = inits) # build model</code></pre>
 <pre class="r"><code>mcmc.out &lt;- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
-                       nchains = 2, niter = 1000,
+                       nchains = 4, niter = 1000,
                        summary = TRUE, WAIC = T,
                        monitors = c(&#39;beta0&#39;,&#39;beta1&#39;,&#39;beta2&#39;)) #,&#39;sigma&#39;
 ## |-------------|-------------|-------------|-------------|
 ## |-------------------------------------------------------|
 ## |-------------|-------------|-------------|-------------|
 ## |-------------------------------------------------------|
+## |-------------|-------------|-------------|-------------|
+## |-------------------------------------------------------|
+## |-------------|-------------|-------------|-------------|
+## |-------------------------------------------------------|
 names(mcmc.out)
 ## [1] &quot;samples&quot; &quot;summary&quot; &quot;WAIC&quot;</code></pre>
-<pre class="r"><code>nimble.probit &lt;- mcmc.out$summary$all.chains[,1]
-nimble.probit.sd &lt;- mcmc.out$summary$all.chains[,3]</code></pre>
+<pre class="r"><code>nimble.p &lt;- mcmc.out$summary$all.chains[,1]
+nimble.p.sd &lt;- mcmc.out$summary$all.chains[,3]</code></pre>
+<pre class="r"><code>nimble.sample&lt;- rbind(mcmc.out$samples$chain1[901:1000,],mcmc.out$samples$chain2[901:1000,],
+                      mcmc.out$samples$chain3[901:1000,],mcmc.out$samples$chain4[901:1000,])
+(nimble.p.marg &lt;- mean(dnorm(X %*% t(nimble.sample)))*nimble.p)
+##   beta0   beta1   beta2 
+## -0.9918  0.3997  0.2864</code></pre>
 <ul>
 <li>Code 2 Use <code>inprod</code></li>
 </ul>
@@ -910,11 +933,11 @@ names(mcmc.out)
 ## [1] &quot;samples&quot; &quot;summary&quot; &quot;WAIC&quot;</code></pre>
 <pre class="r"><code>mcmc.out$summary$all.chains
 ##           Mean Median St.Dev. 95%CI_low 95%CI_upp
-## beta[1]  2.132  2.041  0.7562    0.7130     3.662
-## beta[2]  1.494  1.552  0.5376    0.3273     2.461
-## beta0   -5.252 -5.232  1.7384   -8.3891    -1.546
+## beta[1]  1.855  1.864  0.7218    0.4195     3.218
+## beta[2]  1.324  1.301  0.5036    0.3838     2.326
+## beta0   -4.584 -4.664  1.6913   -7.6683    -1.272
 mcmc.out$WAIC 
-## [1] 39.19</code></pre>
+## [1] 37.97</code></pre>
 <ul>
 <li>Code 3 Use Matrix Algebra</li>
 </ul>
@@ -950,7 +973,10 @@ mcmcConf$printSamplers()
 </div>
 <div id="comparing-the-results" class="section level3">
 <h3>Comparing the results</h3>
-<table style="width:100%;">
+<pre class="r"><code>par.p&lt;- cbind(g1,g2,g3,rl,glm.p,nimble.p)
+rownames(par.p) &lt;- c(&quot;Beta0&quot;,&quot;Beta1&quot;,&quot;Beta2&quot;)
+pander::pander(round((par.p),4))</code></pre>
+<table style="width:93%;">
 <colgroup>
 <col width="16%"></col>
 <col width="12%"></col>
@@ -958,7 +984,7 @@ mcmcConf$printSamplers()
 <col width="12%"></col>
 <col width="12%"></col>
 <col width="11%"></col>
-<col width="22%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -967,8 +993,8 @@ mcmcConf$printSamplers()
 <th align="center">g2</th>
 <th align="center">g3</th>
 <th align="center">rl</th>
-<th align="center">glm</th>
-<th align="center">nimble.probit</th>
+<th align="center">glm.p</th>
+<th align="center">nimble.p</th>
 </tr>
 </thead>
 <tbody>
@@ -979,7 +1005,7 @@ mcmcConf$printSamplers()
 <td align="center">-4.946</td>
 <td align="center">-5.003</td>
 <td align="center">-5.06</td>
-<td align="center">-4.775</td>
+<td align="center">-4.605</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Beta1</strong></td>
@@ -988,7 +1014,7 @@ mcmcConf$printSamplers()
 <td align="center">1.928</td>
 <td align="center">1.902</td>
 <td align="center">2.022</td>
-<td align="center">1.911</td>
+<td align="center">1.855</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>Beta2</strong></td>
@@ -997,19 +1023,22 @@ mcmcConf$printSamplers()
 <td align="center">1.429</td>
 <td align="center">1.403</td>
 <td align="center">1.456</td>
-<td align="center">1.392</td>
+<td align="center">1.33</td>
 </tr>
 </tbody>
 </table>
-<table>
+<pre class="r"><code>par.p.sd&lt;- rbind(g1.sd,g2.sd,g3.sd,rl.sd,glm.p.sd, nimble.p.sd)
+colnames(par.p.sd) &lt;- c(&quot;Beta0&quot;,&quot;Beta1&quot;,&quot;Beta2&quot;)
+pander::pander(round(t(par.p.sd),4))</code></pre>
+<table style="width:100%;">
 <colgroup>
+<col width="16%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
 <col width="15%"></col>
-<col width="11%"></col>
-<col width="11%"></col>
-<col width="11%"></col>
-<col width="11%"></col>
-<col width="11%"></col>
-<col width="25%"></col>
+<col width="19%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -1018,8 +1047,8 @@ mcmcConf$printSamplers()
 <th align="center">g2.sd</th>
 <th align="center">g3.sd</th>
 <th align="center">rl.sd</th>
-<th align="center">glm.sd</th>
-<th align="center">nimble.probit.sd</th>
+<th align="center">glm.p.sd</th>
+<th align="center">nimble.p.sd</th>
 </tr>
 </thead>
 <tbody>
@@ -1030,7 +1059,7 @@ mcmcConf$printSamplers()
 <td align="center">1.533</td>
 <td align="center">2.402</td>
 <td align="center">1.553</td>
-<td align="center">1.787</td>
+<td align="center">1.743</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Beta1</strong></td>
@@ -1039,7 +1068,7 @@ mcmcConf$printSamplers()
 <td align="center">0.6414</td>
 <td align="center">0.4966</td>
 <td align="center">0.683</td>
-<td align="center">0.753</td>
+<td align="center">0.7414</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>Beta2</strong></td>
@@ -1048,7 +1077,7 @@ mcmcConf$printSamplers()
 <td align="center">0.4744</td>
 <td align="center">0.3067</td>
 <td align="center">0.4618</td>
-<td align="center">0.543</td>
+<td align="center">0.532</td>
 </tr>
 </tbody>
 </table>
@@ -1088,9 +1117,9 @@ fit.brms3 &lt;- brm(
 ## 
 ## Population-Level Effects: 
 ##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-## Intercept   -10.89      3.43   -18.54    -5.24 1.00     1501     1915
-## Vol           4.35      1.46     1.95     7.69 1.00     1605     1868
-## Rate          3.08      1.02     1.38     5.41 1.00     1634     1974
+## Intercept   -10.90      3.58   -18.82    -5.09 1.00     1282     1336
+## Vol           4.35      1.51     1.92     7.72 1.00     1404     1464
+## Rate          3.07      1.06     1.35     5.41 1.00     1423     1635
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
 ## and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -1106,9 +1135,9 @@ summary(fit.brms2)
 ## 
 ## Population-Level Effects: 
 ##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-## eta_Intercept   -11.25      3.62   -19.79    -5.51 1.00      688      851
-## eta_Vol           4.50      1.54     1.96     7.96 1.00      809     1031
-## eta_Rate          3.17      1.06     1.48     5.49 1.00      687      868
+## eta_Intercept   -11.15      3.45   -18.57    -5.38 1.01      697      951
+## eta_Vol           4.47      1.48     2.03     7.76 1.00      762     1063
+## eta_Rate          3.14      1.01     1.41     5.31 1.01      743     1067
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
 ## and Tail_ESS are effective sample size measures, and Rhat is the potential
@@ -1125,16 +1154,27 @@ summary(fit.brms3)
 ## 
 ## Population-Level Effects: 
 ##                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
-## eta_Intercept    -129.57     65.55  -269.95   -35.35 1.03      226      334
-## eta_Vol            47.86     24.81    13.26    99.80 1.03      230      412
-## eta_Rate           31.19     17.86     8.61    68.20 1.03      213      318
-## guess_Intercept     0.25      0.09     0.09     0.45 1.02      445      404
+## eta_Intercept    -111.92     62.47  -261.19   -36.52 1.08       40      194
+## eta_Vol            41.63     23.13    14.11    96.88 1.10       31      208
+## eta_Rate           27.51     15.21     9.27    63.10 1.09       34      220
+## guess_Intercept     0.29      0.12     0.07     0.50 1.41        8       26
 ## 
 ## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
 ## and Tail_ESS are effective sample size measures, and Rhat is the potential
 ## scale reduction factor on split chains (at convergence, Rhat = 1).
-brm.beta &lt;- fixef(fit.brms1)[,1]
-brm.beta.sd &lt;- fixef(fit.brms1)[,2]</code></pre>
+brm.l &lt;- fixef(fit.brms1)[,1]
+brm.l.sd &lt;- fixef(fit.brms1)[,2]</code></pre>
+<pre class="r"><code>brm.sample &lt;- data.frame()
+for (i in 1:4) {
+brm.sample &lt;- rbind(brm.sample,data.frame(fit.brms1$fit@sim$samples[[i]])[1901:2000,1:3])
+}
+prob.l&lt;-  mean(X %*% t(brm.sample))
+(brm.l.marg &lt;-prob.l*(1-prob.l)*brm.l)
+## Intercept       Vol      Rate 
+##   -1.8053    0.7201    0.5089
+(brm.l.marg &lt;- mean(dlogis(X %*% t(brm.sample)))*brm.l)
+## Intercept       Vol      Rate 
+##   -1.2379    0.4937    0.3489</code></pre>
 </div>
 <div id="nimble-1" class="section level3">
 <h3>nimble</h3>
@@ -1170,116 +1210,224 @@ samples &lt;- as.matrix(Cmcmc$mvSamples)</code></pre>
 mcmcConf$printSamplers()</code></pre>
 <pre class="r"><code>mcmc.out &lt;- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
-                       nchains = 2, niter = 1000,
+                       nchains = 4, niter = 1000,
                        summary = TRUE, WAIC = T,
                        monitors = c(&#39;beta0&#39;,&#39;beta1&#39;,&#39;beta2&#39;)) #,&#39;sigma&#39;&#39;sigma_RE&#39;,
 ## |-------------|-------------|-------------|-------------|
 ## |-------------------------------------------------------|
 ## |-------------|-------------|-------------|-------------|
+## |-------------------------------------------------------|
+## |-------------|-------------|-------------|-------------|
+## |-------------------------------------------------------|
+## |-------------|-------------|-------------|-------------|
 ## |-------------------------------------------------------|</code></pre>
-<pre class="r"><code>nimble.beta &lt;- mcmc.out$summary$all.chains[,1]
-nimble.beta.sd &lt;- mcmc.out$summary$all.chains[,3]</code></pre>
+<pre class="r"><code>nimble.l &lt;- mcmc.out$summary$all.chains[,1]
+nimble.l.sd &lt;- mcmc.out$summary$all.chains[,3]</code></pre>
+<pre class="r"><code>nimble.sample&lt;- rbind(mcmc.out$samples$chain1[901:1000,],mcmc.out$samples$chain2[901:1000,],
+                      mcmc.out$samples$chain3[901:1000,],mcmc.out$samples$chain4[901:1000,])
+prob.l&lt;-  mean(X %*% t(nimble.sample))
+(glm.l.marg &lt;-prob.l*(1-prob.l)*nimble.l)
+##   beta0   beta1   beta2 
+## -2.2675  0.9050  0.6441
+(nimble.l.marg &lt;- mean(dlogis(X %*% t(nimble.sample)))*nimble.l)
+##   beta0   beta1   beta2 
+## -1.1966  0.4775  0.3399</code></pre>
 </div>
 <div id="glm-1" class="section level3">
 <h3>GLM</h3>
-<pre class="r"><code>fit.logit.glm &lt;- glm(Resp~Vol+Rate,family=binomial(link=&quot;logit&quot;))
-glm.logit.beta&lt;- coef(fit.logit.glm)
-glm.logit.beta.sd &lt;- summary(fit.logit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))</code></pre>
+<pre class="r"><code>fit.l.glm &lt;- glm(Resp~Vol+Rate,family=binomial(link=&quot;logit&quot;))
+glm.l&lt;- coef(fit.l.glm)
+glm.l.sd &lt;- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))</code></pre>
+<pre class="r"><code>prob.l&lt;-  mean(X %*% glm.l)
+(glm.l.marg &lt;-prob.l*(1-prob.l)*glm.l)
+## (Intercept)         Vol        Rate 
+##     -1.4013      0.5583      0.3955
+
+(glm.l.marg &lt;-mean(dlogis(X %*% glm.l))*glm.l)
+## (Intercept)         Vol        Rate 
+##     -1.1638      0.4637      0.3284</code></pre>
 </div>
 <div id="mlogit" class="section level3">
 <h3>mlogit</h3>
-<pre class="r"><code># From Kenneth Train’s exercises using the mlogit package for R
+<pre class="r"><code>#data(&quot;Fishing&quot;, package = &quot;mlogit&quot;)
+# From Kenneth Train’s exercises using the mlogit package for R
 # data(&quot;Mode&quot;, package=&quot;mlogit&quot;)
 # Mo &lt;- dfidx(Mode, choice = &quot;choice&quot;, varying = 2:9)
 # Mo &lt;- mlogit.data(Mode, choice=&#39;choice&#39;, shape=&#39;wide&#39;, varying=c(2:9))
 # p1 &lt;- mlogit(choice~cost+time, Mo, seed = 20, R = 100, probit = TRUE)
-
-finney.mlogit &lt;- mlogit.data(finney, choice=&#39;Resp&#39;, shape=&#39;wide&#39;) #, varying=1:2
+finney.mlogit &lt;-dfidx(finney, choice = &quot;Resp&quot;, shape=&#39;wide&#39;) # varying = c(1:2), 
+#finney.mlogit &lt;- mlogit.data(finney, choice=&#39;Resp&#39;, shape=&#39;wide&#39;, varying=1:2) #
 fit.mlogit &lt;- mlogit(Resp~1|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
-mlogit.beta&lt;- coef(fit.mlogit)
-mlogit.beta.sd &lt;- sqrt(diag(vcov(fit.mlogit)))</code></pre>
+# fit.mlogit &lt;- mlogit(Resp~Vol+Rate,finney.mlogit, probit=T) 
+mlogit&lt;- coef(fit.mlogit)
+mlogit.sd &lt;- sqrt(diag(vcov(fit.mlogit)))
+mlogit.marg &lt;- rep(NA,3)
+mlogit.marg[2] &lt;- colMeans(effects(fit.mlogit, covariate = &quot;Vol&quot;, data = finney.mlogit))[2] #type = &quot;ar&quot;, 
+mlogit.marg[3] &lt;- colMeans(effects(fit.mlogit, covariate = &quot;Rate&quot;,  data = finney.mlogit))[2]</code></pre>
 </div>
 <div id="comparing-the-results-1" class="section level3">
 <h3>Comparing the results</h3>
-<table style="width:94%;">
+<table style="width:68%;">
+<colgroup>
+<col width="16%"></col>
+<col width="11%"></col>
+<col width="15%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">brm.l</th>
+<th align="center">nimble.l</th>
+<th align="center">glm.l</th>
+<th align="center">mlogit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>Beta0</strong></td>
+<td align="center">-10.9</td>
+<td align="center">-10.6</td>
+<td align="center">-9.187</td>
+<td align="center">-9.187</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>Beta1</strong></td>
+<td align="center">4.347</td>
+<td align="center">4.231</td>
+<td align="center">3.66</td>
+<td align="center">3.66</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>Beta2</strong></td>
+<td align="center">3.072</td>
+<td align="center">3.011</td>
+<td align="center">2.593</td>
+<td align="center">2.593</td>
+</tr>
+</tbody>
+</table>
+<table style="width:83%;">
 <colgroup>
 <col width="16%"></col>
 <col width="15%"></col>
 <col width="19%"></col>
-<col width="23%"></col>
-<col width="19%"></col>
+<col width="15%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
 <th align="center"> </th>
-<th align="center">brm.beta</th>
-<th align="center">nimble.beta</th>
-<th align="center">glm.logit.beta</th>
-<th align="center">mlogit.beta</th>
+<th align="center">brm.l.sd</th>
+<th align="center">nimble.l.sd</th>
+<th align="center">glm.l.sd</th>
+<th align="center">mlogit.sd</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="center"><strong>Beta0</strong></td>
-<td align="center">-5.446</td>
-<td align="center">-5.919</td>
-<td align="center">-4.593</td>
-<td align="center">-4.593</td>
+<td align="center">3.576</td>
+<td align="center">4.334</td>
+<td align="center">3.104</td>
+<td align="center">3.104</td>
 </tr>
 <tr class="even">
 <td align="center"><strong>Beta1</strong></td>
-<td align="center">2.177</td>
-<td align="center">2.376</td>
-<td align="center">1.83</td>
-<td align="center">1.83</td>
+<td align="center">1.509</td>
+<td align="center">1.772</td>
+<td align="center">1.333</td>
+<td align="center">1.333</td>
 </tr>
 <tr class="odd">
 <td align="center"><strong>Beta2</strong></td>
-<td align="center">1.539</td>
-<td align="center">1.661</td>
-<td align="center">1.296</td>
-<td align="center">1.296</td>
+<td align="center">1.055</td>
+<td align="center">1.261</td>
+<td align="center">0.9058</td>
+<td align="center">0.9058</td>
 </tr>
 </tbody>
 </table>
-<table>
+<p><span class="math inline">\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)</span></p>
+<p><span class="math inline">\(\beta_{marg}=\bar\phi(p_i)\boldsymbol{\beta}\)</span></p>
+<p><span class="math inline">\(\beta_{marg}=\bar logit(p_i)\boldsymbol{\beta}\)</span></p>
+<p><span class="math inline">\(\beta_{marg}=\bar p(1-\bar p))\boldsymbol{\beta}\)</span></p>
+<table style="width:67%;">
 <colgroup>
-<col width="15%"></col>
-<col width="17%"></col>
-<col width="21%"></col>
-<col width="25%"></col>
-<col width="21%"></col>
+<col width="27%"></col>
+<col width="13%"></col>
+<col width="12%"></col>
+<col width="12%"></col>
 </colgroup>
 <thead>
 <tr class="header">
 <th align="center"> </th>
-<th align="center">brm.beta.sd</th>
-<th align="center">nimble.beta.sd</th>
-<th align="center">glm.logit.beta.sd</th>
-<th align="center">mlogit.beta.sd</th>
+<th align="center">Beta0</th>
+<th align="center">Beta1</th>
+<th align="center">Beta2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center"><strong>Beta0</strong></td>
-<td align="center">1.717</td>
-<td align="center">2.076</td>
-<td align="center">1.552</td>
-<td align="center">1.552</td>
+<td align="center"><strong>g1.marg</strong></td>
+<td align="center">-1.041</td>
+<td align="center">0.4078</td>
+<td align="center">0.3036</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>Beta1</strong></td>
-<td align="center">0.7297</td>
-<td align="center">0.8809</td>
-<td align="center">0.6667</td>
-<td align="center">0.6667</td>
+<td align="center"><strong>g2.marg</strong></td>
+<td align="center">-1.027</td>
+<td align="center">0.399</td>
+<td align="center">0.3033</td>
 </tr>
 <tr class="odd">
-<td align="center"><strong>Beta2</strong></td>
-<td align="center">0.5091</td>
-<td align="center">0.5846</td>
-<td align="center">0.4529</td>
-<td align="center">0.4529</td>
+<td align="center"><strong>g3.marg</strong></td>
+<td align="center">-1.129</td>
+<td align="center">0.4401</td>
+<td align="center">0.3263</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>rl.marg</strong></td>
+<td align="center">-0.6999</td>
+<td align="center">0.2661</td>
+<td align="center">0.1962</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>nimble.p.marg</strong></td>
+<td align="center">-0.9918</td>
+<td align="center">0.3997</td>
+<td align="center">0.2864</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>nimble.l.marg</strong></td>
+<td align="center">-1.197</td>
+<td align="center">0.4775</td>
+<td align="center">0.3399</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>glm.p.marg</strong></td>
+<td align="center">-1.124</td>
+<td align="center">0.4494</td>
+<td align="center">0.3235</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>glm.l.marg</strong></td>
+<td align="center">-1.164</td>
+<td align="center">0.4637</td>
+<td align="center">0.3284</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>brm.l.marg</strong></td>
+<td align="center">-1.238</td>
+<td align="center">0.4937</td>
+<td align="center">0.3489</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>mlogit.marg</strong></td>
+<td align="center">NA</td>
+<td align="center">0.4637</td>
+<td align="center">0.3284</td>
 </tr>
 </tbody>
 </table>

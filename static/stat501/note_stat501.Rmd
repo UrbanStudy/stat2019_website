@@ -703,6 +703,16 @@ g2.sd<-apply(gibbs2,2,sd)
 g3.sd<-apply(gibbs3,2,sd)
 ```
 
+\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)
+
+\(\beta_{marg}=\phi(\bar p)\boldsymbol{\beta}\)
+
+```{r,echo=T,collapse=T}
+(g1.marg <- mean(dnorm(X %*% t(gibbs1)))*g1)
+(g2.marg <- mean(dnorm(X %*% t(gibbs2)))*g2)
+(g3.marg <- mean(dnorm(X %*% t(gibbs3)))*g3)
+```
+
 
 
 ### Rank likelihood regression 
@@ -716,6 +726,8 @@ rfit<-treg(Resp,X)
 ```{r}
 (rl <- apply(rfit$BETA,2,mean)) # function(x) c(mean(x),sd(x)))
 (rl.sd <- apply(rfit$BETA,2,sd))
+
+(rl.marg <- mean(dnorm(X %*% t(rfit$BETA)))*rl)
 ```
 
 
@@ -726,13 +738,14 @@ rfit<-treg(Resp,X)
 
 ```{r,eval=T,echo=T,collapse=T}
 fit.probit.glm <- glm(Resp~Vol+Rate,family=binomial(link="probit"))
-glm<- coef(fit.probit.glm)
-glm.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
+glm.p<- coef(fit.probit.glm)
+glm.p.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 # fit.probit.lm <- lm(Resp~Vol+Rate)
 # fit.logit.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
 #comp <- fits.compare(fit.probit.lm, fit.probit.glm, fit.logit.glm)
 #comp
 #plot(comp)
+(glm.p.marg <- mean(dnorm(X %*% glm.p))*glm.p)
 ```
 
 
@@ -767,15 +780,21 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits) # 
 ```{r}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
-                       nchains = 2, niter = 1000,
+                       nchains = 4, niter = 1000,
                        summary = TRUE, WAIC = T,
                        monitors = c('beta0','beta1','beta2')) #,'sigma'
 names(mcmc.out)
 ```
 
 ```{r}
-nimble.probit <- mcmc.out$summary$all.chains[,1]
-nimble.probit.sd <- mcmc.out$summary$all.chains[,3]
+nimble.p <- mcmc.out$summary$all.chains[,1]
+nimble.p.sd <- mcmc.out$summary$all.chains[,3]
+```
+
+```{r}
+nimble.sample<- rbind(mcmc.out$samples$chain1[901:1000,],mcmc.out$samples$chain2[901:1000,],
+                      mcmc.out$samples$chain3[901:1000,],mcmc.out$samples$chain4[901:1000,])
+(nimble.p.marg <- mean(dnorm(X %*% t(nimble.sample)))*nimble.p)
 ```
 
 
@@ -851,17 +870,19 @@ mcmcConf$printSamplers()
 
 ### Comparing the results
 
-```{r,echo=F,collapse=T}
-par<- cbind(g1,g2,g3,rl,glm,nimble.probit)
-rownames(par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round((par),4))
+```{r,echo=T,collapse=T}
+par.p<- cbind(g1,g2,g3,rl,glm.p,nimble.p)
+rownames(par.p) <- c("Beta0","Beta1","Beta2")
+pander::pander(round((par.p),4))
 ```
 
-```{r,eval=T,echo=F}
 
-par<- rbind(g1.sd,g2.sd,g3.sd,rl.sd,glm.sd, nimble.probit.sd)
-colnames(par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round(t(par),4))
+
+
+```{r,eval=T,echo=T}
+par.p.sd<- rbind(g1.sd,g2.sd,g3.sd,rl.sd,glm.p.sd, nimble.p.sd)
+colnames(par.p.sd) <- c("Beta0","Beta1","Beta2")
+pander::pander(round(t(par.p.sd),4))
 ```
 
 ```{r,echo=F,include=T, fig.width=9, fig.height=3, fig.align='center'}
@@ -930,9 +951,22 @@ fit.brms3 <- brm(
 summary(fit.brms1)
 summary(fit.brms2)
 summary(fit.brms3)
-brm.beta <- fixef(fit.brms1)[,1]
-brm.beta.sd <- fixef(fit.brms1)[,2]
+brm.l <- fixef(fit.brms1)[,1]
+brm.l.sd <- fixef(fit.brms1)[,2]
 ```
+
+
+```{r}
+brm.sample <- data.frame()
+for (i in 1:4) {
+brm.sample <- rbind(brm.sample,data.frame(fit.brms1$fit@sim$samples[[i]])[1901:2000,1:3])
+}
+prob.l<-  mean(X %*% t(brm.sample))
+(brm.l.marg <-prob.l*(1-prob.l)*brm.l)
+(brm.l.marg <- mean(dlogis(X %*% t(brm.sample)))*brm.l)
+```
+
+
 
 ### nimble
 
@@ -978,57 +1012,91 @@ mcmcConf$printSamplers()
 ```{r}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
-                       nchains = 2, niter = 1000,
+                       nchains = 4, niter = 1000,
                        summary = TRUE, WAIC = T,
                        monitors = c('beta0','beta1','beta2')) #,'sigma''sigma_RE',
 ```
 
 ```{r}
-nimble.beta <- mcmc.out$summary$all.chains[,1]
-nimble.beta.sd <- mcmc.out$summary$all.chains[,3]
+nimble.l <- mcmc.out$summary$all.chains[,1]
+nimble.l.sd <- mcmc.out$summary$all.chains[,3]
 ```
+
+```{r}
+nimble.sample<- rbind(mcmc.out$samples$chain1[901:1000,],mcmc.out$samples$chain2[901:1000,],
+                      mcmc.out$samples$chain3[901:1000,],mcmc.out$samples$chain4[901:1000,])
+prob.l<-  mean(X %*% t(nimble.sample))
+(glm.l.marg <-prob.l*(1-prob.l)*nimble.l)
+(nimble.l.marg <- mean(dlogis(X %*% t(nimble.sample)))*nimble.l)
+```
+
 
 
 ### GLM
 
 
 ```{r,eval=T,echo=T,collapse=T}
-fit.logit.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
-glm.logit.beta<- coef(fit.logit.glm)
-glm.logit.beta.sd <- summary(fit.logit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
+fit.l.glm <- glm(Resp~Vol+Rate,family=binomial(link="logit"))
+glm.l<- coef(fit.l.glm)
+glm.l.sd <- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 ```
 
+```{r}
+prob.l<-  mean(X %*% glm.l)
+(glm.l.marg <-prob.l*(1-prob.l)*glm.l)
+
+(glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l)
+```
 
 
 ### mlogit
 
 ```{r,eval=T,echo=T}
+#data("Fishing", package = "mlogit")
 # From Kenneth Train’s exercises using the mlogit package for R
 # data("Mode", package="mlogit")
 # Mo <- dfidx(Mode, choice = "choice", varying = 2:9)
 # Mo <- mlogit.data(Mode, choice='choice', shape='wide', varying=c(2:9))
 # p1 <- mlogit(choice~cost+time, Mo, seed = 20, R = 100, probit = TRUE)
-
-finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide') #, varying=1:2
+finney.mlogit <-dfidx(finney, choice = "Resp", shape='wide') # varying = c(1:2), 
+#finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide', varying=1:2) #
 fit.mlogit <- mlogit(Resp~1|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
-mlogit.beta<- coef(fit.mlogit)
-mlogit.beta.sd <- sqrt(diag(vcov(fit.mlogit)))
-
+# fit.mlogit <- mlogit(Resp~Vol+Rate,finney.mlogit, probit=T) 
+mlogit<- coef(fit.mlogit)
+mlogit.sd <- sqrt(diag(vcov(fit.mlogit)))
+mlogit.marg <- rep(NA,3)
+mlogit.marg[2] <- colMeans(effects(fit.mlogit, covariate = "Vol", data = finney.mlogit))[2] #type = "ar", 
+mlogit.marg[3] <- colMeans(effects(fit.mlogit, covariate = "Rate",  data = finney.mlogit))[2]
 ```
 
 ### Comparing the results
 
 ```{r,echo=F,collapse=T}
-par<- cbind(brm.beta,nimble.beta,glm.logit.beta,mlogit.beta)
-rownames(par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round((par/2),4))
+par.l<- cbind(brm.l,nimble.l,glm.l,mlogit)
+rownames(par.l) <- c("Beta0","Beta1","Beta2")
+pander::pander(round((par.l),4))
 ```
 
 ```{r,eval=T,echo=F}
-par<- rbind(brm.beta.sd,nimble.beta.sd,glm.logit.beta.sd,mlogit.beta.sd)
-colnames(par) <- c("Beta0","Beta1","Beta2")
-pander::pander(round(t(par/2),4))
+par.l.sd<- rbind(brm.l.sd,nimble.l.sd,glm.l.sd,mlogit.sd)
+colnames(par.l.sd) <- c("Beta0","Beta1","Beta2")
+pander::pander(round(t(par.l.sd),4))
 ```
+
+\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)
+
+\(\beta_{marg}=\bar\phi(p_i)\boldsymbol{\beta}\)
+
+\(\beta_{marg}=\bar logit(p_i)\boldsymbol{\beta}\)
+
+\(\beta_{marg}=\bar p(1-\bar p))\boldsymbol{\beta}\)
+
+```{r,echo=F,collapse=T}
+par.marg<- rbind(g1.marg,g2.marg,g3.marg,rl.marg,nimble.p.marg,nimble.l.marg,glm.p.marg,glm.l.marg,brm.l.marg,mlogit.marg)
+colnames(par.marg) <- c("Beta0","Beta1","Beta2")
+pander::pander(round((par.marg),4))
+```
+
 
 
 
