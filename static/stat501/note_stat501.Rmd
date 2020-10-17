@@ -17,8 +17,8 @@ header-includes:
 knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T,collapse = T)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
-options(scipen=6)
-options(digits=4)
+options(scipen=10)
+options(digits=10)
 if (!require(pacman)) {install.packages("pacman"); library(pacman)}
 p_load(stargazer, pscl, mlmRev,mvtnorm, MASS,brms, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,msm ,lme4) 
 
@@ -474,7 +474,7 @@ if(m%%step==0 & m>burnin) { gibbs1[(m-burnin)/step,] <- t(beta); Z[(m-burnin)/st
 Plot Gibbs 1
 
 ```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
-lab<-c(expression(beta[1]),expression(beta[2]),expression(beta[3]))
+lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
 laby<-c("density","","")
 
 par(mfrow=c(3,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
@@ -703,9 +703,11 @@ g2.sd<-apply(gibbs2,2,sd)
 g3.sd<-apply(gibbs3,2,sd)
 ```
 
+- Marginal Effects
+
 \(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)
 
-\(\beta_{marg}=\phi(\bar p)\boldsymbol{\beta}\)
+\(\beta_{marg}=\overline{\phi(p_i)}\boldsymbol{\beta}\)
 
 ```{r,echo=T,collapse=T}
 (g1.marg <- mean(dnorm(X %*% t(gibbs1)))*g1)
@@ -906,7 +908,7 @@ if(j==3) {
 
 
 ```{r,echo=F,include=T,fig.show='hold', fig.width=9, fig.height=6, fig.align='center'}
-par(mar=c(5,3,1,1),mgp=c(1.75,.75,0)); par(mfrow=c(3,3))
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0)); par(mfrow=c(4,3))
 lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
 for(j in 1:3) {
 acf(rfit$BETA[,j],ci.col="dodgerblue4",xlab=lab[j])}  
@@ -1052,12 +1054,6 @@ prob.l<-  mean(X %*% glm.l)
 ### mlogit
 
 ```{r,eval=T,echo=T}
-#data("Fishing", package = "mlogit")
-# From Kenneth Train’s exercises using the mlogit package for R
-# data("Mode", package="mlogit")
-# Mo <- dfidx(Mode, choice = "choice", varying = 2:9)
-# Mo <- mlogit.data(Mode, choice='choice', shape='wide', varying=c(2:9))
-# p1 <- mlogit(choice~cost+time, Mo, seed = 20, R = 100, probit = TRUE)
 finney.mlogit <-dfidx(finney, choice = "Resp", shape='wide') # varying = c(1:2), 
 #finney.mlogit <- mlogit.data(finney, choice='Resp', shape='wide', varying=1:2) #
 fit.mlogit <- mlogit(Resp~1|(Vol+Rate),finney.mlogit, probit=F) #|0 ,reflevel=5,seed=20,R=100
@@ -1085,14 +1081,14 @@ pander::pander(round(t(par.l.sd),4))
 
 \(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)
 
-\(\beta_{marg}=\bar\phi(p_i)\boldsymbol{\beta}\)
+\(\beta_{marg}=\overline{\phi(p_i)}\boldsymbol{\beta}\)
 
-\(\beta_{marg}=\bar logit(p_i)\boldsymbol{\beta}\)
+\(\beta_{marg}=\overline{logit(p_i)}\boldsymbol{\beta}\)
 
 \(\beta_{marg}=\bar p(1-\bar p))\boldsymbol{\beta}\)
 
 ```{r,echo=F,collapse=T}
-par.marg<- rbind(g1.marg,g2.marg,g3.marg,rl.marg,nimble.p.marg,nimble.l.marg,glm.p.marg,glm.l.marg,brm.l.marg,mlogit.marg)
+par.marg<- rbind(g1.marg,g2.marg,g3.marg,nimble.p.marg,nimble.l.marg,glm.p.marg,glm.l.marg,mlogit.marg,rl.marg,brm.l.marg)
 colnames(par.marg) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par.marg),4))
 ```
@@ -1149,12 +1145,12 @@ beta<-rep(0,p)
 z<-qnorm(rank(y,ties.method="random")/(n+1))
 g<-rep(NA,length(uranks)-1)
 K<-length(uranks)
-BETA<-matrix(NA,1000,p) ; Z<-matrix(NA,1000,n) ; ac<-0
 mu<-rep(0,K-1) ; sigma<-rep(100,K-1) 
 
 ## MCMC
-S<-25000
-for(s in 1:S) 
+M<-25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
+BETA<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
+for(m in 1:M) 
 {
 
   #update g 
@@ -1185,13 +1181,7 @@ for(s in 1:S)
   lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) + 
          sum(dnorm(gp,mu,sigma,log=T) - dnorm(g,mu,sigma,log=T) )
   if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
-
-  if(s%%(S/1000)==0) 
-  { 
-#    cat(s/S,ac/s,"\n")
-    BETA[s/(S/1000),]<-  beta
-    Z[s/(S/1000),]<- z
-  }
+if(m%%step==0 & m>burnin) {BETA[(m-burnin)/step,] <- beta; Z[(m-burnin)/step,]<- z} 
 } 
 
 ```
@@ -1225,8 +1215,212 @@ quantile(BETA[,3],prob=c(.025,.0975))
 quantile(BETA[,3],prob=c(0.025,0.975))
 ```
 
+## Multinomial Probit
+
+### mlogit
+
+```{r}
+data("Fishing", package = "mlogit")
+# From Kenneth Train’s exercises using the mlogit package for R
+Fish <- dfidx(Fishing, varying = 2:9, choice = "mode", idnames = c("chid", "alt"))
+```
 
 
+```{r}
+Fish.mprobit <- mlogit(mode~price | income | catch, Fish, probit = TRUE, alt.subset=c('beach', 'boat','pier'))
+summary(Fish.mprobit)
+```
+
+```{r}
+fish <- Fish%>% subset(mode=="TRUE",select=c(income,price,catch,idx))
+income <- fish$income
+price <- fish$price
+catch <- fish$catch
+X<-cbind(income,price,catch)
+X<-cbind(1,scale(X))
+name.rank<- names(sort(table(fish$idx$alt)))
+y<-match(fish$idx$alt,name.rank)
+# ranks<-match(y,sort(unique(y)))
+uranks<-sort(unique(y))
+n<-dim(X)[1] ; p<-dim(X)[2]
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
+```
+
+```{r}
+## setup
+set.seed(1)
+beta<-rep(0,p) 
+z<-qnorm(rank(y,ties.method="random")/(n+1))
+g<-rep(NA,length(uranks)-1)
+K<-length(uranks)
+mu<-rep(0,K-1) ; sigma<-rep(100,K-1) 
+
+## MCMC
+M<-25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
+BETA<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
+for(m in 1:M) 
+{
+  #update g 
+  for(k in 1:(K-1)) 
+  {
+  a<-max(z[y==k])
+  b<-min(z[y==k+1])
+  u<-runif(1, pnorm( (a-mu[k])/sigma[k] ),
+              pnorm( (b-mu[k])/sigma[k] ) )
+  g[k]<- mu[k] + sigma[k]*qnorm(u)
+  }
+  #update beta
+  E<- V%*%( t(X)%*%z )
+  beta<- cholV%*%rnorm(p) + E
+  #update z
+  ez<-X%*%beta
+  a<-c(-Inf,g)[ match( y-1, 0:K) ]
+  b<-c(g,Inf)[y]  
+  u<-runif(n, pnorm(a-ez),pnorm(b-ez) )
+  z<- ez + qnorm(u)
+  #help mixing
+  c<-rnorm(1,0,n^(-1/3))  
+  zp<-z+c ; gp<-g+c
+  lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) + 
+         sum(dnorm(gp,mu,sigma,log=T) - dnorm(g,mu,sigma,log=T) )
+  if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
+if(m%%step==0 & m>burnin) {BETA[(m-burnin)/step,] <- beta; Z[(m-burnin)/step,]<- z} 
+} 
+
+```
+
+```{r}
+apply(BETA, 2, mean)
+```
+
+```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
+lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]),expression(beta[3]))
+laby<-c("density","","")
+
+par(mfrow=c(4,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
+for(j in 1:p){
+plot(BETA[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
+     xlab="Gibbs iteration (k)",col="cornflowerblue")  
+plot(cumsum(BETA[,j])/(1:size),  ylab=lab[j],main="",
+     type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
+#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),main="",col="cornflowerblue")
+plot(density(BETA[,j],adj=2),lwd=2,main="",col="cornflowerblue",
+    xlab=lab[j],ylab="density")
+abline(v=quantile(BETA[,j],c(0.025,0.975)),col="gray",lwd=1)
+}
+```
+
+## Dirichlet-multinomial
+
+```{r, eval=F}
+test_that('Dirichlet-multinomial conjugacy setup', {
+### Dirichlet-multinomial conjugacy
+
+# as of v0.4, exact numerical results here have changed because
+# ddirch now sometimes returns NaN rather than -Inf (when an
+# alpha is proposed to be negative) -- this changes the RNG
+# sequence because NaN values result in no runif() call in decide()
+
+# single multinomial
+    set.seed(0)
+    n <- 100
+    alpha <- c(10, 30, 15, 60, 1)
+    K <- length(alpha)
+    p <- c(.12, .24, .09, .54, .01)
+    y <- rmulti(1, n, p)
+    
+    code <- function() {
+        y[1:K] ~ dmulti(p[1:K], n);
+        p[1:K] ~ ddirch(alpha[1:K]);
+        for(i in 1:K) {
+            alpha[i] ~ dgamma(.001, .001);
+        }
+    }
+    
+    inits <- list(p = rep(1/K, K), alpha = rep(K, K))
+    data <- list(n = n, K = K, y = y)
+    
+    test_mcmc(model = code, name = 'Dirichlet-multinomial example', data= data, seed = 0, numItsC = 10000,
+              inits = inits,
+              results = list(mean = list(p = p)),
+              resultsTolerance = list(mean = list(p = rep(.06, K))), avoidNestedTest = TRUE)
+})
+## bad mixing for alphas; probably explains why posterior estimates for alphas changed so much as of v 0.4
+  
+## with replication
+test_that('Dirichlet-multinomial with replication setup', {
+    set.seed(0)
+    n <- 100
+    m <- 20
+    alpha <- c(10, 30, 15, 60, 1)
+    K <- length(alpha)
+    y <- p <- matrix(0, m, K)
+    for(i in 1:m) {
+        p[i, ] <- rdirch(1, alpha)
+        y[i, ] <- rmulti(1, n, p[i, ])
+    }
+    
+    code <- function() {
+        for(i in 1:m) {
+            y[i, 1:K] ~ dmulti(p[i, 1:K], n);
+            p[i, 1:K] ~ ddirch(alpha[1:K]);
+        }
+        for(i in 1:K) {
+            alpha[i] ~ dgamma(.001, .001);
+        }
+    }
+    
+    inits <- list(p = matrix(1/K, m, K), alpha = rep(1/K, K))
+    data <- list(n = n, K = K, m = m, y = y)
+
+    ## two tolerance failures are known, for p[39] and p[76]
+    test_mcmc(model = code, name = 'Dirichlet-multinomial with replication', data= data,
+              seed = 0, numItsC = 1000,
+              inits = inits, numItsC_results = 100000,
+              results = list(mean = list(p = p, alpha = alpha)),
+              resultsTolerance = list(mean = list(p = matrix(.05, m, K),
+                                                  alpha = c(5,10,10,20,.5))),
+              knownFailures = list('MCMC match to known posterior: p mean 39' = 'KNOWN ISSUE: two samples outside resultsTolerance',
+                                  'MCMC match to known posterior: p mean 76' = 'KNOWN ISSUE: two samples outside resultsTolerance'), avoidNestedTest = TRUE)
+})
+# note alphas mix poorly (and are highly correlated),
+# presumably because of cross-level dependence between
+# p's and alphas.  cross-level sampler would probably work well here,
+# or, of course, integrating over the p's
+
+test_that('Dirichlet-categorical conjugacy setup', {
+### Dirichlet-categorical conjugacy
+
+# single multinomial represented as categorical
+    set.seed(0)
+    n <- 100
+    alpha <- c(10, 30, 15, 60, 1)
+    K <- length(alpha)
+    p <- c(.12, .24, .09, .54, .01)
+    y <- rmulti(1, n, p)
+    y <- rep(seq_along(y), times = y)
+    
+    code <- function() {
+        for(i in 1:n)
+          y[i] ~ dcat(p[1:K])
+        p[1:K] ~ ddirch(alpha[1:K])
+        for(i in 1:K) {
+            alpha[i] ~ dgamma(.001, .001);
+        }
+    }
+    
+    inits <- list(p = rep(1/K, K), alpha = rep(K, K))
+    data <- list(n = n, K = K, y = y)
+    
+    test_mcmc(model = code, name = 'Dirichlet-categorical example', data= data, seed = 0, numItsC = 10000,
+              inits = inits,
+              results = list(mean = list(p = p)),
+              resultsTolerance = list(mean = list(p = rep(.06, K))), avoidNestedTest = TRUE)
+})
+
+## also note that MCMC results here should be identical to those from
+## Dirichlet-multinomial case two tests up from this
+```
 
 
 ## Resources
