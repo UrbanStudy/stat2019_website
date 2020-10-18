@@ -1,0 +1,193 @@
+---
+title: "2 Bayes Packages"
+subtitle: STAT 501
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document: default
+  pdf_document: default
+header-includes:
+- \usepackage{amssymb}
+- \usepackage{amsmath}
+---
+
+
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T,collapse = T)
+options(width = 2000)
+options(repos="https://cran.rstudio.com")
+options(scipen=10)
+options(digits=10)
+if (!require(pacman)) {install.packages("pacman"); library(pacman)}
+p_load( ggplot2,tidyverse,stargazer, pscl,kableExtra, MASS,
+        mlogit,lme4,
+       mfx,foreign,erer ,nnet, VGAM,
+       bamlss,bayesm,
+      BayesLogit,robcbi,truncnorm,msm, mlmRev,mvtnorm ) 
+
+# likelihoodAsy, coda,devtools,loo,dagitty,rethinking, msm::rtnorm
+# brms,
+# library(nimble, warn.conflicts = FALSE)
+```
+
+
+#  {.tabset .tabset-fade .tabset-pills}
+
+
+## `bamlss`
+
+https://bayesr.r-forge.r-project.org/articles/multinomial.html
+
+```{r}
+library(bamlss)
+d <- GAMart()
+f <- num ~ s(x1) + s(x2) + s(x3) + te(lon, lat)
+b <- bamlss(f, data = d)
+```
+
+```{r,eval=F}
+summary(b)
+plot(b)
+plot(b, which = 3:4)
+# plot(b, which = "samples")
+```
+
+```{r,eval=F}
+## Use of optimizer and sampler functions:
+## * first run optimizer,
+b1 <- bamlss(f, data = d, optimizer = bfit, sampler = FALSE)
+print(b1)
+summary(b1)
+```
+
+```{r,eval=F}
+## * afterwards, start sampler with staring values,
+b2 <- bamlss(f, data = d, start = coef(b1), optimizer = FALSE, sampler = GMCMC)
+print(b2)
+summary(b2)
+```
+
+
+```{r,eval=F}
+## Continue sampling.
+b3 <- continue(b2, n.iter = 12000, burnin = 0, thin = 10)
+plot(b3, which = "samples")
+plot(b3, which = "max-acf")
+plot(b3, which = "max-acf", burnin = 500, thin = 4)
+```
+
+```{r}
+data("marital.nz", package = "VGAM")
+head(marital.nz)
+```
+
+```{r}
+## Model formula, each category may
+## have different model terms.
+f <- list(  mstatus ~ s(age),
+            ~ s(age),
+            ~ s(age))
+set.seed(123)
+
+b <- bamlss(f, family = "multinomial", data = marital.nz,
+  reference = "Married/Partnered")
+```
+
+```{r}
+summary(b)
+```
+
+```{r}
+par(mfrow = c(1, 3), mar = c(4.1, 4.1, 0.1, 1.1))
+plot(b)
+```
+
+```{r}
+## Create a data frame for prediction.
+nd <- data.frame("age" = seq(20, 90, length = 100))
+## Predict for the three levels.
+p <- predict(b, newdata = nd, type = "parameter")
+```
+
+```{r}
+probs <- list()
+for(j in names(p))
+  probs[[j]] <- p[[j]] / (1 + rowSums(do.call("cbind", p)))
+probs <- as.data.frame(probs)
+probs[["MarriedPartnered"]] <- 1 - rowSums(probs)
+```
+
+```{r}
+par(mar = c(4.1, 4.1, 1.1, 1.1))
+plot2d(probs ~ age, data = nd, col.lines = rainbow_hcl(4),
+  lwd = 2, scheme = 1, ylab = "Fitted probabilities", ylim = c(0, 1))
+legend("center", names(probs), lty = 1, lwd = 2, col = rainbow_hcl(4))
+```
+
+## `bayesm`
+
+https://cran.r-project.org/web/packages/bayesm/vignettes/bayesm_Overview_Vignette.html
+
+### Multiniomial Logic
+
+```{r}
+data(margarine)
+str(margarine)
+marg <- merge(margarine$choicePrice, margarine$demos, by = "hhid")
+```
+
+```{r}
+y <- marg[,2]
+```
+
+```{r}
+X1 <- createX(p=10, na=1, Xa=marg[,3:12], nd=NULL, Xd=NULL, base=1)
+colnames(X1) <- c(names(marg[,3:11]), "price")
+head(X1, n=10)
+```
+
+
+```{r}
+X2 <- createX(p=10, na=NULL, Xa=NULL, nd=2, Xd=as.matrix(marg[,c(13,16)]), base=1)
+print(X2[1:10,1:9]); cat("\n")
+print(X2[1:10,10:18])
+```
+
+```{r}
+X <- cbind(X1, X2[,10:ncol(X2)])
+out <- rmnlIndepMetrop(Data = list(y=y, X=X, p=10), 
+                       Mcmc = list(R=1e4, nprint=1e3))
+```
+
+```{r}
+summary.bayesm.mat(out$betadraw[,10], names = "Price")
+```
+
+```{r,out.width='30%'}
+plot.bayesm.mat(out$betadraw[,10], names = "Price")
+```
+
+### hierarcical Logit
+
+```{r}
+data(camera)
+length(camera)
+str(camera[[1]])
+```
+
+```{r}
+data  <- list(lgtdata = camera, p = 5)
+prior <- list(ncomp = 1)
+mcmc  <- list(R = 1e4, nprint = 0)
+
+out <- rhierMnlRwMixture(Data = data, Prior = prior, Mcmc = mcmc)
+```
+
+```{r}
+hist(apply(out$betadraw, 1:2, mean)[,9], col = "dodgerblue4", 
+     xlab = "", ylab = "", yaxt="n", xlim = c(-4,6), breaks = 20,
+     main = "Histogram of Posterior Means For Individual Wifi Coefs")
+```
+
+

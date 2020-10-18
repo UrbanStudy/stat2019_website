@@ -20,7 +20,11 @@ options(repos="https://cran.rstudio.com")
 options(scipen=10)
 options(digits=10)
 if (!require(pacman)) {install.packages("pacman"); library(pacman)}
-p_load(stargazer, pscl, mlmRev,mvtnorm, MASS,brms, ggplot2,tidyverse,mlogit,BayesLogit,robcbi,kableExtra,truncnorm,msm ,lme4) 
+p_load( ggplot2,tidyverse,stargazer, pscl,kableExtra, MASS,
+        brms,mlogit,lme4,
+       mfx,foreign,erer ,nnet, VGAM,
+       bamlss,bayesm,
+      BayesLogit,robcbi,truncnorm,msm, mlmRev,mvtnorm ) 
 
 # likelihoodAsy, coda,devtools,loo,dagitty,rethinking, msm::rtnorm 
 library(nimble, warn.conflicts = FALSE)
@@ -274,13 +278,6 @@ covar(z.logit)
 Rank(z.logit)
 rscale(z.logit)
 # kable(t(data_frame(weights(z.logit))))
-```
-
-```{r,eval=F,echo=F}
-
-# From https://data.princeton.edu/
-fit.mle.glmer <- glmer(Resp~(1|Vol)+(1|Rate), family=binomial) #, nAGQ = 12, REML=FALSE
-summary(fit.mle.glmer)
 ```
 
 
@@ -752,7 +749,6 @@ glm.p.sd <- summary(fit.probit.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 
 
 
-
 ### nimble
 
 - Code 1
@@ -870,10 +866,29 @@ mcmcConf$printSamplers()
 
 
 
+
+### brms
+
+```{r,results=F}
+brms.p <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli("probit"),silent = T, refresh=0) # probit_approx
+```
+
+```{r}
+summary(brms.p)
+brm.p <- fixef(brms.p)[,1]
+brm.p.sd <- fixef(brms.p)[,2]
+```
+
+```{r}
+(brm.p.marg <- mean(dnorm(X %*% brm.p))*brm.p)
+```
+
+
+
 ### Comparing the results
 
 ```{r,echo=T,collapse=T}
-par.p<- cbind(g1,g2,g3,rl,glm.p,nimble.p)
+par.p<- cbind(g1,g2,g3,rl,glm.p,nimble.p,brm.p)
 rownames(par.p) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par.p),4))
 ```
@@ -882,7 +897,7 @@ pander::pander(round((par.p),4))
 
 
 ```{r,eval=T,echo=T}
-par.p.sd<- rbind(g1.sd,g2.sd,g3.sd,rl.sd,glm.p.sd, nimble.p.sd)
+par.p.sd<- rbind(g1.sd,g2.sd,g3.sd,rl.sd,glm.p.sd, nimble.p.sd,brm.p.sd)
 colnames(par.p.sd) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(par.p.sd),4))
 ```
@@ -927,8 +942,29 @@ mtext("autocorrelation functions with Rank Reg(above),Gibbs1(middle) ,Gibbs2(bel
 ### brms
 
 ```{r,results=F}
-fit.brms1 <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli(),silent = T, refresh=0)
+brms.l <- brm(Resp ~ Vol + Rate, data =finney, family = bernoulli("logit"),silent = T, refresh=0)
+```
 
+```{r}
+summary(brms.l)
+brm.l <- fixef(brms.l)[,1]
+brm.l.sd <- fixef(brms.l)[,2]
+```
+
+
+```{r}
+brm.sample <- data.frame()
+for (i in 1:4) {
+brm.sample <- rbind(brm.sample,data.frame(brms.l$fit@sim$samples[[i]])[1901:2000,1:3])
+}
+prob.l<-  mean(X %*% t(brm.sample))
+(brm.l.marg <-prob.l*(1-prob.l)*brm.l)
+(brm.l.marg <- mean(dlogis(X %*% t(brm.sample)))*brm.l)
+(brm.l.marg <- mean(dlogis(X %*% brm.l))*brm.l)
+```
+
+
+```{r,eval=F}
 inv_logit <- function(x) 1 / (1 + exp(-x))
 fit.brms2 <- brm(bf(Resp ~ inv_logit(eta), 
                      eta ~ Vol + Rate, nl = T),
@@ -945,27 +981,8 @@ fit.brms3 <- brm(
     prior(beta(1, 1), nlpar = "guess", lb = 0, ub = 1)
   ),silent = T, refresh=0
 )
-```
-
-
-
-```{r}
-summary(fit.brms1)
 summary(fit.brms2)
 summary(fit.brms3)
-brm.l <- fixef(fit.brms1)[,1]
-brm.l.sd <- fixef(fit.brms1)[,2]
-```
-
-
-```{r}
-brm.sample <- data.frame()
-for (i in 1:4) {
-brm.sample <- rbind(brm.sample,data.frame(fit.brms1$fit@sim$samples[[i]])[1901:2000,1:3])
-}
-prob.l<-  mean(X %*% t(brm.sample))
-(brm.l.marg <-prob.l*(1-prob.l)*brm.l)
-(brm.l.marg <- mean(dlogis(X %*% t(brm.sample)))*brm.l)
 ```
 
 
@@ -1051,6 +1068,16 @@ prob.l<-  mean(X %*% glm.l)
 ```
 
 
+
+- Another method
+
+```{r}
+library(mfx)
+(mfx.l <- logitmfx(Resp~Vol+Rate,finney))
+mfx.l$mfxest[,1]/2
+```
+
+
 ### mlogit
 
 ```{r,eval=T,echo=T}
@@ -1064,6 +1091,9 @@ mlogit.marg <- rep(NA,3)
 mlogit.marg[2] <- colMeans(effects(fit.mlogit, covariate = "Vol", data = finney.mlogit))[2] #type = "ar", 
 mlogit.marg[3] <- colMeans(effects(fit.mlogit, covariate = "Rate",  data = finney.mlogit))[2]
 ```
+
+
+
 
 ### Comparing the results
 
@@ -1088,7 +1118,7 @@ pander::pander(round(t(par.l.sd),4))
 \(\beta_{marg}=\bar p(1-\bar p))\boldsymbol{\beta}\)
 
 ```{r,echo=F,collapse=T}
-par.marg<- rbind(g1.marg,g2.marg,g3.marg,nimble.p.marg,nimble.l.marg,glm.p.marg,glm.l.marg,mlogit.marg,rl.marg,brm.l.marg)
+par.marg<- rbind(rl.marg,nimble.p.marg,g1.marg,g2.marg,g3.marg,glm.p.marg,glm.l.marg,mlogit.marg,nimble.l.marg,brm.p.marg,brm.l.marg)
 colnames(par.marg) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par.marg),4))
 ```
@@ -1103,8 +1133,145 @@ https://bayesr.r-forge.r-project.org/index.html
 
 
 
-## Ordinal probit
 
+### `glmer`
+
+```{r,eval=F,echo=F}
+# From https://data.princeton.edu/
+glmer.p <- glmer(Resp~Vol+(1|Rate), family=binomial(link = "probit"))#, nAGQ = 12, REML=FALSE
+summary(glmer.p)
+```
+
+```{r,eval=F,echo=F}
+glmer.l <- glmer(Resp~Vol+(1|Rate), family=binomial(link = "logit")) 
+summary(glmer.l)
+```
+
+
+
+## Ordinal
+
+```{r}
+library(foreign)
+Panel101 <- read.dta("https://dss.princeton.edu/training/Panel101.dta")
+```
+
+### `polr`
+
+```{r}
+polr.p <- polr(opinion ~ x1 + x2 + x3, data=Panel101, Hess=TRUE,method = "probit")
+summary(polr.p)
+library(erer)
+ocME(polr.p)# , x.mean=TRUE
+```
+
+```{r}
+polr.l <- polr(opinion ~ x1 + x2 + x3, data=Panel101, Hess=TRUE,method = "logistic")
+summary(polr.l)
+ocME(polr.l)
+```
+
+### `brms`
+
+```{r,results=F}
+# brm(self ~ age + (1|id), data=d, family=cumulative("logit"), threshold="flexible") #
+# Families cumulative, cratio, sratio, and acat support logit, probit, probit_approx, cloglog, and cauchit.
+# Families categorical, multinomial, and dirichlet support logit.
+# Panel101$y_ord<-match(Panel101[,8],levels(Panel101[,8]))
+brm.ord <- brm(opinion ~ x1 + x2 + x3, data=Panel101, family=categorical("logit", refcat ="Str disag"),silent = T, refresh=0)
+```
+
+```{r}
+summary(brm.ord)
+brm.ord.l <- fixef(brm.ord)[,1]
+brm.ord.l.sd <- fixef(brm.ord)[,2]
+```
+
+### Gibbs
+
+```{r}
+X<-sapply(Panel101[,5:7], as.numeric)
+X <- cbind(1,X)
+y<-Panel101[,8]
+name.rank<- levels(Panel101[,8])
+y<-match(Panel101[,8],name.rank)
+uranks<-sort(unique(y))
+n<-dim(X)[1] ; p<-dim(X)[2]
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
+```
+
+
+```{r}
+## setup
+set.seed(1)
+beta<-rep(0,p) 
+z<-qnorm(rank(y,ties.method="random")/(n+1))
+g<-rep(NA,length(uranks)-1)
+K<-length(uranks)
+mu<-rep(0,K-1) ; sigma<-rep(100,K-1) 
+
+## MCMC
+M<-25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
+BETA<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
+for(m in 1:M) 
+{
+
+  #update g 
+  for(k in 1:(K-1)) 
+  {
+  a<-max(z[y==k])
+  b<-min(z[y==k+1])
+  u<-runif(1, pnorm( (a-mu[k])/sigma[k] ),
+              pnorm( (b-mu[k])/sigma[k] ) )
+  g[k]<- mu[k] + sigma[k]*qnorm(u)
+  }
+
+  #update beta
+  E<- V%*%( t(X)%*%z )
+  beta<- cholV%*%rnorm(p) + E
+
+  #update z
+  ez<-X%*%beta
+  a<-c(-Inf,g)[ match( y-1, 0:K) ]
+  b<-c(g,Inf)[y]  
+  u<-runif(n, pnorm(a-ez),pnorm(b-ez) )
+  z<- ez + qnorm(u)
+
+
+  #help mixing
+  c<-rnorm(1,0,n^(-1/3))  
+  zp<-z+c ; gp<-g+c
+  lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) + 
+         sum(dnorm(gp,mu,sigma,log=T) - dnorm(g,mu,sigma,log=T) )
+  if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
+if(m%%step==0 & m>burnin) {BETA[(m-burnin)/step,] <- beta; Z[(m-burnin)/step,]<- z} 
+} 
+
+```
+
+```{r}
+(g4 <- apply(BETA, 2, mean))
+(g4.marg <-mean(dnorm(X %*% g4))*g4)
+```
+
+```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
+lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]),expression(beta[3]))
+laby<-c("density","","")
+
+par(mfrow=c(4,3),mar=c(3,3.2,.5,.5),mgp=c(1.70,.70,0))
+for(j in 1:p){
+plot(BETA[,j],  ylab=lab[j],main="",pch=1,cex=0.1,
+     xlab="Gibbs iteration (k)",col="cornflowerblue")  
+plot(cumsum(BETA[,j])/(1:size),  ylab=lab[j],main="",
+     type="l",col="cornflowerblue",lwd=2,pch=20,cex=0.7,xlab="Gibbs iteration (k)")
+#hist(gibbs.mat[-burnin,j],freq =F,xlab=paste("distribution of est. for beta",j-1),main="",col="cornflowerblue")
+plot(density(BETA[,j],adj=2),lwd=2,main="",col="cornflowerblue",
+    xlab=lab[j],ylab="density")
+abline(v=quantile(BETA[,j],c(0.025,0.975)),col="gray",lwd=1)
+}
+```
+
+<!--
 ### Social mobility data
 
 ```{r}
@@ -1215,9 +1382,115 @@ quantile(BETA[,3],prob=c(.025,.0975))
 quantile(BETA[,3],prob=c(0.025,0.975))
 ```
 
-## Multinomial Probit
+-->
 
-### mlogit
+
+## Multinomial-hsb2
+
+```{r}
+hsb2 <- read.table('https://stats.idre.ucla.edu/stat/data/hsb2.csv', header=TRUE, sep=",")
+# Checking the output (dependent) variable
+table(hsb2$ses)
+# By default the first category is the reference.
+# To change it so ‘middle’ is the reference type
+hsb2$ses2 = relevel(factor(hsb2$ses), ref = 2)
+```
+
+### `multinom`
+
+```{r}
+multi.hsb2  <-  nnet::multinom(ses2 ~ science + socst + female, hsb2)# 
+summary(multi.hsb2)
+```
+
+
+```{r,results=F }
+brm.mlt.hsb2 <- brm(ses2 ~ science + socst + female, data=hsb2, family=categorical("logit"),silent = T, refresh=0)
+```
+
+```{r}
+summary(brm.mlt.hsb2)
+brm.l <- fixef(brm.mlt.hsb2)[,1]
+brm.l.sd <- fixef(brm.mlt.hsb2)[,2]
+```
+
+
+### `mlogit`
+
+```{r}
+hsb2.mlogit <- dfidx(hsb2, shape='wide', choice = "ses2")#, varying = c(10,11, 2)
+hsb2.mprobit <- mlogit(ses2 ~ 1|science + socst + female, data=hsb2.mlogit, probit = TRUE, reflevel = 2)# 
+summary(hsb2.mprobit)
+```
+
+
+### `glmer`
+
+```{r}
+glmer(ses2 ~ science + socst + (1|female), hsb2, family=binomial(link = "logit")) 
+```
+
+### Gibbs
+
+```{r}
+ X<-sapply(hsb2[,c(10,11)], as.numeric)# ,2
+# X <- scale(hsb2[,c(10,11)])
+# X<-cbind(1,X)# ,as.numeric(hsb2[,2])
+y<-hsb2$ses2
+# name.rank<- names(sort(table(fish$idx$alt)))
+# y<-match(fish$idx$alt,name.rank)
+# ranks<-match(y,sort(unique(y)))
+uranks<-sort(unique(y))
+n<-dim(X)[1] ; p<-dim(X)[2]
+iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
+```
+
+```{r,eval=F}
+## setup
+set.seed(1)
+beta<-rep(0,p) 
+z<-qnorm(rank(y,ties.method="random")/(n+1))
+#z <- scale(rank(y,ties.method="random"))
+g<-rep(NA,length(uranks)-1)
+K<-length(uranks)
+mu<-rep(0,K-1) ; sigma<-rep(1,K-1) 
+
+## MCMC
+M<-25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
+BETA<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
+for(m in 1:M) 
+{
+  #update g 
+  for(k in 1:(K-1)) 
+  {
+  a<-max(z[y==k])
+  b<-min(z[y==k+1])
+  u<-runif(1, pnorm( (a-mu[k])/sigma[k] ),
+              pnorm( (b-mu[k])/sigma[k] ) )
+  g[k]<- mu[k] + sigma[k]*qnorm(u)
+  }
+  #update beta
+  E<- V%*%( t(X)%*%z )
+  beta<- cholV%*%rnorm(p) + E
+  #update z
+  ez<-X%*%beta
+  a<-c(-Inf,g)[ match( y-1, 0:K) ]
+  b<-c(g,Inf)[y]  
+  u<-runif(n, pnorm(a-ez),pnorm(b-ez) )
+  z<- ez + qnorm(u)
+  #help mixing
+  c<-rnorm(1,0,n^(-1/3))  
+  zp<-z+c ; gp<-g+c
+  lhr<-  sum(dnorm(zp,ez,1,log=T) - dnorm(z,ez,1,log=T) ) + 
+         sum(dnorm(gp,mu,sigma,log=T) - dnorm(g,mu,sigma,log=T) )
+  if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
+if(m%%step==0 & m>burnin) {BETA[(m-burnin)/step,] <- beta; Z[(m-burnin)/step,]<- z} 
+} 
+
+```
+
+
+## Multinomial-fish
 
 ```{r}
 data("Fishing", package = "mlogit")
@@ -1225,11 +1498,34 @@ data("Fishing", package = "mlogit")
 Fish <- dfidx(Fishing, varying = 2:9, choice = "mode", idnames = c("chid", "alt"))
 ```
 
+### `mlogit`
 
 ```{r}
 Fish.mprobit <- mlogit(mode~price | income | catch, Fish, probit = TRUE, alt.subset=c('beach', 'boat','pier'))
 summary(Fish.mprobit)
 ```
+
+
+### `multinom`
+
+```{r}
+multi.fish  <-  nnet::multinom(mode~price + income + catch , data=Fish)
+summary(multi.fish)
+```
+
+```{r,results=F,eval=F }
+brm.mlt.fish <- brm(mode~price + income + catch , data=Fish, family=categorical("logit"),silent = T, refresh=0)
+```
+
+```{r,eval=F}
+summary(brm.mlt.fish)
+brm.l.fish <- fixef(brm.mlt.fish)[,1]
+brm.l.fish.sd <- fixef(brm.mlt.fish)[,2]
+```
+
+
+
+### Gibbs
 
 ```{r}
 fish <- Fish%>% subset(mode=="TRUE",select=c(income,price,catch,idx))
@@ -1309,6 +1605,37 @@ plot(density(BETA[,j],adj=2),lwd=2,main="",col="cornflowerblue",
 abline(v=quantile(BETA[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
+
+## Multinomial-marital
+
+### 'bamlss'
+
+
+```{r}
+data("marital.nz", package = "VGAM")
+```
+
+```{r,eval=F}
+library(bamlss)
+d <- GAMart()
+f <- num ~ s(x1) + s(x2) + s(x3) + te(lon, lat)
+b <- bamlss(f, data = d)
+```
+
+> Error in value[[3L]](cond) : Package ‘coda’ version 0.19.4 cannot be unloaded: Error in unloadNamespace(package) : namespace ‘coda’ is imported by ‘bamlss’, ‘nimble’, ‘bridgesampling’, ‘brms’ so cannot be unloaded
+
+```{r,eval=F}
+## Model formula, each category may have different model terms.
+f <- list(mstatus ~ s(age),
+                  ~ s(age),
+                  ~ s(age))
+set.seed(123)
+bamlss1 <- bamlss::bamlss(f, family = "multinomial", data = marital.nz,reference = "Married/Partnered",
+                              optimizer = bfit, sampler = FALSE)
+```
+
+
+
 
 ## Dirichlet-multinomial
 
