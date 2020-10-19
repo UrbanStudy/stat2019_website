@@ -14,7 +14,7 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T,collapse = T)
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache =T,collapse = T)
 options(width = 2000)
 options(repos="https://cran.rstudio.com")
 options(scipen=10)
@@ -319,7 +319,7 @@ predict(z.probit, newdat, type="response")
 
 
 
-## Gibbs Sampler
+## Probit Binary
 
 \[\Phi^{-1}(p_i)=\beta_0+\beta_1x_{1i}+\beta_2x_{2i},\ i=1,..,39\]
 
@@ -332,6 +332,7 @@ where $x_{1i}$ is the volume of air inspired, $x_{2i}$ is the rate of air inspir
 X <- cbind(1, Vol, Rate) # Design Matrix
 p <- dim(X)[2]           # Parameter Dimension
 iXX<-solve(t(X)%*%X)  # Inverse Matrix
+n <- nrow(X)
 V<-iXX*(n/(n+1))         # Hoff, p.156, 9.2.2: . A unit information prior is one that contains the same amount of information as that would be contained in only a single observation. ; 
 # Note of Regresion Analysis p.23
 cholV<-chol(V)     
@@ -778,7 +779,7 @@ model <- nimbleModel(code, constants = constants, data = data, inits = inits) # 
 ```{r}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
-                       nchains = 4, niter = 1000,
+                       nchains = 4, niter = 2000,
                        summary = TRUE, WAIC = T,
                        monitors = c('beta0','beta1','beta2')) #,'sigma'
 names(mcmc.out)
@@ -790,9 +791,9 @@ nimble.p.sd <- mcmc.out$summary$all.chains[,3]
 ```
 
 ```{r}
-nimble.sample<- rbind(mcmc.out$samples$chain1[901:1000,],mcmc.out$samples$chain2[901:1000,],
-                      mcmc.out$samples$chain3[901:1000,],mcmc.out$samples$chain4[901:1000,])
-(nimble.p.marg <- mean(dnorm(X %*% t(nimble.sample)))*nimble.p)
+# nimble.sample<- rbind(mcmc.out$samples$chain1[1901:2000,],mcmc.out$samples$chain2[1901:2000,],
+#                       mcmc.out$samples$chain3[1901:2000,],mcmc.out$samples$chain4[1901:2000,])
+(nimble.p.marg <- mean(dnorm(X %*% (nimble.p)))*nimble.p)
 ```
 
 
@@ -888,7 +889,7 @@ brm.p.sd <- fixef(brms.p)[,2]
 ### Comparing the results
 
 ```{r,echo=T,collapse=T}
-par.p<- cbind(g1,g2,g3,rl,glm.p,nimble.p,brm.p)
+par.p<- cbind(rl,g1,g3,glm.p,g2,nimble.p,brm.p)
 rownames(par.p) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par.p),4))
 ```
@@ -1031,7 +1032,7 @@ mcmcConf$printSamplers()
 ```{r}
 mcmc.out <- nimbleMCMC(code = code, constants = constants,
                        data = data, inits = inits,
-                       nchains = 4, niter = 1000,
+                       nchains = 4, niter = 2000,
                        summary = TRUE, WAIC = T,
                        monitors = c('beta0','beta1','beta2')) #,'sigma''sigma_RE',
 ```
@@ -1042,11 +1043,11 @@ nimble.l.sd <- mcmc.out$summary$all.chains[,3]
 ```
 
 ```{r}
-nimble.sample<- rbind(mcmc.out$samples$chain1[901:1000,],mcmc.out$samples$chain2[901:1000,],
-                      mcmc.out$samples$chain3[901:1000,],mcmc.out$samples$chain4[901:1000,])
+nimble.sample<- rbind(mcmc.out$samples$chain1[1901:1000,],mcmc.out$samples$chain2[1901:1000,],
+                      mcmc.out$samples$chain3[1901:1000,],mcmc.out$samples$chain4[1901:1000,])
 prob.l<-  mean(X %*% t(nimble.sample))
 (glm.l.marg <-prob.l*(1-prob.l)*nimble.l)
-(nimble.l.marg <- mean(dlogis(X %*% t(nimble.sample)))*nimble.l)
+(nimble.l.marg <- mean(dlogis(X %*% nimble.l))*nimble.l)
 ```
 
 
@@ -1124,36 +1125,54 @@ pander::pander(round((par.marg),4))
 ```
 
 
-
-
-
-https://cran.r-project.org/web/packages/bayesm/vignettes/bayesm_Overview_Vignette.html
-
-https://bayesr.r-forge.r-project.org/index.html
-
-
-
-
 ### `glmer`
 
-```{r,eval=F,echo=F}
+```{r,eval=T,echo=T}
 # From https://data.princeton.edu/
 glmer.p <- glmer(Resp~Vol+(1|Rate), family=binomial(link = "probit"))#, nAGQ = 12, REML=FALSE
 summary(glmer.p)
 ```
 
-```{r,eval=F,echo=F}
+```{r,eval=T,echo=T}
 glmer.l <- glmer(Resp~Vol+(1|Rate), family=binomial(link = "logit")) 
 summary(glmer.l)
 ```
 
 
 
-## Ordinal
+## Ordinal-Panel
 
 ```{r}
 library(foreign)
 Panel101 <- read.dta("https://dss.princeton.edu/training/Panel101.dta")
+```
+
+
+
+### `nnet`
+
+```{r}
+nnet::multinom(opinion ~ x1 + x2 + x3, data=Panel101)%>%summary() 
+```
+
+
+### `brms`
+
+https://kevinstadler.github.io/blog/bayesian-ordinal-regression-with-random-effects-using-brms/
+
+```{r,results=F}
+# brm(self ~ age + (1|id), data=d, family=cumulative("logit"), threshold="flexible") #
+# Families cumulative, cratio(continuation ratio), sratio(stopping ratio), and acat(adjacent category) 
+#          support logit, probit, probit_approx, cloglog, and cauchit.
+# Families categorical, multinomial, and dirichlet support logit.
+# Panel101$y_ord<-match(Panel101[,8],levels(Panel101[,8]))
+brm.ord <- brm(opinion ~ x1 + x2 + x3, data=Panel101, family=categorical,silent = T, refresh=0)# , refcat ="Str disag"
+```
+
+```{r}
+summary(brm.ord)
+brm.ord.l <- fixef(brm.ord)[,1]
+brm.ord.l.sd <- fixef(brm.ord)[,2]
 ```
 
 ### `polr`
@@ -1169,22 +1188,6 @@ ocME(polr.p)# , x.mean=TRUE
 polr.l <- polr(opinion ~ x1 + x2 + x3, data=Panel101, Hess=TRUE,method = "logistic")
 summary(polr.l)
 ocME(polr.l)
-```
-
-### `brms`
-
-```{r,results=F}
-# brm(self ~ age + (1|id), data=d, family=cumulative("logit"), threshold="flexible") #
-# Families cumulative, cratio, sratio, and acat support logit, probit, probit_approx, cloglog, and cauchit.
-# Families categorical, multinomial, and dirichlet support logit.
-# Panel101$y_ord<-match(Panel101[,8],levels(Panel101[,8]))
-brm.ord <- brm(opinion ~ x1 + x2 + x3, data=Panel101, family=categorical("logit", refcat ="Str disag"),silent = T, refresh=0)
-```
-
-```{r}
-summary(brm.ord)
-brm.ord.l <- fixef(brm.ord)[,1]
-brm.ord.l.sd <- fixef(brm.ord)[,2]
 ```
 
 ### Gibbs
@@ -1215,7 +1218,6 @@ M<-25000; burnin <- 5000; step <- 20; size <- (M-burnin)/step
 BETA<-matrix(NA,size,p) ; Z<-matrix(NA,size,n) ; ac<-0
 for(m in 1:M) 
 {
-
   #update g 
   for(k in 1:(K-1)) 
   {
@@ -1225,19 +1227,15 @@ for(m in 1:M)
               pnorm( (b-mu[k])/sigma[k] ) )
   g[k]<- mu[k] + sigma[k]*qnorm(u)
   }
-
   #update beta
   E<- V%*%( t(X)%*%z )
   beta<- cholV%*%rnorm(p) + E
-
   #update z
   ez<-X%*%beta
   a<-c(-Inf,g)[ match( y-1, 0:K) ]
   b<-c(g,Inf)[y]  
   u<-runif(n, pnorm(a-ez),pnorm(b-ez) )
   z<- ez + qnorm(u)
-
-
   #help mixing
   c<-rnorm(1,0,n^(-1/3))  
   zp<-z+c ; gp<-g+c
@@ -1246,7 +1244,6 @@ for(m in 1:M)
   if(log(runif(1))<lhr) { z<-zp ; g<-gp ; ac<-ac+1 }
 if(m%%step==0 & m>burnin) {BETA[(m-burnin)/step,] <- beta; Z[(m-burnin)/step,]<- z} 
 } 
-
 ```
 
 ```{r}
@@ -1385,6 +1382,70 @@ quantile(BETA[,3],prob=c(0.025,0.975))
 -->
 
 
+
+
+
+## Ordinal-Trolley
+
+```{r,eval=F}
+data(Trolley)
+```
+
+```{r,eval=F}
+d<- Trolley %>%
+  group_by(response) %>% 
+  count() %>%
+  mutate(pr_k     = n / nrow(d)) %>% 
+  ungroup() %>% 
+  mutate(cum_pr_k = cumsum(pr_k)) %>% 
+  filter(response < 7) 
+```
+
+
+```{r,eval=F}
+inits <- list(`Intercept[1]` = -2,
+              `Intercept[2]` = -1,
+              `Intercept[3]` = 0,
+              `Intercept[4]` = 1,
+              `Intercept[5]` = 2,
+              `Intercept[6]` = 2.5)
+inits_list <- list(inits, inits)
+b11.1 <- 
+  brm(data = Trolley, family = cumulative,
+      response ~ 1,
+      prior(normal(0, 10), class = Intercept),
+      iter = 2000, warmup = 1000, cores = 2, chains = 2,
+      inits = inits_list,  # here we add our start values
+      seed = 11)
+```
+
+> Error: Argument 'family' is invalid.
+
+## Multinomial-VA
+
+https://stackoverflow.com/questions/42114194/can-multinomial-models-be-estimated-using-generalized-linear-model
+
+```{r}
+data("VA",package = "MASS")
+summary(VA)
+```
+
+
+### `nnet`
+
+```{r}
+nnet::multinom(cell ~ factor(treat), data=VA)%>%summary() # stime+age +Karn+diag.time
+```
+
+### `glm`
+
+```{r}
+VA.tab <- table(VA[, c('cell', 'treat')])
+summary(glm(Freq ~ cell * treat, data=VA.tab, family=poisson))
+```
+
+
+
 ## Multinomial-hsb2
 
 ```{r}
@@ -1396,12 +1457,7 @@ table(hsb2$ses)
 hsb2$ses2 = relevel(factor(hsb2$ses), ref = 2)
 ```
 
-### `multinom`
-
-```{r}
-multi.hsb2  <-  nnet::multinom(ses2 ~ science + socst + female, hsb2)# 
-summary(multi.hsb2)
-```
+### `brms`
 
 
 ```{r,results=F }
@@ -1414,6 +1470,12 @@ brm.l <- fixef(brm.mlt.hsb2)[,1]
 brm.l.sd <- fixef(brm.mlt.hsb2)[,2]
 ```
 
+### `nnet`
+
+```{r}
+multi.hsb2  <-  nnet::multinom(ses2 ~ science + socst + female, hsb2)# 
+summary(multi.hsb2)
+```
 
 ### `mlogit`
 
@@ -1424,28 +1486,21 @@ summary(hsb2.mprobit)
 ```
 
 
-### `glmer`
-
-```{r}
-glmer(ses2 ~ science + socst + (1|female), hsb2, family=binomial(link = "logit")) 
-```
-
 ### Gibbs
 
-```{r}
+```{r,echo=T}
  X<-sapply(hsb2[,c(10,11)], as.numeric)# ,2
-# X <- scale(hsb2[,c(10,11)])
-# X<-cbind(1,X)# ,as.numeric(hsb2[,2])
+# X <- scale(X)
+ X<-cbind(1,X)# ,as.numeric(hsb2[,2])
 y<-hsb2$ses2
-# name.rank<- names(sort(table(fish$idx$alt)))
-# y<-match(fish$idx$alt,name.rank)
+y<-match(hsb2$ses2,levels(hsb2$ses2))
 # ranks<-match(y,sort(unique(y)))
 uranks<-sort(unique(y))
 n<-dim(X)[1] ; p<-dim(X)[2]
 iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
 ```
 
-```{r,eval=F}
+```{r,echo=F}
 ## setup
 set.seed(1)
 beta<-rep(0,p) 
@@ -1489,6 +1544,24 @@ if(m%%step==0 & m>burnin) {BETA[(m-burnin)/step,] <- beta; Z[(m-burnin)/step,]<-
 
 ```
 
+```{r}
+(g5 <- apply(BETA, 2, mean))
+(g5.marg <-mean(dnorm(X %*% g5))*g5)
+```
+
+Note: this method cannot include "female"
+
+
+### `glmer`
+
+```{r}
+glmer(ses2 ~ science + socst + (1|female), hsb2, family=binomial(link = "probit")) 
+```
+
+```{r}
+glmer(ses2 ~ science + socst + (1|female), hsb2, family=binomial(link = "logit")) 
+```
+
 
 ## Multinomial-fish
 
@@ -1505,17 +1578,31 @@ Fish.mprobit <- mlogit(mode~price | income | catch, Fish, probit = TRUE, alt.sub
 summary(Fish.mprobit)
 ```
 
+```{r,results=F,eval=T }
+fish <- Fish%>% subset(mode=="TRUE",select=c(income,price,catch,idx))
+income <- fish$income
+price <- fish$price
+catch <- fish$catch
+mode<- fish$idx$alt
+fishing <- data.frame(mode,income,price,catch)
+```
 
-### `multinom`
+
+### `nnet`
 
 ```{r}
-multi.fish  <-  nnet::multinom(mode~price + income + catch , data=Fish)
+multi.fish  <-  nnet::multinom(mode~price + income + catch , data=fishing)
 summary(multi.fish)
 ```
 
+### `brms`
+
+Note: Doesn't work
+
 ```{r,results=F,eval=F }
-brm.mlt.fish <- brm(mode~price + income + catch , data=Fish, family=categorical("logit"),silent = T, refresh=0)
+brm.mlt.fish <- brm(mode~price + income + catch , data=fishing, family=categorical("logit"),silent = T, refresh=0)
 ```
+
 
 ```{r,eval=F}
 summary(brm.mlt.fish)
@@ -1528,11 +1615,8 @@ brm.l.fish.sd <- fixef(brm.mlt.fish)[,2]
 ### Gibbs
 
 ```{r}
-fish <- Fish%>% subset(mode=="TRUE",select=c(income,price,catch,idx))
-income <- fish$income
-price <- fish$price
-catch <- fish$catch
 X<-cbind(income,price,catch)
+head(X)
 X<-cbind(1,scale(X))
 name.rank<- names(sort(table(fish$idx$alt)))
 y<-match(fish$idx$alt,name.rank)
@@ -1542,7 +1626,9 @@ n<-dim(X)[1] ; p<-dim(X)[2]
 iXX<-solve(t(X)%*%X)  ; V<-iXX*(n/(n+1)) ; cholV<-chol(V)
 ```
 
-```{r}
+Note: This method require standardize X
+
+```{r,echo=F}
 ## setup
 set.seed(1)
 beta<-rep(0,p) 
@@ -1605,6 +1691,18 @@ plot(density(BETA[,j],adj=2),lwd=2,main="",col="cornflowerblue",
 abline(v=quantile(BETA[,j],c(0.025,0.975)),col="gray",lwd=1)
 }
 ```
+
+
+### `glmer`
+
+```{r}
+glmer(mode~price + income + (1|catch) , data=Fishing, family=binomial(link = "probit")) 
+```
+
+```{r}
+glmer(mode~price + income + (1|catch) , data=Fishing, family=binomial(link = "logit")) 
+```
+
 
 ## Multinomial-marital
 
@@ -1750,6 +1848,33 @@ test_that('Dirichlet-categorical conjugacy setup', {
 ```
 
 
+
+## Summary
+
+
+--------------------------------------------------------------------------------------------------------------------
+|$y\in$       | link fn | cont'us X   |             |            |            |            |            |discrete X 
+|-------------|---------|-------------|-------------|------------|------------|------------|------------|-----------
+|             |         |fixed $\beta$|             |            |            |            |random $\beta$|           
+|             |         |Manual       |`glm`        |`brms`      |`nimble`    |`mlogit`    |`glmer`     |
+|$\{0,1\}$    | $\Phi$  |$\checkmark$ |$\checkmark$ |$\checkmark$|$\checkmark$|            |$\checkmark$|
+|             |  Logit  |$\checkmark$ |$\checkmark$ |$\checkmark$|$\checkmark$|$\checkmark$|$\checkmark$|
+|             |         |             |`polr`       |            |            |            |            |   
+|$\{1,2,..\}$ | $\Phi$  |$\checkmark$ |$\checkmark$ |            |            |            |$\checkmark$|         
+|             |  Logit  |             |$\checkmark$ |$\checkmark$|            |            |$\checkmark$|         
+|             |         |             |`nnet`       |            |            |            |            |
+|\{A,B,..\}   | $\Phi$  |             |             |            |            |$\checkmark$|$\checkmark$|
+|             |  Logit  |             |             |$\checkmark$|            |$\checkmark$|$\checkmark$|
+|             |  log    |             |$\checkmark$ |            |            |            |            |
+|\{(A,B),C,.\}| $\Phi$  |             |             |            |            |$\checkmark$|            |
+|             |  Logit  |             |             |            |            |$\checkmark$|            |
+
+Nested
+
+Mixed
+
+Hierarchical
+
 ## Resources
 
 [Charlie Geyer's Personal Home Page](http://users.stat.umn.edu/~geyer/)
@@ -1771,3 +1896,11 @@ data(bangladesh)
 #age.centered  Centered age
 #urban  0/1 indicator of urban context
 ```
+
+
+https://cran.r-project.org/web/packages/bayesm/vignettes/bayesm_Overview_Vignette.html
+
+https://bayesr.r-forge.r-project.org/index.html
+
+
+
