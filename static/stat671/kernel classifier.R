@@ -15,25 +15,25 @@ kernel <- function(a,b){
   return(a %*% t(b))
 }
 
-kernel_class <- function(new,data){
+kernel_class <- function(new,data,p=2){
   data_plus <- data[data$y==1,]
   data_minus <- data[data$y==-1,]
-  
+new <- (new[1:p])
   for(i in 1:nrow(data_plus)){
-    a_plus = 1/nrow(data_plus)*sum(kernel(new,data_plus[i,c(-3)]))
+    a_plus = 1/nrow(data_plus)*sum(kernel(new,data_plus[i,1:p]))
   }
   for(i in 1:nrow(data_minus)){
-    a_minus = 1/nrow(data_minus)*sum(kernel(new,data_minus[i,c(-3)]))
+    a_minus = 1/nrow(data_minus)*sum(kernel(new,data_minus[i,1:p]))
   }
   
   for(i in 1:(nrow(data_plus)-1)){
     for (j in (i+1):nrow(data_plus)){
-      b_plus = -0.5*(1/nrow(data_plus)^2)*sum(kernel(as.matrix(data_plus[i,c(-3)]),data_plus[j,c(-3)]))
+      b_plus = -0.5*(1/nrow(data_plus)^2)*sum(kernel(as.matrix(data_plus[i,1:p]),data_plus[j,1:p]))
     }
   }
   for(i in 1:(nrow(data_minus)-1)){
     for (j in (i+1):nrow(data_minus)){
-      b_minus = 0.5*(1/nrow(data_minus)^2)*sum(kernel(as.matrix(data_minus[i,c(-3)]),data_minus[j,c(-3)]))
+      b_minus = 0.5*(1/nrow(data_minus)^2)*sum(kernel(as.matrix(data_minus[i,1:p]),data_minus[j,1:p]))
     }
   }
   
@@ -69,5 +69,53 @@ kernel_class(c(1,-1),data)
 kernel_class(c(0,1),data)
 
 # Run this algorithm on the iris data set. Create a classifier for the lable "I.setosa" versus "I.versicolor"
-iris <- read.csv("~/PDX Google Drive/LAPTOP Backup/STAT 610 Machine Learning I-III/III/iris.csv")
+# iris <- read.csv("~/PDX Google Drive/LAPTOP Backup/STAT 610 Machine Learning I-III/III/iris.csv")
+library(datasets)
+data(iris)
+data1 <- iris %>% subset(Species=="setosa"|Species=="versicolor")%>% mutate(y=ifelse(Species=="setosa",-1,1))
 
+id <- sample(1:nrow(data1), size = 80)
+train <- data1[id, ]
+test <- data1[-id, ]
+
+for(i in 1:(nrow(test))){
+out[i] <- kernel_class(test[i,],train,p=4)
+}
+
+
+
+kernel_class <- function(new,data,p=2){
+  data_plus <- train[train$y==1,1:p]
+  data_minus <- train[train$y==-1,1:p]
+  new <- as.matrix(test[,1:p])
+  for(i in 1:nrow(data_plus)){
+    a_plus = 1/nrow(data_plus)*sum(kernel(new,data_plus[i,]))
+  }
+  for(i in 1:nrow(data_minus)){
+    a_minus = 1/nrow(data_minus)*sum(kernel(new,data_minus[i,]))
+  }
+  
+  for(i in 1:(nrow(data_plus)-1)){
+    for (j in (i+1):nrow(data_plus)){
+      b_plus = -0.5*(1/nrow(data_plus)^2)*sum(kernel(as.matrix(data_plus[i,]),data_plus[j,]))
+    }
+  }
+  for(i in 1:(nrow(data_minus)-1)){
+    for (j in (i+1):nrow(data_minus)){
+      b_minus = 0.5*(1/nrow(data_minus)^2)*sum(kernel(as.matrix(data_minus[i,]),data_minus[j,]))
+    }
+  }
+  
+  class = a_plus+a_minus+b_plus+b_minus
+  return(ifelse(class>=0,1,-1))
+}
+
+k = function(a,b)
+  return(sum(a*b))
+kk=outer(1:nrow(test),1:nrow(data_plus),Vectorize(function(i,j) k(test[i,1:p],data_plus[j,1:p]))) %>% sum()/nrow(data_plus)/nrow(test)
+k.pp=outer(1:nrow(data_plus),1:nrow(data_plus),Vectorize(function(i,j) k(data_plus[i,],data_plus[j,1])))
+k.mm=outer(1:nrow(data_minus),1:nrow(data_minus),Vectorize(function(i,j) k(data_minus[i,],data_minus[j,])))
+b=(sum(k.mm)/(nrow(data_minus)^2)-sum(k.pp)/(nrow(data_plus)^2))/2
+alpha=ifelse(data1$Species=="setosa",1/40,-1/40)
+k.x=outer(1:nrow(train),1:nrow(test),Vectorize(function(i,j) k(train[i,1:p],test[j,1:p])))
+test$pred <- (t(k.x)%*%alpha+b)

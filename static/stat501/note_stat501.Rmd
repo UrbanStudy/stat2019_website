@@ -940,6 +940,77 @@ mtext("autocorrelation functions with Rank Reg(above),Gibbs1(middle) ,Gibbs2(bel
 
 ## Logit Binary
 
+### gibbs
+
+\[\begin{align} 
+\boldsymbol{\omega|\beta}  &\sim PG(1,\boldsymbol{|X'\beta|}) \\ 
+\boldsymbol{\beta|Y,\omega}&\sim N_p(\boldsymbol{\mu,\Sigma}) \\ 
+\boldsymbol{\mu}&=\boldsymbol{\Sigma X'\Omega\eta} & \boldsymbol{\Omega}&=diag_n(\mathbf{\omega}) & \boldsymbol{\eta}&=\mathbf{\Omega^{-1}}(\mathbf{Y}-\frac12)\\
+\boldsymbol{\Sigma}&=\boldsymbol{\sigma^{-1}+X'\Omega X} & \boldsymbol{\sigma}&=diag_p(100) &\\
+\end{align}\]
+
+```{r}
+beta.ini=runif(dim(X)[2],-3,3)
+
+w.cond <- function(beta){
+  xb=abs(X%*%beta) # as.vector(X%*%beta)
+  W=rpg.devroye(num=n, h=1, z=xb)
+  return(W)
+}
+w.ini=w.cond(beta.ini)
+
+beta.cond = function(y,w,varbeta=100){
+  matbetapr=diag(rep(1/varbeta,p))
+  OMG=diag(w)  
+  OMGinv=diag(1/w)
+  eta=OMGinv%*%(y-0.5)
+  varmat=chol2inv(chol(matbetapr+t(X)%*%OMG%*%X))
+  meanvec = varmat%*%(t(X)%*%OMG%*%eta)
+  beta=rmvnorm(1, mean = meanvec, sigma = varmat)
+  return(beta)  
+}
+beta.ini=beta.cond(y=Resp,w=w.ini)
+```
+
+```{r}
+M <- 25000
+W=matrix(NA,nrow=M,ncol=n)
+Beta=matrix(NA,nrow=(M+1),ncol=p)
+Beta[1,]=beta.ini
+for(i in 1:M){
+  W[i,] = w.cond(Beta[i,])
+  Beta[(i+1),]=beta.cond(Resp,W[i,]) 
+}
+```
+
+```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
+glm.l <- c(-9.186610938,3.660409960,2.592717380)
+thinned=seq(round(M*0.7),M,5)
+par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
+for(s in 1:p){
+  plot(Beta[thinned,s],main=bquote(beta[.(s)]),type="p",pch=1,cex=0.1,col="cornflowerblue")
+  abline(h=glm.l[s],col="red")
+}
+for(s in 1:p){
+  plot(cumsum(Beta[thinned,s])/1:length(thinned),main=bquote(beta[.(s)]),
+       type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=glm.l[s],col="red")
+}
+```
+
+```{r}
+(g.PG.par <- data.frame(PostMean=colMeans(Beta[thinned,]),
+                      PostMedian=apply(Beta[thinned,],2,quantile,probs=0.5),
+                      ll.95=apply(Beta[thinned,],2,quantile,probs=0.025),
+                      ul.95=apply(Beta[thinned,],2,quantile,probs=0.975)))
+g.PG <- g.PG.par[,1]
+```
+
+```{r}
+(g.PG.marg <- mean(dlogis(X %*% g.PG))*g.PG)
+```
+
+
 ### brms
 
 ```{r,results=F}
@@ -1099,7 +1170,7 @@ mlogit.marg[3] <- colMeans(effects(fit.mlogit, covariate = "Rate",  data = finne
 ### Comparing the results
 
 ```{r,echo=F,collapse=T}
-par.l<- cbind(brm.l,nimble.l,glm.l,mlogit)
+par.l<- cbind(brm.l,nimble.l,g.PG,glm.l,mlogit)
 rownames(par.l) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par.l),4))
 ```
@@ -1110,16 +1181,13 @@ colnames(par.l.sd) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(par.l.sd),4))
 ```
 
-\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\)
-
-\(\beta_{marg}=\overline{\phi(p_i)}\boldsymbol{\beta}\)
-
-\(\beta_{marg}=\overline{logit(p_i)}\boldsymbol{\beta}\)
-
+\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\);
+\(\beta_{marg}=\overline{\phi(p_i)}\boldsymbol{\beta}\);
+\(\beta_{marg}=\overline{logit(p_i)}\boldsymbol{\beta}\);
 \(\beta_{marg}=\bar p(1-\bar p))\boldsymbol{\beta}\)
 
 ```{r,echo=F,collapse=T}
-par.marg<- rbind(rl.marg,nimble.p.marg,g1.marg,g2.marg,g3.marg,glm.p.marg,glm.l.marg,mlogit.marg,nimble.l.marg,brm.p.marg,brm.l.marg)
+par.marg<- rbind(rl.marg,nimble.p.marg,g1.marg,g2.marg,g3.marg,glm.p.marg,glm.l.marg,mlogit.marg,g.PG.marg,nimble.l.marg,brm.p.marg,brm.l.marg)
 colnames(par.marg) <- c("Beta0","Beta1","Beta2")
 pander::pander(round((par.marg),4))
 ```
