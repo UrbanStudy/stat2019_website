@@ -1,0 +1,294 @@
+---
+title: "USP 657 HW1"
+subtitle: 'qushen@pdx.edu'
+author: "Shen Qu"
+
+fontfamily:  mathpazo
+fontsize: 12 pt
+output:
+  pdf_document:
+    toc: F
+    number_sections: F
+header-includes:
+   - \usepackage{fancyhdr}
+   - \pagestyle{fancy}
+   - \fancyhf{}
+   - \rhead{Shen Qu}
+   - \chead{USP 657}
+   - \lhead{HW1}
+   - \rfoot{Page \thepage}
+   
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "C:/E/PhD/courses/USP657_Fall2020/Homework/hw")
+knitr::opts_chunk$set( eval =T,echo = T,cache=F,collapse=T, out.width='50%', fig.show='hold',message=F,warning=F)
+options(scipen=10)
+options(digits=3)
+
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+p_load(tidyverse ,dplyr, mlogit,dfidx)
+
+# setwd("C:/E/PhD/courses/USP657_Fall2020/Homework/hw")
+```
+
+
+
+\fontsize{9pt}{0pt}
+
+#
+
+```{r, include=F}
+#datalong <- read_xls ("datalong.xls")
+# H = mlogit.data(datalong, shape="long", choice="depvar", alt.var='idalt', id.var="idcase")
+```
+
+1. Run a logit model with installation cost and operating cost as the only explanatory variables.
+
+```{r}
+data("Heating",package="mlogit")
+levelid <- c("gc","gr","ec","er","hp")
+H <- dfidx(Heating, choice = "depvar", varying = c(3:12),levels = levelid)
+H <- dfidx(Heating, choice="depvar", shape="wide", varying=c(3:12), sep=".", idnames=c("idcase", "choice"))
+# str(H)
+```
+
+The model with only two predictors is: \(logit(p)=\beta_0+\beta_1ic+\beta_2oc+\varepsilon\)
+
+This question also wants to set zero intercept: \(logit(p)=\beta_1ic+\beta_2oc+\varepsilon\)
+
+```{r}
+m <- mlogit(depvar ~ ic + oc|0 , H) #, reflevel="gc"
+summary(m)
+```
+
+```{r}
+logLik.0 <- length(unique(H$idx$id1)) * log(1/length(unique(H$idx$id2)))#log likelihood for null model
+(rho.sq <- 1 - m$logLik/logLik.0)
+m.fit.c <- mlogit(depvar~ 0 | 1, H); summary(m.fit.c) #log likelihood for constant only model
+ logLik.c <- logLik(m.fit.c)
+(rho.sq <- 1 - m$logLik/logLik.c)
+
+```
+
+
+
+(a) Do the estimated coefficients have the expected signs?  
+
+Yes. The coefficients are both negative. A greater installation cost for one heating system will decrease the probability of households choosing this system. The same with the annual operating cost.
+
+(b) Are both coefficients significantly different from zero?
+
+Yes. The p-values are both less than 0.05. The two coefficients are significantly different from zero at .05 significance level.
+
+(c) How closely do the predicted shares match the actual shares of houses with each heating system?
+
+```{r}
+m.freq <- (m$freq/900)[levelid]
+m.pred <- predict(m)[levelid]
+m.fitted <- apply(fitted(m, outcome = FALSE), 2, mean)[levelid]
+comp <- rbind(m.freq,m.fitted,m.freq-m.fitted,m.pred,m.freq-m.pred)
+row.names(comp)=c("actual","fitted","difference of actual vs fitted",
+                  "predict","difference of actual vs predicted")
+comp
+```
+
+The above table shows that both of the fitted average probabilities and the predicted shares of houses with each heating system are different with the actual shares.
+
+(d) The ratio of coefficients usually provides economically meaningful information. The willingness to pay (wtp) through higher installation cost for a one-dollar reduction in operating costs is the ratio of the operating cost coefficient to the installation cost coefficient. What is the estimated wtp from this model? Is it reasonable in magnitude? 
+
+```{r}
+(wtp <- coef(m)[2]/coef(m)[1])
+```
+
+The estimated wtp is $\frac{\beta_2}{\beta_1}=$ `r wtp`. It is not reasonable that the householder will pay through extra `r wtp` dollars installation cost for a one-dollar reduction in operation costs. If the extra installation cost is less than one-year operation costs, no one will refuse this deal.
+
+(e) We can use the estimated wtp to obtain an estimate of the discount rate that is implied by the model of choice of operating system. The present value of the future operating costs is the discounted sum of operating costs over the life of the system: $PV=\sum[OC/(1+r)^t]$ where r is the discount rate and the sum is over t=1,...,L with L being the life of the system. As L rises, the PV approaches (1/r)OC. Therefore, for a system with a sufficiently long life (which we will assume these systems have), a one-dollar reduction in OC reduces the present value of future operating costs by (1/r). This means that if the person choosing the system were incurring the installation costs and the operating costs over the life of the system, and rationally traded-off the two at a discount rate of r, the decisionmaker's wtp for operating cost reductions would be (1/r). Given this, what value of r is implied by the estimated wtp that you calculated in part (c)? Is this reasonable?
+
+
+The values of $r=\frac{1}{wtp}=\frac{\beta_1}{\beta_2}=$ `r 1/wtp`, which greater than 100%. It is not reasonable.
+
+2. Estimate a model that imposes the constraint that r=0.12 (such that wtp=8.33). Test the hypothesis that r=0.12.  
+To do this, you will need to create a new variable lcc that relates to ic and oc according to the constraint, and then estimate a new model using lcc in the place of ic and oc. 
+
+Under the null hypothesis, the model is $y=\beta_1(ic+\frac{oc}{0.12})+\varepsilon=\beta_1ic+\frac{\beta_1}{0.12}oc+\varepsilon$
+
+That is $H_0: \beta_1=0.12\beta_2$; $H_A: \beta_1\neq0.12\beta_2$
+
+```{r}
+H$lcc <- H$ic+H$oc/0.12
+m1 <- mlogit(depvar ~ lcc|0 , H)
+summary(m1)
+(lrt <- lrtest(m, m1))
+```
+
+
+The LRT result shows that p-value is less than .05 and we can reject the null hypothesis that the two model are the same. Thus, r does not equal 0.12 at .05 significance level.
+
+3. Add alternative-specific constants to the model for alternatives 1-4. Alternative specific constants is added by specifying a constant 1 after the first verticle bar in the mlogit formula (read the mlogit documentation for more details):
+
+```{r}
+m2 <- mlogit(depvar~ic+oc|1, H, reflevel="hp")
+summary(m2)
+```
+
+(a) How well do the estimated probabilities match the shares of customers choosing each alternative? Note that they match exactly: alternative-specific constants in a logit model insure that the average probabilities equal the observed shares.
+
+```{r}
+m2.freq <- (m2$freq/900)[levelid]
+m2.pred <- predict(m2)[levelid]
+m2.fitted <- apply(fitted(m2, outcome = FALSE), 2, mean)[levelid]
+comp2 <- rbind(m2.freq,m2.fitted,m2.freq-m2.fitted,m2.pred,m2.freq-m2.pred)
+row.names(comp2)=c("actual","fitted","difference of actual vs fitted","predict",
+                   "difference of actual vs predicted")
+comp2
+```
+
+The above table shows that the average probabilities and the observed shares match exactly, while the predicted shares of houses with each heating system are close to the actual shares.
+
+(b) Calculate the wtp and discount rate r that is implied by the estimates. Are these reasonable?
+
+```{r}
+(wtp2 <- coef(m2)[6]/coef(m2)[5])
+1/wtp2
+```
+
+The estimated wtp is $\frac{\beta_2}{\beta_1}=$ `r wtp2`. It is reasonable that the householder will pay through extra `r wtp2` dollars installation cost for a one-dollar reduction in operation costs. The household will have net gains for over five years. By the same way, the discount rate r= `r 1/wtp2` is reasonable.
+
+(c) Suppose you had included constants for alternatives 1,3,4, and 5, with the constant for alternative 2 normalized to zero. What would be the estimated coefficient of the constant for alternative 1? Figure this out logically rather than actually estimating the model.
+
+```{r}
+m3 <-  update(m2, reflevel="gr")
+m2.coef <- coef(m2)
+m3.coef <- coef(m3)
+m2.coef[3:4]
+m3.coef[3]
+```
+
+The previous model set alternative (5) 'heat pump' as zero. The coefficient of alternative (1) 'gas central' in this model (`r m2.coef[3]`) is the relative difference to the coefficient of alternative (5).
+
+The new model set alternative (2) 'gas room' with zero. The coefficient of alternative (1) 'gas central' (`r m3.coef[3]`) will be exactly the relative difference between the coefficients of alternative (1)  and (2) (`r m2.coef[3]`-`r m2.coef[4]`) in the previous model.
+
+4. Now try some models with sociodemographic variables entering.
+
+(a) Enter installation cost divided by income, instead of installation cost. With this specification, the magnitude of the installation cost coefficient is inversely related to income, such that high income households are less concerned with installation costs than lower income households. Does dividing installation cost by income seem to make the model better or worse?
+
+```{r}
+m4 <- mlogit(depvar ~ I(ic/income) + oc, H, reflevel="hp")
+summary(m4)
+```
+
+$y=\beta_0+\beta_1\frac{ic}{income}+\beta_2oc+\varepsilon$
+
+The new model is worse. Because all of Log-Likelihood (`r m4$logLik `), McFadden $R^2$, and LRT $\chi^2$ are less than before.
+
+(b) Instead of dividing installation cost by income, enter alternative-specific income effects. The income variable for the first alternative divide by 1000 scales. Do similarly for alts2-4, with the coefficient for alt 5 normalized to zero.
+What do the estimates imply about the impact of income on the choice of central systems versus room system? Do these income terms enter significantly?
+
+```{r}
+H$income.alt1 = 0
+H$income.alt1[idx(H,2) == "gc"] = H$income[idx(H,2) == "gc"]/1000 
+H$income.alt1[idx(H,2) == "gr"] = H$income[idx(H,2) == "gr"]/1000
+H$income.alt1[idx(H,2) == "ec"] = H$income[idx(H,2) == "ec"]/1000
+H$income.alt1[idx(H,2) == "er"] = H$income[idx(H,2) == "er"]/1000
+m5 <- mlogit(depvar~ic+oc|income.alt1, H, reflevel="hp")
+m5 <- mlogit(depvar~ic+oc|I(income/1000), H, reflevel="hp") # equivalent
+summary(m5)
+```
+
+The results show that the 'income' have a negative relationship with the probability of 'central systems' and 'room system' relative to the 'heat pump'. The sequence of the coefficients is $\beta_{income}|gr<\beta_{income}|er<\beta_{income}|gc<\beta_{income}|ec<\beta_{income}|hp$. The coefficients of income terms are not significant at .05 significance level.
+
+```{r}
+lrtest(m3, m5)
+```
+
+The LRT also shows that we fail to reject the new model is same with before at .05 significance level. Thus the income term is negligible.
+
+
+(c). Try other models. Determine which model you think is best from these data.
+
+```{r}
+m6 <-  mlogit(depvar ~ ic + oc |poly(agehed,2)*rooms*region*income,H)
+lrtest(m3, m6)
+# (rho.sq2 <- 1 - logLik(m6)/logLik.0)
+```
+
+The greater Likelihood and LRT $\chi^2$ values show that the new model with more interaction and high-order terms fit the data better.
+
+5. We now are going to consider the use of the logit model for prediction. Specify a model with installation costs, operating costs, and alternative specific constants. Run the model (or retrieve your previous output). You'll be using this model for prediction below. You can use the predict() in mlogit for prediction.
+
+```{r}
+(m2.pred <- predict(m2)) # ,interval="prediction""confidence"
+```
+
+6. The California Energy Commission (CEC) is considering whether to offer rebates on heat pumps. The CEC wants to predict the effect of the rebates on the heating system choices of customers in California. The rebates will be set at 10% of the installation cost. The new installation cost will therefore be:
+
+
+```{r}
+H1 <-  H
+H1[idx(H1, 2) == "hp", "ic"] <- 0.9 * H1[idx(H1, 2) == "hp", "ic"]
+m2.rebates <- apply(predict(m2, newdata = H1), 2, mean)
+```
+
+```{r}
+comp3 <- rbind(m2.pred,m2.rebates,m2.rebates-m2.pred) 
+row.names(comp3)=c("Before","After","difference")
+comp3
+```
+
+The results shows that the rebates will increase the share of 'hp' with `r comp[3,1]`. The shares of 'ec', and 'er' will increase, while the shares of 'gc' and 'gr' will decrease. It shows that 'hp' is a substitute good to 'gc' and 'gr', a complementary good to 'er' and 'ec'.
+
+```{r,include=F}
+m2.pred[2:5]/m2.pred[1]
+m2.rebates[2:5]/m2.rebates[1]
+
+m2.pred[2]/m2.pred[3:5]
+m2.rebates[2]/m2.rebates[3:5]
+
+m2.pred[2:5]/m2.rebates[2:5]
+```
+
+
+
+```{r,include=F}
+Pseudo.R2=function(object){
+  stopifnot(object$family$family == "binomial")
+  object0 = update(object, ~ 1)
+  wt <- object$prior.weights # length(wt)
+      y = object$y # weighted
+  ones = round(y*wt)
+  zeros = wt-ones
+  fv <- object$fitted.values   # length(fv)
+      if (is.null(object$na.action)) fv0 <- object0$fitted.values else
+        fv0 <- object0$fitted.values[-object$na.action] # object may have missing values
+  resp <- cbind(ones, zeros)
+  Y <- apply(resp, 1, function(x) {c(rep(1, x[1]), rep(0, x[2]))} )
+  if (is.list(Y)) Y <- unlist(Y) else Y <- c(Y)
+  # length(Y); sum(Y)
+  fv.exp <- c(apply(cbind(fv, wt), 1, function(x) rep(x[1], x[2])))
+  if (is.list(fv.exp)) fv.exp <- unlist(fv.exp) else fv.exp <- c(fv.exp)
+  # length(fv.exp)
+  fv0.exp <- c(apply(cbind(fv0, wt), 1, function(x) rep(x[1], x[2])))
+  if (is.list(fv0.exp)) fv0.exp <- unlist(fv0.exp) else fv0.exp <- c(fv0.exp)
+  (ll = sum(log(dbinom(x=Y,size=1,prob=fv.exp))))
+  (ll0 = sum(log(dbinom(x=Y,size=1,prob=fv0.exp))))
+
+  n <- length(Y)
+  G2 <- -2 * (ll0 - ll)
+  McFadden.R2 <- 1 - ll/ll0
+  CoxSnell.R2 <- 1 - exp((2 * (ll0 - ll))/n) # Cox & Snell / Maximum likelihood pseudo r-squared
+  r2ML.max <- 1 - exp(ll0 * 2/n)
+  Nagelkerke.R2 <- CoxSnell.R2/r2ML.max  # Nagelkerke / Cragg & Uhler's pseudo r-squared
+
+  out <- c(llh = ll, llhNull = ll0, G2 = G2, McFadden = McFadden.R2,
+           r2ML = CoxSnell.R2, r2CU = Nagelkerke.R2)
+  out
+}
+
+# pscl::pR2(m6)
+```
+
+
+
+

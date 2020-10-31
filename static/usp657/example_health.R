@@ -13,6 +13,10 @@ probit.visit <- Rchoice(doc ~ female + age + hhinc + married + hhkids+ educ+
                         family = binomial("probit"))
 summary(probit.visit) 
 
+Rchoice(doc ~  hhinc*age ,
+        data = data.Health,
+        family = binomial("probit"))%>%summary() 
+
 Rchoice(doc ~  hhinc*age + I(age^2) + I(hhinc^2),
         data = data.Health,
         family = binomial("probit"))%>%summary() 

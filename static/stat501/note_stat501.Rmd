@@ -943,10 +943,14 @@ mtext("autocorrelation functions with Rank Reg(above),Gibbs1(middle) ,Gibbs2(bel
 ### gibbs
 
 \[\begin{align} 
-\boldsymbol{\omega|\beta}  &\sim PG(1,\boldsymbol{|X'\beta|}) \\ 
-\boldsymbol{\beta|Y,\omega}&\sim N_p(\boldsymbol{\mu,\Sigma}) \\ 
-\boldsymbol{\mu}&=\boldsymbol{\Sigma X'\Omega\eta} & \boldsymbol{\Omega}&=diag_n(\mathbf{\omega}) & \boldsymbol{\eta}&=\mathbf{\Omega^{-1}}(\mathbf{Y}-\frac12)\\
-\boldsymbol{\Sigma}&=\boldsymbol{\sigma^{-1}+X'\Omega X} & \boldsymbol{\sigma}&=diag_p(100) &\\
+\boldsymbol{\omega_i|\beta}  &\sim PG(1,\boldsymbol{|X'_{i,1:p}\beta|}),i=1:n \\ 
+\boldsymbol{\beta}&\sim N_p(0,\boldsymbol{\sigma^2}I=diag_p(100))\\
+Pr(\boldsymbol{\beta|Y,\omega})&=\phi_p(0,\boldsymbol{\sigma^2I)\phi_n(\eta|X'\beta,\Omega^{-1}}) & where \boldsymbol{\Omega}=diag_n(\mathbf{\omega_i}); \boldsymbol{\eta}=\mathbf{\Omega^{-1}}(\mathbf{Y_{1:n}}-\frac12)\\
+&=\exp{[-\frac12\boldsymbol{\beta'\sigma^2I\beta}]}\exp{[-\frac12\boldsymbol{(\eta-X\beta)'\Omega(\eta-X\beta)}]}\\
+&=\exp{[-\frac12(\boldsymbol{\beta'(\sigma^2I+X'\Omega X)\beta}-2\boldsymbol{\beta'X'\Omega\eta+\eta'\eta})]} & let \underset{p\cdot p}{\boldsymbol{\Sigma}}=\boldsymbol{(\sigma^{2}I+X'\Omega X)^{-1}}\\
+&\propto\exp{[\boldsymbol{-\frac12\Sigma^{-1}(\beta'I\beta-2\beta'\Sigma X'\Omega\eta)}]}\\
+&\propto\exp{[\boldsymbol{-\frac12(\beta-\Sigma X'\Omega\eta)'\Sigma^{-1}(\beta-\Sigma X'\Omega\eta)}]}\\
+\boldsymbol{\beta|Y,\omega}&\sim N_p(\boldsymbol{\underset{(p\cdot p)}{\Sigma} \underset{(p\cdot n)}{X'}\underset{(n\cdot n)}{\Omega}\underset{(n\cdot 1)}{\eta}},\boldsymbol{\Sigma})\\
 \end{align}\]
 
 ```{r}
@@ -964,7 +968,7 @@ beta.cond = function(y,w,varbeta=100){
   OMG=diag(w)  
   OMGinv=diag(1/w)
   eta=OMGinv%*%(y-0.5)
-  varmat=chol2inv(chol(matbetapr+t(X)%*%OMG%*%X))
+  varmat=chol2inv(chol(matbetapr+t(X)%*%OMG%*%X)) # =solve(), faster
   meanvec = varmat%*%(t(X)%*%OMG%*%eta)
   beta=rmvnorm(1, mean = meanvec, sigma = varmat)
   return(beta)  
@@ -983,9 +987,18 @@ for(i in 1:M){
 }
 ```
 
+```{r,echo=F,include=T,fig.show='hold', fig.width=9, fig.height=3, fig.align='center'}
+par(mar=c(5,3,1,1),mgp=c(1.75,.75,0)); par(mfrow=c(1,3))
+lab<-c(expression(beta[0]),expression(beta[1]),expression(beta[2]))
+for(j in 1:3) {
+acf(Beta[,j],ci.col="dodgerblue4",xlab=lab[j])}  
+mtext("autocorrelation functions",side=1,line=-1,outer=T)
+```
+
+
 ```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
 glm.l <- c(-9.186610938,3.660409960,2.592717380)
-thinned=seq(round(M*0.7),M,5)
+thinned=seq(round(M*0.2),M,20)
 par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
 for(s in 1:p){
   plot(Beta[thinned,s],main=bquote(beta[.(s)]),type="p",pch=1,cex=0.1,col="cornflowerblue")
@@ -997,6 +1010,30 @@ for(s in 1:p){
   abline(h=glm.l[s],col="red")
 }
 ```
+
+```{r}
+W=matrix(NA,nrow=M,ncol=n)
+Beta=matrix(NA,nrow=(M+1),ncol=p)
+Beta[1,]=c(-9.186610938,3.660409960,2.592717380)
+for(i in 1:M){
+  W[i,] = w.cond(Beta[i,])
+  Beta[(i+1),]=beta.cond(Resp,W[i,]) 
+}
+```
+
+```{r,echo=F,include=T, fig.width=9, fig.height=6, fig.align='center'}
+par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
+for(s in 1:p){
+  plot(Beta[thinned,s],main=bquote(beta[.(s)]),type="p",pch=1,cex=0.1,col="cornflowerblue")
+  abline(h=glm.l[s],col="red")
+}
+for(s in 1:p){
+  plot(cumsum(Beta[thinned,s])/1:length(thinned),main=bquote(beta[.(s)]),
+       type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=glm.l[s],col="red")
+}
+```
+
 
 ```{r}
 (g.PG.par <- data.frame(PostMean=colMeans(Beta[thinned,]),
