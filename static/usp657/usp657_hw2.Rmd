@@ -1,0 +1,313 @@
+---
+title: "USP 657 HW2"
+subtitle: 'qushen@pdx.edu'
+author: "Shen Qu"
+
+fontfamily:  mathpazo
+fontsize: 12 pt
+output:
+  pdf_document:
+    toc: F
+    number_sections: F
+header-includes:
+   - \usepackage{fancyhdr}
+   - \pagestyle{fancy}
+   - \fancyhf{}
+   - \rhead{Shen Qu}
+   - \chead{USP 657}
+   - \lhead{HW2}
+   - \rfoot{Page \thepage}
+   
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "~/qushen26/stat2019_website/static/usp657")
+knitr::opts_chunk$set( eval =T,echo = T,cache=F,collapse=T, out.width='50%', fig.show='hold',message=T,warning=F)
+options(scipen=10)
+options(digits=3)
+
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+p_load(tidyverse ,dplyr, mlogit,dfidx) #, stargazer,texreg,pander,huxtable
+
+# setwd("~/qushen26/stat2019_website/static/usp657")
+```
+
+\fontsize{9pt}{0pt}
+\scriptsize
+
+Objectives
+
+The topic of homework 2 is Multinomial Logit Model (MNL) estimation, specification testing and application:
+
+Specify and estimate an MNL model;
+
+Conduct reasonableness check and specification testing;
+
+Derive Value of Time, user benefit from model estimation results.
+
+Datasets
+
+The Swissmetro dataset (Bierlaire, M., Axhausen, K., and G, Abay (2001)) consists entirely of survey data collected on the train between St. Gallen and Geneva, Switzerland, during March 1998. The respondents provided information in order to analyze the impact of the modal innovation in transportation, represented by the Swissmetro, a revolutionary maglev underground system, against the usual transportation modes represented by car and train.
+
+
+```{r, include=F}
+# source("C:/E/PhD/courses/USP657_Fall2020/Homework/hw/HW2.R")
+swissmetro = read.table('swissmetro.dat', sep="\t", header=T)
+# rename variables so they conform to mlogit convention
+names(swissmetro) = c("group","survey","sp","id","purpose","first","ticket","who","luggage","age","male", "income","ga","origin","dest",
+                      "av_train","av_car","av_sm","tt_train","co_train","fr_train","tt_sm","co_sm","fr_sm","seats_sm","tt_car","co_car",
+                      "choice")
+# prepare swissmetro data
+swissmetro <- swissmetro %>% 
+  filter(choice != 0) %>% 
+  mutate(fr_car = 0,
+         seats_car = 0,
+         seats_train = 0,
+         choice = factor(choice, levels = 1:3, labels = c("train", "sm", "car")))
+# mlogit.data is very specific about the order of the columns - they have to appear in the same order for all generic varaibles, even if they are not adjacent.
+sm = dfidx(swissmetro, shape="wide", choice="choice", 
+           varying=sort(c("av_train","av_car","av_sm","tt_train","co_train","fr_train","tt_sm","co_sm","fr_sm","seats_sm","tt_car","co_car", 'fr_car', 'seats_car', 'seats_train')), 
+           sep="_")
+```
+
+1. Formulate a hypothesis: selection of explanatory variables and how they affect the utilities (generic and/or alternative-specific), inclusion of socioeconomic variables, etc.; 
+
+\normalsize
+
+According the data description and Bierlaire et al. (2001), we select several factors as candidate variables and divide them into three groups: attributes of generic alternatives and specific alternatives, characteristics of decision-makers.
+
+Suppose the model specification as below:
+
+\[\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|}\hline
+Alt&\multicolumn{3}{c|}{Generic}&\multicolumn{2}{c|}{Specific}&\multicolumn{7}{c|}{Characteristics}\\\hline
+   & $\beta_0$& $\beta_1$ & $\beta_2$ & $\beta_3$  & $\beta_4$  & $\beta_5$&$\beta_6$&$\beta_7$&$\beta_8$&$\beta_9$&$\beta_{10}$&$\beta_{11}$\\\hline
+Tra& 0        & Av$_{tra}$& Fr$_{tra}$& TT$_{pub}$ & Co$_{tra}$ & Ga & Age & 0    & male& inc & 0   & 0\\ 
+Sm & 1$_{sm}$ & Av$_{sm}$ & Fr$_{sm}$ & TT$_{pub}$ & Co$_{sm}$  & Ga & 0   & Seat & 0   & 0   & 1st & 0 \\ 
+Car& 1$_{car}$& 0         & 0         & TT$_{car}$ & Co$_{car}$ & 0  & 0   & 0    & 0   & 0   & 0   & Lug\\\hline
+\end{tabular}\]
+
+Let  "Alt" = "alternative"; "sm" = "Swissmetro"; "tra" = "train"; "pub" = "transit";
+
+"Av" = "availability"; "Fr" = "Headway"; 
+"TT" = "Travel Time"; "CO" = "Travel Cost"
+
+"Ga" = "General abonnement",annual season ticket for transit
+
+"Seats" is the parameter associated with the seat configuration in the Swissmetro
+
+"Lug" = "luggage" the parameter associated with presence of relevant amounts of luggage during the trip.
+"inc" = "income"; "1st" = "First Class"
+
+\fontsize{8pt}{0pt}
+
+
+\[\begin{aligned}
+ V_{i, Train} 
+ &= 0+\beta_{av.tra} + \beta_{fr.tra} \text{Fr}_{tra} 
+ &+ \beta_{tt.pub} \text{TT}_{tra} + \beta_{tc.tra}\text{Co}_{tra}
+ &+0 & + \beta_{age} \text{Age}&+0\\ 
+ V_{i,sm} 
+ &= \beta_{0.sm}+\beta_{av.sm} + \beta_{fr.sm} \text{Fr}_{sm} 
+ &+ \beta_{tt.pub} \text{TT}_{sm} + \beta_{tc.sm}\text{Co}_{sm}
+ &+\beta_{seat}\text{Seat}_{sm}&+0&+0 \\ 
+ V_{i,Car} 
+ &= \beta_{0.car}+0 + 0
+ &+ \beta_{tt.car} \text{TT}_{car} + \beta_{tc.car}\text{Co}_{car}
+ &+0 &+0 & +\beta_{lug} \text{Lug}
+ \end{aligned}\]
+ 
+\scriptsize 
+ 
+https://stats.stackexchange.com/questions/100007/alternative-specific-variables-in-r
+https://notebook.community/timothyb0912/pylogit/examples/notebooks/Main%20PyLogit%20Example
+
+2. Estimate the related model. Give an interpretation of the obtained results and check if they are plausible. Note that car is not available to traveler without car (indicated by CAR_AV).
+
+\normalsize
+Removed the cases of traveler without car, the LRT test shows that model 1.1 is significant better than the ASC model.
+\scriptsize 
+
+```{r}
+m0 <- mlogit(choice~1|1|0, sm, reflevel="train")
+sm.av <- sm %>% filter(av == 1)
+m1 <- mlogit(choice~1|1|0, sm.av, reflevel="train")
+m1.1 <- mlogit(choice~1+fr|1|0, sm.av, reflevel="train")
+lrtest(m0,m1,m1.1)
+```
+
+
+```{r,eval=F,echo=F}
+extractAIC.mlogit <- function (fit, scale = 0, k = 2, ...) {
+    n <- length(fit$residuals)
+    edf <- length(fit$coefficients)
+    aic <- (-2 * fit$logLik) + k + edf
+    c(edf, aic + (k - 2) * edf)
+}
+m1 %>% extractAIC.mlogit()
+#m1 %>% MASS::stepAIC(trace = FALSE)
+```
+
+```{r,eval=F,echo=F}
+data('heating')
+library(mlogitBMA)
+res <- bic.mlogit(depvar ~ ic + oc + income + rooms, heating, choices=1:5, 
+                  varying=3:12, verbose=TRUE, approx=FALSE, sep='')
+summary(res)
+# imageplot.mlogit(res)
+# plot(res)
+
+# use approximate BMA and estimate the models afterwards
+res <- bic.mlogit(depvar ~ ic + oc | income + rooms, heating, choices=1:5, 
+                  varying=3:12, verbose=TRUE, approx=TRUE, sep='')
+summary(res)
+estimate.mlogit(res, heating)
+```
+
+
+3. Try to adjust the model specification, improving the final log-likelihood value while keeping coefficient estimates coherent with the behavioral hypothesis. It is suggested that you start with a simple model specification, and introduce new variables into your model specification using a stepwise modeling strategy, which increases the complexity by adding different variables at each step.
+
+\normalsize
+Chosen the ASC model as the benchmark, the comparisom of models show that the more predictors give the larger log-likelihood value and each adding has a significant improvement.
+\scriptsize 
+
+```{r}
+m1.2 <-  mlogit(choice~1+fr|1|tt, sm.av, reflevel="train")
+m1.3 <-  mlogit(choice~1+fr|ga|tt, sm.av, reflevel="train")
+m1.4 <-  mlogit(choice~1+fr|ga|tt+co, sm.av, reflevel="train")
+m1.5 <-  mlogit(choice~1+fr|ga+male|tt+co, sm.av, reflevel="train")
+m1.6 <-  mlogit(choice~1+fr|ga+male+age|tt+co, sm.av, reflevel="train")
+m1.7 <-  mlogit(choice~1+fr|ga+male+age+luggage|tt+co, sm.av, reflevel="train")
+m1.8 <-  mlogit(choice~1+fr|ga+male+age+luggage+first|tt+co, sm.av, reflevel="train")
+m1.9 <-  mlogit(choice~1+fr+seats|ga+male+age+luggage+first|tt+co, sm.av, reflevel="train")
+m1.10 <- mlogit(choice~1+fr+seats|ga+male+age+luggage+first+income|tt+co, sm.av, reflevel="train")
+```
+
+```{r}
+lrtest(m1.1, m1.2, m1.3, m1.4, m1.5, m1.6, m1.7, m1.8, m1.9, m1.10)
+```
+
+```{r,echo=F}
+# pander(stargazer(m1,m1.1, title="Regression Results",
+# align=TRUE, dep.var.labels=c("Overall Rating","High Rating"),
+# covariate.labels=c("Handling of Complaints","No Special Privileges",
+# "Opportunity to Learn","Performance-Based Raises","Too Critical","Advancement"),
+# omit.stat=c("LL","ser","f"), no.space=TRUE))
+#pander(texreg(list(m1, m1.1)))
+# huxreg(m1, m1.1)
+```
+
+\normalsize
+Among the predictors, the coefficient of 'income' is not significant. We can choose model 1.9.
+\scriptsize 
+
+```{r}
+summary(m1.10)
+```
+
+
+4. Perform a test on whether the coefficients for travel time attributes should be generic or alternative-specific, and a test on whether the coefficients for drive cost is equal to those for train cost or Swiss Metro cost.
+
+```{r}
+m1.21 <-  mlogit(choice~1+fr+tt|1, sm.av, reflevel="train")
+lrtest(m1.2,m1.21)
+m1.41 <-  mlogit(choice~1+fr+co|ga|tt, sm.av, reflevel="train")
+lrtest(m1.4,m1.41)
+```
+
+\normalsize
+If we change travel time from specific alternative to generic, the new model is worse at .05 significance level.
+
+By the same way, the model treating travel cost as generic alternative is worse than before at .05 significance level.
+
+Therefore, travel time and travel cost should be both alternative-specific variables.
+\scriptsize 
+
+5. Derive Value of Time and Value of Frequency; depending on results of your tests above, you may have up to 3 sets of values.
+
+```{r}
+coe<- coef(m1.9)
+(vot.car<- coe["tt:car"]/coe["co:car"])
+(vot.sm<- coe["tt:sm"]/coe["co:sm"])
+(vot.train<- coe["tt:train"]/coe["co:train"])
+# (vof.sm <- coe["fr"]/coe.fr["co:sm"])
+# (vof.train <- coe["fr"]/coe.fr["co:train"])
+```
+
+\normalsize
+The Value of Time are `r c(vot.car,vot.sm,vot.train)` for Car, Sm, and Train respectively.
+\scriptsize 
+
+
+```{r}
+sm.av.fr <- sm.av %>% 
+  mutate(fr_train = ifelse(idx(sm.av, 2)=="train", fr, 0),
+         fr_sm = ifelse(idx(sm.av, 2)=="sm", fr, 0))
+m1.91 <- mlogit(choice~1+fr_train+fr_sm+seats|ga+male+age+luggage+first|tt+co, sm.av.fr) #, reflevel="car"
+coe.fr<- coef(m1.91)
+(vof.sm <- coe.fr["fr_sm"]/coe.fr["co:sm"])
+(vof.train <- coe.fr["fr_train"]/coe.fr["co:train"])
+```
+
+\normalsize
+The Value of Frequency are `r c(vof.sm,vof.train)` for Sm and Train respectively.
+\scriptsize 
+
+```{r}
+m1.92 <- update(m1.91, alt.subset=c("train", "sm"))
+hmftest(m1.91, m1.92)
+```
+
+
+6. Design one market segmentation scheme based on decision maker’s socio-economic characteristics (e.g. age, income) and perform a market segmentation test to determine if the segments are statistically different from one another.
+
+```{r}
+levels(factor(sm$income)) # levels(factor(sm$age))
+m1.71 <-  mlogit(choice~1+fr|ga+male+age+luggage|tt+co, sm.av%>%filter(income==1), reflevel="train") # 
+m1.72 <-  mlogit(choice~1+fr|ga+male+age+luggage|tt+co, sm.av%>%filter(income==2), reflevel="train")
+m1.73 <-  mlogit(choice~1+fr|ga+male+age+luggage|tt+co, sm.av%>%filter(income==3), reflevel="train")
+m1.74 <-  mlogit(choice~1+fr|ga+male+age+luggage|tt+co, sm.av%>%filter(income==4), reflevel="train")
+
+lrt.seg <- 2*(logLik(m1.71)+logLik(m1.72)+logLik(m1.73)+logLik(m1.74)-logLik(m1.7))
+df.seg  <- 17*4-17
+pchisq(lrt.seg,df.seg,lower.tail = F)
+
+# DCA p.195
+qchisq(.05,12,lower.tail = F)
+qchisq(.05,24,lower.tail = F)
+```
+
+\normalsize
+The market segmentation of 'income' contains four levels. The degree of freedom of four fitted models and pooled model are all 17.
+
+The market segmentation test shows that the p-value is smaller than 0.05. The evidence can reject equality of coefficients across the income market segments.
+\scriptsize 
+
+7. Revert to your best model without market segmentation, and evaluate the user benefit of reducing the train headway (TRAIN_FR) by half. 
+
+```{r}
+levels(factor(sm$fr))
+m1.93 <- mlogit(choice~1+fr+seats|ga+male+age+luggage+first|tt+co, sm.av, alt.subset=c("train","sm"))
+m1.94 <- mlogit(choice~1+I(fr*0.5)+seats|ga+male+age+luggage+first|tt+co, sm.av, alt.subset=c("train","sm"))
+coef(m1.94)
+   
+beta93 <- Vectorize(coef(m1.93)[c(-9,-11)]) 
+beta94 <- as.vector(coef(m1.94)[c(-9,-11)])
+train<- sm.av%>%filter(idx(sm.av, 2)=="train")%>% select(fr,seats,ga,male,age,luggage,first,tt,co) %>% data.frame()
+X <- cbind(1,train[,-10])%>%as.matrix()
+unique(round(X%*%beta94-X%*%beta93,3))
+```
+
+\normalsize
+
+\scriptsize 
+
+
+
+
+
+# References
+
+Bierlaire, M., Axhausen, K., and G, Abay (2001). The acceptance of modal innovation: The case of Swissmetro. Proceedings of the 1st Swiss Transportation Research Conference, Ascona, Switzerland. Available at http://www.strc.ch/conferences/2001/bierlaire1.pdf
+
+
