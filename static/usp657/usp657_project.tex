@@ -1,0 +1,293 @@
+% Modified from Transportation Research Board conference paper template version 4.0
+% available at https://github.com/chiehrosswang/TRB_LaTeX_tex
+%
+% When numbered option is activated, lines are numbered.
+\documentclass[numbered]{trbunofficial}
+\usepackage{graphicx}
+
+% \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+% For TRB version hide links
+\usepackage[hidelinks]{hyperref}
+
+% needed when pandoc renders some R Markdown list into \tightlist
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\TotalWords{1543}
+\TotalTables{9}
+\WordsPerTable{250}
+
+% Put here what will go to headers as author
+\AuthorHeaders{Qu}
+\title{Explore Bayesian Approaches for Discrete Choice models with NHTS Data}
+
+\author{
+      \textbf{Shen Qu} \\
+    {Portland State University} \\
+    {Toulan School of Urban Studies and Planning} \\  {Portland, OR, 97201} \\  
+    {\href{mailto:qushen@pdx.edu}{\nolinkurl{qushen@pdx.edu}}} \\
+    \hfill\break% this is a way to add line numbering on empty line
+  }
+
+\begin{document}
+
+\nolinenumbers
+\maketitle
+
+\linenumbers
+
+\section{Abstrct}
+1
+\hfill\break
+
+  \noindent\textit{Keywords}: Travel mode Choice, Bayesian statistics, Multinomial Model
+
+\newpage
+
+\hypertarget{research-topic}{%
+\section{Research Topic}\label{research-topic}}
+
+Binary and polychotomous response are two typical data in Discrete choice models. A vast literature is concerned with the analysis of regression. Using some classical approaches of Probit Model, Logit Model etc., the discrete models can link to Multiple Linear Regression (MLR) models and are solved by Ordinary Least Squares (OLS) method.
+
+In this paper, we explore the validity of Bayesian methods. Comparing to the frequentist approaches, Bayes' theorem represents a different methodology. Using computing intensive method and simulation, Bayes' methods have some unique benefits and provide some powerful tools.
+
+Using existing packages in R language is a simple and convenient option for fitting the models. Coding also has some merits that one can adjust the arguments and get a user-defined setting to optimize or speedup the algorithm. This research will make repeated trials to examine the results from different packages and code to find their respective advantages and applicable situations.
+
+After testing the simulated data, This research will use the 2009 National Household Travel Survey (NHTS) as the real dataset. The application of Bayesian analysis allows us to get a new perspective of the travel behavior characteristics of the U.S. residents and to explore how they are related to the demographic attributions and spatial distributions.
+
+\begin{itemize}
+\tightlist
+\item
+  previous research
+\end{itemize}
+
+Many research want to investigate the relationship between travel behavior and built environment. A famous hypothesis by Ewing and Cervero (\emph{1})
+
+\hypertarget{literature}{%
+\section{Literature}\label{literature}}
+
+In 1970s, Daniel McFadden published a series of paper and identified the random utility framework for disaggregate demand models. (\emph{2}) derives the Multinomial logit model by assuming the random utilities follows the Extreme value distribution. The underlying assumption is called independence from irrelevant alternatives (IIA), which means that adding a new alternative mode will not affect the relative proportions of other modes. (\emph{3}) further developed the nested logit model. Many other advanced models, such as Hierarchical model, Generalized Extreme Value (GEV) model and Mixed Logit model, are also based on this framework.
+(\emph{4}) systematically introduce the theories of individual choice behavior and theories of sampling. This book also give some applications to Travel Demand, which includes the aggregate forecasting techniques, testing, and practical issues.
+
+Along with the development of computer technology, many advanced algorithm relied on intensive computation are developed. Researcher can get better estimation and simulation on Discrete Choice Models with these new tools. (\emph{5}) brings these new ideas together. Simulation methods help researcher solve some complex integral problems and give a numerical approximation for some formula without closed-form. For some data with small sample size, simulation can assist to construct a large dataset and make the Central Limit Theorem usable. In chapter 12 of this book, Train describes the Bayesian procedures for estimating discrete choice models. The early contribution is from (\emph{6})'s paper. The More elaborate introduction can be found in statistic literature such as (\emph{7}). While (\emph{8}) gives a more in depth look at theoretical and philosophical aspects, (\emph{9}) has many more examples and applications.
+
+\hypertarget{data}{%
+\section{Data}\label{data}}
+
+2009 National Household Travel Survey (NHTS) (\emph{10}) is a nation-wide travel survey conducted by the Federal Highway Administration of US Department of Transportation that surveyed more than 150,000 households between 2008 and 2009. Travel diaries over 24 hours on the day of the survey, as well as their socio-demographic characteristics, are captured in the survey. For this study, we focus on travel modes.
+
+\begin{itemize}
+\tightlist
+\item
+  Step 1 Missing Data pattern and muliple imputation.
+\end{itemize}
+
+\hypertarget{missing-values}{%
+\subsection{Missing values}\label{missing-values}}
+
+included\_sample: 48122
+150145
+
+\begin{itemize}
+\item
+  Step 2 variables correlation matrix.
+\item
+  Step 3 variable selection by Glmnet.
+\end{itemize}
+
+Glmnet is a package that fits a generalized linear model via penalized maximum likelihood. The regularization path is computed for the lasso or elastic net penalty at a grid of values for the regularization parameter lambda.
+
+cv.glmnet is the main function to do cross-validation here, along with various supporting methods such as plotting and prediction.
+
+Two selected \(\lambda\)'s are indicated by the vertical dotted lines.
+lambda.min is the value of \(\lambda\) that gives minimum mean cross-validated error. The other \(\lambda\) saved is lambda.1se, which gives the most regularized model such that error is within one standard error of the minimum
+
+the left vertical line in our plot shows us where the CV-error curve hits its minimum. The right vertical line shows us the most regularized model with CV-error within 1 standard deviation of the minimum.
+
+\[\begin{tabular}{|l|l|l|}\hline
+\multirow{2}{c}{} & \multicolumn{2}{c|}{DVMT} \\
+\cline{2-4}
+                           & no     & yes  \\\hline
+\multirow{2}{c}{Veh}&  no  &  6827  &  377 \\
+                    & yes  & 121598 & 21343 \\
+\end{tabular}\]
+
+\begin{verbatim}
+     1      0
+\end{verbatim}
+
+1 121598 377
+0 21343 6827
+
+\begin{itemize}
+\tightlist
+\item
+  Step 4 Fixed Effects two-step Models
+\end{itemize}
+
+zero-inflation models separate the zeros into ``true'' and ``extra'' categories.
+
+Hurdle models model the zeros and non-zeros as two separate processes.
+
+Zero-inflation models may be more elegant and informative if the same predictors are thought to contribute to the extra and real zeros.
+
+Hurdle models can be useful in that they allow you to model the zeros and non-zeros with different predictors or different roles of the same predictors. Maybe one process leads to the zero/non-zero data and another leads to the non-zero magnitude.
+
+\begin{itemize}
+\tightlist
+\item
+  Step 5 Fixed Effects Hurdle models
+\end{itemize}
+
+Mullahy (1986), Heilbron (1989), Lambert (1992), Johnson and Kotz (1993), and Greene (1994) have analyzed an extension of the hurdle model in which the zero outcome can arise from one of two regimes.
+
+The zero inflation model can also be viewed as a type of latent class model.
+
+whether there is a regime splitting mechanism at work or not
+
+the basic model and the zero-inflated model are not nested.
+Setting the parameters of the splitting model to zero, for example, does not produce Prob{[}z = 0{]} = 0. In the probit case, this probability becomes 0.5, which maintains the regime split
+
+\begin{itemize}
+\tightlist
+\item
+  Step 6 Mixed Effects two-step Models
+\end{itemize}
+
+random parameters logit model (RPL) (also called the mixed logit model)
+random coefficients
+
+\begin{itemize}
+\item
+  Step 7 Mixed Effects hurdle Models
+\item
+  Step 8 Poisson Models for counts of trips
+\end{itemize}
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\hypertarget{appendices}{%
+\section{Appendices}\label{appendices}}
+
+\hypertarget{proposed-approach}{%
+\section{Proposed Approach}\label{proposed-approach}}
+
+\hypertarget{factorial-design}{%
+\subsection{Factorial Design}\label{factorial-design}}
+
+Factorial Design is an elementary statistic method of examining the effects of factors. Given the different levels of treatments or attributes, a linear model can reflect the relationship between the independent variables and dependent variable. Through the Analysis of Variances (ANOVA), The model can include or exclude some 2-way or higher interaction terms.
+
+The NHTS data consists of categorical variables. Some of them, such as number of vehicles in household, can be treat as ordinal numbers. Some variable such as income can be treat as segmented numerical values. The rest variable such as race cannot be interpret as any numerical meaning. Although the data contain thousands of observations, the high dimension make each combination of factors has only one record. It makes further analysis impossible. Therefore, factorial design could be the first step of this research for model specification.
+
+\hypertarget{multinomial-regression}{%
+\subsection{Multinomial Regression}\label{multinomial-regression}}
+
+Individual travel choice follows the Multinomial distribution.
+As the non-normal data, the response is a categorical variable, which cannot directly apply the linear regression models. The solution of Generalized Linear Model (GLM) is that The linear part of independent variables and coefficients are transfered to a probability distribution through a link function. Then the initial response is the results of a classification process with the corresponding probability.
+
+Transportation mode choice, the response includes several alternative mode and each observation only has one choice from them. The predictors includes the socio-economic characteristics of traveler and the factors affecting the utility.
+To connect the two parts together, we will try to use two common link function of Logit and Probit in this study,
+
+\hypertarget{bayesian-methods}{%
+\subsection{Bayesian Methods}\label{bayesian-methods}}
+
+\hypertarget{prior-information-we-will-try-to-find-some-information-from-existing-literature.}{%
+\subsubsection{Prior Information: We will try to find some information from existing literature.}\label{prior-information-we-will-try-to-find-some-information-from-existing-literature.}}
+
+\hypertarget{mcmc-by-monte-carlo-approximation-and-markov-chain-we-can-simulate-the-parameter-values-from-corrdesponding-posterior-distribution-and-generate-the-lanten-varibales.-this-is-more-straghtward-method-for-the-posterior-didnt-has-closed-form-and-sovle-the-problem-of-complex-integration.}{%
+\subsubsection{MCMC: By Monte Carlo approximation and Markov Chain, we can simulate the parameter values from corrdesponding posterior distribution and generate the lanten varibales. This is more straghtward method for the posterior didn't has closed form and sovle the problem of complex integration.}\label{mcmc-by-monte-carlo-approximation-and-markov-chain-we-can-simulate-the-parameter-values-from-corrdesponding-posterior-distribution-and-generate-the-lanten-varibales.-this-is-more-straghtward-method-for-the-posterior-didnt-has-closed-form-and-sovle-the-problem-of-complex-integration.}}
+
+\hypertarget{gibbs-sampling-gipps-sampler-can-sample-from-the-full-conditional-distribution-and-constructs-a-dependent-sequence-of-parameter.-in-glm-the-standard-conjugate-prior-distributions-does-not-exits.-as-the-geralized-gibbs-algorithm-metroplies-hasting-method-can-sovle-this-type-of-problems.}{%
+\subsubsection{Gibbs Sampling: Gipps sampler can sample from the full conditional distribution and constructs a dependent sequence of parameter. In GLM, the standard conjugate prior distributions does not exits. As the geralized Gibbs algorithm, Metroplies-Hasting method can sovle this type of problems.}\label{gibbs-sampling-gipps-sampler-can-sample-from-the-full-conditional-distribution-and-constructs-a-dependent-sequence-of-parameter.-in-glm-the-standard-conjugate-prior-distributions-does-not-exits.-as-the-geralized-gibbs-algorithm-metroplies-hasting-method-can-sovle-this-type-of-problems.}}
+
+\hypertarget{hierarchical-modeling}{%
+\subsection{Hierarchical Modeling}\label{hierarchical-modeling}}
+
+When the assumption of independent error components doesn't hold, Hierarchical generalized linear models (HGLM) can help to distinguish the within-cluster error terms and between-cluster error terms.
+
+Hierarchical Modeling contains multiple levels. The part of Multinomial Regression is treated as the first level or stage. Then the parameters in the first level are treated as random variables.
+Frequentist statistics uses generalized linear mixed model (GLMM) divide the factors in the first level of model to fixed effects and random effects. The parameters of random effects will follow the Multivariate Normal distribution.
+Bayesian statistics focu on the different prior information in different levels.
+When the observational units provides some information in different levels, hierarchical Modeling methods can help to better understand the multiparameter problems.
+
+\hypertarget{variable-selection}{%
+\subsection{Variable Selection}\label{variable-selection}}
+
+\hypertarget{importing-data}{%
+\subsubsection{Importing data}\label{importing-data}}
+
+\begin{itemize}
+\item
+  The full model
+\item
+  multicollinearity Diagnostics
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model\_vif \textless{}{-}}\StringTok{ }\KeywordTok{lm}\NormalTok{(DVMT }\OperatorTok{\textasciitilde{}}\StringTok{ }\NormalTok{.,}\DataTypeTok{data=}\NormalTok{glmnet\_df1)}
+\NormalTok{car}\OperatorTok{::}\KeywordTok{vif}\NormalTok{(model\_full)}
+\NormalTok{car}\OperatorTok{::}\KeywordTok{vif}\NormalTok{(model\_vif)}
+\CommentTok{\# ols\_vif\_tol(model\_full)}
+\CommentTok{\# ols\_coll\_diag(model\_full)}
+\CommentTok{\# table \textless{}{-} as.table(vif(model\_full))}
+\CommentTok{\# table \textless{}{-} as.table(vif(model\_vif))}
+\CommentTok{\# print(xtable((table)),floating=FALSE,latex.environments=NULL,booktabs=TRUE)}
+\CommentTok{\#write.csv(cbind(model\_vif$model[,1:2],model\_vif$fitted.values),"prediction\_vif.csv", row.names = F)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{stepwise-variable-selection}{%
+\subsubsection{Stepwise Variable selection}\label{stepwise-variable-selection}}
+
+Removing any predictor can draw down the VIF. We can take more diagnostics and comparisons, gather sufficient evidents to decide the final elimination plan.
+
+Use Stepwise AIC Regression
+
+Use Stepwise Regression based on p values (use alpha=0.05)
+
+\hypertarget{random-forest}{%
+\subsubsection{Random Forest}\label{random-forest}}
+
+\hypertarget{bayesian-feature-selection}{%
+\subsubsection{Bayesian Feature selection}\label{bayesian-feature-selection}}
+
+\hypertarget{classification}{%
+\subsubsection{Classification}\label{classification}}
+
+\hypertarget{refs}{}
+\begin{cslreferences}
+\leavevmode\hypertarget{ref-ewing_travel_2010-1}{}%
+1. Ewing, R., and R. Cervero. Travel and the Built Environment. \emph{Journal of the American Planning Association}, Vol. 76, No. 3, 2010, pp. 265--294. \url{https://doi.org/10.1080/01944361003766766}.
+
+\leavevmode\hypertarget{ref-mcfaddenConditionalLogitAnalysis1973}{}%
+2. McFadden, D. \emph{Conditional Logit Analysis of Qualitative Choice Behavior}. Institute of Urban \& Regional Development, University of California, Berkeley, Berkeley, 1973.
+
+\leavevmode\hypertarget{ref-mcfaddenModellingChoiceResidential1978}{}%
+3. McFadden, D. Modelling the Choice of Residential Location. \emph{Transportation Research Record}, No. 673, 1978.
+
+\leavevmode\hypertarget{ref-ben-akivaDiscreteChoiceAnalysis1985}{}%
+4. Ben-Akiva, M., and S. R. Lerman. \emph{Discrete Choice Analysis: Theory and Application to Travel Demand}. MIT Press, 1985.
+
+\leavevmode\hypertarget{ref-trainDiscreteChoiceMethods2003}{}%
+5. Train, K. E. \emph{Discrete Choice Methods with Simulation}. Cambridge University Press, Cambridge, 2003.
+
+\leavevmode\hypertarget{ref-albertBayesianAnalysisBinary1993a}{}%
+6. Albert, J. H., and S. Chib. Bayesian Analysis of Binary and Polychotomous Response Data. \emph{Journal of the American Statistical Association}, Vol. 88, No. 422, 1993, pp. 669--679. \url{https://doi.org/10.1080/01621459.1993.10476321}.
+
+\leavevmode\hypertarget{ref-hoffFirstCourseBayesian2009}{}%
+7. Hoff, P. D. \emph{A First Course in Bayesian Statistical Methods}. Springer-Verlag, New York, 2009.
+
+\leavevmode\hypertarget{ref-robertBayesianChoiceDecisionTheoretic2007}{}%
+8. Robert, C. \emph{The Bayesian Choice: From Decision-Theoretic Foundations to Computational Implementation}. Springer Science \& Business Media, 2007.
+
+\leavevmode\hypertarget{ref-gelmanBayesianDataAnalysis2020}{}%
+9. Gelman, A., J. B. Carlin, H. S. Stern, D. B. Dunson, A. Vehtari, and D. B. Rubin. \emph{Bayesian Data Analysis, Third Edition}. CRC Press, 2020.
+
+\leavevmode\hypertarget{ref-nhts_2009}{}%
+10. U.S. Department of Transportation, Federal Highway Administration. \emph{2009 National Household Travel Survey}. 2009.
+\end{cslreferences}
+
+
+\end{document}

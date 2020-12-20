@@ -1,0 +1,517 @@
+---
+title: Explore Bayesian Approaches for Discrete Choice models with NHTS Data
+author:
+  - name: Shen Qu
+    email: qushen@pdx.edu
+    affiliation: Portland State University
+    address: Toulan School of Urban Studies and Planning
+    address2: Portland, OR, 97201
+authorheader: Qu
+abstract: |
+  1
+
+keywords: Travel mode Choice, Bayesian statistics, Multinomial Model
+bibliography: usp657_2020.bib
+csl: transportation-research-record.csl
+wordcount:
+  words: "`r wordcountaddin::word_count(rprojroot::thisfile())`"
+  tables: 9
+  WordsPerTable: 250
+header-includes:
+   - \usepackage{booktabs}
+   - \usepackage{multicol}
+   - \usepackage{multirow}
+   - \usepackage{longtable}
+   - \usepackage{dcolumn}
+   - \usepackage{rotating}
+   - \usepackage{subfig}
+   - \usepackage{setspace}\doublespacing
+output:
+  bookdown::pdf_book:
+    base_format: rticles::trb_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = "../")
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE)
+options(scipen=100)
+options(digits=3)
+
+if (!require("pacman")) {install.packages("pacman"); library(pacman)}
+p_load_gh("jrnold/resamplr")
+p_load(dplyr, purrr, MASS, texreg, tableone,bookdown,
+       randomForest,glmnet, mgcv, MLmetrics,
+       mlogit, gmnl, lcmm, lme4, splines, corrr,
+       stringr, stargazer, pscl, modelr, AER,moments, skimr,
+       knitr, multidplyr)
+
+output_format <- knitr::opts_knit$get("rmarkdown.pandoc.to") #html/latex
+if (is.null(output_format)) {
+  output_format <- "text"
+  # properreg <- case_when(
+  #   output_format=="text" ~ screenreg,
+  #   output_format=="html" ~ htmlreg,
+  #   output_format=="pdf"  ~ texreg,
+  #   TRUE                  ~ screenreg)
+}
+br <- ifelse(output_format=="html", "<br>", "\n")
+# setwd("C:/E/PhD/courses/USP657_Fall2020/project")
+# remotes::install_github("cities-lab/rticles")
+# devtools::install_github("benmarwick/wordcountaddin", type = "source", dependencies = TRUE)
+# devtools::install_github("tidyverse/multidplyr")
+
+```
+
+
+# Research Topic
+
+Binary and polychotomous response are two typical data in Discrete choice models. A vast literature is concerned with the analysis of regression. Using some classical approaches of Probit Model, Logit Model etc., the discrete models can link to Multiple Linear Regression (MLR) models and are solved by Ordinary Least Squares (OLS) method. 
+
+In this paper, we explore the validity of Bayesian methods. Comparing to the frequentist approaches, Bayes' theorem represents a different methodology. Using computing intensive method and simulation, Bayes' methods have some unique benefits and provide some powerful tools. 
+
+Using existing packages in R language is a simple and convenient option for fitting the models. Coding also has some merits that one can adjust the arguments and get a user-defined setting to optimize or speedup the algorithm. This research will make repeated trials to examine the results from different packages and code to find their respective advantages and applicable situations.
+
+
+After testing the simulated data, This research will use the 2009 National Household Travel Survey (NHTS) as the real dataset. The application of Bayesian analysis allows us to get a new perspective of the travel behavior characteristics of the U.S. residents and to explore how they are related to the demographic attributions and spatial distributions. 
+
+- previous research
+
+Many research want to investigate the relationship between travel behavior and built environment. A famous hypothesis by Ewing and Cervero [-@ewing_travel_2010-1]
+
+
+# Literature 
+
+In 1970s, Daniel McFadden published a series of paper and identified the random utility framework for disaggregate demand models. [-@mcfaddenConditionalLogitAnalysis1973] derives the Multinomial logit model by assuming the random utilities follows the Extreme value distribution.  The underlying assumption is called independence from irrelevant alternatives (IIA), which means that adding a new alternative mode will not affect the relative proportions of other modes. [-@mcfaddenModellingChoiceResidential1978] further developed the nested logit model. Many other advanced models, such as Hierarchical model, Generalized Extreme Value (GEV) model and Mixed Logit model, are also based on this framework.
+[@ben-akivaDiscreteChoiceAnalysis1985] systematically introduce the theories of individual choice behavior and theories of sampling. This book also give some applications to Travel Demand, which includes the aggregate forecasting techniques, testing, and practical issues.
+
+Along with the development of computer technology, many advanced algorithm relied on intensive computation are developed. Researcher can get better estimation and simulation on Discrete Choice Models with these new tools. [-@trainDiscreteChoiceMethods2003] brings these new ideas together. Simulation methods help researcher solve some complex integral problems and give a numerical approximation for some formula without closed-form. For some data with small sample size, simulation can assist to construct a large dataset and make the Central Limit Theorem usable. In chapter 12 of this book, Train describes the Bayesian procedures for estimating discrete choice models. The early contribution is from [@albertBayesianAnalysisBinary1993a]'s paper. The More elaborate introduction can be found in statistic literature such as [@hoffFirstCourseBayesian2009]. While [@robertBayesianChoiceDecisionTheoretic2007] gives a more in depth look at theoretical and philosophical aspects, [@gelmanBayesianDataAnalysis2020] has many more examples and applications.
+
+# Data
+
+2009 National Household Travel Survey (NHTS) [@nhts_2009] is a nation-wide travel survey conducted by the Federal Highway Administration of US Department of Transportation that surveyed more than 150,000 households between 2008 and 2009. Travel diaries over 24 hours on the day of the survey, as well as their socio-demographic characteristics, are captured in the survey. For this study, we focus on travel modes. 
+
+
+
+- Step 1 Missing Data pattern and muliple imputation.
+
+## Missing values
+
+included_sample: 48122
+150145
+
+- Step 2 variables correlation matrix.
+
+- Step 3 variable selection by Glmnet.
+
+Glmnet is a package that fits a generalized linear model via penalized maximum likelihood. The regularization path is computed for the lasso or elastic net penalty at a grid of values for the regularization parameter lambda.
+
+cv.glmnet is the main function to do cross-validation here, along with various supporting methods such as plotting and prediction.
+
+Two selected $\lambda$'s are indicated by the vertical dotted lines. 
+lambda.min is the value of $\lambda$ that gives minimum mean cross-validated error. The other $\lambda$ saved is lambda.1se, which gives the most regularized model such that error is within one standard error of the minimum
+
+the left vertical line in our plot shows us where the CV-error curve hits its minimum. The right vertical line shows us the most regularized model with CV-error within 1 standard deviation of the minimum. 
+
+
+\[\begin{tabular}{|l|l|l|}\hline
+\multirow{2}{c}{} & \multicolumn{2}{c|}{DVMT} \\
+\cline{2-4}
+                           & no     & yes  \\\hline
+\multirow{2}{c}{Veh}&  no  &  6827  &  377 \\
+                    & yes  & 121598 & 21343 \\
+\end{tabular}\]
+
+         1      0
+  1 121598    377
+  0  21343   6827
+
+- Step 4 Fixed Effects two-step Models
+
+zero-inflation models separate the zeros into "true" and "extra" categories.
+
+Hurdle models model the zeros and non-zeros as two separate processes.
+
+Zero-inflation models may be more elegant and informative if the same predictors are thought to contribute to the extra and real zeros.
+
+Hurdle models can be useful in that they allow you to model the zeros and non-zeros with different predictors or different roles of the same predictors. Maybe one process leads to the zero/non-zero data and another leads to the non-zero magnitude.
+
+
+
+- Step 5 Fixed Effects Hurdle models
+
+Mullahy (1986), Heilbron (1989), Lambert (1992), Johnson and Kotz (1993), and Greene (1994) have analyzed an extension of the hurdle model in which the zero outcome can arise from one of two regimes.
+
+The zero inflation model can also be viewed as a type of latent class model. 
+
+whether there is a regime splitting mechanism at work or not
+
+ the basic model and the zero-inflated model are not nested.
+Setting the parameters of the splitting model to zero, for example, does not produce Prob[z = 0] = 0. In the probit case, this probability becomes 0.5, which maintains the regime split
+
+- Step 6 Mixed Effects two-step Models
+
+random parameters logit model (RPL) (also called the mixed logit model)
+random coefficients
+
+- Step 7 Mixed Effects hurdle Models
+
+- Step 8 Poisson Models for counts of trips
+
+# References
+
+# Appendices
+
+
+
+
+# Proposed Approach
+
+
+## Factorial Design
+
+Factorial Design is an elementary statistic method of examining the effects of factors. Given the different levels of treatments or attributes, a linear model can reflect the relationship between the independent variables and dependent variable. Through the Analysis of Variances (ANOVA), The model can include or exclude some 2-way or higher interaction terms.
+
+The NHTS data consists of categorical variables. Some of them, such as number of vehicles in household, can be treat as ordinal numbers. Some variable such as income can be treat as segmented numerical values. The rest variable such as race cannot be interpret as any numerical meaning. Although the data contain thousands of observations, the high dimension make each combination of factors has only one record. It makes further analysis impossible. Therefore, factorial design could be the first step of this research for model specification.
+
+<!-- An experiment is a type of research method in which you manipulate one or more independent variables and measure their effect on one or more dependent variables. Experimental design means creating a set of procedures to test a hypothesis.
+
+Step 1: Define your research question and variables
+You should begin with a specific research question in mind. You may need to spend time reading about your field of study to identify knowledge gaps and to find questions that interest you.
+
+Step 2: Write your hypothesis
+Now that you have a strong conceptual understanding of the system you are studying, you should be able to write a specific, testable hypothesis that addresses your research question.
+
+Step 3: Design your experimental treatments
+
+Step 4: Assign your subjects to treatment groups -->
+
+
+
+## Multinomial Regression
+
+Individual travel choice follows the Multinomial distribution.
+As the non-normal data, the response is a categorical variable, which cannot directly apply the linear regression models. The solution of Generalized Linear Model (GLM) is that The linear part of independent variables and coefficients are transfered to a probability distribution through a link function. Then the initial response is the results of a classification process with the corresponding probability.
+
+Transportation mode choice, the response includes several alternative mode and each observation only has one choice from them. The predictors includes the socio-economic characteristics of traveler and the factors affecting the utility.
+To connect the two parts together, we will try to use two common link function of Logit and Probit in this study, 
+
+
+## Bayesian Methods
+
+### Prior Information: We will try to find some information from existing literature. 
+
+### MCMC: By Monte Carlo approximation and Markov Chain, we can simulate the parameter values from corrdesponding posterior distribution and generate the lanten varibales. This is more straghtward method for the posterior didn't has closed form and sovle the problem of complex integration.
+
+### Gibbs Sampling: Gipps sampler can sample from the full conditional distribution and constructs a dependent sequence of parameter. In GLM, the standard conjugate prior distributions does not exits. As the geralized Gibbs algorithm, Metroplies-Hasting method can sovle this type of problems.
+
+
+
+## Hierarchical Modeling
+
+When the assumption of independent error components doesn't hold, Hierarchical generalized linear models (HGLM) can help to distinguish the within-cluster error terms and between-cluster error terms.
+
+Hierarchical Modeling contains multiple levels. The part of Multinomial Regression is treated as the first level or stage. Then the parameters in the first level are treated as random variables. 
+Frequentist statistics uses generalized linear mixed model (GLMM) divide the factors in the first level of model to fixed effects and random effects. The parameters of random effects will follow the Multivariate Normal distribution.
+Bayesian statistics focu on the different prior information in different levels.
+When the observational units provides some information in different levels, hierarchical Modeling methods can help to better understand the multiparameter problems.
+
+
+
+
+
+
+
+
+## Variable Selection
+
+### Importing data 
+
+```{r,eval=F}
+source('code/comp_dependencies.R')
+source('code/rename_variables.R')
+source('code/included_sample.R')
+source('code/est_models.R')
+```
+
+
+```{r,eval=F}
+hh_df0 <- readRDS('output/intermediate/hh_df.rds') %>% 
+  compute_dependencies() %>% 
+  rename_variables() %>% 
+  included_sample()
+
+hh_df1 <- hh_df0 %>% droplevels()
+hh_df2 <- hh_df1 %>% filter(DVMT >0)
+glmnet_df0 <- hh_df0 %>% select_variables()
+# skim(glmnet_df0) # check missingness
+# glmnet_df1 <- glmnet_df0 %>% na.omit()
+
+# glmnet_df1 %>% group_by(ZeroDVMT) %>% tally()
+
+y1 <- glmnet_df1 %>% pull(ZeroDVMT)
+wt1 <- glmnet_df1 %>% pull(hhwgt)
+glmnet_df1 <- glmnet_df1 %>% select(-ZeroDVMT, -DVMT, -hhwgt)
+
+x.mm1 <- model.matrix(~ ., glmnet_df1)
+
+fit1 <- glmnet::glmnet(x.mm1, y1, family="binomial", weights=wt1)
+cvfit1 = cv.glmnet(x.mm1, y1, family="binomial", weights=wt1)
+opt.lam1 = c(cvfit1$lambda.min, cvfit1$lambda.1se)
+coef(cvfit1, s = opt.lam1)
+
+## auto variable selection for DVMT
+
+#skim(glmnet_df2) # check missingness
+
+# glmnet_df2 <- glmnet_df0 %>% dplyr::filter(DVMT>0) %>% na.omit()
+
+y2 <- glmnet_df2 %>% pull(DVMT)
+wt2 <- glmnet_df2 %>% pull(hhwgt)
+glmnet_df2 <- glmnet_df2 %>% select(-ZeroDVMT, -DVMT, -hhwgt)
+
+x.mm2 <- model.matrix(~ ., glmnet_df2)
+
+fit2 <- glmnet::glmnet(x.mm2, log(y2), family="gaussian", weights=wt2)
+cvfit2 = cv.glmnet(x.mm2, log(y2), family="gaussian", weights=wt2)
+opt.lam = c(cvfit2$lambda.min, cvfit2$lambda.1se)
+coef(cvfit2, s = opt.lam)
+
+```
+
+
+- The full model
+
+```{r, echo=F,eval=F}
+model_full <- glm(ZeroDVMT ~ .,data=glmnet_df1,family=binomial(link="logit"))
+#write.csv(cbind(model_full$model[,1:2],model_full$fitted.values),"prediction_full.csv", row.names = F)
+# ols_regress(model_full)
+# summary(model_full)
+```
+
+
+- multicollinearity Diagnostics 
+
+```{r, echo=T,eval=F}
+model_vif <- lm(DVMT ~ .,data=glmnet_df1)
+car::vif(model_full)
+car::vif(model_vif)
+# ols_vif_tol(model_full)
+# ols_coll_diag(model_full)
+# table <- as.table(vif(model_full))
+# table <- as.table(vif(model_vif))
+# print(xtable((table)),floating=FALSE,latex.environments=NULL,booktabs=TRUE)
+#write.csv(cbind(model_vif$model[,1:2],model_vif$fitted.values),"prediction_vif.csv", row.names = F)
+```
+
+
+
+
+### Stepwise Variable selection
+
+Removing any predictor can draw down the VIF. We can take more diagnostics and comparisons, gather sufficient evidents to decide the final elimination plan.
+
+Use Stepwise AIC Regression
+
+```{r, eval=F, out.width='100%'}
+# Stepwise AIC Regression
+k <- ols_step_both_aic(model_full)
+# plot(k,cex=0.2)
+```
+
+Use Stepwise  Regression based on p values (use alpha=0.05)
+
+```{r, eval=F, out.width='33%'}
+# Stepwise Regression based on p values
+k <- ols_step_both_p(model_full)
+# plot(k)
+```
+
+
+### Random Forest
+
+```{r,eval=F,echo=F}
+library(randomForest)
+set.seed(123)
+RF_df1 <- glmnet_df1 %>% select(starts_with("D",1:5))
+#run with out of the box parameters
+model_RF<-randomForest(DVMT ~ .,data=RF_df1, proximity = FALSE)
+
+#Summarize/view model results
+model_RF
+varImpPlot(model_RF)
+plot(model_RF)
+
+```
+
+### Bayesian Feature selection
+
+```{r,eval=F,warning=F}
+ind.insample <- sample(1:178,120)
+X <- data.frame(table_habitat[-c(2,23)])
+# y <- table_habitat[23]
+y <- table_habitat[2]
+
+y_perc <- y/X$W_c_A
+X_perc <- X[c(6:13,15,19,20)]/X$W_c_A
+X_perc[12:19] <- X[c(1,4,5,14,16:18,21)]
+names(X_perc) <- c("W_m_P","W_s_P","W_a_P","L_b_P","L_v_P","W_d_P","W_ia_P","W_r_P","W_P","P","W_c_P","No","D1_P","D2_P","W_L","W_m_L","S","FE","D12_P")
+glimpse(X_perc)
+
+source("VarSelectHC.R")
+source("summaryout.R")
+
+####################################################
+# 14 Length no fixed
+# vtest <- c('RKM_2008','area_1m','perc_1_2m','MainChannel_Area','SideChannel_Area','Alcove_Area','BareBar_Area','VegetatedBar_Area','InverseAlcove_Area','Bedrock_Area','AllWetLength','MainChannelLength','Slope','Floodplain_elevation')
+
+# 7 Length no fixed
+vtest <- c("W_c_A","W_s_A","No","S","W_m_A","W_L","A")
+#----------------------------------------------------------------
+#with habitat area as a response
+datain <- data.frame(y=y[ind.insample,],X[ind.insample,vtest])  # c(vbase,vtest)
+data.holdout <- data.frame(y=y[-ind.insample,],X[-ind.insample,vtest])  # c(vbase,vtest)
+modpriorvec=c("HOP","HIP","HUP")
+
+# baseformula <- as.formula(paste(".~ ",paste0(vbase,collapse="+"))) # This can fix some variables
+theformula <- as.formula(paste("y ~",paste0(vtest,collapse="+"))) # c(vbase,vtest)
+
+res=VarSelectHC(full.formula=theformula,
+                data=datain,
+                base.formula=as.formula(. ~ 1),#baseformula,#
+                maxdeg=2,
+                nodes.to.remove=NULL,
+                SH = T,
+                model.prior.type=modpriorvec,
+                model.prior.pars = "children",
+                beta.prior.type = "IP",
+                beta.prior.pars = list(alpha=1,nu=1),
+                niter=5000)
+
+summary.res <- summaryout(mcmc.out=res,insampledata=datain,modelprior.nams=modpriorvec,
+                          shr.adj=T,outsampledata=data.holdout,respnam="y",top.ave=10,betaprtype="IP",
+                          parsprbeta=list(alpha=1,nu=1))
+
+#----------------------------------------------------------------
+vtest <- c("W_c_P","W_s_P","No","S","W_m_P","W_L","P")
+#with proportion of habitat area and other variables
+datain.prop <- data.frame(y=y_perc[ind.insample,],X_perc[ind.insample,vtest]) # c(vbase,vtest)
+data.holdout.prop <- data.frame(y=y_perc[-ind.insample,],X_perc[-ind.insample,vtest]) # c(vbase,vtest)
+
+theformula <- as.formula(paste("y ~",paste0(vtest,collapse="+"))) # c(vbase,vtest)
+
+res.prop=VarSelectHC(full.formula=theformula,
+                 data=datain.prop,
+                 base.formula=as.formula(. ~ 1),#baseformula,#
+                 maxdeg=2,
+                 nodes.to.remove=NULL,
+                 model.prior.type=modpriorvec,
+                 model.prior.pars = "children",
+                 beta.prior.type = "IP",
+                 beta.prior.pars = list(alpha=1,nu=1),
+                 niter=5000)
+
+summary.res.prop <- summaryout(mcmc.out=res.prop,insampledata=datain.prop,modelprior.nams=modpriorvec,
+                               shr.adj=T,outsampledata=data.holdout.prop,respnam="y",top.ave=10,betaprtype="IP",
+                               parsprbeta=list(alpha=1,nu=1))
+
+save(file="7plan.RData",
+     list=c("res","summary.res","res.prop","summary.res.prop"))
+```
+
+### Classification
+
+```{r,eval=F}
+##Try with classifiction by breaking area into factors##
+#create new df
+data_model_fac<-data_model_sub
+
+#Seperate data into n quartiles
+n<-3
+data_model_fac$quartile<-as.factor(ntile(data_model$Habitat_area, n))
+
+#remove habitat area data to prevent model estimating from it
+data_model_fac$Habitat_area<-NULL
+
+#run model
+model_fac<-randomForest(quartile ~., data = data_model_fac, importance = TRUE)
+model_fac
+varImpPlot(model_fac)
+plot(model_fac)
+```
+
+<!--
+
+## E16. Transportation mode to work last week ('WRKTRANS') 
+
+- PERSONAL VEHICLES: 1-8; 
+
+- BUS TRAVEL: 9-14; 
+
+- TRAIN TRAVEL: 15-18
+
+- OTHER
+  + TAXICAB: 19
+  + FERRY: 20
+  + AIRPLANE: 21
+  + BICYCLE: 22
+  + WALK: 23
+  + SPECIAL TRANSIT FOR PEOPLE WITH DISABILITIES (DIAL-A-RIDE): 24
+  + OTHER: 97 
+  + REFUSED: -7
+  + DON'T KNOW: -8 
+  + Appropriate skip: -1
+  
+## Several selected independent variables include:
+
+- C7: Race of household respondent ('HH_RACE'); 
+
+  + White: 1
+  + African American, Black: 2
+  + Asian: 3
+  + American Indian, Alaskan Native: 4
+  + Native Hawaiian, or other Pacific Islander: 5
+  + MULTIRACIAL: 6
+  + HISPANIC/MEXICAN: 7
+  + OTHER: 97
+  + REFUSED: -7
+  + DON'T KNOW: -8 
+
+
+- DV_16: Derived total household income ('HHFAMINC',Unit:\$); 
+
+  + 01 = < 5,000 
+  + 02 = 5,000 - 9,999 
+  + 03 = 10,000 - 14,999 
+  + 04 = 15,000 - 19,999 
+  + 05 = 20,000 - 24,999 
+  + 06 = 25,000 - 29,999 
+  + 07 = 30,000 - 34,999 
+  + 08 = 35,000 - 39,999 
+  + 09 = 40,000 - 44,999 
+  + 10 = 45,000 - 49,999 
+  + 11 = 50,000 - 54,999 
+  + 12 = 55,000 - 59,999 
+  + 13 = 60,000 - 64,999 
+  + 14 = 65,000 - 69,999 
+  + 15 = 70,000 - 74,999 
+  + 16 = 75,000 - 79,999 
+  + 17 = 80,000 - 99,999 
+  + 18 = 100,000-
+  + -7 = Refused
+  + -8 = Don't know
+  + -9 = Not ascertained
+
+
+- DV_18: Count of household members ('HHSIZE':1-14); 
+
+- DV_21: Count of Household Vehicles ('HHVEHCNT': 0-15,23,27).
+
+Source: <https://nhts.ornl.gov/documentation.shtml>
+
+
+
+The Oregon Household Activity Survey (OHAS) [@ohas_2011] is a comprehensive state-wide travel survey conducted by Oregon Department of Transportation (ODOT). The survey was conducted from 2009 to 2011.
+The data include the demographic and travel behavior characteristics of Oregon residents with typical weekday personal travel across the state. 
+The daily weekday household travel patterns of 17941 households randomly sampled from among the 1.5 million Oregon households. There are 4516 surveys located in ODOT Region 1 (Portland Metro).
+This data sources provide information including household social-economic status and travel characteristics. For this study, we focus on travel mode choice, including 'WABIK' (household members walk or bike to work or school at least once a week), 'WMODE' (the normally mode for getting to work), and 'SMODE' (the normally mode for getting to school).
+-->
