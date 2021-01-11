@@ -1,0 +1,934 @@
+% !TeX program = pdfLaTeX
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx,psfrag,epsf}
+\usepackage{enumerate}
+\usepackage{natbib}
+\usepackage{textcomp}
+\usepackage[hyphens]{url} % not crucial - just used below for the URL
+\usepackage{hyperref}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+%\pdfminorversion=4
+% NOTE: To produce blinded version, replace "0" with "1" below.
+\newcommand{\blind}{0}
+
+% DON'T change margins - should be 1 inch all around.
+\addtolength{\oddsidemargin}{-.5in}%
+\addtolength{\evensidemargin}{-.5in}%
+\addtolength{\textwidth}{1in}%
+\addtolength{\textheight}{1.3in}%
+\addtolength{\topmargin}{-.8in}%
+
+%% load any required packages here
+
+
+
+% Pandoc citation processing
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\begin{document}
+
+
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\if0\blind
+{
+  \title{\bf Data Augmentation with Polya-Gamma Latent Variables for
+Logistic Models}
+
+  \author{
+        Shen Qu \thanks{STAT 501 Statistical Literature and Problems;
+The Fariborz Maseeh Department of Mathematics + Statistics} \\
+    Portland State University\\
+     and \\     Supervisor Prof.~Daniel Taylor-Rodriguez \\
+    Portland State University\\
+      }
+  \maketitle
+} \fi
+
+\if1\blind
+{
+  \bigskip
+  \bigskip
+  \bigskip
+  \begin{center}
+    {\LARGE\bf Data Augmentation with Polya-Gamma Latent Variables for
+Logistic Models}
+  \end{center}
+  \medskip
+} \fi
+
+\bigskip
+\begin{abstract}
+In Bayesian Statistics, Data Augmentation (DA) methods can generate the
+auxiliary or latent variables to solve some questions that cannot sample
+directly or the probability density/mass functions doesn't have a closed
+form. This paper introduces the basic DA approaches and several
+examples. For binary response, both probit models and logitstic model
+can use Gibb's samplers to simulate the target distribution through the
+single-layer latent variables. For logitstic regression models,
+generating the posterior distribution from the Pólya--Gamma family is a
+fast, exact simulation method.
+\end{abstract}
+
+\noindent%
+{\it Keywords:} Data Augmentation, Logistic Models, Polya-Gamma
+\vfill
+
+\newpage
+\spacingset{1.45} % DON'T change the spacing!
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+Data Augmentation (DA) is a technique of newly creating synthetic data
+from existing data. In Statistics contest, DA algorithm includes, but
+not limited to Markov chain Monte Carlo (MCMC) method. There are plenty
+of mathematical and computational techniques such as EM algorithm which
+can fertilize the DA field exploration. In Deep Learning field, the DA
+techniques add some slightly modified copies of already existing data
+for increasing the amount of data \citep{shortenSurveyImageData2019}.
+This paper focus on the DA applications of MCMC in Bayesian statistics.
+It introduces the basic ideas of MCMC algorithm through several examples
+and explain its main properties and conditions, that is constructing a
+successes DA Markov chain requires the condition of \emph{Harris
+ergodic}, which includes three properties: irreducible, aperiodic, and
+Harris recurrent.
+
+These approaches can be applied on the binary response regression
+models. As a type of Generalized Linear Models (GLMs), the response is
+treated as the results of a Bernoulli process. Using a link function of
+probit or logit, one can construct a model with the dependent binary
+variable \(\mathbf{Y}\), the vectors of covariates \(\mathbf{X}\) and
+parameters \(\boldsymbol{\beta}\).
+
+There are many approaches fitting these models through the Gibb's
+samplers. From literature, we find two simple simulation methods with
+some single-layer latent variables for the probit and logistic
+regression models. In probit version, the Bayesian methods generate the
+location-mixture latent variables from two truncated normal
+distributions. For logistic models, the latent variables is drawn from
+the Polya-Gamma family. Hence, its posterior distribution is a scale
+mixture with the linear part.
+
+\hypertarget{literature}{%
+\section{Literature}\label{literature}}
+
+A main goal of Bayesian approach is to identify the posterior
+distribution. There are three main methods to estimate the target
+posterior density of \(\beta\): asymptotic expansions, numerical
+integration, and Monte Carlo integration. When the sample size is small,
+asymptotic expansions may not work well. When the canonical exponential
+families with normal or conjugate priors are concave on the log scale,
+the numerical method can converge quickly to estimate the posterior
+joint or marginal distribution \citep{ohaganKendallAdvancedTheory2004}.
+In many cases, the numerical integration is difficult for the
+high-dimension models. \citet{zellnerBayesianAnalysisDichotomous1984}
+proposed an importance sampling generalization of Monte Carlo
+simulation. They found that Monte Carlo methods are more adequate and
+efficient to achieve a good approximation.
+\citet{gelfandSamplingBasedApproachesCalculating1990} develop these
+methods to Gibbs sampling. When sampling from the conditional
+distribution is easier, Gibbs sampler is a highly useful MCMC method to
+sample from multivariate distributions. Metropolis-Hastings algorithm
+\citep{tierneyMarkovChainsExploring1994} is another important progress
+of MCMC. It is the generalized version of Gibb's sampler. A systematic
+review can be found in \citet{agrestiBayesianInferenceCategorical2005}
+and \citet{agrestiCategoricalDataAnalysis2012}.
+
+For binary response, the generalized linear models use a link function
+such as probit or logit to connect the linear part to the response.
+\citet{albertBayesianAnalysisBinary1993} provide a computational simple
+Bayesian approach for probit regression modeling. They assume the
+relationship between the binary data and the latent variables. The
+question can be solved through an underlying normal regression model.
+The models have a hierarchical prior structure as follow:
+
+\[Z\sim N_p(\boldsymbol{X\beta,I}),\quad \boldsymbol{\beta}\sim N_p(\boldsymbol{A\beta_0,\sigma^2I}), \quad (\beta_0,\sigma^2)\sim \pi(\beta_0,\sigma^2)\]
+
+where \(Z\) is the latent variable, \(\boldsymbol{\beta}\) is the
+parameter vector of the linear predictors. \(\boldsymbol{A\beta_0}\) is
+the linear subspace, and assuming \(\boldsymbol{\beta_0,\sigma^2}\) are
+independent and noninformative priors. This method can also extend to
+ordered multinomial responses and mixture models
+\citep{hoffFirstCourseBayesian2009, gelmanBayesianDataAnalysis2020}.
+
+The Bayesian logistic models using approximation methods for quite some
+time. \citet{piegorschEmpiricalBayesEstimation1996} suggest the
+parametric empirical Bayes methods using marginal maximum likelihood
+estimate hyperparameters and extend the link function.
+\citet{greenlandPuttingBackgroundInformation2001} discuss that the
+approximation may be inadequate with sparse data and they suggest to use
+conjugate priors to conduct exact analysis. A new step is that
+\citet{polsonBayesianInferenceLogistic2013} introduce an new method that
+assume the latent variables follow a Polya-Gamma distribution. It is as
+simple as \citet{albertBayesianAnalysisBinary1993} 's method, which
+don't need multiple layers. This approach assign the linear part at the
+scale parameter. \citet{choiPolyaGammaGibbsSampler2013} prove that this
+polya-gamma Gibbs sampler for logistic model is uniformly ergodic. Some
+further discussions of this DA algorithm include convergence rates of
+the DA and the Haar PX-DA algorithm
+\citep{choiConvergenceAnalysisGibbs2014}, a sandwich version of DA
+\citep{choiComparisonTheoremData2016}, and the analysis of variance
+\citep{choiAnalysisPolyaGammaGibbs2017}.
+
+\hypertarget{appoaches}{%
+\section{Appoaches}\label{appoaches}}
+
+\subsection{Basic ideas}
+\label{sec:basic}
+
+\begin{itemize}
+\tightlist
+\item
+  Expectation
+\end{itemize}
+
+Assume a random variable \(g(X)\) and pdf
+\(f_{X}(x):\mathbb{R}^{p} \to [0,\infty)\). Denote interested
+\(E[g(x)]\) is the expected value or mean of \(g(X)\)
+\citep[\emph{Def2.2.1}]{casellaStatisticalInference2002}.
+
+\[E_{f_{X}}[g(x)]= \int_{\mathbb{R}^{p}} g(x) f_{X}(x) dx\]
+
+\begin{itemize}
+\tightlist
+\item
+  Joint, conditional, and marginal density
+\end{itemize}
+
+A probability function with a bivariate random vector \(f(x,z)\) is
+called joint pdf.
+
+A marginal probability density function of X is the integral of joint
+pdf \(f(x,z)\) on X: \(f_{X}(x)=\int_{\mathbb{R}^p} f(x,z)dz\).
+
+The relationship among joint pdf, marginal pdf, and conditional pdf of
+\(X\) given \(Z\) is: \(f(x,z)=f(x|z)f(z)\)
+
+\begin{description}
+\item[\textbf{Example 1}]
+Given \(f_{X}(x)=3x^{2}I_{(0,1)}(x)\), then
+\(E[X]=\int_{0}^{1} xf_{X}(x)dx=\left.\frac34x^4\right|_0^1=0.75\).
+\end{description}
+
+Suppose the joint pdf \(f(x,z)=3xI_{(0<z<x<1)}\), then we can get all
+the rest of density functions:
+
+\[\begin{aligned}
+f_Z(z)&=\int_{z}^{1} f(x,z)dx =\frac32(1-z^2)\\
+f_{Z|X}(z|x)&=\frac{f(x,z)}{f_Z(z)}=\frac1{x}I(0<z<x)\\
+f_{X|Z}(x|z)&=\frac{f(x,z)}{f_X(x)}=\frac{2x}{1-z^2}I(z<x<1)\\
+\end{aligned}\]
+
+\begin{description}
+\item[\textbf{Example 2}:]
+Given a joint pdf
+\(f(x,z)=(\sqrt{2}\pi)^{-1}\exp\left[-(x^2-\sqrt{2}xz+z^2)\right]\),
+which is a bivariate normal density with means \(\mu_X=\mu_Z=0\),
+variances \(\sigma_X=\sigma_Z=1\), and correlation \(\rho=2^{-1/2}\), we
+can get \(f_{X}(x)\) by integral of \(f(x,z)\).
+\end{description}
+
+\[\begin{aligned}
+f_{X}(x)&=\int_{-\infty}^\infty f_{X,Z}(x,z)\,\mathrm dz \\
+&= \frac{\exp(-\frac12x^2)}{\sqrt{2\pi}}\int_{-\infty}^\infty \frac{1}{\sqrt{2\pi\frac12}}\exp\left[-\frac12(z-\frac{x}{\sqrt{2}})^2\right]\,\mathrm dz \\
+&= \frac{1}{\sqrt{2\pi}}\exp(-\frac12x^2)
+\end{aligned}\]
+
+Another way is, suppose \(f(z|x)\sim N(\frac{x}{\sqrt{2}}\frac12)\), we
+also can get
+\(f_{X}(x)=\frac{f(x,z)}{f(z|x)}=\frac{1}{\sqrt{2\pi}}\exp{(-\frac12x^2)}\)
+
+Then, we can utilize these properties to construct MCMC algorithm to
+solve the more complex questions.
+
+\begin{itemize}
+\tightlist
+\item
+  Monte Carlo approximation
+\end{itemize}
+
+In some case, \emph{constructing estimates of features of probability
+distributions are impossible or very difficult to compute analytically}
+
+\emph{if we have data from an unknown probability distribution belonging
+to a model we can estimate that distribution in some way.} \emph{if we
+have a feature (parameter) of the true distribution we want to estimate,
+use Monte Carlo to estimate the feature by random quantities generated
+using the estimated distribution. }
+\citep[ch.~10.1]{doksumMathematicalStatisticsBasic2015}
+
+Regardless of the distribution, if we draw i.i.d.
+\(g(X_{1}),g(X_{2}),\ldots,g(X_{m})\) from \(f_{X}(x)\), then, for large
+\(m\), the empirical distribution of is arbitrarily close to the
+distribution under\(f_{X}(x)\). That is
+\(\frac{1}{m}\sum_{i=1}^{m} g(X_{i})\overset{a.s}{\to}E_{f_{X}}[g(x)]\).
+
+\begin{itemize}
+\tightlist
+\item
+  Markov Chain
+\end{itemize}
+
+When it is impossible to simulate from \(f_{X}(x)\), such as
+\(f_{X}(x)\) doesn't have closed form or \(f(x,z)\) is hard to integral,
+we can construct a Markov chain. Suppose
+\(X = \{X_{i}\}^{\infty}_{i=0}\), with state space \(\mathbf{X}\). If
+the current state of the chain is \(X_{i} = x\), then the density of the
+next state, \(X_{n+1}\), is \(k(\cdot|x)\). \textbf{???}
+
+\begin{itemize}
+\tightlist
+\item
+  Markov Chain Monte Carlo (MCMC)
+\end{itemize}
+
+Markov Chain Monte Carlo is a homogeneous positive recurrent Markov
+chain
+\citep{tannerCalculationPosteriorDistributions1987, swendsenNonuniversalCriticalDynamics1987a}.
+\(K(x,x')\) is called the transition kernel which has an unique
+stationary density \(k(x'|x)\). The conditional density \(k(x'|x)\) is
+also called the Markov transition density (Mtd).
+
+Our goal is to find \(f_{X}(x)\). The conditions are that a joint pdf
+\(f:\mathbb{R}^p\times\mathbb{R}^q \to [0,\infty)\) exists, which
+includes a auxiliary real variable \(Z\). If the invariant x-marginal
+pdf \(f_{X}(x)=\int_{\mathbb{R}^q} f(x,z)dz\) holds. And the associated
+two conditional pdfs \(f_{X|Z}(x'|z)\) and \(f_{Z|X}(z|x)\) are
+applicable for simulation.
+
+We can shows that \(k(x'|x)\) is a pdf of a random variable \(X'\)
+
+\[\begin{aligned}
+\int_{X} k(x'|x)d x' &=\int_{X}\left[\int_{Z}f_{X|Z}(x'|z)f_{Z|X}(z|x) dz\right]dx'\\
+&=\int_{Z}f_{Z|X}(z|x) \left[\int_X f_{X|Z}(x'|z)dx'\right]dz\\
+&=\int_{Z}f_{Z|X}(z|x)dz=1
+\end{aligned}\]
+
+Even without the \(k(x'|x)\) in closed form, we still can simulate the
+Markov chain \(X\) as follows.
+
+\begin{quote}
+Given an initial value \(x_0\)
+\end{quote}
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Draw \(z^{(1)} \sim f_{Z |X}(\cdot|x^{(0)})\).
+\end{enumerate}
+\end{quote}
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Draw \(x^{(1)} \sim f_{X|Z} (\cdot|z^{(1)})\).
+\end{enumerate}
+\end{quote}
+
+\begin{quote}
+Repeat the two steps \ldots{}
+\end{quote}
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\roman{enumi}.}
+\tightlist
+\item
+  Draw \(z^{(i)} \sim f_{Z |X}(\cdot|x^{(i-1)})\).
+\end{enumerate}
+\end{quote}
+
+\begin{quote}
+i+1. Draw \(x^{(i)} \sim f_{X|Z} (\cdot|z^{(i)})\).
+\end{quote}
+
+\begin{quote}
+At the end, we can calculate
+\(E_{f_{X}}[g(x)]\approx\frac{1}{m}\sum_{i=1}^m g(X_i)\)
+\end{quote}
+
+\begin{description}
+\item[\textbf{Example 3}]
+The Student's \(t_4\) with four degree of freedom.
+\end{description}
+
+Assume we don't know the target
+\(f_{X}(x)=\frac38(1+\frac{x^2}4)^{-\frac52}\). We can take
+\(f(x,z)=\frac{4}{\sqrt{2\pi}}z^{\frac32}\exp\{-z(\frac{x^2}{2}+2)\} I_{(0,\infty)}(z)\),
+which satisfied \(f_{X}(x)=\int_{\mathbb{R}^p} f(x,z)dz\). Then, it is
+easy to draw from two conditional pdf of
+\((Z|X=x) \sim Gamma(\frac52,\frac{x^2}2+2)\) and
+\((X|Z=z) \sim N(0,z^{-1})\).
+
+\begin{itemize}
+\tightlist
+\item
+  Simple slice sample
+\end{itemize}
+
+The \textbf{simple slice sampler} is a DA technique through a
+\emph{stepping-out and shrinkage} procedures
+\citep{nealSliceSampling2003}. If we can factorize \(f_{X}(x)\) to
+\(q(x)l(x)\), supposing an auxiliary variable \(Z\) satisfies
+\((Z|X=x)\sim Uniform(0,l(x))\). The joint distribution over \(x\) and
+\(z\) define a region \(\{(x,z):0\le z\le l(x)\}\) under the curve of
+\(l(x)\). A random state of \(x^{(0)}\) can give a vertical ``slice''
+for all possible \(z\) bounded from zero to \(l(x^{(0)})\). Then an
+uniformly selected \(z^{(1)}\) can give a horizontal ``slice'' for all
+\(x\) inside the curve. That slice is from zero to
+\(\int_{z^{(1)}}^{l(x)} f_{X|Z}(x|z)dx\), the union of intervals that
+all \(x\) satisfy \(l(x)\ge z^{(1)}\). The next state \(x^{(1)}\) around
+\(x^{(0)}\) is accepted only if it doesn't step out the horizontal
+``slice''. Each updating will shrink \((x,z)\) until the whole region is
+explored.
+
+\begin{description}
+\item[Example 1 Cont.]
+Rewrite \(f_{X}(x)=3x^{2}I_{(0,1)}(x)=[3x I_{(0,1)}(x)][x]=q(x)l(x)\).
+\end{description}
+
+For \(l(x)=x\), the vertical slice is \(\{z|x: 0\le z\le x \}\).
+\((Z|X=x) \sim Unif(0,x)\).
+
+The horizontal slice is \(\{x|z: x\ge z\}\). Given
+\(f_{X|Z}(x|z)=\frac{2x}{1-z^2}I(z<x<1)\), The union of intervals is
+\(\int_z^x f_{X|Z}(x|z)dx=\frac{x^2-z^2}{1-z^2}\). Then
+\((X|Z=z)\sim Unif(0,\frac{x^2-z^2}{1-z^2})\)
+
+Suppose \(U \sim Unif(0,1)\), we can get \((Z|X)=xU\) and
+\((X|Z)=\sqrt{U(1-z^2)+z^2}\) by transformation.
+
+\begin{quote}
+Given an initial value \(x^{(0)}\)
+\end{quote}
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Draw \(u^{(1)} \sim Unif(0,1)\)
+\end{enumerate}
+\end{quote}
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Calculate \(z^{(1)} =x^{(0)}u^{(1)}\)
+\end{enumerate}
+\end{quote}
+
+\begin{quote}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Calculate \(x^{(1)} =\sqrt{u^{(1)}(1-(z^{(1)})^2)+(z^{(1)})^2}\).
+\end{enumerate}
+\end{quote}
+
+\begin{quote}
+Update \((x^{(i)},z^{(i)})\) by repeating step 1, 2, 3, \ldots{}
+\end{quote}
+
+\begin{quote}
+Calculate \(E_{f_{X}}[g(x)]\approx\frac{1}{m}\sum_{i=1}^m g(X_i)\)
+\end{quote}
+
+\hypertarget{properties}{%
+\subsection{Properties}\label{properties}}
+
+\hypertarget{conditions}{%
+\subsubsection{Conditions}\label{conditions}}
+
+A well-behaved Markov Chain should be Harris ergodic, which satisfies
+three properties: irreducible, aperiodic, and recurrent. A sufficient
+condition for Harris ergodicity is
+
+\[\mathcal{K}: k(x'|x)>0\quad\forall x', x\in \mathbf{X}\]
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Detailed balance}
+\end{itemize}
+
+For all \(x, x'\in \mathbf{X}\), let
+
+\[\delta(x',x)=k(x'|x)f_{X}(x)=\int_{Z} \frac{f(x',z)}{f_Z(z)}\cdot\frac{f(z,x)}{f_X(x)}f_{X}(x) dz\]
+\[\delta(x,x')=k(x|x')f_{X}(x')=\int_{Z} \frac{f(x,z)}{f_Z(z)}\cdot\frac{f(z,x')}{f_X(x')}f_{X}(x') dz\]
+
+So \(\delta(x',x)=\delta(x,x')\) is a symmetric function satisfying
+
+\[\delta(x,x')=f_X(x)k(x'|x)=f_X(x')k(x|x'), \forall x, x'\]
+
+which is called the \emph{detailed balance} condition.
+
+A type of MCMC, Metropolis Sampling Algorithm defines a symmetric Markov
+kernel \(K_0(\cdot,\cdot)\) in the original Metropolis algorithm and
+
+\[r(x,x')=\min\left(1,\frac{f_X(x')}{f_X(x)}\right)\]
+
+If and only if \(r(x,x')=\frac{\delta(x,x')}{f_X(x)K_0(x,x')}\)
+
+\[K(x,x')=r(x,x')K_0(x,x'),\quad x\neq x'\]
+
+Then \(K\) is a Markov kernel satisfying detailed balance. The Markov
+chain is reversible with respect to \(f_X(x)\). When the MCMC always
+satisfying detailed balance \(r\equiv 1\), this algorithm is called
+Gibbs' Sampler
+\citep[ch.~10.4.3]{doksumMathematicalStatisticsBasic2015}.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Invariant (stationarity)}
+\end{itemize}
+
+\(f_{X}\) is an invariant density for \(K\) when
+
+\[\int_X k(x'|x)f_{X}(x) dx= f_{X}(x')\]
+
+which means that, if \(X_n\sim f_{X}\), then \(X_{n+1}\sim f_{X}\). The
+Markov chain is time homogeneous.
+
+For the case of the multivariate distribution
+\(\boldsymbol{\beta}=(\beta_1,...,\beta_p)^T\), the Gibbs sampling
+procedure requires the stationary density is an unique distribution
+defined by the full conditionals, which mean each single component of
+the random vector given the values of the rest.
+
+\hypertarget{convergence}{%
+\subsubsection{Convergence}\label{convergence}}
+
+For a reversible Markov chain X satisfies Harris ergodicity, the
+\textbf{Strong Law of Large Numbers} holds. The marginal density of
+\(X_i\) will converge to the invariant density \(f_{X}\) no matter how
+the chain is started. Denote \(P^{n}(x,A)=Pr(X_n\in A|X_0=x)\) where
+\(A\) is a measurable set. \(\phi(A)=\int_A f_X(x)dx\). That is
+
+\[\lim_{n\to\infty}||P^{n}(x,\cdot)-\phi(\cdot)||\to 0\]
+
+where
+\(||P^{n}(x,\cdot)-\phi(\cdot)||=\underset{A}{\sup}|P^{n}(x,A)-\phi(A)|\)
+
+Let \(L^1(f_X)\) denote the set of functions
+\(h: \mathbf{X}\to \mathbb{R}\) \(\int_X |h(x)|f_X(x)dx<\infty\) and
+\(E_{f_{X}}h=\int_X h(x)f_X(x)dx\). For \(g\in L^1(f_X)\)
+
+\[\bar g_n := \frac{1}{n}\sum_{i=0}^{n-1} g(X_i)\overset{a.s}{\to}E_{f_{X}}[g(x)]\]
+
+\hypertarget{geometric-ergodicity}{%
+\subsubsection{Geometric ergodicity}\label{geometric-ergodicity}}
+
+For all \(x\in \mathbf{X}\) and all n=1,2,.., if exist a function
+\(M: \mathbf{X}\to [0,\infty)\) and a constant \(0<\rho<1\)
+
+\[||P^{n}(x,\cdot)-\phi(\cdot)||\le M(x) \rho^n\]
+
+Then the Markov chain \(X\) is geometrically ergodic.
+
+\begin{itemize}
+\tightlist
+\item
+  Drift condition
+\end{itemize}
+
+Define \(V: \mathbf{X}\to[0,\infty)\) is unbounded off compact sets,
+constants \(\lambda\in[0,1]\), and \(L\in\mathbb{R}\). If the
+\emph{drift function} \(V\) exist and
+
+\[E[V(X_{n+1}|X_n=x)]\le\lambda V(x)+L\]
+
+Then the Markov chain \(X\) is geometrically ergodic.
+
+\hypertarget{central-limit-theorems}{%
+\subsubsection{Central Limit Theorems}\label{central-limit-theorems}}
+
+Assume that \(X\) is geometrically ergodic and \(g\in L^2(f_X)\). Define
+\(\sigma^2=E_{f_{X}}g^2-(E_{f_{X}}g)^2\) and
+\(\kappa^2=\sigma^2+2\sum_{k=1}^\infty c_k< \infty\). As \(n\to\infty\)
+
+\[\sqrt{n}(\bar g_n-E_{f_{X}}g)\overset{d}{\to}N(0,\kappa^2)\]
+
+\hypertarget{minorization-regenration-and-alteernative-clt}{%
+\subsubsection{Minorization regenration and alteernative
+CLT}\label{minorization-regenration-and-alteernative-clt}}
+
+\subsection{MCMC and EM algorithm}
+\label{sec:latent}
+
+We can extend data augmentation methods by some techniques both from
+MCMC and EM (Expectation and Maximization) algorithm
+\citep{mclachlanEMAlgorithmExtensions2008}. Define \(Y\) as the observed
+data, which are sampled from a family of pdfs
+\(\{p(y|\theta):\theta\in \Theta\}\). To find the feature (parameter) of
+the true distribution, the target is the \(\theta\)-marginal posterior
+density \(\pi(\theta|y)\) and corresponding expectations
+\(E[\pi(\theta|y)]\). Suppose the \textbf{missing data},
+\(z\in Z\subset \mathbb{R}^q\) can be identified. The \textbf{complete
+data} posterior density as
+
+\[\pi(\theta,z|y)=\frac{p(y,z|\theta)\pi(\theta)}{\int_\Theta\int_{Z}p(y,z|\theta)\pi(\theta)dzd\theta}=\frac{p(y,z|\theta)\pi(\theta)}{\int_{\Theta}p(y|\theta)\pi(\theta)d\theta}=\frac{p(y,z|\theta)\pi(\theta)}{c(y)}.\]
+
+where \(p(y,z|\theta)\) represents the joint density, \(\pi(\theta)\)
+denotes the prior density, \(c(y)\) is the marginal density of the data.
+we can check that the \(\theta\)-marginal pdf is invariant:
+
+\[\int_{Z}\pi(\theta,z|y)dz=\frac{\pi(\theta)}{c(y)}\int_{Z}p(y,z|\theta)dz=\frac{p(y|\theta)\pi(\theta)}{c(y)}=\pi(\theta|y).\]
+
+This question can be solved by deterministic EM algorithm. Let
+\(\theta^{i}\) denote the current guess to the mode of the observed
+posterior \(p(\theta|y)\). \(p(\theta|z,y)\) is the augmented posterior.
+\(p(z|\theta^{i},y)\) represents the conditional predictive distribution
+of the latent data \(Z\), conditional on the current guess to the
+posterior mode. In the E-step, we can find the \(Q\)-function, the
+conditional expectation of the complete-data log likelihood function as
+
+\[Q(\theta,\theta^{i})=\int_Z\log(p(\theta|z,y))p(z|\theta^{i},y)dz\]
+
+In the M-step, \(Q\)-function is maximized with respect to \(\theta\) to
+obtain \(\theta^{i+1}\) by Coordinate-Ascent Algorithm. Continue the
+E-step and M-step until convergent. However, for the high-dimension
+\(\theta\) the \(Q\)-function is hard to differentiate.
+
+Once we can straightforwardly sample from two full posterior densities
+\(\pi(z|\theta,y)\) and \(\pi(\theta|z,y)\), then the target density
+\(\pi(\theta|y)\) can be simulated by MCMC
+\citep{mengSeekingEfficientData1999}. EM algorithm works well with
+exponential families when the log-concave property holds. But if
+\(p(z|\theta,y)\) is not ``sufficiently smooth'', the iterates
+\(\theta^{i}\) may converge to some local maxima, minima, or saddle
+stationary point of \(p(\theta|y)\). In small samples, the posterior or
+likelihood may not consistent with the normal approximation. Unlike the
+EM algorithm, the DA methods base on the entire likelihood function or
+posterior distribution. It can converge to the global maximizer and can
+also improves the inference in both small and large sample situation
+\citep{tannerToolsStatisticalInference1993}.
+
+The EM algorithm converges at a linear
+rate\citep{dempsterMaximumLikelihoodIncomplete1977}, with the rate
+depending on the proportion of information about \(\theta\) in
+\((\theta|Y)\) is observed. In contrast, MCMC can converge at a
+geometric speed, More discussions of EM and DA can be found in
+\citet{dykCrossFertilizingStrategiesBetter2010}.
+
+\textbf{Example 4} The multivariate location-scale Student's \(t\)
+density with known degree of freedom \(\nu>0\).
+
+Assume the true distribution of response
+\(Y_i\sim t_{\nu,\mu,\sigma^2}\),i=1,..,m.
+
+\[p(y|\mu,\sigma^2)=\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(y-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}\]
+
+Let the prior density \(\pi(\mu,\sigma^2)\propto 1/\sigma^2\). The
+target posterior density is
+
+\[\begin{aligned}
+\pi(\mu,\sigma^2|y)&\propto\pi(\mu,\sigma^2)\prod_{i=1}^m{p(y_i|\mu,\sigma^2)} \\
+                   &\propto(\sigma^2)^{-\frac{m+2}2}\prod_{i=1}^m(1+\frac{(y_i-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}
+\end{aligned}\]
+
+\citet{mengSeekingEfficientData1999} propose a solution by DA algorithm.
+Let \(Z=\mathbb{R}^p_{+}\) and make a i.i.d. paired vectors
+\((Y_{1:m},Z_{1:m})\), where
+\((Y_{i}|Z_{i},\mu,\sigma^2)\sim N(\mu,\sigma^2/z_i)\),
+\((Z_{i},\mu,\sigma^2) \sim Gamma(\nu/2,\nu/2)\). Then the joint density
+is
+\(p(y,z|\mu,\sigma^2)=\prod_{i=1}^mp(y_i|z_i,\mu,\sigma^2)p(z_i|\mu,\sigma^2)\)
+
+Checking the \((\mu,\sigma^2)\)-marginal density confirms that the
+condition holds.
+
+\[\begin{aligned}\int_Y p(z,y|\mu,\sigma^2)dz=&\prod_{i=1}^m\int_{\mathbb{R}_{+}}\frac{\sqrt{z_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{z_i}{2\sigma^2}(y_i-\mu)^2\right]\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}z_i^{\frac{\nu}2-1}\exp\left[-\frac{\nu}{2}z_i\right]dz_i\\
+=&\prod_{i=1}^m\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(y_i-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}\end{aligned}\]
+
+Then we can rearrange the joint pdf.
+
+\[\begin{aligned}
+p(\mu,\sigma^2,z|y)&\propto\pi(\mu,\sigma^2)p(z,y|\mu,\sigma^2)\\
+                     &\propto\frac{1}{\sigma^2}\prod_{i=1}^m\frac{\sqrt{z_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{z_i}{2\sigma^2}(y_i-\mu)^2\right]\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}z_i^{\frac{\nu}2-1}\exp\left[-\frac{\nu}{2}z_i\right]\\
+\end{aligned}\]
+
+and get the first full conditional pdf
+
+\[ \pi(z|\mu,\sigma^2,y)\propto \frac{(\frac{(y-\mu)^2}{2\sigma^2}+\frac{\nu}{2})^{(\frac{\nu+1}2)}}{\Gamma(\frac{\nu+1}2)}z^{\frac{\nu+1}2-1}\exp\left[-\left(\frac{(y-\mu)^2}{2\sigma^2}+\frac{\nu}{2}\right)z\right]\]
+
+Define \(\hat\mu=\frac{1}{z_{.}}\sum_{j=1}^my_jz_j\) The second full
+conditional pdf is
+
+\[\begin{aligned}
+\pi(\mu|\sigma^2,y,z)&\propto\exp\left[-\frac{\sum z_j}{2\sigma^2}\mu^2+\frac{\sum z_jy_j}{\sigma^2}\mu\right]\\
+&\propto\exp\left[-\frac{z_.}{2\sigma^2}(\mu-\frac{\sum y_jz_j}{z_{.}})^2\right]\\
+&\propto\frac{\sqrt{z_.}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{z_.}{2\sigma^2}(\mu-\hat\mu)^2\right]
+\end{aligned}\]
+
+Define \(\hat\sigma^2=\frac{1}{z_{.}}\sum_{j=1}^mz_j(y_j-\hat\mu)^2\).
+The third full conditional pdf can get by
+
+\[\begin{aligned}
+\pi(\sigma^2|y,z)&= \int_{\mathbb{R}}p(\mu,\sigma^2,z|y)d\mu\\
+               &\propto \frac{(\frac{z_{.}\hat\sigma^2}2)^{\frac{m+1}2}}{\Gamma(\frac{m+1}2)} \sigma^{-m-1}\exp\left[-\frac{z_{.}\hat\sigma^2}{2\sigma^2}\right]
+\end{aligned}\]
+
+Thus, we can simulate \((\mu,\sigma^2)\) by three steps:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Draw \((Z_i|\mu,\sigma^2,y)\) from
+  \(Gamma(\frac{\nu+1}2,\frac{1}2(\frac{(y_i-\mu)^2}{\sigma^2}+\nu))\).
+\item
+  Draw \((\sigma^2|y,z)\) from
+  \(IG(\frac{m+1}2,\frac{z_{.}\hat\sigma^2}2)\).
+\item
+  Draw \((\mu|\sigma^2,y,z)\) from
+  \(N(\hat\mu,\frac{\sigma^2}{z_{.}})\).
+\end{enumerate}
+
+\hypertarget{probit-models}{%
+\section{Probit Models}\label{probit-models}}
+
+Probit models is one type of Generalized Linear Models. Suppose the
+binary response \(Y_1,..,Y_n\sim Bern(p_i)\) is the observed data with
+sample size \(n\). \(X_i^T=(X_{i1},..,X_{ip})\) known \(p\) covariates.
+\(\beta_{k\times1}\) is the unknown vector of parameters we want to
+estimate.
+
+To construct a regression model, suppose a known CDF \(H(\cdot)\) as the
+link function with the linear part \(\mathbf{x}_i^T\boldsymbol{\beta}\)
+Then, let \(p_i=H(\mathbf{x}_i^T\boldsymbol{\beta})\).
+
+Denote \(\pi(\boldsymbol{\beta})\) as the prior density. The target
+conditional density is \[
+\pi(\boldsymbol{\beta}|y) = \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{k}H (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-H(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}
+\]
+
+where \(c(y)\) is free from \(\beta\)
+\[C(y)=\int\pi(\boldsymbol{\beta})\prod_{i=1}^{k}H (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-H(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}d\boldsymbol{\beta}\]
+
+When \(H(\cdot)\) represents the standard normal CDF, it obtains the
+probit model. When \(H(\cdot)\) is logistic CDF, it is the logistic
+model.
+
+While the logistic models have a close form, probit models cannot
+compute in closed form and are hard to integral.
+
+Sampling from the posterior density \(\pi(\boldsymbol{\beta}|y)\) with
+high dimension is also problematic. (why)
+
+\citet{albertBayesianAnalysisBinary1993} propose a DA algorithm to
+estimate the exact posterior distribution of \(\beta\). This
+simulation-based approach introduces latent variables
+\(Z_1,..Z_N\overset{iid}{\sim} N(\mathbf{x}_i^T\boldsymbol{\beta},1)\).
+The relationship between observed data and missing data is
+\(y_i=\begin{cases}1&\text{if } z_i>0\\0&\text{if }z_i\le0\end{cases}\).
+The joint mass function is
+
+\[\begin{aligned}
+\pi(\boldsymbol{\beta,z|y}) &= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}[p(y_i|\beta)]f(z_i|\beta)\\
+&\propto\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\left[\Phi (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-\Phi(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}\right]\phi (z_{i}|\beta)\\
+&=\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\left[1_{z_i>0}1_{y_i=1}+1_{z_i\le0}1_{y_i=0}\right]\phi (z_{i}|\beta)\\
+\end{aligned}\]
+
+where \(\Phi\) is a standard normal CDF, \(\phi\) is a normal pdf with
+means equal \(\mathbf{x}_i^T\boldsymbol{\beta}\) and variances equal
+one.
+
+Assign a flat prior to \(\beta\), we can get the first conditional
+posterior density:
+
+\[\pi(\boldsymbol{\beta|y,Z})\propto \prod_{i=1}^{N}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1)\]
+
+For a multivariate linear model
+\(\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}\) where
+\(\boldsymbol{\varepsilon}\sim N_N(0,\mathbf{I})\), the least squares
+estimates have
+\(\hat\beta=(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z}\) and
+\(\hat\sigma^2_\beta=(\mathbf{X}^T\mathbf{X})^{-1}\). Thus, we can draw
+\(\boldsymbol{\beta|y,Z}\) from
+\(N_k(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z},(\mathbf{X}^T\mathbf{X})^{-1})\)
+
+The second conditional posterior pdf is
+
+\[Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)\begin{cases}\text{truncated at the left by 0} & \text{if } y_i=1 \\
+ \text{truncated at the right by 0} & \text{if } y_i=0 \end{cases}\]
+
+\hypertarget{logistic-models}{%
+\section{Logistic Models}\label{logistic-models}}
+
+In logistic models, the link function
+\(p_{i}=H(z_i)= \frac{e^{\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\).
+The log odds of success \(H^{-1}(p_i)=\log(\frac{p_i}{1-p_i})\)
+
+The joint pmf is
+
+\[\begin{aligned}
+\pi(\boldsymbol{\beta|y}) &= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}[p(y_i|\beta)]\\
+&\propto\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\left[(\frac{e^{\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}})^{y_i}(1-\frac{e^{\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}})^{1-y_i}\right]\\
+&=\pi(\boldsymbol{\beta})\prod_{i=1}^{N}\left[\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\right]\\
+\end{aligned}\]
+
+\hypertarget{single-layer-da-methods}{%
+\subsection{Single-layer DA methods}\label{single-layer-da-methods}}
+
+\citet{polsonBayesianInferenceLogistic2013} propose a DA approach which
+only need a single layer of latent variables, which involve the
+Pólya--Gamma distribution. Denote
+\(W_i \sim PG(1,\boldsymbol{|X'_{i,1:p}\beta|})\),i=1:n, then (no
+absolute value in polson2013)
+
+\[f(\omega|\beta)=\cosh{(\frac12\boldsymbol{x^T\beta})}\exp\left[-\frac12(\boldsymbol{x^T\beta})^2\omega\right]g(\omega)\]
+
+where \(\cosh{c}=\frac12(e^c+e^{-c})=\frac{1+e^2c}{2e^{c}}\),
+\(g(\omega)\) is free of \(\beta\) s.t.
+
+\[g(\omega)=\sum_n^\infty(-1)^n\frac{2n+1}{\sqrt{2\pi\omega^3}}\exp[-\frac{(2n+1)^2}{8\omega}]\mathbb{I}_{(0,\infty)}(\omega)\]
+
+Since \(y\) is observed data, \(\pi(\omega|\beta,y)=f(\omega|\beta)\).
+
+Assign the prior of \(\boldsymbol{\beta}\) is
+\(\sim N_p(b,\boldsymbol{B})\)
+
+\[\begin{aligned} 
+\pi(\boldsymbol{\beta,\omega|y})&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}[p(y_i|\beta)]f(\omega_i|\beta)\\
+&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}\left[\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\right]\cosh{(\frac12\boldsymbol{x_i^T\beta})}\exp\left[-\frac12(\boldsymbol{x_i^T\beta})^2\omega_i\right]g(\omega_i)\\
+&\propto\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\cdot\frac{1+e^{\boldsymbol{x_i^T\beta}}}{2e^{\frac12\boldsymbol{x_i^T\beta}}}\exp\left[-\frac12(\boldsymbol{x_i^T\beta})^2\omega\right]\\
+&=2^{-n}\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\exp\left[(y_i-\frac12)\mathbf{x}_i^T\boldsymbol{\beta}-\frac12(\boldsymbol{x_i^T\beta})^2\omega_i\right]\\
+\end{aligned}\]
+
+When \(\omega_i\) is known,
+\(\pi(\boldsymbol{\beta,\omega|y})=\pi(\boldsymbol{\beta|\omega,y})\).
+Let \(\boldsymbol{\Omega}=diag_n(\mathbf{\omega_i})\);
+\(\boldsymbol{\kappa}=\mathbf{y_{1:n}}-\frac12\) Then we get to
+conditional pmfs of \(\pi(\boldsymbol{\beta|\omega,y})\)
+
+\[\begin{aligned} 
+\pi(\boldsymbol{\beta|\omega,y})&\propto\exp\left\{-\frac12\left[\boldsymbol{\beta'(X'\Omega X+B^{-1})\beta-2\beta'(X'\kappa+B^{-1}b)}\right]\right\}\\
+&\propto\exp\left\{-\frac12\boldsymbol{V_\omega^{-1}[\beta'I\beta-2\beta'V_\omega(X'\kappa+B^{-1}b)]}\right\}\\
+&\propto\exp\left\{-\frac12\boldsymbol{(\beta-m_\omega)'V_\omega^{-1}(\beta-m_\omega)}\right\}\\
+\end{aligned}\] where
+\(m_\omega=\underset{(p\cdot p)}{V_\omega}(\underset{(p\cdot n)}{X^T}(\mathbf{y_{1:n}}-\frac12)+B^{-1}b)\);
+\(V_\omega=(X^T\Omega X+B^{-1})^{-1}\). Then we confirm that
+\(\boldsymbol{\beta|\omega,y}\sim N_p(m_\omega,V_\omega)\)
+
+To sample from the posterior distribution using the Pólya--Gamma method,
+simply iterate two steps:
+
+\[\begin{aligned}
+(\omega_i|\boldsymbol{\beta})&\sim PG(n_i,x_i^T\boldsymbol{\beta})\\
+(\boldsymbol{\beta}|y,\omega)&\sim N(m_\omega,V_\omega)
+\end{aligned}\]
+
+\hypertarget{other-bayesian-methods}{%
+\subsection{Other Bayesian methods}\label{other-bayesian-methods}}
+
+One method is similar with \citet{albertBayesianAnalysisBinary1993}. Let
+\(y_i=\begin{cases}1&\text{if } z_i>0\\0&\text{if }z_i\le0\end{cases}\).
+The \emph{latent utilities}
+\(z_i=\mathbf{x}_i^T\boldsymbol{\beta}+\varepsilon_i\),
+\(\varepsilon_i\sim Logistic(1)\)
+
+The standard approach has been to add another layer of auxiliary
+variables to handle the logistic error model on the latent-utility
+scale. One strategy is to represent the logistic distribution as a
+normal-scale mixture
+
+\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=(2\lambda_i)^2; \lambda_i\sim KS(1)\quad\text{Kolmogorov–Smirnov distribution}\]
+
+Alternatively, one may approximate the logistic error term as a discrete
+mixture of normals.
+
+\[(\epsilon_i|\phi_i)\sim N(0,\phi_i);\quad \phi_i=\sum_{k=1}^K\omega_k\delta_{\phi^{(k)}}\]
+
+where \(\delta_{\phi}\) indicates a {\emph{Dirac measure}} at \(\phi\).
+The weights \(\omega_k\) and the points \(\phi^{(k)}\) in the discrete
+mixture are fixed for a given choice of \(k\) so that \emph{{the
+Kullback--Leibler divergence}} from the true distribution of the random
+utilities is minimized. Frühwirth-Schnatter and Frühwirth (2010) found
+that the choice of \(K=10\) leads to a good approximation.
+
+The discrete mixture of normals is an approximation, but it outperforms
+the scale mixture of normals in terms of effective sampling rate, as it
+is much faster.
+
+\[\begin{tabular}{|l|l|l|}\hline
+                 & {Albert and Chib (1993)} & Polson et al. (2013) \\\hline
+{Gaussian}         & location mixture  & scale mixture \\
+{Latent variables} & truncated normals & Polya-Gamma \\\hline
+\end{tabular}\]
+
+One may also arrive at the hierarchy above by manipulating the random
+utility derivation of McFadden (1974)
+
+The dRUM. One must use a table of different weights and variances
+representing different normal mixtures, to approximate a finite
+collection of type-III logistic distributions, and interpolate within
+this table to approximate the entire family.
+
+Another approximation: the use of a Student-t link function as a close
+substitute for the logistic link. This also introduces a second layer of
+latent variables, in that the Student-t error model for \(z_i\) is
+represented as a scale mixture of normals.
+
+\hypertarget{other-frequentist-methods}{%
+\subsection{Other Frequentist methods}\label{other-frequentist-methods}}
+
+\hypertarget{mle-methods}{%
+\subsubsection{MLE methods}\label{mle-methods}}
+
+\hypertarget{em-algoritm}{%
+\subsubsection{EM Algoritm}\label{em-algoritm}}
+
+\hypertarget{implementation}{%
+\subsection{Implementation}\label{implementation}}
+
+\hypertarget{summary}{%
+\subsection{Summary}\label{summary}}
+
+\emph{Our data-augmentation scheme differs from each of these approaches
+in several ways.}
+
+\emph{it does not appeal directly to the random-utility interpretation
+of the logit model. Instead, it represents the logistic CDF as a mixture
+with respect to an infinite convolution of gammas.}
+
+\emph{the method is exact, in the sense of making draws from the correct
+joint posterior distribution, rather than an approximation to the
+posterior that arises out of an approximation to the link function.}
+
+\emph{like the Albert and Chib (1993) method, it requires only a single
+layer of latent variables.}
+
+\emph{In binary logit models, the Pólya--Gamma is more efficient than
+all previously proposed data-augmentation schemes.}
+
+\emph{the Pólya--Gamma method always had a higher effective sample size
+than the two default Metropolis samplers we tried. }
+
+\emph{the Pólya--Gamma method truly shines when the model has a complex
+prior structure.}
+
+\bibliographystyle{agsm}
+\bibliography{stat501.bib}
+
+\end{document}

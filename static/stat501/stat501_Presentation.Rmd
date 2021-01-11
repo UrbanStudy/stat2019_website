@@ -1,0 +1,1056 @@
+---
+title: 'STAT 501: Statistical Literature and Problems'
+author: "Shen Qu"
+subtitle: Data Augmentation with Polya-Gamma Latent Variables for Logistic Models 
+runtime: shiny
+output:
+  html_document: default
+  ioslides_presentation: 
+    fig_width: 8
+    fig_height: 5
+    incremental: no
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  slidy_presentation: 
+    duration: 45
+header-includes:
+- \usepackage{amssymb}
+- \usepackage{amsmath}
+---
+
+
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = F,collapse = T)
+options(width = 2000)
+options(scipen=6)
+options(digits=4)
+if (!require(pacman)) {install.packages("pacman"); library(pacman)}
+p_load(mixtools,scales, shiny, shinythemes,TTR,BayesLogit,mvtnorm,pander) #,EnvStats
+# mixtools, for ellipse # scales::alpha #
+# html_document: 
+```
+
+## Basic Ideas
+
+- In the context of Statistics
+
+A Markov chain Monte Carlo (MCMC) method is called the data augmentation (DA) algorithm.
+
+- In the context of Deep Learning
+
+Data augmentation in data analysis are techniques used to increase the amount of data by adding slightly modified copies of already existing data or newly created synthetic data from existing data. 
+
+Shorten, C., Khoshgoftaar, T.M. A survey on Image Data Augmentation for Deep Learning. J Big Data 6, 60 (2019). https://doi.org/10.1186/s40537-019-0197-0
+
+## Motivation
+
+Assume pdf $f_X(x):\mathbb{R}^p \to [0,\infty)$, and suppose we want to estimate $E[g(x)]$.
+
+$$E_{f_X}[g(x)]= \int_{\mathbb{R}^p} g(x) f_X(x) dx$$
+Regardless of the distribution, if we have $g(X_1),g(X_2),\ldots,g(X_m) \overset{iid}{\sim} f_X(x)$ 
+
+then $\frac{1}{m}\sum_{i=1}^m g(X_i)$ is a good estimator for $E(g)$.
+
+--- 
+
+When it is impossible to simulate from $f_X(x)$, constructing a Markov chain.
+
+Find a joint pdf $f:\mathbb{R}^p\times\mathbb{R}^q \to [0,\infty)$ that satisfies two properties
+
+1. an invariant x-marginal pdf 
+
+$$f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$$
+
+$$f_Y(y)=\int_{\mathbb{R}^p} f(x,y)dx$$
+
+2. applicable simulating from the associated conditional pdfs, 
+
+$$f_{X|Y}(x|y)$$
+
+$$f_{Y|X}(y|x)$$.
+
+---
+
+Then, the Markov transition density (Mtd) is
+
+$$k(x'|x)=\int_Y f_{X|Y}(x'|y)f_{Y|X}(y|x) dy$$
+$$\begin{align}
+\int_Xk(x'|x)dx'&=\int_X\left[\int_Y f_{X|Y}(x'|y)f_{Y|X}(y|x) dy\right]dx'\\
+&=\int_Yf_{Y|X}(y|x) \left[\int_X f_{X|Y}(x'|y)dx'\right]dy\\
+&=\int_Yf_{Y|X}(y|x)dy=1
+\end{align}$$
+
+Definition: a Markov chain, $X = \{X_i\}^\infty_{i=0}$,with state space X. 
+If the current state of the chain is $X_i = x$, then the density of the next state, $X_{n+1}$, is $k(·|x)$.
+
+---
+
+Property: Symmetric $k(x'|x)=k(x|x')$
+
+$$k(x',x)=k(x'|x)f_X(x)=\int_Y \frac{f(x',y)f(y,x)}{f_Y(y)} dy$$
+$$k(x,x')=k(x|x')f_X(x')=\int_Y \frac{f(x,y)f(y,x')}{f_Y(y)} dy$$
+
+Property: For a well-behaved Markov chain X,, the marginal density of $X_i$
+will *converge* to the invariant density $f_X$ no matter how the chain is started.
+
+$$\frac{1}{m}\sum_{i=1}^m g(X_i)\overset{a.s}{=}E_{f_X}[g(x)]$$
+s.t. $P\left(\lim_\limits{n\to\infty}|\frac{1}{m}\sum_{i=1}^m g(X_i)-E_{f_X}[g(x)]|<\varepsilon\right)=1$
+
+## DA Algorithm:
+
+Goal: ($f_X(x)$)
+
+Condition: [$f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$]
+
+1. Draw $Y \sim f_{Y |X}(·|x)$.
+
+2. Draw $X_{i+1} \sim f_{X|Y} (·|y)$.
+
+Tanner and Wong (1987), Swendsen and Wang (1987)
+
+## Ex1: Bivariate Normal Density
+
+
+```{r,echo=F}
+# Function to draw ellipse for bivariate normal data
+ellipse_bvn <- function(bvn, alpha){
+  Xbar <- apply(bvn,2,mean)
+  S <- cov(bvn)
+  ellipse(Xbar, S, alpha = alpha, col="red")
+}
+```
+
+```{r,echo=F,eval=F}
+# method 1
+rbvn<-function (n, m1, s1, m2, s2, rho){
+     X1 <- rnorm(n, mu1, s1)
+     X2 <- rnorm(n, mu2 + (s2/s1) * rho *
+           (X1 - mu1), sqrt((1 - rho^2)*s2^2))
+     cbind(X1, X2)
+}
+bvn <- rbvn(N,mu1,s1,mu2,s2,rho)
+# method 2
+bvn <- MASS::mvrnorm(N, mu = mu, Sigma = sigma )
+# method 3
+M <- t(chol(sigma)) # M %*% t(M)
+Z <- matrix(rnorm(2*N),2,N) # 2 rows, N/2 columns
+bvn <- t(M %*% Z) + matrix(rep(mu,N), byrow=TRUE,ncol=2)
+
+colnames(bvn) <- c("bvn_X1","bvn_X2")
+```
+
+
+```{r echo = FALSE}
+# Target parameters for univariate normal distributions
+N <- 2000 ;mu1 <- 0; s1 <- 1; mu2 <- 0; s2 <- 1; rho <- 1/sqrt(2)
+# Parameters for bivariate normal distribution
+mu <- c(mu1,mu2); s <- c(s1,s2) # Mean
+sigma <- matrix(c(s1^2, s1*s2*rho, s1*s2*rho, s2^2),2) # Covariance matrix
+```
+
+($X \sim N(0,1)$; $Y \sim N(0,1)$)
+
+[$X,Y \sim N_2(0,1,\frac{1}{\sqrt 2})$; $f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$]
+
+1. Draw $(Y|X=x) \sim N(\frac{x}{\sqrt 2},\frac12)$.
+
+2. Draw $(X|Y=y) \sim N(\frac{y}{\sqrt 2},\frac12)$.
+
+
+```{r}
+g.bvn<-function (n, mu1, s1, mu2, s2, rho){
+  x <- 0; y <- 0; 
+  mat      <- matrix(ncol=2,nrow = n)
+  mat[1, ] <- c(x, y)
+  for (i in 2:n) {
+    x <- rnorm(1, mu1+(s1/s2)*rho*(y-mu2), sqrt((1-rho^2)*s1^2))
+    y <- rnorm(1, mu2+(s2/s1)*rho*(x-mu1), sqrt((1-rho^2)*s2^2))
+    mat[i, ] <- c(x, y)} 
+  colnames(mat) <- c("X","Y"); mat}
+```
+
+
+---
+
+```{r,echo=F}
+ui <- fluidPage(theme = shinytheme("lumen"),
+#  titlePanel("BVN"),
+      tabsetPanel(
+      tabPanel("scatter & trace", plotOutput("plot1", height = "300px")),
+      tabPanel("running average & histogram", plotOutput("plot2", height = "300px"))
+      ),
+hr(), #actionButton("update", "Update View")
+  fluidRow(
+column(2,sliderInput("mu1", label = "mean1:",min = -5, max = 5, value = 0, step = 1)),
+column(2,sliderInput("s1", label = "sd1:",min = 0.3, max = 1.5, value = .9, step = .3)),
+column(2,sliderInput("mu2", label = "mean2:",min = -5, max = 5, value = 0, step = 1)),
+column(2,sliderInput("s2", label = "sd2:",min = 0.3, max = 1.5, value = .9, step = .3)),
+column(2,sliderInput("rho", label = "correlation:",min = 0, max = 1, value = 1/sqrt(2), step = .1)),
+column(2,sliderInput("N", label = "Sampling Size:",min = 500, max = 2000, value = 1000, step = 100)
+    )
+  )
+)
+
+server <- function(input, output) {
+  bvn.dy <- reactive({ #    req(input$update)
+    g.bvn(input$N,input$mu1,input$s1,input$mu2,input$s2,input$rho)
+  })
+
+  output$plot1 <- renderPlot({
+    color = "#434343" #    par(mar = c(4, 4, 1, 1))    
+    par(mfrow=c(1,2))
+    plot(x = bvn.dy(),col=alpha("steelblue", 0.4))
+    ellipse_bvn(bvn.dy(),.5)
+    ellipse_bvn(bvn.dy(),.05)  
+    plot(bvn.dy(),type="l",col=alpha("steelblue", 0.4),lwd=.1)
+  })
+  output$plot2 <- renderPlot({  
+    par(mfrow=c(1,2))
+    plot(cumsum(bvn.dy()[,1])/1:input$N,main=bquote(mu[.(1)]),
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+    abline(h=input$mu1,col="red")
+  hist(bvn.dy()[,1],40,freq = F, xlab="X",main= "")
+  curve(dnorm(x,input$mu1,input$s1),add = T,col=2)
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+```{r,eval=F,echo=F}
+par(mfrow=c(2,3))
+for(i in 1:2){
+plot(bvn,type = "n", xlab="X1",ylab="X2")# 
+points(bvn,col=alpha("steelblue", 0.4),pch=1,cex = 0.1)
+ellipse_bvn(bvn,.5)
+ellipse_bvn(bvn,.05)
+# plot(bvn,type="l",col=alpha("steelblue", 0.4),lwd=.1)
+plot(cumsum(bvn[,i])/1:N,main=bquote(mu[.(i)]),
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=mu[i],col="red")
+hist(bvn[,i],40,freq = F, xlab=bquote(X[.(i)]),main= "")
+curve(dnorm(x,mu[i],s[i]),add = T,col=2)
+# lines(density(bvn[,i]), col = "steelblue", lwd = 2)
+}
+```
+
+
+
+## Ex2: Simple Slice Sampler (Neal, 2003)
+
+($f_X(x)=3x^2I_{(0,1)}(x)$; $E[X]=\int_{0}^1 xf_X(x)dx=0.75$)
+
+[$f(x,y)=3xI(0<y<x<1)$; $f_X(x)=\int_{0}^x f(x,y)dy$]
+
+$f_Y(y)=\int_{y}^1 f(x,y)dx=\frac32(1-y^2)$
+
+$f_{Y|X}(y|x)=\frac1xI(0<y<x)$
+
+$f_{X|Y}(x|y)=\frac{2x}{1-y^2}I(y<x<1)$
+
+$\int_{y}^xf_{X|Y}(x|y)dx=\frac{x^2-y^2}{1-y^2}I(0<y<x<1)\sim Unif(0,1)$
+
+---
+
+1. Draw $(Y|X=x) \sim Unif(0,x)$ and $U \sim Unif(0,1)$.
+
+2. Update $(X|Y=y,U=u) =\sqrt{u(1-y^2)+y^2}$.
+
+
+```{r}
+g.ex2<-function (n){
+  x <- .5
+  y <- .5
+  X <- NA
+  for (i in 1:n) {
+    y <- runif(1,0,x)
+    u <- runif(1,0,1)
+ X[i] <- x <- sqrt(u*(1-y^2)+y^2)
+      }
+X}
+```
+
+```{r,eval=F, echo=F}
+ex2<- gibbs(N)
+```
+
+---
+
+```{r, echo=F}
+ui <- fluidPage(theme = shinytheme("lumen"),
+      plotOutput("plot3", height = "360px"), # 
+hr(), #actionButton("update", "Update View")
+sliderInput("N", label = "Sampling Size:",min = 500, max = 2000, value = 1000, step = 100)
+)
+server <- function(input, output) {
+ex2_dy <- reactive({g.ex2(input$N)})
+
+output$plot3 <- renderPlot({
+  par(mfrow=c(1,2))
+  plot(cumsum(ex2_dy())/1:input$N,main="E[X]",
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=3/4,col="red")
+  hist(ex2_dy(),40,freq = F, xlab="X",main= "")
+  curve(3*x^2,add = T,col=2)
+})
+}
+shinyApp(ui = ui, server = server)
+```
+
+
+```{r,eval=F,echo=F}
+par(mfrow=c(1,2))
+plot(cumsum(ex2)/1:N,main="",
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+abline(h=3/4,col="red")
+hist(ex2,40,freq = F, xlab="",main= "")
+curve(3*x^2,add = T,col=2)
+```
+
+
+## Ex3: t: Normal-Gamma
+
+($X\sim t_4$, $f_X(x)=\frac38(1+\frac{x^2}4)^{-\frac52}$)
+
+[$f(x,y)=\frac{4}{\sqrt{2\pi}}y^{\frac32}\exp\{-y(\frac{x^2}{2}+2)\} I_{(0,\infty)}(y)$ ]
+
+1. Draw $(Y|X=x) \sim Gamma(\frac52,\frac{x^2}2+2)$.
+
+2. Draw $(X|Y=y) \sim N(0,y^{-1})$.
+
+```{r}
+g.t<-function (n){
+  x <- 1;y <- 1 ; X <- NA
+  for (i in 1:n) {
+    y <- rgamma(1,5/2,(x^2/2+2))    
+    X[i] <- x <- rnorm(1, 0, 1/sqrt(y))
+  }
+  X
+}
+```
+
+```{r, eval=F,echo=F}
+t_N.G<- gibbs(N)
+2*var(t_N.G)/(var(t_N.G)-1)
+```
+
+---
+
+```{r, echo=F}
+ui <- fluidPage(theme = shinytheme("lumen"),
+      plotOutput("plot4", height = "360px"), 
+hr(), 
+sliderInput("N", label = "Sampling Size:",min = 500, max = 2000, value = 1000, step = 100)
+)
+
+server <- function(input, output) {
+t_N.G_dy <- reactive({g.t(input$N)})
+
+output$plot4 <- renderPlot({
+  par(mfrow=c(1,2))
+  plot(cumsum(t_N.G_dy())/1:input$N,main="E[X]",
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=0,col="red")
+  hist(t_N.G_dy(),40,freq = F, xlab="X",main= "")
+  curve(dt(x,4),add = T,col=2)
+})
+}
+shinyApp(ui = ui, server = server)
+```
+
+
+```{r,eval=F,echo=F}
+par(mfrow=c(1,2))
+plot(cumsum(t_N.G)/1:N,main="",
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=0,col="red")
+hist(t_N.G,40,freq = F, xlab="X",main= "",xlim = c(-5,5))
+curve(dt(x,4),add = T,col=2)
+```
+
+## Ex4:  Location-scale student's t
+
+EM algorithm (Dempster et al., 1977). 
+
+($Z_i\sim t_{\nu,\mu,\sigma^2}$,i=1,..,m, $f_Z(z)=\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}$)
+
+$p(z,y|\mu,\sigma^2)=\prod_{i=1}^m\underbrace{\frac{\sqrt{y_i}}{\sqrt{2\pi\sigma^2}}e^\left[-\frac{y_i}{2\sigma^2}(z_i-\mu)^2\right]}_{N(\mu,\sigma^2/y_i)}\underbrace{\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}y_i^{\frac{\nu}2-1}e^\left[-\frac{\nu}{2}y_i\right]}_{Gamma(\nu/2,\nu/2)}$
+
+$$\begin{align}\int_Y p(z,y|\mu,\sigma^2)dy=&\prod_{i=1}^mp(z_i|y_i,\mu,\sigma^2)p(y_i|\mu,\sigma^2)dy_i\\
+=&\prod_{i=1}^m\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z_i-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}\end{align}$$
+
+---
+
+$p((\mu,\sigma^2),y|z)\propto\pi(\mu,\sigma^2)p(z,y|\mu,\sigma^2)=\frac{1}{\sigma^2}p(z,y|\mu,\sigma^2)$
+
+
+1. Draw $(Y_i|\mu,\sigma^2,z) \sim Gamma(\frac{\nu+1}2,\frac{1}2(\frac{(z_i-\mu)^2}{\sigma^2}+\nu))$.
+
+   $\hat\mu=\frac{1}{y_{.}}\sum_{j=1}^mz_jy_j$, $\hat\sigma^2=\frac{1}{y_{.}}\sum_{j=1}^my_j(z_j-\hat\mu)^2$
+
+2. Draw $(\sigma^2|y,z) \sim IG(\frac{m+1}2,\frac{y_{.}\hat\sigma^2}2)$.
+
+3. Draw $(\mu|\sigma^2,y,z) \sim N(\hat\mu,\frac{\sigma^2}{y_{.}})$.
+
+A more general DA algorithm developed by Meng and van Dyk (1999) 
+
+---
+
+```{r}
+g.tls<-function (n,nu,z,step=20){
+  m       <- length(z)
+  y       <- rgamma(m,nu/2,nu/2)
+  y.      <- sum(y)
+  mu      <- sum(z*y)/y.
+sigma.sq  <- sum((z-mu)^2*y)/y.
+theta     <- matrix(ncol = 2, nrow = n)  
+theta[1,] <- c(mu,sigma.sq)  
+  for (i in 1:n) {
+          y  <- rgamma(m,(nu+1)/2,((z-mu)^2/sigma.sq+nu)/2)  
+          y. <- sum(y)
+      hat.mu <- sum(z*y)/y.
+hat.sigma.sq <- sum((z-hat.mu)^2*y)/y.   
+    sigma.sq <- 1/rgamma(1, (m+1)/2, (hat.sigma.sq*y./2))    
+          mu <- rnorm(1, hat.mu, sqrt(sigma.sq/y.))
+  theta[i, ] <- c(mu,sigma.sq)  
+  }
+thinned=seq(round(n*0.2),n,step)
+  theta[thinned,]
+}
+```
+
+```{r,eval=F, echo=F}
+# mu.j <- sigma.sq.j <- NA
+  # for (j in 1:m) {mu.j[j]=z[j]*y[j]}
+  # mu=sum(mu.j)/y.
+  # for (j in 1:m) {  
+  # sigma.sq.j[j]=(z[j]-mu)^2*y[j]
+  # }
+  # sigma.sq=sum(sigma.sq.j)/y.
+  #   for (j in 1:m) {
+  #     y[j] <- rgamma(1,(nu+1)/2,((z[j]-mu)^2/sigma.sq+nu)/2)  
+  #   }
+    # for (j in 1:m) {mu.j[j]=z[j]*y[j]}
+    # mu=sum(mu.j)/y.
+    # 
+    # for (j in 1:m) {  
+    # sigma.sq.j[j]=(z[j]-mu)^2*y[j]
+    # }
+    # sigma.sq=sum(sigma.sq.j)/y.
+nu=4
+set.seed(123)
+z <- ggdist::rstudent_t(30,nu,0,1)
+# z <- rnst(1e5, 1000, 5, 13)
+# rt.scaled(n, 4, mean = 0, sd = 1)
+#  Z[1, ] <- z <- rnorm(m,mu,sigma/y)
+t_EM<- gibbs(N,nu,z)
+```
+
+
+```{r,eval=T, echo=F}
+# functions of cumulative standard diviation
+# 1 runSD(t_EM[,1], n=1, cumulative=TRUE)
+# 2
+biasedSd<-function(data){sqrt(mean((data-mean(data))^2))}
+cumSd<-function(data){sapply(Reduce(c,data,accumulate = T), biasedSd)}
+# cumSd(t_EM[,1])
+# sd(t_EM[,1])
+cumean<- function(x){cumsum(x)/seq_along(x)} 
+
+```
+
+---
+
+```{r, echo=F}
+ui <- fluidPage(theme = shinytheme("lumen"),
+      plotOutput("plot5", height = "300px"),
+hr(), 
+  fluidRow(
+column(2,sliderInput("mu", label = "mean:",min = -5, max = 5, value = 0, step = 1)),
+column(2,sliderInput("var", label = "variance:",min = 1, max = 10, value = 1, step = 1)),    
+column(2,sliderInput("m", label = "Observed Size:",min = 10, max = 100, value = 30, step = 10)),
+column(3,sliderInput("nu", label = "degree of freedom:",min = 2, max = 8, value = 4, step = 1)),
+column(3,sliderInput("N", label = "Sampling Size:",min = 500, max = 25000, value = 2000, step = 500)
+    )
+  )
+)
+server <- function(input, output) {
+t_EM_dy <- reactive({ # set.seed(123)
+z <- ggdist::rstudent_t(input$m,input$nu,input$mu,sqrt(input$var))  
+g.tls(input$N,input$nu,z)
+  })
+output$plot5 <- renderPlot({
+par(mfrow=c(1,2)); par.name <- c(expression(mu),expression(sigma^2))
+for(i in 1:2){
+  cum.est <- cumean(t_EM_dy()[,i])
+  cum.sd <- cumSd(t_EM_dy()[,i])# runSD(t_EM_dy()[,i], n=1, cumulative=TRUE)/1:input$N
+  plot(cum.est,main=par.name[i],  ylim= range(c((cum.est-2*cum.sd),(cum.est+2*cum.sd))),
+       #c(mean(t_EM_dy()[,i])+2*sd(t_EM_dy()[,i]),mean(t_EM_dy()[,i])-2*sd(t_EM_dy()[,i])),   
+     type="l",xlab="index",ylab="running average",col=1)
+  abline(h=c(input$mu,input$var)[i],col="red")
+  lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3)
+  lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3)
+  }
+})
+}
+shinyApp(ui = ui, server = server)
+```
+
+
+
+```{r,eval=F,echo=F}
+par(mfrow=c(1,2))
+for(i in 1:2){
+plot(cumsum(t_EM[,i])/1:N,main=c(expression(mu),expression(sigma^2))[i],
+     type="l",xlab="index",ylab="running average",col="cornflowerblue")
+  abline(h=c(0,1)[i],col="red")
+}
+```
+
+## Ex5:  Probit & Logit Model
+
+Albert and Chib’s (1993)
+
+$Y_1,..,Y_m\sim Bern(p_i)$,i=1,..,m; Link: $p_i=\Phi(Z_i)$
+
+\(\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}; \quad \boldsymbol{\varepsilon}\sim N_m(0,\mathbf{I})\)
+
+\(\pi(\boldsymbol{\beta,Z|y}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{m}\left[\mathbf{1}_{Z_i>0}\mathbf{1}_{y_i=1}+\mathbf{1}_{Z_i\le0}\mathbf{1}_{y_i=0}\right]\phi (Z_{i})\)
+
+\(\pi(\boldsymbol{\beta|y,Z}) = C\pi(\boldsymbol{\beta})\prod_{i=1}^{m}\phi (Z_{i};\mathbf{x}_i^T\boldsymbol{\beta},1)\)
+
+$Z_i|\boldsymbol{y,\beta}\sim N(\mathbf{x}_i^T\boldsymbol{\beta},1)$ truncated by 0 at $\begin{cases}\text{left if}&y_i=1\\\text{right if}&y_i=0\end{cases}$
+
+\(\boldsymbol{\beta}|\mathbf{y,Z}\sim N_k((\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Z},(\mathbf{X}^T\mathbf{X})^{-1})\)
+
+---
+
+```{r}
+# beta.t <- c(-1,1/2,1/4,-1,1)
+# beta.name <- c("Beta0","Beta1","Beta2","Beta3","Beta4")
+beta.t <- c(-1,1/2,1/4)
+beta.name <- c("Beta0","Beta1","Beta2")
+m <- 50; p <- 3;#p <- dim(X)[2] 
+step=20; set.seed(123)
+# X.df <- data.frame(x1=rnorm(m,1,1),
+#                    x2=rnorm(m,2,1),
+#                    x3=sample(c("a","b","c"),m,replace=T))
+X.df <- data.frame(x1=rnorm(m,1,1),
+                   x2=rnorm(m,2,1))
+X <- model.matrix(~.,X.df)
+
+# X <- matrix(rnorm(m*p), ncol = p)
+# cnty <- ceiling(exp(y)) # count data
+# X <- matrix(runif(n*p, 5, 10), n)
+
+# p.true <- pnorm(X%*%beta.t)
+Y <- ifelse(X%*%beta.t+ rnorm(m) > 0, 1, 0) 
+# Y <- rbinom(m,1,p.true)
+table(Y)
+```
+
+---
+
+```{r,echo=F}
+fit.p.glm <- glm(Y~.,X.df,family=binomial(link="probit"))
+glm.p<- coef(fit.p.glm)
+glm.p.sd <- summary(fit.p.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
+glm.p.ci <- confint(fit.p.glm)
+glm.p.marg <-mean(dnorm(X %*% glm.p))*glm.p
+glm.p.ci.marg <-mean(dnorm(X %*% glm.p.ci))*glm.p.ci
+par.glm.p<- cbind(glm.p,glm.p.sd,glm.p.ci,glm.p.marg,glm.p.ci.marg)
+rownames(par.glm.p) <- beta.name
+pander(round((par.glm.p),4))
+```
+
+---
+
+```{r}
+beta.cond = function(z,V,cholV){
+   beta <- V%*%(t(X)%*%z)+cholV%*%rnorm(p)
+  return(beta)  
+ }
+ z.cond <- function(beta){
+   ez<-(X%*%beta) 
+   u<-runif(m,0,1)
+   z <- ez + qnorm(ifelse(Y==1,u+(1-u)*pnorm(0,ez,1),
+                               u*pnorm(0,ez,1)))
+   return(z)
+ }
+```
+
+---
+
+```{r}
+g.probit<-function (N,X,Y,m,p,step=20){
+iXX<-chol2inv(chol(t(X)%*%X)); V<-iXX*(m/(m+1)); cholV<-chol(V) 
+
+beta.ini <- runif(p,-3,3)
+   Z     <- matrix(NA,N,m) 
+   z.ini <- z.cond(beta.ini)
+Beta     <- matrix(NA,nrow=(N+1),ncol=p)
+Beta[1,] <- beta.ini <- beta.cond(z.ini,V,cholV)
+
+for(i in 1:N){
+   Z[i,]     <- z.cond(Beta[i,])
+Beta[(i+1),] <- beta.cond(Z[i,],V,cholV)
+}
+thinned=seq(round(N*0.2),N,step)  
+Beta[thinned,]
+}
+```
+
+---
+
+```{r,echo=F}
+N <- 25000
+beta.p <- g.probit(N,X,Y,m,p)
+```
+
+```{r,eval=T,echo=T}
+#beta.p.marg <- mean(dnorm(beta.p%*%t(X)))*beta.p
+```
+
+```{r,echo=F}
+beta.p.mean <- colMeans(beta.p)
+beta.p.median <- apply(beta.p,2,quantile,probs=0.5)
+beta.p.ll <- apply(beta.p,2,quantile,probs=0.025)
+beta.p.ul <- apply(beta.p,2,quantile,probs=0.975)
+beta.p.sd <- c(sd(beta.p[,1]),sd(beta.p[,2]),sd(beta.p[,3]))
+par.p<- cbind(beta.p.mean,beta.p.median,beta.p.ll,beta.p.ul,beta.p.sd)
+rownames(par.p) <- beta.name
+pander(round((par.p),4))
+```
+
+
+```{r}
+biasedSd<-function(data){sqrt(mean((data-mean(data))^2))}
+cumSd<-function(data){sapply(Reduce(c,data,accumulate = T), biasedSd)}
+cumean<- function(x){cumsum(x)/seq_along(x)} 
+```
+
+---
+
+```{r, echo=F}
+ui <- fluidPage(theme = shinytheme("lumen"),
+      tabsetPanel(
+      tabPanel("Probit", plotOutput("plot6", height = "300px")),
+      tabPanel("Logit", plotOutput("plot7", height = "300px"))
+      ),
+hr(),
+  fluidRow(
+column(3,verbatimTextOutput("Xsummary")
+       ),
+column(1,sliderInput("beta0", label = "beta0:",min = -3, max = 3, value = -1, step = .25)
+       #  tableOutput("Y.ptable")      
+       ),
+column(2,sliderInput("beta1", label = "beta1:",min = -3, max = 3, value = .5, step = .25),
+         sliderInput("beta2", label = "beta2:",min = -3, max = 3, value = .25, step = .25)
+       ),
+column(2,sliderInput("EX1", label = "E[X1]:",min = -3, max = 3, value = 1, step = .25),
+         sliderInput("EX2", label = "E[X2]:",min = -3, max = 3, value = 2, step = .25)
+       ),
+column(2,sliderInput("sd1", label = "sd[X1]:",min = 0.2, max = 3, value = 1, step = .2),
+         sliderInput("sd2", label = "sd[X2]:",min = 0.2, max = 3, value = 1, step = .2)
+       ),
+column(2,sliderInput("m", label = "observed size:",min = 10, max = 300, value = 50, step = 10),
+         sliderInput("N", label = "Sampling Size:",min = 500, max = 25000, value = 1000, step = 1000)
+       )
+  )
+)
+
+server <- function(input, output) {
+beta.t.dy <- reactive({c(input$beta0,input$beta1,input$beta2)})
+#X.dy <- reactive({ cbind(1,x1=rnorm(input$m,input$EX1,input$sd1),x2=rnorm(input$m,input$EX2,input$sd2)) })
+X.df.dy <- reactive({ data.frame(x1=rnorm(input$m,input$EX1,input$sd1),x2=rnorm(input$m,input$EX2,input$sd2)) })
+X.dy <- reactive({ model.matrix(~.,X.df.dy()) })
+#Y.p.dy <- reactive({ rbinom(input$m,1,pnorm(X.dy()%*%beta.t.dy())) })
+Y.p.dy <- reactive({ ifelse(X.dy()%*%beta.t.dy()+rnorm(input$m)>0,1,0) })
+glm.p.dy <- reactive({ coef(glm(Y.p.dy()~.,X.df.dy(),family=binomial(link="probit"))) })
+# beta.p.dy <- reactive({ g.probit(input$N,X.dy(),Y.dy(),input$m,p)})
+
+  output$plot6 <- renderPlot({  
+iXX<-chol2inv(chol(t(X.dy())%*%X.dy())); V<-iXX*(input$m/(input$m+1)); cholV<-chol(V) 
+
+beta.cond = function(z,V,cholV){
+  beta <- V%*%(t(X.dy())%*%z)+cholV%*%rnorm(p)
+  return(beta)  
+}
+z.cond <- function(beta){
+  ez<-(X.dy()%*%beta) 
+  u<-runif(input$m,0,1)
+  z <- ez + qnorm(ifelse(Y.p.dy()==1,u+(1-u)*pnorm(0,ez,1),
+                         u*pnorm(0,ez,1)))
+  return(z)
+}
+
+beta.ini <- runif(p,-3,3)
+   Z     <- matrix(NA,input$N,input$m) 
+   z.ini <- z.cond(beta.ini)
+Beta     <- matrix(NA,nrow=(input$N+1),ncol=p)
+Beta[1,] <- beta.ini <- beta.cond(z.ini,V,cholV)
+
+for(i in 1:input$N){
+  Z[i,]     <- z.cond(Beta[i,])
+  Beta[(i+1),] <- beta.cond(Z[i,],V,cholV)
+}
+thinned=seq(round(input$N*0.2),input$N,step)  
+beta.p.dy <- Beta[thinned,]
+#beta.p.dy <- g.probit(input$N,X.dy,Y.dy,input$m,p)
+  par(mfrow=c(1,3))
+  for(s in 1:3){
+  cum.est <- cumean(beta.p.dy[,s])
+  cum.sd <- cumSd(beta.p.dy[,s])  
+  plot(cum.est,ylim= c(min(cum.est-2*cum.sd),max(cum.est+2*cum.sd)),
+         #c(beta.t.dy()[s]-1,beta.t.dy()[s]+1),#c(-3,3),
+       main="",type="l",xlab="index",ylab=bquote(beta[.(s-1)]),col=4,lwd=2)
+  abline(h=beta.t.dy()[s],col=1,lty=2,lwd=2)
+  abline(h=glm.p.dy()[s],col=3,lwd=2)
+  lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3,lwd=2)
+  lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3,lwd=2)
+  if(s==3){legend(length(cum.est)*.8,max(cum.est+2*cum.sd),c("Ture","GLM","Gibbs","GIbbs'CI"),
+                  col=c(1,3,4,"cornflowerblue"),lty=c(2,1,1,3),lwd=rep(2,4) )
+    text(length(cum.est)/2,min(cum.est-2*cum.sd),
+         paste("Count:",table(Y.p.dy())[1],"(Y=0);",table(Y.p.dy())[2],"(Y=1)"),
+         cex = 2, col =2)
+    }
+  }
+  })
+  
+#  output$Y.ptable <- renderTable({ table(Y.p.dy(),dnn = "Y") })
+  output$Xsummary <- renderPrint({ summary(X.dy()[,2:3],digits = 2) })  
+
+Y.l.dy <- reactive({ rbinom(input$m,1,pnorm(X.dy()%*%beta.t.dy())) })
+glm.l.dy <- reactive({ coef(glm(Y.l.dy()~.,X.df.dy(),family=binomial(link="logit"))) })  
+  
+  output$plot7 <- renderPlot({  
+    
+  w.cond <- function(beta){
+    w <- rpg.devroye(num=input$m, h=1, z=abs(X.dy()%*%beta))
+    return(w)
+  }
+  beta.cond = function(y,w,varbeta=100){
+    matbetapr= diag(rep(1/varbeta,p))
+    OMG      = diag(w);  
+    OMGinv   = diag(1/w)
+    eta      = OMGinv%*%(y-0.5)
+    varmat   = chol2inv(chol(matbetapr+t(X.dy())%*%OMG%*%X.dy())) 
+    meanvec  = varmat%*%(t(X.dy())%*%OMG%*%eta)
+    beta <- rmvnorm(1, mean = meanvec, sigma = varmat)
+    return(beta)  
+  }
+  
+  beta.ini <- runif(p,-3,3)
+  W        <- matrix(NA,nrow=input$N,ncol=input$m)
+  w.ini    <- w.cond(beta.ini)
+  Beta     <- matrix(NA,nrow=(input$N+1),ncol=p)
+  Beta[1,] <- beta.ini <- beta.cond(Y.l.dy(),w.ini)
+  for(i in 1:input$N){
+    W[i,] = w.cond(Beta[i,])
+    Beta[(i+1),]=beta.cond(Y.l.dy(),W[i,]) 
+  }
+  thinned=seq(round(input$N*0.2),input$N,step)  
+  beta.l.dy <- Beta[thinned,]
+
+  par(mfrow=c(1,3))
+  for(s in 1:3){
+    cum.est <- cumean(beta.l.dy[,s])
+    cum.sd <- cumSd(beta.l.dy[,s])  
+    plot(cum.est,ylim= c(min(cum.est-2*cum.sd),max(cum.est+2*cum.sd)),
+         main="",type="l",xlab="index",ylab=bquote(beta[.(s-1)]),col=4,lwd=2)
+    abline(h=beta.t.dy()[s],col=1,lty=2,lwd=2)
+    abline(h=glm.l.dy()[s],col=3,lwd=2)
+    lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3,lwd=2)
+    lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3,lwd=2)
+    if(s==3){legend(length(cum.est)*.8,max(cum.est+2*cum.sd),c("Ture","GLM","Gibbs","GIbbs'CI"),
+                    col=c(1,3,4,"cornflowerblue"),lty=c(2,1,1,3),lwd=rep(2,4) )
+      text(length(cum.est)/2,min(cum.est-2*cum.sd),
+           paste("Count:",table(Y.l.dy())[1],"(Y=0);",table(Y.l.dy())[2],"(Y=1)"),
+           cex = 2, col =2)
+    }
+  }
+})
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+---
+
+```{r,echo=F}
+par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
+for(s in 1:p){
+  plot(beta.p[,s],
+       main=bquote(beta[.(s-1)]),type="p",pch=1,cex=0.1,col="cornflowerblue")
+  abline(h=beta.t[s],col="red")
+  abline(h=glm.p[s],col="green")
+}
+for(s in 1:p){
+  cum.est <- cumean(beta.p[,s])
+  cum.sd <- cumSd(beta.p[,s])  
+  plot(cum.est,ylim= range(c((cum.est-2*cum.sd),(cum.est+2*cum.sd))),
+       #c(beta.p.ll[s]-.01,beta.p.ul[s]+.01),
+       main=bquote(beta[.(s-1)]),type="l",xlab="index",ylab="running average",col=1)
+  abline(h=beta.t[s],col="red")
+  abline(h=glm.p[s],col="green")
+  # abline(h=beta.p.ll[s],col="cornflowerblue")
+  # abline(h=beta.p.ul[s],col="cornflowerblue")
+  lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3)
+  lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3)
+}
+```
+
+
+
+
+## Logit Model
+
+$Y_1,..,Y_n\sim Bern(p_i)$,i=1,..,n; $P_i(Y=1)=\frac1{1+\exp(-\mathbf{x}_i^T\boldsymbol{\beta})}$; $F(p_i)^{-1}=\ln\frac{p_i}{1-p_i}$ log odds of success = $\mathbf{x}_i^T\boldsymbol{\beta}$
+
+```{r,eval=T, echo=T}
+set.seed(1234)
+Y <- rbinom(m,1,1/(1+exp(-X%*%beta.t)))
+table(Y)
+```
+
+---
+
+```{r}
+fit.l.glm <- glm(Y~.,X.df,family=binomial(link="logit"))
+glm.l<- coef(fit.l.glm)
+glm.l.sd <- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.l.glm)))
+glm.l.ci <- confint(fit.l.glm)
+# glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l
+par.glm.l<- cbind(glm.l,glm.l.sd,glm.l.ci)
+rownames(par.glm.l) <- beta.name
+pander(round((par.glm.l),4))
+```
+
+---
+
+(Polson etal, 2013)
+
+\[\begin{align} 
+\boldsymbol{\omega_i|\beta}  &\sim PG(1,\boldsymbol{|X'_{i,1:p}\beta|}),i=1:n \\ 
+\boldsymbol{\beta}&\sim N_p(0,\boldsymbol{\sigma^2}I=diag_p(100))\\
+Pr(\boldsymbol{\beta|Y,\omega})&=\phi_p(0,\boldsymbol{\sigma^2I)\phi_n(\eta|X'\beta,\Omega^{-1}}) & \boldsymbol{\Omega}=diag_n(\mathbf{\omega_i}); \boldsymbol{\eta}=\mathbf{\Omega^{-1}}(\mathbf{Y_{1:n}}-\frac12)\\
+&=\exp{[-\frac12\boldsymbol{\beta'\sigma^2I\beta}]}\exp{[-\frac12\boldsymbol{(\eta-X\beta)'\Omega(\eta-X\beta)}]}\\
+&=\exp{[-\frac12(\boldsymbol{\beta'(\sigma^2I+X'\Omega X)\beta}-2\boldsymbol{\beta'X'\Omega\eta+\eta'\eta})]} & \underset{p\cdot p}{\boldsymbol{\Sigma}}=\boldsymbol{(\sigma^{2}I+X'\Omega X)^{-1}}\\
+&\propto\exp{[\boldsymbol{-\frac12\Sigma^{-1}(\beta'I\beta-2\beta'\Sigma X'\Omega\eta)}]}\\
+&\propto\exp{[\boldsymbol{-\frac12(\beta-\Sigma X'\Omega\eta)'\Sigma^{-1}(\beta-\Sigma X'\Omega\eta)}]}\\
+\boldsymbol{\beta|Y,\omega}&\sim N_p(\boldsymbol{\underset{(p\cdot p)}{\Sigma} \underset{(p\cdot n)}{X'}\underset{(n\cdot n)}{\Omega}\underset{(n\cdot 1)}{\eta}},\boldsymbol{\Sigma})\\
+\end{align}\]
+
+---
+
+```{r}
+ w.cond <- function(beta,m){
+   w <- rpg.devroye(num=m, h=1, z=abs(X%*%beta))
+   return(w)
+ }
+ beta.cond = function(y,w,p,varbeta=100){
+   matbetapr= diag(rep(1/varbeta,p))
+   OMG      = diag(w);  
+   OMGinv   = diag(1/w)
+   eta      = OMGinv%*%(y-0.5)
+   varmat   = chol2inv(chol(matbetapr+t(X)%*%OMG%*%X)) 
+   meanvec  = varmat%*%(t(X)%*%OMG%*%eta)
+   beta <- mvtnorm::rmvnorm(1, mean = meanvec, sigma = varmat)
+  return(beta)  
+ }
+```
+
+
+---
+
+```{r}
+g.logit<-function (N,X,Y,step=20){
+  p <- dim(X)[2]; m <- dim(X)[1]
+  beta.ini <- runif(p,-3,3)
+  W        <- matrix(NA,nrow=N,ncol=m)
+  w.ini    <- w.cond(beta.ini,m)
+  Beta     <- matrix(NA,nrow=(N+1),ncol=p)
+  Beta[1,] <- beta.ini <- beta.cond(Y,w.ini,p)
+  for(i in 1:N){
+    W[i,] = w.cond(Beta[i,],m)
+    Beta[(i+1),]=beta.cond(Y,W[i,],p) 
+  }
+  thinned=seq(round(N*0.2),N,step)  
+  Beta[thinned,]
+}
+```
+
+
+```{r,echo=F}
+set.seed(123)
+beta.l <- g.logit(N,X,Y)
+```
+
+
+---
+
+```{r,eval=F,echo=F}
+# beta.l.marg <- mean(dlogis(beta.l[thinned,]%*%t(X)))*(beta.l[thinned,])
+# beta.l.marg <- colMeans(apply(beta.l[thinned,]%*%t(X),1,dlogis))*(beta.l[thinned,])
+```
+
+
+```{r,echo=F}
+beta.l.mean <- colMeans(beta.l)
+beta.l.median <- apply(beta.l,2,quantile,probs=0.5)
+beta.l.ll <- apply(beta.l,2,quantile,probs=0.025)
+beta.l.ul <- apply(beta.l,2,quantile,probs=0.975)
+beta.l.sd <- c(sd(beta.l[,1]),sd(beta.l[,2]),sd(beta.l[,3]))
+par.l<- cbind(beta.l.mean,beta.l.median,beta.l.ll,beta.l.ul, beta.l.sd)
+rownames(par.l) <- beta.name
+pander(round((par.l),4))
+```
+
+
+---
+
+```{r,echo=F}
+par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
+for(s in 1:p){
+  plot(beta.l[,s],
+       main=bquote(beta[.(s-1)]),type="p",pch=1,cex=0.1,col="cornflowerblue")
+  abline(h=beta.t[s],col="red")
+  abline(h=glm.l[s],col="green")
+}
+for(s in 1:p){
+  cum.est <- cumean(beta.l[,s])
+  cum.sd <- cumSd(beta.l[,s])  
+  plot(cum.est,ylim= range(c((cum.est-2*cum.sd),(cum.est+2*cum.sd))),
+       # c(beta.l.ll[s]-.01,beta.l.ul[s]+.01),
+       main=bquote(beta[.(s-1)]),type="l",xlab="index",ylab="running average",col=1)
+  abline(h=beta.t[s],col="red")
+  abline(h=glm.l[s],col="green")
+  # abline(h=beta.l.ll[s],col="cornflowerblue")
+  # abline(h=beta.l.ul[s],col="cornflowerblue")
+  lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3)
+  lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3)
+}
+```
+
+---
+
+```{r,echo=F}
+mean.all<- cbind(glm.p,beta.p.mean,glm.l,beta.l.mean)
+rownames(mean.all) <- beta.name
+pander(round((mean.all),4))
+sd.all<- cbind(glm.p.sd,beta.p.sd,glm.l.sd,beta.l.sd)
+rownames(sd.all) <- beta.name
+pander(round((sd.all),4))
+```
+
+## Application: Active Trips
+
+Jun S. Liu & Ying Nian Wu (1999) Parameter Expansion for Data Augmentation, Journal of the American Statistical Association, 94:448, 1264-1274, DOI: 10.1080/01621459.1999.10473879
+
+## Markov chain
+
+--------------------------------------------------------
+random walk                        Markov chain
+-------------------               ----------------------
+graph                              stochastic process
+
+vertex                             state
+
+strongly connected aperiodic       persistent aperiodic
+
+strongly connected and aperiodic   ergodic
+
+edge weighted undirected graph     time reversible
+---------------------------------------------------------
+
+Table 5.1: Correspondence between terminology of random walks and Markov chains
+
+James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An introduction to statistical learning (Vol. 112, p. 18). New York: springer.
+
+## Monte Carlo Sampling
+
+- In the simplest possible situation, let $Y$ have pdf/pmf $p$, and suppose we want to estimate $E(Y)$.  
+
+
+- Regardless of the distribution, if we have $Y_1,Y_2,\ldots,Y_S \overset{iid}{\sim} p$ then $\frac{1}{S}\sum_{k=1}^S Y_k$ is a good estimator for $E(Y)$.
+
+
+- To approximate $E(g(Y) | Z=z) \ldots$, let $X=g(Y) | Z=z$, with $Y_1,\ldots,Y_S \overset{iid}{\sim} p(\cdot | Z=z)$, then $$\frac{1}{S}\sum_{k=1}^S X_k\rightarrow E(X)=E(g(Y) | Z=z).$$
+
+## Properties of Monte Carlo Estimators
+
+- Consistency: If $E(|Y|)<\infty$, then $$\frac{1}{S}\sum_{k=1}^S Y_k  \longrightarrow E(Y)\text{ w.p. }1.$$
+
+- Unbiasedness: $$E\lrp{\frac{1}{S}\sum Y_k}=E(Y)$$
+
+- Variance: $$\var{\frac{1}{S}\sum Y_k}= \frac{\var{Y}}{S}\overset{S\rightarrow\infty}\longrightarrow 0  $$
+
+
+## Properties of Monte Carlo Estimators
+
+Root Mean Squared Error (RMSE)
+
+$$RMSE = \sqrt{E\lrp{\lrsqb{\frac{1}{S}\sum Y_k-E(Y)}^2}}=\sqrt{\var{\frac{1}{S}\sum Y_k}},$$
+$$=\sqrt{\frac{\var{Y}}{S}}\quad=\quad \sigma(Y)/\sqrt{S}.$$
+
+With RMSE we can determine how close our estimate is from the true value we are trying to estimate depending on $S$.  
+
+The rate of convergence of $\sum Y_k / S$ is of order $(S)^{-1/2}$.
+
+
+
+- Gelman, A. (2014). Bayesian data analysis (Third edition.). CRC Press.
+
+11.7 Bibliographic note
+
+Tanner and Wong (1987) introduced the idea of iterative simulation to many statisticians, using the special case of ‘data augmentation’ to emphasize the analogy to the EM algorithm (see Section 13.4).
+
+  Auxiliary variables
+  
+12.1 Efficient Gibbs samplers
+
+Gibbs sampler computations can often be simplified or convergence accelerated by adding auxiliary variables, for example indicators for mixture distributions, as described in Chapter 22. The idea of adding variables is also called data augmentation and is often a useful conceptual and computational tool, both for the Gibbs sampler and for the EM algorithm (see Section 13.4).
+
+12.7 Bibliographic note
+
+For the relatively simple ways of improving simulation algorithms mentioned in Sections 12.1 and 12.2, Tanner and Wong (1987) discuss data augmentation and auxiliary variables, and Hills and Smith (1992) and Roberts and Sahu (1997) discuss different parameterizations for the Gibbs sampler. Higdon (1998) discusses some more complicated auxiliary variable methods, and Liu and Wu (1999), van Dyk and Meng (2001), and Liu (2003) present different approaches to parameter expansion. The results on acceptance rates for efficient Metropolis jumping rules appear in Gelman, Roberts, and Gilks (1995); more general results for Metropolis-Hastings algorithms appear in Roberts and Rosenthal (2001) and Brooks,
+Giudici, and Roberts (2003).
+
+18.2 Multiple imputation
+
+Any single imputation provides a complete dataset that can be used by a variety of researchers to address a variety of questions. Assuming the imputation model is reasonable, the results from an analysis of the imputed dataset are likely to provide more accurate estimates than would be obtained by discarding data with missing values.
+The key idea of multiple imputation is to create more than one set of replacements for the missing values in a dataset. This addresses one of the difficulties of single imputation in that the uncertainty due to nonresponse under a particular missing-data model can be properly reflected. The data augmentation algorithm that is used in this chapter to obtain posterior inference can be viewed as iterative multiple imputation.
+
+  Computation using EM and data augmentation
+  
+The process of generating missing data imputations usually begins with crude methods of imputation based on approximate models such as MCAR. The initial imputations are used as starting points for iterative mode-finding and simulation algorithms.
+
+Chapters 11 and 13 describe the Gibbs sampler and the EM algorithm in some detail as approaches for drawing simulations and obtaining the posterior mode in complex problems. As was mentioned there, the Gibbs sampler and EM algorithms formalize a fairly old approach to handling missing data: replace missing data by estimated values, estimate model parameters, and perhaps, repeat these two steps several times. Often, a problem with no missing data can be easier to analyze if the dataset is augmented by some unobserved values, which may be thought of as missing data.
+
+Here, we briefly review the EM algorithm and its extensions using the notation of this chapter. Similar ideas apply for the Gibbs sampler, except that the goal is simulation rather than point estimation of the parameters. The algorithms can be applied whether the missing data are ignorable or not by including the missing-data model in the likelihood, as discussed in Chapter 8. For ease of exposition, we assume the missing-data mechanism is ignorable and therefore omit the inclusion indicator I in the following explanation. The generalization to specified nonignorable models is relatively straightforward. We assume that any augmented data, for example, mixture component indicators, are included as part
+of ymis. Converting to the notation of Sections 13.4 and 13.5:
+
+
+18.7 Bibliographic note
+
+Little and Rubin (2002) is a comprehensive text on statistical analysis with missing data.
+Van Buuren (2012) is a recent text with a more computational focus. Tanner and Wong
+(1987) describe the use of data augmentation to calculate posterior distributions. Schafer
+(1997) and Liu (1995) apply data augmentation for multivariate exchangeable models, including the normal, t, and loglinear models discussed briefly in this chapter. The approximate variance estimate in Section 18.2 is derived from the Satterthwaite (1946) approximation; see Rubin (1987a), Meng, Raghunathan, and Rubin (1991), and Meng and Rubin
+(1992). Abayomi, Gelman, and Levy (2008) discuss graphical methods for checking the fit
+and reasonableness of missing-data imputations.
+
+Imai, K., and van Dyk, D. A. (2005). A Bayesian analysis of the multinomial probit model using marginal data augmentation. Journal of Econometrics. 124, 311–334. https://doi.org/10.1016/j.jeconom.2004.02.002
+
+Rubin, D. B. (1987b). A noniterative sampling/importance resampling alternative to the data augmentation algorithm for creating a few imputations when fractions of missing information are modest: The SIR algorithm. Discussion of Tanner and Wong (1987). Journal of the American Statistical Association 82, 543–546.
+
+Tanner, M. A., and Wong, W. H. (1987). The calculation of posterior distributions by data augmentation (with discussion). Journal of the American Statistical Association 82, 528–550. 
+
+van Dyk, D. A., and Meng, X. L. (2001). The art of data augmentation (with discussion). Journal of Computational and Graphical Statistics 10, 1–111.
+
+
+
