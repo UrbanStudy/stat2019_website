@@ -1045,9 +1045,8 @@ g.PG <- g.PG.par[,1]
 
 ```{r}
 (g.PG.marg <- mean(dlogis(X %*% g.PG))*g.PG)
-
-(g.PG.marg <- mean(dlogis(X %*% g.PG))*g.PG)
-
+# pi <- dlogis(X %*% g.PG)
+# (g.PG.marg <- mean(pi*(1-pi))*g.PG)
 
 ```
 
@@ -1157,8 +1156,6 @@ nimble.l.sd <- mcmc.out$summary$all.chains[,3]
 ```{r}
 nimble.sample<- rbind(mcmc.out$samples$chain1[1901:1000,],mcmc.out$samples$chain2[1901:1000,],
                       mcmc.out$samples$chain3[1901:1000,],mcmc.out$samples$chain4[1901:1000,])
-prob.l<-  mean(X %*% t(nimble.sample))
-(glm.l.marg <-prob.l*(1-prob.l)*nimble.l)
 (nimble.l.marg <- mean(dlogis(X %*% nimble.l))*nimble.l)
 ```
 
@@ -1174,9 +1171,9 @@ glm.l.sd <- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 ```
 
 ```{r}
-prob.l<-  mean(X %*% glm.l)
+prob.l<-  mean(plogis(X %*% glm.l))
 (glm.l.marg <-prob.l*(1-prob.l)*glm.l)
-
+# sqrt(3)/pi
 (glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l)
 ```
 
@@ -1222,10 +1219,11 @@ colnames(par.l.sd) <- c("Beta0","Beta1","Beta2")
 pander::pander(round(t(par.l.sd),4))
 ```
 
-\(p_i=\mathbf{x}_i^T\boldsymbol{\beta}\);
-\(\beta_{marg}=\overline{\phi(p_i)}\boldsymbol{\beta}\);
-\(\beta_{marg}=\overline{logit(p_i)}\boldsymbol{\beta}\);
-\(\beta_{marg}=\bar p(1-\bar p))\boldsymbol{\beta}\)
+
+\(\beta_{marg}=\overline{\phi(\mathbf{x}_i'\boldsymbol{\beta})}\boldsymbol{\beta}\);
+\(\beta_{marg}=\overline{logit(\mathbf{x}_i'\boldsymbol{\beta})}\boldsymbol{\beta}\);
+\(p_i=\frac{\mathbf{x}_i^T\boldsymbol{\beta}}{1+\mathbf{x}_i'\boldsymbol{\beta}}\);
+\(\beta_{marg}=\overline{p(1-p)}\boldsymbol{\beta}\)
 
 ```{r,echo=F,collapse=T}
 par.marg<- rbind(rl.marg,nimble.p.marg,g1.marg,g2.marg,g3.marg,glm.p.marg,glm.l.marg,mlogit.marg,g.PG.marg,nimble.l.marg,brm.p.marg,brm.l.marg)

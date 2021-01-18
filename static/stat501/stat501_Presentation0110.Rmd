@@ -20,7 +20,7 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T,collapse = F)
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = F,collapse = F)
 options(width = 2000)
 options(scipen=6)
 options(digits=4)
@@ -41,15 +41,23 @@ Covariates $X=X_1,...X_p$
 Desired $\beta=\beta_0,\beta_1,...,\beta_p$
 
 
-## Frequentist's Method
+
+## General Framework
+
 
 The link function: $Pr(Y_i=1|\beta)=H(\mathbf{x}_i^T\boldsymbol{\beta})$
 
 H is a CDF
+
+
+## Frequentist's Method
+
 <!-- v.s.  Maximum Likelihood Estimation -->
 <!-- v.s. asymptotic expansions or numerical integration -->
 
 Iteratively Reweighted Least Squares (IRLS) Algorithm
+
+Fisher Scoring??? Newton-Raphson algorithm "gradient descent level II"???
 
 ## Bayesian methods
 
@@ -555,11 +563,8 @@ cumSd<-function(data){sapply(Reduce(c,data,accumulate = T), biasedSd)}
 cumean<- function(x){cumsum(x)/seq_along(x)} 
 ```
 
----
 
-Iteratively Reweighted Least Squares (IRLS) Algorithm
-
-Fisher Scoring??? Newton-Raphson algorithm "gradient descent level II"???
+IRLS' results
 
 ```{r,echo=F}
 fit.p.glm <- glm(Y~.,X.df,family=binomial(link="probit"))
@@ -573,10 +578,10 @@ pander(round((par.glm.p),4))
 
 ```{r, echo=F}
 glm.p.marg <-mean(dnorm(X %*% glm.p))*glm.p
-glm.p.ci.marg <-mean(dnorm(X %*% glm.p.ci))*glm.p.ci
+glm.p.ci.marg <-mean(dnorm(X %*% glm.p))*glm.p.ci
 
 beta.p.marg <-mean(dnorm(X %*% beta.p.mean))*beta.p.mean
-beta.p.ci.marg <-cbind(ll=mean(dnorm(X %*% beta.p.ll))*beta.p.ll, ul= mean(dnorm(X %*% beta.p.ul))*beta.p.ul)
+beta.p.ci.marg <-cbind(ll=mean(dnorm(X %*% beta.p.mean))*beta.p.ll, ul= mean(dnorm(X %*% beta.p.mean))*beta.p.ul)
 ```
 
 
@@ -629,7 +634,7 @@ Repeat (1) and (2) long enough.
 (Polson etal, 2013)
 
 
-```{r,eval=T, echo=F}
+```{r,eval=F, echo=F}
 set.seed(1234)
 Y <- rbinom(m,1,1/(1+exp(-X%*%beta.t)))
 table(Y)
@@ -736,7 +741,9 @@ beta.l <- g.logit(N,X,Y)
 
 ---
 
-- Gibbs' results
+\scriptsize
+
+Gibbs' results (divided by $\pi/\sqrt{3}$)
 
 ```{r,echo=F}
 beta.l.mean <- colMeans(beta.l)
@@ -744,15 +751,12 @@ beta.l.median <- apply(beta.l,2,quantile,probs=0.5)
 beta.l.ll <- apply(beta.l,2,quantile,probs=0.025)
 beta.l.ul <- apply(beta.l,2,quantile,probs=0.975)
 beta.l.sd <- c(sd(beta.l[,1]),sd(beta.l[,2]),sd(beta.l[,3]))
-par.l<- cbind(beta.l.mean,beta.l.median,beta.l.ll,beta.l.ul, beta.l.sd)
+par.l<- cbind(beta.l.mean,beta.l.median, beta.l.sd,beta.l.ll,beta.l.ul)*sqrt(3)/pi
 rownames(par.l) <- beta.name
 pander(round((par.l),4))
 ```
 
-
----
-
-Iteratively Reweighted Least Squares (IRLS) Algorithm
+IRLS' results (divided by $\pi/\sqrt{3}$)
 
 ```{r echo=F}
 fit.l.glm <- glm(Y~.,X.df,family=binomial(link="logit"))
@@ -760,18 +764,19 @@ glm.l<- coef(fit.l.glm)
 glm.l.sd <- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.l.glm)))
 glm.l.ci <- confint(fit.l.glm)
 # glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l
-par.glm.l<- cbind(glm.l,glm.l.sd,glm.l.ci)
+par.glm.l<- cbind(glm.l,glm.l.sd,glm.l.ci)*sqrt(3)/pi
 rownames(par.glm.l) <- beta.name
 pander(round((par.glm.l),4))
 ```
 
 
+
 ```{r echo=F}
 glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l
-glm.l.ci.marg <-mean(dlogis(X %*% glm.l.ci))*glm.l.ci
+glm.l.ci.marg <-mean(dlogis(X %*% glm.l))*glm.l.ci
 
 beta.l.marg <-mean(dlogis(X %*% beta.l.mean))*beta.l.mean
-beta.l.ci.marg <-cbind(ll=mean(dlogis(X %*% beta.l.ll))*beta.l.ll, ul=mean(dlogis(X %*% beta.l.ul))*beta.l.ul)
+beta.l.ci.marg <-cbind(ll=mean(dlogis(X %*% beta.l.mean))*beta.l.ll, ul=mean(dlogis(X %*% beta.l.mean))*beta.l.ul)
 ```
 
 ---
@@ -805,20 +810,21 @@ Marginal effects
 
 
 ```{r,echo=F}
-mean.all<- cbind(irls.p=glm.p.marg,gibbs.p=beta.p.marg,irls.l=glm.l.marg,gibbs.l=beta.l.marg)
+mean.all<- cbind(irls.p=glm.p.marg, irls.l=glm.l.marg, gibbs.p=beta.p.marg, gibbs.l=beta.l.marg)
 rownames(mean.all) <- beta.name
 pander(round((mean.all),4))
 ```
 
-Standard deviations
+Confidence Interval
 
 \footnotesize
 
 ```{r,echo=F}
-sd.all<- cbind(irls.p=glm.p.ci.marg,gibbs.p=beta.p.ci.marg,irls.l=glm.l.ci.marg,gibbs.l=beta.l.ci.marg)
+sd.all<- cbind(glm.p.ci.marg,glm.l.ci.marg, beta.p.ci.marg,beta.l.ci.marg)
 rownames(sd.all) <- beta.name
+colnames(sd.all) <- c("i.p.l","i.p.u","i.l.l","i.l.u","g.p.l","g.p.u","g.l.l","g.l.u")
 panderOptions('table.split.table', 300)
-pander(round((sd.all),4))
+pander(round((sd.all[,c(1,3,5,7,2,4,6,8)]),4))
 ```
 
 
