@@ -20,7 +20,7 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = F,collapse = T)
+knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = T,collapse = F)
 options(width = 2000)
 options(scipen=6)
 options(digits=4)
@@ -70,10 +70,6 @@ $y_i|z_i=\begin{cases}1&\text{if }z_i>0\\0&\text{o.w.}\end{cases}$
 - In case of Logit models,
 \(\boldsymbol{\varepsilon}\sim Logistic_n(\mathbf{0,I}) \)
 
-Can we have a simple, exact algorithm?
-
-
-
 
 # A Data-Augmentation schemes
 
@@ -86,32 +82,60 @@ Generating the missing data
 
 ## Motivation
 
-Assume pdf $f_X(x):\mathbb{R}^p \to [0,\infty)$, and estimate $E[g(x)]$.
+Assume pdf $f_X(x):\mathbb{R}^p \to [0,\infty)$, function $g: \mathbb{R}^p \to \mathbb{R}$
 
-When $E_{f_X}[g(x)]= \int_{\mathbb{R}^p} g(x) f_X(x) dx$ is hard to numerical integral or analytical approximate,
+want to estimate $E[g(x)]$.
+
+\[E_{f_X}[g(x)]= \int_{\mathbb{R}^p} g(x) f_X(x) dx\]
+
+When $E[g(x)]$ is hard to numerical integral or analytical approximate, 
+
+we can use simulation based methods.
 
 ## Monte Carlo Sampling
+
 
 Regardless of the distribution, if we have $g(X_1),g(X_2),\ldots,g(X_m) \overset{iid}{\sim} f_X(x)$ 
 
 then $\frac{1}{m}\sum_{i=1}^m g(X_i)$ is a good estimator for $E(g)$.
 
-Consistency: If $E[|g|]<\infty$, then $\frac{1}{n}\sum_{i=1}^n g(X_i) \overset{a.s.}\longrightarrow E[g]$
+\[E_{f_{X}}[g(x)]\approx \frac{1}{m}\sum_{i=1}^{m} g(X_{i})\]
 
-Unbiasedness: $E[\frac{1}{S}\sum Y_k]=E(Y)$
+
+- Consistency: 
+
+If $E[|g|]<\infty$, then $\frac{1}{m}\sum_{i=1}^m g(X_i) \overset{a.s.}\longrightarrow E_{f_{X}}[g]$
+
+- Unbiasedness: 
+
+$E[\frac{1}{m}\sum Y_k]=E(Y)$
 
 
 ## Monte Carlo Markov chain (MCMC)
 
-Unknown distribution, if we can constructe a Markov chain
 
+\[\pi(\theta|x)=\frac{f(x|\theta)\pi(\theta)}{c=\int f(x|\theta)\pi(\theta) d\theta}\]
+
+Prior $\pi(\theta)$, $\theta\in\Theta\subseteq\mathbb{R}^k$, where $k$ may be "high" dimention
+
+When $c$ is hard to compute, 
+
+define $X_1, X_2...$ stochastic processes with values in $E\subseteq \mathbb{Z}$, if
+
+
+\(\scriptsize{P(X_n=i_n|X_1=i_1,..,X_{n-1}=i_{n-1})=P(X_n=i_n|X_{n-1}=i_{n-1})}\)
+
+
+\(P(X_n\in A|X_1,...,X_{n-1})=P(X_n\in A|X_{n-1})\)
+
+then $\{X_n\}$ is a M.C.
 
 
 ## DA algorithm
 
-When it is impossible to simulate from $f_X(x)$, require the conditions:
+When it is impossible to just simulate from $f_X(x)$, require the conditions:
 
-1. the invariant x-marginal pdf/pmf: 
+1. the invariant x-marginal pdf/pmf
 
 $f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$
 
@@ -183,9 +207,9 @@ sigma <- matrix(c(s1^2, s1*s2*rho, s1*s2*rho, s2^2),2) # Covariance matrix
 
 
 
-($X \sim N(0,1)$; $Y \sim N(0,1)$)
+The unknown true $X \sim N(0,1)$; $Y \sim N(0,1)$
 
-[$X,Y \sim N_2(0,1,\frac{1}{\sqrt 2})$; $f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$]
+We know $X,Y \sim N_2(0,1,\frac{1}{\sqrt 2})$; $f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$
 
 1. Draw $(Y|X=x) \sim N(\frac{x}{\sqrt 2},\frac12)$.
 
@@ -271,12 +295,16 @@ $$f_{X}(x') =\int_X k(x'|x)f_{X}(x)dx$$
 
 Then the Markov chain is time homogeneous and the "recurrent" property holds. ???
 
-## Detailed balance (updat when server resume)
+## Detailed balance
 
-Symmetric $k(x'|x)=k(x|x')$
+For all $x, x'\in \mathbf{X}$, let
 
-$$k(x',x)=k(x'|x)f_X(x)=\int_Y \frac{f(x',y)f(y,x)}{f_Y(y)} dy$$
-$$k(x,x')=k(x|x')f_X(x')=\int_Y \frac{f(x,y)f(y,x')}{f_Y(y)} dy$$
+$$\delta(x',x)=k(x'|x)f_{X}(x)=\int_{Z} \frac{f(x',z)}{f_Z(z)}\cdot\frac{f(z,x)}{f_X(x)}f_{X}(x) dz$$
+$$\delta(x,x')=k(x|x')f_{X}(x')=\int_{Z} \frac{f(x,z)}{f_Z(z)}\cdot\frac{f(z,x')}{f_X(x')}f_{X}(x') dz$$
+
+So $\delta(x',x)=\delta(x,x')$ is a symmetric function satisfying
+
+\[\delta(x,x')=f_X(x)k(x'|x)=f_X(x')k(x|x'), \forall x, x'\]
 
 ## Convergence
 
@@ -293,11 +321,11 @@ s.t. $P\left(\lim\limits_{n\to\infty}|\frac{1}{m}\sum_{i=1}^m g(X_i)-E_{f_X}[g(x
 
 ## Ex4:  Location-scale student's t
 
-EM algorithm (Dempster et al., 1977). 
+The unknown true $Z_i\sim t_{\nu=4,\mu,\sigma^2}$,i=1,..,m,
+$f_Z(z)=\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}$
 
-($Z_i\sim t_{\nu=4,\mu,\sigma^2}$,i=1,..,m, $f_Z(z)=\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}$)
-
-$p(z,y|\mu,\sigma^2)=\prod_{i=1}^m\underbrace{\frac{\sqrt{y_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{y_i}{2\sigma^2}(z_i-\mu)^2\right]}_{N(\mu,\sigma^2/y_i)}\underbrace{\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}y_i^{\frac{\nu}2-1}\exp\left[-\frac{\nu}{2}y_i\right]}_{Gamma(\nu/2,\nu/2)}$
+We know $p(z,y|\mu,\sigma^2)=$
+$\prod_{i=1}^m\underbrace{\frac{\sqrt{y_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{y_i}{2\sigma^2}(z_i-\mu)^2\right]}_{N(\mu,\sigma^2/y_i)}\underbrace{\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}y_i^{\frac{\nu}2-1}\exp\left[-\frac{\nu}{2}y_i\right]}_{Gamma(\nu/2,\nu/2)}$
 
 $$\begin{aligned}\int_Y p(z,y|\mu,\sigma^2)dy=&\prod_{i=1}^mp(z_i|y_i,\mu,\sigma^2)p(y_i|\mu,\sigma^2)dy_i\\
 =&\prod_{i=1}^m\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z_i-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}\end{aligned}$$
@@ -315,11 +343,13 @@ $p((\mu,\sigma^2),y|z)\propto\pi(\mu,\sigma^2)p(z,y|\mu,\sigma^2)=\frac{1}{\sigm
 
 3. Draw $(\mu|\sigma^2,y,z) \sim N(\hat\mu,\frac{\sigma^2}{y_{.}})$.
 
+EM algorithm (Dempster et al., 1977). 
+
 A more general DA algorithm developed by Meng and van Dyk (1999) 
 
 ---
 
-```{r}
+```{r,echo=F}
 g.tls<-function (n,nu,z,step=20){
   m       <- length(z)
   y       <- rgamma(m,nu/2,nu/2)
@@ -371,9 +401,6 @@ t_EM<- g.tls(N,nu,z)
 ```
 
 
----
-
-
 
 ```{r,eval=T,echo=F}
 par(mfrow=c(1,2))
@@ -390,6 +417,13 @@ plot(cum.est,main=c(expression(mu),expression(sigma^2))[i],
 ```
 
 # Solutions
+
+- Simple
+
+- Exact
+
+- One layer
+
 
 ## Probit Model
 
@@ -432,7 +466,11 @@ Because
 
 Simulate the observed data
 
-```{r}
+Assume $\boldsymbol{\beta}=\{-1,0.5,0.25\}$
+
+$\begin{bmatrix}X_1\\X_2\end{bmatrix}\sim N_2(\begin{bmatrix}1\\2\end{bmatrix},\begin{bmatrix}1&0\\0&1\end{bmatrix})$
+
+```{r echo=F}
 beta.t <- c(-1,1/2,1/4)
 beta.name <- c("Beta0","Beta1","Beta2")
 m <- 50; p <- 3;#p <- dim(X)[2] 
@@ -444,6 +482,8 @@ X <- model.matrix(~.,X.df)
 
 Y <- ifelse(X%*%beta.t+ rnorm(m) > 0, 1, 0) 
 
+head(cbind(Y,X),4)
+colMeans(X)
 table(Y)
 ```
 
@@ -493,6 +533,8 @@ beta.p <- g.probit(N,X,Y,m,p)
 #beta.p.marg <- mean(dnorm(beta.p%*%t(X)))*beta.p
 ```
 
+---
+
 - Gibbs' results
 
 ```{r,echo=F}
@@ -524,11 +566,17 @@ fit.p.glm <- glm(Y~.,X.df,family=binomial(link="probit"))
 glm.p<- coef(fit.p.glm)
 glm.p.sd <- summary(fit.p.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 glm.p.ci <- confint(fit.p.glm)
-glm.p.marg <-mean(dnorm(X %*% glm.p))*glm.p
-glm.p.ci.marg <-mean(dnorm(X %*% glm.p.ci))*glm.p.ci
-par.glm.p<- cbind(glm.p,glm.p.sd,glm.p.ci,glm.p.marg,glm.p.ci.marg)
+par.glm.p<- cbind(glm.p,glm.p.sd,glm.p.ci)
 rownames(par.glm.p) <- beta.name
 pander(round((par.glm.p),4))
+```
+
+```{r, echo=F}
+glm.p.marg <-mean(dnorm(X %*% glm.p))*glm.p
+glm.p.ci.marg <-mean(dnorm(X %*% glm.p.ci))*glm.p.ci
+
+beta.p.marg <-mean(dnorm(X %*% beta.p.mean))*beta.p.mean
+beta.p.ci.marg <-cbind(ll=mean(dnorm(X %*% beta.p.ll))*beta.p.ll, ul= mean(dnorm(X %*% beta.p.ul))*beta.p.ul)
 ```
 
 
@@ -562,64 +610,86 @@ for(s in 1:p){
 
 ## Logit Model
 
-$P_i(Y=1)=\frac1{1+\exp(-\mathbf{x}_i^T\boldsymbol{\beta})}$; 
-
-$H(p_i)^{-1}=\ln\frac{p_i}{1-p_i}$ log odds of success = $\mathbf{x}_i^T\boldsymbol{\beta}$
-
-\(\boldsymbol{\varepsilon}\sim Logistic_n(\mathbf{0,I}) \)
+$P(Y_i=1)=\frac{\exp(\mathbf{x}_i^T\boldsymbol{\beta})}{1+\exp(\mathbf{x}_i^T\boldsymbol{\beta})}$; 
+$H^{-1}(p_i)=\ln\frac{p_i}{1-p_i}$=$\mathbf{x}_i^T\boldsymbol{\beta}$ log odds of success
 
 $(1)\quad \boldsymbol{\omega_i^*|\mathbf{y},\beta}\sim PG(n_i,|\mathbf{x}_i^T\boldsymbol{\beta}|)$
 
 \((2)\quad \boldsymbol{\beta|\mathbf{y},\omega^*}\sim N_p\left(\mathbf{m_\omega,v_\omega}\right)\)
 
 where 
-
 $\mathbf{m_\omega}=\mathbf{v_\omega(x'(y-\frac12)+B^{-1}b)}$, 
 
-$\mathbf{v_\omega}={\mathbf{(x'\boldsymbol{\Omega} x+B^{-1})^{-1}}}$
-
+$\mathbf{v_\omega}={\mathbf{(x'\boldsymbol{\Omega} x+B^{-1})^{-1}}}$; 
 $\boldsymbol{\Omega}=diag_n(\mathbf{\omega_i})$,
 
 The prior $\boldsymbol{\beta}\sim N_p(\mathbf{b,B})$
 
 Repeat (1) and (2) long enough.
-
 (Polson etal, 2013)
 
 
-```{r,eval=T, echo=T}
+```{r,eval=T, echo=F}
 set.seed(1234)
 Y <- rbinom(m,1,1/(1+exp(-X%*%beta.t)))
 table(Y)
 ```
 
+---
+
+Introduce Pólya–Gamma
+
+\[f(\omega|\beta)=\cosh{(\frac12\mathbf{x}^T\boldsymbol{\beta})}\exp\left[-\frac12(\mathbf{x}^T\boldsymbol{\beta})^2\omega\right]g(\omega)\]
+
+where $\cosh{(c)}=\frac12(e^c+e^{-c})=\frac{1+e^2c}{2e^{c}}$, $g(\omega)$ is free of $\beta$ s.t.
+
+\[g(\omega)=\sum_n^\infty(-1)^n\frac{2n+1}{\sqrt{2\pi\omega^3}}\exp[-\frac{(2n+1)^2}{8\omega}]\mathbb{I}_{(0,\infty)}(\omega)\]
+
+Since $y$ is observed data, \(\pi(\omega|\beta,y)=f(\omega|\beta)\).
 
 ---
 
-Derive the full conditional pdf
 
-$\pi(\omega|\beta,y)$
+Assign the prior of $\boldsymbol{\beta}$ is $\sim N_p(\mathbf{b,B})$
 
-$\pi(\beta|\omega,y)$
+\[\scriptsize{\begin{aligned} 
+\pi(\boldsymbol{\beta,\omega|y})&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}[p(y_i|\beta)]f(\omega_i|\beta)\\
+&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}\left[\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\right]\cosh{(\frac12\boldsymbol{x_i^T\beta})}\exp\left[-\frac12(\mathbf{x}_i^T\boldsymbol{\beta})^2\omega_i\right]g(\omega_i)\\
+&\propto\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\cdot\frac{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}{2e^{\frac12\mathbf{x}_i^T\boldsymbol{\beta}}}\exp\left[-\frac12(\mathbf{x}_i^T\boldsymbol{\beta})^2\omega\right]\\
+&=2^{-n}\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\exp\left[(y_i-\frac12)\mathbf{x}_i^T\boldsymbol{\beta}-\frac12(\mathbf{x}_i^T\boldsymbol{\beta})^2\omega_i\right]\\
+\end{aligned}}\]
 
-(update when the server resume)
+When $\omega_i$ is known, \(\pi(\boldsymbol{\beta,\omega|y})=\pi(\boldsymbol{\beta|\omega,y})\).
+
+Let $\boldsymbol{\Omega}=diag_n(\mathbf{\omega_i})$; $\boldsymbol{\kappa}=\mathbf{y_{1:n}}-\frac12$
+
+Then we get to conditional pmfs of \(\pi(\boldsymbol{\beta|\omega,y})\)
+
 
 ---
 
-$\boldsymbol{\omega_i^*|\mathbf{y},\beta}\sim PG(n_i,|\mathbf{x}_i^T\boldsymbol{\beta}|)$
+
+\[\scriptsize{\begin{aligned} 
+\pi(\boldsymbol{\beta|\omega,y})&\propto\exp\left\{-\frac12\left[\boldsymbol{\beta'(\mathbf{x'\Omega x+B}^{-1})\beta-2\beta'(\mathbf{x'\kappa+B^{-1}b})}\right]\right\}\\
+&\propto\exp\left\{-\frac12\mathbf{v}_\omega^{-1}[\boldsymbol{\beta'\mathbf{I}\beta-2\beta'\mathbf{v_\omega(x'\kappa+B^{-1}b})]}\right\}\\
+&\propto\exp\left\{-\frac12\boldsymbol{(\beta-\mathbf{m_\omega)'v_\omega^{-1}(\beta-m}_\omega)}\right\}\\
+\end{aligned}}\]
+where 
+
+\(\mathbf{m_\omega=\underset{(p\cdot p)}{v_\omega}(\underset{(p\cdot n)}{x^T}(\mathbf{y_{1:n}}-\frac12)+B^{-1}b)}\); \(\mathbf{v_\omega=(x^T\Omega x+B^{-1})^{-1}}\).
+
+Then we confirm that \(\boldsymbol{\beta|\omega,y}\sim N_p(m_\omega,V_\omega)\)
 
 
-
-```{r}
+```{r echo=F}
 w.cond <- function(beta,m){
    w <- rpg.devroye(num=m, h=1, z=abs(X%*%beta))
    return(w)
  }
 ```
 
-\(\boldsymbol{\beta|\mathbf{y},\omega^*}\sim N_p\left(\mathbf{m_\omega,v_\omega}\right)\)
 
-```{r}
+```{r echo=F}
 beta.cond = function(y,w,p,varbeta=100){
    matbetapr= diag(rep(1/varbeta,p))
    OMG      = diag(w);  
@@ -633,11 +703,9 @@ beta.cond = function(y,w,p,varbeta=100){
 ```
 
 
----
 
-- Gibbs' sampler
 
-```{r}
+```{r,echo=F}
 g.logit<-function (N,X,Y,step=20){
   p <- dim(X)[2]; m <- dim(X)[1]
   beta.ini <- runif(p,-3,3)
@@ -661,12 +729,12 @@ beta.l <- g.logit(N,X,Y)
 ```
 
 
----
-
 ```{r,eval=F,echo=F}
 # beta.l.marg <- mean(dlogis(beta.l[thinned,]%*%t(X)))*(beta.l[thinned,])
 # beta.l.marg <- colMeans(apply(beta.l[thinned,]%*%t(X),1,dlogis))*(beta.l[thinned,])
 ```
+
+---
 
 - Gibbs' results
 
@@ -686,7 +754,7 @@ pander(round((par.l),4))
 
 Iteratively Reweighted Least Squares (IRLS) Algorithm
 
-```{r}
+```{r echo=F}
 fit.l.glm <- glm(Y~.,X.df,family=binomial(link="logit"))
 glm.l<- coef(fit.l.glm)
 glm.l.sd <- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.l.glm)))
@@ -695,6 +763,15 @@ glm.l.ci <- confint(fit.l.glm)
 par.glm.l<- cbind(glm.l,glm.l.sd,glm.l.ci)
 rownames(par.glm.l) <- beta.name
 pander(round((par.glm.l),4))
+```
+
+
+```{r echo=F}
+glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l
+glm.l.ci.marg <-mean(dlogis(X %*% glm.l.ci))*glm.l.ci
+
+beta.l.marg <-mean(dlogis(X %*% beta.l.mean))*beta.l.mean
+beta.l.ci.marg <-cbind(ll=mean(dlogis(X %*% beta.l.ll))*beta.l.ll, ul=mean(dlogis(X %*% beta.l.ul))*beta.l.ul)
 ```
 
 ---
@@ -724,21 +801,26 @@ for(s in 1:p){
 
 ---
 
-Means
+Marginal effects
+
 
 ```{r,echo=F}
-mean.all<- cbind(irls.p=glm.p,gibbs.p=beta.p.mean,irls.l=glm.l,gibbs.l=beta.l.mean)
+mean.all<- cbind(irls.p=glm.p.marg,gibbs.p=beta.p.marg,irls.l=glm.l.marg,gibbs.l=beta.l.marg)
 rownames(mean.all) <- beta.name
 pander(round((mean.all),4))
 ```
 
 Standard deviations
 
+\footnotesize
+
 ```{r,echo=F}
-sd.all<- cbind(irls.p=glm.p.sd,gibbs.p=beta.p.sd,irls.l=glm.l.sd,gibbs.l=beta.l.sd)
+sd.all<- cbind(irls.p=glm.p.ci.marg,gibbs.p=beta.p.ci.marg,irls.l=glm.l.ci.marg,gibbs.l=beta.l.ci.marg)
 rownames(sd.all) <- beta.name
+panderOptions('table.split.table', 300)
 pander(round((sd.all),4))
 ```
+
 
 ## literature
 

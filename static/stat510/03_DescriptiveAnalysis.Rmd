@@ -1,0 +1,472 @@
+---
+title: 'STAT 510: Spatiotemporal Stats'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Introduction and Exploring SPT Data
+output:
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, echo=FALSE, message=F, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(STRbook)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(spacetime)
+library(lubridate)
+```
+
+
+
+# Spatio-Temporal Data Exploration
+
+
+## Flavors of temporal and spatial data
+
+As I mentionend last time, this field is BIG, and methodology has branched off according to the specific flavor of the data.
+
+
+### In time
+
+\bigskip
+\bit
+\item Time intervals type: regular or irregular? 
+
+\item Is time discrete or continuous? 
+
+\item Is the random event the time at which an event occurs?
+\eit
+
+## Flavors of temporal and spatial data
+
+### In space:
+Spatial data corresponds to either a fixed time-point or a temporal aggregation over multiple timepoints and can be:
+
+\bigskip
+\bit
+\item \textcolor{orange}{Geostatistical:} point-level/coordinate observations, space is treated as a continuous surface over a given spatial domain
+
+
+\item \textcolor{orange}{Areal:} space is discretized into a grid, polygons or small areas
+
+
+\item \textcolor{orange}{Point-process:} the locations where events occur are themselves random, and each location can be complemented with attributes (called marks)
+\eit
+
+
+## Spatio-temporal data
+
+Obviously spatio-temporal data will be defined by the combination of features in time and space the data have.
+
+\bigskip
+\textcolor{blue}{For this course, we'll focus on data that is discrete in time and \emph{geostatistical} or \emph{areal} in space}
+
+
+<!-- ## Representation of spatio-temporal data -->
+
+<!-- * Most often, spatio-temporal (ST) data is formated as \textsf{.csv} -->
+
+<!--  -->
+<!-- * ST data are represented throughout the book using the class definitions found in the \textsf{spacetime} \textsf{R} package -->
+
+<!--  -->
+<!-- \bdes -->
+<!-- \item[time-wide] Columns in data are time points -->
+<!-- \item[space-wide] Columns in data are spatial features -->
+<!-- \item[long-format] Each row corresponds to a specific location and time-point combination (inefficient but easier to manipulate) -->
+<!-- \edes -->
+
+<!-- ## Representation of spatio-temporal data -->
+
+
+# Exploratory Analysis of ST Data
+
+## Empirical Spatial and Temporal Statistics
+
+
+Denote by $\lrb{Z(s_i,t_j)}_{i=1,j=1}$ \textcolor{red}{the set of observations} at
+
+\bigskip
+
+* locations $\lrb{s_i:i=1,\ldots,m}$, and
+
+* times  $\lrb{t_j:j=1,\ldots,T}$
+
+
+\bigskip
+\begin{block}{The empirical spatial means vector is}
+$$\hat{\bmu}_{z,s} = \left[\bmat \hat{\mu}_{z,s}(s_1)\\ \vdots \\ \hat{\mu}_{z,s}(s_m) \emat\right]= \left[\bmat \frac{1}{T}\sum_{j=1}^T Z(s_1,t_j)\\ \vdots \\ \frac{1}{T}\sum_{j=1}^T Z(s_m,t_j) \emat\right]=\frac{1}{T} \sum_{j=1}^T \bZ_{t_j}$$
+\end{block}
+
+
+## Empirical Spatial and Temporal Statistics
+
+```{r loadNOAA, echo=F, eval=T}
+locs <- read.table(system.file("extdata",
+                               "Stationinfo.dat", 
+                               package = "STRbook"),
+col.names = c("id", "lat", "lon"))
+Times <- read.table(system.file("extdata",
+                                "Times_1990.dat",
+                                package = "STRbook"),
+col.names = c("julian", "year", "month", "day"))
+Tmax <- read.table(system.file("extdata",
+                               "Tmax_1990.dat", 
+                               package = "STRbook"))
+names(Tmax) <- locs$id
+Tmax <- bind_cols(Times,Tmax)
+Tmax_long <- gather(Tmax, id, z, -julian, -year, -month,
+                    -day) %>% 
+  filter(!(z<=-9998))
+```
+
+### Empirical Spatial Means (NOAA Data)
+
+\bigskip
+```{r spMeans, echo=F, eval=T, message=F, fig.height=2.5, fig.width=3, fig.align='center'}
+Tmax_long %>% 
+  group_by(id) %>% #,year) %>% 
+  summarise(z=mean(z)) %>% 
+  mutate(id=as.numeric(id)) %>% 
+  left_join(locs,by="id") %>% 
+  # filter(year<1993) %>% 
+  ggplot() + 
+  geom_point(aes(x=lon,y=lat,colour=z),size=2) +
+  col_scale(name = "degF") + 
+  xlab("Longitude (deg)") + 
+  ylab("Latitude (deg)") + 
+  geom_path(data = map_data("state"),# plot points
+            aes(x = long, y = lat, group = group)) +
+  # facet_grid(.~year) + 
+  coord_fixed(xlim = c(-105, -75),
+              ylim= c(25,50)) +
+  theme_bw()
+```
+
+\smallskip
+\scriptsize{In these data, stations have different number of measurements, so we use instead $\hat{\mu}_{z,s}(s_i)=\frac{1}{T_i}\sum_{j=1}^{T_i} Z(s_i,t_j)$}
+
+## Empirical Spatial and Temporal Statistics
+
+Conversely, one could average over space to get the *empirical temporal mean*, given by $$\hat{\mu}_{z,t}(t_j)=\frac{1}{m}\sum_{i=1}^{m} Z(s_i,t_j)$$
+
+```{r tsMeans, echo=F, eval=T, message=F, fig.height=2, fig.width=4, fig.align='center'}
+Tmax_tsmu <- Tmax_long %>% 
+  group_by(year,month,day) %>% #,year) %>% 
+  summarise(z=mean(z)) %>% 
+  mutate(year=as.character(year),
+         month=as.character(month),
+         day=as.character(day)) %>% 
+  unite("date",year,month,day) %>% 
+  mutate(date=ymd(date)) %>% 
+  filter(date<ymd("19920101"))
+
+rndsample <- sample(Tmax_long$id,100,replace=F)
+Tmax_long %>% 
+  filter(id%in%rndsample) %>% 
+  group_by(id,year,month,day) %>% #,year) %>% 
+  mutate(year=as.character(year),
+         month=as.character(month),
+         day=as.character(day)) %>% 
+  unite("date",year,month,day) %>% 
+  mutate(date=ymd(date)) %>% 
+  filter(date<ymd("19920101")) %>% 
+  ggplot() + 
+  geom_line(aes(x=date,y=z,group=id),
+            color="cornflowerblue",
+            alpha=0.2,size=.1) +
+  geom_line(data=Tmax_tsmu,
+            aes(x=date,y=z),size=0.2) +
+  ylab("Max temp (degF)") + 
+  xlab("date") + 
+  theme_bw()
+```
+
+## Empirical Spatial and Temporal Statistics
+
+\begin{block}{For 2 locations, the lag-$\tau$ empirical spatial covariance is}
+
+\scriptsize{$$\hat{C}_z^{(\tau)}(s_i,s_k)=\frac{1}{T-\tau}\sum_{j=\tau+1}^{T} (Z(s_i,t_j)-\hat{\mu}_{z,s}(s_i))(Z(s_k,t_j-\tau)-\hat{\mu}_{z,s}(s_k))$$}
+\normalsize
+for $\tau=0,1,\ldots,T-1.$
+\end{block}
+
+
+\begin{block}{For all locations, the lag-$\tau$ empirical spatial covariance matrix is}
+\scriptsize{$$\hat{\bC}_z^{(\tau)}=\frac{1}{T-\tau}\sum_{j=\tau+1}^{T} (\bZ_{t_j}-\hat{\bmu}_{z,s})(\bZ_{t_j-\tau}-\hat{\bmu}_{z,s})'$$}
+\normalsize
+where $\bZ_{t_j}=(Z(s_1,t_j),Z(s_2,t_j),\ldots,Z(s_m,t_j))'$, and $\hat{\bmu}_{z,s}$ is defined analogously.
+\end{block}
+
+
+## Empirical Spatial and Temporal Statistics
+
+\begin{block}{Between two different datasets, the lag-$\tau$ empirical cross-covariance matrix is}
+\scriptsize{$$\hat{\bC}_{z,x}^{(\tau)}=\frac{1}{T-\tau}\sum_{j=\tau+1}^{T} (\bZ_{t_j}-\hat{\bmu}_{z,s})(\bX_{t_j-\tau}-\hat{\bmu}_{x,s})'$$}
+\normalsize
+Can be used to characterize ST dependence in two variables
+\end{block}
+
+
+## Measures of Spatio-Temporal dependence
+
+\begin{block}{Empirical ST Covariogram}
+
+We want to describe covariability in the ST data as a function of temporal lags and space. Assume that
+
+
+\bigskip
+\bit
+\item the first moment depends on space but not on time
+
+
+\bigskip
+
+\item the second moment depends on lag differences in space and time
+\eit
+\end{block}
+
+Then the ST covariogram for spatial and temporal lags $\bh$ and $\tau$, respectively, is
+
+
+\scriptsize{$$\hat{\bC}_{z}(\bh,\tau)=\frac{1}{|N_s(\bh)|}\frac{1}{|N_t(\tau)|}\sum_{s_i,s_k\in N_s(\bh)} \sum_{t_j,t_\ell\in N_t(\tau)}(Z(s_i,t_j)-\hat{\mu}_{z,s}(s_i))(Z(s_k,t_\ell)-\hat{\mu}_{z,s}(s_k))$$}
+
+
+## Measures of Spatio-Temporal dependence
+
+\begin{block}{Empirical ST Semivariogram}
+$$\gamma_z(s_i,s_k;t_j,t_\ell)=\frac{1}{2}\text{var}(Z(s_i;t_j)-Z(s_k;t_\ell)).$$
+
+
+If the covariance is only in terms of displacement in space and differences in time, then
+\begin{eqnarray*}
+\gamma_z(s_i,s_k;t_j,t_\ell)&=&\text{var}(Z(s+\bh;t+\tau)-Z(s;t))\\
+&=&C_z(\0,0)-C_z(\bh,\tau).
+\end{eqnarray*}
+with $\bh=s_i-s_k$ and $\tau=t_j-t_\ell$.
+\end{block}
+\scriptsize{\textcolor{red}{Note:} This last equation doesn't hold even if $\exists \gamma_z(\bh;\tau)$ if there is no $C_z(\bh;\tau)$ that is stationary.}
+
+## In class-problem
+
+Show, under the conditions previously assumed, that
+
+\begin{eqnarray*}
+\text{var}(Z(s+\bh;t+\tau)-Z(s;t))&=&C_z(\0,0)-C_z(\bh,\tau).
+\end{eqnarray*}
+
+## Measures of Spatio-Temporal dependence
+
+\begin{block}{ST Semivariogram}
+If $C_z(\bh;\tau)$ is well-defined, the the semivariogram depends on
+
+\bigskip
+\bdes
+\item[Nugget effect] $$\underset{\stackrel{\bh\rightarrow \0}{ \tau\rightarrow 0}}{\lim}\gamma_z(\bh;\tau)$$ 
+
+
+\item[Sill:] $$\underset{\stackrel{\bh\rightarrow \infty}{ \tau\rightarrow\infty}}{\lim}\gamma_z(\bh;\tau)$$ 
+
+
+\item[Partial sill:] Sill minus Nugget
+\edes
+\end{block}
+
+\scriptsize
+\textcolor{red}{Note:} Before fitting a semivariogram, non-stationary behavior in $C_z(\bh;\tau)$ may be avoided by fitting (and removing) linear and quadratic trends in ST coordinates.
+
+## Measures of Spatio-Temporal dependence
+
+\begin{block}{Empirical ST Semivariogram}
+
+\bigskip
+Assuming that $\mu_{z,s}$ is constant across all locations, then
+\scriptsize
+\begin{eqnarray*}
+\hat{\gamma}_z(\bh;\tau)&=&\hat{C}_z(\0;0)-\hat{C}_z(\bh;\tau)\\
+&=& \frac{1}{|N_s(\bh)|}\frac{1}{|N_t(\tau)|}\sum_{s_i,s_k\in N_s(\bh)} \sum_{t_j,t_\ell\in N_t(\tau)}(Z(s+\bh,t+\tau)-Z(s,t))^2
+\end{eqnarray*}
+\end{block}
+
+```{r esemivar, echo=F, eval=T, message=F, warning=F,fig.height=2.2, fig.width=3, fig.align='center'}
+data("STObj3", package = "STRbook")
+STObj4 <- STObj3[, "1993-07-01::1993-07-31"]
+
+vv <- gstat::variogram(object = z~1 + lat,
+                       data = STObj4,
+                       width = 80,
+                       cutoff = 1000,
+                       tlags = 0.01:6.01)
+plot(vv)
+```
+
+
+## Empirical Orthogonal Functions
+
+\begin{block}{}
+
+\bigskip
+\bit
+\item Help identify spatial patterns in ST data
+
+\bigskip
+\item Can be used for dimension reduction
+
+\bigskip
+\item Are ST manifestation of Principal Components
+\eit
+\end{block}
+
+## Interlude: A Review of PCA
+
+* Assume iid random $\bx_i=(x_{i1}, x_{i2},\ldots, x_{ip})'$ with $p\times p$ covariance matrix $\text{var}(\bx_i)=\bC_x$.
+
+
+* Suppose we want to build variables $$a_{ik}=w_{k 1} x_{i1}+ w_{k 2}x_{i2} + \cdots + w_{kp}x_{ip}$$ for $k=1, \ldots, p$, that are *orthogonal* to each other.
+
+
+* How should the $w_{kj}$'s be chosen?
+
+
+## Interlude: A Review of PCA
+
+Using spectral decomposition: $$\bC_x = W \Lambda_x W',$$ with $W W' = W'W=\text{I}_p$ and $\Lambda=\text{diag}(\lambda_1,\lambda_2,\cdots, \lambda_p)$, with $$\lambda_1\geq \lambda_2\geq \cdots \geq \lambda_p>0.$$ 
+
+ 
+Dropping the $i$
+$$\ba = W' \bx = \left[\bmat \bw_{1}' \bx\\ \vdots \\ \bw_{p}'\bx \emat\right] = \left[\bmat a_1\\ \vdots \\ a_{p} \emat\right],$$
+
+Note that $\text{var}(\ba)= W'\text{var}(\bx) W = W'(W \Lambda_x W') W = \Lambda_x.$
+
+
+## Interlude: A Review of PCA
+
+\bit
+\item Since $\Lambda_x$ is diagonal then the $a_k$'s are independent (orthogonal to each other) 
+
+
+\bigskip
+\item Furthermore, note that
+\eit
+
+\vspace{-1cm}
+\begin{eqnarray*}
+\text{var}(x_1)+\cdots+\text{var}(x_p) &=&\text{trace}(C_x) \\
+&=& \lambda_1+\cdots+\lambda_p \\
+&=&\text{var}(a_1)+\cdots+\text{var}(a_p)
+\end{eqnarray*}
+
+
+\bit
+\item Lastly, since $\lambda_1\geq \ldots \geq \lambda_p.$
+
+$a_1$ captures the largest amount of variability in $\bx$, $a_2$ the second largest, etc.
+\eit
+
+\scriptsize
+\textcolor{red}{Note:}In practice $\bC_x$ is unknown, so we use the estimator $\hat{\bC}_x$ instead.
+
+
+## Empirical Orthogonal Functions
+
+\bit
+\item Replace $\bZ_{t_j}$ for $\bx_i$, and use the lag-0 empirical spatial covariance matrix $\hat{\bC}_z^{(0)}$
+
+
+\bigskip
+\item Spectrally decompose $\hat{\bC}_z^{(0)}$ into $\Psi \Lambda \Psi,$
+where 
+\eit
+
+\vspace{-0.7cm}
+\begin{eqnarray*}
+\Psi_{m\times m}&=&(\bpsi_1, \ldots, \bpsi_m)'\;\text{with}\\
+\bpsi_k &=& (\psi_k(s_1), \ldots, \psi_k(s_m)).
+\end{eqnarray*}
+
+
+\bit
+\item The $k$th principal component times series is $$\ba_k=\left[\bmat a_k(t_1)\\ a_k(t_2)\\ \vdots\\ a_k(t_T) \emat\right]=\left[\bmat \bpsi_k' \bZ_{t_1}\\ \bpsi_k' \bZ_{t_2}\\ \vdots\\ \bpsi_k' \bZ_{t_T} \emat\right].$$
+\eit
+
+
+## Empirical Orthogonal Functions
+
+The $\bpsi_k$'s ($k=1,\ldots,m$) are known as the Empirical Orthogonal Functions (EOFs).  Main uses are:
+
+\bigskip
+
+\benum
+\item Identify salient spatial patterns in ST data
+
+\bigskip
+
+\item Reduce the dimensionality of spatial or ST random effects (more on this later)
+\eenum
+
+
+## Empirical Orthogonal Functions
+
+To do dimension reduction, we need to decide the number of EOFs to use. How?
+
+\bigskip
+Here are some possibilities
+
+
+\benum
+\item Use the $\lambda_k$'s to determine the proportion of overall variance to retain
+
+
+\bigskip
+\item Use scree plot and find after including how many EOFs the variance contribution flattens out
+
+
+\bigskip
+\item Identify the *significant* EOFs by obtaining EOFs for several spatially permuted versions of the data.  See where the tue scree plot intersects with those of the permuted datasets
+\eenum
+
+## In-class problem
+
+Calculate the EOFs for the *SST* dataset. Replicate the figures in pages 44-45 using the R functions \textsf{svd} and \textsf{ggplot2::geom\_tile} and interpret them.  How many EOFs would you retain?
+
+```{r echo=T, eval=F}
+library(STRbook)
+library(ggplot2)
+library(tidyr)
+
+data("SSTlandmask", package = "STRbook")
+data("SSTlonlat", package = "STRbook")
+data("SSTdata", package = "STRbook")
+
+#remove years that are not complete
+rm_rows <- which(SSTlandmask == 1)
+SSTdata <- SSTdata[-rm_rows, 1:396]
+```
+
+
+
+
+<!-- ## Visualizing spatio-temporal data -->
+
+<!-- ### Spatial Plots -->
+
+
+<!-- ## Visualizing spatio-temporal data -->
+
+<!-- ### Time-Series Plots -->
+
+
+<!-- ## Visualizing spatio-temporal data -->
+
+<!-- ### Hovlmoller Plots -->
+
+
+<!-- ## Visualizing spatio-temporal data -->
+
+<!-- ### Other Visualization Options -->
+

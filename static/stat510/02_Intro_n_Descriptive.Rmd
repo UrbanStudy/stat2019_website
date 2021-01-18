@@ -1,0 +1,220 @@
+---
+title: 'STAT 510: Spatiotemporal Stats'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Introduction and Visualizing SPT Data
+output:
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+# Introduction
+
+## Why study spatio-temporal processes
+
+* Spatio-temporal processes are common in the real world.  These can result from interactions across many processes and scales
+
+* Snapshots of spatial events at a fixed time are informative, but provide an incomplete picture about the process
+
+* Looking at a time series at a single location might miss out on the influence nearby locations exert
+
+$$\textsf{there is no history without geography and vice-versa }$$
+
+
+
+## Why should it be statistical?
+
+Processes mostly follow deterministic (even if sometimes chaotic) rules, but...
+
+
+
+There is often incomplete data and knowledge about mechanisms driving phenomena $$\Rightarrow\textsf{uncertainty in data, model and parameter values}$$
+
+
+## Why should these models be statistical?
+
+**Statistical spatio-temporal models allow:**
+
+* capturing the notion of uncertainty without obscuring important trends
+
+
+* building-in system components that appear random -- even if they are not, models are useful if predictions are accurate
+
+
+* parameter estimation and process prediction (conditional on observed data)
+
+
+* can be based on our physical understanding of a process (i.e., on a mechanistic model)
+
+
+## Why spatio-temporal modeling?
+
+**To characterize processes with uncertain and (too often) incomplete data and system knowledge to:**
+
+* make predictions in space and time (\textsf{smoothing} and \textsf{filtering})
+
+
+* make predictions in time (\textsf{forecasting})
+
+
+* \textsf{data assimilation} with mechanistic models
+
+
+* conduct \textsf{parameter inference}
+
+
+* other (computer-model emulation, monitoring network design)
+
+
+## The two approaches
+
+### Descriptive (or maginal) approach
+
+Characterize the first and second-moment (mean and covariance) behavior of the process
+
+\bigskip
+* Many different processes can generate same marginal form
+
+* More useful if knowledge is limited about driving mechanisms behind process
+
+
+## The two approaches
+
+### Dynamical (or conditional) approach
+
+Process values at a location evolve from past values at many locations
+
+\bigskip
+* Relate more closely to causal (mechanistic) explanations of the process
+
+* Most useful when good prior knowledge about process is available
+
+$$\textsf{\textcolor{red}{Both approaches can be connected through their covariance functions}}$$
+
+
+## Hierarchical Statistical Models
+
+* The likelihood of marginal probability models for processes with complex dependencies are hard (sometimes impossible) to compute 
+
+
+* These also struggle with the fact that data are noisy imperfect measurements of what we are usually interested in
+
+
+* Alternatively, complexity can be built-in gradually through conditioning
+
+## Hierarchical Statistical Models
+
+If most complex dependencies in data arise  (for example) from the actual process, it is useful to set up the model with two components
+
+$$\underbrace{[\textsf{data} | \textsf{process}]}_{\text{data model}} \quad\text{and}\quad\underbrace{[\textsf{process}]}_{\text{process model}}$$
+\tiny{(\textcolor{red}{Note:} Square braket notation, common throughout the book, is used to denote pdf's or pmf's)}
+
+
+
+\normalsize
+\bigskip
+
+the game here is to use these two components to do inference on the process through $[\textsf{process} | \textsf{data}]$ using Bayes rule.
+<!-- \normalsize -->
+<!-- \bdes -->
+<!-- \item[data model] describes uncertainties in the data given the process function -->
+<!-- \item[process model] describes process mechanism and uncertainties surrounding the process -->
+<!-- \edes -->
+
+## Hierarchical Statistical Models
+
+<!-- So far, I've largely ignored parameters, in both the data and process models, but these too are a source of uncertainty.  -->
+
+\bit
+\item Parameter uncertainty can be accounted for by assigning probability distributions to parameters (a.k.a. prior distributions) 
+
+
+\item  This leads to a Bayesian hierarchical model (BHM), which uses the hierarchy:
+\benum
+\item $[\textsf{data} | \textsf{process}, \textsf{parameters}]$
+\item $[\textsf{process}|\textsf{parameters}]$
+\item $[\textsf{parameters}]$
+\eenum
+
+
+to deduce 
+\eit
+$$\textcolor{blue}{[\textsf{process}, \textsf{parameters} | \textsf{data}] \propto [\textsf{data} | \textsf{process}, \textsf{parameters}] \times }$$
+$$\qquad\qquad \textcolor{blue}{[\textsf{process}|\textsf{parameters}] \times [\textsf{parameters}]}$$
+
+
+## Hierarchical Statistical Models
+
+**\textcolor{red}{An aside}**
+
+* An alternative to specifying parameter priors (that disregards parameter uncertainty) is to estimate parameter values in $[\textsf{data} | \textsf{process}, \textsf{parameters}]$ and $[\textsf{process} | \textsf{parameters}]$ using the data
+
+* This is known as empirical hierarchical modeling (EHM), and is preferrable in some cases (we'll see some examples later on in the course)
+
+* There are hybrid versions of this
+
+## Hierarchical Statistical Models
+
+A popular type of a hierarchical models in time series, are known as \emph{State-Space} models in one or many variables:
+
+* Data modeled as noisy observations of an underlying (hidden) **state process** evolving through time
+
+
+* Goal of these models is to understand the **state process** while accounting for **noise**
+
+
+* Used for **smoothing** (inference on hidden state throughout observed time period), **filtering** (inference on state value at most current time point) and **forecasting** (inference on state values beyond observed period).
+
+## Hierarchical Statistical Models
+
+For this course, we will go beyond this type of models.  We are interested in the temporal evolution of entire spatial processes.
+
+$$\textsf{As you may imagine, this adds a big layer of computational complexity}$$
+
+
+
+
+# Spatio-Temporal Data Exploration
+
+
+## Flavors of temporal and spatial data
+
+As I mentionend last time, this field is BIG, and methodology has branched off according to the specific flavor of the data.
+
+
+### In time
+
+\bigskip
+\bit
+\item Time intervals type: regular or irregular? 
+
+\item Is time discrete or continuous? 
+
+\item Is the random event the time at which an event occurs?
+\eit
+
+## Flavors of temporal and spatial data
+
+### In space:
+Spatial data corresponds to either a fixed time-point or a temporal aggregation over multiple timepoints and can be:
+
+\bigskip
+\bit
+\item \textcolor{orange}{Geostatistical:} point-level/coordinate observations, space is treated as a continuous surface over a given spatial domain
+
+
+\item Areal: space is discretized into a grid, polygons or small areas
+
+
+\item Point-process: the locations where events occur are themselves random, and each location can be complemented with attributes (called marks)
+\eit
+
+
+<!-- ## Spatio-temporal data -->
+
+<!-- Obviously spatio-temporal data will have a combination of features of both temporal and spatial datasets -->
+
+
+
