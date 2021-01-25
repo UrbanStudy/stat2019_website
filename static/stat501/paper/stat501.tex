@@ -652,7 +652,7 @@ target posterior density is
 Let \(Z=\mathbb{R}^p_{+}\) and make a i.i.d. paired vectors
 \((Y_{1:m},Z_{1:m})\), where
 \((Y_{i}|Z_{i},\mu,\sigma^2)\sim N(\mu,\sigma^2/z_i)\),
-\((Z_{i},\mu,\sigma^2) \sim Gamma(\nu/2,\nu/2)\). Then the joint density
+\((Z_{i}|\mu,\sigma^2) \sim Gamma(\nu/2,\nu/2)\). Then the joint density
 is
 \(p(y,z|\mu,\sigma^2)=\prod_{i=1}^mp(y_i|z_i,\mu,\sigma^2)p(z_i|\mu,\sigma^2)\)
 
@@ -687,7 +687,7 @@ The third full conditional pdf can get by
 
 \[\begin{aligned}
 \pi(\sigma^2|y,z)&= \int_{\mathbb{R}}p(\mu,\sigma^2,z|y)d\mu\\
-               &\propto \frac{(\frac{z_{.}\hat\sigma^2}2)^{\frac{m+1}2}}{\Gamma(\frac{m+1}2)} \sigma^{-m-1}\exp\left[-\frac{z_{.}\hat\sigma^2}{2\sigma^2}\right]
+               &\propto \frac{(\frac{z_{.}\hat\sigma^2}2)^{\frac{m+1}2}}{\Gamma(\frac{m+1}2)} (\frac1{\sigma^2})^{\frac{m+1}{2}+1}\exp\left[-\frac{z_{.}\hat\sigma^2}{2\sigma^2}\right]
 \end{aligned}\]
 
 Thus, we can simulate \((\mu,\sigma^2)\) by three steps:
@@ -794,10 +794,10 @@ The joint pmf is
 \citet{polsonBayesianInferenceLogistic2013} propose a DA approach which
 only need a single layer of latent variables, which involve the
 Pólya--Gamma distribution. Denote
-\(W_i \sim PG(1,\boldsymbol{|X'_{i,1:p}\beta|})\),i=1:n, then (no
+\(W_i \sim PG(1,|\mathbf{x}^T_{i}\boldsymbol{\beta}|)\),i=1:n, then (no
 absolute value in polson2013)
 
-\[f(\omega|\beta)=\cosh{(\frac12\boldsymbol{x^T\beta})}\exp\left[-\frac12(\boldsymbol{x^T\beta})^2\omega\right]g(\omega)\]
+\[f(\omega|\beta)=\cosh{(\frac12\mathbf{x}^T\boldsymbol{\beta})}\exp\left[-\frac12(\mathbf{x}^T\boldsymbol{\beta})^2\omega\right]g(\omega)\]
 
 where \(\cosh{c}=\frac12(e^c+e^{-c})=\frac{1+e^2c}{2e^{c}}\),
 \(g(\omega)\) is free of \(\beta\) s.t.
@@ -806,14 +806,13 @@ where \(\cosh{c}=\frac12(e^c+e^{-c})=\frac{1+e^2c}{2e^{c}}\),
 
 Since \(y\) is observed data, \(\pi(\omega|\beta,y)=f(\omega|\beta)\).
 
-Assign the prior of \(\boldsymbol{\beta}\) is
-\(\sim N_p(b,\boldsymbol{B})\)
+Assign the prior of \(\boldsymbol{\beta}\) is \(\sim N_p(\mathbf{b,B})\)
 
 \[\begin{aligned} 
 \pi(\boldsymbol{\beta,\omega|y})&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}[p(y_i|\beta)]f(\omega_i|\beta)\\
-&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}\left[\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\right]\cosh{(\frac12\boldsymbol{x_i^T\beta})}\exp\left[-\frac12(\boldsymbol{x_i^T\beta})^2\omega_i\right]g(\omega_i)\\
-&\propto\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\cdot\frac{1+e^{\boldsymbol{x_i^T\beta}}}{2e^{\frac12\boldsymbol{x_i^T\beta}}}\exp\left[-\frac12(\boldsymbol{x_i^T\beta})^2\omega\right]\\
-&=2^{-n}\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\exp\left[(y_i-\frac12)\mathbf{x}_i^T\boldsymbol{\beta}-\frac12(\boldsymbol{x_i^T\beta})^2\omega_i\right]\\
+&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}\left[\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\right]\cosh{(\frac12\boldsymbol{x_i^T\beta})}\exp\left[-\frac12(\mathbf{x}_i^T\boldsymbol{\beta})^2\omega_i\right]g(\omega_i)\\
+&\propto\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\frac{e^{y_i\mathbf{x}_i^T\boldsymbol{\beta}}}{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}\cdot\frac{1+e^{\mathbf{x}_i^T\boldsymbol{\beta}}}{2e^{\frac12\mathbf{x}_i^T\boldsymbol{\beta}}}\exp\left[-\frac12(\mathbf{x}_i^T\boldsymbol{\beta})^2\omega\right]\\
+&=2^{-n}\phi_p(\mathbf{b,B})\prod_{i=1}^{N}\exp\left[(y_i-\frac12)\mathbf{x}_i^T\boldsymbol{\beta}-\frac12(\mathbf{x}_i^T\boldsymbol{\beta})^2\omega_i\right]\\
 \end{aligned}\]
 
 When \(\omega_i\) is known,
@@ -823,20 +822,20 @@ Let \(\boldsymbol{\Omega}=diag_n(\mathbf{\omega_i})\);
 conditional pmfs of \(\pi(\boldsymbol{\beta|\omega,y})\)
 
 \[\begin{aligned} 
-\pi(\boldsymbol{\beta|\omega,y})&\propto\exp\left\{-\frac12\left[\boldsymbol{\beta'(X'\Omega X+B^{-1})\beta-2\beta'(X'\kappa+B^{-1}b)}\right]\right\}\\
-&\propto\exp\left\{-\frac12\boldsymbol{V_\omega^{-1}[\beta'I\beta-2\beta'V_\omega(X'\kappa+B^{-1}b)]}\right\}\\
-&\propto\exp\left\{-\frac12\boldsymbol{(\beta-m_\omega)'V_\omega^{-1}(\beta-m_\omega)}\right\}\\
+\pi(\boldsymbol{\beta|\omega,y})&\propto\exp\left\{-\frac12\left[\boldsymbol{\beta'(\mathbf{x'\Omega x+B}^{-1})\beta-2\beta'(\mathbf{x'\kappa+B^{-1}b})}\right]\right\}\\
+&\propto\exp\left\{-\frac12\mathbf{v}_\omega^{-1}[\boldsymbol{\beta'\mathbf{I}\beta-2\beta'\mathbf{v_\omega(x'\kappa+B^{-1}b})]}\right\}\\
+&\propto\exp\left\{-\frac12\boldsymbol{(\beta-\mathbf{m_\omega)'v_\omega^{-1}(\beta-m}_\omega)}\right\}\\
 \end{aligned}\] where
-\(m_\omega=\underset{(p\cdot p)}{V_\omega}(\underset{(p\cdot n)}{X^T}(\mathbf{y_{1:n}}-\frac12)+B^{-1}b)\);
-\(V_\omega=(X^T\Omega X+B^{-1})^{-1}\). Then we confirm that
+\(\mathbf{m_\omega=\underset{(p\cdot p)}{v_\omega}(\underset{(p\cdot n)}{x^T}(\mathbf{y_{1:n}}-\frac12)+B^{-1}b)}\);
+\(\mathbf{v_\omega=(x^T\Omega x+B^{-1})^{-1}}\). Then we confirm that
 \(\boldsymbol{\beta|\omega,y}\sim N_p(m_\omega,V_\omega)\)
 
 To sample from the posterior distribution using the Pólya--Gamma method,
 simply iterate two steps:
 
 \[\begin{aligned}
-(\omega_i|\boldsymbol{\beta})&\sim PG(n_i,x_i^T\boldsymbol{\beta})\\
-(\boldsymbol{\beta}|y,\omega)&\sim N(m_\omega,V_\omega)
+(\omega_i|\boldsymbol{\beta})&\sim PG(n_i,\mathbf{x}_i^T\boldsymbol{\beta})\\
+(\boldsymbol{\beta|y,\omega})&\sim N(\mathbf{m_\omega,v_\omega})
 \end{aligned}\]
 
 \hypertarget{other-bayesian-methods}{%

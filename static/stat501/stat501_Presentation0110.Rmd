@@ -44,49 +44,138 @@ Desired $\beta=\beta_0,\beta_1,...,\beta_p$
 
 ## General Framework
 
+Generalized Linear Models
 
-The link function: $Pr(Y_i=1|\beta)=H(\mathbf{x}_i^T\boldsymbol{\beta})$
+\[\begin{aligned}
+Y=\{0,1\}\qquad\quad&\\
+\downarrow\qquad\qquad\quad&\\
+Pr(Y_i=1|\beta)=p_i=&H(\eta_i)&\\
+&\downarrow\\
+&H^{-1}(p_i)=\eta_i=\mathbf{x}_i^T\boldsymbol{\beta}\\
+\end{aligned}\]
 
-H is a CDF
+The link function $H$ is a CDF
 
+---
 
-## Frequentist's Method
+- Logit models:
 
-<!-- v.s.  Maximum Likelihood Estimation -->
+\(\begin{aligned}
+p_i=Logistic(\eta_i)&=\frac{\exp(\eta_i)}{1+\exp(\eta_i)}\\
+Logit(p_i)&=\ln\frac{p_i}{1-p_i}=\eta_i=\mathbf{x}_i^T\boldsymbol{\beta}\\
+\end{aligned}\)
+
+($\eta$ is log odds of success)
+
+- Probit models:
+
+\(\begin{aligned}
+p_i=\Phi(\eta_i)&=\frac12+\frac12\rm erf(\frac{\eta_i}{\sqrt {2}})\\
+\Phi^{-1}(p_i)&=\sqrt {2}\rm erf^{-1}(2p_i-1)=\eta_i=\mathbf{x}_i^T\boldsymbol{\beta}\\
+\end{aligned}\)
+
+ the standard normal cdf $\Phi$ is not an elementary function.
+
+## IRLS Algorithm
+
+Iteratively Reweighted Least Squares (MLE)
+
+\[\log L(\boldsymbol{\beta}) = \sum[ y_i \log(\frac{p_i}{1-p_i}) + n_i\log(1-p_i)]\]
+
+Using Fisher Scoring procedure
+
+\[\begin{aligned}
+\mathbf{x}_i^T\boldsymbol{\hat\beta}^{(0)}=\hat\eta_i &\longrightarrow \frac{\exp(\hat\eta_i)}{1+\exp(\hat\eta_i)}=\hat p_i\ \downarrow\\
+ &\downarrow \ z_i=\hat{\eta_i} + \frac{y_i-n_i\hat{p}_i}{n_i\hat{p}_i(1-\hat{p}_i)}\\
+\hat{\boldsymbol{\beta}}^{(1)}=\mathbf{(X'WX)^{-1}X'Wz}&\longleftarrow\mathbf{W}=diag[n_i\hat{p}_i(1-\hat{p}_i)]
+\end{aligned}\]
+
+$z$ the adjusted dependent variable.
+$\hat{\boldsymbol{\beta}}^{(1)}$ the weighted least squares estimate
+
 <!-- v.s. asymptotic expansions or numerical integration -->
+<!-- v.s.??? Newton-Raphson algorithm "gradient descent level II"???   -->
 
-Iteratively Reweighted Least Squares (IRLS) Algorithm
+## Bayesian statisitcs
 
-Fisher Scoring??? Newton-Raphson algorithm "gradient descent level II"???
+The posterior density
 
-## Bayesian methods
+\[\pi(\theta|y)=\frac{f(y|\theta)\cdot\pi(\theta)}{c(y)=\int_{\Theta}f(y|\theta)d\theta}\]
+
+$\pi(\theta)$ is the prior density.
+
+When we can get $c(y)$.
+
+Bayesian estimate $\hat\theta=E[\theta|y]$
+
+Draw many $\theta_i^*\overset{iid}{\sim}\pi(\theta|y)$
+
+$\hat\theta_n=\frac1n\sum_{i=1}^n\theta_i^*\overset{a.s}{\to}\hat\theta$ by SLLN
+
+---
+
+But for our question, $c(y)$ is intractable.
+
+\[\pi(\boldsymbol{\beta}|y) = \frac{\pi(\boldsymbol{\beta})\prod_{i=1}^{n}H (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-H(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}}{\int\pi(\boldsymbol{\beta})\prod_{i=1}^{n}H (\mathbf{x}_i^T\boldsymbol{\beta})^{y_i}(1-H(\mathbf{x}_i^T\boldsymbol{\beta}))^{1-y_i}d\boldsymbol{\beta}}\]
+
+The solutions include:
+
+Asymptotic expansions (require large sample size), 
+
+Numerical integration (hard for high-dimension), 
+
+and Monte Carlo integration
 
 
-v.s. Multi-layers or approximation
+## EM algorithm
+
+E-step
+
+\[Q(\theta',\theta)=\int_Z\log[p(\theta'|z,y)]\cdotp(z|y,\theta)dz\]
+
+where $\theta$ is the current guess to the mode of the observed posterior $p(\theta'|y)=\frac1{c(y)} p(\theta)L(y|\theta)$.
+
+$p(\theta'|z,y)$ is the augmented posterior,
+
+$p(z|y,\theta)$ is the conditional predictive distribution of the latent data $Z$, conditional on the current guess to the posterior mode.
+
+---
+
+M-step
+
+\[\frac{\partial Q(\theta',\theta)}{\partial\theta'}\overset{set}{=}0\]
+
+Continue E-step and M-step .... until
+
+\[||\theta'-\theta|| \text{ or } |Q(\theta'',\theta')-Q(\theta',\theta)|<\delta\]
 
 
-The latent variable \(\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}\)
-
-$y_i|z_i=\begin{cases}1&\text{if }z_i>0\\0&\text{o.w.}\end{cases}$
+EM algorithm (Dempster et al., 1977). 
 
 
+## DA Algorithm
 
-- In case of Probit models,
-\(\boldsymbol{\varepsilon}\sim N_n(\mathbf{0,I}) \)
+the target \(p(\theta|y)=\int_Zp(\theta|z,y)\cdot p(z|y)dz\)
 
+the predictive density $p(z|y)=\int_\Theta p(z|\phi,y)\cdot p(\phi|y)d\phi$
 
-- In case of Logit models,
-\(\boldsymbol{\varepsilon}\sim Logistic_n(\mathbf{0,I}) \)
+\(\begin{aligned}
+p(\theta|y)&=\int_Zp(\theta|z,y)\cdot p(z|y)dz\\
+&=\int_Zp(\theta|z,y)\cdot [\int_\Theta p(z|\phi,y)\cdot p(\phi|y)d\phi]\ dz\\
+&=\int_\Theta p(\phi|y)\cdot [\int_Zp(\theta|z,y) \cdot p(z|\phi,y)dz]\ d\phi\\
+&=\int_\Theta p(\phi|y)\cdot K(\theta,\phi)\ d\phi\\
+\end{aligned}\)
 
+where the kernel $K(\theta,\phi)$ is a nonnegative weight function used in density estimation.
 
 # A Data-Augmentation schemes
 
 
 A well-behaved Markov chain Monte Carlo (MCMC)
 
-A underlying variable $Z$ simulated from the proper distribution
+Simulating from the proper conditional predictive distribution
 
-Generating the missing data
+Generating the underlying data $Z$
 
 ## Motivation
 
@@ -116,48 +205,47 @@ If $E[|g|]<\infty$, then $\frac{1}{m}\sum_{i=1}^m g(X_i) \overset{a.s.}\longrigh
 
 - Unbiasedness: 
 
-$E[\frac{1}{m}\sum Y_k]=E(Y)$
+$E[\frac{1}{m}\sum g(X_i)]=E[g(X)]$
 
 
 ## Monte Carlo Markov chain (MCMC)
 
+- 'Current' and 'next'
 
-\[\pi(\theta|x)=\frac{f(x|\theta)\pi(\theta)}{c=\int f(x|\theta)\pi(\theta) d\theta}\]
+$\theta\in\Theta\subseteq\mathbb{R}^k$, where $k$ may be "high" dimension
 
-Prior $\pi(\theta)$, $\theta\in\Theta\subseteq\mathbb{R}^k$, where $k$ may be "high" dimention
+\(\pi(\theta|y)=\frac{f(y|\theta)\pi(\theta)}{c(y)}\)
+when $c(y)=\int f(y|\theta)\pi(\theta) d\theta$ is hard to compute, 
 
-When $c$ is hard to compute, 
+Define $\{X_n\}\in E$, $A\in \mathcal{J}$. $\mathcal{J}$ is a $\delta$-field on $E$, 
 
-define $X_1, X_2...$ stochastic processes with values in $E\subseteq \mathbb{Z}$, if
+if \(\scriptsize{P(X_n=i_n|X_1=i_1,..,X_{n-1}=i_{n-1})=P(X_n=i_n|X_{n-1}=i_{n-1})}\)
 
-
-\(\scriptsize{P(X_n=i_n|X_1=i_1,..,X_{n-1}=i_{n-1})=P(X_n=i_n|X_{n-1}=i_{n-1})}\)
-
-
-\(P(X_n\in A|X_1,...,X_{n-1})=P(X_n\in A|X_{n-1})\)
+or \(P(X_n\in A|X_1,...,X_{n-1})=P(X_n\in A|X_{n-1})\)
 
 then $\{X_n\}$ is a M.C.
+
 
 
 ## DA algorithm
 
 When it is impossible to just simulate from $f_X(x)$, require the conditions:
 
-1. the invariant x-marginal pdf/pmf
+ 1. the invariant x-marginal pdf/pmf. 
+ \[f_X(x)=\int_{\mathbb{R}^q} f(x,z)dz\]
+ 
+ 2. the applicable conditional pdf/pmf.
+ \[f_{X|Z}(x|z)=\frac{f_{X,Z}(x,z)}{f_Z(z)}\]
 
-$f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$
-
-2. the applicable conditional pdf/pmf 
-
-$f_{X|Y}(x|y)=\frac{f_{X,Y}(x,y)}{f_Y(y)}$ and $f_{Y|X}(y|x)$.
+and $f_{Z|X}(z|x)$.
 
 ---
 
 - Constructing a Markov chain, one iteration includes:
 
-1. Draw $Y \sim f_{Y |X}(·|x)$.
+1. Draw $Z \sim f_{Z |X}(·|x)$.
 
-2. Draw $X_{i+1} \sim f_{X|Y} (·|y)$.
+2. Draw $X_{i+1} \sim f_{X|Z} (·|z)$.
 
 Repeat to simulate $f_X(x)$
 
@@ -215,13 +303,17 @@ sigma <- matrix(c(s1^2, s1*s2*rho, s1*s2*rho, s2^2),2) # Covariance matrix
 
 
 
-The unknown true $X \sim N(0,1)$; $Y \sim N(0,1)$
+The unknown true $X \sim N(0,1)$; $Z \sim N(0,1)$
 
-We know $X,Y \sim N_2(0,1,\frac{1}{\sqrt 2})$; $f_X(x)=\int_{\mathbb{R}^q} f(x,y)dy$
+Exist $(X,Z) \sim N_2(0,1,\frac{1}{\sqrt 2})$ and 
 
-1. Draw $(Y|X=x) \sim N(\frac{x}{\sqrt 2},\frac12)$.
+$f_X(x)=\int_{\mathbb{R}^q} f(x,z)dz$
 
-2. Draw $(X|Y=y) \sim N(\frac{y}{\sqrt 2},\frac12)$.
+We know $f(Z|X=x)$ and $f(X|Z=z)$
+
+1. Draw $(Z|X=x) \sim N(\frac{x}{\sqrt 2},\frac12)$.
+
+2. Draw $(X|Z=z) \sim N(\frac{z}{\sqrt 2},\frac12)$.
 
 
 ```{r,echo=F}
@@ -279,40 +371,56 @@ $$\mathcal{K}:k(x'|x)>0\quad\forall x', x\in\mathbf{X}$$
 ## Definition
 
 A Markov chain, $X = \{X_i\}^\infty_{i=0}$,with state space X. 
+
 If the current state of the chain is $X = x$, then the density of the next state, $X'$, is $k(x'|x)$.
+
 The Markov transition density (Mtd) is
 
-$$k(x'|x)=\int_Y f_{X|Y}(x'|y)f_{Y|X}(y|x) dy$$
+$$k(x'|x)=\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dz$$
 
 ---
 
 Check $k(x'|x)$ is a pdf:
 
 $$\begin{aligned}
-\int_Xk(x'|x)dx'&=\int_X\left[\int_Y f_{X|Y}(x'|y)f_{Y|X}(y|x) dy\right] dx'\\
-&=\int_Yf_{Y|X}(y|x) \left[\int_X f_{X|Y}(x'|y)dx'\right] dy\\
-&=\int_Yf_{Y|X}(y|x)dy=1
+\int_Xk(x'|x)dx'&=\int_X\left[\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dz\right] dx'\\
+&=\int_Zf_{Z|X}(z|x) \left[\int_X f_{X|Z}(x'|z)dx'\right] dz\\
+&=\int_Zf_{Z|X}(z|x)dz=1
 \end{aligned}$$
 
 ## Invariant (stationarity)
 
 $f_X$ is an invariant density for $K$ when
 
-
 $$f_{X}(x') =\int_X k(x'|x)f_{X}(x)dx$$
 
-Then the Markov chain is time homogeneous and the "recurrent" property holds. ???
+The 1-step transition probability $k(x'|x)$ does not depend on $n$,
+then the Markov chain is time/step homogeneous.
+
+Aperiodic: Any state that can come back with positive probability.
+
+$\pi$-irreducible: Any states $x$, $x'$, $\pi(x)>0$, $\pi(x')>0$
+
+## Symmatric
+
+\(\begin{aligned}
+k(x'|x)f_{X}(x)&=\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dzf_{X}(x)\\
+&=\int_{Z} \frac{f(x',z)}{f_Z(z)}\cdot\frac{f(z,x)}{f_X(x)}f_{X}(x) dz\\
+&=\int_{Z} \frac{f(x,z)}{f_Z(z)}\cdot\frac{f(z,x')}{f_X(x')}f_{X}(x') dz\\
+&=k(x|x')f_{X}(x')
+\end{aligned}\)
+
+Thus the MC $X$ is reversible with respect to $f_X$
 
 ## Detailed balance
 
 For all $x, x'\in \mathbf{X}$, let
 
-$$\delta(x',x)=k(x'|x)f_{X}(x)=\int_{Z} \frac{f(x',z)}{f_Z(z)}\cdot\frac{f(z,x)}{f_X(x)}f_{X}(x) dz$$
-$$\delta(x,x')=k(x|x')f_{X}(x')=\int_{Z} \frac{f(x,z)}{f_Z(z)}\cdot\frac{f(z,x')}{f_X(x')}f_{X}(x') dz$$
+\[r=\min\left(1,\frac{f(x|x')f_X(x')}{f(x'|x)f_X(x)}\right)\]
 
-So $\delta(x',x)=\delta(x,x')$ is a symmetric function satisfying
+The MCMC is called Gibb's sampler if $r\equiv1$.
 
-\[\delta(x,x')=f_X(x)k(x'|x)=f_X(x')k(x|x'), \forall x, x'\]
+
 
 ## Convergence
 
@@ -322,57 +430,116 @@ will *converge* to the invariant density $f_X$ no matter how the chain is starte
 $$\frac{1}{m}\sum_{i=1}^m g(X_i)\overset{a.s}{=}E_{f_X}[g(x)]$$
 s.t. $P\left(\lim\limits_{n\to\infty}|\frac{1}{m}\sum_{i=1}^m g(X_i)-E_{f_X}[g(x)]|<\varepsilon\right)=1$
 
-"irreducible"?
 
-##  Geometric ergodicity and CLT
+ Geometric ergodicity and CLT
 
 
 ## Ex4:  Location-scale student's t
 
-The unknown true $Z_i\sim t_{\nu=4,\mu,\sigma^2}$,i=1,..,m,
-$f_Z(z)=\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}$
+The unknown true $Y_i\sim t_{\nu=4,\mu,\sigma^2}$,i=1,..,m,
+\[p(y|\mu,\sigma^2)=\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(y-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}\]
 
-We know $p(z,y|\mu,\sigma^2)=$
-$\prod_{i=1}^m\underbrace{\frac{\sqrt{y_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{y_i}{2\sigma^2}(z_i-\mu)^2\right]}_{N(\mu,\sigma^2/y_i)}\underbrace{\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}y_i^{\frac{\nu}2-1}\exp\left[-\frac{\nu}{2}y_i\right]}_{Gamma(\nu/2,\nu/2)}$
+But we know 
 
-$$\begin{aligned}\int_Y p(z,y|\mu,\sigma^2)dy=&\prod_{i=1}^mp(z_i|y_i,\mu,\sigma^2)p(y_i|\mu,\sigma^2)dy_i\\
-=&\prod_{i=1}^m\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\nu\sigma^2}\Gamma(\frac{\nu}2)}(1+\frac{(z_i-\mu)^2}{\nu\sigma^2})^{-\frac{\nu+1}2}\end{aligned}$$
+\[(Y_{i}|Z_{i},\mu,\sigma^2)\sim N(\mu,\frac{\sigma^2}{z_i}), \]
+\[(Z_{i}|\mu,\sigma^2) \sim Gamma(\frac\nu2,\frac\nu2)\]
 
 ---
 
-$p((\mu,\sigma^2),y|z)\propto\pi(\mu,\sigma^2)p(z,y|\mu,\sigma^2)=\frac{1}{\sigma^2}p(z,y|\mu,\sigma^2)$
+$p(z,y|\mu,\sigma^2)=p(y|z,\mu,\sigma^2)p(z|\mu,\sigma^2)$
+$=\prod_{i=1}^m\underbrace{\frac{\sqrt{z_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{z_i}{2\sigma^2}(y_i-\mu)^2\right]}_{N(\mu,\sigma^2/z_i)}\underbrace{\frac{(\frac{\nu}2)^{(\frac{\nu}2)}}{\Gamma(\frac{\nu}2)}z_i^{\frac{\nu}2-1}\exp\left[-\frac{\nu}{2}z_i\right]}_{Gamma(\nu/2,\nu/2)}$
 
 
-1. Draw $(Y_i|\mu,\sigma^2,z) \sim Gamma(\frac{\nu+1}2,\frac{1}2(\frac{(z_i-\mu)^2}{\sigma^2}+\nu))$.
+$=\prod_{i=1}^m\underbrace{\frac{\Gamma(\frac{\nu+1}2)}{\sqrt{\pi\nu\sigma^2}\Gamma(\frac{\nu}2)}(\frac{(y_i-\mu)^2}{\nu\sigma^2}+1)^{-\frac{\nu+1}2}}_{p(y_i|\mu,\sigma^2)\sim t_{\nu,\mu,\sigma^2}}$
 
-   $\hat\mu=\frac{1}{y_{.}}\sum_{j=1}^mz_jy_j$, $\hat\sigma^2=\frac{1}{y_{.}}\sum_{j=1}^my_j(z_j-\hat\mu)^2$
+$\times\underbrace{\frac{\left[\frac{(y_i-\mu)^2}{2\sigma^2}+\frac{\nu}{2}\right]^{(\frac{\nu+1}2)}}{\Gamma(\frac{\nu+1}2)}z_i^{\frac{\nu+1}2-1}\exp\left[-\left(\frac{(y_i-\mu)^2}{2\sigma^2}+\frac{\nu}{2}\right)z_i\right]}_{p(z_i|y_i,\mu,\sigma^2)\sim Gamma\left(\frac{\nu+1}2,\frac{(y_i-\mu)^2}{2\sigma^2}+\frac{\nu}2\right)}$
 
-2. Draw $(\sigma^2|y,z) \sim IG(\frac{m+1}2,\frac{y_{.}\hat\sigma^2}2)$.
+---
 
-3. Draw $(\mu|\sigma^2,y,z) \sim N(\hat\mu,\frac{\sigma^2}{y_{.}})$.
+Check invariant property
 
-EM algorithm (Dempster et al., 1977). 
+$$\begin{aligned}\int_Z p(z,y|\mu,\sigma^2)dz_i=&\int_{\mathbb{R}_{+}} p(z_i|y_i,\mu,\sigma^2)p(y_i|\mu,\sigma^2)dz_i\\
+=&p(y_i|\mu,\sigma^2)\int_{\mathbb{R}_{+}} p(z_i|y_i,\mu,\sigma^2)dz_i\\
+=&p(y_i|\mu,\sigma^2)
+\end{aligned}$$
+
+---
+
+$$\begin{aligned}
+l(\mu,\sigma^2)=&\log[p(y|z,\mu,\sigma^2)]\\
+=&\log\prod_{i=1}^m\frac{\sqrt{z_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{z_i}{2\sigma^2}(y_i-\mu)^2\right]\\
+=&\log(2\pi)^{-\frac{m}{2}}-\frac{1}{2}\sum\log(\frac{\sigma^2}{z_i})-\frac{\sum z_i(y_i-\mu)^2}{2\sigma^2}\\
+\frac{\partial l(\mu,\sigma^2)}{\partial\mu}=&\frac{1}{\sigma^2}\sum_{i=1}^mz_i(y_i-\mu)\overset{set}{=}0\\
+\frac{\partial l(\mu,\sigma^2)}{\partial\sigma^2}=&-\frac{1}{2}\sum_{i=1}^m\frac{z_i}{\sigma^2}+\frac{1}{2\sigma^4}\sum z_i(y_i-\mu)^2\overset{set}{=}0\\
+\implies\hat\mu=&\frac{1}{z_{.}}\sum_{i=1}^mz_iy_i; \quad\hat\sigma^2=\frac{1}{z_{.}}\sum_{i=1}^mz_i(y_i-\hat\mu)^2\\
+\end{aligned}$$
+
+
+---
+
+\(\begin{aligned}
+&p(\mu,\sigma^2,z|y)\\
+&\propto\pi(\mu,\sigma^2)p(z,y|\mu,\sigma^2)=\frac{1}{\sigma^2}p(z,y|\mu,\sigma^2)\\
+&\propto\frac{1}{\sigma^2}\prod_{i=1}^m\frac{\sqrt{z_i}}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{z_i}{2\sigma^2}(y_i-\mu)^2\right]\\
+&\propto(\frac{\sum z_i}{\sigma^2})^{\frac12}(\frac{1}{\sigma^2})^{\frac{m+1}2}\exp\left[-\frac{\sum z_iy_i^2-2\sum z_iy_i\mu+\sum z_i\mu^2}{2\sigma^2}\right]\\
+&\propto\underbrace{(\frac{z_.}{\sigma^2})^{\frac12}\exp\left[-\frac{z_.}{2\sigma^2}\left(\mu^2-2\frac{\sum z_iy_i}{z_.}\mu+(\frac{\sum z_iy_i}{z_.})^2\right)\right]}_{N(\hat\mu,\sigma^2/z_.)}\\
+&\times\underbrace{(\frac{1}{\sigma^2})^{\frac{m-1}2+1}\exp\left[-\frac{1}{2\sigma^2}(\sum z_iy_i^2-z_.\hat\mu^2)\right]}_{IG(\frac{m-1}2,z_{.}\hat\sigma^2/2)}\\
+\end{aligned}\)
+
+---
+
+Check
+
+\(\begin{aligned}
+z_{.}\hat\sigma^2=&\sum z_i(y_i-\hat\mu)^2\\
+=&\sum z_iy_i^2-2\sum z_iy_i\hat\mu+\sum z_{i}\hat\mu^2\\
+=&\sum z_iy_i^2-2z_{.}\hat\mu\hat\mu+z_{.}\hat\mu^2\\
+=&\sum z_iy_i^2-z_{.}\hat\mu^2
+\end{aligned}\)
+
+Then we get the augmented conditional posterior pdf.
+
+\[\begin{aligned}
+\pi(\mu|\sigma^2,y,z)&\sim N(\hat\mu,\frac{\sigma^2}{z_{.}})\quad \square\\
+\pi(\sigma^2|y,z)&\sim IG(\frac{m-1}2,\frac{z_{.}{\hat\sigma^2}}2)\quad \square
+\end{aligned}\]
+
+---
+
+
+
+1. Draw $(z'_i|\mu,\sigma^2,y) \sim Gamma(\frac{\nu+1}2,\frac{(y_i-\mu)^2}{2\sigma^2}+\frac{\nu}2)$.
+
+   $\hat\mu'=\frac{1}{z_{.}'}\sum_{j=1}^mz_j'y_j$,  
+   
+   ${\hat\sigma^2}'=\frac{1}{z_{.}'}\sum_{j=1}^mz_j'(y_j-\hat\mu')^2$
+
+2. Draw $({\sigma^2}'|z',y) \sim IG(\frac{m-1}2,\frac{z_{.}'{\hat\sigma^2}'}2)$.
+
+3. Draw $(\mu'|{\sigma^2}',z',y) \sim N(\hat\mu,\frac{{\sigma^2}'}{z_{.}'})$.
+
+
 
 A more general DA algorithm developed by Meng and van Dyk (1999) 
 
 ---
 
 ```{r,echo=F}
-g.tls<-function (n,nu,z,step=20){
-  m       <- length(z)
-  y       <- rgamma(m,nu/2,nu/2)
-  y.      <- sum(y)
-  mu      <- sum(z*y)/y.
-sigma.sq  <- sum((z-mu)^2*y)/y.
+g.tls<-function (n,nu,y,step=20){
+  m       <- length(y)
+  z       <- rgamma(m,nu/2,nu/2)
+  z.      <- sum(z)
+  mu      <- sum(z*y)/z.
+sigma.sq  <- sum((y-mu)^2*z)/z.
 theta     <- matrix(ncol = 2, nrow = n)  
 theta[1,] <- c(mu,sigma.sq)  
   for (i in 1:n) {
-          y  <- rgamma(m,(nu+1)/2,rate = ((z-mu)^2/sigma.sq+nu)/2)  
-          y. <- sum(y)
-      hat.mu <- sum(z*y)/y.
-hat.sigma.sq <- sum((z-hat.mu)^2*y)/y.   
-    sigma.sq <- 1/rgamma(1, (m+1)/2, rate=(hat.sigma.sq*y./2))    
-          mu <- rnorm(1, hat.mu, sqrt(sigma.sq/y.))
+          z  <- rgamma(m,(nu+1)/2,rate = ((y-mu)^2/sigma.sq+nu)/2)  
+          z. <- sum(z)
+      hat.mu <- sum(z*y)/z.
+hat.sigma.sq <- sum((y-hat.mu)^2*z)/z.   
+    sigma.sq <- 1/rgamma(1, (m-1)/2, rate=(hat.sigma.sq*z./2))    
+          mu <- rnorm(1, hat.mu, sqrt(sigma.sq/z.))
   theta[i, ] <- c(mu,sigma.sq)  
   }
   thinned=seq(round(n*0.2),n,step)
@@ -383,29 +550,29 @@ hat.sigma.sq <- sum((z-hat.mu)^2*y)/y.
 ```{r,eval=T, echo=F}
 # mu.j <- sigma.sq.j <- NA
   # for (j in 1:m) {mu.j[j]=z[j]*y[j]}
-  # mu=sum(mu.j)/y.
+  # mu=sum(mu.j)/z.
   # for (j in 1:m) {  
-  # sigma.sq.j[j]=(z[j]-mu)^2*y[j]
+  # sigma.sq.j[j]=(y[j]-mu)^2*z[j]
   # }
-  # sigma.sq=sum(sigma.sq.j)/y.
+  # sigma.sq=sum(sigma.sq.j)/z.
   #   for (j in 1:m) {
-  #     y[j] <- rgamma(1,(nu+1)/2,((z[j]-mu)^2/sigma.sq+nu)/2)  
+  #     z[j] <- rgamma(1,(nu+1)/2,((y[j]-mu)^2/sigma.sq+nu)/2)  
   #   }
     # for (j in 1:m) {mu.j[j]=z[j]*y[j]}
-    # mu=sum(mu.j)/y.
+    # mu=sum(mu.j)/z.
     # 
     # for (j in 1:m) {  
-    # sigma.sq.j[j]=(z[j]-mu)^2*y[j]
+    # sigma.sq.j[j]=(y[j]-mu)^2*z[j]
     # }
-    # sigma.sq=sum(sigma.sq.j)/y.
+    # sigma.sq=sum(sigma.sq.j)/z.
 nu=4
 set.seed(123)
-z <- ggdist::rstudent_t(30,nu,1,2)
-# z <- rnst(1e5, 1000, 5, 13)
+y <- ggdist::rstudent_t(30,nu,1,2)
+# y <- rnst(1e5, 1000, 5, 13)
 # rt.scaled(n, 4, mean = 0, sd = 1)
-#  Z[1, ] <- z <- rnorm(m,mu,sigma/y)
+#  Y[1, ] <- y <- rnorm(m,mu,sigma/y)
 N <- 20000
-t_EM<- g.tls(N,nu,z)
+t_EM<- g.tls(N,nu,y)
 ```
 
 
@@ -426,11 +593,13 @@ plot(cum.est,main=c(expression(mu),expression(sigma^2))[i],
 
 # Solutions
 
-- Simple
+The latent variable \(\mathbf{Z}=\mathbf{X}\boldsymbol{\beta+\varepsilon}\)
 
-- Exact
+$y_i|z_i=\begin{cases}1&\text{if }z_i>0\\0&\text{o.w.}\end{cases}$
 
-- One layer
+Probit models: \(\boldsymbol{\varepsilon}\sim N_n(\mathbf{0,I}) \)
+
+Logit models: \(\boldsymbol{\varepsilon}\sim Logistic_n(\mathbf{0,I}) \)
 
 
 ## Probit Model
@@ -551,7 +720,7 @@ beta.p.median <- apply(beta.p,2,quantile,probs=0.5)
 beta.p.ll <- apply(beta.p,2,quantile,probs=0.025)
 beta.p.ul <- apply(beta.p,2,quantile,probs=0.975)
 beta.p.sd <- c(sd(beta.p[,1]),sd(beta.p[,2]),sd(beta.p[,3]))
-par.p<- cbind(beta.p.mean,beta.p.median,beta.p.ll,beta.p.ul,beta.p.sd)
+par.p<- cbind(beta.p.mean,beta.p.ll,beta.p.ul,beta.p.sd) # ,beta.p.median
 rownames(par.p) <- beta.name
 pander(round((par.p),4))
 ```
@@ -615,23 +784,24 @@ for(s in 1:p){
 
 ## Logit Model
 
-$P(Y_i=1)=\frac{\exp(\mathbf{x}_i^T\boldsymbol{\beta})}{1+\exp(\mathbf{x}_i^T\boldsymbol{\beta})}$; 
-$H^{-1}(p_i)=\ln\frac{p_i}{1-p_i}$=$\mathbf{x}_i^T\boldsymbol{\beta}$ log odds of success
+- Simple, exact, one layer (Polson etal, 2013)
+
 
 $(1)\quad \boldsymbol{\omega_i^*|\mathbf{y},\beta}\sim PG(n_i,|\mathbf{x}_i^T\boldsymbol{\beta}|)$
 
 \((2)\quad \boldsymbol{\beta|\mathbf{y},\omega^*}\sim N_p\left(\mathbf{m_\omega,v_\omega}\right)\)
 
 where 
-$\mathbf{m_\omega}=\mathbf{v_\omega(x'(y-\frac12)+B^{-1}b)}$, 
 
-$\mathbf{v_\omega}={\mathbf{(x'\boldsymbol{\Omega} x+B^{-1})^{-1}}}$; 
+the prior $\boldsymbol{\beta}\sim N_p(\mathbf{b,B})$
+
 $\boldsymbol{\Omega}=diag_n(\mathbf{\omega_i})$,
 
-The prior $\boldsymbol{\beta}\sim N_p(\mathbf{b,B})$
+$\mathbf{v_\omega}={\mathbf{(x'\boldsymbol{\Omega} x+B^{-1})^{-1}}}$,
+
+$\mathbf{m_\omega}=\mathbf{v_\omega(x'(y-\frac12)+B^{-1}b)}$, 
 
 Repeat (1) and (2) long enough.
-(Polson etal, 2013)
 
 
 ```{r,eval=F, echo=F}
@@ -646,7 +816,9 @@ Introduce Pólya–Gamma
 
 \[f(\omega|\beta)=\cosh{(\frac12\mathbf{x}^T\boldsymbol{\beta})}\exp\left[-\frac12(\mathbf{x}^T\boldsymbol{\beta})^2\omega\right]g(\omega)\]
 
-where $\cosh{(c)}=\frac12(e^c+e^{-c})=\frac{1+e^2c}{2e^{c}}$, $g(\omega)$ is free of $\beta$ s.t.
+where $\cosh{(c)}=\frac12(e^c+e^{-c})=\frac{1+e^2c}{2e^{c}}$, 
+
+$g(\omega)$ is free of $\beta$ s.t.
 
 \[g(\omega)=\sum_n^\infty(-1)^n\frac{2n+1}{\sqrt{2\pi\omega^3}}\exp[-\frac{(2n+1)^2}{8\omega}]\mathbb{I}_{(0,\infty)}(\omega)\]
 
@@ -655,7 +827,7 @@ Since $y$ is observed data, \(\pi(\omega|\beta,y)=f(\omega|\beta)\).
 ---
 
 
-Assign the prior of $\boldsymbol{\beta}$ is $\sim N_p(\mathbf{b,B})$
+Assign the prior $\boldsymbol{\beta}$ $\sim N_p(\mathbf{b,B})$
 
 \[\scriptsize{\begin{aligned} 
 \pi(\boldsymbol{\beta,\omega|y})&= \frac{\pi(\boldsymbol{\beta})}{C(y)}\prod_{i=1}^{N}[p(y_i|\beta)]f(\omega_i|\beta)\\
@@ -675,13 +847,15 @@ Then we get to conditional pmfs of \(\pi(\boldsymbol{\beta|\omega,y})\)
 
 
 \[\scriptsize{\begin{aligned} 
-\pi(\boldsymbol{\beta|\omega,y})&\propto\exp\left\{-\frac12\left[\boldsymbol{\beta'(\mathbf{x'\Omega x+B}^{-1})\beta-2\beta'(\mathbf{x'\kappa+B^{-1}b})}\right]\right\}\\
-&\propto\exp\left\{-\frac12\mathbf{v}_\omega^{-1}[\boldsymbol{\beta'\mathbf{I}\beta-2\beta'\mathbf{v_\omega(x'\kappa+B^{-1}b})]}\right\}\\
-&\propto\exp\left\{-\frac12\boldsymbol{(\beta-\mathbf{m_\omega)'v_\omega^{-1}(\beta-m}_\omega)}\right\}\\
+\pi(\boldsymbol{\beta|\omega,y})&\propto|\mathbf{B}|^{-\frac12}\exp\left\{-\frac12\left[\boldsymbol{\beta'(\mathbf{x'\Omega x+B}^{-1})\beta-2\beta'(\mathbf{x'\kappa+B^{-1}b})}\right]\right\}\\
+&\propto|\mathbf{v_\omega}|^{-\frac12}\exp\left\{-\frac12\mathbf{v}_\omega^{-1}[\boldsymbol{\beta'\mathbf{I}\beta-2\beta'\mathbf{v_\omega(x'\kappa+B^{-1}b})]}\right\}\\
+&\propto|\mathbf{v_\omega}|^{-\frac12}\exp\left\{-\frac12\boldsymbol{(\beta-\mathbf{m_\omega)'v_\omega^{-1}(\beta-m}_\omega)}\right\}\\
 \end{aligned}}\]
 where 
 
-\(\mathbf{m_\omega=\underset{(p\cdot p)}{v_\omega}(\underset{(p\cdot n)}{x^T}(\mathbf{y_{1:n}}-\frac12)+B^{-1}b)}\); \(\mathbf{v_\omega=(x^T\Omega x+B^{-1})^{-1}}\).
+\(\mathbf{v_\omega=(x^T\Omega x+B^{-1})^{-1}}\),
+
+\(\mathbf{m_\omega=\underset{(p\cdot p)}{v_\omega}(\underset{(p\cdot n)}{x^T}(\mathbf{y_{1:n}}-\frac12)+B^{-1}b)}\),
 
 Then we confirm that \(\boldsymbol{\beta|\omega,y}\sim N_p(m_\omega,V_\omega)\)
 
@@ -751,7 +925,7 @@ beta.l.median <- apply(beta.l,2,quantile,probs=0.5)
 beta.l.ll <- apply(beta.l,2,quantile,probs=0.025)
 beta.l.ul <- apply(beta.l,2,quantile,probs=0.975)
 beta.l.sd <- c(sd(beta.l[,1]),sd(beta.l[,2]),sd(beta.l[,3]))
-par.l<- cbind(beta.l.mean,beta.l.median, beta.l.sd,beta.l.ll,beta.l.ul)*sqrt(3)/pi
+par.l<- cbind(beta.l.mean, beta.l.sd,beta.l.ll,beta.l.ul)*sqrt(3)/pi #,beta.l.median
 rownames(par.l) <- beta.name
 pander(round((par.l),4))
 ```

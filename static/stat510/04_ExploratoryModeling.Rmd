@@ -1,0 +1,581 @@
+---
+title: 'STAT 510: Spatiotemporal Stats'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Exploratory Modeling of SPT Data
+output:
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, echo=FALSE, message=F, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(STRbook)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(spacetime)
+library(lubridate)
+library(sp)
+library("leaps")
+library("lmtest")
+library("nlme")
+library("ape")
+library("broom")
+library("FRK")
+library("purrr")
+library("lattice")
+library("RColorBrewer") 
+```
+
+
+
+
+## ST Modeling Goals
+
+\begin{quote}
+\hfill All models are wrong but some are useful
+\end{quote}
+\hfill(George Box)
+
+
+\textbf{Recall that three main goals for ST (statistical) modeling are}
+
+* predicting (with the associated uncertainty) the response at a location in space within the time span of the data
+
+
+* infer the importance of covariates on the response when ST dependece is present
+
+
+* forecast (with uncertainty estimates) response values at particular locations
+
+
+# ST Prediction
+
+## ST Prediction
+
+
+Suppose we want to predict (interpolate) the unobserved response at a particular location at a time within the span of the data, given the available data. 
+
+
+Consider that similar factors drive observations that are nearby in time and space.
+
+
+
+## ST Prediction
+
+Consider that similar factors drive observations that are nearby in time and space.
+
+\bit
+\item The meteorological phenomena that drive rainfall (e.g.,El Nino) in one month typically lasts a few months.
+
+
+\item Religion and race are strong predictors of voters' choices. These are likely to be similar in nearby regions and times.
+
+
+\item School quality is a strong predictor of house prices. Nearby houses belong to the same school district.
+\eit
+
+
+\normalsize
+\textcolor{blue}{What would be a good predictor in general?}
+
+## ST Prediction
+
+\textcolor{blue}{What would be a good predictor in general?}
+
+\begin{block}{Tobler's Law}
+
+\bigskip
+\begin{quote}
+everything is related to everything else, but near things are more related than distant things
+\end{quote}
+
+\bigskip
+\bit
+\item \textcolor{red}{{\bf Idea:}} A combination of values for observations nearby (in space and time)
+
+\item Or use all existing data, but give increasing weights as distances in time and space diminish
+\eit
+\end{block}
+
+
+## Deterministic Prediction: Inverse Distance Weighting
+
+**Simplest alternative** to implement Tobler's law is use a weighted average, with weights inversely related to distance. For ST data 
+
+\scriptsize
+$$\lrb{Z(\bs_{1 1};t_1), Z(\bs_{2 1};t_1), \ldots, Z(\bs_{m_1 1};t_1),\ldots, Z(\bs_{m_T T}; t_T))}$$
+
+
+\normalsize
+The IDW estimator at a location $\bs_0$ and a time $t_0\in[t_1,t_T]$ is
+
+$$\hat{Z}(\bs_0;t_0) = \sum_{j=1}^T \sum_{i=1}^{m_j} w_{ij}(\bs_0;t_0) Z(\bs_{ij};t_j)$$
+
+
+with weights given by 
+
+\vspace{-1cm}
+\scriptsize
+\begin{eqnarray*}
+w_{ij}(\bs_0;t_0)&=&\frac{\tilde{w}_{ij}(\bs_0;t_0)}{\sum_{k=1}^T \sum_{\ell=1}^{m_k}\tilde{w}_{k\ell}(\bs_0;t_0)},\quad\text{with}\\ \tilde{w}_{ij}(\bs_0;t_0)&=&\frac{1}{d\lrp{(\bs_{ij};t_j),(\bs_0;t_0)}^\alpha}
+\end{eqnarray*}
+
+where $\alpha>0$ is a smoothing parameter (smaller values lead to more smoothness).
+
+
+## Deterministic Prediction: Inverse Distance Weighting
+
+\begin{block}{Things to consider}
+
+\bit
+\item What happens if $(\bs_0;t_0)=(\bs_{k\ell};t_\ell)$ (i.e., it's an observed point)?
+
+
+\textcolor{blue}{Exact Interpolation}
+
+\bigskip
+
+\item What issues can arise from using an exact interpolator?
+
+
+\textcolor{blue}{If measurement error is present, interpolation is misleading}
+
+\bigskip
+
+\item Does it make sense to have $d(\cdot;\cdot)$ be a Euclidean distance?
+
+
+\textcolor{blue}{No, distances in time are not the same as distances in space}
+
+\bigskip
+
+\item How to choose the value of $\alpha$?
+
+
+\textcolor{blue}{Cross-validation}
+\eit
+\end{block}
+
+
+## In-class Exercise
+
+\scriptsize
+
+Use the function `fields::rdist` (see `?rdist`) to predict the minimum temperature on July 4th, 14th and 29th of 1993 using IDW with $\alpha=5$ at the spatio temporal prediction grid `pred_grid` defined below with the data from `Tmin_long`. Plot your results with `ggplot2::geom_tile`
+
+```{r echo=T, eval=T, message=F}
+data("NOAA_df_1990", package = "STRbook")
+Tmin_long <- NOAA_df_1990 %>% # now subset the data
+  filter(proc == "Tmin" &     # only max temperature
+           month %in% 7 &   # May to September
+           year == 1993 &
+           day != 14) %>%  # year 1993
+  mutate(t=as.integer(julian-min(julian-1))) #create time variable
+
+#generate the ST prediction grid
+pred_grid <- expand.grid(lon = seq(-100, -80, length = 20), 
+                         lat = seq(32, 46, length = 20),
+                         day = c(4, 14, 29))
+```
+
+
+## Deterministic Prediction: Kernel Predictors
+
+IDW is a type of kernel predictor.  Kernel predictors are defined as 
+$$\hat{Z}(\bs_0;t_0) = \sum_{j=1}^T \sum_{i=1}^{m_j} w_{ij}(\bs_0;t_0) Z(\bs_{ij};t_j),$$ 
+with weights 
+$$\tilde{w}_{ij}(\bs_0;t_0)=k\lrp{(\bs_{ij};t_j),(\bs_0;t_0);\theta},$$ 
+where $k(\cdot,\cdot;\theta)$ is a *kernel function*, which quantfies distance between two locations with bandwidth parameter $\theta$
+
+
+## Deterministic Prediction: Kernel Predictors
+
+
+\begin{block}{Some commonly used kernel functions} 
+
+\textcolor{red}{Gaussian radial basis kernel}
+
+\scriptsize
+$$k\lrp{(\bs_{ij};t_j),(\bs_0;t_0);\theta}=\e{-\frac{1}{\theta}d\lrp{(\bs_{ij};t_j),(\bs_0;t_0)}^2}$$
+
+\normalsize
+\textcolor{red}{Epanechnikov}
+
+\scriptsize
+$$k\lrp{(\bs_{ij};t_j),(\bs_0;t_0);\theta}=\frac{3}{4}\lrp{1-d\lrp{(\bs_{ij};t_j),(\bs_0;t_0)}^2}\;\text{with}\;d\lrp{\cdot,\cdot}\in\lrsqb{0,1}$$
+
+\normalsize
+\textcolor{red}{Tricube}
+
+\scriptsize
+$$k\lrp{(\bs_{ij};t_j),(\bs_0;t_0);\theta}=\frac{70}{81}\lrp{1-|d\lrp{(\bs_{ij};t_j),(\bs_0;t_0)}|^3}^3\;\text{with}\;d\lrp{\cdot,\cdot}\in\lrsqb{0,1}$$
+
+\end{block}
+
+
+## Deterministic Prediction: Uncertainty Quantification
+
+* Deterministic methods DO NOT account for measurement or prediction uncertainty
+
+\bigskip
+
+* Non-exact interpolating methods may average away measurement error but have no built-in mechanism to quantify it
+
+\bigskip
+
+* Prediction error can be quantified through \textcolor{blue}{Cross-Validation} (CV)
+
+\bigskip
+
+* As such, CV can also be used to select the smoothness parameters ($\alpha$ and $\theta$)
+
+
+## K-fold Cross-Validation
+
+\emph{GOAL: get an \textbf{independent} assessment of error}
+
+
+\bigskip
+\begin{block}{The steps involved in K-fold CV are}
+
+\small
+\benum
+\item Partition data randomly in $K$ (often $K\in\lrb{5,10,n}$) roughly equally-sized pieces (the "folds")
+
+\bigskip
+
+\item Holding out one fold at a time, train/fit the model with remaining $K-1$ folds
+
+\bigskip
+
+\item Predict data in hold-out fold using model trained without it
+
+\bigskip
+
+\item Calculate some metric (typically MSPE) to compare predictions and real values for each fold
+
+\bigskip
+
+\item Combine metrics from all $K$-folds to calculate CV score
+\eenum
+\end{block}
+
+
+## K-fold Cross-Validation
+
+\scriptsize
+Letting $k=1,2,\ldots,K$, then
+
+1. Split data $Z_1,\ldots,Z_m$ data into $K$ folds
+
+\bigskip
+
+2. Denote the data in $k$th folds as $\bZ^{(k)}=(Z_1^{(k)},\ldots,Z_{m_k}^{(k)})$
+
+\bigskip
+
+3. Fit model without $\bZ^{(k)}$ and obtain predictions $\hat{Z}_i^{(k)}$ for $Z_i^{(k)}$ with $i=1,\ldots,m_k$.
+
+\bigskip
+
+4. Compute for $k=1,\ldots,K$, say, the MSPE $$MSPE_k=\frac{1}{m_k}\sum_{i=1}^{m_k} (Z_i^{(k)}-\hat{Z}_i^{(k)})^2$$
+
+\bigskip
+
+5. Calculate the CV-score $$CV_{K}=\frac{1}{K}\sum_{k=1}^K MSPE_k$$
+
+
+## K-fold Cross-Validation
+
+Let's calculate the 5-fold CV-scores using a Gaussian kernel for $\theta=0.5$ with the following dataset
+
+\scriptsize
+```{r echo=T, eval=T, message=F}
+Tmax_long <- NOAA_df_1990 %>% # now subset the data
+  filter(proc == "Tmax" &     # only max temperature
+           month %in% 7 &   # May to September
+           year == 1993) %>% 
+  mutate(t=as.integer(julian-min(julian-1))) #create time variable
+```
+
+
+## K-fold Cross-Validation
+
+Let's write down our own generic CV function
+\tiny
+```{r echo=T, eval=T, message=F}
+library(fields)
+# "data" must include variables: lon, lat, t and z
+K.fold.cv <- function(data,nfolds=5,weight.fn,theta){
+  mT <- nrow(data)
+  Z <- data$z
+  coords <- data %>% dplyr::select(lon,lat,t) 
+  dist_mat <- rdist(coords,coords)
+  
+  # sample fold label vector
+  if(nfolds < mT){
+    fold.vec <- sample(1:nfolds,mT,replace = T)
+  }else{
+    fold.vec <- 1:mT
+  }
+  w.tilde <- weight.fn(theta,dist_mat)
+  MSPEk <- 1:nfolds %>% 
+    map_dbl(function(x){
+      hold.out <- which(fold.vec==x)
+      w <- w.tilde[hold.out,-hold.out,drop=F]
+      w <- w * (1/rowSums(w))
+      Z.hat <-  w %*% Z[-hold.out]
+      mean((Z[hold.out]-Z.hat)^2)
+      })
+  # CV score
+  return(mean(MSPEk))
+}
+```
+
+
+## K-fold Cross-Validation
+
+... now define the weight function, and run the cross-validation procedure for $K=5$.
+
+\scriptsize
+```{r echo=T, eval=T, message=F}
+weight.gauss <- function(theta, dist_mat){
+  exp(-dist_mat^2/theta)
+} 
+
+K.fold.cv(data=Tmax_long,
+          nfolds=5,
+          weight.fn = weight.gauss,
+          theta=5)
+```
+
+## In-class problem
+
+Using the same dataset together with the functions defined above, cross-validate predictions with a Gaussian kernel setting the number of folds to $K=5,10,m\times T$ (the last one is leave-one-out CV), and the values of $\theta=0.2,0.4,\ldots,2$.  
+
+Compare the 5, 10 and LOO cv procedures by contrasting their corresponding CV-scores vs $\theta$ curves.
+
+# Trend-Surface Estimation
+
+## Trend-Surface Estimation
+
+An alternative to doing prediction based on deterministic methods is to use simple statistical models
+
+* The idea is to try to capture all ST dependence in the *\textcolor{red}{trend}*
+
+\begin{block}{So what is gained by doing this?}
+\bit
+\item Easily implementable
+\item Provides model based error estimate
+\item Provides model based prediction-error variance
+\item We can also use cv to assess performance
+\eit
+\end{block}
+
+
+## Trend-Surface Estimation
+
+For simplicity assume we have all locations $\lrb{\bs_1,\ldots,\bs_m}$ measured at all time points $\lrb{t_1,\ldots,t_T}$, such that
+$$Z(\bs_i;t_j) = \beta_0+\beta_1 X_1(\bs_i; t_j)+ \cdots + +\beta_1 X_p(\bs_i; t_j) +  \epsilon(\bs_i; t_j),$$
+
+
+* $\epsilon(\bs_i; t_j)\overset{iid}{\sim} N(0,\sigma^2)$.
+
+
+\bigskip
+* $X_j(\cdot;\cdot)$'s represent spatially varying, temporally varying, and/or spatio-temporally varying predictors
+
+
+\bigskip
+* could also represent ST *\textcolor{red}{basis functions}*
+
+
+## Basis Functions
+
+Under certain regularity conditions, it is possible to decompose curves or surfaces using a linear combination of *elemental* *\textcolor{red}{basis functions}*.
+
+\bigskip
+For example, a surface $Y(\bs)$ in space be represented as
+$$Y(\bs)=\alpha_1 \phi_1(\bs) + \alpha_2 \phi_2(\bs) + \cdots + \alpha_r \phi_r(\bs)$$
+
+* $\lrb{\phi_k(\bs)}$ denoting a **known** set of basis functions (can have local or global support)
+
+* $\lrb{\alpha_k}$ represent constants that weight the relative importance of each basis function
+
+\scriptsize 
+\textcolor{blue}{Note here the absence of error, we are not dealing with data but with the \emph{process} function}
+
+
+## Basis Functions
+
+```{r echo=F,fig.height=3.5, fig.width=6}
+x <- seq(0,100,length.out=100)
+bsbasis_obj <- fda::create.bspline.basis(rangeval=c(0,100),
+                                    nbasis=10, norder=4)
+bsbasisevals <- fda::eval.basis(x, bsbasis_obj)
+
+par(mfrow=c(1,2))
+matplot(x, bsbasisevals, type='l', lty=1, col=rainbow(15),
+        xlab=expression(bold(s)), ylab=expression(psi(bold(s))), 
+        main="")
+rndbetavec <- rnorm(10)
+rndbeta <- matrix(rndbetavec,byrow=T,ncol=10,nrow=length(x))
+plot(x,bsbasisevals%*%rndbetavec,type="l",lwd=3,col="black",
+        xlab=expression(bold(s)), ylab=expression(Y(bold(s))))
+matplot(x,bsbasisevals*rndbeta,type='l', lty=1, col=rainbow(15),
+        add=T)
+```
+
+
+## Basis Functions
+
+Some examples of basis functions are
+
+\bigskip
+\begin{center}
+\textsf{polynomials, splines, wavelets, sines and cosines}
+\end{center}
+
+\bigskip
+
+If $Y(\bs)$ is a random process, a statistical model would assume \textcolor{orange}{known basis functions $\lrb{\phi_k(\bs)}$} and \textcolor{blue}{random weights $\lrb{\alpha_k}$}, with a data model, for example, given by 
+\begin{eqnarray*}
+Z(\bs)&=&Y(\bs)+\epsilon(\bs) \\
+&=&\alpha_1 \phi_1(\bs) + \alpha_2 \phi_2(\bs) + \cdots + \alpha_r \phi_r(\bs) +\epsilon(\bs)
+\end{eqnarray*}
+
+\bigskip
+
+\textcolor{blue}{Very cool... these models are \textcolor{red}{easy to fit} and can be \textcolor{red}{super flexible}}
+
+
+## Trend-Surface Estimation: Example
+
+Consider the NOAA daily Tmax data for July of 1993, which has $m=138$ locations, each measured every day of the month (i.e., $T=31$). Let's use as covariates:
+
+
+
+\begin{columns}
+\column{5cm}
+$X_0(\cdot;\cdot)=1$: Intercept
+
+$X_1(\cdot;\cdot)$: lon
+
+$X_2(\cdot;\cdot)$: lat
+
+$X_3(\cdot;\cdot)$: $t$
+
+$X_4(\cdot;\cdot)$: lon$\times$lat
+
+
+\column{5cm}
+
+
+$X_5(\cdot;\cdot)$: lon$\times$t
+
+$X_6(\cdot;\cdot)$: lat$\times$t
+
+$X_k(\cdot;\cdot)=\phi_{k-6}(\cdots)$: with $k=7,\ldots,18$ spatial-only basis functions
+
+\end{columns}
+
+
+## Trend-Surface Estimation: Example
+
+Now, let's fit the model 
+
+$$Z(\bs_i;t_j) = \beta_0+\beta_1 X_1(\bs_i; t_j)+ \cdots +\beta_{18} X_{18}(\bs_i; t_j) +  \epsilon(\bs_i; t_j),$$
+
+using \emph{ordinary least squares}
+
+$$RSS = \sum_{j=1}^{T} \sum_{i=1}^{m} (Z(\bs_i;t_j)-\hat{Z}(\bs_i;t_j))^2$$
+and find parameter estimates $\hat{\bbeta}=(\hat{\beta}_0,\hat{\beta}_1,\cdots,\hat{\beta}_{18})'$
+
+
+## Trend-Surface Estimation: Example
+
+\scriptsize
+
+\textcolor{blue}{Let's make the spatial basis fns with FRK::auto\_basis()}
+
+
+```{r echo=T}
+G <- auto_basis(data = (Tmax_long[,c("lon","lat")] %>% 
+                          SpatialPoints()), # make Tmax a spp object
+                nres = 1,
+                type = "Gaussian")
+```
+
+
+\bigskip
+\textcolor{blue}{Evaluate basis fns at locations of interest}
+
+```{r echo=T}
+coords <- as.matrix(Tmax_long[,c("lon","lat")])
+S <- eval_basis(basis = G,   # basis functions 
+                s =  coords  # eval at these locations
+                ) %>% 
+  as.matrix()                # conv. to matrix
+colnames(S) <- paste0("B", 1:ncol(S))
+
+Tmax2 <- cbind(Tmax_long, S) %>% 
+  dplyr::select(-year,-month,-proc,-julian,-date)
+```
+
+
+## Trend-Surface Estimation: Example
+
+\scriptsize
+
+\textcolor{blue}{Let's make the spatial basis fns with FRK::auto\_basis()}
+
+
+```{r echo=F, fig.height=3.5,fig.width=4}
+pred_grid <- expand.grid(lon = seq(-100, -80, length = 20), 
+                         lat = seq(32, 46, length = 20))
+S.pred <- eval_basis(basis = G,
+                    s =  as.matrix(dplyr::select(pred_grid,lon,lat))) %>% 
+  as.matrix()
+colnames(S.pred) <- paste0("B", 1:ncol(S.pred))
+
+cbind(pred_grid,S.pred) %>% 
+  dplyr::select(lon,lat,B1:B9) %>% 
+  pivot_longer(B1:B9,names_to="basis",values_to="value") %>% 
+  ggplot() +
+  geom_tile(aes(x = lon, y = lat, fill = value)) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  facet_wrap(vars(basis),nrow=3,ncol=3)  +
+  coord_fixed(xlim = c(-100, -80),
+              ylim = c(32, 46)) +
+  theme_minimal()
+
+```
+
+## Trend-Surface Estimation: Example
+
+\tiny
+```{r}
+#remove the 14th
+Tmax_no_14 <- filter(Tmax2, !(day == 14)) 
+
+Tmax_July_lm <- lm(z ~ (lon + lat + day)^2 + ., # model 
+                   data = dplyr::select(Tmax_no_14, -id,-t))  
+Tmax_July_lm %>% summary()
+```
+
+
+
+
+
+
+<!-- ## Diagnostics -->
+
+
+<!-- # ST Forecasting -->
+
+<!-- ## ST Forecasting -->

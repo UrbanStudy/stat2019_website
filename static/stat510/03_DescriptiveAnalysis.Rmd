@@ -386,7 +386,7 @@ where
 \vspace{-0.7cm}
 \begin{eqnarray*}
 \Psi_{m\times m}&=&(\bpsi_1, \ldots, \bpsi_m)'\;\text{with}\\
-\bpsi_k &=& (\psi_k(s_1), \ldots, \psi_k(s_m)).
+\bpsi_k &=& (\psi_k(s_1), \ldots, \psi_k(s_m))'.
 \end{eqnarray*}
 
 
@@ -430,31 +430,174 @@ Here are some possibilities
 \item Identify the *significant* EOFs by obtaining EOFs for several spatially permuted versions of the data.  See where the tue scree plot intersects with those of the permuted datasets
 \eenum
 
-## In-class problem
 
-Calculate the EOFs for the *SST* dataset. Replicate the figures in pages 44-45 using the R functions \textsf{svd} and \textsf{ggplot2::geom\_tile} and interpret them.  How many EOFs would you retain?
+## Empirical Orthogonal Functions
 
-```{r echo=T, eval=F}
-library(STRbook)
-library(ggplot2)
-library(tidyr)
+\begin{block}{A more efficient method to obtain EOF's}
+Note that letting
 
+$$\tilde{\bZ}=\frac{1}{\sqrt{T-1}}(\bZ-\1_T \hat{\bmu}_{z,s}')$$ 
+Implies that
+
+
+$$\Longrightarrow \hat{\bC}_z^{(0)}=\tilde{\bZ}'\tilde{\bZ}  =\bPsi \bLambda \bPsi'$$
+
+
+Also, considering the SVD $\tilde{\bZ}=\bU \bD \bV'$, we have $$\hat{\bC}_z^{(0)}=(\bU \bD \bV')'(\bU \bD \bV')=\underbrace{\bV}_{\Psi}\underbrace{\bD'\bD}_{\Lambda}\underbrace{\bV'}_{\Psi'}$$
+This equality implies that SVD can be used (and is recommended) to obtain the EOF's.
+\end{block}
+
+## ST Canonical Correlation Analysis (CCA)
+
+
+\bit
+\item \textcolor{red}{\bf Goal:} create 2 new sets of variables, which arise as linear combinations of two multivariate (mvt) datasets and that are maximally correlated
+
+\bigskip
+\item  The first few pairs of canonical variables are very similar (since maximaly correlated)
+
+\bigskip
+\item  The spatial patterns in the weights show the areas in space that are most responsible for the high correlations
+\eit
+
+
+
+\bigskip
+
+In the ST case, each \textcolor{blue}{\emph{spatial location}} corresponds to a \textcolor{blue}{\emph{variable}}, and each \textcolor{orange}{\emph{time-point}} corresponds to a \textcolor{orange}{\emph{sample}}
+
+
+## ST Canonical Correlation Analysis (CCA)
+
+This, from two datasets denoted by
+\begin{eqnarray*}
+\lrb{\bZ_{t_t}=(Z(s_1;t_j),\ldots,Z(s_m;t_j))':j=1,\ldots,T}&&\\
+\lrb{\bX_{t_t}=(X(r_1;t_j),\ldots,X(r_n;t_j))':j=1,\ldots,T}
+\end{eqnarray*}
+ 
+ST-CCA, for $k=1,2,\ldots,\min\lrb{m,n}$, seeks to generate variables
+
+ \begin{eqnarray*}
+a_k(t_j)&=&\sum_{i=1}^m \xi_{ik} Z(s_i;t_j)\;=\;\mbs{\xi}_k' \bZ_{t_j}\\
+b_k(t_j)&=&\sum_{\ell=1}^n \psi_{\ell k} X(r_{\ell};t_j)\;=\;\mbs{\psi}_k' \bX_{t_j}
+\end{eqnarray*}
+
+
+with weights $\mbs{\xi}_k$ and $\bpsi_k$ a.k.a. \emph{canonical variables}
+ 
+
+## In-class Problem
+
+The $k$th canonical correlation $r_k$ is given by $$r_k=\text{corr}(a_k,b_k)=\frac{\mbs{\xi}_k' \bC_{z,x}^{(0)} \bpsi_k}{(\mbs{\xi}_k' \bC_{z}^{(0)} \mbs{\xi}_k)^{1/2} (\mbs{\psi}_k' \bC_{x}^{(0)} \mbs{\psi}_k)^{1/2}}$$
+show this result.
+
+## ST Canonical Correlation Analysis (CCA)
+
+### Calculating ST-CCA in practice
+
+\scriptsize
+\begin{eqnarray*}
+r_k=\text{corr}(a_k,b_k) &=& \frac{\mbs{\xi}_k' \bC_{z,x}^{(0)} \bpsi_k}{(\mbs{\xi}_k' \bC_{z}^{(0)} \mbs{\xi}_k)^{1/2} (\mbs{\psi}_k' \bC_{x}^{(0)} \mbs{\psi}_k)^{1/2}}\\
+&=&\frac{\overbrace{\mbs{\xi}_k'(\hat{\bC}_z^{(0)})^{1/2}}^{\equiv\tilde{\mbs{\xi}}_k'}(\hat{\bC}_z^{(0)})^{-1/2} \bC_{z,x}^{(0)} (\hat{\bC}_x^{(0)})^{-1/2}\overbrace{(\hat{\bC}_x^{(0)})^{1/2}\bpsi_k}^{^{\equiv\tilde{\mbs{\psi}}_k}} }{(\mbs{\xi}_k' (\hat{\bC}_z^{(0)})^{1/2}(\hat{\bC}_z^{(0)})^{1/2} \mbs{\xi}_k)^{1/2} (\mbs{\psi}_k' (\hat{\bC}_x^{(0)})^{1/2}(\hat{\bC}_x^{(0)})^{1/2} \mbs{\psi}_k)^{1/2}} \\
+&=&\frac{\tilde{\mbs{\xi}}_k'(\hat{\bC}_z^{(0)})^{-1/2} \bC_{z,x}^{(0)} (\hat{\bC}_x^{(0)})^{-1/2}\tilde{\bpsi}_k }{(\tilde{\mbs{\xi}}_k'\tilde{\mbs{\xi}}_k)^{1/2} (\tilde{\bpsi}_k'\tilde{\bpsi}_k)^{1/2}}
+\end{eqnarray*}
+
+
+\normalsize
+It is well-known that from the SVD of $$(\hat{\bC}_z^{(0)})^{-1/2} \bC_{z,x}^{(0)} (\hat{\bC}_x^{(0)})^{-1/2},$$  $r_1^2$ corresponds to the largest singular value, and $\tilde{\mbs{\xi}}_1$ and $\tilde{\bpsi}_1$ are the first left and right singular vectors, respectively.
+
+## ST Canonical Correlation Analysis (CCA)
+
+### Calculating ST-CCA in practice
+
+\scriptsize
+```{r echo=T}
 data("SSTlandmask", package = "STRbook")
 data("SSTlonlat", package = "STRbook")
 data("SSTdata", package = "STRbook")
 
-#remove years that are not complete
-rm_rows <- which(SSTlandmask == 1)
-SSTdata <- SSTdata[-rm_rows, 1:396]
+delete_rows <- which(SSTlandmask == 1)
+SSTdata <- SSTdata[-delete_rows, 1:396]
+ 
+## Put data into space-wide form
+Z <- t(SSTdata)
 ```
 
+\vfill
+
+## ST Canonical Correlation Analysis (CCA)
+
+### Calculating ST-CCA in practice
+
+\scriptsize
+```{r echo=T}
+## First find the matrix we need to subtract:
+spat_mean <- apply(SSTdata, 1, mean)
+nT <- ncol(SSTdata)
+
+## Then subtract and standardize:
+Zspat_detrend <- Z - outer(rep(1, nT), spat_mean)
+Zt <- 1/sqrt(nT - 1)*Zspat_detrend
+
+## get the SVD
+E <- svd(Zt)
+```
+\vfill
 
 
+## ST Canonical Correlation Analysis (CCA)
 
-<!-- ## Visualizing spatio-temporal data -->
+### Calculating ST-CCA in practice
 
-<!-- ### Spatial Plots -->
+\scriptsize
+```{r echo=T,eval=F, fig.height=2.3, fig.width=3.5, fig.align="center"}
+nEOF <- 10
+EOFset1 <- E$u[1:(nT-7), 1:nEOF] * sqrt(nT - 1)
+EOFset2 <- E$u[8:nT, 1:nEOF] * sqrt(nT - 1)
 
+cc <- cancor(EOFset1, EOFset2) # compute CCA 
+
+options(digits = 3) 
+CCA_df <- data.frame(t = 1:(nT - 7),
+                     CCAvar1 = (EOFset1 %*% cc$xcoef[,1])[,1],
+                     CCAvar2 = (EOFset2 %*% cc$ycoef[,1])[,1])
+t_breaks <- seq(1, nT, by = 60) # breaks for x-labels 
+year_breaks <- seq(1970,2002,by=5) # labels for x-axis 
+ggplot(CCA_df) +
+  geom_line(aes(t, CCAvar1), col = "dark blue") + 
+  geom_line(aes(t, CCAvar2), col = "dark red") + 
+  scale_x_continuous(breaks = t_breaks, labels = year_breaks) + 
+  ylab("CCA variables") + xlab("Year") + theme_bw()
+```
+\vfill
+
+
+## ST Canonical Correlation Analysis (CCA)
+
+### Calculating ST-CCA in practice
+
+\scriptsize
+```{r echo=F,eval=T, fig.height=2.3, fig.width=3.5, fig.align="left"}
+nEOF <- 10
+EOFset1 <- E$u[1:(nT-7), 1:nEOF] * sqrt(nT - 1)
+EOFset2 <- E$u[8:nT, 1:nEOF] * sqrt(nT - 1)
+
+cc <- cancor(EOFset1, EOFset2) # compute CCA 
+
+options(digits = 3) 
+CCA_df <- data.frame(t = 1:(nT - 7),
+                     CCAvar1 = (EOFset1 %*% cc$xcoef[,1])[,1],
+                     CCAvar2 = (EOFset2 %*% cc$ycoef[,1])[,1])
+t_breaks <- seq(1, nT, by = 60) # breaks for x-labels 
+year_breaks <- seq(1970,2002,by=5) # labels for x-axis 
+ggplot(CCA_df) +
+  geom_line(aes(t, CCAvar1), col = "dark blue") + 
+  geom_line(aes(t, CCAvar2), col = "dark red") + 
+  scale_x_continuous(breaks = t_breaks, labels = year_breaks) + 
+  ylab("CCA variables") + xlab("Year") + theme_bw()
+```
+
+\vfill
 
 <!-- ## Visualizing spatio-temporal data -->
 
