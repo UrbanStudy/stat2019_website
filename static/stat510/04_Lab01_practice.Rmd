@@ -178,6 +178,10 @@ D <- diag(sqrt(AAT$values))
 ```{r}
 round(E$v[1:5,1:8],4)
 round(V[1:5,1:8],4)
+```
+
+
+```{r}
 V[,c(1,2,4)] <- V[,c(1,2,4)]*-1
 ```
 
@@ -439,17 +443,18 @@ cv.map <- data.frame(folds=rep(folds,each=length(theta)),
            theta=rep(theta,times=length(folds)),
            score=NA)
 for (i in 1:3) { 
-cv.map[(1:10)*i,3] <- theta %>% map_dbl(~K.fold.cv(data=Tmax_long,
+cv.map[10*(i-1)+1:10,3] <-  map_dbl(theta,~K.fold.cv(data=Tmax_long,
       nfolds=folds[i],
       weight.fn = weight.gauss,
       theta=.x))
 }
-cv.map[10:30,]
+
+cv.map[,3] <- map2_dbl(folds,theta, ~ K.fold.cv(data=Tmax_long, nfolds=.x, weight.fn=weight.gauss, theta=.y))
 ```
 
-**However, using the same "k.fold.cv" and "weight.gauss" functions, there are some NA values.**
+Error: Mapped vectors must have consistent lengths:
 
-```{r, eval=F, echo=F}
+```{r, eval=T, echo=F}
 ggplot(cv.map,aes(x =theta, y = score,group = folds,col=as.factor(folds))) +
     geom_line() +
     geom_point(size = 2) +    # point

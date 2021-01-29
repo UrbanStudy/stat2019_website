@@ -1,0 +1,568 @@
+---
+title: 'STAT 510: Spatiotemporal Stats'
+author: "Prof. Taylor-Rodriguez"
+subtitle: Exploratory Modeling of SPT Data (Part 2)
+output:
+  beamer_presentation:
+    includes:
+      in_header: "preamble.tex"
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, echo=FALSE, message=F, warning=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(STRbook)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(spacetime)
+library(lubridate)
+library(sp)
+library("leaps")
+library("lmtest")
+library("nlme")
+library("ape")
+library("broom")
+library("FRK")
+library("purrr")
+library("lattice")
+library("RColorBrewer") 
+```
+
+# Trend-Surface Estimation
+
+## Trend-Surface Estimation
+
+An alternative to doing prediction based on deterministic methods is to use simple statistical models
+
+* The idea is to try to capture all ST dependence in the *\textcolor{red}{trend}*
+
+\begin{block}{So what is gained by doing this?}
+\bit
+\item Easily implementable
+\item Provides model based error estimate
+\item Provides model based prediction-error variance
+\item We can also use cv to assess performance
+\eit
+\end{block}
+
+
+## Trend-Surface Estimation
+
+For simplicity assume we have all locations $\lrb{\bs_1,\ldots,\bs_m}$ measured at all time points $\lrb{t_1,\ldots,t_T}$, such that
+$$Z(\bs_i;t_j) = \beta_0+\beta_1 X_1(\bs_i; t_j)+ \cdots + +\beta_1 X_p(\bs_i; t_j) +  \epsilon(\bs_i; t_j),$$
+
+
+* $\epsilon(\bs_i; t_j)\overset{iid}{\sim} N(0,\sigma^2)$.
+
+
+\bigskip
+* $X_j(\cdot;\cdot)$'s represent spatially varying, temporally varying, and/or spatio-temporally varying predictors
+
+
+\bigskip
+* could also represent ST *\textcolor{red}{basis functions}*
+
+
+## Basis Functions
+
+Under certain regularity conditions, it is possible to decompose curves or surfaces using a linear combination of *elemental* *\textcolor{red}{basis functions}*.
+
+\bigskip
+For example, a surface $Y(\bs)$ in space can be represented as
+$$Y(\bs)=\alpha_1 \phi_1(\bs) + \alpha_2 \phi_2(\bs) + \cdots + \alpha_r \phi_r(\bs)$$
+
+* $\lrb{\phi_k(\bs)}$ denoting a **known** set of basis functions (can have local or global support)
+
+* $\lrb{\alpha_k}$ represent constants that weight the relative importance of each basis function
+
+\scriptsize 
+\textcolor{blue}{Note here the absence of error, we are not dealing with data but with the \emph{process} function}
+
+
+## Basis Functions
+
+```{r echo=F,fig.height=3.5, fig.width=6}
+x <- seq(0,100,length.out=100)
+bsbasis_obj <- fda::create.bspline.basis(rangeval=c(0,100),
+                                    nbasis=10, norder=4)
+bsbasisevals <- fda::eval.basis(x, bsbasis_obj)
+
+rndbetavec <- rnorm(10)
+rndbeta <- matrix(rndbetavec,byrow=T,ncol=10,nrow=length(x))
+yy <- bsbasisevals%*%rndbetavec
+rngy <- range(c(range(yy),range(bsbasisevals)))
+par(mfrow=c(1,2))
+matplot(x, bsbasisevals, type='l', lty=1, col=rainbow(15),
+        xlab=expression(bold(s)), ylab=expression(psi(bold(s))), 
+        main="")
+plot(x,yy,type="l",lwd=3,col="black", ylim=rngy,
+        xlab=expression(bold(s)), ylab=expression(Y(bold(s))))
+matplot(x,bsbasisevals*rndbeta,type='l', lty=1, col=rainbow(15),
+        add=T)
+```
+
+
+## Basis Functions
+
+Some examples of basis functions are
+
+\bigskip
+\begin{center}
+\textsf{polynomials, splines, wavelets, sines and cosines}
+\end{center}
+
+\bigskip
+
+If $Y(\bs)$ is a random process, a statistical model would assume \textcolor{orange}{known basis functions $\lrb{\phi_k(\bs)}$} and \textcolor{blue}{random weights $\lrb{\alpha_k}$}, with a data model, for example, given by 
+\begin{eqnarray*}
+Z(\bs)&=&Y(\bs)+\epsilon(\bs) \\
+&=&\alpha_1 \phi_1(\bs) + \alpha_2 \phi_2(\bs) + \cdots + \alpha_r \phi_r(\bs) +\epsilon(\bs)
+\end{eqnarray*}
+
+\bigskip
+
+\textcolor{blue}{Very cool... these models are \textcolor{red}{easy to fit} and can be \textcolor{red}{super flexible}}
+
+
+## Trend-Surface Estimation: Example
+
+Consider the NOAA daily Tmax data for July of 1993, which has $m=138$ locations, each measured every day of the month (i.e., $T=31$). Let's use as covariates:
+
+
+
+\begin{columns}
+\column{5cm}
+$X_0(\cdot;\cdot)=1$: Intercept
+
+$X_1(\cdot;\cdot)$: lon
+
+$X_2(\cdot;\cdot)$: lat
+
+$X_3(\cdot;\cdot)$: $t$
+
+$X_4(\cdot;\cdot)$: lon$\times$lat
+
+
+\column{5cm}
+
+
+$X_5(\cdot;\cdot)$: lon$\times$t
+
+$X_6(\cdot;\cdot)$: lat$\times$t
+
+$X_k(\cdot;\cdot)=\phi_{k-6}(\cdots)$: with $k=7,\ldots,18$ spatial-only basis functions
+
+\end{columns}
+
+
+## Trend-Surface Estimation: 
+
+Now, let's fit the model 
+
+$$Z(\bs_i;t_j) = \beta_0+\beta_1 X_1(\bs_i; t_j)+ \cdots +\beta_{18} X_{18}(\bs_i; t_j) +  \epsilon(\bs_i; t_j),$$
+
+using \emph{ordinary least squares}
+
+$$RSS = \sum_{j=1}^{T} \sum_{i=1}^{m} (Z(\bs_i;t_j)-\hat{Z}(\bs_i;t_j))^2$$
+to find parameter estimates $$\hat{\bbeta}=(\hat{\beta}_0,\hat{\beta}_1,\cdots,\hat{\beta}_{18})'= (\bX'\bX)^{-1}\bX' \bZ,$$
+with var$(\hat{\bbeta})=\sigma^2 (\bX'\bX)^{-1} \approx \hat{\sigma}^2 (\bX'\bX)^{-1},$
+
+
+## Trend-Surface Estimation: Fitting the model
+
+\scriptsize
+
+\textcolor{blue}{Let's make the spatial basis fns with FRK::auto\_basis()}
+
+
+```{r echo=F}
+data("NOAA_df_1990", package = "STRbook")
+Tmax_long <- NOAA_df_1990 %>% # now subset the data
+  filter(proc == "Tmax" &     # only max temperature
+           month %in% 7 &   # May to September
+           year == 1993) %>% 
+  mutate(t=as.integer(julian-min(julian-1))) #create time variable
+```
+
+```{r echo=T}
+G <- auto_basis(data = (Tmax_long[,c("lon","lat")] %>% 
+                          SpatialPoints()), # make Tmax a spp object
+                nres = 1,
+                type = "Gaussian")
+```
+
+
+\textcolor{blue}{Evaluate basis fns at locations of interest}
+
+```{r echo=T}
+coords <- as.matrix(Tmax_long[,c("lon","lat")])
+S <- eval_basis(basis = G,   # basis functions 
+                s =  coords) %>%   # eval at these locations
+                as.matrix()                # conv. to matrix
+colnames(S) <- paste0("B", 1:ncol(S))
+
+Tmax2 <- cbind(Tmax_long, S) %>% 
+  dplyr::select(-year,-month,-proc,-julian,date)
+```
+
+
+\textcolor{blue}{Fit the model}
+```{r echo=T}
+#remove the 14th
+Tmax_no_14 <- filter(Tmax2, !(day == 14)) 
+
+Tmax_July_lm <- lm(z ~ (lon + lat + day)^2 + .,
+                   data = dplyr::select(Tmax_no_14,
+                                        -id,-t,-date))  
+```
+
+
+
+## Trend-Surface Estimation: Smoothing
+
+\scriptsize
+
+\textcolor{blue}{Let's generate prediction grid}
+
+
+```{r echo=F, fig.height=3.5,fig.width=5}
+pred_grid <- expand.grid(lon = seq(-100, -80, length = 20), 
+                         lat = seq(32, 46, length = 20))
+S.pred <- eval_basis(basis = G,
+                    s =  as.matrix(dplyr::select(pred_grid,lon,lat))) %>% 
+  as.matrix()
+colnames(S.pred) <- paste0("B", 1:ncol(S.pred))
+
+cbind(pred_grid,S.pred) %>% 
+  dplyr::select(lon,lat,B1:B12) %>% 
+  pivot_longer(B1:B12,names_to="basis",values_to="value") %>% 
+  mutate(basis=factor(basis,
+                      levels=paste0("B",1:12),
+                      labels=paste0("B",1:12))) %>% 
+  ggplot() +
+  geom_tile(aes(x = lon, y = lat, fill = value)) +
+  scale_fill_gradient(low = "blue", high = "yellow") +
+  facet_wrap(vars(basis),nrow=3,ncol=4)  +
+  coord_fixed(xlim = c(-100, -80),
+              ylim = c(32, 46)) +
+  theme_minimal()
+```
+
+
+## Trend-Surface Estimation: Smoothing
+
+\scriptsize
+```{r echo=T}
+pred_grid <- expand.grid(lon = seq(-100, -80, length = 20),
+                          lat = seq(32, 46, length = 20),
+                          day = seq(4,31,by=5))
+# generate basis fns at prediction points
+S.pred <- eval_basis(basis = G,
+                    s =  as.matrix(dplyr::select(pred_grid,lon,lat))) %>% 
+  as.matrix()
+colnames(S.pred) <- paste0("B", 1:ncol(S.pred))
+
+# append to basis prediction grid
+pred_grid <- cbind(pred_grid,S.pred)
+```
+
+ 
+```{r echo=T}
+#gte predictions including 95% pred int.
+preds <- predict(Tmax_July_lm,
+                    newdata=pred_grid,
+                    interval = "prediction")
+pred_grid <- pred_grid %>%
+  bind_cols(as_tibble(preds))
+```
+
+
+## Trend-Surface Estimation: Smoothing
+
+### Fitted Values
+
+\bigskip
+```{r echo=F, fig.height=2.7,fig.width=5}
+pred_grid %>% 
+  ggplot(aes(x=lon,y=lat)) +
+  geom_tile(aes(fill=fit)) +
+  fill_scale(name = "") +
+  facet_wrap(.~day,nrow = 2, ncol = 3) +
+  theme_bw()
+```
+
+
+## Trend-Surface Estimation: Smoothing
+
+### Standard Errors
+
+\bigskip
+```{r echo=F, fig.height=2.7,fig.width=5}
+pred_grid %>% 
+  mutate(se=(upr-fit)/(2*1.96)) %>% 
+  ggplot(aes(x=lon,y=lat)) +
+  geom_tile(aes(fill=se)) +
+  fill_scale(name = "") +
+  facet_wrap(.~day,nrow = 2, ncol = 3) +
+  theme_bw()
+```
+
+
+## Trend-Surface Estimation: Smoothing - Comments
+
+\bit
+\item Prediction SE's don't show structure, but display undertainty increasing at domain boundaries (extrapolation)
+
+\bigskip
+
+\item Predictions smoother than kernel predictions from before (due to smooth basis fns), but it's not always the case depends on predictors
+
+\bigskip
+
+\item This model does not explicitly account for response measurement errors
+
+\bigskip
+
+\item Variation from measurement error confounded with variation due to lack of fit
+
+\bigskip
+
+\item Note that the regression predictor can be considered a type of kernel predictor
+\eit
+
+## Trend-Surface Estimation: Parameter Estimation
+
+\tiny
+```{r message=TRUE, warning=FALSE, paged.print=TRUE, results='asis'}
+stargazer::stargazer(Tmax_July_lm,
+                     type = "latex", 
+                     header = FALSE,
+                     single.row = TRUE)
+                     #ci=TRUE, ci.level=0.9)
+```
+
+
+## Trend-Surface Estimation: Diagnostics
+
+After fitting a model such as this, we need to check:
+
+\bit
+\item non-constant error variance
+
+\bigskip
+
+\item \textcolor{orange}{error (in)dependence} (specially important with ST data)
+
+\bigskip
+
+\item outliers and influential observations
+
+\bigskip
+
+\item multicollinearity
+
+\bigskip
+
+\item non-normality, etc...
+\eit
+
+
+## Trend-Surface Estimation: Diagnostics
+
+### Error dependence checks
+
+\scriptsize
+```{r echo=T, eval=F}
+library(modelr)
+Tmax_no_14 <- Tmax_no_14 %>% 
+  add_predictions(Tmax_July_lm) %>% 
+  add_residuals(Tmax_July_lm)
+
+#plotting spatial residuals last 7 days
+ggplot(filter(Tmax_no_14, day %in% 24:31)) +
+  geom_point(aes(lon, lat, colour = resid)) +
+  facet_wrap(~ day, ncol=4) +
+  col_scale(name = "degF") +
+  geom_point(data = filter(Tmax_no_14,day %in% 24:31 & 
+                             id %in% c(3810, 3889)),
+             aes(lon, lat), colour = "black", 
+             pch = 2, size = 2.5) +
+  theme_bw()
+
+#plotting temporal residuals 2 stations
+Tmax_no_14 %>% 
+  filter(id %in% c(3810, 3889)) %>% 
+  mutate(id=as.character(id)) %>% 
+  ggplot(aes(x=day,y=resid)) +
+  geom_line(aes(group=id,colour=id)) +
+  theme_bw()
+```
+
+## Trend-Surface Estimation: Diagnostics
+
+### Residual Analysis: Spatial Residuals
+
+\bigskip
+```{r eval=T, echo=F, fig.height=2.7, fig.width=6, message=FALSE, warning=FALSE}
+
+library(modelr)
+Tmax_no_14 <- Tmax_no_14 %>% 
+  add_predictions(Tmax_July_lm) %>% 
+  add_residuals(Tmax_July_lm)
+
+ggplot(filter(Tmax_no_14, day %in% 24:31)) +
+  geom_point(aes(lon, lat, colour = resid)) +
+  facet_wrap(~ day, ncol=4) +
+  col_scale(name = "degF") +
+  geom_point(data = filter(Tmax_no_14,day %in% 24:31 & 
+                             id %in% c(3810, 3889)),
+             aes(lon, lat), colour = "black", 
+             pch = 2, size = 2.5) +
+  theme_bw()
+```
+
+## Trend-Surface Estimation: Diagnostics
+
+### Residual Analysis: Temporal Residuals
+
+\bigskip
+```{r eval=T, echo=F, fig.height=2.7, fig.width=6, message=FALSE, warning=FALSE}
+#plotting temporal residuals 2 stations
+Tmax_no_14 %>% 
+  filter(id %in% c(3810, 3889)) %>% 
+  mutate(id=as.character(id)) %>% 
+  ggplot(aes(x=day,y=resid)) +
+  geom_line(aes(group=id,colour=id)) +
+  geom_point(aes(group=id,colour=id),
+             pch=20,size=3) +
+  geom_hline(yintercept = 0,linetype="dotted") +
+  theme_bw()
+```
+
+
+## Trend-Surface Estimation: Diagnostics
+
+### Error dependence checks (Semivariogram)
+
+\bigskip
+\begin{columns}
+
+\column{4cm}
+$$F=\left|\frac{\hat{\gamma}_e(\|\bh_1 \|;\tau_1)}{\hat{\sigma}^2}-1\right|$$
+
+\scriptsize
+
+$\bh_1$ and $\tau_1$ denote smallest possible lags in space and time, respectively. 
+
+\bigskip
+reject if $F$ large (determine what is \emph{large} permuting ST locations)
+
+\column{7cm}
+```{r esemivar, eval=T, echo=F, fig.align='center', fig.height=2.8, fig.width=3, message=FALSE, warning=FALSE}
+
+data("STObj3", package = "STRbook")
+STObj4 <- STObj3[, "1993-07-01::1993-07-31"]
+STObj4@data <- left_join(STObj4@data, Tmax_no_14)
+vv <- gstat::variogram(object = resid ~1, # fixed effect comp
+                       data = STObj4, # July data
+                       width = 80, # spatial bin (80 km)
+                       cutoff = 1000,#pts <1000km apart
+                       tlags = 0.01:6.01) # 0 days to 6 days
+plot(vv)
+```
+
+\end{columns}
+
+## Trend-Surface Estimation: Diagnostics
+
+### Error dependence checks
+
+\bigskip
+#### Durbin-Watson Statistic
+$$d=\frac{\sum_{t=2}^T (\hat{e}_t-\hat{e}_{t-1})^2}{\sum_{t=1}^T\hat{e}_t^2},\quad d\in[0,4]$$
+
+$d=2\Rightarrow$Indep, $d\rightarrow 0 \Rightarrow (+\text{dep})$, $d\rightarrow 4 \Rightarrow (-\text{dep})$ 
+
+
+#### Moran's I
+
+$$I=\frac{m\sum_{i=1}^m\sum_{j=1}^m w_{ij}(Z_i-\bar{Z}) (Z_i-\bar{Z})}{\lrp{\sum_{i=1}^m\sum_{j=1}^m w_{ij}}\sum_{i=1}^m\sum_{j=1}^m (Z_i-\bar{Z})^2 }$$
+
+## Trend-Surface Estimation: Diagnostics
+
+### Effect of error dependence
+
+\bigskip
+#### On the bright side
+
+\bit
+\item Regression coefficients and predictions are still unbiased 
+\eit
+
+
+\bigskip
+#### The not so great side
+
+\bit
+\item SE's and prediction SE's wrong, for ST data usually underestimated!!!
+\eit
+
+
+\bigskip
+#### How can we fix it?
+
+\bit
+\item Modeling error dependence: assume $\bf{e}\sim N_{mT}(\0,\bC_e)$ 
+
+
+\item What challenges do you see with this fix? (more on Lab 02 and in Ch 4)
+\eit
+
+
+## In-class Exercise
+
+Under ST dependence, $\bZ\sim N_{mT}(\bX \bbeta,\bC_e)$.  Note that the likelihood for $\bZ$ is maximized when minimizing $$(Z-\bX\bbeta)' C_e^{-1} (Z-\bX\bbeta).$$
+
+Derive the Generalized Least Squares Estimator for $\bbeta$
+
+
+
+## Trend-Surface Estimation: Variable Selection
+
+### Options
+
+\bigskip
+\bit 
+\item Best subsets (with `leaps` function) 
+
+\bigskip
+
+\item Stepwise and forward selection (with `step` function)
+
+\bigskip
+
+\item \textcolor{orange}{Penalized regression (e.g., Ridge and Lasso)}
+\eit
+
+
+## Trend-Surface Estimation: Variable Selection
+
+### Penalized Regression
+
+$$Z(\bs_i;t_j) = \underbrace{\beta_0+\beta_1 X_1(\bs_i; t_j)+ \cdots +\beta_{18} X_{18}(\bs_i; t_j)}_{=\hat{Z}(\bs_i;t_j)} +  \epsilon(\bs_i; t_j),$$
+
+#### OLS estimates $\bbeta$ by minimizing
+
+$$RSS = \sum_{j=1}^{T} \sum_{i=1}^{m} (Z(\bs_i;t_j)-\hat{Z}(\bs_i;t_j))^2$$
+
+#### Penalized approaches estimate $\bbeta$ by minimizing
+
+$$RSS + \lambda \sum_{j=1}^p |\beta_j|^q$$
+$\text{Ridge:}\;q=1,\quad\text{Lasso:}\;q=2$
+
+<!-- # Non-normal Errors -->
+
+<!-- ## ST Forecasting -->
