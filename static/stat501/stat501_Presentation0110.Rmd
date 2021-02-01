@@ -1,5 +1,5 @@
 ---
-title: 'A Brief Introduction to Data Augmentation'
+title: 'Introduction to Data Augmentation and Applications'
 author: "Shen Qu"
 subtitle: 'STAT 501: Statistical Literature and Problems'
 # runtime: shiny
@@ -20,12 +20,12 @@ header-includes:
 
 
 ```{r setup, include=F}
-knitr::opts_chunk$set(message=F, warning=F, echo=T,cache = F,collapse = F)
+knitr::opts_chunk$set(message=F, warning=F, echo=F,cache = F,collapse = F)
 options(width = 2000)
 options(scipen=6)
 options(digits=4)
 if (!require(pacman)) {install.packages("pacman"); library(pacman)}
-p_load(mixtools,scales,TTR,BayesLogit,mvtnorm,pander) #,EnvStats
+p_load(mixtools,scales,TTR,BayesLogit,mvtnorm,pander,tidyverse) #,EnvStats
 # mixtools, for ellipse # scales::alpha #shiny, shinythemes ,
 # html_document: 
 ```
@@ -35,6 +35,8 @@ p_load(mixtools,scales,TTR,BayesLogit,mvtnorm,pander) #,EnvStats
 - Binary response regression models
 
 Observed $Y_1,..,Y_n\sim Bern(p_i)$, i=1,..,n.
+
+$p_i=H(\mathbf{x}_i^T\boldsymbol{\beta})$
 
 Covariates $X=X_1,...X_p$
 
@@ -70,11 +72,15 @@ Logit(p_i)&=\ln\frac{p_i}{1-p_i}=\eta_i=\mathbf{x}_i^T\boldsymbol{\beta}\\
 - Probit models:
 
 \(\begin{aligned}
-p_i=\Phi(\eta_i)&=\frac12+\frac12\rm erf(\frac{\eta_i}{\sqrt {2}})\\
-\Phi^{-1}(p_i)&=\sqrt {2}\rm erf^{-1}(2p_i-1)=\eta_i=\mathbf{x}_i^T\boldsymbol{\beta}\\
+p_i=\Phi(\eta_i)&\\
+\Phi^{-1}(p_i)&=\eta_i=\mathbf{x}_i^T\boldsymbol{\beta}\\
 \end{aligned}\)
 
- the standard normal cdf $\Phi$ is not an elementary function.
+$\Phi$ is the standard normal cdf.
+
+<!-- =\frac12+\frac12\rm erf(\frac{\eta_i}{\sqrt {2}}) -->
+<!-- =\sqrt {2}\rm erf^{-1}(2p_i-1) -->
+<!-- is not an elementary function -->
 
 ## IRLS Algorithm
 
@@ -106,11 +112,11 @@ $\pi(\theta)$ is the prior density.
 
 When we can get $c(y)$.
 
-Bayesian estimate $\hat\theta=E[\theta|y]$
+Bayesian estimate $\widehat{g(\theta)}=E[\theta|y]$
 
 Draw many $\theta_i^*\overset{iid}{\sim}\pi(\theta|y)$
 
-$\hat\theta_n=\frac1n\sum_{i=1}^n\theta_i^*\overset{a.s}{\to}\hat\theta$ by SLLN
+$\widehat{g(\theta_n)}=\frac1n\sum_{i=1}^ng(\theta_i^*)\overset{a.s}{\to}\widehat{g(\theta)}$ by SLLN
 
 ---
 
@@ -153,20 +159,7 @@ Continue E-step and M-step .... until
 EM algorithm (Dempster et al., 1977). 
 
 
-## DA Algorithm
 
-the target \(p(\theta|y)=\int_Zp(\theta|z,y)\cdot p(z|y)dz\)
-
-the predictive density $p(z|y)=\int_\Theta p(z|\phi,y)\cdot p(\phi|y)d\phi$
-
-\(\begin{aligned}
-p(\theta|y)&=\int_Zp(\theta|z,y)\cdot p(z|y)dz\\
-&=\int_Zp(\theta|z,y)\cdot [\int_\Theta p(z|\phi,y)\cdot p(\phi|y)d\phi]\ dz\\
-&=\int_\Theta p(\phi|y)\cdot [\int_Zp(\theta|z,y) \cdot p(z|\phi,y)dz]\ d\phi\\
-&=\int_\Theta p(\phi|y)\cdot K(\theta,\phi)\ d\phi\\
-\end{aligned}\)
-
-where the kernel $K(\theta,\phi)$ is a nonnegative weight function used in density estimation.
 
 # A Data-Augmentation schemes
 
@@ -177,7 +170,7 @@ Simulating from the proper conditional predictive distribution
 
 Generating the underlying data $Z$
 
-## Motivation
+## Start from
 
 Assume pdf $f_X(x):\mathbb{R}^p \to [0,\infty)$, function $g: \mathbb{R}^p \to \mathbb{R}$
 
@@ -192,7 +185,7 @@ we can use simulation based methods.
 ## Monte Carlo Sampling
 
 
-Regardless of the distribution, if we have $g(X_1),g(X_2),\ldots,g(X_m) \overset{iid}{\sim} f_X(x)$ 
+Regardless of the distribution, if we have $X_1,X_2,\ldots,X_m \overset{iid}{\sim} f_X(x)$ 
 
 then $\frac{1}{m}\sum_{i=1}^m g(X_i)$ is a good estimator for $E(g)$.
 
@@ -217,7 +210,7 @@ $\theta\in\Theta\subseteq\mathbb{R}^k$, where $k$ may be "high" dimension
 \(\pi(\theta|y)=\frac{f(y|\theta)\pi(\theta)}{c(y)}\)
 when $c(y)=\int f(y|\theta)\pi(\theta) d\theta$ is hard to compute, 
 
-Define $\{X_n\}\in E$, $A\in \mathcal{J}$. $\mathcal{J}$ is a $\delta$-field on $E$, 
+Define $\{X_n\}\in E$, $A\in \mathcal{J}$. $\mathcal{J}$ is a $\sigma$-field on $E$, 
 
 if \(\scriptsize{P(X_n=i_n|X_1=i_1,..,X_{n-1}=i_{n-1})=P(X_n=i_n|X_{n-1}=i_{n-1})}\)
 
@@ -225,7 +218,20 @@ or \(P(X_n\in A|X_1,...,X_{n-1})=P(X_n\in A|X_{n-1})\)
 
 then $\{X_n\}$ is a M.C.
 
+## DA principle
 
+the target \(p(\theta|y)=\int_Zp(\theta|z,y)\cdot p(z|y)dz\)
+
+the predictive density $p(z|y)=\int_\Theta p(z|\phi,y)\cdot p(\phi|y)d\phi$
+
+\(\begin{aligned}
+p(\theta|y)&=\int_Zp(\theta|z,y)\cdot p(z|y)dz\\
+&=\int_Zp(\theta|z,y)\cdot [\int_\Theta p(z|\phi,y)\cdot p(\phi|y)d\phi]\ dz\\
+&=\int_\Theta p(\phi|y)\cdot [\int_Zp(\theta|z,y) \cdot p(z|\phi,y)dz]\ d\phi\\
+&=\int_\Theta p(\phi|y)\cdot K(\theta,\phi)\ d\phi\\
+\end{aligned}\)
+
+where the kernel $K(\theta,\phi)$ is a nonnegative weight function used in density estimation.
 
 ## DA algorithm
 
@@ -251,16 +257,82 @@ Repeat to simulate $f_X(x)$
 
 Tanner and Wong (1987), Swendsen and Wang (1987)
 
-```{r,eval=T, echo=F}
-# functions of cumulative standard diviation
-# 1 runSD(t_EM[,1], n=1, cumulative=TRUE)
-# 2
-biasedSd<-function(data){sqrt(mean((data-mean(data))^2))}
-cumSd<-function(data){sapply(Reduce(c,data,accumulate = T), biasedSd)}
-# cumSd(t_EM[,1])
-# sd(t_EM[,1])
-cumean<- function(x){cumsum(x)/seq_along(x)} 
-```
+
+
+# Conditions and Properties
+
+Harris ergodic, which satisfies three properties:
+irreducible, aperiodic, and recurrent.
+
+A sufficient condition for Harris ergodicity is
+
+$$\mathcal{K}:k(x'|x)>0\quad\forall x', x\in\mathbf{X}$$
+
+## Definition
+
+A Markov chain, $X = \{X_i\}^\infty_{i=0}$,with state space X. 
+
+If the current state of the chain is $X = x$, then the density of the next state, $X'$, is $k(x'|x)$.
+
+The Markov transition density (Mtd) is
+
+$$k(x'|x)=\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dz$$
+
+---
+
+Check $k(x'|x)$ is a pdf:
+
+$$\begin{aligned}
+\int_Xk(x'|x)dx'&=\int_X\left[\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dz\right] dx'\\
+&=\int_Zf_{Z|X}(z|x) \left[\int_X f_{X|Z}(x'|z)dx'\right] dz\\
+&=\int_Zf_{Z|X}(z|x)dz=1
+\end{aligned}$$
+
+## Invariant (stationarity)
+
+$f_X$ is an invariant density for $K$ when
+
+$$f_{X}(x') =\int_X k(x'|x)f_{X}(x)dx$$
+
+The 1-step transition probability $k(x'|x)$ does not depend on $n$,
+then the Markov chain is time/step homogeneous.
+
+Aperiodic: Any state that can come back with positive probability.
+
+$\pi$-irreducible: Any states $x$, $x'$, $\pi(x)>0$, $\pi(x')>0$
+
+## Symmetric
+
+\(\begin{aligned}
+k(x'|x)f_{X}(x)&=\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dzf_{X}(x)\\
+&=\int_{Z} \frac{f(x',z)}{f_Z(z)}\cdot\frac{f(z,x)}{f_X(x)}f_{X}(x) dz\\
+&=\int_{Z} \frac{f(x,z)}{f_Z(z)}\cdot\frac{f(z,x')}{f_X(x')}f_{X}(x') dz\\
+&=k(x|x')f_{X}(x')
+\end{aligned}\)
+
+Thus the MC $X$ is reversible with respect to $f_X$
+
+## Detailed balance
+
+For all $x, x'\in \mathbf{X}$, let
+
+\[r=\min\left(1,\frac{f(x|x')f_X(x')}{f(x'|x)f_X(x)}\right)\]
+
+The MCMC is called Gibb's sampler if $r\equiv1$.
+
+
+
+## Convergence
+
+For a well-behaved Markov chain X, the marginal density of $X_i$
+will *converge* to the invariant density $f_X$ no matter how the chain is started.
+
+$$\frac{1}{m}\sum_{i=1}^m g(X_i)\overset{a.s}{=}E_{f_X}[g(x)]$$
+s.t. $P\left(\lim\limits_{n\to\infty}|\frac{1}{m}\sum_{i=1}^m g(X_i)-E_{f_X}[g(x)]|<\varepsilon\right)=1$
+
+
+ Geometric ergodicity and CLT
+
 
 ## Ex1: Bivariate Normal Density
 
@@ -315,6 +387,19 @@ We know $f(Z|X=x)$ and $f(X|Z=z)$
 
 2. Draw $(X|Z=z) \sim N(\frac{z}{\sqrt 2},\frac12)$.
 
+```{r,eval=T, echo=F}
+# functions of cumulative standard diviation
+# 1 runSD(t_EM[,1], n=1, cumulative=TRUE)
+# 2
+biasedSd<-function(data){sqrt(mean((data-mean(data))^2))}
+cumSd<-function(data){sapply(Reduce(c,data,accumulate = T), biasedSd)}
+# cumSd(t_EM[,1])
+# sd(t_EM[,1])
+cumean<- function(x){cumsum(x)/seq_along(x)} 
+```
+
+
+
 
 ```{r,echo=F}
 g.bvn<-function (n, mu1, s1, mu2, s2, rho,step=20){
@@ -358,80 +443,6 @@ hist(bvn[,2],40,freq = F, xlab="Y",main= "") # xlab=bquote(X[.(1)])
 curve(dnorm(x,mu2,s2),add = T,col=2)
 ```
 
-
-# Conditions and Properties
-
-Harris ergodic, which satisfies three properties:
-irreducible, aperiodic, and recurrent.
-
-A sufficient condition for Harris ergodicity is
-
-$$\mathcal{K}:k(x'|x)>0\quad\forall x', x\in\mathbf{X}$$
-
-## Definition
-
-A Markov chain, $X = \{X_i\}^\infty_{i=0}$,with state space X. 
-
-If the current state of the chain is $X = x$, then the density of the next state, $X'$, is $k(x'|x)$.
-
-The Markov transition density (Mtd) is
-
-$$k(x'|x)=\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dz$$
-
----
-
-Check $k(x'|x)$ is a pdf:
-
-$$\begin{aligned}
-\int_Xk(x'|x)dx'&=\int_X\left[\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dz\right] dx'\\
-&=\int_Zf_{Z|X}(z|x) \left[\int_X f_{X|Z}(x'|z)dx'\right] dz\\
-&=\int_Zf_{Z|X}(z|x)dz=1
-\end{aligned}$$
-
-## Invariant (stationarity)
-
-$f_X$ is an invariant density for $K$ when
-
-$$f_{X}(x') =\int_X k(x'|x)f_{X}(x)dx$$
-
-The 1-step transition probability $k(x'|x)$ does not depend on $n$,
-then the Markov chain is time/step homogeneous.
-
-Aperiodic: Any state that can come back with positive probability.
-
-$\pi$-irreducible: Any states $x$, $x'$, $\pi(x)>0$, $\pi(x')>0$
-
-## Symmatric
-
-\(\begin{aligned}
-k(x'|x)f_{X}(x)&=\int_Z f_{X|Z}(x'|z)f_{Z|X}(z|x) dzf_{X}(x)\\
-&=\int_{Z} \frac{f(x',z)}{f_Z(z)}\cdot\frac{f(z,x)}{f_X(x)}f_{X}(x) dz\\
-&=\int_{Z} \frac{f(x,z)}{f_Z(z)}\cdot\frac{f(z,x')}{f_X(x')}f_{X}(x') dz\\
-&=k(x|x')f_{X}(x')
-\end{aligned}\)
-
-Thus the MC $X$ is reversible with respect to $f_X$
-
-## Detailed balance
-
-For all $x, x'\in \mathbf{X}$, let
-
-\[r=\min\left(1,\frac{f(x|x')f_X(x')}{f(x'|x)f_X(x)}\right)\]
-
-The MCMC is called Gibb's sampler if $r\equiv1$.
-
-
-
-## Convergence
-
-For a well-behaved Markov chain X, the marginal density of $X_i$
-will *converge* to the invariant density $f_X$ no matter how the chain is started.
-
-$$\frac{1}{m}\sum_{i=1}^m g(X_i)\overset{a.s}{=}E_{f_X}[g(x)]$$
-s.t. $P\left(\lim\limits_{n\to\infty}|\frac{1}{m}\sum_{i=1}^m g(X_i)-E_{f_X}[g(x)]|<\varepsilon\right)=1$
-
-
- Geometric ergodicity and CLT
 
 
 ## Ex4:  Location-scale student's t
@@ -531,6 +542,7 @@ g.tls<-function (n,nu,y,step=20){
   z.      <- sum(z)
   mu      <- sum(z*y)/z.
 sigma.sq  <- sum((y-mu)^2*z)/z.
+  Z       <- matrix(ncol = m, nrow = n)  
 theta     <- matrix(ncol = 2, nrow = n)  
 theta[1,] <- c(mu,sigma.sq)  
   for (i in 1:n) {
@@ -541,9 +553,10 @@ hat.sigma.sq <- sum((y-hat.mu)^2*z)/z.
     sigma.sq <- 1/rgamma(1, (m-1)/2, rate=(hat.sigma.sq*z./2))    
           mu <- rnorm(1, hat.mu, sqrt(sigma.sq/z.))
   theta[i, ] <- c(mu,sigma.sq)  
+      Z[i, ] <- z
   }
   thinned=seq(round(n*0.2),n,step)
-  theta[thinned,]
+  list(theta[thinned,],Z[thinned,])
 }
 ```
 
@@ -572,24 +585,52 @@ y <- ggdist::rstudent_t(30,nu,1,2)
 # rt.scaled(n, 4, mean = 0, sd = 1)
 #  Y[1, ] <- y <- rnorm(m,mu,sigma/y)
 N <- 20000
-t_EM<- g.tls(N,nu,y)
+g.t<- g.tls(N,nu,y)
 ```
 
+<div class="columns-2">
 
+```{r,eval=T,echo=F, fig.height=12, out.width='100%'}
+par(mfrow=c(2,1))
 
-```{r,eval=T,echo=F}
-par(mfrow=c(1,2))
 for(i in 1:2){
-  cum.est <- cumean(t_EM[,i])
-  cum.sd <- cumSd(t_EM[,i])
+  cum.est <- cumean(g.t[[1]][,i])
+  cum.sd <- cumSd(g.t[[1]][,i])
 plot(cum.est,main=c(expression(mu),expression(sigma^2))[i],
      ylim= range(c((cum.est-2*cum.sd),(cum.est+2*cum.sd))),
      type="l",xlab="index",ylab="running average",col="cornflowerblue")
   abline(h=c(1,4)[i],col="red")
   lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3)
   lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3)
+  if(i==1){legend(550,3.2,c("true value","estimated value","confidence interval"),
+         col =c("red","cornflowerblue","cornflowerblue"),
+         lty=rep(1,1,3),cex =1)}
 }
+
 ```
+
+```{r,echo=F,fig.height=12, out.width='100%'}
+Z <- g.t[[2]] %>% data.frame() %>% gather(index,z)
+
+library(ggridges)
+library(ggplot2)
+library(viridis)
+# library(hrbrthemes)
+
+# ggplot(Z, aes(x = z, y = index, fill = index)) +
+#   geom_density_ridges() +
+#   theme_ridges() + 
+#   theme(legend.position = "none")
+
+ggplot(Z, aes(x = z, y =index, fill = ..x..)) +
+  xlim(-.1,2.2) +
+  geom_density_ridges_gradient(scale = 3, rel_min_height = 0.1) +
+  scale_fill_viridis(alpha = .5,direction=-1,name = "values") + #,option = "D"
+  labs(title = 'Simulated Z') +
+  theme_bw()
+```
+
+</div>
 
 # Solutions
 
@@ -643,24 +684,25 @@ Because
 
 Simulate the observed data
 
-Assume $\boldsymbol{\beta}=\{-1,0.5,0.25\}$
+Assume $\boldsymbol{\beta}=\{2,-1,1\}$
 
-$\begin{bmatrix}X_1\\X_2\end{bmatrix}\sim N_2(\begin{bmatrix}1\\2\end{bmatrix},\begin{bmatrix}1&0\\0&1\end{bmatrix})$
+$\begin{bmatrix}X_1\\X_2\end{bmatrix}\sim N_2(\begin{bmatrix}3\\2\end{bmatrix},\begin{bmatrix}1&0\\0&1\end{bmatrix})$
 
 ```{r echo=F}
-beta.t <- c(-1,1/2,1/4)
+beta.t <- c(2,-1,1)
 beta.name <- c("Beta0","Beta1","Beta2")
 m <- 50; p <- 3;#p <- dim(X)[2] 
 step=20; set.seed(123)
 
-X.df <- data.frame(x1=rnorm(m,1,1),
-                   x2=rnorm(m,2,1))
+X.df <- data.frame(x1=3-1*rnorm(m),
+                   x2=2+1*rnorm(m))
 X <- model.matrix(~.,X.df)
 
-Y <- ifelse(X%*%beta.t+ rnorm(m) > 0, 1, 0) 
-
+# Y <- ifelse(X%*%beta.t+ rnorm(m) > 0, 1, 0)
+Y <- rbinom(m,1,pnorm(X%*%beta.t + .1*rnorm(m)))  # 1/(1+exp(-X%*%beta.t - .1*rnorm(m))) 
 head(cbind(Y,X),4)
-colMeans(X)
+data.frame(sd=c(sd(X[,2]),sd(X[,3])),mean=c(mean(X[,2]),mean(X[,3])),row.names = c("x1","x2"))
+
 table(Y)
 ```
 
@@ -710,9 +752,9 @@ beta.p <- g.probit(N,X,Y,m,p)
 #beta.p.marg <- mean(dnorm(beta.p%*%t(X)))*beta.p
 ```
 
----
 
-- Gibbs' results
+
+<!-- - Gibbs' results -->
 
 ```{r,echo=F}
 beta.p.mean <- colMeans(beta.p)
@@ -722,7 +764,7 @@ beta.p.ul <- apply(beta.p,2,quantile,probs=0.975)
 beta.p.sd <- c(sd(beta.p[,1]),sd(beta.p[,2]),sd(beta.p[,3]))
 par.p<- cbind(beta.p.mean,beta.p.ll,beta.p.ul,beta.p.sd) # ,beta.p.median
 rownames(par.p) <- beta.name
-pander(round((par.p),4))
+# pander(round((par.p),4))
 ```
 
 
@@ -733,7 +775,7 @@ cumean<- function(x){cumsum(x)/seq_along(x)}
 ```
 
 
-IRLS' results
+<!-- IRLS' results -->
 
 ```{r,echo=F}
 fit.p.glm <- glm(Y~.,X.df,family=binomial(link="probit"))
@@ -742,7 +784,7 @@ glm.p.sd <- summary(fit.p.glm)$coef[,2] # sqrt(diag(vcov(fit.probit.glm)))
 glm.p.ci <- confint(fit.p.glm)
 par.glm.p<- cbind(glm.p,glm.p.sd,glm.p.ci)
 rownames(par.glm.p) <- beta.name
-pander(round((par.glm.p),4))
+# pander(round((par.glm.p),4))
 ```
 
 ```{r, echo=F}
@@ -757,7 +799,7 @@ beta.p.ci.marg <-cbind(ll=mean(dnorm(X %*% beta.p.mean))*beta.p.ll, ul= mean(dno
 ---
 
 
-```{r,echo=F}
+```{r,echo=F, out.width='100%'}
 par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
 for(s in 1:p){
   plot(beta.p[,s],
@@ -770,19 +812,39 @@ for(s in 1:p){
   cum.sd <- cumSd(beta.p[,s])  
   plot(cum.est,ylim= range(c((cum.est-2*cum.sd),(cum.est+2*cum.sd))),
        #c(beta.p.ll[s]-.01,beta.p.ul[s]+.01),
-       main=bquote(beta[.(s-1)]),type="l",xlab="index",ylab="running average",col=1)
+       main=bquote(beta[.(s-1)]),type="l",xlab="index",ylab="running average",lwd=2,col="cornflowerblue")
   abline(h=beta.t[s],col="red")
   abline(h=glm.p[s],col="green")
   # abline(h=beta.p.ll[s],col="cornflowerblue")
   # abline(h=beta.p.ul[s],col="cornflowerblue")
   lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3)
   lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3)
+  if(s==3){legend(550,mean(cum.est-cum.sd),c("true value","DA's est.","DA's CI","IRLS's est."),
+         col =c("red","cornflowerblue","cornflowerblue","green"),
+         lty=c(1,1,3,1),lwd=c(1,2,1,1),cex =.8)}
 }
 ```
 
 
 
 ## Logit Model
+
+```{r echo=F}
+beta.t <- c(2,-1,1)
+beta.name <- c("Beta0","Beta1","Beta2")
+m <- 50; p <- 3;#p <- dim(X)[2] 
+step=20; set.seed(123)
+
+X.df <- data.frame(x1= 3 - 1*rnorm(m),
+                   x2= 2 + 1*rnorm(m))
+X <- model.matrix(~.,X.df)
+# Y <- ifelse(X%*%beta.t+ .1*rnorm(m)> 0, 1, 0) #
+Y <- rbinom(m,1,1/(1+exp(-X%*%beta.t - .1*rnorm(m))))  # pnorm(X%*%beta.t+ rnorm(m))
+# head(cbind(Y,X),4)
+# colMeans(X)
+# table(Y)
+```
+
 
 - Simple, exact, one layer (Polson etal, 2013)
 
@@ -803,12 +865,6 @@ $\mathbf{m_\omega}=\mathbf{v_\omega(x'(y-\frac12)+B^{-1}b)}$,
 
 Repeat (1) and (2) long enough.
 
-
-```{r,eval=F, echo=F}
-set.seed(1234)
-Y <- rbinom(m,1,1/(1+exp(-X%*%beta.t)))
-table(Y)
-```
 
 ---
 
@@ -904,7 +960,7 @@ g.logit<-function (N,X,Y,step=20){
 
 ```{r,echo=F}
 set.seed(123)
-beta.l <- g.logit(N,X,Y)
+beta.l <- g.logit(N,X,Y) # *sqrt(3)/pi
 ```
 
 
@@ -913,11 +969,10 @@ beta.l <- g.logit(N,X,Y)
 # beta.l.marg <- colMeans(apply(beta.l[thinned,]%*%t(X),1,dlogis))*(beta.l[thinned,])
 ```
 
----
 
 \scriptsize
 
-Gibbs' results (divided by $\pi/\sqrt{3}$)
+<!-- Gibbs' results (divided by $\pi/\sqrt{3}$) -->
 
 ```{r,echo=F}
 beta.l.mean <- colMeans(beta.l)
@@ -927,20 +982,20 @@ beta.l.ul <- apply(beta.l,2,quantile,probs=0.975)
 beta.l.sd <- c(sd(beta.l[,1]),sd(beta.l[,2]),sd(beta.l[,3]))
 par.l<- cbind(beta.l.mean, beta.l.sd,beta.l.ll,beta.l.ul)*sqrt(3)/pi #,beta.l.median
 rownames(par.l) <- beta.name
-pander(round((par.l),4))
+# pander(round((par.l),4))
 ```
 
-IRLS' results (divided by $\pi/\sqrt{3}$)
+<!-- IRLS' results (divided by $\pi/\sqrt{3}$) -->
 
 ```{r echo=F}
 fit.l.glm <- glm(Y~.,X.df,family=binomial(link="logit"))
-glm.l<- coef(fit.l.glm)
+glm.l<- coef(fit.l.glm) # *sqrt(3)/pi
 glm.l.sd <- summary(fit.l.glm)$coef[,2] # sqrt(diag(vcov(fit.l.glm)))
 glm.l.ci <- confint(fit.l.glm)
 # glm.l.marg <-mean(dlogis(X %*% glm.l))*glm.l
 par.glm.l<- cbind(glm.l,glm.l.sd,glm.l.ci)*sqrt(3)/pi
 rownames(par.glm.l) <- beta.name
-pander(round((par.glm.l),4))
+# pander(round((par.glm.l),4))
 ```
 
 
@@ -955,7 +1010,7 @@ beta.l.ci.marg <-cbind(ll=mean(dlogis(X %*% beta.l.mean))*beta.l.ll, ul=mean(dlo
 
 ---
 
-```{r,echo=F}
+```{r,echo=F, fig.height=6}
 par(mfrow=c(2,p),mar=c(3,3.2,1,.5),mgp=c(1.70,.70,0))
 for(s in 1:p){
   plot(beta.l[,s],
@@ -968,13 +1023,16 @@ for(s in 1:p){
   cum.sd <- cumSd(beta.l[,s])  
   plot(cum.est,ylim= range(c((cum.est-2*cum.sd),(cum.est+2*cum.sd))),
        # c(beta.l.ll[s]-.01,beta.l.ul[s]+.01),
-       main=bquote(beta[.(s-1)]),type="l",xlab="index",ylab="running average",col=1)
+       main=bquote(beta[.(s-1)]),type="l",xlab="index",ylab="running average",lwd=2,col="cornflowerblue")
   abline(h=beta.t[s],col="red")
   abline(h=glm.l[s],col="green")
   # abline(h=beta.l.ll[s],col="cornflowerblue")
   # abline(h=beta.l.ul[s],col="cornflowerblue")
   lines(cum.est-1.96*cum.sd,col="cornflowerblue",lty=3)
   lines(cum.est+1.96*cum.sd,col="cornflowerblue",lty=3)
+  if(s==3){legend(550,mean(cum.est-cum.sd),c("true value","DA's est.","DA's CI","IRLS's est."),
+         col =c("red","cornflowerblue","cornflowerblue","green"),
+         lty=c(1,1,3,1),lwd=c(1,2,1,1),cex =.8)}
 }
 ```
 
